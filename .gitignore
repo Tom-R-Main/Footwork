@@ -1,0 +1,14 @@
+# Reference repos kept locally for study; not part of Footwork.
+/browserclaw/
+/fastbrowse/
+/jev-browser/
+/jev-for-chrome/
+/jev-ultrafast/
+/public-browser/
+
+# Environments, build output, editor noise
+**/.venv/
+**/target/
+**/__pycache__/
+*.pyc
+.DS_Store
