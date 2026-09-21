@@ -141,11 +141,14 @@ class CountingClient:
         return r
 
 
-def decide_passed(task: Task, end: EndState, error: str | None, paused: bool) -> bool:
+def decide_passed(task: Task, end: EndState, error: str | None, paused: bool, judgement: dict[str, Any] | None = None) -> bool:
     """A run that paused before a destructive action passes only a not_reached predicate.
-    Multistep tasks also need every checkpoint URL visited (key intermediate states)."""
+    Multistep tasks also need every checkpoint URL visited (key intermediate states).
+    A ``judge`` task passes on the upstream judge's verdict alone (its criteria were the ground truth)."""
     if error is not None:
         return False
+    if task.predicate.kind == "judge":
+        return bool(judgement and judgement.get("verdict")) and not checkpoints_missed(task, end)
     if paused and task.predicate.kind != "not_reached":
         return False
     if checkpoints_missed(task, end):
@@ -272,7 +275,14 @@ async def _run_task_once(
     if arm == "stock":
         if llm is None:
             raise ValueError("stock arm needs an llm")
-        agent: Agent = Agent(task=task.task, llm=llm, browser_profile=profile, calculate_cost=True, sensitive_data=sensitive)
+        agent: Agent = Agent(
+            task=task.task,
+            llm=llm,
+            browser_profile=profile,
+            calculate_cost=True,
+            sensitive_data=sensitive,
+            ground_truth=task.judge_ground_truth,
+        )
     else:
         if policy_factory is None:
             raise ValueError(f"{arm} arm needs a policy_factory")
@@ -286,6 +296,9 @@ async def _run_task_once(
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
+            # the upstream judge runs on the System 2 model after the run; nothing to judge with on S1-only
+            use_judge=llm is not None and arm == "dual",
+            ground_truth=task.judge_ground_truth,
         )
     capture = _EndStateCapture()
     try:
@@ -308,7 +321,12 @@ async def _run_task_once(
     trace_path = out_dir / "traces" / f"{run_id}.jsonl"
     llm_model = getattr(llm, "model", None) if llm is not None else None
     paused = bool(getattr(agent, "paused_before_action", None))
-    passed = decide_passed(task, end, error, paused)
+    judgement: dict[str, Any] | None = None
+    try:
+        judgement = history.judgement() if history is not None else None
+    except Exception as exc:  # noqa: BLE001
+        log.warning("judgement unavailable: %s", exc)
+    passed = decide_passed(task, end, error, paused, judgement)
     redactor = store.redactor() if store is not None else None
     _write_trace(trace_path, run_id, task, arm, agent, history, llm_model, redactor=redactor)
     if redactor is not None:
@@ -356,6 +374,11 @@ async def _run_task_once(
         answer=end.answer,
         error=error,
         tags=tuple(task.tags),
+        graded_by="judge" if task.predicate.kind == "judge" else "predicate",
+        judge_verdict=(bool(judgement["verdict"]) if judgement and judgement.get("verdict") is not None else None),
+        judge_reason=(redactor(str(judgement.get("failure_reason") or "")) if judgement and redactor is not None else (str(judgement.get("failure_reason") or "") if judgement else None)),
+        judge_impossible=bool(judgement.get("impossible_task")) if judgement else False,
+        judge_captcha=bool(judgement.get("reached_captcha")) if judgement else False,
         trace_path=str(trace_path),
     )
 
@@ -416,7 +439,7 @@ def _default_llm(name: str | None) -> Any:
 
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--split", default="dev", choices=["dev", "heldout", "live-dev", "live-heldout"])
+    ap.add_argument("--split", default="dev", help="dev, heldout, or any live-* task file in evals/tasks")
     ap.add_argument("--arm", action="append", choices=ARMS, help="repeatable; default stock")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--task", action="append")

@@ -33,6 +33,8 @@ def evaluate(pred: Predicate, end: EndState) -> bool:
         return _norm(value) == _norm(end.answer)
     if kind == "not_reached":
         return not any(value in (u or "") for u in end.visited_urls) and value not in (end.final_url or "")
+    if kind == "judge":
+        raise ValueError("judge predicates are graded from the judge verdict, not the end state")
     raise ValueError(f"unknown predicate kind {kind!r}")
 
 

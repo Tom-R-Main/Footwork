@@ -102,3 +102,38 @@ def test_decide_passed_requires_every_checkpoint():
                        visited_urls=("https://shop.example/",))
     assert decide_passed(t, hit, None, False)
     assert not decide_passed(t, skipped, None, False)
+
+
+def test_judge_kind_passes_only_on_the_verdict():
+    from evals.predicates import EndState
+    from evals.runner import decide_passed
+    from evals.tasks.schema import Task
+
+    t = Task(
+        id="judged", task="find the cheapest laptop and report it", start_url="https://shop.example/", tags=("live", "judged"),
+        requirements=("Cheapest found",), predicate={"kind": "judge", "value": "The agent reports a laptop and its price"},
+    )
+    assert t.judge_ground_truth == "The agent reports a laptop and its price"
+    end = EndState(final_url="https://shop.example/", page_text="", answer="Laptop X, $499", is_done=True, success=True)
+    assert decide_passed(t, end, None, False, {"verdict": True}) is True
+    assert decide_passed(t, end, None, False, {"verdict": False, "failure_reason": "no price"}) is False
+    assert decide_passed(t, end, None, False, None) is False
+
+
+def test_report_separates_judge_grading_from_predicates(tmp_path):
+    from evals.report import TaskResult, aggregate, render_markdown
+
+    base = {"steps": 1, "s1_steps": 0, "s2_steps": 1, "llm_calls": 1, "jev_calls": 0, "llm_tokens": 10, "llm_cost_usd": 0.0, "jev_cost_usd": 0.0, "wall_s": 1.0, "is_done": True, "final_url": "u", "answer": "a"}
+    rows = [
+        TaskResult(task_id="a", arm="dual", passed=True, judge_verdict=True, **base),
+        TaskResult(task_id="b", arm="dual", passed=False, judge_verdict=True, **base),  # judge false accept
+        TaskResult(task_id="c", arm="dual", passed=True, judge_verdict=False, **base),  # judge false reject
+        TaskResult(task_id="d", arm="dual", passed=True, graded_by="judge", judge_verdict=True, **base),
+        TaskResult(task_id="e", arm="stock", passed=True, **base),
+    ]
+    agg = aggregate(rows)["dual"]
+    assert agg["judged"] == 4 and agg["judge_pass"] == 3
+    assert agg["judge_agree"] == 1 and agg["judge_false_accept"] == 1 and agg["judge_false_reject"] == 1
+    assert agg["graded_by_judge"] == 1
+    md = render_markdown(rows, "t")
+    assert "## Judge" in md and "| d | dual | yes | judge | yes |" in md

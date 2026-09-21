@@ -30,6 +30,13 @@ class TaskResult:
     trace_path: str | None = None
     success: bool | None = None
     paused: bool = False
+    #: "predicate" (observed state) or "judge" (upstream judge verdict with the task's criteria as ground truth)
+    graded_by: str = "predicate"
+    #: Upstream judge (browser-use's judge prompt, run by the System 2 model) on every judged run
+    judge_verdict: bool | None = None
+    judge_reason: str | None = None
+    judge_impossible: bool = False
+    judge_captcha: bool = False
 
     @property
     def cost_usd(self) -> float:
@@ -57,6 +64,15 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "cost_usd": sum(r.cost_usd for r in rs),
             "wall_s": sum(r.wall_s for r in rs),
             "errors": sum(1 for r in rs if r.error),
+            "judged": sum(1 for r in rs if r.judge_verdict is not None),
+            "judge_pass": sum(1 for r in rs if r.judge_verdict),
+            # agreement between the judge and the predicate, over predicate-graded rows the judge saw
+            "judge_agree": sum(1 for r in rs if r.judge_verdict is not None and r.graded_by == "predicate" and r.judge_verdict == r.passed),
+            "judge_false_accept": sum(1 for r in rs if r.judge_verdict and r.graded_by == "predicate" and not r.passed),
+            "judge_false_reject": sum(1 for r in rs if r.judge_verdict is False and r.graded_by == "predicate" and r.passed),
+            "captcha": sum(1 for r in rs if r.judge_captcha),
+            "impossible": sum(1 for r in rs if r.judge_impossible),
+            "graded_by_judge": sum(1 for r in rs if r.graded_by == "judge"),
         }
     return out
 
@@ -77,9 +93,28 @@ def render_markdown(results: list[TaskResult], title: str) -> str:
             f"| {arm} | {a['tasks']:.0f} | {a['pass']:.0f} | {a['pass_rate']:.0%} | {a['false_done']:.0f} | {a['paused']:.0f} | {a['mean_steps']:.1f} | "
             f"{a['llm_calls']:.0f} | {a['jev_calls']:.0f} | {a['llm_tokens']:.0f} | {a['cost_usd']:.4f} | {a['wall_s']:.0f} | {a['errors']:.0f} |"
         )
-    lines += ["", "## Per task", "", "| task | arm | pass | steps | s1/s2 | est. cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|"]
+    if any(r.judge_verdict is not None for r in results):
+        lines += [
+            "",
+            "## Judge (upstream judge prompt, run by the System 2 model)",
+            "",
+            (
+                "Predicate-graded rows: agreement, false accepts (judge yes, predicate no) and false rejects "
+                "(judge no, predicate yes). Rows graded by the judge alone are counted separately."
+            ),
+            "",
+            "| arm | judged | judge pass | agree | false accept | false reject | captcha | impossible | graded by judge |",
+            "|---|---|---|---|---|---|---|---|---|",
+        ]
+        for arm, a in agg.items():
+            lines.append(
+                f"| {arm} | {a['judged']:.0f} | {a['judge_pass']:.0f} | {a['judge_agree']:.0f} | {a['judge_false_accept']:.0f} | "
+                f"{a['judge_false_reject']:.0f} | {a['captcha']:.0f} | {a['impossible']:.0f} | {a['graded_by_judge']:.0f} |"
+            )
+    lines += ["", "## Per task", "", "| task | arm | pass | graded by | judge | steps | s1/s2 | est. cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|---|---|"]
     for r in sorted(results, key=lambda r: (r.task_id, r.arm)):
-        lines.append(f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |")
+        judge = "-" if r.judge_verdict is None else ("yes" if r.judge_verdict else "no")
+        lines.append(f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.graded_by} | {judge} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |")
     return "\n".join(lines) + "\n"
 
 

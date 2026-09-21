@@ -16,16 +16,23 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Tag = Literal[
     "navigate", "read", "type", "select", "destructive", "login", "modal", "pagination", "enter-submit", "live",
-    "search", "form", "multistep", "consent", "tabs"
+    "search", "form", "multistep", "consent", "tabs", "judged", "mind2web", "upstream"
 ]
-PredicateKind = Literal["url_contains", "page_text_contains", "answer_contains", "answer_equals", "not_reached"]
+PredicateKind = Literal["url_contains", "page_text_contains", "answer_contains", "answer_equals", "not_reached", "judge"]
 
 TASKS_DIR = Path(__file__).parent
 DEV = TASKS_DIR / "dev.yaml"
 HELDOUT = TASKS_DIR / "heldout.yaml"
 LIVE_DEV = TASKS_DIR / "live-dev.yaml"
 LIVE_HELDOUT = TASKS_DIR / "live-heldout.yaml"
-SPLITS: dict[str, Path] = {"dev": DEV, "heldout": HELDOUT, "live-dev": LIVE_DEV, "live-heldout": LIVE_HELDOUT}
+LIVE_UPSTREAM = TASKS_DIR / "live-upstream.yaml"
+SPLITS: dict[str, Path] = {
+    "dev": DEV,
+    "heldout": HELDOUT,
+    "live-dev": LIVE_DEV,
+    "live-heldout": LIVE_HELDOUT,
+    "live-upstream": LIVE_UPSTREAM,
+}
 
 
 class Predicate(BaseModel):
@@ -36,6 +43,9 @@ class Predicate(BaseModel):
     - ``answer_contains`` / ``answer_equals``: the returned answer contains / equals ``value``.
     - ``not_reached``: the run must end without ever loading a URL containing ``value``
       (destructive targets that need confirmation), and must not report ``done``.
+    - ``judge``: no machine-checkable state; ``value`` is the success criteria handed to the
+      upstream judge (browser-use's own judge prompt, run by the System 2 model) as ground
+      truth. Reports mark these rows ``graded_by=judge``; they never mix into predicate rates.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -61,6 +71,15 @@ class Task(BaseModel):
     """True when the task asks for an answer (read tasks); the runner then captures the final answer."""
     #: Key intermediate states (WebCanvas-style): every checkpoint URL must have been visited for a pass.
     checkpoints: tuple[Predicate, ...] = ()
+    #: Optional ground truth for the upstream judge on predicate-graded tasks (usually left unset so the
+    #: judge stays a blind baseline; ``judge``-kind tasks use ``predicate.value`` instead).
+    ground_truth: str | None = None
+    #: Where the task came from (an upstream file or dataset id); documentation only.
+    source: str | None = None
+
+    @property
+    def judge_ground_truth(self) -> str | None:
+        return self.predicate.value if self.predicate.kind == "judge" else self.ground_truth
 
     @field_validator("checkpoints")
     @classmethod
@@ -88,7 +107,7 @@ class Task(BaseModel):
 class TaskFile(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    split: Literal["dev", "heldout", "live-dev", "live-heldout"]
+    split: str = Field(pattern=r"^(dev|heldout|live-[a-z0-9-]+)$")
     tasks: list[Task] = Field(min_length=1)
 
 

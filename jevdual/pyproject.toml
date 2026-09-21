@@ -28,6 +28,8 @@ dev = [
     "hypothesis>=6",
     "ruff>=0.6",
     "pyyaml>=6.0.3",
+    "pytest-httpserver>=1.1",
+    "pytest-timeout>=2.4",
 ]
 
 [tool.maturin]
@@ -44,6 +46,9 @@ cache-keys = [
 ]
 
 [tool.pytest.ini_options]
+markers = [
+    "browser: launches a headless browser (tests/test_agent_loop.py)",
+]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 

@@ -132,3 +132,20 @@ def test_heldout_readme_states_rule():
     text = (HELDOUT.parent / "README.md").read_text()
     assert "never debugged" in text
     assert LIVE_HELDOUT.name in text and LIVE_DEV.name in text
+
+
+def test_upstream_import_is_judge_graded_and_reproducible(tasks, tmp_path: Path):
+    import subprocess
+    import sys
+
+    up = tasks["live-upstream"]
+    assert len(up) >= 30
+    for t in up:
+        assert t.predicate.kind == "judge" and "judged" in t.tags and t.is_live, t.id
+        assert t.judge_ground_truth == t.predicate.value
+        assert "multistep" not in t.tags  # judge tasks have no checkpoints
+    out = subprocess.run(
+        [sys.executable, "scripts/import_upstream_tasks.py", "--mind2web", "40", "--seed", "7"],
+        capture_output=True, text=True, check=True, cwd=Path(__file__).resolve().parents[1],
+    ).stdout
+    assert out == (Path(__file__).resolve().parents[1] / "evals/tasks/live-upstream.yaml").read_text()
