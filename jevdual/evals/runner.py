@@ -96,13 +96,25 @@ def _final_page_text(state: Any) -> str:
 
 
 async def _capture_end_state(agent: Agent, history: Any) -> EndState:
+    """Predicates run on the page's innerText, not the model-facing representation.
+
+    The serializer drops some inline text (e.g. the number in "Showing page <b>3</b> of 3"),
+    so a predicate on it would fail on the right page.
+    """
     page_text = ""
     final_url = None
     try:
         if agent.browser_session is not None:
-            state = await agent.browser_session.get_browser_state_summary(include_screenshot=False)
-            page_text = _final_page_text(state)
-            final_url = state.url
+            final_url = await agent.browser_session.get_current_page_url()
+            cdp = await agent.browser_session.get_or_create_cdp_session()
+            r = await cdp.cdp_client.send.Runtime.evaluate(
+                params={"expression": "document.body ? document.body.innerText : ''", "returnByValue": True},
+                session_id=cdp.session_id,
+            )
+            page_text = str(r.get("result", {}).get("value") or "")
+            if not page_text:
+                state = await agent.browser_session.get_browser_state_summary(include_screenshot=False)
+                page_text = _final_page_text(state)
     except Exception as exc:  # noqa: BLE001
         log.warning("could not capture end state: %s", exc)
     urls = tuple(u for u in history.urls() if u)
