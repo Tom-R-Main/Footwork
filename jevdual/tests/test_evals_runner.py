@@ -137,3 +137,31 @@ def test_report_separates_judge_grading_from_predicates(tmp_path):
     assert agg["graded_by_judge"] == 1
     md = render_markdown(rows, "t")
     assert "## Judge" in md and "| d | dual | yes | judge | yes |" in md
+
+
+def test_load_partial_round_trips_results(tmp_path):
+    from evals.report import TaskResult, write_results
+    from evals.runner import load_partial
+
+    row = TaskResult(task_id="a", arm="dual", passed=True, steps=1, s1_steps=0, s2_steps=1, llm_calls=1, jev_calls=0, llm_tokens=1,
+                     llm_cost_usd=0.0, jev_cost_usd=0.0, wall_s=1.0, is_done=True, final_url="u", answer="x", tags=("live",))
+    write_results([row], tmp_path, "t")
+    back = load_partial(tmp_path)
+    assert back == [row]
+    assert load_partial(tmp_path / "missing") == []
+
+
+def test_remove_temp_profile_only_touches_browser_use_dirs_in_tmp(tmp_path, monkeypatch):
+    import tempfile
+    from types import SimpleNamespace
+
+    from evals.runner import _remove_temp_profile
+
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(tmp_path))
+    ours = tmp_path / "browser-use-user-data-dir-abc"
+    ours.mkdir()
+    theirs = tmp_path / "keep-me"
+    theirs.mkdir()
+    _remove_temp_profile(SimpleNamespace(browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(ours)))))
+    _remove_temp_profile(SimpleNamespace(browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(theirs)))))
+    assert not ours.exists() and theirs.exists()

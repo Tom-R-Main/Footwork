@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import importlib.metadata
+import json
 import logging
 import os
 import time
@@ -232,6 +233,25 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
 BROWSER_START_FAILURE = "BrowserStartEvent"
 
 
+def _remove_temp_profile(agent: Any) -> None:
+    """browser-use leaves its per-session Chrome profile in the temp dir (about 25 MB each; 636 of
+    them filled the disk on 2026-09-21). Remove ours once the session is closed."""
+    import shutil
+    import tempfile
+
+    try:
+        profile = getattr(getattr(agent, "browser_session", None), "browser_profile", None)
+        path = getattr(profile, "user_data_dir", None)
+        if not path:
+            return
+        path = Path(str(path))
+        tmp = Path(tempfile.gettempdir()).resolve()
+        if path.name.startswith("browser-use-user-data-dir") and path.resolve().is_relative_to(tmp) and path.is_dir():
+            shutil.rmtree(path, ignore_errors=True)
+    except Exception as exc:  # noqa: BLE001
+        log.debug("temp profile cleanup skipped: %s", exc)
+
+
 async def run_task(
     task: Task,
     arm: Arm,
@@ -317,6 +337,7 @@ async def _run_task_once(
             await agent.close()
         except Exception as exc:  # noqa: BLE001
             log.warning("close failed: %s", exc)
+        _remove_temp_profile(agent)
     wall = time.perf_counter() - t0
     trace_path = out_dir / "traces" / f"{run_id}.jsonl"
     llm_model = getattr(llm, "model", None) if llm is not None else None
@@ -394,6 +415,7 @@ async def run_split(
     task_ids: set[str] | None = None,
     include_live: bool = False,
     max_steps: int = 25,
+    resume: bool = False,
 ) -> list[TaskResult]:
     tasks = load_tasks(Path(__file__).parent / "tasks" / f"{split}.yaml")
     if task_ids:
@@ -404,18 +426,39 @@ async def run_split(
         tasks = tasks[:limit]
     patch.install()
     site_url, stop = serve()
-    results: list[TaskResult] = []
+    title = f"{split} split, arms {', '.join(arms)}"
+    results: list[TaskResult] = load_partial(out_dir) if resume else []
+    done = {(r.task_id, r.arm) for r in results}
+    if done:
+        log.info("resuming: %s task runs already in %s", len(done), out_dir / "results.json")
     try:
         for task in tasks:
             for arm in arms:
+                if (task.id, arm) in done:
+                    continue
                 log.info("running %s on %s", task.id, arm)
                 results.append(
                     await run_task(task, arm, site_url, out_dir, llm=llm, policy_factory=policy_factory, max_steps=max_steps)
                 )
+                # written after every task run so a crash (disk full, power) keeps what finished
+                write_results(results, out_dir, title)
     finally:
         stop()
-    write_results(results, out_dir, f"{split} split, arms {', '.join(arms)}")
+    write_results(results, out_dir, title)
     return results
+
+
+def load_partial(out_dir: Path) -> list[TaskResult]:
+    """Rows already in ``out_dir/results.json`` (for ``--resume``)."""
+    path = out_dir / "results.json"
+    if not path.is_file():
+        return []
+    rows = json.loads(path.read_text())
+    out = []
+    for r in rows:
+        r["tags"] = tuple(r.get("tags") or ())
+        out.append(TaskResult(**r))
+    return out
 
 
 def _default_llm(name: str | None) -> Any:
@@ -447,6 +490,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--llm", default="meta", help="System 2 provider for stock/dual arms: meta (Muse Spark 1.3 Contributor, default), browser-use, or none")
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--out", default=f"results/run-{time.strftime('%Y%m%d-%H%M%S')}")
+    ap.add_argument("--resume", action="store_true", help="skip task/arm pairs already in --out/results.json")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     present = load_keys()
@@ -466,6 +510,7 @@ def main(argv: list[str] | None = None) -> None:
             limit=args.limit,
             task_ids=set(args.task) if args.task else None,
             include_live=args.live,
+            resume=args.resume,
             max_steps=args.max_steps,
         )
     )
