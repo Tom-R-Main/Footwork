@@ -1,0 +1,103 @@
+"""Trajectory evidence for verification.
+
+Two pieces, both cheap:
+
+* ``trajectory_from_agent`` summarises the run so far from browser-use's history: per step the URL,
+  the actions executed (name, index, the element interacted with, redacted text) and the model's
+  memory line. The verifier gets it as ``state.trajectory`` next to the current page, so a
+  requirement that names an action ("Password entered", "Search submitted", "Signed in") can be
+  judged from the trail after the page has moved on. This changes the state, not the number of
+  Jev calls.
+* ``Ledger`` remembers, per requirement, the lowest ``unmet`` probability any verification in this
+  run has assigned it. A requirement judged met once stays met (monotone within a run); the
+  band is computed on the ledger-adjusted values. Live validation run 0 showed 120 of 224
+  rejections were per-requirement verdicts on actions no longer visible on the final page.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Any
+
+_LABEL_ATTRS = ("aria-label", "placeholder", "name", "title", "alt", "value", "id")
+_TEXT_PARAMS = ("text", "keys", "query", "url")
+
+
+def _element_label(el: Any) -> str | None:
+    if el is None:
+        return None
+    attrs = getattr(el, "attributes", None) or {}
+    for key in _LABEL_ATTRS:
+        v = attrs.get(key)
+        if v:
+            return f"{getattr(el, 'node_name', '?').lower()} {key}={str(v)[:60]!r}"
+    value = (getattr(el, "node_value", "") or "").strip()
+    if value:
+        return f"{getattr(el, 'node_name', '?').lower()} {value[:60]!r}"
+    node_type = attrs.get("type")
+    name = getattr(el, "node_name", "?").lower()
+    return f"{name} type={node_type}" if node_type else name
+
+
+def _action_line(action: Any, element: Any, redact: Callable[[str], str]) -> str:
+    dumped = action.model_dump(exclude_unset=True) if hasattr(action, "model_dump") else dict(action)
+    name, params = next(iter(dumped.items()))
+    params = dict(params or {})
+    parts = []
+    if "index" in params:
+        parts.append(f"index={params['index']}")
+    for key in _TEXT_PARAMS:
+        if key in params and params[key] is not None:
+            parts.append(f"{key}={redact(str(params[key]))[:80]!r}")
+    for key in ("seconds", "down", "pages", "success"):
+        if key in params:
+            parts.append(f"{key}={params[key]}")
+    label = _element_label(element)
+    line = f"{name}({', '.join(parts)})"
+    return f"{line} on {label}" if label else line
+
+
+def trajectory_from_agent(agent: Any, redact: Callable[[str], str] | None = None, *, max_steps: int = 12) -> list[dict[str, Any]]:
+    """Per-step summary of the run so far, oldest first, at most ``max_steps`` most recent steps."""
+    red = redact or (lambda s: s)
+    history = getattr(getattr(agent, "history", None), "history", None) or []
+    out: list[dict[str, Any]] = []
+    for i, h in enumerate(history, start=1):
+        model_output = getattr(h, "model_output", None)
+        actions = list(getattr(model_output, "action", None) or [])
+        elements = list(getattr(getattr(h, "state", None), "interacted_element", None) or [])
+        lines = []
+        for j, a in enumerate(actions):
+            el = elements[j] if j < len(elements) else None
+            try:
+                lines.append(_action_line(a, el, red))
+            except Exception:  # noqa: BLE001 - a malformed action must not break verification
+                lines.append("?")
+        errors = [r.error for r in (getattr(h, "result", None) or []) if getattr(r, "error", None)]
+        entry: dict[str, Any] = {"step": i, "url": red(getattr(getattr(h, "state", None), "url", "") or ""), "actions": lines}
+        memory = getattr(model_output, "memory", None)
+        if memory:
+            entry["note"] = red(str(memory))[:200]
+        if errors:
+            entry["error"] = red(str(errors[0]))[:120]
+        out.append(entry)
+    return out[-max_steps:]
+
+
+@dataclass
+class Ledger:
+    """Lowest ``unmet`` seen per requirement in this run; met once means met."""
+
+    best_unmet: dict[str, float] = field(default_factory=dict)
+    met_threshold: float = 0.20
+
+    def apply(self, unmet: dict[str, float]) -> dict[str, float]:
+        return {req: min(p, self.best_unmet.get(req, 1.0)) for req, p in unmet.items()}
+
+    def update(self, unmet: dict[str, float]) -> None:
+        for req, p in unmet.items():
+            self.best_unmet[req] = min(p, self.best_unmet.get(req, 1.0))
+
+    def met(self) -> tuple[str, ...]:
+        return tuple(req for req, p in self.best_unmet.items() if p <= self.met_threshold)

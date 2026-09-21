@@ -112,7 +112,7 @@ def test_accept_path():
     assert verdict.unmet == {REQS[0]: 0.05, REQS[1]: 0.08}
     assert verdict.claims == [] and verdict.supported_answer is None
     t = verdict.to_trace()
-    assert t["band"] == "accept" and t["unsupported"] == 0 and set(t) == {"band", "complete", "unmet", "claims", "unsupported", "reason"}
+    assert t["band"] == "accept" and t["unsupported"] == 0 and set(t) == {"band", "complete", "unmet", "unmet_effective", "claims", "unsupported", "reason"}
 
 
 def test_reject_on_one_unmet():

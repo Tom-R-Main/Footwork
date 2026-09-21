@@ -144,25 +144,36 @@ NOULS: dict[str, dict[str, str]] = {
 # worded directly (jaggedness rule: ask each decision one way; never derive `unmet_i` from
 # `complete` or vice versa) and literally (no counting, no arithmetic).
 
-VERIFY_PROMPTS_VERSION = "2026-09-21.1"
+VERIFY_PROMPTS_VERSION = "2026-09-21.2"
+
+# Evidence for a requirement is either the current page (`page.text`) or the run so far
+# (`trajectory`: per step the URL, the actions executed on which elements, and a note). A
+# requirement naming an action ("Password entered", "Search submitted") is usually only visible
+# in the trajectory once the page has moved on.
 
 VERIFY_COMPLETE: dict[str, str] = {
-    "instructions": "Is every entry in `requirements` visibly satisfied by what `page.text` shows right now, "
-    "so that `task` is finished on this page?",
-    "true": "For each requirement, the page text itself shows the outcome it names: the confirmation message, "
-    "the opened item, the reported value, the submitted form's result.",
-    "false": "At least one requirement is not shown in `page.text`, or the page only offers a way to reach it "
-    "(an unsubmitted form, a link to the item, a search box with the query typed but not run).",
+    "instructions": "Is every entry in `requirements` satisfied, judging each one from `page.text` as it is now "
+    "or from an action recorded in `trajectory` with its result, so that `task` is finished?",
+    "true": "For each requirement, either the page text shows the outcome it names (the confirmation message, "
+    "the opened item, the reported value, the submitted form's result), or `trajectory` records the action it "
+    "names as executed (the text entered on that field, the form submitted, the page opened) and nothing later "
+    "undid it.",
+    "false": "At least one requirement is neither shown in `page.text` nor recorded in `trajectory`, or the page "
+    "only offers a way to reach it (an unsubmitted form, a link to the item, a search box with the query typed "
+    "but not run), or the trajectory shows the action failed.",
 }
 
 
 def verify_unmet(index: int, requirement: str) -> dict[str, str]:
     """Noul asking whether ONE requirement is NOT satisfied. Absolute; independent of `complete`."""
     return {
-        "instructions": f"Is `requirements[{index}]` (\"{requirement}\") NOT satisfied by what `page.text` shows right now?",
-        "true": "Nothing in `page.text` shows this requirement's outcome, or the page shows only a way to reach it, "
-        "or it shows a different outcome from the one required.",
-        "false": "`page.text` shows exactly the outcome this requirement names.",
+        "instructions": f"Is `requirements[{index}]` (\"{requirement}\") NOT satisfied, judging from `page.text` as it "
+        "is now and from the actions recorded in `trajectory`?",
+        "true": "Nothing in `page.text` shows this requirement's outcome and no entry in `trajectory` records the "
+        "action it names as executed, or the page shows only a way to reach it, or it shows a different outcome "
+        "from the one required, or the trajectory shows that action failed.",
+        "false": "`page.text` shows exactly the outcome this requirement names, or `trajectory` records the action "
+        "it names as executed with no later error.",
     }
 
 
