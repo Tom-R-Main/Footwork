@@ -12,7 +12,7 @@ import os
 import time
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Self
 
 from pydantic import BaseModel, Field
 
@@ -121,7 +121,7 @@ class TraceWriter:
     def close(self) -> None:
         self._fh.close()
 
-    def __enter__(self) -> TraceWriter:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *exc: object) -> None:

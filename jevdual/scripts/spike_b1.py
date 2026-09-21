@@ -126,7 +126,7 @@ async def run_task(base: str, name: str, task: str, script, outdir: Path, max_st
     findings = {}
     try:
         history = await agent.run(max_steps=max_steps)
-    except Exception as exc:  # the escalation task should not raise; record if it does
+    except Exception as exc:  # noqa: BLE001 - the spike records any escape rather than crashing
         findings["run_raised"] = repr(exc)
         history = agent.history
     findings.update(
