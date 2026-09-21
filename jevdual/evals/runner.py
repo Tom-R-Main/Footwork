@@ -95,32 +95,42 @@ def _final_page_text(state: Any) -> str:
         return ""
 
 
-async def _capture_end_state(agent: Agent, history: Any) -> EndState:
-    """Predicates run on the page's innerText, not the model-facing representation.
+async def _snapshot_page(agent: Agent) -> dict[str, str]:
+    """url plus innerText of the current page, read live over CDP."""
+    session = agent.browser_session
+    if session is None:
+        return {}
+    url = await session.get_current_page_url()
+    cdp = await session.get_or_create_cdp_session()
+    r = await cdp.cdp_client.send.Runtime.evaluate(
+        params={"expression": "document.body ? document.body.innerText : ''", "returnByValue": True},
+        session_id=cdp.session_id,
+    )
+    return {"url": url, "text": str(r.get("result", {}).get("value") or "")}
 
-    The serializer drops some inline text (e.g. the number in "Showing page <b>3</b> of 3"),
-    so a predicate on it would fail on the right page.
-    """
-    page_text = ""
-    final_url = None
-    try:
-        if agent.browser_session is not None:
-            final_url = await agent.browser_session.get_current_page_url()
-            cdp = await agent.browser_session.get_or_create_cdp_session()
-            r = await cdp.cdp_client.send.Runtime.evaluate(
-                params={"expression": "document.body ? document.body.innerText : ''", "returnByValue": True},
-                session_id=cdp.session_id,
-            )
-            page_text = str(r.get("result", {}).get("value") or "")
-            if not page_text:
-                state = await agent.browser_session.get_browser_state_summary(include_screenshot=False)
-                page_text = _final_page_text(state)
-    except Exception as exc:  # noqa: BLE001
-        log.warning("could not capture end state: %s", exc)
+
+class _EndStateCapture:
+    """browser-use closes the session when run() returns, so the end state is captured
+    from the on_step_end hook and the last capture wins. Predicates read innerText because
+    the serializer's text drops some inline nodes (the number in 'Showing page <b>3</b> of 3')."""
+
+    def __init__(self) -> None:
+        self.last: dict[str, str] = {}
+
+    async def __call__(self, agent: Agent) -> None:
+        try:
+            snap = await _snapshot_page(agent)
+            if snap:
+                self.last = snap
+        except Exception as exc:  # noqa: BLE001
+            log.warning("end-state capture failed at step %s: %s", agent.state.n_steps, exc)
+
+
+def _end_state(capture: _EndStateCapture, history: Any) -> EndState:
     urls = tuple(u for u in history.urls() if u)
     return EndState(
-        final_url=final_url or (urls[-1] if urls else None),
-        page_text=page_text,
+        final_url=capture.last.get("url") or (urls[-1] if urls else None),
+        page_text=capture.last.get("text", ""),
         answer=history.final_result(),
         visited_urls=urls,
         is_done=history.is_done(),
@@ -181,6 +191,8 @@ async def run_task(
     run_id = f"{task.id}-{arm}-{uuid.uuid4().hex[:8]}"
     start_url = task.resolved_start_url(site_url)
     profile = BrowserProfile(headless=headless)
+    store = _secret_store(task, site_url)
+    sensitive = store.to_browser_use() if store is not None else None
     t0 = time.perf_counter()
     error: str | None = None
     if arm == "stock":
@@ -200,11 +212,12 @@ async def run_task(
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
         )
+    capture = _EndStateCapture()
     try:
         await agent.browser_session.start()
         await agent.browser_session.navigate_to(start_url)
-        history = await agent.run(max_steps=max_steps)
-        end = await _capture_end_state(agent, history)
+        history = await agent.run(max_steps=max_steps, on_step_end=capture)
+        end = _end_state(capture, history)
     except Exception as exc:  # noqa: BLE001 - a crashed run is a failed task, not a crashed rig
         error = repr(exc)
         history = agent.history

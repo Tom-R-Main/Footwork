@@ -61,7 +61,7 @@ def main(run_dir: str) -> None:
     escalations: Counter[str] = Counter()
     ops: Counter[str] = Counter()
     for r in results:
-        header, steps = read_trace(r["trace_path"]) if r.get("trace_path") and Path(r["trace_path"]).exists() else (None, [])
+        _header, steps = read_trace(r["trace_path"]) if r.get("trace_path") and Path(r["trace_path"]).exists() else (None, [])
         cls = classify(r, steps)
         counts[cls] += 1
         for s in steps:
