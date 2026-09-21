@@ -136,6 +136,7 @@ def _end_state(capture: _EndStateCapture, history: Any) -> EndState:
         answer=history.final_result(),
         visited_urls=urls,
         is_done=history.is_done(),
+        success=history.is_successful(),
     )
 
 
@@ -243,6 +244,7 @@ async def run_task(
             answer=redactor(end.answer) if end.answer else end.answer,
             visited_urls=tuple(redactor(u) for u in end.visited_urls),
             is_done=end.is_done,
+            success=end.success,
         )
         if error:
             error = redactor(error)
@@ -268,6 +270,8 @@ async def run_task(
         jev_cost_usd=jev_cost,
         wall_s=wall,
         is_done=end.is_done,
+        success=end.success,
+        paused=bool(getattr(agent, "paused_before_action", None)),
         final_url=end.final_url,
         answer=end.answer,
         error=error,

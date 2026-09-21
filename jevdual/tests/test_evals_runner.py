@@ -29,7 +29,7 @@ def test_aggregate_and_report(tmp_path: Path):
     assert agg["stock"]["pass_rate"] == 0.5 and agg["stock"]["false_done"] == 1
     assert agg["dual"]["pass_rate"] == 1.0 and agg["dual"]["jev_calls"] == 5 and agg["dual"]["llm_calls"] == 1
     md = render_markdown(rs, "t")
-    assert "| dual | 2 | 2 | 100% | 0 |" in md
+    assert "| dual | 2 | 2 | 100% | 0 | 0 |" in md
     write_results(rs, tmp_path, "t")
     assert json.loads((tmp_path / "summary.json").read_text())["by_tag"]["navigate"]["dual"]["pass"] == 2
 

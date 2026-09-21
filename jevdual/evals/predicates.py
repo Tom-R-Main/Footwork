@@ -14,6 +14,7 @@ class EndState:
     answer: str | None
     visited_urls: tuple[str, ...] = field(default_factory=tuple)
     is_done: bool = False
+    success: bool | None = None
 
 
 def _norm(s: str | None) -> str:

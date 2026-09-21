@@ -29,6 +29,8 @@ def classify(result: dict, steps) -> str:
         return "pass"
     if result.get("error"):
         return "crash"
+    if result.get("paused"):
+        return "destructive_paused"
     reasons = [s.arbiter_reason or "" for s in steps]
     joined = " | ".join(reasons).lower()
     if any(s.result_error and "policy" in (s.result_error or "").lower() for s in steps) or "policy error" in joined:

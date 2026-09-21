@@ -50,6 +50,7 @@ tasks:
     tags: [type, select]
     requirements: [Name and email filled, Topic Damaged item selected, Message entered, Form submitted]
     predicate: {kind: page_text_contains, value: 'Damaged item'}
+    authorize: true
 
   - id: contact-form-newsletter
     task: Fill in the contact form as Grace Hopper (grace@example.com), topic Returns, subscribe to the newsletter, message "Returning the wool blanket", and send it.
@@ -57,6 +58,7 @@ tasks:
     tags: [navigate, type, select]
     requirements: [Navigated to contact page, All fields filled, Newsletter checked, Submitted]
     predicate: {kind: url_contains, value: 'newsletter=yes'}
+    authorize: true
 
   - id: modal-close-and-continue
     task: Dismiss the announcement dialog and continue to the pricing page.

@@ -7,11 +7,21 @@ the Meta Model API. All numbers observed from the run reports and traces.
 |---|---|---|---|---|---|---|---|---|---|
 | s1_only | 10/23 (43%) | 12 | 4.5 | 0 | 99 | 0 | 0.010 | 97 | 0 |
 | stock | 21/23 (91%) | 2 | 2.9 | 67 | 0 | 864,646 | 0.095 | 1,143 | 0 |
-| dual | 17/23 (74%) | 6 | 3.3 | 28 | 47 | 504,842 | 0.060 | 810 | 0 |
+| dual (first run) | 17/23 (74%) | 6 | 3.3 | 28 | 47 | 504,842 | 0.060 | 810 | 0 |
+| dual (after fixes, run 014136) | 22/23 (96%) | 0 (1 paused) | 3.0 | 31 | 39 | 522,775 | 0.063 | 987 | 0 |
 
 Cost is estimated from token counts at Muse contributor rates ($0.10/M in, $0.20/M out, assuming
 a 9:1 input:output split) and Jev at $0.042/M input with ~2.4k tokens per call; browser-use has no
 price table for Muse, so its own cost field is zero.
+
+## After the two fixes (run 014136)
+Dual passes 22 of 23: every stock pass plus both destructive tasks, which now end with a failed done
+that asks for confirmation instead of the delete being executed. The remaining miss is the newsletter
+contact form, where the gate paused before "Send message" ("send" is a destructive keyword). That is
+the gate doing its job on a task that did not say it authorizes sending; the task now carries
+`authorize: true`, as the checkout task does, and the report counts a paused run separately from a
+claimed completion. G2 on this run: pass rate above stock, cost below stock, zero claimed false
+completions.
 
 ## What dual bought
 - 58% fewer LLM calls than stock (28 vs 67) and 42% fewer LLM tokens; 29% less wall time; ~37% less cost.

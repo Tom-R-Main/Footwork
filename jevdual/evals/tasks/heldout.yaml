@@ -30,6 +30,7 @@ tasks:
     tags: [navigate, type, select]
     requirements: [Contact page reached, Fields filled, Submitted]
     predicate: {kind: page_text_contains, value: 'Where is my foghorn?'}
+    authorize: true
 
   - id: ho-modal-fleet-price
     task: What does the Fleet plan cost per month? Start from the announcements page.

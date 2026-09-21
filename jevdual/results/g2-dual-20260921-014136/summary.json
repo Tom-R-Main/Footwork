@@ -1,0 +1,154 @@
+{
+ "arms": {
+  "dual": {
+   "tasks": 23,
+   "pass": 22,
+   "pass_rate": 0.9565217391304348,
+   "false_done": 1,
+   "mean_steps": 3.0434782608695654,
+   "llm_calls": 31,
+   "jev_calls": 39,
+   "llm_tokens": 522775,
+   "cost_usd": 0.0624965,
+   "wall_s": 987.0947807917837,
+   "errors": 0
+  }
+ },
+ "by_tag": {
+  "destructive": {
+   "dual": {
+    "tasks": 2,
+    "pass": 2,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "mean_steps": 1.5,
+    "llm_calls": 2,
+    "jev_calls": 1,
+    "llm_tokens": 34566,
+    "cost_usd": 0.0039419,
+    "wall_s": 65.96052358392626,
+    "errors": 0
+   }
+  },
+  "enter-submit": {
+   "dual": {
+    "tasks": 2,
+    "pass": 2,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "mean_steps": 3.0,
+    "llm_calls": 2,
+    "jev_calls": 4,
+    "llm_tokens": 47149,
+    "cost_usd": 0.0061467,
+    "wall_s": 105.77194937493186,
+    "errors": 0
+   }
+  },
+  "login": {
+   "dual": {
+    "tasks": 3,
+    "pass": 3,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "mean_steps": 5.333333333333333,
+    "llm_calls": 6,
+    "jev_calls": 10,
+    "llm_tokens": 100147,
+    "cost_usd": 0.0118457,
+    "wall_s": 167.306889917003,
+    "errors": 0
+   }
+  },
+  "modal": {
+   "dual": {
+    "tasks": 3,
+    "pass": 3,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "mean_steps": 3.0,
+    "llm_calls": 6,
+    "jev_calls": 3,
+    "llm_tokens": 74388,
+    "cost_usd": 0.008599200000000001,
+    "wall_s": 152.32654612499755,
+    "errors": 0
+   }
+  },
+  "navigate": {
+   "dual": {
+    "tasks": 11,
+    "pass": 10,
+    "pass_rate": 0.9090909090909091,
+    "false_done": 1,
+    "mean_steps": 3.727272727272727,
+    "llm_calls": 15,
+    "jev_calls": 26,
+    "llm_tokens": 258269,
+    "cost_usd": 0.0312288,
+    "wall_s": 448.0176907508867,
+    "errors": 0
+   }
+  },
+  "pagination": {
+   "dual": {
+    "tasks": 2,
+    "pass": 2,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "mean_steps": 3.0,
+    "llm_calls": 1,
+    "jev_calls": 5,
+    "llm_tokens": 28630,
+    "cost_usd": 0.0036589000000000005,
+    "wall_s": 45.249493582872674,
+    "errors": 0
+   }
+  },
+  "read": {
+   "dual": {
+    "tasks": 11,
+    "pass": 11,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "mean_steps": 2.4545454545454546,
+    "llm_calls": 16,
+    "jev_calls": 11,
+    "llm_tokens": 260390,
+    "cost_usd": 0.030812100000000002,
+    "wall_s": 520.312344540027,
+    "errors": 0
+   }
+  },
+  "select": {
+   "dual": {
+    "tasks": 2,
+    "pass": 1,
+    "pass_rate": 0.5,
+    "false_done": 1,
+    "mean_steps": 4.5,
+    "llm_calls": 5,
+    "jev_calls": 4,
+    "llm_tokens": 71572,
+    "cost_usd": 0.008127700000000002,
+    "wall_s": 96.48052483296487,
+    "errors": 0
+   }
+  },
+  "type": {
+   "dual": {
+    "tasks": 10,
+    "pass": 9,
+    "pass_rate": 0.9,
+    "false_done": 1,
+    "mean_steps": 4.3,
+    "llm_calls": 16,
+    "jev_calls": 27,
+    "llm_tokens": 274020,
+    "cost_usd": 0.0330446,
+    "wall_s": 488.530635959818,
+    "errors": 0
+   }
+  }
+ }
+}

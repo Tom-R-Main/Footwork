@@ -28,6 +28,8 @@ class TaskResult:
     error: str | None = None
     tags: tuple[str, ...] = field(default_factory=tuple)
     trace_path: str | None = None
+    success: bool | None = None
+    paused: bool = False
 
     @property
     def cost_usd(self) -> float:
@@ -45,7 +47,9 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "tasks": n,
             "pass": sum(r.passed for r in rs),
             "pass_rate": (sum(r.passed for r in rs) / n) if n else 0.0,
-            "false_done": sum(1 for r in rs if r.is_done and not r.passed),
+            # a run that ended with done(success=False) or paused before a destructive action is not a claimed success
+            "false_done": sum(1 for r in rs if r.is_done and not r.passed and r.success is not False and not r.paused),
+            "paused": sum(1 for r in rs if r.paused),
             "mean_steps": (sum(r.steps for r in rs) / n) if n else 0.0,
             "llm_calls": sum(r.llm_calls for r in rs),
             "jev_calls": sum(r.jev_calls for r in rs),
@@ -67,10 +71,10 @@ def by_tag(results: list[TaskResult]) -> dict[str, dict[str, dict[str, float]]]:
 
 def render_markdown(results: list[TaskResult], title: str) -> str:
     agg = aggregate(results)
-    lines = [f"# {title}", "", "| arm | tasks | pass | pass rate | false done | mean steps | LLM calls | Jev calls | LLM tokens | cost USD | wall s | errors |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    lines = [f"# {title}", "", "| arm | tasks | pass | pass rate | false done | paused | mean steps | LLM calls | Jev calls | LLM tokens | cost USD | wall s | errors |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for arm, a in agg.items():
         lines.append(
-            f"| {arm} | {a['tasks']:.0f} | {a['pass']:.0f} | {a['pass_rate']:.0%} | {a['false_done']:.0f} | {a['mean_steps']:.1f} | "
+            f"| {arm} | {a['tasks']:.0f} | {a['pass']:.0f} | {a['pass_rate']:.0%} | {a['false_done']:.0f} | {a['paused']:.0f} | {a['mean_steps']:.1f} | "
             f"{a['llm_calls']:.0f} | {a['jev_calls']:.0f} | {a['llm_tokens']:.0f} | {a['cost_usd']:.4f} | {a['wall_s']:.0f} | {a['errors']:.0f} |"
         )
     lines += ["", "## Per task", "", "| task | arm | pass | steps | s1/s2 | cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|"]
