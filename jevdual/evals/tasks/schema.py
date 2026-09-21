@@ -50,6 +50,8 @@ class Task(BaseModel):
     requirements: tuple[str, ...] = Field(min_length=1)
     predicate: Predicate
     answer_expected: bool = False
+    #: Secrets by name; values never appear in task text. The runner scopes them to the site origin.
+    secrets: dict[str, str] = Field(default_factory=dict)
     """True when the task asks for an answer (read tasks); the runner then captures the final answer."""
 
     @field_validator("start_url")

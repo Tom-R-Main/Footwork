@@ -45,7 +45,7 @@ def test_scripted_arm_end_to_end(tmp_path: Path):
 
     from evals.runner import run_split
 
-    def factory(task):
+    def factory(task, store=None):
         return ScriptedPolicy([("click", "Search"), ("done", "opened search")])
 
     results = asyncio.run(run_split("dev", ("scripted",), tmp_path, policy_factory=factory, task_ids={"nav-search-page"}))

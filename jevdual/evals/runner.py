@@ -39,7 +39,20 @@ Arm = Literal["stock", "s1_only", "dual", "scripted"]
 ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "scripted")
 log = logging.getLogger("evals.runner")
 
-PolicyFactory = Callable[[Task], S1Policy]
+PolicyFactory = Callable[[Task, Any], S1Policy]
+
+
+def _secret_store(task: Task, site_url: str):
+    """Scope a task's secrets to the local site's origin (loopback over http is allowed by the strict rule)."""
+    if not task.secrets:
+        return None
+    from urllib.parse import urlsplit
+
+    from jevdual.secrets import SecretStore
+
+    origin = urlsplit(site_url)
+    pattern = f"{origin.scheme}://{origin.hostname}"
+    return SecretStore({pattern: dict(task.secrets)})
 
 
 def default_policy_factory(arm: str) -> PolicyFactory:
@@ -51,14 +64,14 @@ def default_policy_factory(arm: str) -> PolicyFactory:
     client = AsyncTypeSafeClient()  # reads TYPESAFE_API_KEY
     policy = JevPolicy(client)
 
-    def factory(task: Task) -> S1Policy:
+    def factory(task: Task, store: Any = None) -> S1Policy:
         if arm == "s1_only":
             # S1's own done stands, so false completions are measured, not hidden.
-            return JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements))
+            return JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
         from jevdual.verify import ArbiterHook, Verifier
 
         hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements))
-        return JevS1(policy, arbiter=_dual_arbiter(), requirements=tuple(task.requirements), verifier=hook)
+        return JevS1(policy, arbiter=_dual_arbiter(), requirements=tuple(task.requirements), verifier=hook, secrets=store)
 
     return factory
 
@@ -161,7 +174,7 @@ async def run_task(
     if arm == "stock":
         if llm is None:
             raise ValueError("stock arm needs an llm")
-        agent: Agent = Agent(task=task.task, llm=llm, browser_profile=profile, calculate_cost=True)
+        agent: Agent = Agent(task=task.task, llm=llm, browser_profile=profile, calculate_cost=True, sensitive_data=sensitive)
     else:
         if policy_factory is None:
             raise ValueError(f"{arm} arm needs a policy_factory")
@@ -171,8 +184,9 @@ async def run_task(
             task=task.task,
             llm=llm if (arm == "dual" and llm is not None) else RefusingLLM(),
             browser_profile=profile,
-            s1_policy=policy_factory(task),
+            s1_policy=policy_factory(task, store),
             calculate_cost=llm is not None,
+            sensitive_data=sensitive,
         )
     try:
         await agent.browser_session.start()

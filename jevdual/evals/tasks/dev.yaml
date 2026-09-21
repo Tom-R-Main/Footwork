@@ -82,23 +82,26 @@ tasks:
     predicate: {kind: answer_contains, value: '29'}
 
   - id: login-success
-    task: Sign in with username "ada" and password "hunter2".
+    task: Sign in with username "ada" and the stored password.
     start_url: "{site}/login.html"
     tags: [login, type]
+    secrets: {password: hunter2}
     requirements: [Username entered, Password entered, Signed in]
     predicate: {kind: page_text_contains, value: 'Welcome, ada'}
 
   - id: login-from-home
-    task: Sign in as user "grace" with password "hunter2" and open the checkout from the account page.
+    task: Sign in as user "grace" with the stored password and open the checkout from the account page.
     start_url: "{site}/"
     tags: [login, navigate, type]
+    secrets: {password: hunter2}
     requirements: [Signed in as grace, Checkout reached from the account page]
     predicate: {kind: url_contains, value: '/checkout.html'}
 
   - id: login-wrong-password
-    task: Try to sign in with username "ada" and password "wrong" and report what the page says.
+    task: Try to sign in with username "ada" and the stored password, then report what the page says.
     start_url: "{site}/login.html"
     tags: [login, type, read]
+    secrets: {password: wrong-password}
     requirements: [Attempted sign-in, Reported the error message]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Invalid username or password'}

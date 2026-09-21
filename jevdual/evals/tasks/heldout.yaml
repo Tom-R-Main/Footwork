@@ -40,9 +40,10 @@ tasks:
     predicate: {kind: answer_contains, value: '99'}
 
   - id: ho-login-then-total
-    task: Sign in as "linus" with password "hunter2", open the checkout, and report the order total.
+    task: Sign in as "linus" with the stored password, open the checkout, and report the order total.
     start_url: "{site}/login.html"
     tags: [login, type, navigate, read]
+    secrets: {password: hunter2}
     requirements: [Signed in, Checkout opened, Total reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: '74.48'}
