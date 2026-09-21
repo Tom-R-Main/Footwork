@@ -1,0 +1,51 @@
+[build-system]
+requires = ["maturin>=1.9.4,<2"]
+build-backend = "maturin"
+
+[project]
+name = "jevdual"
+version = "0.0.1"
+description = "Dual-process browser agent: TypeSafe Jev as System 1 on top of browser-use, with Rust hot paths."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11,<4.0"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = [
+    "browser-use==0.13.10",
+    "typesafe-sdk>=0.7,<1",
+    "orjson>=3.10",
+]
+
+[dependency-groups]
+dev = [
+    "maturin>=1.9.4,<2",
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "pytest-benchmark>=5",
+    "hypothesis>=6",
+    "ruff>=0.6",
+]
+
+[tool.maturin]
+python-source = "python"
+module-name = "jevdual._core"
+manifest-path = "crates/jevdual-core/Cargo.toml"
+features = ["pyo3/extension-module"]
+
+[tool.uv]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "crates/**/Cargo.toml" },
+    { file = "crates/**/*.rs" },
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"

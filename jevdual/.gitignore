@@ -1,0 +1,14 @@
+.venv/
+target/
+__pycache__/
+*.pyc
+*.so
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.hypothesis/
+.ruff_cache/
+results/*.jsonl
+evals/runs/
+.env
