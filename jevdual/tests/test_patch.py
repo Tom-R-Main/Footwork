@@ -144,3 +144,20 @@ def test_uninstall_clears_every_active_flag():
     patch.install()
     patch.uninstall()
     assert patch.active_patches() == {"orjson_decode": True} or all(not v for k, v in patch.active_patches().items() if k != "orjson_decode")
+
+
+def test_lazy_uuid_subclass_keeps_upstream_repr_and_hash():
+    """A regenerated dataclass __repr__ walks every child; bubus reprs handler results, so on a live
+    Wikipedia page one step took minutes. The subclass must inherit upstream's __repr__ and __hash__."""
+    from browser_use.dom import service, views
+
+    patch.uninstall()
+    assert patch.install_lazy_uuid() is True
+    try:
+        sub = service.EnhancedDOMTreeNode
+        assert sub is not views.EnhancedDOMTreeNode
+        assert sub.__repr__ is views.EnhancedDOMTreeNode.__repr__
+        assert sub.__hash__ is views.EnhancedDOMTreeNode.__hash__
+        assert sub.__eq__ is views.EnhancedDOMTreeNode.__eq__
+    finally:
+        patch.uninstall()

@@ -179,7 +179,9 @@ def install_lazy_uuid() -> bool:
         return False
 
     # eq=False keeps upstream's __eq__ and explicit __hash__ (a dataclass with eq=True would set __hash__ = None).
-    @dataclasses.dataclass(eq=False)
+    # repr=False keeps upstream's __repr__: a regenerated dataclass repr walks children recursively, and
+    # bubus reprs every handler result, which took minutes per step on a live Wikipedia page.
+    @dataclasses.dataclass(eq=False, repr=False)
     class EnhancedDOMTreeNodeNoUuid(views.EnhancedDOMTreeNode):
         uuid: str = ""
 
