@@ -23,7 +23,7 @@ def test_registration_and_schema():
     assert set(action.param_model.model_fields) == {"goal", "max_steps"}
     assert GoalParams(goal="open pricing").max_steps == 10
     am = tools.registry.create_action_model()
-    assert "act_toward_goal" in am.model_fields
+    assert "ActTowardGoalActionModel" in repr(am.model_fields["root"].annotation)
 
 
 def test_result_summary_shape():
