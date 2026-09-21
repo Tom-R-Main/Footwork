@@ -96,7 +96,8 @@ def native(name: str) -> Callable[..., Any] | None:
     """The native export for ``name`` if the extension is loaded and provides it, else None."""
     if core is None:
         return None
-    return getattr(core, FUNCTIONS[name][1], None)
+    kind, fn = _resolve(name)
+    return fn if kind == "native" else None
 
 
 def backend_report() -> dict[str, str]:

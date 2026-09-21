@@ -157,6 +157,28 @@ class TextSource:
         return None
 
 
+def placeholder_from_store(store: Any) -> SecretPlaceholder:
+    """Map a credential field to a stored secret name (task D5's SecretStore).
+
+    A password field takes the single stored name that looks like a password;
+    any field whose label shares a token with exactly one secret name takes that
+    one. Ambiguity returns None (escalate) rather than guessing.
+    """
+
+    def pick(target: Candidate) -> str | None:
+        names = tuple(store.names())
+        if not names:
+            return None
+        if target.input_type == "password":
+            pw = [n for n in names if any(k in n.casefold() for k in ("pass", "pw", "secret"))]
+            return store.placeholder(pw[0]) if len(pw) == 1 else None
+        label = _tokens(target.label)
+        hits = [n for n in names if _tokens(n.replace("_", " ")) & label]
+        return store.placeholder(hits[0]) if len(hits) == 1 else None
+
+    return pick
+
+
 def as_sync_literal_source(task: str, target: Candidate, menu: Menu) -> str | None:
     """Drop-in for JevS1.text_source until the wrapper takes async sources."""
     if target.input_type == "password":

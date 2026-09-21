@@ -50,8 +50,13 @@ def default_policy_factory(arm: str) -> PolicyFactory:
     policy = JevPolicy(client)
 
     def factory(task: Task) -> S1Policy:
-        arbiter = AlwaysAct() if arm == "s1_only" else _dual_arbiter()
-        return JevS1(policy, arbiter=arbiter, requirements=tuple(task.requirements))
+        if arm == "s1_only":
+            # S1's own done stands, so false completions are measured, not hidden.
+            return JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements))
+        from jevdual.verify import ArbiterHook, Verifier
+
+        hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements))
+        return JevS1(policy, arbiter=_dual_arbiter(), requirements=tuple(task.requirements), verifier=hook)
 
     return factory
 
