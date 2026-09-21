@@ -7,7 +7,7 @@ tasks:
     task: Using Wikipedia, find who created the Python programming language.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Reported the creator]
+    requirements: [Relevant Wikipedia article opened, Reported the creator]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Guido van Rossum'}
 
@@ -15,7 +15,7 @@ tasks:
     task: Using Wikipedia, find the year the Eiffel Tower was completed.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Year reported]
+    requirements: [Relevant Wikipedia article opened, Year reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: '1889'}
 
@@ -23,7 +23,7 @@ tasks:
     task: Using Wikipedia, find who wrote the novel Pride and Prejudice.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Author reported]
+    requirements: [Relevant Wikipedia article opened, Author reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Jane Austen'}
 
@@ -31,7 +31,7 @@ tasks:
     task: Using Wikipedia, find the capital city of Australia.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Capital reported]
+    requirements: [Relevant Wikipedia article opened, Capital reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Canberra'}
 
@@ -39,7 +39,7 @@ tasks:
     task: Using Wikipedia, find who created the Linux kernel.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Creator reported]
+    requirements: [Relevant Wikipedia article opened, Creator reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Linus Torvalds'}
 
@@ -47,7 +47,7 @@ tasks:
     task: Using Wikipedia, find the year the Berlin Wall fell.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Year reported]
+    requirements: [Relevant Wikipedia article opened, Year reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: '1989'}
 
@@ -55,7 +55,7 @@ tasks:
     task: Using Wikipedia, find who invented the World Wide Web.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Inventor reported]
+    requirements: [Relevant Wikipedia article opened, Inventor reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Berners-Lee'}
 
@@ -125,7 +125,7 @@ tasks:
     task: On MDN Web Docs, open the reference page for JavaScript's Array.prototype.map method.
     start_url: "https://developer.mozilla.org/en-US/"
     tags: [live, search, navigate]
-    requirements: [MDN searched, Array.prototype.map page opened]
+    requirements: [MDN reference found, Array.prototype.map page opened]
     predicate: {kind: url_contains, value: 'Array/map'}
 
   - id: lw-mdn-418
@@ -140,7 +140,7 @@ tasks:
     task: On MDN Web Docs, find the name of the CSS property that controls how bold text is.
     start_url: "https://developer.mozilla.org/en-US/"
     tags: [live, search, read]
-    requirements: [MDN searched, Property name reported]
+    requirements: [MDN reference found, Property name reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'font-weight'}
 
@@ -148,14 +148,14 @@ tasks:
     task: In the Python 3 documentation, open the page for the pathlib module.
     start_url: "https://docs.python.org/3/"
     tags: [live, search, navigate]
-    requirements: [Docs searched or browsed, pathlib page opened]
+    requirements: [Python docs page found, pathlib page opened]
     predicate: {kind: url_contains, value: 'library/pathlib'}
 
   - id: lw-pydocs-lru-cache
     task: In the Python 3 documentation, find which standard-library module provides the lru_cache decorator.
     start_url: "https://docs.python.org/3/"
     tags: [live, search, read]
-    requirements: [Docs searched, Module name reported]
+    requirements: [Python docs page found, Module name reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'functools'}
 
@@ -163,7 +163,7 @@ tasks:
     task: In the Python 3 documentation, find the name of the exception raised when a dictionary key is not found.
     start_url: "https://docs.python.org/3/"
     tags: [live, search, read]
-    requirements: [Docs searched, Exception name reported]
+    requirements: [Python docs page found, Exception name reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'KeyError'}
 
@@ -171,7 +171,7 @@ tasks:
     task: On the RFC Editor site, open RFC 9110.
     start_url: "https://www.rfc-editor.org/"
     tags: [live, search, navigate]
-    requirements: [RFC searched, RFC 9110 opened]
+    requirements: [RFC found, RFC 9110 opened]
     predicate: {kind: url_contains, value: 'rfc9110'}
 
   - id: lw-rfc-8259-format
@@ -201,7 +201,7 @@ tasks:
     task: On Project Gutenberg, find the ebook page for "Pride and Prejudice" by Jane Austen and open it.
     start_url: "https://www.gutenberg.org/"
     tags: [live, search, navigate]
-    requirements: [Catalog searched, Ebook page opened]
+    requirements: [Ebook found, Ebook page opened]
     predicate: {kind: url_contains, value: 'ebooks/1342'}
 
   - id: lw-gutenberg-top
@@ -230,7 +230,7 @@ tasks:
     task: On PyPI, open the project page for the package "requests" and report its license.
     start_url: "https://pypi.org/"
     tags: [live, search, read]
-    requirements: [PyPI searched, License reported]
+    requirements: [Project found on PyPI, License reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Apache'}
 
@@ -238,7 +238,7 @@ tasks:
     task: On PyPI, open the project page for the package "browser-use".
     start_url: "https://pypi.org/"
     tags: [live, search, navigate]
-    requirements: [PyPI searched, Project page opened]
+    requirements: [Project found on PyPI, Project page opened]
     predicate: {kind: url_contains, value: 'pypi.org/project/browser-use'}
 
   - id: lw-ddg-mdn-fetch

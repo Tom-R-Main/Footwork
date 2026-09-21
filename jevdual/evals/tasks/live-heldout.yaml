@@ -5,7 +5,7 @@ tasks:
     task: Using Wikipedia, find the year the Rust programming language first appeared.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Year reported]
+    requirements: [Relevant Wikipedia article opened, Year reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: '2015'}
 
@@ -13,7 +13,7 @@ tasks:
     task: Using Wikipedia, find who painted the Mona Lisa.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Painter reported]
+    requirements: [Relevant Wikipedia article opened, Painter reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Leonardo'}
 
@@ -21,7 +21,7 @@ tasks:
     task: Using Wikipedia, find the year of the Great Fire of London.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Year reported]
+    requirements: [Relevant Wikipedia article opened, Year reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: '1666'}
 
@@ -29,7 +29,7 @@ tasks:
     task: Using Wikipedia, find who was the first person to walk on the Moon.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, read]
-    requirements: [Searched Wikipedia, Name reported]
+    requirements: [Relevant Wikipedia article opened, Name reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'Armstrong'}
 
@@ -71,7 +71,7 @@ tasks:
     task: On MDN Web Docs, open the reference page for the global fetch() function.
     start_url: "https://developer.mozilla.org/en-US/"
     tags: [live, search, navigate]
-    requirements: [MDN searched, fetch() page opened]
+    requirements: [MDN reference found, fetch() page opened]
     predicate: {kind: url_contains, value: 'Window/fetch'}
 
   - id: lhw-pydocs-itertools-product
@@ -86,7 +86,7 @@ tasks:
     task: In the Python 3 documentation, open the page for the json module.
     start_url: "https://docs.python.org/3/"
     tags: [live, search, navigate]
-    requirements: [Docs searched or browsed, json page opened]
+    requirements: [Python docs page found, json page opened]
     predicate: {kind: url_contains, value: 'library/json'}
 
   - id: lhw-rfc-2616-title

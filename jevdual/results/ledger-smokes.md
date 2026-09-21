@@ -1,0 +1,39 @@
+# Ledger smokes on live-dev (dual arm, six tasks each), 2026-09-21
+
+Quick checks of the trajectory ledger (commit 2f601c0) and the widened accept band (06a5b60) before
+the paired three-arm rerun. Both ran while repeat 1 was running on the same machine, so wall times
+are inflated. All numbers observed from the run directories.
+
+| run | change under test | pass | paused | verified accepts | S2 rejections | S1 done vetoes | UNVERIFIED dones |
+|---|---|---|---|---|---|---|---|
+| `ledger-smoke-20260921-141456` | ledger on, old band (complete ≥ 0.85, unmet ≤ 0.20) | 4/6 | 2 | 0 | 6 | 18 | 6 of 6 |
+| `ledger-smoke2-20260921-145439` | ledger on, widened band (complete ≥ 0.80, unmet ≤ 0.30) | 5/6 | 1 | 4 | 2 | 8 | 2 of 6 |
+
+Run 0 on the first smoke's six tasks: 25 rejections, every run UNVERIFIED.
+
+## What each smoke showed
+
+1. **Ledger, old band.** Per-requirement rejections on actions no longer visible: 0 of 24 (run 0:
+   120 of 224). The ledger carried met requirements forward 37 times. But every remaining rejection
+   was the uncertain band with unmet at 0.22 to 0.30 and complete at 0.84 to 0.91 on runs whose
+   predicate passed: the accept band, a conjunction over all requirements at 0.20 each, was the
+   next wall.
+2. **Ledger, widened band.** Four of six runs verified and accepted in two to four steps
+   (li-login-success 2 steps, ls-login-inventory 4, both Wikipedia chains 4), judge agreeing on all
+   four. The answer task `lw-pydocs-keyerror` stayed UNVERIFIED for a task-wording reason: its
+   requirement "Docs searched" was judged unmet (p 0.61 to 0.69) because the agent navigated to the
+   exceptions page without using search, which the task never needed. Sixteen live tasks phrased
+   an incidental process as a requirement ("Searched Wikipedia", "MDN searched", "PyPI searched");
+   all are now outcome phrased on both live files (heldout had never been run). The DuckDuckGo tasks
+   keep "Search submitted" because the task demands it and a checkpoint grades it.
+3. **`ls-add-backpack-cart` failed in both smokes** after passing run 0: S1's first step typed the
+   product name into the username field (the literal text source picked task text for an input),
+   System 2 then signed in, and four clicks on the same element produced no visible change, S1
+   escalated on no-effect and stuck, and System 2 reached for `evaluate`, which the gate refuses.
+   Inferred: the repeated no-effect click is flakiness under load; the first-step text choice is an
+   S1 defect worth its own dev task; the `evaluate` refusal is the Q8 consent class (Siftable a140b874).
+
+## Not yet measured
+
+The paired three-arm rerun after repeat 1 is the measurement; these smokes only say the mechanism
+moves the right numbers on the tasks that motivated it.
