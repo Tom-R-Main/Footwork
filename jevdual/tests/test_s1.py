@@ -1,0 +1,93 @@
+import asyncio
+from types import SimpleNamespace
+
+from browser_use.agent.views import AgentOutput
+from browser_use.tools.service import Tools
+from jevdual.policy import Decision, PolicyError
+from jevdual.s1 import JevS1, Verdict, literal_text_source
+
+from tests.fixtures.replay import replay_state
+
+
+def _decision(op, target=None, alternates=()):
+    return Decision(op, 0.9, {op: 0.9}, target, 0.8 if target else None, {target: 0.8} if target else {}, tuple(alternates), {"goal_done": 0.1, "stuck": 0.0, "destructive": 0.0}, "jev-1.13.0", 50, 12.0)
+
+
+class FakePolicy:
+    def __init__(self, decision):
+        self.decision = decision
+
+    async def decide(self, menu, ctx):
+        if isinstance(self.decision, Exception):
+            raise self.decision
+        return self.decision
+
+
+class FakeAgent:
+    def __init__(self, state, task="Open the About page"):
+        am = Tools().registry.create_action_model()
+        self.ActionModel = am
+        self.AgentOutput = AgentOutput.type_with_custom_actions(am)
+        self.task = task
+        self.state = SimpleNamespace(n_steps=1)
+        self.history = SimpleNamespace(history=[])
+        self.browser_session = SimpleNamespace(_cached_browser_state_summary=state)
+
+
+def _state_and_link():
+    state = replay_state("modal-over-content")
+    idx = next(i for i, n in state.dom_state.selector_map.items() if n.tag_name == "a")
+    return state, idx
+
+
+def test_act_path_bridges_click():
+    state, idx = _state_and_link()
+    agent = FakeAgent(state)
+    s1 = JevS1(FakePolicy(_decision("click", idx)))
+    out = asyncio.run(s1.decide(agent, state))
+    assert out is not None and out.action[0].model_dump(exclude_unset=True) == {"click": {"index": idx}}
+    rec = agent.s1_records[1]
+    assert rec.verdict.kind == "act" and rec.proposed[0].name == "click" and rec.decision.target == idx
+
+
+def test_escalate_on_policy_error_and_arbiter():
+    state, idx = _state_and_link()
+    agent = FakeAgent(state)
+    assert asyncio.run(JevS1(FakePolicy(PolicyError("boom"))).decide(agent, state)) is None
+    assert agent.s1_records[1].verdict.kind == "escalate"
+
+    class Escalator:
+        def judge(self, d, m, c, a):
+            return Verdict("escalate", "needs reasoning")
+
+    agent2 = FakeAgent(state)
+    assert asyncio.run(JevS1(FakePolicy(_decision("click", idx)), arbiter=Escalator()).decide(agent2, state)) is None
+    assert agent2.s1_records[1].verdict.reason == "needs reasoning"
+
+
+def test_retry_alternate_uses_next_best():
+    state, idx = _state_and_link()
+    links = [i for i, n in state.dom_state.selector_map.items() if n.tag_name == "a"]
+    if len(links) < 2:
+        return
+
+    class Retry:
+        def judge(self, d, m, c, a):
+            return Verdict("retry_alternate", "low target confidence")
+
+    agent = FakeAgent(state)
+    out = asyncio.run(JevS1(FakePolicy(_decision("click", links[0], alternates=(links[1],))), arbiter=Retry()).decide(agent, state))
+    assert out.action[0].model_dump(exclude_unset=True) == {"click": {"index": links[1]}}
+
+
+def test_stale_state_escalates():
+    state, idx = _state_and_link()
+    agent = FakeAgent(state)
+    agent.browser_session._cached_browser_state_summary = object()
+    assert asyncio.run(JevS1(FakePolicy(_decision("click", idx))).decide(agent, state)) is None
+    assert "stale" in agent.s1_records[1].error
+
+
+def test_literal_text_source():
+    assert literal_text_source('Search for "lantern" now', None, None) == "lantern"
+    assert literal_text_source("Search for lanterns", None, None) is None

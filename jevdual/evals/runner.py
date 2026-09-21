@@ -40,6 +40,33 @@ log = logging.getLogger("evals.runner")
 PolicyFactory = Callable[[Task], S1Policy]
 
 
+def default_policy_factory(arm: str) -> PolicyFactory:
+    """S1 policy for the s1_only and dual arms: Jev over TypeSafe, arbiter per arm."""
+    from jevdual.policy import JevPolicy
+    from jevdual.s1 import AlwaysAct, JevS1
+    from typesafe_sdk import AsyncTypeSafeClient
+
+    client = AsyncTypeSafeClient()  # reads TYPESAFE_API_KEY
+    policy = JevPolicy(client)
+
+    def factory(task: Task) -> S1Policy:
+        arbiter = AlwaysAct() if arm == "s1_only" else _dual_arbiter()
+        return JevS1(policy, arbiter=arbiter, requirements=tuple(task.requirements))
+
+    return factory
+
+
+def _dual_arbiter():
+    try:
+        from jevdual.arbiter import Arbiter as _A  # task D2
+
+        return _A.from_toml()
+    except ImportError:  # pragma: no cover - until D2 lands
+        from jevdual.s1 import AlwaysAct
+
+        return AlwaysAct()
+
+
 def _final_page_text(state: Any) -> str:
     try:
         return state.dom_state.llm_representation()
@@ -69,6 +96,7 @@ async def _capture_end_state(agent: Agent, history: Any) -> EndState:
 
 def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, history: Any, llm_model: str | None) -> None:
     systems = getattr(agent, "step_systems", {})
+    s1_records = getattr(agent, "s1_records", {})
     with TraceWriter(path) as w:
         w.write(
             RunHeader(
@@ -85,18 +113,22 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
             step_ms = None
             if h.metadata:
                 step_ms = (h.metadata.step_end_time - h.metadata.step_start_time) * 1000
+            rec = s1_records.get(i)
+            decision = rec.decision.to_trace(sum(rec.menu_omitted.values())) if rec and rec.decision else None
             w.write(
                 StepRecord(
                     run_id=run_id,
                     step=i,
                     system=systems.get(i, "s2"),  # type: ignore[arg-type]
                     url_after=h.state.url,
-                    proposed=actions,
+                    decision=decision,
+                    arbiter_reason=(rec.verdict.reason if rec and rec.verdict else None),
+                    proposed=list(rec.proposed) if rec and rec.proposed else actions,
                     executed=actions,
                     result_error=next((r.error for r in h.result if r.error), None),
                     is_done=any(r.is_done for r in h.result),
                     memory_line=h.model_output.memory if h.model_output else None,
-                    timings=Timings(step_ms=step_ms),
+                    timings=Timings(step_ms=step_ms, jev_ms=(rec.jev_ms if rec else None), dom_ms=(rec.menu_ms if rec else None)),
                 )
             )
 
@@ -237,12 +269,14 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(args.llm)
+    policy_factory = default_policy_factory(arms[0]) if any(a in ("s1_only", "dual") for a in arms) else None
     results = asyncio.run(
         run_split(
             args.split,
             arms,  # type: ignore[arg-type]
             Path(args.out),
             llm=llm,
+            policy_factory=policy_factory,
             limit=args.limit,
             task_ids=set(args.task) if args.task else None,
             include_live=args.live,
