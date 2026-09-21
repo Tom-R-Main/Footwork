@@ -69,6 +69,10 @@ class ClaimCheck:
     def supported(self) -> bool:
         return self.grade != "none"
 
+    @property
+    def is_evidence(self) -> bool:
+        return self.grade in ("exact", "normalized")
+
 
 @dataclass(frozen=True)
 class Verdict:
@@ -99,19 +103,66 @@ _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
 
 
 def split_claims(answer: str) -> list[str]:
-    """Sentences and lines of an answer, each a claim that must be quoted from the page."""
+    """Sentences and lines of an answer."""
     parts = [p.strip() for p in _SENTENCE_SPLIT.split(answer)]
     return [p for p in parts if len(p) >= 2]
 
 
+_URL_RE = re.compile(r"https?://\S+")
+_QUOTED_RE = re.compile(r"[\"“”']([^\"“”']{2,120})[\"“”']")
+_NUMBER_RE = re.compile(r"(?<![\w.])[$€£]?\d[\d,]*(?:\.\d+)?(?:\s?(?:%|per\s+\w+|nautical\s+miles|miles|km|m|kg|items?|results?))?", re.IGNORECASE)
+_AFTER_COLON_RE = re.compile(r":\s*([^:;]{2,160})$")
+
+
+def extract_atoms(sentence: str) -> list[str]:
+    """The evidence-bearing pieces of a sentence: quoted spans, numbers with units or currency,
+    and the value after a trailing colon. Narrative words are not evidence and are not atoms.
+    URLs are stripped first; page innerText never contains them."""
+    text = _URL_RE.sub(" ", sentence)
+    atoms: list[str] = [m.group(1).strip() for m in _QUOTED_RE.finditer(text)]
+    atoms += [m.group(0).strip() for m in _NUMBER_RE.finditer(text)]
+    tail = _AFTER_COLON_RE.search(text)
+    if tail:
+        atoms.append(tail.group(1).strip().rstrip("."))
+    seen: set[str] = set()
+    out = []
+    for a in atoms:
+        key = a.casefold()
+        if key and key not in seen and not key.isspace():
+            seen.add(key)
+            out.append(a)
+    return out
+
+
 def check_claims(answer: str | None, page_text: str) -> list[ClaimCheck]:
+    """Grade each sentence by its atoms.
+
+    A sentence with no atoms is narrative (grade ``narrative``): kept, never counted as
+    evidence. A sentence with atoms is supported only if every atom is found in the page
+    text (exact or normalized); the sentence's grade is its worst atom's grade.
+    """
     if not answer:
         return []
-    claims = split_claims(answer)
-    if not claims:
+    sentences = split_claims(answer)
+    if not sentences:
         return []
-    matcher = native_or_pure("evidence_match")
-    return [ClaimCheck(r["claim"], r["grade"], r["start"], r["end"]) for r in matcher(claims, page_text)]
+    per_sentence = [extract_atoms(sn) for sn in sentences]
+    flat = [a for atoms in per_sentence for a in atoms]
+    results = {}
+    if flat:
+        matcher = native_or_pure("evidence_match")
+        for r in matcher(flat, page_text):
+            results.setdefault(r["claim"], r)
+    out: list[ClaimCheck] = []
+    order = {"exact": 0, "normalized": 1, "none": 2}
+    for sn, atoms in zip(sentences, per_sentence, strict=True):
+        if not atoms:
+            out.append(ClaimCheck(sn, "narrative", -1, -1))
+            continue
+        graded = [results.get(a, {"grade": "none", "start": -1, "end": -1}) for a in atoms]
+        worst = max(graded, key=lambda g: order.get(g["grade"], 2))
+        out.append(ClaimCheck(sn, worst["grade"], worst.get("start", -1), worst.get("end", -1)))
+    return out
 
 
 def band_for(complete: float, unmet: dict[str, float], policy: VerifyPolicy) -> tuple[Band, str]:
@@ -208,10 +259,11 @@ class Verifier:
         supported_answer: str | None = None
         if claims:
             kept = [c.claim for c in claims if c.supported]
-            supported_answer = " ".join(kept) if kept else None
-            if not kept and band == "accept":
+            evidence = [c for c in claims if c.is_evidence]
+            supported_answer = " ".join(kept) if evidence else None
+            if not evidence and band == "accept":
                 band = "verify"
-                reason = f"answer has no claim quoted from the page ({len(claims)} unsupported); {reason}"
+                reason = f"answer carries no fact found on the page ({len(unsupported)} unsupported, rest narrative); {reason}"
             elif unsupported:
                 reason = f"{len(unsupported)} unsupported claim(s) dropped; {reason}"
         if answer_required >= self.policy.answer_required and not supported_answer and band == "accept":

@@ -132,7 +132,7 @@ def test_unsupported_claims_are_dropped_but_accept_survives_if_some_supported():
     assert verdict.unsupported_claims == ("It was electrified in 1955.",)
     assert verdict.supported_answer == "The lighthouse was built in 1874."
     assert "1 unsupported claim(s) dropped" in verdict.reason
-    assert verdict.to_trace()["claims"] == ["normalized", "none"]  # trailing period folds away
+    assert verdict.to_trace()["claims"] == ["exact", "none"]  # atoms (1874, 1955) are graded, not sentences
 
 
 def test_confidently_wrong_done_cannot_accept_without_evidence():
@@ -140,7 +140,7 @@ def test_confidently_wrong_done_cannot_accept_without_evidence():
     verdict = run(Verifier(FakeClient(load("verify_confident_wrong"))), "Report the height", ("Height reported",), menu(), "It stands 45 metres tall.")
     assert verdict.band == "verify"
     assert verdict.supported_answer is None and verdict.unsupported_claims == ("It stands 45 metres tall.",)
-    assert "no claim quoted from the page" in verdict.reason
+    assert "no fact found on the page" in verdict.reason
 
 
 def test_missing_answer_key_is_policy_error():
@@ -164,3 +164,20 @@ def test_answer_required_blocks_done_without_answer():
     assert verdict.band == "verify" and "asks for an answer" in verdict.reason
     ok = run(Verifier(FakeClient(load("verify_accept"))), "Open the checkout", REQS, menu(), None)
     assert ok.band == "accept"
+
+
+def test_atoms_and_narrative_grading():
+    from jevdual.verify import check_claims, extract_atoms
+
+    page = 'Catalog. Showing page 2 of 3. Fender, blue $12.00. Rope, 30 m $19.99. 0 results for "kayak". The Fleet plan costs $99 per month.'
+    assert extract_atoms("The 30 m rope in the catalog costs $19.99.") == ["30 m", "$19.99"]
+    assert extract_atoms("Navigated to page 2 at http://127.0.0.1:5/list.html?page=2 (Showing page 2 of 3). The first item listed there is: Fender, blue.")[-1] == "Fender, blue"
+    checks = check_claims(
+        'Searched the catalog for "kayak" at http://127.0.0.1:5/search.html?q=kayak. The page displays: 0 results for "kayak". I clicked around a bit. The lighthouse is 45 metres tall.',
+        page,
+    )
+    grades = {c.claim[:22]: c.grade for c in checks}
+    assert grades['Searched the catalog f'] in ("exact", "normalized")
+    assert grades["The page displays: 0 r"] in ("exact", "normalized")
+    assert grades["I clicked around a bit"] == "narrative"
+    assert grades["The lighthouse is 45 m"] == "none"
