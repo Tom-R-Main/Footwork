@@ -15,13 +15,17 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Tag = Literal[
-    "navigate", "read", "type", "select", "destructive", "login", "modal", "pagination", "enter-submit", "live"
+    "navigate", "read", "type", "select", "destructive", "login", "modal", "pagination", "enter-submit", "live",
+    "search", "form", "multistep", "consent", "tabs"
 ]
 PredicateKind = Literal["url_contains", "page_text_contains", "answer_contains", "answer_equals", "not_reached"]
 
 TASKS_DIR = Path(__file__).parent
 DEV = TASKS_DIR / "dev.yaml"
 HELDOUT = TASKS_DIR / "heldout.yaml"
+LIVE_DEV = TASKS_DIR / "live-dev.yaml"
+LIVE_HELDOUT = TASKS_DIR / "live-heldout.yaml"
+SPLITS: dict[str, Path] = {"dev": DEV, "heldout": HELDOUT, "live-dev": LIVE_DEV, "live-heldout": LIVE_HELDOUT}
 
 
 class Predicate(BaseModel):
@@ -55,6 +59,16 @@ class Task(BaseModel):
     #: The task explicitly wants an irreversible action (order placed, message sent); the destructive gate is off.
     authorize: bool = False
     """True when the task asks for an answer (read tasks); the runner then captures the final answer."""
+    #: Key intermediate states (WebCanvas-style): every checkpoint URL must have been visited for a pass.
+    checkpoints: tuple[Predicate, ...] = ()
+
+    @field_validator("checkpoints")
+    @classmethod
+    def _checkpoint_kinds(cls, v: tuple[Predicate, ...]) -> tuple[Predicate, ...]:
+        bad = [c for c in v if c.kind != "url_contains"]
+        if bad:
+            raise ValueError("checkpoints are judged against visited URLs; only url_contains is supported")
+        return v
 
     @field_validator("start_url")
     @classmethod
@@ -74,7 +88,7 @@ class Task(BaseModel):
 class TaskFile(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    split: Literal["dev", "heldout"]
+    split: Literal["dev", "heldout", "live-dev", "live-heldout"]
     tasks: list[Task] = Field(min_length=1)
 
 
@@ -82,6 +96,10 @@ def load_tasks(path: str | Path) -> list[Task]:
     """Load and validate a task file, rejecting duplicate ids within it."""
     raw = yaml.safe_load(Path(path).read_text())
     file = TaskFile.model_validate(raw)
+    if file.split.startswith("live"):
+        offenders = [t.id for t in file.tasks if not t.is_live or not t.start_url.startswith("https://")]
+        if offenders:
+            raise ValueError(f"{path}: live splits hold only live https tasks; offenders {offenders}")
     ids = [t.id for t in file.tasks]
     dupes = sorted({i for i in ids if ids.count(i) > 1})
     if dupes:
@@ -90,4 +108,5 @@ def load_tasks(path: str | Path) -> list[Task]:
 
 
 def load_all() -> dict[str, list[Task]]:
-    return {"dev": load_tasks(DEV), "heldout": load_tasks(HELDOUT)}
+    """Every split that exists on disk, keyed by split name."""
+    return {name: load_tasks(path) for name, path in SPLITS.items() if path.is_file()}

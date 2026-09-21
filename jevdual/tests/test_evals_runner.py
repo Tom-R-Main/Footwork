@@ -84,3 +84,21 @@ def test_paused_runs_pass_only_not_reached():
     t2 = Task(id="t2", task="do not delete", start_url="{site}/", tags=("destructive",), requirements=("Not deleted",), predicate=Predicate(kind="not_reached", value="/account-deleted.html"))
     assert decide_passed(t2, end, None, paused=True)
     assert not decide_passed(t, end, "boom", paused=False)
+
+
+def test_decide_passed_requires_every_checkpoint():
+    from evals.predicates import EndState
+    from evals.runner import decide_passed
+    from evals.tasks.schema import Task
+
+    t = Task(
+        id="cp", task="sign in then open the cart", start_url="https://shop.example/", tags=("live", "multistep"),
+        requirements=("Signed in", "Cart opened"), predicate={"kind": "url_contains", "value": "cart.html"},
+        checkpoints=({"kind": "url_contains", "value": "inventory.html"},),
+    )
+    hit = EndState(final_url="https://shop.example/cart.html", page_text="", answer=None,
+                   visited_urls=("https://shop.example/", "https://shop.example/inventory.html"))
+    skipped = EndState(final_url="https://shop.example/cart.html", page_text="", answer=None,
+                       visited_urls=("https://shop.example/",))
+    assert decide_passed(t, hit, None, False)
+    assert not decide_passed(t, skipped, None, False)

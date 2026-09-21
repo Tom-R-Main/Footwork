@@ -1,0 +1,457 @@
+# Live dev split for the experiment program (docs/experiments/README.md). Debug freely.
+# Stable facts only; practice sites for anything that submits. Nothing real is sent or bought.
+split: live-dev
+tasks:
+  # ---- Wikipedia: search and read (stable facts)
+  - id: lw-python-creator
+    task: Using Wikipedia, find who created the Python programming language.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Reported the creator]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Guido van Rossum'}
+
+  - id: lw-eiffel-completed
+    task: Using Wikipedia, find the year the Eiffel Tower was completed.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Year reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '1889'}
+
+  - id: lw-pride-author
+    task: Using Wikipedia, find who wrote the novel Pride and Prejudice.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Author reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Jane Austen'}
+
+  - id: lw-canberra
+    task: Using Wikipedia, find the capital city of Australia.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Capital reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Canberra'}
+
+  - id: lw-linux-creator
+    task: Using Wikipedia, find who created the Linux kernel.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Creator reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Linus Torvalds'}
+
+  - id: lw-berlin-wall
+    task: Using Wikipedia, find the year the Berlin Wall fell.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Year reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '1989'}
+
+  - id: lw-www-inventor
+    task: Using Wikipedia, find who invented the World Wide Web.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, read]
+    requirements: [Searched Wikipedia, Inventor reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Berners-Lee'}
+
+  # ---- Wikipedia: multistep chains (search, follow a link, read)
+  - id: lw-chain-python-guido
+    task: On Wikipedia, open the article "Python (programming language)", then follow the link to the article about its creator and stop there.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, multistep]
+    requirements: [Python article opened, Creator's article opened]
+    checkpoints: [{kind: url_contains, value: 'Python_(programming_language)'}]
+    predicate: {kind: url_contains, value: 'Guido_van_Rossum'}
+
+  - id: lw-chain-rust-hoare
+    task: On Wikipedia, open the article "Rust (programming language)", then follow the link to the article about its original designer and stop there.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, multistep]
+    requirements: [Rust article opened, Designer's article opened]
+    checkpoints: [{kind: url_contains, value: 'Rust_(programming_language)'}]
+    predicate: {kind: url_contains, value: 'Graydon_Hoare'}
+
+  - id: lw-chain-turing-machine
+    task: On Wikipedia, open the article "Alan Turing", then follow a link from it to the article "Turing machine" and stop there.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, multistep]
+    requirements: [Alan Turing article opened, Turing machine article opened]
+    checkpoints: [{kind: url_contains, value: 'Alan_Turing'}]
+    predicate: {kind: url_contains, value: 'Turing_machine'}
+
+  - id: lw-chain-austen-year
+    task: On Wikipedia, open the article "Jane Austen", follow the link to "Pride and Prejudice", and report the year the novel was first published.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, read, multistep]
+    requirements: [Jane Austen article opened, Pride and Prejudice article opened, Year reported]
+    checkpoints: [{kind: url_contains, value: 'Jane_Austen'}, {kind: url_contains, value: 'Pride_and_Prejudice'}]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '1813'}
+
+  - id: lw-chain-eiffel-gustave
+    task: On Wikipedia, open the article "Eiffel Tower", follow the link to the article about Gustave Eiffel, and report the year he was born.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, read, multistep]
+    requirements: [Eiffel Tower article opened, Gustave Eiffel article opened, Birth year reported]
+    checkpoints: [{kind: url_contains, value: 'Eiffel_Tower'}, {kind: url_contains, value: 'Gustave_Eiffel'}]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '1832'}
+
+  - id: lw-chain-dune-herbert
+    task: On Wikipedia, open the article "Dune (novel)", follow the link to the article about its author, and report the year the author was born.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, read, multistep]
+    requirements: [Dune article opened, Author's article opened, Birth year reported]
+    checkpoints: [{kind: url_contains, value: 'Dune_(novel)'}, {kind: url_contains, value: 'Frank_Herbert'}]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '1920'}
+
+  - id: lw-chain-curie-nobel
+    task: On Wikipedia, open the article "Marie Curie", follow the link to the article "Nobel Prize in Physics", and report the year that prize was first awarded.
+    start_url: "https://en.wikipedia.org/wiki/Main_Page"
+    tags: [live, search, navigate, read, multistep]
+    requirements: [Marie Curie article opened, Nobel Prize in Physics article opened, Year reported]
+    checkpoints: [{kind: url_contains, value: 'Marie_Curie'}, {kind: url_contains, value: 'Nobel_Prize_in_Physics'}]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '1901'}
+
+  # ---- MDN, Python docs, RFC Editor, arXiv, Gutenberg, GitHub, PyPI: navigate and read
+  - id: lw-mdn-array-map
+    task: On MDN Web Docs, open the reference page for JavaScript's Array.prototype.map method.
+    start_url: "https://developer.mozilla.org/en-US/"
+    tags: [live, search, navigate]
+    requirements: [MDN searched, Array.prototype.map page opened]
+    predicate: {kind: url_contains, value: 'Array/map'}
+
+  - id: lw-mdn-418
+    task: On MDN Web Docs, find the reason phrase (name) of HTTP status code 418.
+    start_url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status"
+    tags: [live, read]
+    requirements: [Status 418 found, Name reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'teapot'}
+
+  - id: lw-mdn-font-weight
+    task: On MDN Web Docs, find the name of the CSS property that controls how bold text is.
+    start_url: "https://developer.mozilla.org/en-US/"
+    tags: [live, search, read]
+    requirements: [MDN searched, Property name reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'font-weight'}
+
+  - id: lw-pydocs-pathlib
+    task: In the Python 3 documentation, open the page for the pathlib module.
+    start_url: "https://docs.python.org/3/"
+    tags: [live, search, navigate]
+    requirements: [Docs searched or browsed, pathlib page opened]
+    predicate: {kind: url_contains, value: 'library/pathlib'}
+
+  - id: lw-pydocs-lru-cache
+    task: In the Python 3 documentation, find which standard-library module provides the lru_cache decorator.
+    start_url: "https://docs.python.org/3/"
+    tags: [live, search, read]
+    requirements: [Docs searched, Module name reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'functools'}
+
+  - id: lw-pydocs-keyerror
+    task: In the Python 3 documentation, find the name of the exception raised when a dictionary key is not found.
+    start_url: "https://docs.python.org/3/"
+    tags: [live, search, read]
+    requirements: [Docs searched, Exception name reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'KeyError'}
+
+  - id: lw-rfc-9110
+    task: On the RFC Editor site, open RFC 9110.
+    start_url: "https://www.rfc-editor.org/"
+    tags: [live, search, navigate]
+    requirements: [RFC searched, RFC 9110 opened]
+    predicate: {kind: url_contains, value: 'rfc9110'}
+
+  - id: lw-rfc-8259-format
+    task: On the RFC Editor site, find which data interchange format RFC 8259 specifies.
+    start_url: "https://www.rfc-editor.org/"
+    tags: [live, search, read]
+    requirements: [RFC 8259 found, Format reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'JSON'}
+
+  - id: lw-arxiv-attention-title
+    task: On arXiv, open the abstract page for paper 1706.03762 and report its title.
+    start_url: "https://arxiv.org/"
+    tags: [live, search, read]
+    requirements: [Abstract page opened, Title reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Attention Is All You Need'}
+
+  - id: lw-arxiv-cs-ai-list
+    task: On arXiv, open the listing of new submissions in the cs.AI (Artificial Intelligence) category.
+    start_url: "https://arxiv.org/"
+    tags: [live, navigate]
+    requirements: [cs.AI new-submissions listing opened]
+    predicate: {kind: url_contains, value: 'list/cs.AI'}
+
+  - id: lw-gutenberg-pride
+    task: On Project Gutenberg, find the ebook page for "Pride and Prejudice" by Jane Austen and open it.
+    start_url: "https://www.gutenberg.org/"
+    tags: [live, search, navigate]
+    requirements: [Catalog searched, Ebook page opened]
+    predicate: {kind: url_contains, value: 'ebooks/1342'}
+
+  - id: lw-gutenberg-top
+    task: On Project Gutenberg, open the "Top 100" downloads page.
+    start_url: "https://www.gutenberg.org/"
+    tags: [live, navigate]
+    requirements: [Top 100 page opened]
+    predicate: {kind: url_contains, value: 'browse/scores/top'}
+
+  - id: lw-github-browser-use-license
+    task: On GitHub, open the repository browser-use/browser-use and report which license it is released under.
+    start_url: "https://github.com/browser-use/browser-use"
+    tags: [live, read]
+    requirements: [Repository page read, License reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'MIT'}
+
+  - id: lw-github-pyo3-issues
+    task: On GitHub, go to the Issues tab of the repository PyO3/pyo3.
+    start_url: "https://github.com/PyO3/pyo3"
+    tags: [live, navigate]
+    requirements: [Issues tab opened]
+    predicate: {kind: url_contains, value: 'PyO3/pyo3/issues'}
+
+  - id: lw-pypi-requests-license
+    task: On PyPI, open the project page for the package "requests" and report its license.
+    start_url: "https://pypi.org/"
+    tags: [live, search, read]
+    requirements: [PyPI searched, License reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Apache'}
+
+  - id: lw-pypi-browser-use
+    task: On PyPI, open the project page for the package "browser-use".
+    start_url: "https://pypi.org/"
+    tags: [live, search, navigate]
+    requirements: [PyPI searched, Project page opened]
+    predicate: {kind: url_contains, value: 'pypi.org/project/browser-use'}
+
+  - id: lw-ddg-mdn-fetch
+    task: Search DuckDuckGo for "MDN fetch API" and open the result on developer.mozilla.org.
+    start_url: "https://duckduckgo.com/"
+    tags: [live, search, navigate]
+    requirements: [Search submitted, MDN result opened]
+    predicate: {kind: url_contains, value: 'developer.mozilla.org'}
+
+  - id: lw-ddg-python-pathlib
+    task: Search DuckDuckGo for "python pathlib documentation" and open the result on docs.python.org.
+    start_url: "https://duckduckgo.com/"
+    tags: [live, search, navigate]
+    requirements: [Search submitted, docs.python.org result opened]
+    predicate: {kind: url_contains, value: 'docs.python.org'}
+
+  # ---- saucedemo.com: login, select, multistep checkout, consent
+  - id: ls-login-inventory
+    task: Sign in to the shop with username standard_user and the password provided, and stop on the products page.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type]
+    requirements: [Username entered, Password entered, Signed in]
+    secrets: {sauce_password: secret_sauce}
+    predicate: {kind: url_contains, value: 'inventory.html'}
+
+  - id: ls-login-locked
+    task: Try to sign in to the shop with username locked_out_user and the password provided, and report the error message shown.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type, read]
+    requirements: [Sign-in attempted, Error message reported]
+    secrets: {sauce_password: secret_sauce}
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'locked out'}
+
+  - id: ls-bike-light-price
+    task: Sign in to the shop with username standard_user and the password provided, then report the price of the "Sauce Labs Bike Light".
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, read, multistep]
+    requirements: [Signed in, Bike Light price reported]
+    secrets: {sauce_password: secret_sauce}
+    checkpoints: [{kind: url_contains, value: 'inventory.html'}]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '9.99'}
+
+  - id: ls-sort-cheapest
+    task: Sign in to the shop with username standard_user and the password provided, sort the products by price from low to high, and report the name of the cheapest product.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, select, read, multistep]
+    requirements: [Signed in, Sorted by price low to high, Cheapest product reported]
+    secrets: {sauce_password: secret_sauce}
+    checkpoints: [{kind: url_contains, value: 'inventory.html'}]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Onesie'}
+
+  - id: ls-add-backpack-cart
+    task: Sign in to the shop with username standard_user and the password provided, add the "Sauce Labs Backpack" to the cart, and open the cart.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, navigate, multistep]
+    requirements: [Signed in, Backpack added to cart, Cart opened]
+    secrets: {sauce_password: secret_sauce}
+    checkpoints: [{kind: url_contains, value: 'inventory.html'}]
+    predicate: {kind: url_contains, value: 'cart.html'}
+
+  - id: ls-checkout-total
+    task: Sign in to the shop with username standard_user and the password provided, add the "Sauce Labs Backpack" to the cart, proceed to checkout with first name Ada, last name Lovelace and postal code 12345, and report the order total shown on the overview page. Do not finish the order.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type, multistep, consent]
+    requirements: [Signed in, Backpack in cart, Checkout information entered, Total reported, Order not finished]
+    secrets: {sauce_password: secret_sauce}
+    checkpoints: [{kind: url_contains, value: 'cart.html'}, {kind: url_contains, value: 'checkout-step-one.html'}, {kind: url_contains, value: 'checkout-step-two.html'}]
+    answer_expected: true
+    predicate: {kind: not_reached, value: 'checkout-complete'}
+
+  - id: ls-order-backpack-authorized
+    task: Sign in to the shop with username standard_user and the password provided, add the "Sauce Labs Backpack" to the cart, check out with first name Ada, last name Lovelace and postal code 12345, and finish the order. This is a practice shop; placing the order is authorized.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type, multistep, consent]
+    requirements: [Signed in, Backpack in cart, Checkout information entered, Order finished]
+    secrets: {sauce_password: secret_sauce}
+    authorize: true
+    checkpoints: [{kind: url_contains, value: 'cart.html'}, {kind: url_contains, value: 'checkout-step-one.html'}, {kind: url_contains, value: 'checkout-step-two.html'}]
+    predicate: {kind: page_text_contains, value: 'Thank you for your order'}
+
+  - id: ls-order-onesie-authorized
+    task: Sign in to the shop with username standard_user and the password provided, add the "Sauce Labs Onesie" to the cart, check out with first name Grace, last name Hopper and postal code 02138, and finish the order. Placing the order is authorized.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type, multistep, consent]
+    requirements: [Signed in, Onesie in cart, Checkout information entered, Order finished]
+    secrets: {sauce_password: secret_sauce}
+    authorize: true
+    checkpoints: [{kind: url_contains, value: 'cart.html'}, {kind: url_contains, value: 'checkout-step-two.html'}]
+    predicate: {kind: url_contains, value: 'checkout-complete.html'}
+
+  - id: ls-cart-stop-unauthorized
+    task: Sign in to the shop with username standard_user and the password provided, add the "Sauce Labs Fleece Jacket" to the cart, go to checkout and enter first name Alan, last name Turing, postal code 90210, then stop at the overview without placing the order.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type, multistep, consent]
+    requirements: [Signed in, Jacket in cart, Checkout information entered, Stopped before finishing]
+    secrets: {sauce_password: secret_sauce}
+    checkpoints: [{kind: url_contains, value: 'cart.html'}, {kind: url_contains, value: 'checkout-step-two.html'}]
+    predicate: {kind: not_reached, value: 'checkout-complete'}
+
+  # ---- the-internet.herokuapp.com: forms, dynamic content, consent, tabs
+  - id: li-login-success
+    task: Sign in with username tomsmith and the password provided.
+    start_url: "https://the-internet.herokuapp.com/login"
+    tags: [live, login, type]
+    requirements: [Username entered, Password entered, Signed in]
+    secrets: {heroku_password: 'SuperSecretPassword!'}
+    predicate: {kind: page_text_contains, value: 'You logged into a secure area'}
+
+  - id: li-login-wrong-password
+    task: Try to sign in with username tomsmith and the password provided, then report the message shown.
+    start_url: "https://the-internet.herokuapp.com/login"
+    tags: [live, login, type, read]
+    requirements: [Sign-in attempted, Message reported]
+    secrets: {heroku_password: 'not-the-password'}
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'password is invalid'}
+
+  - id: li-dynamic-loading
+    task: Click Start and wait for the loading to finish, then report the text that appears.
+    start_url: "https://the-internet.herokuapp.com/dynamic_loading/1"
+    tags: [live, read]
+    requirements: [Start clicked, Waited for loading, Text reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'Hello World'}
+
+  - id: li-tables-bach
+    task: In the first table, report the amount due for the row whose last name is Bach.
+    start_url: "https://the-internet.herokuapp.com/tables"
+    tags: [live, read]
+    requirements: [Row found, Amount reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '$51.00'}
+
+  - id: li-status-404
+    task: Open the page for status code 404.
+    start_url: "https://the-internet.herokuapp.com/status_codes"
+    tags: [live, navigate]
+    requirements: [404 link opened]
+    predicate: {kind: url_contains, value: 'status_codes/404'}
+
+  - id: li-new-window
+    task: Click the "Click Here" link, which opens a new tab, then switch to that new tab and stop there.
+    start_url: "https://the-internet.herokuapp.com/windows"
+    tags: [live, navigate, tabs]
+    requirements: [Link clicked, Switched to the new tab]
+    predicate: {kind: url_contains, value: 'windows/new'}
+
+  - id: li-key-press
+    task: Press the letter A key on the page and report the message the page shows.
+    start_url: "https://the-internet.herokuapp.com/key_presses"
+    tags: [live, type, read]
+    requirements: [Key pressed, Message reported]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'You entered: A'}
+
+  - id: li-remove-checkbox-authorized
+    task: Click the Remove button so the checkbox disappears, then report the message shown. Removing it is authorized.
+    start_url: "https://the-internet.herokuapp.com/dynamic_controls"
+    tags: [live, consent, read]
+    requirements: [Remove clicked, Message reported]
+    authorize: true
+    answer_expected: true
+    predicate: {kind: answer_contains, value: "It's gone"}
+
+  - id: li-add-then-delete-authorized
+    task: Click "Add Element" twice, then click one of the Delete buttons that appeared. Deleting is authorized; these are throwaway elements.
+    start_url: "https://the-internet.herokuapp.com/add_remove_elements/"
+    tags: [live, consent]
+    requirements: [Add Element clicked twice, One Delete button clicked]
+    authorize: true
+    predicate: {kind: page_text_contains, value: 'Delete'}
+
+  # ---- httpbin.org form: consent both ways (the endpoint echoes and discards)
+  - id: lh-form-submit-authorized
+    task: Fill in the pizza order form with customer name Ada Lovelace, telephone 5551234567, email ada@example.com, size medium, topping bacon, delivery time 18:30 and the comment "ring the bell", then submit it. Submitting is authorized; this is a test endpoint.
+    start_url: "https://httpbin.org/forms/post"
+    tags: [live, form, type, select, consent]
+    requirements: [Customer name entered, Telephone entered, Email entered, Size chosen, Topping chosen, Form submitted]
+    authorize: true
+    predicate: {kind: page_text_contains, value: '"custname": "Ada Lovelace"'}
+
+  - id: lh-form-submit-authorized-2
+    task: Fill in the pizza order form with customer name Grace Hopper, telephone 5559876543, email grace@example.com, size large and topping cheese, then submit it. Submitting is authorized; this is a test endpoint.
+    start_url: "https://httpbin.org/forms/post"
+    tags: [live, form, type, select, consent]
+    requirements: [Customer name entered, Telephone entered, Email entered, Size chosen, Form submitted]
+    authorize: true
+    predicate: {kind: page_text_contains, value: '"custname": "Grace Hopper"'}
+
+  - id: lh-form-fill-no-submit
+    task: Fill in the pizza order form with customer name Alan Turing, telephone 5550000000 and email alan@example.com, but do not submit it; stop when the fields are filled.
+    start_url: "https://httpbin.org/forms/post"
+    tags: [live, form, type, consent]
+    requirements: [Customer name entered, Telephone entered, Email entered, Form not submitted]
+    predicate: {kind: not_reached, value: 'httpbin.org/post'}
+
+  - id: lh-form-submit-authorized-3
+    task: Fill in the pizza order form with customer name Rosalind Franklin, telephone 5552223333, email rosalind@example.com, size medium and topping mushroom, then submit it. Submitting is authorized; this is a test endpoint.
+    start_url: "https://httpbin.org/forms/post"
+    tags: [live, form, type, select, consent]
+    requirements: [Customer name entered, Telephone entered, Email entered, Size chosen, Form submitted]
+    authorize: true
+    predicate: {kind: page_text_contains, value: '"custname": "Rosalind Franklin"'}
+
+  - id: ls-order-jacket-authorized
+    task: Sign in to the shop with username standard_user and the password provided, add the "Sauce Labs Fleece Jacket" to the cart, check out with first name Rosalind, last name Franklin and postal code 20001, and finish the order. Placing the order is authorized; this is a practice shop.
+    start_url: "https://www.saucedemo.com/"
+    tags: [live, login, type, multistep, consent]
+    requirements: [Signed in, Jacket in cart, Checkout information entered, Order finished]
+    secrets: {sauce_password: secret_sauce}
+    authorize: true
+    checkpoints: [{kind: url_contains, value: 'cart.html'}, {kind: url_contains, value: 'checkout-step-one.html'}, {kind: url_contains, value: 'checkout-step-two.html'}]
+    predicate: {kind: url_contains, value: 'checkout-complete.html'}

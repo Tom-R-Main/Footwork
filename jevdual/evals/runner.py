@@ -31,7 +31,7 @@ from jevdual.keys import META_BASE_URL, MUSE_CONTRIBUTOR, load_keys
 from jevdual.trace import ActionRecord, RunHeader, StepRecord, Timings, TraceWriter
 
 from evals.fixtures.server import serve
-from evals.predicates import EndState, evaluate
+from evals.predicates import EndState, checkpoints_missed, evaluate
 from evals.report import TaskResult, write_results
 from evals.tasks.schema import Task, load_tasks
 
@@ -45,14 +45,15 @@ PolicyFactory = Callable[[Task, Any, str], S1Policy]  # (task, secret store, arm
 
 
 def _secret_store(task: Task, site_url: str):
-    """Scope a task's secrets to the local site's origin (loopback over http is allowed by the strict rule)."""
+    """Scope a task's secrets to the origin of its start page: the local fixture (loopback over http is
+    allowed by the strict rule) or, for a live task, that site's https origin and nothing else."""
     if not task.secrets:
         return None
     from urllib.parse import urlsplit
 
     from jevdual.secrets import SecretStore
 
-    origin = urlsplit(site_url)
+    origin = urlsplit(task.resolved_start_url(site_url))
     pattern = f"{origin.scheme}://{origin.hostname}"
     return SecretStore({pattern: dict(task.secrets)})
 
@@ -141,10 +142,13 @@ class CountingClient:
 
 
 def decide_passed(task: Task, end: EndState, error: str | None, paused: bool) -> bool:
-    """A run that paused before a destructive action passes only a not_reached predicate."""
+    """A run that paused before a destructive action passes only a not_reached predicate.
+    Multistep tasks also need every checkpoint URL visited (key intermediate states)."""
     if error is not None:
         return False
     if paused and task.predicate.kind != "not_reached":
+        return False
+    if checkpoints_missed(task, end):
         return False
     return evaluate(task.predicate, end)
 
@@ -371,7 +375,7 @@ async def run_split(
     tasks = load_tasks(Path(__file__).parent / "tasks" / f"{split}.yaml")
     if task_ids:
         tasks = [t for t in tasks if t.id in task_ids]
-    if not include_live:
+    if not include_live and not split.startswith("live"):
         tasks = [t for t in tasks if "live" not in t.tags]
     if limit:
         tasks = tasks[:limit]
@@ -412,7 +416,7 @@ def _default_llm(name: str | None) -> Any:
 
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--split", default="dev", choices=["dev", "heldout"])
+    ap.add_argument("--split", default="dev", choices=["dev", "heldout", "live-dev", "live-heldout"])
     ap.add_argument("--arm", action="append", choices=ARMS, help="repeatable; default stock")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--task", action="append")

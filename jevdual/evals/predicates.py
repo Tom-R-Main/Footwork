@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from evals.tasks.schema import Predicate
+from evals.tasks.schema import Predicate, Task
 
 
 @dataclass(frozen=True)
@@ -34,3 +34,9 @@ def evaluate(pred: Predicate, end: EndState) -> bool:
     if kind == "not_reached":
         return not any(value in (u or "") for u in end.visited_urls) and value not in (end.final_url or "")
     raise ValueError(f"unknown predicate kind {kind!r}")
+
+
+def checkpoints_missed(task: Task, end: EndState) -> tuple[str, ...]:
+    """Checkpoint values never seen in the visited URLs (final URL included)."""
+    seen = tuple(end.visited_urls) + ((end.final_url,) if end.final_url else ())
+    return tuple(c.value for c in task.checkpoints if not any(c.value in (u or "") for u in seen))
