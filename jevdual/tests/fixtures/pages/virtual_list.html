@@ -1,0 +1,13 @@
+<!doctype html><html><head><title>Virtualized list fixture</title>
+<style>body{font-family:sans-serif;margin:16px}#vp{height:600px;overflow:auto;border:1px solid #888;position:relative}
+#spacer{position:relative}.row{position:absolute;left:0;right:0;height:30px;line-height:30px;padding:0 8px;border-bottom:1px solid #eee}</style></head><body>
+<h1>10,000 rows, only visible ones in the DOM</h1>
+<label>Filter <input type="search" placeholder="type to filter"></label> <button>Refresh</button>
+<div id="vp"><div id="spacer"></div></div>
+<script>
+const N=10000,H=30,vp=document.getElementById('vp'),sp=document.getElementById('spacer');sp.style.height=(N*H)+'px';
+function render(){const s=vp.scrollTop,first=Math.floor(s/H),last=Math.min(N,first+Math.ceil(vp.clientHeight/H)+4);sp.innerHTML='';
+ for(let i=first;i<last;i++){const d=document.createElement('div');d.className='row';d.style.top=(i*H)+'px';
+  d.innerHTML=`Row ${i} <a href="/row/${i}">open</a> <button>select ${i}</button>`;sp.appendChild(d)}}
+vp.addEventListener('scroll',render);render();
+</script></body></html>

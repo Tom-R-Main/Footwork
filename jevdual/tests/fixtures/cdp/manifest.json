@@ -1,0 +1,115 @@
+{
+ "fixtures": [
+  {
+   "slug": "amazon-usb-c-hub",
+   "url": "https://www.amazon.com/s?k=usb+c+hub",
+   "why": "dense commerce grid, heavy computed styles",
+   "captured_at": "2026-09-21T04:20:21.232007+00:00",
+   "element_count": 427,
+   "documents": 2,
+   "snapshot_strings": 3789,
+   "size_kb": 643
+  },
+  {
+   "slug": "dense-links",
+   "url": "http://127.0.0.1:55570/dense_links.html",
+   "why": ">255 interactive elements in one viewport (360 links + 360 buttons)",
+   "captured_at": "2026-09-21T04:21:58.237373+00:00",
+   "element_count": 722,
+   "documents": 1,
+   "snapshot_strings": 1124,
+   "size_kb": 85
+  },
+  {
+   "slug": "github-browser-use",
+   "url": "https://github.com/browser-use/browser-use",
+   "why": "app-like layout, many buttons, nested menus",
+   "captured_at": "2026-09-21T04:20:16.354203+00:00",
+   "element_count": 356,
+   "documents": 1,
+   "snapshot_strings": 2548,
+   "size_kb": 285
+  },
+  {
+   "slug": "hacker-news",
+   "url": "https://news.ycombinator.com/",
+   "why": "flat table layout, many small links",
+   "captured_at": "2026-09-21T04:21:12.816410+00:00",
+   "element_count": 536,
+   "documents": 1,
+   "snapshot_strings": 697,
+   "size_kb": 81
+  },
+  {
+   "slug": "ja-wikipedia-python",
+   "url": "https://ja.wikipedia.org/wiki/Python",
+   "why": "CJK text and labels",
+   "captured_at": "2026-09-21T04:21:06.663604+00:00",
+   "element_count": 244,
+   "documents": 1,
+   "snapshot_strings": 7927,
+   "size_kb": 757
+  },
+  {
+   "slug": "modal-over-content",
+   "url": "http://127.0.0.1:53953/modal_over_content.html",
+   "why": "fixed modal + backdrop covering a product grid (paint-order occlusion)",
+   "captured_at": "2026-09-21T04:20:58.303775+00:00",
+   "element_count": 44,
+   "documents": 1,
+   "snapshot_strings": 237,
+   "size_kb": 24
+  },
+  {
+   "slug": "sensitive-fields",
+   "url": "http://127.0.0.1:53953/sensitive_fields.html",
+   "why": "password, cc-number, one-time-code, hidden and file inputs with pre-filled values",
+   "captured_at": "2026-09-21T04:21:08.296710+00:00",
+   "element_count": 16,
+   "documents": 1,
+   "snapshot_strings": 78,
+   "size_kb": 6
+  },
+  {
+   "slug": "virtual-list",
+   "url": "http://127.0.0.1:55570/virtual_list.html",
+   "why": "virtualized list: 10,000 rows, only ~25 in the DOM at a time",
+   "captured_at": "2026-09-21T04:21:57.041774+00:00",
+   "element_count": 51,
+   "documents": 1,
+   "snapshot_strings": 151,
+   "size_kb": 12
+  },
+  {
+   "slug": "w3schools-iframe",
+   "url": "https://www.w3schools.com/html/html_iframe.asp",
+   "why": "cross-origin iframes",
+   "captured_at": "2026-09-21T04:20:56.832287+00:00",
+   "element_count": 243,
+   "documents": 11,
+   "snapshot_strings": 3317,
+   "size_kb": 662
+  },
+  {
+   "slug": "wikipedia-python",
+   "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+   "why": "long article, many links, tables",
+   "captured_at": "2026-09-21T04:20:11.265292+00:00",
+   "element_count": 358,
+   "documents": 1,
+   "snapshot_strings": 14174,
+   "size_kb": 1286
+  },
+  {
+   "slug": "youtube-home",
+   "url": "https://www.youtube.com/",
+   "why": "shadow DOM everywhere (Polymer)",
+   "captured_at": "2026-09-21T04:20:27.969345+00:00",
+   "element_count": 21,
+   "documents": 2,
+   "snapshot_strings": 2248,
+   "size_kb": 423
+  }
+ ],
+ "failed": []
+}

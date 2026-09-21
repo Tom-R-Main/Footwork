@@ -1,0 +1,16 @@
+<!doctype html><html><head><title>Sensitive fields fixture</title></head><body>
+<h1>Checkout</h1>
+<form action="#" method="post">
+  <label>Username <input type="text" name="user" value="alice@example.com"></label><br>
+  <label>Password <input type="password" name="pw" value="hunter2-SECRET-9f3a"></label><br>
+  <label>Card number <input type="text" name="cc" autocomplete="cc-number" value="4111111111111111"></label><br>
+  <label>CVC <input type="text" name="cvc" autocomplete="cc-csc" value="123"></label><br>
+  <label>One-time code <input type="text" name="otp" autocomplete="one-time-code" value="998877"></label><br>
+  <input type="hidden" name="csrf" value="hidden-token-ZZTOP">
+  <label>Upload <input type="file" name="f"></label><br>
+  <label>Remember me <input type="checkbox" name="remember" checked></label><br>
+  <button type="submit">Pay now</button>
+  <button type="button">Cancel</button>
+</form>
+<p>Order total: $42.00</p>
+</body></html>
