@@ -16,6 +16,7 @@ import argparse
 import asyncio
 import importlib.metadata
 import logging
+import os
 import time
 import uuid
 from collections.abc import Callable
@@ -26,6 +27,7 @@ from browser_use.agent.service import Agent
 from browser_use.browser.profile import BrowserProfile
 from jevdual import BACKEND, patch
 from jevdual.agent import DualProcessAgent, S1Policy
+from jevdual.keys import META_BASE_URL, MUSE_CONTRIBUTOR, load_keys
 from jevdual.trace import ActionRecord, RunHeader, StepRecord, Timings, TraceWriter
 
 from evals.fixtures.server import serve
@@ -252,11 +254,20 @@ async def run_split(
 
 
 def _default_llm(name: str | None) -> Any:
+    """System 2 provider. ``meta`` is Muse Spark 1.3 Contributor over the Meta Model API (OpenAI-compatible)."""
     if not name:
         return None
-    from browser_use import ChatBrowserUse  # type: ignore[attr-defined]
+    if name in ("meta", "muse", MUSE_CONTRIBUTOR, "muse-spark-1.3"):
+        from browser_use.llm.openai.chat import ChatOpenAI
 
+        key = os.environ.get("MODEL_API_KEY")
+        if not key:
+            raise SystemExit("MODEL_API_KEY is not set; materialize META_MODEL_API_KEY into ~/.config/jevdual first")
+        model = MUSE_CONTRIBUTOR if name in ("meta", "muse", MUSE_CONTRIBUTOR) else "muse-spark-1.3"
+        return ChatOpenAI(model=model, base_url=META_BASE_URL, api_key=key, temperature=0.0)
     if name == "browser-use":
+        from browser_use import ChatBrowserUse  # type: ignore[attr-defined]
+
         return ChatBrowserUse()
     raise SystemExit(f"unknown --llm {name}; wire the provider in evals/runner.py")
 
@@ -268,15 +279,17 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--task", action="append")
     ap.add_argument("--live", action="store_true", help="include live-site tasks")
-    ap.add_argument("--llm", help="LLM for stock/dual arms, e.g. browser-use")
+    ap.add_argument("--llm", default="meta", help="System 2 provider for stock/dual arms: meta (Muse Spark 1.3 Contributor, default), browser-use, or none")
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--out", default=f"results/run-{time.strftime('%Y%m%d-%H%M%S')}")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+    present = load_keys()
+    logging.getLogger("evals.runner").info("keys present: %s", {k: v for k, v in present.items()})
     arms = tuple(args.arm or ["stock"])
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
-    llm = _default_llm(args.llm)
+    llm = _default_llm(None if args.llm == "none" else args.llm)
     policy_factory = default_policy_factory(arms[0]) if any(a in ("s1_only", "dual") for a in arms) else None
     results = asyncio.run(
         run_split(
