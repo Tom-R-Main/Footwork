@@ -177,7 +177,8 @@ def install_lazy_uuid() -> bool:
         log.warning("browser_use.dom.service.EnhancedDOMTreeNode already rebound; leaving it alone")
         return False
 
-    @dataclasses.dataclass(slots=False)
+    # eq=False keeps upstream's __eq__ and explicit __hash__ (a dataclass with eq=True would set __hash__ = None).
+    @dataclasses.dataclass(eq=False)
     class EnhancedDOMTreeNodeNoUuid(views.EnhancedDOMTreeNode):
         uuid: str = ""
 

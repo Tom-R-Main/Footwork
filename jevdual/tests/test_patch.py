@@ -129,6 +129,9 @@ def test_lazy_uuid_patch_keeps_pipeline_equal():
         after, root, _ = replay_serialized.__wrapped__("modal-over-content")
         assert isinstance(root, views.EnhancedDOMTreeNode)
         assert root.uuid == ""
+        # history matching hashes nodes; the subclass must keep upstream's __hash__ and __eq__
+        node = next(iter(after.selector_map.values()))
+        assert isinstance(hash(node), int) and node == node and {node: 1}[node] == 1
         assert before.selector_map.keys() == after.selector_map.keys()
         assert before.llm_representation() == after.llm_representation()
     finally:
