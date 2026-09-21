@@ -1,0 +1,164 @@
+{
+ "arms": {
+  "dual": {
+   "tasks": 10,
+   "pass": 10,
+   "pass_rate": 1.0,
+   "false_done": 0,
+   "paused": 1,
+   "mean_steps": 4.2,
+   "llm_calls": 20,
+   "jev_calls": 22,
+   "llm_tokens": 326718,
+   "cost_usd": 0.03821840000000001,
+   "wall_s": 550.6585953332251,
+   "errors": 0
+  }
+ },
+ "by_tag": {
+  "destructive": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 1,
+    "mean_steps": 1.0,
+    "llm_calls": 1,
+    "jev_calls": 0,
+    "llm_tokens": 16504,
+    "cost_usd": 0.0018632000000000002,
+    "wall_s": 36.63352208293509,
+    "errors": 0
+   }
+  },
+  "enter-submit": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 3.0,
+    "llm_calls": 1,
+    "jev_calls": 2,
+    "llm_tokens": 23549,
+    "cost_usd": 0.0030732000000000003,
+    "wall_s": 52.87320466700476,
+    "errors": 0
+   }
+  },
+  "login": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.0,
+    "llm_calls": 1,
+    "jev_calls": 4,
+    "llm_tokens": 24766,
+    "cost_usd": 0.0030885,
+    "wall_s": 37.64952183305286,
+    "errors": 0
+   }
+  },
+  "modal": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 7.0,
+    "llm_calls": 4,
+    "jev_calls": 3,
+    "llm_tokens": 54762,
+    "cost_usd": 0.006397100000000001,
+    "wall_s": 116.506727833068,
+    "errors": 0
+   }
+  },
+  "navigate": {
+   "dual": {
+    "tasks": 5,
+    "pass": 5,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 6.4,
+    "llm_calls": 15,
+    "jev_calls": 17,
+    "llm_tokens": 232106,
+    "cost_usd": 0.0270055,
+    "wall_s": 360.5009697502246,
+    "errors": 0
+   }
+  },
+  "pagination": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 2.0,
+    "llm_calls": 1,
+    "jev_calls": 1,
+    "llm_tokens": 17995,
+    "cost_usd": 0.0020634,
+    "wall_s": 26.88903062499594,
+    "errors": 0
+   }
+  },
+  "read": {
+   "dual": {
+    "tasks": 8,
+    "pass": 8,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 4.5,
+    "llm_calls": 17,
+    "jev_calls": 19,
+    "llm_tokens": 274099,
+    "cost_usd": 0.0322005,
+    "wall_s": 463.28032291622367,
+    "errors": 0
+   }
+  },
+  "select": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.0,
+    "llm_calls": 2,
+    "jev_calls": 3,
+    "llm_tokens": 36115,
+    "cost_usd": 0.004154700000000001,
+    "wall_s": 50.74475033406634,
+    "errors": 0
+   }
+  },
+  "type": {
+   "dual": {
+    "tasks": 5,
+    "pass": 5,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.8,
+    "llm_calls": 12,
+    "jev_calls": 17,
+    "llm_tokens": 199727,
+    "cost_usd": 0.023383,
+    "wall_s": 300.4802554171765,
+    "errors": 0
+   }
+  }
+ }
+}
