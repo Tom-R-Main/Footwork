@@ -25,6 +25,12 @@ strict JSON contract; otherwise the step escalates.
   the work: `stuck` flagged the form loops on 16 of 21 steps, `destructive` stopped the delete.
 - Two mechanisms, not thresholds, closed the dev gap: verification must know whether the task asks
   for an answer, and the destructive gate must cover System 2's actions.
+- On live pages the confidence floors do bind (7.7% of S1-eligible steps versus 3.2% on the fixture)
+  and `stuck`/`blocked` fire; but the cost driver is the verifier, which judged every requirement
+  on the final page. Requirements that name an action ("Password entered", "Signed in") are gone
+  from the page by the time the run says done: 120 of 224 rejections on live validation run 0.
+  Verification now receives the trajectory (actions, elements, URLs, redacted) next to the page
+  and keeps a per-run ledger where a requirement judged met stays met (`jevdual/ledger.py`).
 - Rig defects can masquerade as agent defects: end-state capture after `run()` returns fails
   silently because upstream closes the session; the serializer's text drops some inline nodes;
   a policy factory bound to the first arm ran two S1-only arms. Each is now a test.
