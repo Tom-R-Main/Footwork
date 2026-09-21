@@ -97,6 +97,7 @@ def redact_menu(menu: Menu, red: Callable[[str], str]) -> Menu:
         url=red(menu.url),
         title=red(menu.title),
         page_text=red(menu.page_text),
+        full_text=red(menu.full_text) if menu.full_text else menu.full_text,
         candidates=cands,
         by_operation={op: tuple(by_id[c.id] for c in cs) for op, cs in menu.by_operation.items()},
         tabs=tuple({k: (red(v) if isinstance(v, str) else v) for k, v in t.items()} for t in menu.tabs),

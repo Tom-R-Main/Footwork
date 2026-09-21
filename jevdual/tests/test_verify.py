@@ -182,3 +182,19 @@ def test_atoms_and_narrative_grading():
     assert grades["The page displays: 0 r"] in ("exact", "normalized")
     assert grades["I clicked around a bit"] == "narrative"
     assert grades["The lighthouse is 45 m"] == "none"
+
+
+def test_claims_are_checked_against_the_full_page_text_and_the_excerpt_centres_on_evidence():
+    from jevdual.verify import evidence_excerpt
+
+    filler = "Built-in exceptions. " * 500  # ~10k chars before the definition
+    full = filler + "exception KeyError Raised when a mapping (dictionary) key is not found in the set of existing keys. " + "More text. " * 300
+    m = Menu(url="http://s/exceptions.html", title="Exceptions", page_text=full[:6000], candidates=(), by_operation={}, full_text=full)
+    answer = "The exception raised when a dictionary key is not found is KeyError."
+    client = FakeClient(load("verify_accept"))
+    verdict = run(Verifier(client), "Find the exception name", ("Exception name reported",), m, answer)
+    assert all(c.supported for c in verdict.claims), [c.claim for c in verdict.claims if not c.supported]
+    sent = client.calls[0]["state"]["page"]["text"]
+    assert "exception KeyError Raised when a mapping" in sent and len(sent) <= 6000
+    assert evidence_excerpt(full, None) == full[:6000]
+    assert evidence_excerpt("short page", answer) == "short page"

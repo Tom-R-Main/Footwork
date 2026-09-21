@@ -35,6 +35,8 @@ OPERATIONS: tuple[Operation, ...] = ("click", "type", "select", "enter", "hover"
 #: state plus the longest question; 64k for the whole request.
 MAX_CHOICE_OPTIONS = 255
 STATE_TOKEN_BUDGET = 32_000
+#: Cap on the untruncated page text kept for verification (never sent in a menu).
+FULL_TEXT_CAP = 60_000
 REQUEST_TOKEN_BUDGET = 64_000
 
 
@@ -89,6 +91,9 @@ class Menu:
     omitted: dict[str, int] = field(default_factory=dict)
     tabs: tuple[dict[str, Any], ...] = ()
     estimated_tokens: int = 0
+    #: Untruncated visible text (up to FULL_TEXT_CAP). Never sent in a menu; verification uses it for
+    #: claim checks and for an evidence-centred excerpt, so a fact deep in a long page still counts.
+    full_text: str = ""
 
     def candidate(self, id: int) -> Candidate | None:
         for c in self.candidates:
@@ -412,7 +417,8 @@ def build_menu(state: BrowserStateSummary, budget: MenuBudget | None = None) -> 
 
     selector_map = state.dom_state.selector_map
     candidates = tuple(candidate_from_node(idx, node, vp) for idx, node in sorted(selector_map.items()))
-    page_text = _page_text(_root_of(state), budget.max_page_text_chars)
+    full_text = _page_text(_root_of(state), FULL_TEXT_CAP)
+    page_text = full_text[: budget.max_page_text_chars]
     omitted: dict[str, int] = {}
 
     tokens = estimate_tokens(page_text, candidates, budget.chars_per_token)
@@ -457,6 +463,7 @@ def build_menu(state: BrowserStateSummary, budget: MenuBudget | None = None) -> 
         url=state.url,
         title=state.title,
         page_text=page_text,
+        full_text=full_text,
         candidates=candidates,
         by_operation=_by_operation(candidates),
         omitted=omitted,

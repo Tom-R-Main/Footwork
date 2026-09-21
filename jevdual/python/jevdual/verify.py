@@ -177,6 +177,63 @@ def check_claims(answer: str | None, page_text: str) -> list[ClaimCheck]:
     return out
 
 
+_IDENTIFIER = re.compile(r"\b(?:[A-Za-z]+[A-Z][A-Za-z0-9]*|[A-Za-z]+_[A-Za-z0-9_]+|[A-Z][a-z]{3,})\b")
+
+
+def _excerpt_needles(claim: str) -> list[str]:
+    """What to look for in the page for one claim: its evidence atoms, plus identifier-like and
+    capitalised tokens (KeyError, font-weight's neighbours, Guido) when a claim carries no atom."""
+    needles = list(extract_atoms(claim))
+    words = claim.split()
+    for tok in _IDENTIFIER.findall(claim):
+        if words and tok == words[0].strip(".,:;"):
+            continue  # sentence-initial capital is not evidence
+        if tok not in needles:
+            needles.append(tok)
+    return needles
+
+
+def evidence_excerpt(full_text: str, answer: str | None, *, head: int = 2_500, window: int = 350, cap: int = 6_000) -> str:
+    """Page text for verification: the head of the page plus windows around every place the answer's
+    evidence atoms occur, so a fact deep in a long page (a definition 9,000 characters down) is in view.
+    Without an answer, or when everything fits, this is just the head."""
+    if len(full_text) <= cap or not answer:
+        return full_text[:cap]
+    folded = full_text.casefold()
+    spans: list[tuple[int, int]] = [(0, head)]
+    for claim in split_claims(answer):
+        for atom in _excerpt_needles(claim):
+            needle = atom.casefold()
+            start = 0
+            hits = 0
+            while hits < 3:
+                i = folded.find(needle, start)
+                if i < 0:
+                    break
+                spans.append((max(0, i - window), min(len(full_text), i + len(needle) + window)))
+                start = i + len(needle)
+                hits += 1
+    spans.sort()
+    merged: list[list[int]] = []
+    for a, b in spans:
+        if merged and a <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], b)
+        else:
+            merged.append([a, b])
+    out: list[str] = []
+    used = 0
+    for a, b in merged:
+        piece = full_text[a:b]
+        if used + len(piece) > cap:
+            piece = piece[: max(0, cap - used)]
+        if piece:
+            out.append(piece)
+            used += len(piece)
+        if used >= cap:
+            break
+    return " … ".join(out)
+
+
 def band_for(complete: float, unmet: dict[str, float], policy: VerifyPolicy) -> tuple[Band, str]:
     worst = max(unmet.values(), default=0.0)
     worst_key = max(unmet, key=unmet.get) if unmet else None
@@ -239,10 +296,11 @@ class Verifier:
         answer: str | None,
         trajectory: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
+        text = evidence_excerpt(menu.full_text, answer) if (answer and menu.full_text) else menu.page_text
         state: dict[str, Any] = {
             "task": task,
             "requirements": list(requirements),
-            "page": {"url": menu.url, "title": menu.title, "text": menu.page_text},
+            "page": {"url": menu.url, "title": menu.title, "text": text},
         }
         if trajectory:
             state["trajectory"] = trajectory
@@ -291,7 +349,7 @@ class Verifier:
         if answer_expected:
             answer_required = max(answer_required, 1.0)
 
-        claims = check_claims(answer, menu.page_text)
+        claims = check_claims(answer, menu.full_text or menu.page_text)
         unsupported = tuple(c.claim for c in claims if not c.supported)
         supported_answer: str | None = None
         if claims:

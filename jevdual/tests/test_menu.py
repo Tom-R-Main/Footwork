@@ -129,3 +129,15 @@ def test_budget_trims_text_then_offscreen_then_overflow():
 def test_group_candidates_rejects_bad_size():
     with pytest.raises(ValueError):
         group_candidates((), 0)
+
+
+def test_menu_keeps_full_text_beyond_the_budgeted_page_text():
+    from jevdual.menu import Menu
+
+    m = Menu(url="u", title="t", page_text="abc", candidates=(), by_operation={})
+    assert m.full_text == ""  # default for hand-built menus
+    from jevdual.s1 import redact_menu
+
+    m2 = Menu(url="u", title="t", page_text="secret1 here", candidates=(), by_operation={}, full_text="secret1 here and there")
+    r = redact_menu(m2, lambda s: s.replace("secret1", "[X]"))
+    assert r.full_text == "[X] here and there" and r.page_text == "[X] here"
