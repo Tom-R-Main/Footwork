@@ -1,0 +1,82 @@
+{
+ "model": "jev-1.13.0",
+ "usage": {
+  "input_tokens": 1834,
+  "output_tokens": 0
+ },
+ "answers": {
+  "operation": {
+   "type": "choice",
+   "choice": "click",
+   "confidence": 0.78,
+   "probabilities": {
+    "type": 0.025,
+    "select": 0.025,
+    "enter": 0.025,
+    "scroll_page": 0.025,
+    "back": 0.025,
+    "wait": 0.025,
+    "done": 0.025,
+    "blocked": 0.025,
+    "click": 0.8
+   }
+  },
+  "click_target": {
+   "type": "choice",
+   "choice": "9",
+   "confidence": 0.5,
+   "probabilities": {
+    "1": 0.5,
+    "2": 0.5
+   }
+  },
+  "type_target": {
+   "type": "choice",
+   "choice": "3",
+   "confidence": 1.0,
+   "probabilities": {
+    "3": 1.0
+   }
+  },
+  "select_target": {
+   "type": "choice",
+   "choice": "4",
+   "confidence": 1.0,
+   "probabilities": {
+    "4": 1.0
+   }
+  },
+  "enter_target": {
+   "type": "choice",
+   "choice": "3",
+   "confidence": 1.0,
+   "probabilities": {
+    "3": 1.0
+   }
+  },
+  "goal_done": {
+   "type": "noul",
+   "noul": 0.05
+  },
+  "stuck": {
+   "type": "noul",
+   "noul": 0.1
+  },
+  "destructive": {
+   "type": "noul",
+   "noul": 0.02
+  },
+  "login_required": {
+   "type": "noul",
+   "noul": 0.01
+  },
+  "bot_check": {
+   "type": "noul",
+   "noul": 0.0
+  },
+  "needs_reasoning": {
+   "type": "noul",
+   "noul": 0.08
+  }
+ }
+}

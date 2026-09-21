@@ -1,0 +1,82 @@
+{
+ "model": "jev-1.13.0",
+ "usage": {
+  "input_tokens": 1834,
+  "output_tokens": 0
+ },
+ "answers": {
+  "operation": {
+   "type": "choice",
+   "choice": "done",
+   "confidence": 0.9,
+   "probabilities": {
+    "click": 0.0112,
+    "type": 0.0112,
+    "select": 0.0112,
+    "enter": 0.0112,
+    "scroll_page": 0.0112,
+    "back": 0.0112,
+    "wait": 0.0112,
+    "blocked": 0.0112,
+    "done": 0.91
+   }
+  },
+  "click_target": {
+   "type": "choice",
+   "choice": "2",
+   "confidence": 0.82,
+   "probabilities": {
+    "1": 0.15,
+    "2": 0.85
+   }
+  },
+  "type_target": {
+   "type": "choice",
+   "choice": "3",
+   "confidence": 1.0,
+   "probabilities": {
+    "3": 1.0
+   }
+  },
+  "select_target": {
+   "type": "choice",
+   "choice": "4",
+   "confidence": 1.0,
+   "probabilities": {
+    "4": 1.0
+   }
+  },
+  "enter_target": {
+   "type": "choice",
+   "choice": "3",
+   "confidence": 1.0,
+   "probabilities": {
+    "3": 1.0
+   }
+  },
+  "goal_done": {
+   "type": "noul",
+   "noul": 0.93
+  },
+  "stuck": {
+   "type": "noul",
+   "noul": 0.1
+  },
+  "destructive": {
+   "type": "noul",
+   "noul": 0.02
+  },
+  "login_required": {
+   "type": "noul",
+   "noul": 0.01
+  },
+  "bot_check": {
+   "type": "noul",
+   "noul": 0.0
+  },
+  "needs_reasoning": {
+   "type": "noul",
+   "noul": 0.08
+  }
+ }
+}
