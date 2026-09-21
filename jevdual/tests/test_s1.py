@@ -66,7 +66,7 @@ def test_escalate_on_policy_error_and_arbiter():
 
 
 def test_retry_alternate_uses_next_best():
-    state, idx = _state_and_link()
+    state, _ = _state_and_link()
     links = [i for i, n in state.dom_state.selector_map.items() if n.tag_name == "a"]
     if len(links) < 2:
         return
