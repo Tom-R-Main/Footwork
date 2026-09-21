@@ -57,10 +57,11 @@ def default_policy_factory(arm: str) -> PolicyFactory:
 
 
 def _dual_arbiter():
+    """A fresh Arbiter per task: its repeat-target and no-effect state is per run."""
     try:
-        from jevdual.arbiter import Arbiter as _A  # task D2
+        from jevdual.arbiter import Arbiter  # task D2
 
-        return _A.from_toml()
+        return Arbiter.from_toml()
     except ImportError:  # pragma: no cover - until D2 lands
         from jevdual.s1 import AlwaysAct
 

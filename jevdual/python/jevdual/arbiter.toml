@@ -1,0 +1,32 @@
+# jevdual arbiter policy (task D2). Every number is a starting point taken from
+# the sibling projects; E1 tunes them on the dev split and then freezes this file
+# together with the Jev model id. Rules are evaluated in the order listed in
+# arbiter.py; the first rule that fires decides the step.
+
+# --- acting floors (confidence-gated routing; docs.typesafe.ai/patterns/confidence-routing)
+act_operation_confidence = 0.55   # below this the operation head is too flat to act on
+act_target_confidence = 0.45      # below this the target head is too flat; retry_alternate or escalate
+
+# --- escalate to System 2
+goal_done_escalate = 0.85         # S1 never declares victory alone: verify (D3) or let S2 judge
+stuck_escalate = 0.85             # recent actions repeat with no progress
+stuck_min_step = 3                # stuck is only meaningful after step 2
+needs_reasoning_escalate = 0.6    # the next step needs reading, comparing or composing text
+login_required_escalate = 0.6     # a sign-in wall blocks the task (reported with "blocked")
+bot_check_escalate = 0.6          # a CAPTCHA / browser check blocks the task (reported with "blocked")
+s1_streak_max = 8                 # periodic S2 check-in so its memory does not go stale
+no_effect_steps = 2               # consecutive steps with no visible change
+repeat_target_count = 3           # same (url, target) acted on this many times ...
+repeat_target_window = 6          # ... within this many steps -> escalate
+
+# --- confirm before anything hard to undo (never auto-executed)
+destructive_confirm = 0.5
+destructive_keywords = [
+  "delete", "remove", "pay", "purchase", "buy now", "place order", "send",
+  "submit payment", "confirm order", "unsubscribe", "deactivate",
+  "删除", "支付", "购买", "确认订单", "发送",
+]
+
+# --- next-best retry from the distribution already paid for
+retry_alternate_margin = 0.15     # alternate must be within this probability of the chosen target
+retry_alternate_lookback = 3      # and not already tried at this url in the last N steps
