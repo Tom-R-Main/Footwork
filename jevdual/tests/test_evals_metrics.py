@@ -59,3 +59,26 @@ def test_auroc_known_values():
 def test_step_dataclass_defaults():
     s = Step("t", "dual", 1, "s1", "click", 1.0, 1.0, {}, "act", ["click"], False, None)
     assert s.op_conf == 1.0
+
+
+def test_signals_from_labels_scores_confidence_negated(tmp_path: Path):
+    import csv
+
+    from evals.metrics import signals_from_labels
+
+    rows = [
+        {"op_conf": 0.99, "target_conf": 0.9, "goal_done": 0.1, "stuck": 0.1, "needs_reasoning": 0.1, "destructive": 0.0, "auto_label": "right", "label": ""},
+        {"op_conf": 0.95, "target_conf": 0.9, "goal_done": 0.1, "stuck": 0.2, "needs_reasoning": 0.1, "destructive": 0.0, "auto_label": "right", "label": ""},
+        {"op_conf": 0.50, "target_conf": 0.4, "goal_done": 0.1, "stuck": 0.9, "needs_reasoning": 0.8, "destructive": 0.0, "auto_label": "wrong", "label": ""},
+        {"op_conf": 0.60, "target_conf": 0.5, "goal_done": 0.1, "stuck": 0.8, "needs_reasoning": 0.7, "destructive": 0.0, "auto_label": "right", "label": "wrong"},
+        {"op_conf": 0.70, "target_conf": 0.5, "goal_done": 0.1, "stuck": 0.5, "needs_reasoning": 0.5, "destructive": 0.0, "auto_label": "unknown", "label": ""},
+    ]
+    path = tmp_path / "labels.csv"
+    with path.open("w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    out = signals_from_labels(path)
+    assert out["n"] == 4 and out["wrong"] == 2 and out["source"] == {"human": 1, "auto": 3}
+    assert out["auroc"]["op_conf"]["auroc"] == 1.0 and out["auroc"]["stuck"]["auroc"] == 1.0
+    assert out["auroc"]["goal_done"]["auroc"] == 0.5
