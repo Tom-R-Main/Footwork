@@ -137,3 +137,30 @@ NOULS: dict[str, dict[str, str]] = {
         "false": "The next step is to operate one visible control whose choice is clear from labels and `task`.",
     },
 }
+
+
+# --- verification (D3) ---------------------------------------------------------------------
+# Absolute questions asked over the final page before any run is called done. Each is
+# worded directly (jaggedness rule: ask each decision one way; never derive `unmet_i` from
+# `complete` or vice versa) and literally (no counting, no arithmetic).
+
+VERIFY_PROMPTS_VERSION = "2026-09-21.1"
+
+VERIFY_COMPLETE: dict[str, str] = {
+    "instructions": "Is every entry in `requirements` visibly satisfied by what `page.text` shows right now, "
+    "so that `task` is finished on this page?",
+    "true": "For each requirement, the page text itself shows the outcome it names: the confirmation message, "
+    "the opened item, the reported value, the submitted form's result.",
+    "false": "At least one requirement is not shown in `page.text`, or the page only offers a way to reach it "
+    "(an unsubmitted form, a link to the item, a search box with the query typed but not run).",
+}
+
+
+def verify_unmet(index: int, requirement: str) -> dict[str, str]:
+    """Noul asking whether ONE requirement is NOT satisfied. Absolute; independent of `complete`."""
+    return {
+        "instructions": f"Is `requirements[{index}]` (\"{requirement}\") NOT satisfied by what `page.text` shows right now?",
+        "true": "Nothing in `page.text` shows this requirement's outcome, or the page shows only a way to reach it, "
+        "or it shows a different outcome from the one required.",
+        "false": "`page.text` shows exactly the outcome this requirement names.",
+    }
