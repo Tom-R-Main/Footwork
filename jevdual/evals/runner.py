@@ -222,7 +222,32 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
             )
 
 
+BROWSER_START_FAILURE = "BrowserStartEvent"
+
+
 async def run_task(
+    task: Task,
+    arm: Arm,
+    site_url: str,
+    out_dir: Path,
+    *,
+    llm: Any = None,
+    policy_factory: PolicyFactory | None = None,
+    max_steps: int = 25,
+    headless: bool = True,
+    browser_start_retries: int = 1,
+) -> TaskResult:
+    """Run one task on one arm; a browser that fails to start is retried once (infrastructure, not the agent)."""
+    result = await _run_task_once(task, arm, site_url, out_dir, llm=llm, policy_factory=policy_factory, max_steps=max_steps, headless=headless)
+    attempts = 0
+    while result.error and BROWSER_START_FAILURE in result.error and attempts < browser_start_retries:
+        attempts += 1
+        log.warning("browser failed to start for %s on %s; retrying (%s/%s)", task.id, arm, attempts, browser_start_retries)
+        result = await _run_task_once(task, arm, site_url, out_dir, llm=llm, policy_factory=policy_factory, max_steps=max_steps, headless=headless)
+    return result
+
+
+async def _run_task_once(
     task: Task,
     arm: Arm,
     site_url: str,
