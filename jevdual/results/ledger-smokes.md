@@ -8,6 +8,7 @@ are inflated. All numbers observed from the run directories.
 |---|---|---|---|---|---|---|---|
 | `ledger-smoke-20260921-141456` | ledger on, old band (complete ≥ 0.85, unmet ≤ 0.20) | 4/6 | 2 | 0 | 6 | 18 | 6 of 6 |
 | `ledger-smoke2-20260921-145439` | ledger on, widened band (complete ≥ 0.80, unmet ≤ 0.30) | 5/6 | 1 | 4 | 2 | 8 | 2 of 6 |
+| `ledger-smoke3-20260921-151528` | as above plus outcome-phrased requirements; six answer-heavy tasks | 5/6 | 0 | 4 | 2 | 7 | 1 of 5 verified runs (cart task hit max steps) |
 
 Run 0 on the first smoke's six tasks: 25 rejections, every run UNVERIFIED.
 
@@ -32,6 +33,15 @@ Run 0 on the first smoke's six tasks: 25 rejections, every run UNVERIFIED.
    escalated on no-effect and stuck, and System 2 reached for `evaluate`, which the gate refuses.
    Inferred: the repeated no-effect click is flakiness under load; the first-step text choice is an
    S1 defect worth its own dev task; the `evaluate` refusal is the Q8 consent class (Siftable a140b874).
+
+4. **Outcome-phrased requirements, answer tasks.** Four of five answer tasks verified and accepted
+   (Wikipedia creator 3 steps, RFC 2 steps, MDN font-weight 4, PyPI licence 6). `lw-pydocs-keyerror`
+   stayed UNVERIFIED with a correct answer: on the long exceptions page the verifier's page text is
+   the first 6,000 characters of the DOM text, and the claim check ran against the same window, so
+   "KeyError" was an unsupported claim and `complete` sat at 0.36 to 0.42. Fix in progress: claim
+   checks run on the full page text and the verifier's excerpt is centred on the answer's evidence.
+   `ls-add-backpack-cart` ran to max steps (3 S1 / 22 S2) without a done: the same no-effect clicks
+   as before, now without an `evaluate` pause.
 
 ## Not yet measured
 
