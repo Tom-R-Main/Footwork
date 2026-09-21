@@ -1,0 +1,121 @@
+# live-dev split, arms stock, dual
+
+| arm | tasks | pass | pass rate | false done | paused | mean steps | LLM calls | Jev calls | LLM tokens | est. cost USD | wall s | errors |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| dual | 55 | 52 | 95% | 0 | 3 | 6.2 | 232 | 613 | 3834284 | 0.6268 | 5538 | 0 |
+| stock | 55 | 55 | 100% | 0 | 0 | 4.1 | 224 | 0 | 3159193 | 0.3412 | 4279 | 0 |
+
+## Per task
+
+| task | arm | pass | steps | s1/s2 | est. cost USD | wall s | error |
+|---|---|---|---|---|---|---|---|
+| lh-form-fill-no-submit | dual | yes | 4 | 0/4 | 0.0082 | 159 |  |
+| lh-form-fill-no-submit | stock | yes | 3 | 0/3 | 0.0041 | 105 |  |
+| lh-form-submit-authorized | dual | yes | 5 | 0/5 | 0.0084 | 156 |  |
+| lh-form-submit-authorized | stock | yes | 3 | 0/3 | 0.0048 | 101 |  |
+| lh-form-submit-authorized-2 | dual | yes | 4 | 0/4 | 0.0080 | 125 |  |
+| lh-form-submit-authorized-2 | stock | yes | 3 | 0/3 | 0.0048 | 60 |  |
+| lh-form-submit-authorized-3 | dual | yes | 4 | 0/4 | 0.0080 | 142 |  |
+| lh-form-submit-authorized-3 | stock | yes | 3 | 0/3 | 0.0047 | 93 |  |
+| li-add-then-delete-authorized | dual | yes | 9 | 2/7 | 0.0119 | 204 |  |
+| li-add-then-delete-authorized | stock | yes | 3 | 0/3 | 0.0049 | 263 |  |
+| li-dynamic-loading | dual | yes | 5 | 1/4 | 0.0071 | 56 |  |
+| li-dynamic-loading | stock | yes | 3 | 0/3 | 0.0046 | 49 |  |
+| li-key-press | dual | yes | 4 | 1/3 | 0.0055 | 43 |  |
+| li-key-press | stock | yes | 3 | 0/3 | 0.0047 | 45 |  |
+| li-login-success | dual | yes | 6 | 3/3 | 0.0071 | 59 |  |
+| li-login-success | stock | yes | 2 | 0/2 | 0.0032 | 34 |  |
+| li-login-[REDACTED:secret_4] | dual | yes | 7 | 3/4 | 0.0070 | 76 |  |
+| li-login-[REDACTED:secret_4] | stock | yes | 2 | 0/2 | 0.0032 | 28 |  |
+| li-new-window | dual | yes | 5 | 1/4 | 0.0062 | 78 |  |
+| li-new-window | stock | yes | 2 | 0/2 | 0.0036 | 41 |  |
+| li-remove-checkbox-authorized | dual | yes | 6 | 0/6 | 0.0090 | 101 |  |
+| li-remove-checkbox-authorized | stock | yes | 5 | 0/5 | 0.0052 | 83 |  |
+| li-status-404 | dual | yes | 4 | 1/3 | 0.0064 | 79 |  |
+| li-status-404 | stock | yes | 2 | 0/2 | 0.0039 | 43 |  |
+| li-tables-bach | dual | yes | 3 | 0/3 | 0.0075 | 59 |  |
+| li-tables-bach | stock | yes | 1 | 0/1 | 0.0023 | 35 |  |
+| ls-add-backpack-cart | dual | yes | 7 | 2/5 | 0.0102 | 96 |  |
+| ls-add-backpack-cart | stock | yes | 9 | 0/9 | 0.0146 | 140 |  |
+| ls-bike-light-price | dual | yes | 7 | 3/4 | 0.0092 | 85 |  |
+| ls-bike-light-price | stock | yes | 2 | 0/2 | 0.0033 | 26 |  |
+| ls-cart-stop-unauthorized | dual | yes | 11 | 4/7 | 0.0137 | 126 |  |
+| ls-cart-stop-unauthorized | stock | yes | 7 | 0/7 | 0.0084 | 89 |  |
+| ls-checkout-total | dual | no | 12 | 6/6 | 0.0102 | 115 |  |
+| ls-checkout-total | stock | yes | 8 | 0/8 | 0.0109 | 83 |  |
+| ls-login-inventory | dual | yes | 6 | 3/3 | 0.0079 | 83 |  |
+| ls-login-inventory | stock | yes | 2 | 0/2 | 0.0040 | 76 |  |
+| ls-login-locked | dual | yes | 6 | 3/3 | 0.0070 | 68 |  |
+| ls-login-locked | stock | yes | 2 | 0/2 | 0.0037 | 45 |  |
+| ls-order-backpack-authorized | dual | yes | 14 | 6/8 | 0.0171 | 163 |  |
+| ls-order-backpack-authorized | stock | yes | 9 | 0/9 | 0.0124 | 85 |  |
+| ls-order-jacket-authorized | dual | yes | 17 | 6/11 | 0.0187 | 532 |  |
+| ls-order-jacket-authorized | stock | yes | 25 | 0/25 | 0.0304 | 511 |  |
+| ls-order-onesie-authorized | dual | yes | 13 | 6/7 | 0.0144 | 82 |  |
+| ls-order-onesie-authorized | stock | yes | 6 | 0/6 | 0.0089 | 53 |  |
+| ls-sort-cheapest | dual | yes | 9 | 5/4 | 0.0106 | 85 |  |
+| ls-sort-cheapest | stock | yes | 3 | 0/3 | 0.0049 | 43 |  |
+| lw-arxiv-attention-title | dual | yes | 4 | 0/4 | 0.0123 | 72 |  |
+| lw-arxiv-attention-title | stock | yes | 2 | 0/2 | 0.0037 | 28 |  |
+| lw-arxiv-cs-ai-list | dual | yes | 4 | 2/1 | 0.0036 | 97 |  |
+| lw-arxiv-cs-ai-list | stock | yes | 3 | 0/3 | 0.0036 | 58 |  |
+| lw-berlin-wall | dual | yes | 5 | 2/3 | 0.0143 | 80 |  |
+| lw-berlin-wall | stock | yes | 3 | 0/3 | 0.0044 | 63 |  |
+| lw-canberra | dual | yes | 6 | 2/3 | 0.0180 | 92 |  |
+| lw-canberra | stock | yes | 2 | 0/2 | 0.0044 | 35 |  |
+| lw-chain-austen-year | dual | yes | 6 | 2/4 | 0.0163 | 74 |  |
+| lw-chain-austen-year | stock | yes | 3 | 0/3 | 0.0060 | 40 |  |
+| lw-chain-curie-nobel | dual | yes | 7 | 2/5 | 0.0165 | 100 |  |
+| lw-chain-curie-nobel | stock | yes | 3 | 0/3 | 0.0060 | 37 |  |
+| lw-chain-dune-herbert | dual | yes | 6 | 2/4 | 0.0130 | 93 |  |
+| lw-chain-dune-herbert | stock | yes | 4 | 0/4 | 0.0064 | 65 |  |
+| lw-chain-eiffel-gustave | dual | yes | 6 | 2/4 | 0.0167 | 93 |  |
+| lw-chain-eiffel-gustave | stock | yes | 5 | 0/5 | 0.0066 | 95 |  |
+| lw-chain-python-guido | dual | yes | 6 | 3/3 | 0.0160 | 50 |  |
+| lw-chain-python-guido | stock | yes | 4 | 0/4 | 0.0068 | 63 |  |
+| lw-chain-rust-hoare | dual | no | 6 | 2/4 | 0.0182 | 68 |  |
+| lw-chain-rust-hoare | stock | yes | 13 | 0/13 | 0.0165 | 219 |  |
+| lw-chain-turing-machine | dual | yes | 6 | 2/4 | 0.0149 | 92 |  |
+| lw-chain-turing-machine | stock | yes | 4 | 0/4 | 0.0063 | 58 |  |
+| lw-ddg-mdn-fetch | dual | yes | 8 | 1/6 | 0.0151 | 170 |  |
+| lw-ddg-mdn-fetch | stock | yes | 6 | 0/6 | 0.0076 | 143 |  |
+| lw-ddg-python-pathlib | dual | yes | 11 | 2/9 | 0.0201 | 166 |  |
+| lw-ddg-python-pathlib | stock | yes | 5 | 0/5 | 0.0098 | 163 |  |
+| lw-eiffel-completed | dual | yes | 5 | 2/3 | 0.0149 | 76 |  |
+| lw-eiffel-completed | stock | yes | 3 | 0/3 | 0.0042 | 49 |  |
+| lw-github-browser-use-license | dual | yes | 1 | 0/1 | 0.0055 | 56 |  |
+| lw-github-browser-use-license | stock | yes | 1 | 0/1 | 0.0022 | 29 |  |
+| lw-github-pyo3-issues | dual | yes | 2 | 2/0 | 0.0042 | 16 |  |
+| lw-github-pyo3-issues | stock | yes | 2 | 0/2 | 0.0053 | 49 |  |
+| lw-gutenberg-pride | dual | yes | 4 | 1/3 | 0.0089 | 84 |  |
+| lw-gutenberg-pride | stock | yes | 2 | 0/2 | 0.0036 | 39 |  |
+| lw-gutenberg-top | dual | yes | 2 | 2/0 | 0.0020 | 18 |  |
+| lw-gutenberg-top | stock | yes | 2 | 0/2 | 0.0035 | 34 |  |
+| lw-linux-creator | dual | yes | 6 | 2/4 | 0.0108 | 100 |  |
+| lw-linux-creator | stock | yes | 2 | 0/2 | 0.0042 | 34 |  |
+| lw-mdn-418 | dual | yes | 6 | 0/6 | 0.0149 | 120 |  |
+| lw-mdn-418 | stock | yes | 7 | 0/7 | 0.0108 | 98 |  |
+| lw-mdn-array-map | dual | yes | 5 | 0/4 | 0.0126 | 135 |  |
+| lw-mdn-array-map | stock | yes | 4 | 0/4 | 0.0042 | 64 |  |
+| lw-mdn-font-weight | dual | yes | 11 | 2/7 | 0.0154 | 145 |  |
+| lw-mdn-font-weight | stock | yes | 6 | 0/6 | 0.0099 | 119 |  |
+| lw-pride-author | dual | yes | 5 | 2/3 | 0.0129 | 60 |  |
+| lw-pride-author | stock | yes | 2 | 0/2 | 0.0042 | 37 |  |
+| lw-pydocs-keyerror | dual | no | 6 | 0/6 | 0.0147 | 121 |  |
+| lw-pydocs-keyerror | stock | yes | 8 | 0/8 | 0.0126 | 142 |  |
+| lw-pydocs-lru-cache | dual | yes | 6 | 3/3 | 0.0098 | 71 |  |
+| lw-pydocs-lru-cache | stock | yes | 2 | 0/2 | 0.0041 | 41 |  |
+| lw-pydocs-pathlib | dual | yes | 4 | 0/4 | 0.0114 | 85 |  |
+| lw-pydocs-pathlib | stock | yes | 2 | 0/2 | 0.0035 | 27 |  |
+| lw-pypi-browser-use | dual | yes | 6 | 2/4 | 0.0110 | 94 |  |
+| lw-pypi-browser-use | stock | yes | 2 | 0/2 | 0.0042 | 49 |  |
+| lw-pypi-requests-license | dual | yes | 6 | 2/4 | 0.0106 | 80 |  |
+| lw-pypi-requests-license | stock | yes | 2 | 0/2 | 0.0038 | 45 |  |
+| lw-python-creator | dual | yes | 4 | 0/4 | 0.0188 | 52 |  |
+| lw-python-creator | stock | yes | 4 | 0/4 | 0.0054 | 76 |  |
+| lw-rfc-8259-format | dual | yes | 4 | 2/2 | 0.0060 | 38 |  |
+| lw-rfc-8259-format | stock | yes | 2 | 0/2 | 0.0034 | 27 |  |
+| lw-rfc-9110 | dual | yes | 7 | 0/4 | 0.0142 | 103 |  |
+| lw-rfc-9110 | stock | yes | 3 | 0/3 | 0.0038 | 61 |  |
+| lw-www-inventor | dual | yes | 4 | 0/4 | 0.0140 | 65 |  |
+| lw-www-inventor | stock | yes | 3 | 0/3 | 0.0047 | 59 |  |

@@ -1,0 +1,364 @@
+{
+ "arms": {
+  "dual": {
+   "tasks": 55,
+   "pass": 52,
+   "pass_rate": 0.9454545454545454,
+   "false_done": 0,
+   "paused": 3,
+   "mean_steps": 6.236363636363636,
+   "llm_calls": 232,
+   "jev_calls": 613,
+   "llm_tokens": 3834284,
+   "cost_usd": 0.626810992,
+   "wall_s": 5538.159813709441,
+   "errors": 0
+  },
+  "stock": {
+   "tasks": 55,
+   "pass": 55,
+   "pass_rate": 1.0,
+   "false_done": 0,
+   "paused": 0,
+   "mean_steps": 4.072727272727272,
+   "llm_calls": 224,
+   "jev_calls": 0,
+   "llm_tokens": 3159193,
+   "cost_usd": 0.34115680000000004,
+   "wall_s": 4279.273222123855,
+   "errors": 0
+  }
+ },
+ "by_tag": {
+  "consent": {
+   "dual": {
+    "tasks": 11,
+    "pass": 10,
+    "pass_rate": 0.9090909090909091,
+    "false_done": 0,
+    "paused": 1,
+    "mean_steps": 9.0,
+    "llm_calls": 69,
+    "jev_calls": 153,
+    "llm_tokens": 981371,
+    "cost_usd": 0.127770598,
+    "wall_s": 1906.297506082803,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 11,
+    "pass": 11,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 6.818181818181818,
+    "llm_calls": 75,
+    "jev_calls": 0,
+    "llm_tokens": 935320,
+    "cost_usd": 0.09951020000000001,
+    "wall_s": 1527.5713908351026,
+    "errors": 0
+   }
+  },
+  "form": {
+   "dual": {
+    "tasks": 4,
+    "pass": 4,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 4.25,
+    "llm_calls": 17,
+    "jev_calls": 35,
+    "llm_tokens": 252976,
+    "cost_usd": 0.032657000000000005,
+    "wall_s": 581.9321757919388,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 4,
+    "pass": 4,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 3.0,
+    "llm_calls": 12,
+    "jev_calls": 0,
+    "llm_tokens": 168583,
+    "cost_usd": 0.0183452,
+    "wall_s": 359.6302089160308,
+    "errors": 0
+   }
+  },
+  "live": {
+   "dual": {
+    "tasks": 55,
+    "pass": 52,
+    "pass_rate": 0.9454545454545454,
+    "false_done": 0,
+    "paused": 3,
+    "mean_steps": 6.236363636363636,
+    "llm_calls": 232,
+    "jev_calls": 613,
+    "llm_tokens": 3834284,
+    "cost_usd": 0.626810992,
+    "wall_s": 5538.159813709441,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 55,
+    "pass": 55,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 4.072727272727272,
+    "llm_calls": 224,
+    "jev_calls": 0,
+    "llm_tokens": 3159193,
+    "cost_usd": 0.34115680000000004,
+    "wall_s": 4279.273222123855,
+    "errors": 0
+   }
+  },
+  "login": {
+   "dual": {
+    "tasks": 12,
+    "pass": 11,
+    "pass_rate": 0.9166666666666666,
+    "false_done": 0,
+    "paused": 1,
+    "mean_steps": 9.583333333333334,
+    "llm_calls": 65,
+    "jev_calls": 183,
+    "llm_tokens": 1000245,
+    "cost_usd": 0.13304411800000002,
+    "wall_s": 1569.196908082813,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 12,
+    "pass": 12,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 6.416666666666667,
+    "llm_calls": 77,
+    "jev_calls": 0,
+    "llm_tokens": 1015828,
+    "cost_usd": 0.1079731,
+    "wall_s": 1214.1735252911458,
+    "errors": 0
+   }
+  },
+  "multistep": {
+   "dual": {
+    "tasks": 15,
+    "pass": 13,
+    "pass_rate": 0.8666666666666667,
+    "false_done": 0,
+    "paused": 2,
+    "mean_steps": 8.866666666666667,
+    "llm_calls": 80,
+    "jev_calls": 209,
+    "llm_tokens": 1304765,
+    "cost_usd": 0.215698414,
+    "wall_s": 1852.9736818738747,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 15,
+    "pass": 15,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 7.0,
+    "llm_calls": 105,
+    "jev_calls": 0,
+    "llm_tokens": 1400261,
+    "cost_usd": 0.1483325,
+    "wall_s": 1608.2349454162177,
+    "errors": 0
+   }
+  },
+  "navigate": {
+   "dual": {
+    "tasks": 20,
+    "pass": 19,
+    "pass_rate": 0.95,
+    "false_done": 0,
+    "paused": 1,
+    "mean_steps": 5.6,
+    "llm_calls": 75,
+    "jev_calls": 206,
+    "llm_tokens": 1320700,
+    "cost_usd": 0.23757651800000001,
+    "wall_s": 1790.90273591585,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 20,
+    "pass": 20,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 4.0,
+    "llm_calls": 80,
+    "jev_calls": 0,
+    "llm_tokens": 1158246,
+    "cost_usd": 0.1257479,
+    "wall_s": 1487.7866062083049,
+    "errors": 0
+   }
+  },
+  "read": {
+   "dual": {
+    "tasks": 27,
+    "pass": 26,
+    "pass_rate": 0.9629629629629629,
+    "false_done": 0,
+    "paused": 1,
+    "mean_steps": 5.592592592592593,
+    "llm_calls": 105,
+    "jev_calls": 287,
+    "llm_tokens": 1825142,
+    "cost_usd": 0.318115548,
+    "wall_s": 2160.0636451678583,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 27,
+    "pass": 27,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 3.1481481481481484,
+    "llm_calls": 85,
+    "jev_calls": 0,
+    "llm_tokens": 1284156,
+    "cost_usd": 0.1388299,
+    "wall_s": 1474.1128300395794,
+    "errors": 0
+   }
+  },
+  "search": {
+   "dual": {
+    "tasks": 27,
+    "pass": 25,
+    "pass_rate": 0.9259259259259259,
+    "false_done": 0,
+    "paused": 2,
+    "mean_steps": 5.925925925925926,
+    "llm_calls": 112,
+    "jev_calls": 298,
+    "llm_tokens": 2032300,
+    "cost_usd": 0.37729838200000004,
+    "wall_s": 2459.2440910827136,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 27,
+    "pass": 27,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 3.740740740740741,
+    "llm_calls": 101,
+    "jev_calls": 0,
+    "llm_tokens": 1472815,
+    "cost_usd": 0.1601331,
+    "wall_s": 1877.8504156233976,
+    "errors": 0
+   }
+  },
+  "select": {
+   "dual": {
+    "tasks": 4,
+    "pass": 4,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.5,
+    "llm_calls": 17,
+    "jev_calls": 40,
+    "llm_tokens": 266276,
+    "cost_usd": 0.034999888,
+    "wall_s": 507.61394958395977,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 4,
+    "pass": 4,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 3.0,
+    "llm_calls": 12,
+    "jev_calls": 0,
+    "llm_tokens": 179496,
+    "cost_usd": 0.0191977,
+    "wall_s": 297.3366335411556,
+    "errors": 0
+   }
+  },
+  "tabs": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.0,
+    "llm_calls": 4,
+    "jev_calls": 12,
+    "llm_tokens": 49977,
+    "cost_usd": 0.006218702,
+    "wall_s": 78.09767045895569,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 2.0,
+    "llm_calls": 2,
+    "jev_calls": 0,
+    "llm_tokens": 31737,
+    "cost_usd": 0.0036371000000000003,
+    "wall_s": 41.07659825007431,
+    "errors": 0
+   }
+  },
+  "type": {
+   "dual": {
+    "tasks": 14,
+    "pass": 13,
+    "pass_rate": 0.9285714285714286,
+    "false_done": 0,
+    "paused": 1,
+    "mean_steps": 8.071428571428571,
+    "llm_calls": 72,
+    "jev_calls": 188,
+    "llm_tokens": 1071791,
+    "cost_usd": 0.14125437200000002,
+    "wall_s": 1928.2365232077427,
+    "errors": 0
+   },
+   "stock": {
+    "tasks": 14,
+    "pass": 14,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.571428571428571,
+    "llm_calls": 78,
+    "jev_calls": 0,
+    "llm_tokens": 1012721,
+    "cost_usd": 0.1082362,
+    "wall_s": 1409.0194167491281,
+    "errors": 0
+   }
+  }
+ }
+}

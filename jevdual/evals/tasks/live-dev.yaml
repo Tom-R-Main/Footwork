@@ -69,7 +69,7 @@ tasks:
     predicate: {kind: url_contains, value: 'Guido_van_Rossum'}
 
   - id: lw-chain-rust-hoare
-    task: On Wikipedia, open the article "Rust (programming language)", then follow the link to the article about its original designer and stop there.
+    task: On Wikipedia, open the article "Rust (programming language)", find who its original designer was, then open that person's Wikipedia article and stop there.
     start_url: "https://en.wikipedia.org/wiki/Main_Page"
     tags: [live, search, navigate, multistep]
     requirements: [Rust article opened, Designer's article opened]
@@ -244,15 +244,17 @@ tasks:
   - id: lw-ddg-mdn-fetch
     task: Search DuckDuckGo for "MDN fetch API" and open the result on developer.mozilla.org.
     start_url: "https://duckduckgo.com/"
-    tags: [live, search, navigate]
+    tags: [live, search, navigate, multistep]
     requirements: [Search submitted, MDN result opened]
+    checkpoints: [{kind: url_contains, value: 'duckduckgo.com/?q='}]
     predicate: {kind: url_contains, value: 'developer.mozilla.org'}
 
   - id: lw-ddg-python-pathlib
     task: Search DuckDuckGo for "python pathlib documentation" and open the result on docs.python.org.
     start_url: "https://duckduckgo.com/"
-    tags: [live, search, navigate]
+    tags: [live, search, navigate, multistep]
     requirements: [Search submitted, docs.python.org result opened]
+    checkpoints: [{kind: url_contains, value: 'duckduckgo.com/?q='}]
     predicate: {kind: url_contains, value: 'docs.python.org'}
 
   # ---- saucedemo.com: login, select, multistep checkout, consent
