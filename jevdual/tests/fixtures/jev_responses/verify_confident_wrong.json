@@ -12,6 +12,10 @@
   "unmet_0": {
    "type": "noul",
    "noul": 0.1
+  },
+  "answer_required": {
+   "type": "noul",
+   "noul": 0.08
   }
  }
 }

@@ -71,13 +71,13 @@ def by_tag(results: list[TaskResult]) -> dict[str, dict[str, dict[str, float]]]:
 
 def render_markdown(results: list[TaskResult], title: str) -> str:
     agg = aggregate(results)
-    lines = [f"# {title}", "", "| arm | tasks | pass | pass rate | false done | paused | mean steps | LLM calls | Jev calls | LLM tokens | cost USD | wall s | errors |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    lines = [f"# {title}", "", "| arm | tasks | pass | pass rate | false done | paused | mean steps | LLM calls | Jev calls | LLM tokens | est. cost USD | wall s | errors |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for arm, a in agg.items():
         lines.append(
             f"| {arm} | {a['tasks']:.0f} | {a['pass']:.0f} | {a['pass_rate']:.0%} | {a['false_done']:.0f} | {a['paused']:.0f} | {a['mean_steps']:.1f} | "
             f"{a['llm_calls']:.0f} | {a['jev_calls']:.0f} | {a['llm_tokens']:.0f} | {a['cost_usd']:.4f} | {a['wall_s']:.0f} | {a['errors']:.0f} |"
         )
-    lines += ["", "## Per task", "", "| task | arm | pass | steps | s1/s2 | cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|"]
+    lines += ["", "## Per task", "", "| task | arm | pass | steps | s1/s2 | est. cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|"]
     for r in sorted(results, key=lambda r: (r.task_id, r.arm)):
         lines.append(f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |")
     return "\n".join(lines) + "\n"

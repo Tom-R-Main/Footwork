@@ -84,13 +84,15 @@ def origin_allows(url: str, pattern: str) -> bool:
     if parts.username or parts.password:
         return False
     pat_scheme, pat_host = _parse_pattern(pattern)
+    # Plaintext HTTP carries credentials in the clear; it is allowed only to loopback hosts,
+    # whatever the pattern says (an explicit http:// pattern cannot opt a remote host in).
+    if scheme == "http" and not _is_loopback(host):
+        return False
     if pat_host == ANY_ORIGIN:
         return scheme in ("http", "https")
     if "*" in pat_host and not (pat_host.startswith("*.") and "*" not in pat_host[2:]):
         return False
-    if pat_scheme is None:
-        scheme_ok = scheme == "https" or (scheme == "http" and _is_loopback(host))
-    elif pat_scheme == "http*":
+    if pat_scheme is None or pat_scheme == "http*":
         scheme_ok = scheme in ("http", "https")
     else:
         scheme_ok = scheme == pat_scheme
@@ -175,6 +177,11 @@ class SecretStore:
         return Redactor(self)
 
 
+def _lower_escapes(encoded: str) -> str:
+    """Lowercase only the hex digits of percent escapes, leaving literal letters untouched."""
+    return re.sub(r"%[0-9A-Fa-f]{2}", lambda m: m.group(0).lower(), encoded)
+
+
 def _variants(value: str) -> set[str]:
     """Every echo form a page, log or serializer is likely to produce for a value."""
     v: set[str] = {value}
@@ -183,9 +190,9 @@ def _variants(value: str) -> set[str]:
     for s in (value, collapsed):
         pct = quote(s, safe="")
         v.add(pct)
-        v.add(pct.lower())
+        v.add(_lower_escapes(pct))
         v.add(quote_plus(s))
-        v.add(quote_plus(s).lower())
+        v.add(_lower_escapes(quote_plus(s)))
         v.add(html.escape(s, quote=True))
         v.add(html.escape(s, quote=False))
         v.add(json.dumps(s)[1:-1])

@@ -121,6 +121,10 @@ def test_destructive_gate_replaces_action_for_either_system():
             self.destructive_keywords = ArbiterPolicy.from_toml().destructive_keywords
             self.authorized_destructive = False
             self.paused_before_action = None
+            self.s1_policy = None
+            self.s2_verifications = []
+            self.s2_done_rejections = 0
+            self.max_done_rejections = 2
             self.executed = None
 
         async def _super_execute(self):
@@ -144,3 +148,37 @@ def test_destructive_gate_replaces_action_for_either_system():
     asyncio.run(go(agent))
     assert agent.paused_before_action["system"] == "s2" and agent.paused_before_action["keyword"] == "delete"
     assert agent.executed[0]["done"]["success"] is False and "Delete account" in agent.executed[0]["done"]["text"]
+
+
+def test_redact_menu_scrubs_every_model_facing_string():
+    from jevdual.menu import Candidate, Menu
+    from jevdual.s1 import redact_menu
+    from jevdual.secrets import SecretStore
+
+    red = SecretStore({"password": "hunter2"}).redactor()
+    m = Menu(url="http://s/account.html?user=ada&password=hunter2", title="hunter2 page", page_text="you typed hunter2",
+             candidates=(Candidate(1, "hunter2", "a", ("click",), href="/x?p=hunter2", value="hunter2"),), by_operation={"click": ()})
+    r = redact_menu(m, red)
+    import json
+
+    assert "hunter2" not in json.dumps({"u": r.url, "t": r.title, "p": r.page_text, "c": [c.to_state() for c in r.candidates]})
+    assert r.candidates[0].id == 1
+
+
+def test_gate_covers_index_less_actions():
+    import asyncio
+    from types import SimpleNamespace
+
+    from browser_use.tools.service import Tools
+    from jevdual.agent import DualProcessAgent
+    from jevdual.arbiter import ArbiterPolicy
+
+    am = Tools().registry.create_action_model()
+    a = DualProcessAgent.__new__(DualProcessAgent)
+    a.destructive_keywords = ArbiterPolicy.from_toml().destructive_keywords
+    a.browser_session = SimpleNamespace(_cached_browser_state_summary=None, get_or_create_cdp_session=None)
+    assert asyncio.run(a._destructive_hit_any([am(evaluate={"code": "document.querySelector('#del').click()"})]))[1] == "evaluate"
+    assert asyncio.run(a._destructive_hit_any([am(navigate={"url": "http://s/delete-confirm.html"})]))[1] == "delete"
+    assert asyncio.run(a._destructive_hit_any([am(navigate={"url": "http://s/about.html"})])) is None
+    hit = asyncio.run(a._destructive_hit_any([am(send_keys={"keys": "Enter"})]))
+    assert hit is not None and hit[1] == "enter"  # focus unknown: gate conservatively

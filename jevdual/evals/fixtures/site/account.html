@@ -5,5 +5,5 @@
 <nav><a href="/">Home</a> | <a href="/search.html">Search</a> | <a href="/list.html">Catalog</a> | <a href="/form.html">Contact</a> | <a href="/modal.html">Announcements</a> | <a href="/login.html">Sign in</a> | <a href="/checkout.html">Checkout</a> | <a href="/article.html">Article</a> | <a href="/enter-submit.html">Tracking</a></nav>
 <h1>Account</h1>
 <div id="acct"></div>
-<script>const q=new URLSearchParams(location.search);const u=q.get("user")||"";if(q.get("password")==="hunter2"&&u){document.getElementById("acct").innerHTML=`<p id="welcome">Welcome, ${u.replace(/</g,"&lt;")}</p><p>Member since 2024. <a href="/checkout.html">Checkout</a> · <a href="/">Sign out</a></p>`;}else{location.replace("/login.html?error=1");}</script>
+<script>const q=new URLSearchParams(location.search);const u=q.get("user")||"";if(q.get("ok")==="1"&&u){document.getElementById("acct").innerHTML=`<p id="welcome">Welcome, ${u.replace(/</g,"&lt;")}</p><p>Member since 2024. <a href="/checkout.html">Checkout</a> · <a href="/">Sign out</a></p>`;}else{location.replace("/login.html?error=1");}</script>
 </body></html>

@@ -25,3 +25,5 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --locked
       - run: JEVDUAL_PURE_PY=${{ matrix.pure_py }} uv run pytest -q
+      - run: JEVDUAL_NATIVE_SNAPSHOT=1 uv run pytest tests/equality -q
+        if: matrix.pure_py == '0'

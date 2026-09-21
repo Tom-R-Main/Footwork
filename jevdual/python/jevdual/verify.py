@@ -179,7 +179,7 @@ class Verifier:
             state["answer"] = answer
         return state
 
-    async def verify(self, task: str, requirements: tuple[str, ...], menu: Menu, answer: str | None) -> Verdict:
+    async def verify(self, task: str, requirements: tuple[str, ...], menu: Menu, answer: str | None, *, answer_expected: bool = False) -> Verdict:
         questions = self.build_questions(requirements)
         state = self.build_state(task, requirements, menu, answer)
         started = time.perf_counter()
@@ -197,7 +197,11 @@ class Verifier:
             unmet[req] = response.nouls[key].noul
 
         band, reason = band_for(complete, unmet, self.policy)
-        answer_required = response.nouls["answer_required"].noul if "answer_required" in response.nouls else 0.0
+        if "answer_required" not in response.nouls:
+            raise PolicyError("verification answer missing `answer_required`")
+        answer_required = response.nouls["answer_required"].noul
+        if answer_expected:
+            answer_required = max(answer_required, 1.0)
 
         claims = check_claims(answer, menu.page_text)
         unsupported = tuple(c.claim for c in claims if not c.supported)
@@ -237,12 +241,13 @@ class ArbiterHook:
     ``answer`` is the text the run is about to report; pass ``None`` for navigation-only tasks.
     """
 
-    def __init__(self, verifier: Verifier, requirements: tuple[str, ...]):
+    def __init__(self, verifier: Verifier, requirements: tuple[str, ...], *, answer_expected: bool = False):
+        self.answer_expected = answer_expected
         self.verifier = verifier
         self.requirements = requirements
         self.last: Verdict | None = None
 
     async def judge_done(self, agent: Any, menu: Menu, answer: str | None = None) -> tuple[Band, str]:
-        verdict = await self.verifier.verify(agent.task, self.requirements, menu, answer)
+        verdict = await self.verifier.verify(agent.task, self.requirements, menu, answer, answer_expected=self.answer_expected)
         self.last = verdict
         return verdict.band, verdict.reason

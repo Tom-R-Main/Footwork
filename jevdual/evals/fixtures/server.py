@@ -11,7 +11,7 @@ import threading
 from collections.abc import Callable
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qsl
+from urllib.parse import parse_qsl, quote
 
 SITE = Path(__file__).with_name("site")
 
@@ -51,7 +51,17 @@ def _handler(recorder: Recorder) -> type[BaseHTTPRequestHandler]:
 
         def do_POST(self) -> None:
             length = int(self.headers.get("Content-Length") or 0)
-            recorder.add(self.path, dict(parse_qsl(self.rfile.read(length).decode())))
+            fields = dict(parse_qsl(self.rfile.read(length).decode()))
+            recorder.add(self.path, fields)
+            if self.path.split("?")[0] == "/account.html":
+                # Sign-in is checked server-side; the password never appears in a URL.
+                user = fields.get("user", "")
+                ok = user and fields.get("password") == "hunter2"
+                self.send_response(303)
+                self.send_header("Location", f"/account.html?user={quote(user)}&ok=1" if ok else "/login.html?error=1")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
             self._send(200, b"<!doctype html><title>Thanks</title><h1>Thanks, we received it.</h1>")
 
         def _send(self, status: int, body: bytes) -> None:

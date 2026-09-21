@@ -59,6 +59,9 @@ class DualProcessAgent(Agent):
         self.destructive_keywords = destructive_keywords
         self.authorized_destructive = authorized_destructive
         self.paused_before_action: dict[str, Any] | None = None
+        self.s2_verifications: list[dict[str, Any]] = []
+        self.s2_done_rejections = 0
+        self.max_done_rejections = 2
         self.s1_steps = 0
         self.s2_steps = 0
         #: step number -> "s1" | "s2", read by the eval rig when it builds the trace.
@@ -82,10 +85,111 @@ class DualProcessAgent(Agent):
                 return label[:80], kw, idx
         return None
 
+    async def _active_element_label(self) -> str:
+        """Label of the focused element and its form's submit control, for gating Enter."""
+        js = (
+            "(()=>{const a=document.activeElement;if(!a)return '';const f=a.form||a.closest('form');"
+            "const p=[a.getAttribute('aria-label')||'',a.value||'',a.innerText||''];"
+            "if(f){const b=f.querySelector('button[type=submit],input[type=submit],button:not([type])');"
+            "if(b)p.push(b.innerText||b.value||'');p.push(f.getAttribute('action')||'')}"
+            "return p.join(' | ').slice(0,300)})()"
+        )
+        try:
+            cdp = await self.browser_session.get_or_create_cdp_session()
+            r = await cdp.cdp_client.send.Runtime.evaluate(params={"expression": js, "returnByValue": True}, session_id=cdp.session_id)
+            return str(r.get("result", {}).get("value") or "")
+        except Exception as exc:  # noqa: BLE001 - if we cannot see the focus, we gate conservatively below
+            log.warning("active element lookup failed: %s", exc)
+            return ""
+
+    async def _destructive_hit_any(self, actions: list[Any]) -> tuple[str, str, int] | None:
+        """Extend the index-based gate to actions that carry no index.
+
+        evaluate runs arbitrary page script and is refused outright without authorization;
+        navigate is checked against the destination url; send_keys with Enter is checked
+        against the focused element and its form's submit control.
+        """
+        from jevdual.arbiter import match_destructive_keyword
+
+        hit = self._destructive_hit(actions)
+        if hit is not None:
+            return hit
+        keywords = tuple(k.casefold() for k in self.destructive_keywords)
+        for action in actions:
+            data = action.model_dump(exclude_unset=True)
+            name = next(iter(data))
+            params = data[name] or {}
+            if name == "evaluate":
+                return ("evaluate (arbitrary page script)", "evaluate", -1)
+            if name == "navigate":
+                url = str(params.get("url", ""))
+                path = url.casefold()
+                kw = next((k for k in keywords if k in path), None)
+                if kw:
+                    return (f"navigate to {url}", kw, -1)
+            if name == "send_keys" and "enter" in str(params.get("keys", "")).casefold():
+                label = await self._active_element_label()
+                if not label:
+                    return ("Enter with unknown focused element", "enter", -1)
+                kw = match_destructive_keyword(label, self.destructive_keywords)
+                if kw:
+                    return (f"Enter in {label[:80]!r}", kw, -1)
+        return None
+
+    async def _verify_s2_done(self, out: Any) -> None:
+        """System 2's own done goes through the same verifier as System 1's.
+
+        A rejected done is replaced by a one-second wait plus a context message so the run
+        continues; after ``max_done_rejections`` the done is allowed but marked UNVERIFIED with
+        success=False so it can never count as a claimed completion.
+        """
+        verifier = getattr(self.s1_policy, "verifier", None)
+        if verifier is None:
+            return
+        done = next((a for a in out.action if a.model_dump(exclude_unset=True).get("done") is not None), None)
+        if done is None:
+            return
+        params = dict(done.model_dump(exclude_unset=True)["done"] or {})
+        if params.get("success", True) is False:
+            return
+        from jevdual.menu import build_menu
+
+        state = getattr(self.browser_session, "_cached_browser_state_summary", None)
+        if state is None:
+            return
+        menu = build_menu(state)
+        store = getattr(self.s1_policy, "secrets", None)
+        if store is not None:
+            from jevdual.s1 import redact_menu
+
+            menu = redact_menu(menu, store.redactor())
+        band, reason = await verifier.judge_done(self, menu, answer=params.get("text"))
+        self.s2_verifications.append({"step": self.state.n_steps, "band": band, "reason": reason})
+        if band == "accept":
+            return
+        self.s2_done_rejections += 1
+        if self.s2_done_rejections <= self.max_done_rejections:
+            from browser_use.llm.messages import UserMessage
+
+            log.info("step %s: System 2 done rejected by verification (%s): %s", self.state.n_steps, band, reason)
+            out.action = [self.ActionModel(wait={"seconds": 1})]
+            self._message_manager._add_context_message(
+                UserMessage(
+                    content=f"Your done was not accepted by verification ({band}): {reason}. Continue the task. "
+                    "If it asks for an answer, the answer must quote what the page shows."
+                )
+            )
+        else:
+            params["success"] = False
+            params["text"] = "UNVERIFIED: " + str(params.get("text", ""))
+            out.action = [self.ActionModel(done=params)]
+
     async def _execute_actions(self) -> None:
         out = self.state.last_model_output
+        if out is not None and self.step_systems.get(self.state.n_steps) == "s2":
+            await self._verify_s2_done(out)
         if out is not None and not self.authorized_destructive:
-            hit = self._destructive_hit(list(out.action))
+            hit = await self._destructive_hit_any(list(out.action))
             if hit is not None:
                 label, kw, idx = hit
                 system = self.step_systems.get(self.state.n_steps, "s2")

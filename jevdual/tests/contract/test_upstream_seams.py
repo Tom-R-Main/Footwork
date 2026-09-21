@@ -365,3 +365,13 @@ def test_tree_builder_binds_node_class_by_module_name():
     # _construct_enhanced_node is a closure inside get_dom_tree, so it resolves the class name at call time.
     src = inspect.getsource(service.DomService.get_dom_tree)
     assert "def _construct_enhanced_node" in src and "EnhancedDOMTreeNode(" in src
+
+
+def test_message_manager_context_message_seam():
+    """DualProcessAgent._verify_s2_done feeds verification feedback to System 2 through this method."""
+    import inspect
+
+    from browser_use.agent.message_manager.service import MessageManager
+
+    sig = inspect.signature(MessageManager._add_context_message)
+    assert list(sig.parameters) == ["self", "message"]

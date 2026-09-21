@@ -77,6 +77,32 @@ class S1Record:
     jev_ms: float = 0.0
 
 
+def redact_menu(menu: Menu, red: Callable[[str], str]) -> Menu:
+    """A copy of the menu with every model-facing string passed through the secret redactor."""
+
+    def rc(c: Candidate) -> Candidate:
+        return dataclasses.replace(
+            c,
+            label=red(c.label),
+            value=red(c.value) if c.value else c.value,
+            href=red(c.href) if c.href else c.href,
+            section=red(c.section) if c.section else c.section,
+            options=tuple(red(o) for o in c.options) if c.options else c.options,
+        )
+
+    cands = tuple(rc(c) for c in menu.candidates)
+    by_id = {c.id: c for c in cands}
+    return dataclasses.replace(
+        menu,
+        url=red(menu.url),
+        title=red(menu.title),
+        page_text=red(menu.page_text),
+        candidates=cands,
+        by_operation={op: tuple(by_id[c.id] for c in cs) for op, cs in menu.by_operation.items()},
+        tabs=tuple({k: (red(v) if isinstance(v, str) else v) for k, v in t.items()} for t in menu.tabs),
+    )
+
+
 class JevS1:
     def __init__(
         self,
@@ -109,6 +135,9 @@ class JevS1:
 
     def _context(self, agent: DualProcessAgent) -> StepContext:
         lines = [h.model_output.memory for h in agent.history.history if h.model_output and h.model_output.memory]
+        if self.secrets is not None:
+            red = self.secrets.redactor()
+            lines = [red(line) for line in lines]
         return StepContext(
             task=agent.task,
             requirements=self.requirements,
@@ -125,6 +154,10 @@ class JevS1:
 
         t0 = time.perf_counter()
         menu = build_menu(state)
+        live_url = menu.url
+        if self.secrets is not None:
+            # Nothing model-facing may carry a secret value, however it got onto the page.
+            menu = redact_menu(menu, self.secrets.redactor())
         rec.menu_ms = (time.perf_counter() - t0) * 1000
         rec.menu_omitted = dict(menu.omitted)
         self.last_menu = menu
@@ -174,6 +207,12 @@ class JevS1:
             if text is None:
                 rec.verdict = Verdict("escalate", f"{decision.operation} needs composed text")
                 return None
+            if isinstance(text, str) and text.startswith("<secret>") and self.secrets is not None:
+                name = text[len("<secret>") : text.index("</secret>")] if "</secret>" in text else ""
+                if not name or not self.secrets.allowed_for(live_url, name):
+                    rec.verdict = Verdict("escalate", f"secret {name!r} is not allowed on {live_url}")
+                    log.warning("step %s: refusing to type secret %r on %s", step, name, live_url)
+                    return None
 
         try:
             bridged: Bridged = Bridge(agent.ActionModel, agent.AgentOutput).build(decision, menu, step=step, text=text, done_text=done_text)

@@ -147,6 +147,7 @@ def uninstall() -> None:
 
         es_mod.build_snapshot_lookup = _ORIGINALS["build_snapshot_lookup"]  # type: ignore[assignment]
         svc_mod.build_snapshot_lookup = _ORIGINALS["build_snapshot_lookup"]  # type: ignore[assignment]
+        _ACTIVE.pop("snapshot_lookup", None)
     if "lazy_uuid" in _ORIGINALS:
         from browser_use.dom import service as svc_mod
 

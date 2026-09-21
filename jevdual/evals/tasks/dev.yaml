@@ -49,7 +49,7 @@ tasks:
     start_url: "{site}/form.html"
     tags: [type, select]
     requirements: [Name and email filled, Topic Damaged item selected, Message entered, Form submitted]
-    predicate: {kind: page_text_contains, value: 'Damaged item'}
+    predicate: {kind: page_text_contains, value: 'The lantern arrived broken.'}
     authorize: true
 
   - id: contact-form-newsletter

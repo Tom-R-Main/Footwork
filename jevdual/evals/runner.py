@@ -68,17 +68,21 @@ def default_policy_factory() -> PolicyFactory:
     from jevdual.s1 import AlwaysAct, JevS1
     from typesafe_sdk import AsyncTypeSafeClient
 
-    client = AsyncTypeSafeClient()  # reads TYPESAFE_API_KEY
-    policy = JevPolicy(client)
+    base_client = AsyncTypeSafeClient()  # reads TYPESAFE_API_KEY
 
     def factory(task: Task, store: Any = None, arm: str = "dual") -> S1Policy:
+        client = CountingClient(base_client)  # one counter per task: every Jev request is billed
+        policy = JevPolicy(client)
         if arm == "s1_only":
             # S1's own done stands, so false completions are measured, not hidden.
-            return JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
-        from jevdual.verify import ArbiterHook, Verifier
+            s1 = JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
+        else:
+            from jevdual.verify import ArbiterHook, Verifier
 
-        hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements))
-        return JevS1(policy, arbiter=_dual_arbiter(), requirements=tuple(task.requirements), verifier=hook, secrets=store)
+            hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected)
+            s1 = JevS1(policy, arbiter=_dual_arbiter(), requirements=tuple(task.requirements), verifier=hook, secrets=store)
+        s1.jev_counter = client  # type: ignore[attr-defined]
+        return s1
 
     return factory
 
@@ -116,6 +120,35 @@ async def _snapshot_page(agent: Agent) -> dict[str, str]:
     return {"url": url, "text": str(r.get("result", {}).get("value") or "")}
 
 
+class CountingClient:
+    """Counts every System One request and its input tokens at the client boundary."""
+
+    def __init__(self, inner: Any):
+        self.inner = inner
+        self.calls = 0
+        self.input_tokens = 0
+
+    async def system_one(self, state: Any, questions: Any, *, model: str | None = None, **kwargs: Any) -> Any:
+        self.calls += 1
+        r = await self.inner.system_one(state, questions, model=model, **kwargs)
+        usage = getattr(r, "usage", None)
+        tokens = getattr(usage, "input_tokens", None)
+        if isinstance(tokens, int):
+            self.input_tokens += tokens
+        else:
+            log.warning("Jev response without input_tokens; cost will undercount this call")
+        return r
+
+
+def decide_passed(task: Task, end: EndState, error: str | None, paused: bool) -> bool:
+    """A run that paused before a destructive action passes only a not_reached predicate."""
+    if error is not None:
+        return False
+    if paused and task.predicate.kind != "not_reached":
+        return False
+    return evaluate(task.predicate, end)
+
+
 class _EndStateCapture:
     """browser-use closes the session when run() returns, so the end state is captured
     from the on_step_end hook and the last capture wins. Predicates read innerText because
@@ -123,13 +156,17 @@ class _EndStateCapture:
 
     def __init__(self) -> None:
         self.last: dict[str, str] = {}
+        self.last_step = 0
+        self.failures = 0
 
     async def __call__(self, agent: Agent) -> None:
         try:
             snap = await _snapshot_page(agent)
             if snap:
                 self.last = snap
+                self.last_step = agent.state.n_steps
         except Exception as exc:  # noqa: BLE001
+            self.failures += 1
             log.warning("end-state capture failed at step %s: %s", agent.state.n_steps, exc)
 
 
@@ -200,7 +237,7 @@ async def run_task(
     start_url = task.resolved_start_url(site_url)
     profile = BrowserProfile(headless=headless)
     store = _secret_store(task, site_url)
-    sensitive = store.to_browser_use() if store is not None else None
+    sensitive = store.to_browser_use_for(start_url) if store is not None else None
     t0 = time.perf_counter()
     error: str | None = None
     if arm == "stock":
@@ -227,6 +264,8 @@ async def run_task(
         await agent.browser_session.navigate_to(start_url)
         history = await agent.run(max_steps=max_steps, on_step_end=capture)
         end = _end_state(capture, history)
+        if capture.last_step < len(history.history):
+            error = f"end state unavailable: last capture at step {capture.last_step} of {len(history.history)}"
     except Exception as exc:  # noqa: BLE001 - a crashed run is a failed task, not a crashed rig
         error = repr(exc)
         history = agent.history
@@ -239,7 +278,8 @@ async def run_task(
     wall = time.perf_counter() - t0
     trace_path = out_dir / "traces" / f"{run_id}.jsonl"
     llm_model = getattr(llm, "model", None) if llm is not None else None
-    passed = evaluate(task.predicate, end) and error is None
+    paused = bool(getattr(agent, "paused_before_action", None))
+    passed = decide_passed(task, end, error, paused)
     redactor = store.redactor() if store is not None else None
     _write_trace(trace_path, run_id, task, arm, agent, history, llm_model, redactor=redactor)
     if redactor is not None:
@@ -258,7 +298,13 @@ async def run_task(
     if usage and not llm_cost and llm_model and "muse" in llm_model:
         # browser-use has no price table for Muse; contributor rates from developer.meta.com.
         llm_cost = usage.total_prompt_tokens / 1e6 * 0.10 + usage.total_completion_tokens / 1e6 * 0.20
-    jev_cost = getattr(agent, "s1_steps", 0) * JEV_TOKENS_PER_CALL / 1e6 * JEV_USD_PER_MTOK
+    counter = getattr(getattr(agent, "s1_policy", None), "jev_counter", None)
+    if counter is not None:
+        jev_calls_total = counter.calls
+        jev_cost = counter.input_tokens / 1e6 * JEV_USD_PER_MTOK
+    else:
+        jev_calls_total = getattr(agent, "s1_steps", 0)
+        jev_cost = jev_calls_total * JEV_TOKENS_PER_CALL / 1e6 * JEV_USD_PER_MTOK
     s1 = getattr(agent, "s1_steps", 0)
     s2 = getattr(agent, "s2_steps", len(history.history))
     return TaskResult(
@@ -269,14 +315,14 @@ async def run_task(
         s1_steps=s1,
         s2_steps=s2,
         llm_calls=s2,
-        jev_calls=s1,
+        jev_calls=jev_calls_total,
         llm_tokens=usage.total_tokens if usage else 0,
         llm_cost_usd=llm_cost,
         jev_cost_usd=jev_cost,
         wall_s=wall,
         is_done=end.is_done,
         success=end.success,
-        paused=bool(getattr(agent, "paused_before_action", None)),
+        paused=paused,
         final_url=end.final_url,
         answer=end.answer,
         error=error,

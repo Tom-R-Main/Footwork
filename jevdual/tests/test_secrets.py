@@ -37,7 +37,7 @@ ORIGIN_TABLE = [
     ("https://example.com.evil.test/", "*.example.com", False),
     ("https://notexample.com/", "*.example.com", False),
     ("http://app.example.com/", "*.example.com", False),  # https required
-    ("http://app.example.com/", "http*://*.example.com", True),
+    ("http://app.example.com/", "http*://*.example.com", False),
     ("http://localhost:8000/", "localhost", True),  # loopback may be http
     ("http://127.0.0.1:9/", "127.0.0.1", True),
     ("http://site.localhost/", "*.localhost", True),
@@ -120,3 +120,21 @@ def test_assert_no_secrets_walks_nested():
     assert_no_secrets({"a": ["<secret>x_password</secret>", {"b": "fine"}]}, STORE)
     with pytest.raises(SecretLeak):
         assert_no_secrets({"messages": [{"content": "pw is " + quote("hunter2-SECRET-9f3a", safe="")}]}, STORE)
+
+
+
+def test_plaintext_http_rejected_for_remote_hosts_even_when_pattern_says_http():
+    from jevdual.secrets import origin_allows
+
+    assert not origin_allows("http://app.example.com/", "http://app.example.com")
+    assert not origin_allows("http://app.example.com/", "http*://*.example.com")
+    assert origin_allows("http://127.0.0.1:8000/x", "http://127.0.0.1")
+    assert origin_allows("https://app.example.com/", "http*://*.example.com")
+
+
+def test_redactor_catches_mixed_case_percent_escapes():
+    from jevdual.secrets import SecretStore
+
+    red = SecretStore({"tok": "AbC/9xyz"}).redactor()
+    for form in ("AbC/9xyz", "AbC%2F9xyz", "AbC%2f9xyz"):
+        assert "AbC" not in red(f"url?t={form}"), form
