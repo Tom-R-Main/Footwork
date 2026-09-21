@@ -1,0 +1,154 @@
+{
+ "arms": {
+  "s1_only": {
+   "tasks": 23,
+   "pass": 10,
+   "pass_rate": 0.43478260869565216,
+   "false_done": 12,
+   "mean_steps": 4.478260869565218,
+   "llm_calls": 0,
+   "jev_calls": 99,
+   "llm_tokens": 0,
+   "cost_usd": 0.0,
+   "wall_s": 97.41078674898017,
+   "errors": 0
+  }
+ },
+ "by_tag": {
+  "destructive": {
+   "s1_only": {
+    "tasks": 2,
+    "pass": 1,
+    "pass_rate": 0.5,
+    "false_done": 1,
+    "mean_steps": 3.5,
+    "llm_calls": 0,
+    "jev_calls": 7,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 7.910477792029269,
+    "errors": 0
+   }
+  },
+  "enter-submit": {
+   "s1_only": {
+    "tasks": 2,
+    "pass": 1,
+    "pass_rate": 0.5,
+    "false_done": 1,
+    "mean_steps": 3.0,
+    "llm_calls": 0,
+    "jev_calls": 6,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 11.376453083008528,
+    "errors": 0
+   }
+  },
+  "login": {
+   "s1_only": {
+    "tasks": 3,
+    "pass": 2,
+    "pass_rate": 0.6666666666666666,
+    "false_done": 1,
+    "mean_steps": 5.0,
+    "llm_calls": 0,
+    "jev_calls": 15,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 11.85084687510971,
+    "errors": 0
+   }
+  },
+  "modal": {
+   "s1_only": {
+    "tasks": 3,
+    "pass": 1,
+    "pass_rate": 0.3333333333333333,
+    "false_done": 2,
+    "mean_steps": 2.3333333333333335,
+    "llm_calls": 0,
+    "jev_calls": 7,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 8.276199333951809,
+    "errors": 0
+   }
+  },
+  "navigate": {
+   "s1_only": {
+    "tasks": 11,
+    "pass": 7,
+    "pass_rate": 0.6363636363636364,
+    "false_done": 3,
+    "mean_steps": 4.909090909090909,
+    "llm_calls": 0,
+    "jev_calls": 52,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 48.09022841590922,
+    "errors": 0
+   }
+  },
+  "pagination": {
+   "s1_only": {
+    "tasks": 2,
+    "pass": 1,
+    "pass_rate": 0.5,
+    "false_done": 1,
+    "mean_steps": 3.0,
+    "llm_calls": 0,
+    "jev_calls": 6,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 6.721142000053078,
+    "errors": 0
+   }
+  },
+  "read": {
+   "s1_only": {
+    "tasks": 11,
+    "pass": 0,
+    "pass_rate": 0.0,
+    "false_done": 11,
+    "mean_steps": 2.272727272727273,
+    "llm_calls": 0,
+    "jev_calls": 25,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 33.13532316603232,
+    "errors": 0
+   }
+  },
+  "select": {
+   "s1_only": {
+    "tasks": 2,
+    "pass": 1,
+    "pass_rate": 0.5,
+    "false_done": 0,
+    "mean_steps": 21.0,
+    "llm_calls": 0,
+    "jev_calls": 38,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 24.274732249905355,
+    "errors": 0
+   }
+  },
+  "type": {
+   "s1_only": {
+    "tasks": 10,
+    "pass": 6,
+    "pass_rate": 0.6,
+    "false_done": 3,
+    "mean_steps": 7.4,
+    "llm_calls": 0,
+    "jev_calls": 70,
+    "llm_tokens": 0,
+    "cost_usd": 0.0,
+    "wall_s": 62.454136123880744,
+    "errors": 0
+   }
+  }
+ }
+}

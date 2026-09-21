@@ -137,10 +137,10 @@ def _end_state(capture: _EndStateCapture, history: Any) -> EndState:
     )
 
 
-def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, history: Any, llm_model: str | None) -> None:
+def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, history: Any, llm_model: str | None, redactor: Any = None) -> None:
     systems = getattr(agent, "step_systems", {})
     s1_records = getattr(agent, "s1_records", {})
-    with TraceWriter(path) as w:
+    with TraceWriter(path, redactor=redactor) as w:
         w.write(
             RunHeader(
                 run_id=run_id,
@@ -230,11 +230,22 @@ async def run_task(
     wall = time.perf_counter() - t0
     trace_path = out_dir / "traces" / f"{run_id}.jsonl"
     llm_model = getattr(llm, "model", None) if llm is not None else None
-    _write_trace(trace_path, run_id, task, arm, agent, history, llm_model)
+    passed = evaluate(task.predicate, end) and error is None
+    redactor = store.redactor() if store is not None else None
+    _write_trace(trace_path, run_id, task, arm, agent, history, llm_model, redactor=redactor)
+    if redactor is not None:
+        end = EndState(
+            final_url=redactor(end.final_url) if end.final_url else end.final_url,
+            page_text=redactor(end.page_text),
+            answer=redactor(end.answer) if end.answer else end.answer,
+            visited_urls=tuple(redactor(u) for u in end.visited_urls),
+            is_done=end.is_done,
+        )
+        if error:
+            error = redactor(error)
     usage = history.usage
     s1 = getattr(agent, "s1_steps", 0)
     s2 = getattr(agent, "s2_steps", len(history.history))
-    passed = evaluate(task.predicate, end) and error is None
     return TaskResult(
         task_id=task.id,
         arm=arm,

@@ -12,3 +12,6 @@ build/
 results/*.jsonl
 evals/runs/
 .env
+# eval run artifacts that may contain page text or model inputs
+results/**/traces/
+results/**/run.log
