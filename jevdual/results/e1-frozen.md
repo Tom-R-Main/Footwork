@@ -19,3 +19,14 @@ verification asks whether the task requires an answer, and the destructive gate 
 
 Heldout protocol: one run per arm, local tasks only (the two live tasks are excluded on both splits
 for reproducibility), never debugged. Misses become new dev tasks.
+
+## Addendum (after the Astra review)
+
+The heldout run under these settings (`heldout-20260921-020103` and `heldout-dual-20260921-021807`)
+was invalidated by rig defects found in the review (`results/review-astra-2026-09-21.md`) and rerun
+as `heldout-v2` and `heldout-dual-v3`. Settings above are unchanged; what changed is mechanism:
+System 2's done is now verified (max 2 rejections, then an `UNVERIFIED` done with `success=false`),
+the destructive gate covers actions without element indices, the verifier grades evidence atoms
+rather than sentences, and Jev call counts include escalation and verification calls.
+`results/heldout-final.md` records the departure from "never debugged" that the verifier change
+implies.
