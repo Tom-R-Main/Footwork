@@ -41,7 +41,7 @@ JEV_USD_PER_MTOK = 0.042
 ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "scripted")
 log = logging.getLogger("evals.runner")
 
-PolicyFactory = Callable[[Task, Any], S1Policy]
+PolicyFactory = Callable[[Task, Any, str], S1Policy]  # (task, secret store, arm)
 
 
 def _secret_store(task: Task, site_url: str):
@@ -57,8 +57,13 @@ def _secret_store(task: Task, site_url: str):
     return SecretStore({pattern: dict(task.secrets)})
 
 
-def default_policy_factory(arm: str) -> PolicyFactory:
-    """S1 policy for the s1_only and dual arms: Jev over TypeSafe, arbiter per arm."""
+def default_policy_factory() -> PolicyFactory:
+    """S1 policy for the s1_only and dual arms: Jev over TypeSafe, arbiter chosen per arm at call time.
+
+    The arm is a call-time argument on purpose: an earlier version bound it at construction from
+    the first arm listed, so a heldout run with --arm s1_only --arm dual ran the dual arm with the
+    always-act arbiter and no verifier.
+    """
     from jevdual.policy import JevPolicy
     from jevdual.s1 import AlwaysAct, JevS1
     from typesafe_sdk import AsyncTypeSafeClient
@@ -66,7 +71,7 @@ def default_policy_factory(arm: str) -> PolicyFactory:
     client = AsyncTypeSafeClient()  # reads TYPESAFE_API_KEY
     policy = JevPolicy(client)
 
-    def factory(task: Task, store: Any = None) -> S1Policy:
+    def factory(task: Task, store: Any = None, arm: str = "dual") -> S1Policy:
         if arm == "s1_only":
             # S1's own done stands, so false completions are measured, not hidden.
             return JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
@@ -211,7 +216,7 @@ async def run_task(
             task=task.task,
             llm=llm if (arm == "dual" and llm is not None) else RefusingLLM(),
             browser_profile=profile,
-            s1_policy=policy_factory(task, store),
+            s1_policy=policy_factory(task, store, arm),
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
@@ -352,7 +357,7 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = default_policy_factory(arms[0]) if any(a in ("s1_only", "dual") for a in arms) else None
+    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual") for a in arms) else None
     results = asyncio.run(
         run_split(
             args.split,

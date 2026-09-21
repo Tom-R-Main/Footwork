@@ -45,7 +45,7 @@ def test_scripted_arm_end_to_end(tmp_path: Path):
 
     from evals.runner import run_split
 
-    def factory(task, store=None):
+    def factory(task, store=None, arm="scripted"):
         return ScriptedPolicy([("click", "Search"), ("done", "opened search")])
 
     results = asyncio.run(run_split("dev", ("scripted",), tmp_path, policy_factory=factory, task_ids={"nav-search-page"}))
@@ -53,3 +53,21 @@ def test_scripted_arm_end_to_end(tmp_path: Path):
     r = results[0]
     assert r.error is None and r.s1_steps == 2 and r.passed, r
     assert Path(r.trace_path).exists()
+
+
+
+def test_default_policy_factory_picks_arbiter_per_arm(monkeypatch):
+    """Regression: the dual arm must get the real arbiter and a verifier even when s1_only is listed first."""
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test-key")
+    from jevdual.arbiter import Arbiter
+    from jevdual.s1 import AlwaysAct
+
+    from evals.runner import default_policy_factory
+    from evals.tasks.schema import Predicate, Task
+
+    task = Task(id="t", task="Report the total", start_url="{site}/", tags=("read",), requirements=("Total reported",), predicate=Predicate(kind="answer_contains", value="1"))
+    factory = default_policy_factory()
+    s1 = factory(task, None, "s1_only")
+    dual = factory(task, None, "dual")
+    assert isinstance(s1.arbiter, AlwaysAct) and s1.verifier is None
+    assert isinstance(dual.arbiter, Arbiter) and dual.verifier is not None
