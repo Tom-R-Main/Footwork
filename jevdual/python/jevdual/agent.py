@@ -44,10 +44,13 @@ class DualProcessAgent(Agent):
         self.s1_policy = s1_policy
         self.s1_steps = 0
         self.s2_steps = 0
+        #: step number -> "s1" | "s2", read by the eval rig when it builds the trace.
+        self.step_systems: dict[int, str] = {}
 
     async def _get_next_action(self, browser_state_summary: BrowserStateSummary) -> None:
         if self.s1_policy is None:
             self.s2_steps += 1
+            self.step_systems[self.state.n_steps] = "s2"
             await super()._get_next_action(browser_state_summary)
             return
 
@@ -55,10 +58,12 @@ class DualProcessAgent(Agent):
         if decision is None:
             log.info("step %s: S1 declined, escalating to S2", self.state.n_steps)
             self.s2_steps += 1
+            self.step_systems[self.state.n_steps] = "s2"
             await super()._get_next_action(browser_state_summary)
             return
 
         self.s1_steps += 1
+        self.step_systems[self.state.n_steps] = "s1"
         self.state.last_model_output = decision
 
         # Mirror the upstream method's tail so pause/stop, step callbacks and
