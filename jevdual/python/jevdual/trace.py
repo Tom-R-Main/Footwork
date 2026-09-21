@@ -90,6 +90,7 @@ class RunHeader(BaseModel):
     arm: Literal["stock", "s1_only", "dual"]
     backend: str
     browser_use_version: str
+    patches: dict[str, Any] = Field(default_factory=dict)
     jev_model: str | None = None
     llm_model: str | None = None
     arbiter_policy: dict[str, Any] = Field(default_factory=dict)

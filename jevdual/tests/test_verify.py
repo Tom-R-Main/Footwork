@@ -154,5 +154,5 @@ def test_arbiter_hook():
         task = "Place the order"
 
     hook = ArbiterHook(Verifier(FakeClient(load("verify_reject_unmet"))), REQS)
-    band, reason = asyncio.run(hook.judge_done(Agent(), menu()))
+    band, _reason = asyncio.run(hook.judge_done(Agent(), menu()))
     assert band == "reject" and hook.last is not None and hook.last.band == "reject"

@@ -24,7 +24,7 @@ from typing import Any, Literal
 
 from browser_use.agent.service import Agent
 from browser_use.browser.profile import BrowserProfile
-from jevdual import BACKEND
+from jevdual import BACKEND, patch
 from jevdual.agent import DualProcessAgent, S1Policy
 from jevdual.trace import ActionRecord, RunHeader, StepRecord, Timings, TraceWriter
 
@@ -111,6 +111,7 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
                 arm=arm if arm != "scripted" else "s1_only",
                 backend=BACKEND,
                 browser_use_version=importlib.metadata.version("browser_use"),
+                patches=patch.describe(),
                 llm_model=llm_model,
             )
         )
@@ -234,6 +235,7 @@ async def run_split(
         tasks = [t for t in tasks if "live" not in t.tags]
     if limit:
         tasks = tasks[:limit]
+    patch.install()
     site_url, stop = serve()
     results: list[TaskResult] = []
     try:

@@ -30,3 +30,87 @@ def test_orjson_matches_stdlib_on_recorded_snapshot():
     fx = load_fixture("wikipedia-python")
     raw = json.dumps({"id": 1, "result": fx.snapshot})
     assert orjson.loads(raw) == json.loads(raw)
+
+
+def _pipeline(slug):
+    from tests.fixtures import replay
+
+    # Bypass replay's @cache so the patched run really re-executes the pipeline.
+    state, _root, timing = replay.replay_serialized.__wrapped__(slug)
+    return sorted(state.selector_map), state.llm_representation(), timing
+
+
+@pytest.mark.skipif(os.environ.get("JEVDUAL_PURE_PY") == "1", reason="pure-python mode")
+def test_paint_order_patch_rebinds_the_serializer_import():
+    from browser_use.dom.serializer import paint_order as po_mod
+    from browser_use.dom.serializer import serializer as ser_mod
+    from jevdual import _native
+
+    if _native.native("paint_order") is None:
+        pytest.skip("native paint_order not built")
+    try:
+        assert patch.install_paint_order() is True
+        assert patch.install_paint_order() is True
+        assert ser_mod.PaintOrderRemover is patch._NativePaintOrderRemover
+        assert po_mod.PaintOrderRemover is patch._NativePaintOrderRemover
+        assert patch.active_patches()["paint_order"] is True
+    finally:
+        patch.uninstall()
+    assert ser_mod.PaintOrderRemover is po_mod.PaintOrderRemover
+    assert "paint_order" not in patch.active_patches()
+
+
+def test_snapshot_patch_is_opt_in(monkeypatch):
+    from jevdual._adapters import snapshot_lookup as adapter
+
+    monkeypatch.delenv("JEVDUAL_NATIVE_SNAPSHOT", raising=False)
+    assert adapter.available() is False
+    assert patch.install_snapshot_lookup() is False
+    assert "snapshot_lookup" not in patch.active_patches()
+
+
+@pytest.mark.skipif(os.environ.get("JEVDUAL_PURE_PY") == "1", reason="pure-python mode")
+def test_snapshot_patch_rebinds_service_import_when_opted_in(monkeypatch):
+    from browser_use.dom import enhanced_snapshot as es_mod
+    from browser_use.dom import service as svc_mod
+    from jevdual._adapters import snapshot_lookup as adapter
+
+    monkeypatch.setenv("JEVDUAL_NATIVE_SNAPSHOT", "1")
+    if not adapter.available():
+        pytest.skip("native snapshot_lookup not built")
+    try:
+        assert patch.install_snapshot_lookup() is True
+        assert svc_mod.build_snapshot_lookup is adapter.snapshot_lookup
+        assert es_mod.build_snapshot_lookup is adapter.snapshot_lookup
+    finally:
+        patch.uninstall()
+    assert svc_mod.build_snapshot_lookup is es_mod.build_snapshot_lookup
+
+
+@pytest.mark.skipif(os.environ.get("JEVDUAL_PURE_PY") == "1", reason="pure-python mode")
+def test_patched_pipeline_equals_unpatched_on_every_fixture(monkeypatch):
+    """The whole replayed DOM pipeline (get_dom_tree + serializer) is identical with patches on."""
+    from jevdual import _native
+
+    from tests.fixtures.loader import fixture_slugs
+
+    if _native.native("paint_order") is None:
+        pytest.skip("native paint_order not built")
+    monkeypatch.setenv("JEVDUAL_NATIVE_SNAPSHOT", "1")
+    patch.uninstall()
+    before = {slug: _pipeline(slug)[:2] for slug in fixture_slugs()}
+    try:
+        active = patch.install()
+        assert active.get("paint_order") is True
+        after = {slug: _pipeline(slug)[:2] for slug in fixture_slugs()}
+    finally:
+        patch.uninstall()
+    for slug in before:
+        assert before[slug][0] == after[slug][0], f"{slug}: selector_map keys differ"
+        assert before[slug][1] == after[slug][1], f"{slug}: llm_representation differs"
+
+
+def test_describe_shape():
+    d = patch.describe()
+    assert set(d) == {"patches", "backends"}
+    assert set(d["backends"]) >= {"paint_order", "snapshot_lookup", "element_hashes", "evidence_match"}

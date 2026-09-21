@@ -7,6 +7,15 @@ is written into the trace header so a run records what it ran with.
 R6: cdp-use decodes every CDP message with the stdlib ``json.loads``; on
 DOMSnapshot payloads that is 12 to 75 ms per step. ``orjson`` is already a
 dependency, so this swaps the decoder and keeps ``json.dumps`` for sending.
+
+R5: the serializer calls ``PaintOrderRemover(tree).calculate_paint_order()``
+through the name it imported into ``browser_use.dom.serializer.serializer``,
+and ``DomService.get_dom_tree`` calls ``build_snapshot_lookup`` through the
+name imported into ``browser_use.dom.service``. Both the defining module and
+the importing module are rebound, and the contract tests pin that those are
+the bindings upstream actually uses. Paint order goes native whenever R1 is
+built; snapshot lookup only when its adapter opts in (JEVDUAL_NATIVE_SNAPSHOT=1),
+because it is not faster end to end (results/r2-snapshot-lookup.md).
 """
 
 from __future__ import annotations
@@ -19,6 +28,7 @@ from typing import Any
 log = logging.getLogger("jevdual.patch")
 
 _ACTIVE: dict[str, bool] = {}
+_ORIGINALS: dict[str, Any] = {}
 
 
 class _JsonShim:
@@ -54,11 +64,106 @@ def install_orjson_decode() -> bool:
     return True
 
 
+class _NativePaintOrderRemover:
+    """Drop-in for upstream's ``PaintOrderRemover``: same constructor and method."""
+
+    __slots__ = ("root",)
+
+    def __init__(self, root: Any):
+        self.root = root
+
+    def calculate_paint_order(self) -> None:
+        from jevdual._adapters.paint_order import paint_order
+
+        paint_order(self.root)
+
+
+def install_paint_order() -> bool:
+    """Route DOMTreeSerializer's paint-order pass through the R1 native port."""
+    if os.environ.get("JEVDUAL_PURE_PY") == "1":
+        return False
+    if _ACTIVE.get("paint_order"):
+        return True
+    from jevdual import _native
+
+    if _native.native("paint_order") is None:
+        log.info("paint_order native port not built; upstream PaintOrderRemover kept")
+        return False
+    from browser_use.dom.serializer import paint_order as po_mod
+    from browser_use.dom.serializer import serializer as ser_mod
+
+    for mod in (po_mod, ser_mod):
+        current = getattr(mod, "PaintOrderRemover", None)
+        if current is not None and current is not po_mod.PaintOrderRemover and current is not _NativePaintOrderRemover:
+            log.warning("%s.PaintOrderRemover already replaced by something else; leaving it alone", mod.__name__)
+            return False
+    _ORIGINALS.setdefault("PaintOrderRemover", po_mod.PaintOrderRemover)
+    po_mod.PaintOrderRemover = _NativePaintOrderRemover  # type: ignore[assignment]
+    ser_mod.PaintOrderRemover = _NativePaintOrderRemover  # type: ignore[assignment]
+    _ACTIVE["paint_order"] = True
+    log.info("jevdual patch active: native paint order")
+    return True
+
+
+def install_snapshot_lookup() -> bool:
+    """Route DomService.get_dom_tree's snapshot lookup through the R2 native port (opt-in)."""
+    if os.environ.get("JEVDUAL_PURE_PY") == "1":
+        return False
+    if _ACTIVE.get("snapshot_lookup"):
+        return True
+    from jevdual._adapters import snapshot_lookup as adapter
+
+    if not adapter.available():
+        log.info("snapshot_lookup native port not enabled (JEVDUAL_NATIVE_SNAPSHOT=1 opts in); upstream kept")
+        return False
+    from browser_use.dom import enhanced_snapshot as es_mod
+    from browser_use.dom import service as svc_mod
+
+    for mod in (es_mod, svc_mod):
+        current = getattr(mod, "build_snapshot_lookup", None)
+        if current is not None and current is not es_mod.build_snapshot_lookup and current is not adapter.snapshot_lookup:
+            log.warning("%s.build_snapshot_lookup already replaced by something else; leaving it alone", mod.__name__)
+            return False
+    _ORIGINALS.setdefault("build_snapshot_lookup", es_mod.build_snapshot_lookup)
+    es_mod.build_snapshot_lookup = adapter.snapshot_lookup  # type: ignore[assignment]
+    svc_mod.build_snapshot_lookup = adapter.snapshot_lookup  # type: ignore[assignment]
+    _ACTIVE["snapshot_lookup"] = True
+    log.info("jevdual patch active: native snapshot lookup")
+    return True
+
+
+def uninstall() -> None:
+    """Restore upstream bindings (tests and benchmarks only)."""
+    if "PaintOrderRemover" in _ORIGINALS:
+        from browser_use.dom.serializer import paint_order as po_mod
+        from browser_use.dom.serializer import serializer as ser_mod
+
+        po_mod.PaintOrderRemover = _ORIGINALS["PaintOrderRemover"]  # type: ignore[assignment]
+        ser_mod.PaintOrderRemover = _ORIGINALS["PaintOrderRemover"]  # type: ignore[assignment]
+        _ACTIVE.pop("paint_order", None)
+    if "build_snapshot_lookup" in _ORIGINALS:
+        from browser_use.dom import enhanced_snapshot as es_mod
+        from browser_use.dom import service as svc_mod
+
+        es_mod.build_snapshot_lookup = _ORIGINALS["build_snapshot_lookup"]  # type: ignore[assignment]
+        svc_mod.build_snapshot_lookup = _ORIGINALS["build_snapshot_lookup"]  # type: ignore[assignment]
+        _ACTIVE.pop("snapshot_lookup", None)
+
+
 def install() -> dict[str, bool]:
     """Install every available patch; returns the active map for the trace header."""
     install_orjson_decode()
+    install_paint_order()
+    install_snapshot_lookup()
     return active_patches()
 
 
 def active_patches() -> dict[str, bool]:
     return dict(_ACTIVE)
+
+
+def describe() -> dict[str, Any]:
+    """What a run actually ran with; written into the trace header."""
+    from jevdual import _native
+
+    return {"patches": active_patches(), "backends": _native.backend_report()}

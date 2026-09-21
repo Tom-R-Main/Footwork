@@ -308,3 +308,28 @@ def test_sensitive_data_resolved_per_url_in_registry():
     src = _src(Registry._replace_sensitive_data)
     assert "match_url_with_domain_pattern(current_url, domain_or_key)" in src
     assert "<secret>" in src
+
+
+# --- R5 patch targets: the bindings upstream actually calls ---
+
+
+def test_serializer_calls_paint_order_remover_through_its_own_module_binding():
+    # patch.py install_paint_order: rebinding browser_use.dom.serializer.serializer.PaintOrderRemover is
+    # what changes behaviour; rebinding only paint_order.PaintOrderRemover would not.
+    from browser_use.dom.serializer import paint_order as po_mod
+    from browser_use.dom.serializer import serializer as ser_mod
+
+    assert ser_mod.PaintOrderRemover is po_mod.PaintOrderRemover
+    src = inspect.getsource(ser_mod.DOMTreeSerializer.serialize_accessible_elements)
+    assert "PaintOrderRemover(simplified_tree).calculate_paint_order()" in src
+    assert "from browser_use.dom.serializer.paint_order import PaintOrderRemover" in inspect.getsource(ser_mod)
+
+
+def test_dom_service_calls_build_snapshot_lookup_through_its_own_module_binding():
+    # patch.py install_snapshot_lookup: get_dom_tree resolves the name in browser_use.dom.service.
+    from browser_use.dom import enhanced_snapshot as es_mod
+    from browser_use.dom import service as svc_mod
+
+    assert svc_mod.build_snapshot_lookup is es_mod.build_snapshot_lookup
+    src = inspect.getsource(svc_mod.DomService.get_dom_tree)
+    assert "build_snapshot_lookup(snapshot, device_pixel_ratio)" in src
