@@ -13,6 +13,15 @@ source and what changed.
 | `tests/ci/test_multi_act_guards.py`, `test_action_loop_detection.py`, `test_redact_cascade.py`, `test_variable_substitution.py`, `test_dom_paint_order_serialization.py`, `test_dom_visibility.py`, `test_llm_output_truncation.py`, `test_llm_retries.py`, `test_tools.py`, `security/test_sensitive_data.py` | `scripts/upstream_tests.sh` via the `jevdual.upstream_pytest` plugin | Run unchanged from the submodule against our installed package with the jevdual patches active. This is the contract with the pinned commit for the seams we override. |
 | `tests/ci/browser/*_template.html` | not yet | Candidate DOM fixtures for the Rust paint-order and snapshot ports. |
 
+First run (2026-09-21): 111 passed, 11 failed. One failure was real and is fixed: upstream's
+`test_text_fully_covered_by_another_element_is_not_serialized` showed the native paint-order adapter
+keyed nodes by `backend_node_id`, which collides across iframe documents (and in that test), so the
+wrong node was flagged. The adapter now keys by position (`tests/equality/test_paint_order.py` pins
+it). The other ten are navigation timeouts to pytest-httpserver in `test_tools.py` and
+`test_multi_act_guards.py` that reproduce without the patches on this machine (`about:blank` after a
+180 s navigate), so they are environment-bound; they stay in the script so a fixed environment
+reports them.
+
 One upstream test is deselected in the script: `test_multi_act_guards.py::TestStaticGuard::test_navigate_aborts_remaining_actions`
 hits the 180 s per-action navigate timeout on this machine both with and without the patches
 (observed 2026-09-21), so it is an environment issue, not a seam regression.

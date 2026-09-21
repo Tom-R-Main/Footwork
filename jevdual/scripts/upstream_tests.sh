@@ -20,6 +20,6 @@ MODULES=(
 export PYTHONPATH="$(cd ../browser-use && pwd)${PYTHONPATH:+:$PYTHONPATH}"
 # Deselected: fails on this machine with and without the jevdual patches (navigate hits the 180 s
 # per-action timeout against pytest-httpserver's /static route), so it says nothing about our seams.
-DESELECT=(--deselect "$UP/test_multi_act_guards.py::TestStaticGuard::test_navigate_aborts_remaining_actions")
+DESELECT=(--deselect "tests/ci/test_multi_act_guards.py::TestStaticGuard::test_navigate_aborts_remaining_actions")
 exec uv run pytest -p jevdual.upstream_pytest -c /dev/null --rootdir=../browser-use --confcutdir="$UP" \
   -o asyncio_mode=auto -p no:cacheprovider -q --timeout=240 "${DESELECT[@]}" "${MODULES[@]}" "$@"

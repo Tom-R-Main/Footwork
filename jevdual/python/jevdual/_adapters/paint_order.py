@@ -55,34 +55,37 @@ def _add_to_union(styles) -> bool:
 
 def paint_order(root: SimplifiedNode) -> frozenset[int]:
     """Return the backend_node_ids that paint-order filtering hides. Mutates ``root`` flags."""
+    # Nodes are handed to the core by position, not by backend_node_id: ids collide across
+    # iframe documents (and in upstream's unit tests), and keying by id flagged the wrong node.
     ids: list[int] = []
     rects: list[float] = []
     paint_orders: list[int] = []
     contexts: list[int] = []
     add_flags: list[bool] = []
     context_index: dict[tuple[str, str | None], int] = {}
-    all_nodes: list[SimplifiedNode] = []
-    by_id: dict[int, SimplifiedNode] = {}
+    with_snapshot: list[SimplifiedNode] = []
 
     stack = [root]
     while stack:
         node = stack.pop()
-        all_nodes.append(node)
         node.ignored_by_paint_order = False
         stack.extend(reversed(node.children))
         snap = node.original_node.snapshot_node
         if not snap or snap.paint_order is None or snap.bounds is None:
             continue
         b = snap.bounds
-        ids.append(node.original_node.backend_node_id)
+        ids.append(len(with_snapshot))
+        with_snapshot.append(node)
         rects.extend((b.x, b.y, b.x + b.width, b.y + b.height))
         paint_orders.append(snap.paint_order)
         ctx = _document_context(node.original_node)
         contexts.append(context_index.setdefault(ctx, len(context_index)))
         add_flags.append(_add_to_union(snap.computed_styles))
-        by_id[node.original_node.backend_node_id] = node
 
-    removed = _native.core.paint_order_flat(ids, rects, paint_orders, contexts, add_flags)
-    for rid in removed:
-        by_id[rid].ignored_by_paint_order = True
-    return frozenset(removed)
+    removed_positions = _native.core.paint_order_flat(ids, rects, paint_orders, contexts, add_flags)
+    removed_ids: set[int] = set()
+    for pos in removed_positions:
+        node = with_snapshot[pos]
+        node.ignored_by_paint_order = True
+        removed_ids.add(node.original_node.backend_node_id)
+    return frozenset(removed_ids)
