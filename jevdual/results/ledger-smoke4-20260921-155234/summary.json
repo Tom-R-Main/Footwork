@@ -1,0 +1,124 @@
+{
+ "arms": {
+  "dual": {
+   "tasks": 6,
+   "pass": 6,
+   "pass_rate": 1.0,
+   "false_done": 0,
+   "paused": 0,
+   "mean_steps": 5.166666666666667,
+   "llm_calls": 28,
+   "jev_calls": 50,
+   "llm_tokens": 305578,
+   "cost_usd": 0.071611408,
+   "wall_s": 1775.215906334808,
+   "errors": 0,
+   "judged": 6,
+   "judge_pass": 6,
+   "judge_agree": 6,
+   "judge_false_accept": 0,
+   "judge_false_reject": 0,
+   "captcha": 0,
+   "impossible": 0,
+   "graded_by_judge": 0
+  }
+ },
+ "by_tag": {
+  "live": {
+   "dual": {
+    "tasks": 6,
+    "pass": 6,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.166666666666667,
+    "llm_calls": 28,
+    "jev_calls": 50,
+    "llm_tokens": 305578,
+    "cost_usd": 0.071611408,
+    "wall_s": 1775.215906334808,
+    "errors": 0,
+    "judged": 6,
+    "judge_pass": 6,
+    "judge_agree": 6,
+    "judge_false_accept": 0,
+    "judge_false_reject": 0,
+    "captcha": 0,
+    "impossible": 0,
+    "graded_by_judge": 0
+   }
+  },
+  "navigate": {
+   "dual": {
+    "tasks": 1,
+    "pass": 1,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 2.0,
+    "llm_calls": 1,
+    "jev_calls": 3,
+    "llm_tokens": 20700,
+    "cost_usd": 0.0035940319999999996,
+    "wall_s": 69.71269408392254,
+    "errors": 0,
+    "judged": 1,
+    "judge_pass": 1,
+    "judge_agree": 1,
+    "judge_false_accept": 0,
+    "judge_false_reject": 0,
+    "captcha": 0,
+    "impossible": 0,
+    "graded_by_judge": 0
+   }
+  },
+  "read": {
+   "dual": {
+    "tasks": 5,
+    "pass": 5,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 5.8,
+    "llm_calls": 27,
+    "jev_calls": 47,
+    "llm_tokens": 284878,
+    "cost_usd": 0.068017376,
+    "wall_s": 1705.5032122508856,
+    "errors": 0,
+    "judged": 5,
+    "judge_pass": 5,
+    "judge_agree": 5,
+    "judge_false_accept": 0,
+    "judge_false_reject": 0,
+    "captcha": 0,
+    "impossible": 0,
+    "graded_by_judge": 0
+   }
+  },
+  "search": {
+   "dual": {
+    "tasks": 4,
+    "pass": 4,
+    "pass_rate": 1.0,
+    "false_done": 0,
+    "paused": 0,
+    "mean_steps": 4.25,
+    "llm_calls": 14,
+    "jev_calls": 28,
+    "llm_tokens": 177560,
+    "cost_usd": 0.0352887,
+    "wall_s": 829.4849892097991,
+    "errors": 0,
+    "judged": 4,
+    "judge_pass": 4,
+    "judge_agree": 4,
+    "judge_false_accept": 0,
+    "judge_false_reject": 0,
+    "captcha": 0,
+    "impossible": 0,
+    "graded_by_judge": 0
+   }
+  }
+ }
+}

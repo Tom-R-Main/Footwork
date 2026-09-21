@@ -9,6 +9,7 @@ are inflated. All numbers observed from the run directories.
 | `ledger-smoke-20260921-141456` | ledger on, old band (complete ≥ 0.85, unmet ≤ 0.20) | 4/6 | 2 | 0 | 6 | 18 | 6 of 6 |
 | `ledger-smoke2-20260921-145439` | ledger on, widened band (complete ≥ 0.80, unmet ≤ 0.30) | 5/6 | 1 | 4 | 2 | 8 | 2 of 6 |
 | `ledger-smoke3-20260921-151528` | as above plus outcome-phrased requirements; six answer-heavy tasks | 5/6 | 0 | 4 | 2 | 7 | 1 of 5 verified runs (cart task hit max steps) |
+| `ledger-smoke4-20260921-155234` | as above plus full-text claim checks and an evidence-centred excerpt (a9a4287); six long-page answer tasks | 6/6 | 0 | 6 | 0 | 13 | 0 of 6 |
 
 Run 0 on the first smoke's six tasks: 25 rejections, every run UNVERIFIED.
 
@@ -42,6 +43,14 @@ Run 0 on the first smoke's six tasks: 25 rejections, every run UNVERIFIED.
    checks run on the full page text and the verifier's excerpt is centred on the answer's evidence.
    `ls-add-backpack-cart` ran to max steps (3 S1 / 22 S2) without a done: the same no-effect clicks
    as before, now without an `evaluate` pause.
+
+5. **Evidence-centred excerpt, long pages.** Six of six verified and accepted, judge agreeing on all
+   six; zero System 2 rejections and zero UNVERIFIED dones. The Python exceptions task went from 12
+   steps UNVERIFIED to 7 steps verified. The 13 S1 vetoes are S1's own `done` proposals refused
+   because S1 cannot compose an answer, which is the intended division of labour and costs one Jev
+   call each. What remains is one or more "uncertain" verdicts before the accept on some tasks
+   (complete 0.53 to 0.83 with max unmet just above 0.30); that is Q3's threshold question, left
+   for the labelled trajectories rather than tuned here.
 
 ## Not yet measured
 
