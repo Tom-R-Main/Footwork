@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Contact us</title>
+<style>body{font-family:system-ui;margin:2rem;max-width:56rem}nav a{margin-right:.25rem}table{border-collapse:collapse}td,th{border:1px solid #999;padding:.3rem .6rem}.error{color:#b00020}.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center}.dialog{background:#fff;padding:1.5rem;border-radius:8px;max-width:28rem}.banner{position:fixed;bottom:0;left:0;right:0;background:#222;color:#fff;padding:1rem;display:flex;justify-content:space-between}</style>
+</head><body>
+<nav><a href="/">Home</a> | <a href="/search.html">Search</a> | <a href="/list.html">Catalog</a> | <a href="/form.html">Contact</a> | <a href="/modal.html">Announcements</a> | <a href="/login.html">Sign in</a> | <a href="/checkout.html">Checkout</a> | <a href="/article.html">Article</a> | <a href="/enter-submit.html">Tracking</a></nav>
+<h1>Contact us</h1>
+<form action="/confirm.html" method="get">
+<p><label for="name">Name</label> <input id="name" name="name" required></p>
+<p><label for="email">Email</label> <input id="email" name="email" type="email" required></p>
+<p><label for="topic">Topic</label> <select id="topic" name="topic"><option value="">Choose…</option><option>Order question</option><option>Damaged item</option><option>Returns</option><option>Other</option></select></p>
+<p><label><input type="checkbox" name="newsletter" value="yes"> Subscribe to the newsletter</label></p>
+<p><label for="message">Message</label><br><textarea id="message" name="message" rows="4" cols="50"></textarea></p>
+<p><button type="submit">Send message</button></p>
+</form>
+</body></html>
