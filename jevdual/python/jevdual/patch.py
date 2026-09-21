@@ -147,7 +147,47 @@ def uninstall() -> None:
 
         es_mod.build_snapshot_lookup = _ORIGINALS["build_snapshot_lookup"]  # type: ignore[assignment]
         svc_mod.build_snapshot_lookup = _ORIGINALS["build_snapshot_lookup"]  # type: ignore[assignment]
+    if "lazy_uuid" in _ORIGINALS:
+        from browser_use.dom import service as svc_mod
+
+        svc_mod.EnhancedDOMTreeNode = _ORIGINALS.pop("lazy_uuid")  # type: ignore[attr-defined]
+        _ACTIVE.pop("lazy_uuid", None)
         _ACTIVE.pop("snapshot_lookup", None)
+
+
+def install_lazy_uuid() -> bool:
+    """Skip the per-node uuid7 in the DOM tree builder.
+
+    Upstream's EnhancedDOMTreeNode declares ``uuid: str = field(default_factory=uuid7str)``
+    and nothing reads it (the contract test pins that), so ~15k uuid7 calls per step on a
+    dense page are pure cost (22 ms on the Wikipedia fixture, measured directly). The tree
+    builder constructs nodes through the name bound in ``browser_use.dom.service``; this
+    rebinds it to a subclass whose uuid defaults to an empty string. Everything else about
+    the node, including isinstance checks, is unchanged.
+    """
+    if os.environ.get("JEVDUAL_PURE_PY") == "1":
+        return False
+    if _ACTIVE.get("lazy_uuid"):
+        return True
+    import dataclasses
+
+    from browser_use.dom import service, views
+
+    if service.EnhancedDOMTreeNode is not views.EnhancedDOMTreeNode:  # pragma: no cover
+        log.warning("browser_use.dom.service.EnhancedDOMTreeNode already rebound; leaving it alone")
+        return False
+
+    @dataclasses.dataclass(slots=False)
+    class EnhancedDOMTreeNodeNoUuid(views.EnhancedDOMTreeNode):
+        uuid: str = ""
+
+    EnhancedDOMTreeNodeNoUuid.__name__ = views.EnhancedDOMTreeNode.__name__
+    EnhancedDOMTreeNodeNoUuid.__qualname__ = views.EnhancedDOMTreeNode.__qualname__
+    service.EnhancedDOMTreeNode = EnhancedDOMTreeNodeNoUuid  # type: ignore[attr-defined]
+    _ORIGINALS["lazy_uuid"] = views.EnhancedDOMTreeNode
+    _ACTIVE["lazy_uuid"] = True
+    log.info("jevdual patch active: lazy node uuid")
+    return True
 
 
 def install() -> dict[str, bool]:
@@ -155,6 +195,7 @@ def install() -> dict[str, bool]:
     install_orjson_decode()
     install_paint_order()
     install_snapshot_lookup()
+    install_lazy_uuid()
     return active_patches()
 
 

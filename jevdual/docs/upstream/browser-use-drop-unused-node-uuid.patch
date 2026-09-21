@@ -1,0 +1,20 @@
+diff --git a/browser_use/dom/views.py b/browser_use/dom/views.py
+index 86b773bb3..9d689a31b 100644
+--- a/browser_use/dom/views.py
++++ b/browser_use/dom/views.py
+@@ -9,7 +9,6 @@ from cdp_use.cdp.dom.commands import GetDocumentReturns
+ from cdp_use.cdp.dom.types import ShadowRootType
+ from cdp_use.cdp.domsnapshot.commands import CaptureSnapshotReturns
+ from cdp_use.cdp.target.types import SessionID, TargetID, TargetInfo
+-from uuid_extensions import uuid7str
+ 
+ from browser_use.dom.utils import cap_text_length
+ from browser_use.observability import observe_debug
+@@ -467,7 +466,6 @@ class EnhancedDOMTreeNode:
+ 	Whether this iframe has hidden non-interactive content below the viewport threshold.
+ 	"""
+ 
+-	uuid: str = field(default_factory=uuid7str)
+ 
+ 	@property
+ 	def parent(self) -> 'EnhancedDOMTreeNode | None':

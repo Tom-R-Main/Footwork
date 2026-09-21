@@ -333,3 +333,35 @@ def test_dom_service_calls_build_snapshot_lookup_through_its_own_module_binding(
     assert svc_mod.build_snapshot_lookup is es_mod.build_snapshot_lookup
     src = inspect.getsource(svc_mod.DomService.get_dom_tree)
     assert "build_snapshot_lookup(snapshot, device_pixel_ratio)" in src
+
+
+def test_node_uuid_is_never_read_upstream():
+    """patch.install_lazy_uuid depends on this: the per-node uuid7 is generated and never consumed."""
+    import re
+    from pathlib import Path
+
+    import browser_use
+
+    root = Path(browser_use.__file__).parent
+    readers = []
+    for p in root.rglob("*.py"):
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        for m in re.finditer(r"\.uuid\b(?!\s*[=(])", text):
+            line = text[: m.start()].count("\n") + 1
+            if p.name == "views.py" and "dom" in str(p):
+                continue
+            readers.append(f"{p.relative_to(root)}:{line}")
+    assert readers == [], f"upstream now reads node.uuid at {readers}; retire install_lazy_uuid"
+    assert "uuid: str = field(default_factory=uuid7str)" in (root / "dom" / "views.py").read_text()
+
+
+def test_tree_builder_binds_node_class_by_module_name():
+    """install_lazy_uuid rebinds browser_use.dom.service.EnhancedDOMTreeNode."""
+    import inspect
+
+    from browser_use.dom import service, views
+
+    assert service.EnhancedDOMTreeNode is views.EnhancedDOMTreeNode or getattr(service.EnhancedDOMTreeNode, "__name__", "") == "EnhancedDOMTreeNode"
+    # _construct_enhanced_node is a closure inside get_dom_tree, so it resolves the class name at call time.
+    src = inspect.getsource(service.DomService.get_dom_tree)
+    assert "def _construct_enhanced_node" in src and "EnhancedDOMTreeNode(" in src

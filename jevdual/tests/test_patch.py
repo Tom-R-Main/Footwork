@@ -114,3 +114,23 @@ def test_describe_shape():
     d = patch.describe()
     assert set(d) == {"patches", "backends"}
     assert set(d["backends"]) >= {"paint_order", "snapshot_lookup", "element_hashes", "evidence_match"}
+
+
+@pytest.mark.skipif(os.environ.get("JEVDUAL_PURE_PY") == "1", reason="pure-python mode")
+def test_lazy_uuid_patch_keeps_pipeline_equal():
+    from browser_use.dom import service, views
+
+    from tests.fixtures.replay import replay_serialized
+
+    patch.uninstall()
+    before, _, _ = replay_serialized.__wrapped__("modal-over-content")
+    assert patch.install_lazy_uuid() is True
+    try:
+        after, root, _ = replay_serialized.__wrapped__("modal-over-content")
+        assert isinstance(root, views.EnhancedDOMTreeNode)
+        assert root.uuid == ""
+        assert before.selector_map.keys() == after.selector_map.keys()
+        assert before.llm_representation() == after.llm_representation()
+    finally:
+        patch.uninstall()
+    assert service.EnhancedDOMTreeNode is views.EnhancedDOMTreeNode
