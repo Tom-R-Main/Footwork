@@ -91,3 +91,56 @@ def test_stale_state_escalates():
 def test_literal_text_source():
     assert literal_text_source('Search for "lantern" now', None, None) == "lantern"
     assert literal_text_source("Search for lanterns", None, None) is None
+
+
+def test_destructive_gate_replaces_action_for_either_system():
+    """The agent-level gate rewrites an index action whose target label is destructive into a failed done."""
+    import asyncio
+    from types import SimpleNamespace
+
+    from browser_use.agent.views import AgentOutput
+    from browser_use.tools.service import Tools
+    from jevdual.agent import DualProcessAgent
+
+    from tests.fixtures.replay import replay_state
+
+    state = replay_state("modal-over-content")
+    idx, node = next(iter(state.dom_state.selector_map.items()))
+    node.ax_node = SimpleNamespace(name="Delete account", role="button")
+
+    class Fake(DualProcessAgent):  # bypass Agent.__init__; only the gate is under test
+        def __init__(self):
+            am = Tools().registry.create_action_model()
+            self.ActionModel = am
+            self.AgentOutput = AgentOutput.type_with_custom_actions(am)
+            self.state = SimpleNamespace(n_steps=3, last_model_output=self.AgentOutput(action=[am(click={"index": idx})]))
+            self.browser_session = SimpleNamespace(_cached_browser_state_summary=state)
+            self.step_systems = {3: "s2"}
+            from jevdual.arbiter import ArbiterPolicy
+
+            self.destructive_keywords = ArbiterPolicy.from_toml().destructive_keywords
+            self.authorized_destructive = False
+            self.paused_before_action = None
+            self.executed = None
+
+        async def _super_execute(self):
+            self.executed = [a.model_dump(exclude_unset=True) for a in self.state.last_model_output.action]
+
+    async def go(agent):
+        # call the gate, then capture what would have been dispatched
+        out = agent.state.last_model_output
+        hit = agent._destructive_hit(list(out.action))
+        assert hit is not None and hit[1] == "delete"
+        import jevdual.agent as mod
+
+        orig = mod.Agent._execute_actions
+        mod.Agent._execute_actions = Fake._super_execute
+        try:
+            await DualProcessAgent._execute_actions(agent)
+        finally:
+            mod.Agent._execute_actions = orig
+
+    agent = Fake()
+    asyncio.run(go(agent))
+    assert agent.paused_before_action["system"] == "s2" and agent.paused_before_action["keyword"] == "delete"
+    assert agent.executed[0]["done"]["success"] is False and "Delete account" in agent.executed[0]["done"]["text"]

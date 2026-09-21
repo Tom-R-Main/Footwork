@@ -113,6 +113,7 @@ tasks:
     requirements: [Order placed, Order number reported]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'KB-20260921'}
+    authorize: true
 
   - id: checkout-total
     task: What is the order total on the checkout page?

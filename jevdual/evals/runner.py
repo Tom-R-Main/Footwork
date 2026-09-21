@@ -36,6 +36,8 @@ from evals.report import TaskResult, write_results
 from evals.tasks.schema import Task, load_tasks
 
 Arm = Literal["stock", "s1_only", "dual", "scripted"]
+JEV_TOKENS_PER_CALL = 2400  # observed mean request size on the local site
+JEV_USD_PER_MTOK = 0.042
 ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "scripted")
 log = logging.getLogger("evals.runner")
 
@@ -211,6 +213,7 @@ async def run_task(
             s1_policy=policy_factory(task, store),
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
+            authorized_destructive=task.authorize,
         )
     capture = _EndStateCapture()
     try:
@@ -244,6 +247,11 @@ async def run_task(
         if error:
             error = redactor(error)
     usage = history.usage
+    llm_cost = usage.total_cost if usage else 0.0
+    if usage and not llm_cost and llm_model and "muse" in llm_model:
+        # browser-use has no price table for Muse; contributor rates from developer.meta.com.
+        llm_cost = usage.total_prompt_tokens / 1e6 * 0.10 + usage.total_completion_tokens / 1e6 * 0.20
+    jev_cost = getattr(agent, "s1_steps", 0) * JEV_TOKENS_PER_CALL / 1e6 * JEV_USD_PER_MTOK
     s1 = getattr(agent, "s1_steps", 0)
     s2 = getattr(agent, "s2_steps", len(history.history))
     return TaskResult(
@@ -256,8 +264,8 @@ async def run_task(
         llm_calls=s2,
         jev_calls=s1,
         llm_tokens=usage.total_tokens if usage else 0,
-        llm_cost_usd=usage.total_cost if usage else 0.0,
-        jev_cost_usd=0.0,
+        llm_cost_usd=llm_cost,
+        jev_cost_usd=jev_cost,
         wall_s=wall,
         is_done=end.is_done,
         final_url=end.final_url,

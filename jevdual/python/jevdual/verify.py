@@ -52,6 +52,8 @@ class VerifyPolicy:
 
     accept_complete: float = 0.85
     accept_unmet_max: float = 0.20
+    #: Above this, the task is judged to ask for an answer; a done with none cannot be accepted.
+    answer_required: float = 0.60
     reject_unmet: float = 0.70
     reject_complete: float = 0.30
 
@@ -160,6 +162,10 @@ class Verifier:
         for i, req in enumerate(requirements):
             spec = prompts.verify_unmet(i, req)
             questions[f"unmet_{i}"] = Noul(instructions=spec["instructions"], criteria={"true": spec["true"], "false": spec["false"]})
+        questions["answer_required"] = Noul(
+            instructions=prompts.VERIFY_ANSWER_REQUIRED["instructions"],
+            criteria={"true": prompts.VERIFY_ANSWER_REQUIRED["true"], "false": prompts.VERIFY_ANSWER_REQUIRED["false"]},
+        )
         return questions
 
     @staticmethod
@@ -191,6 +197,7 @@ class Verifier:
             unmet[req] = response.nouls[key].noul
 
         band, reason = band_for(complete, unmet, self.policy)
+        answer_required = response.nouls["answer_required"].noul if "answer_required" in response.nouls else 0.0
 
         claims = check_claims(answer, menu.page_text)
         unsupported = tuple(c.claim for c in claims if not c.supported)
@@ -203,6 +210,10 @@ class Verifier:
                 reason = f"answer has no claim quoted from the page ({len(claims)} unsupported); {reason}"
             elif unsupported:
                 reason = f"{len(unsupported)} unsupported claim(s) dropped; {reason}"
+        if answer_required >= self.policy.answer_required and not supported_answer and band == "accept":
+            # The page may show the outcome, but the task asked for it to be reported; System 1 cannot compose it.
+            band = "verify"
+            reason = f"task asks for an answer (answer_required={answer_required:.2f}) and none is given; {reason}"
 
         verdict = Verdict(
             band=band,

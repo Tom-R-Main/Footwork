@@ -164,3 +164,12 @@ def verify_unmet(index: int, requirement: str) -> dict[str, str]:
         "or it shows a different outcome from the one required.",
         "false": "`page.text` shows exactly the outcome this requirement names.",
     }
+
+
+VERIFY_ANSWER_REQUIRED: dict[str, str] = {
+    "instructions": "Does `task` ask for information to be reported back as an answer (a value, a message, a fact "
+    "read from the page), rather than only for the page to be brought into a state?",
+    "true": "The task uses words like report, tell, find out, what is, how much, which, or asks for a value, "
+    "a message or a fact to be returned.",
+    "false": "The task only asks to open, reach, submit, select, sign in, or otherwise change what the page shows.",
+}

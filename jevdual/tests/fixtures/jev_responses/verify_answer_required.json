@@ -1,0 +1,25 @@
+{
+ "model": "jev-1.13.0",
+ "usage": {
+  "input_tokens": 900,
+  "output_tokens": 0
+ },
+ "answers": {
+  "complete": {
+   "type": "noul",
+   "noul": 0.94
+  },
+  "unmet_0": {
+   "type": "noul",
+   "noul": 0.05
+  },
+  "unmet_1": {
+   "type": "noul",
+   "noul": 0.08
+  },
+  "answer_required": {
+   "type": "noul",
+   "noul": 0.93
+  }
+ }
+}

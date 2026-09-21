@@ -52,6 +52,8 @@ class Task(BaseModel):
     answer_expected: bool = False
     #: Secrets by name; values never appear in task text. The runner scopes them to the site origin.
     secrets: dict[str, str] = Field(default_factory=dict)
+    #: The task explicitly wants an irreversible action (order placed, message sent); the destructive gate is off.
+    authorize: bool = False
     """True when the task asks for an answer (read tasks); the runner then captures the final answer."""
 
     @field_validator("start_url")

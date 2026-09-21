@@ -99,7 +99,7 @@ def test_request_shape():
     run(v, "Place the order", REQS, menu(), None)
     call = client.calls[0]
     assert call["model"] == "jev-1.13.0"
-    assert list(call["questions"]) == ["complete", "unmet_0", "unmet_1"]
+    assert list(call["questions"]) == ["complete", "unmet_0", "unmet_1", "answer_required"]
     assert all(q.type == "noul" for q in call["questions"].values())
     assert call["state"]["requirements"] == list(REQS) and call["state"]["page"]["text"] == PAGE
     assert "answer" not in call["state"]
@@ -156,3 +156,11 @@ def test_arbiter_hook():
     hook = ArbiterHook(Verifier(FakeClient(load("verify_reject_unmet"))), REQS)
     band, _reason = asyncio.run(hook.judge_done(Agent(), menu()))
     assert band == "reject" and hook.last is not None and hook.last.band == "reject"
+
+
+def test_answer_required_blocks_done_without_answer():
+    """A done on an answer task with no answer text cannot be accepted even if the page shows the outcome."""
+    verdict = run(Verifier(FakeClient(load("verify_answer_required"))), "Report the order total", REQS, menu(), None)
+    assert verdict.band == "verify" and "asks for an answer" in verdict.reason
+    ok = run(Verifier(FakeClient(load("verify_accept"))), "Open the checkout", REQS, menu(), None)
+    assert ok.band == "accept"
