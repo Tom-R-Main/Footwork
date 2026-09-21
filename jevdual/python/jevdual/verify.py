@@ -49,10 +49,19 @@ Band = Literal["accept", "reject", "verify"]
 
 @dataclass(frozen=True)
 class VerifyPolicy:
-    """Band thresholds. Starting points; tuned on the dev split in E1, then frozen."""
+    """Band thresholds.
 
-    accept_complete: float = 0.85
-    accept_unmet_max: float = 0.20
+    Frozen for the fixture heldout in E1 at accept complete >= 0.85 and every unmet <= 0.20. Widened on
+    2026-09-21 after the live ledger smoke (results/ledger-smoke-20260921-141456): with the trajectory
+    ledger, the per-requirement ``unmet`` values settle at 0.22 to 0.30 for requirements the predicate
+    confirms met, and ``complete`` at 0.84 to 0.91, so the old band left every one of those runs in
+    "verify" and then UNVERIFIED. The accept band is a conjunction over all requirements, so a floor of
+    0.20 on each is far stricter than 0.20 on one. The reject band is unchanged. Q3 revisits both
+    numbers from labelled trajectories; the fixture heldout is rerun once on adoption (program rule).
+    """
+
+    accept_complete: float = 0.80
+    accept_unmet_max: float = 0.30
     #: Above this, the task is judged to ask for an answer; a done with none cannot be accepted.
     answer_required: float = 0.60
     reject_unmet: float = 0.70

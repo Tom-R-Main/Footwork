@@ -30,3 +30,10 @@ the destructive gate covers actions without element indices, the verifier grades
 rather than sentences, and Jev call counts include escalation and verification calls.
 `results/heldout-final.md` records the departure from "never debugged" that the verifier change
 implies.
+
+## Addendum 2 (2026-09-21, after the live ledger smoke)
+
+VerifyPolicy accept band widened from complete ≥ 0.85 and unmet ≤ 0.20 to complete ≥ 0.80 and
+unmet ≤ 0.30 (commit noted in git log; rationale in the class docstring). This is a settings change
+after the freeze, so the fixture heldout number in the README is stale until the one rerun the
+experiment program requires on adoption; the live paired rerun measures it first.

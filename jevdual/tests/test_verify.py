@@ -83,8 +83,9 @@ def test_split_claims_and_check_claims():
 def test_band_thresholds():
     p = VerifyPolicy()
     assert band_for(0.9, {"a": 0.1}, p)[0] == "accept"
-    assert band_for(0.9, {"a": 0.25}, p)[0] == "verify"
-    assert band_for(0.84, {"a": 0.1}, p)[0] == "verify"
+    assert band_for(0.9, {"a": 0.25}, p)[0] == "accept"  # widened 2026-09-21: unmet <= 0.30
+    assert band_for(0.9, {"a": 0.35}, p)[0] == "verify"
+    assert band_for(0.79, {"a": 0.1}, p)[0] == "verify"  # complete >= 0.80
     assert band_for(0.9, {"a": 0.7}, p)[0] == "reject"
     assert band_for(0.3, {"a": 0.1}, p)[0] == "reject"
     assert band_for(0.9, {}, p)[0] == "accept"
