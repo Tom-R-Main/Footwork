@@ -8,7 +8,7 @@ question is in the table.
 
 | id | question | status | depends on |
 |---|---|---|---|
-| [Q6](Q6.md) | Does the calibration survive contact with live sites? | live task set authored (`evals/tasks/live-dev.yaml`, `live-heldout.yaml`); not run | nothing |
+| [Q6](Q6.md) | Does the calibration survive contact with live sites? | validation run 0 done (`results/q6-live-validation.md`); repeat 1 running; repeats cut to one plus a paired rerun after the ledger (Amendment 2) | nothing |
 | [Q1](Q1.md) | What signal should trigger deliberation? | pre-registered | Q6 traces, step labels |
 | [Q3](Q3.md) | Is a small calibrated verifier better than an LLM judge? | pre-registered | Q6 traces, trajectory labels |
 | [Q2](Q2.md) | Should the check sit before the action or after it? | pre-registered | Q6 task set, arm configs |
