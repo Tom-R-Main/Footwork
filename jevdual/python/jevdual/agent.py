@@ -30,7 +30,7 @@ class S1Policy(Protocol):
     ``None`` to escalate this step to System 2.
     """
 
-    async def decide(self, agent: "DualProcessAgent", state: "BrowserStateSummary") -> "AgentOutput | None": ...
+    async def decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> AgentOutput | None: ...
 
 
 class DualProcessAgent(Agent):
@@ -45,7 +45,7 @@ class DualProcessAgent(Agent):
         self.s1_steps = 0
         self.s2_steps = 0
 
-    async def _get_next_action(self, browser_state_summary: "BrowserStateSummary") -> None:
+    async def _get_next_action(self, browser_state_summary: BrowserStateSummary) -> None:
         if self.s1_policy is None:
             self.s2_steps += 1
             await super()._get_next_action(browser_state_summary)

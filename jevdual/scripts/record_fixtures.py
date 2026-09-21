@@ -26,10 +26,10 @@ from pathlib import Path
 
 logging.getLogger().setLevel(logging.ERROR)
 
-from browser_use.browser.profile import BrowserProfile  # noqa: E402
-from browser_use.browser.session import BrowserSession  # noqa: E402
-from browser_use.dom.service import DomService  # noqa: E402
-from browser_use.dom.views import DEFAULT_INCLUDE_ATTRIBUTES  # noqa: E402
+from browser_use.browser.profile import BrowserProfile
+from browser_use.browser.session import BrowserSession
+from browser_use.dom.service import DomService
+from browser_use.dom.views import DEFAULT_INCLUDE_ATTRIBUTES
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "tests" / "fixtures" / "cdp"

@@ -5,7 +5,7 @@ from __future__ import annotations
 import gzip
 import json
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -56,7 +56,7 @@ def manifest() -> dict[str, Any]:
     return json.loads((FIXTURE_DIR / "manifest.json").read_text())
 
 
-@lru_cache(maxsize=None)
+@cache
 def load_fixture(slug: str) -> Fixture:
     path = FIXTURE_DIR / f"{slug}.json.gz"
     with gzip.open(path, "rt", encoding="utf-8") as f:

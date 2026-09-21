@@ -19,7 +19,6 @@ from pathlib import Path
 from browser_use.agent.views import AgentOutput
 from browser_use.browser.profile import BrowserProfile
 from browser_use.browser.views import BrowserStateSummary
-
 from jevdual.agent import DualProcessAgent
 from jevdual.testing import RefusingLLM
 

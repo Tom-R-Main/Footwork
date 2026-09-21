@@ -17,7 +17,7 @@ pytestmark = pytest.mark.skipif(
 
 def test_spike_b1_probes():
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
-    import spike_b1  # noqa: E402
+    import spike_b1
 
     async def collect():
         base, stop = spike_b1.serve()
