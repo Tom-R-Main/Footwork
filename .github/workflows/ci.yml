@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jevdual
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.95.0
+          components: rustfmt, clippy
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install (builds the PyO3 crate)
+        run: uv sync
+      - name: Lint
+        run: uv run ruff check python evals tests scripts
+      - name: Rust checks
+        run: |
+          cargo fmt --all --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+          cargo test --workspace --locked
+      - name: Unit and equality tests (no keys, no browser)
+        run: uv run pytest -q -m "not browser"
