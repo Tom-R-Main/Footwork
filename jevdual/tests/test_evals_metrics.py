@@ -82,3 +82,19 @@ def test_signals_from_labels_scores_confidence_negated(tmp_path: Path):
     assert out["n"] == 4 and out["wrong"] == 2 and out["source"] == {"human": 1, "auto": 3}
     assert out["auroc"]["op_conf"]["auroc"] == 1.0 and out["auroc"]["stuck"]["auroc"] == 1.0
     assert out["auroc"]["goal_done"]["auroc"] == 0.5
+
+
+def test_labels_sheet_resolves_target_labels_and_verification_scores(tmp_path: Path):
+    from evals.labels import rows_for
+
+    _write_trace(
+        tmp_path, "task-a-dual-1", "dual",
+        [{"step": 1, "system": "s1", "decision": {**_dec(0.9), "target": {"choice": "6", "confidence": 0.7, "probabilities": {"6": 0.7, "7": 0.3}}},
+          "arbiter_reason": "act: operation 0.90", "executed": [{"name": "input"}], "url_after": "http://s/login",
+          "menu": [{"id": 6, "label": "Username", "role": "input"}, {"id": 7, "label": "Password", "role": "input"}],
+          "verify": {"band": "verify", "complete": 0.81, "unmet": {"Signed in": 0.35}}}],
+    )
+    (tmp_path / "results.json").write_text(json.dumps([{"task_id": "task-a", "arm": "dual", "passed": True}]))
+    r = rows_for(tmp_path)[0]
+    assert r["target_label"] == "Username" and r["alternatives"].startswith("6:Username (0.70); 7:Password (0.30)")
+    assert r["menu_size"] == 2 and r["verify_complete"] == 0.81 and r["verify_unmet_max"] == 0.35

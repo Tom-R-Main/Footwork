@@ -181,7 +181,9 @@ class DualProcessAgent(Agent):
 
             menu = redact_menu(menu, store.redactor())
         band, reason = await verifier.judge_done(self, menu, answer=params.get("text"))
-        self.s2_verifications.append({"step": self.state.n_steps, "band": band, "reason": reason})
+        last = getattr(verifier, "last", None)
+        scores = last.to_trace() if last is not None and hasattr(last, "to_trace") else {"band": band, "reason": reason}
+        self.s2_verifications.append({"step": self.state.n_steps, "band": band, "reason": reason, **{k: v for k, v in scores.items() if k not in ("band", "reason")}})
         if band == "accept":
             return
         self.s2_done_rejections += 1

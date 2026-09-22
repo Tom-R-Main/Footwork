@@ -30,7 +30,7 @@ from browser_use.browser.profile import BrowserProfile
 from jevdual import BACKEND, patch
 from jevdual.agent import DualProcessAgent, S1Policy
 from jevdual.keys import META_BASE_URL, MUSE_CONTRIBUTOR, load_keys
-from jevdual.trace import ActionRecord, RunHeader, StepRecord, Timings, TraceWriter
+from jevdual.trace import ActionRecord, MenuEntry, RunHeader, StepRecord, Timings, TraceWriter
 
 from evals.fixtures.server import serve
 from evals.predicates import EndState, checkpoints_missed, evaluate
@@ -232,6 +232,8 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
                 step_ms = (h.metadata.step_end_time - h.metadata.step_start_time) * 1000
             rec = s1_records.get(i)
             decision = rec.decision.to_trace(sum(rec.menu_omitted.values())) if rec and rec.decision else None
+            verify = rec.verify if rec and rec.verify else next((v for v in getattr(agent, "s2_verifications", []) if v.get("step") == i), None)
+            menu = [MenuEntry(**m) for m in (rec.menu if rec else ())]
             w.write(
                 StepRecord(
                     run_id=run_id,
@@ -245,6 +247,8 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
                     result_error=next((r.error for r in h.result if r.error), None),
                     is_done=any(r.is_done for r in h.result),
                     memory_line=h.model_output.memory if h.model_output else None,
+                    menu=menu,
+                    verify=verify,
                     timings=Timings(step_ms=step_ms, jev_ms=(rec.jev_ms if rec else None), dom_ms=(rec.menu_ms if rec else None)),
                 )
             )

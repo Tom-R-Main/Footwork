@@ -16,7 +16,7 @@ from typing import Any, Literal, Self
 
 from pydantic import BaseModel, Field
 
-TRACE_SCHEMA_VERSION = 1
+TRACE_SCHEMA_VERSION = 2  # 2: menu snapshot and verification scores per step (annotation sets need them)
 
 System = Literal["s1", "s2", "tool"]
 
@@ -39,6 +39,19 @@ class DecisionRecord(BaseModel):
     request_tokens: int | None = None
     latency_ms: float | None = None
     omitted_elements: int = 0
+
+
+class MenuEntry(BaseModel):
+    """One candidate as S1 saw it (after secret redaction): enough for a person to judge a target id."""
+
+    id: int
+    label: str
+    role: str
+    section: str | None = None
+    value: str | None = None
+    input_type: str | None = None
+    href: str | None = None
+    offscreen: bool = False
 
 
 class ActionRecord(BaseModel):
@@ -77,6 +90,10 @@ class StepRecord(BaseModel):
     effect: str | None = None
     no_effect: bool = False
     memory_line: str | None = None
+    #: the candidates S1 chose among (empty when S1 was not consulted), and the verification scores of
+    #: any done judged on this step (S1's own or System 2's): complete, unmet per requirement, band
+    menu: list[MenuEntry] = Field(default_factory=list)
+    verify: dict[str, Any] | None = None
     timings: Timings = Field(default_factory=Timings)
     cost: Cost = Field(default_factory=Cost)
     ts: float = Field(default_factory=time.time)

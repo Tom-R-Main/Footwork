@@ -52,3 +52,17 @@ def test_run_header_accepts_every_eval_arm():
 
     for arm in ARMS:
         RunHeader(run_id="r", task="t", arm=("s1_only" if arm == "scripted" else arm), backend="pure-python", browser_use_version="0")
+
+
+def test_step_record_carries_menu_and_verification_scores():
+    from jevdual.trace import TRACE_SCHEMA_VERSION, MenuEntry, StepRecord
+
+    r = StepRecord(
+        run_id="r", step=1, system="s1",
+        menu=[MenuEntry(id=3, label="Sign in", role="button"), MenuEntry(id=6, label="Username", role="input", input_type="text", value="")],
+        verify={"band": "verify", "complete": 0.81, "unmet": {"Signed in": 0.35}},
+    )
+    d = r.model_dump()
+    assert d["schema_version"] == TRACE_SCHEMA_VERSION == 2
+    assert d["menu"][1]["label"] == "Username" and d["verify"]["complete"] == 0.81
+    assert StepRecord(run_id="r", step=2, system="s2").menu == []  # older records and S2 steps: empty

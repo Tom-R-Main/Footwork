@@ -483,3 +483,13 @@ def test_scoped_authorisation_lets_the_named_action_through_and_pauses_the_rest(
 
     assert Arbiter.from_toml().judge(hot, finish, mkctx(), Scoped()).kind == "act"
     assert Arbiter.from_toml().judge(hot, delete, mkctx(), Scoped()).kind == "confirm"
+
+
+def test_s1_record_keeps_a_redacted_menu_snapshot():
+    state, idx = _fresh_state_and_link()
+    agent = FakeAgent(state)
+    s1 = JevS1(FakePolicy(_decision("click", idx)), arbiter=AlwaysAct())
+    asyncio.run(s1.decide(agent, state))
+    rec = agent.s1_records[1]
+    assert rec.menu and any(m["id"] == idx for m in rec.menu)
+    assert set(rec.menu[0]) == {"id", "label", "role", "section", "value", "input_type", "href", "offscreen"}

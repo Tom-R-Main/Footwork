@@ -103,6 +103,8 @@ class S1Record:
     verdict: Verdict | None
     proposed: tuple[ActionRecord, ...] = ()
     verify: dict[str, Any] | None = None
+    #: compact snapshot of the candidates S1 chose among, after redaction (trace MenuEntry shape)
+    menu: tuple[dict[str, Any], ...] = ()
     menu_omitted: dict[str, int] = field(default_factory=dict)
     error: str | None = None
     menu_ms: float = 0.0
@@ -334,6 +336,10 @@ class JevS1:
             menu = redact_menu(menu, self.secrets.redactor())
         rec.menu_ms = (time.perf_counter() - t0) * 1000
         rec.menu_omitted = dict(menu.omitted)
+        rec.menu = tuple(
+            {"id": c.id, "label": c.label[:120], "role": c.role, "section": (c.section or None), "value": (c.value[:80] if c.value else None), "input_type": c.input_type, "href": (c.href[:160] if c.href else None), "offscreen": c.offscreen}
+            for c in menu.candidates
+        )
         self.last_menu = menu
         ctx = self._context(agent)
 
