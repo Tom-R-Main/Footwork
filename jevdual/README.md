@@ -38,6 +38,13 @@ Live split, 55 tasks on public and practice sites, three arms after the verifica
 | stock | 51/55 | 1 | 265 | 0 | 0.382 | 5,508 |
 | dual | 51/55 | 0 (2 paused) | 196 | 458 | 0.504 | 6,158 |
 
+Q9, the four-arm test of System 2 directing System 1 on the same 55 live tasks
+(`results/q9-live-dev.md`): a guarded System 2 alone (gate and verification, no S1 decisions)
+matched every arm on verified completions at the lowest cost, \$0.0100 per verified pass against
+dual's \$0.0117 and delegation's \$0.0137, with zero false completions everywhere. Dual keeps 26%
+fewer LLM calls than the guarded arm and the fewest steps; the first delegation build cost more and
+is being rebuilt with explicit ownership before the next measurement.
+
 What the splits say: Jev alone handles navigation, search, pagination, modals and login in two to
 five steps and cannot read or answer; the LLM alone reads and answers and will click "Delete
 account" when asked to reach a page, and its own judge accepts that as success; the pair is the only
