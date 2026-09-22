@@ -48,3 +48,30 @@ higher, which is Q1's calibration and grounding question, not a loop-structure q
 `lw-chain-rust-hoare` (UNVERIFIED on the Rust article), the three saucedemo order tasks at the
 checkout step (every arm, every run today), and `ls-cart-stop-unauthorized` paused by the gate
 before its checkpoints (Q8).
+
+## Q9d: executor fixes from these traces, smoke on the twelve tasks they came from (run `q9d-delegate-smoke-20260922-104239`)
+
+Fixes (a4caad0): authorised tasks skip the arbiter's confirm rules; operation floor 0.45 inside an
+assignment; the subgoal check runs through the done verification band with the trajectory; a field
+already holding its known value is finished. Delegate arm alone on the twelve sign-in, form, cart
+and search tasks; the other arms are the same tasks from the same-day runs.
+
+| arm | pass | verified | est. cost USD | wall s | LLM calls | Jev calls | assignments | reached |
+|---|---|---|---|---|---|---|---|---|
+| guarded (q9b, 11 of the 12) | 10/11 | 7 | 0.065 | 906 | 38 | 19 | | |
+| dual (q9b, 11 of the 12) | 10/11 | 8 | 0.069 | 722 | 26 | 72 | | |
+| delegate v3 (q9c, 11 of the 12) | 11/11 | 7 | 0.093 | 1,316 | 56 | 53 | | |
+| delegate with fixes (this smoke) | 12/12 | 7 | 0.094 | 1,064 | 49 | 70 | 10 | 2 |
+
+The fixes removed the two defect classes they targeted: no assignment was paused by the gate and
+none looped on a retyped value. Reach did not move: 2 of 10. The remaining closings are 5
+"not reached" where the subgoal verification sat in the uncertain band on pages that were plainly
+signed in (complete 0.45 to 0.81, one at 0.79 against the 0.80 floor), 2 sign-ins handed back on a
+collapsed target head (0.05 and 0.31 on the username field), 1 stuck form. Cost stayed 40% above
+guarded and dual on these tasks.
+
+Reading: with the instrument coherent and its defects fixed, delegation on live pages is limited
+by two things the loop structure cannot change: the executor's target grounding on forms, and the
+verifier's confidence on multi-step state. Both are calibration questions (Q1, Q3) that need the
+labelled steps and trajectories, and moving the 0.80 floor to fit this smoke would be exactly the
+tuning the program forbids. Q9's decision stands: reactive loop by default, delegation a tool.
