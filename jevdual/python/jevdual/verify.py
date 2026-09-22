@@ -324,6 +324,7 @@ class Verifier:
         answer_expected: bool = False,
         trajectory: list[dict[str, Any]] | None = None,
         ledger: Ledger | None = None,
+        answer_matters: bool = True,
     ) -> Verdict:
         ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
         questions = self.build_questions(requirements, ask_kinds=ask_kinds)
@@ -375,7 +376,7 @@ class Verifier:
                 reason = f"answer carries no fact found on the page ({len(unsupported)} unsupported, rest narrative); {reason}"
             elif unsupported:
                 reason = f"{len(unsupported)} unsupported claim(s) dropped; {reason}"
-        if answer_required >= self.policy.answer_required and not supported_answer and band == "accept":
+        if answer_matters and answer_required >= self.policy.answer_required and not supported_answer and band == "accept":
             # The page may show the outcome, but the task asked for it to be reported; System 1 cannot compose it.
             band = "verify"
             reason = f"task asks for an answer (answer_required={answer_required:.2f}) and none is given; {reason}"
@@ -458,11 +459,7 @@ class ArbiterHook:
         if self.use_trajectory:
             store = getattr(getattr(agent, "s1_policy", None), "secrets", None)
             trajectory = trajectory_from_agent(agent, store.redactor() if store is not None else None)
-        verdict = await self.verifier.verify(
-            f"{subgoal} (a bounded assignment inside the task: {agent.task})",
-            (stop_condition,),
-            menu,
-            None,
-            trajectory=trajectory,
-        )
+        # the subgoal alone is the task here: the whole task's wording made the answer-required rule
+        # refuse navigation subgoals on answer tasks (Q8/Q9e second launch)
+        verdict = await self.verifier.verify(subgoal, (stop_condition,), menu, None, trajectory=trajectory, answer_matters=False)
         return verdict.band == "accept", f"subgoal {verdict.band}: {verdict.reason}"

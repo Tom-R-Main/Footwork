@@ -158,3 +158,14 @@ def test_subgoal_check_uses_the_done_verification_band():
     assert state["requirements"] == ["the products page is shown"] and "sign in" in state["task"] and "trajectory" in state
     met2, reason2 = asyncio.run(hook.judge_subgoal(agent, menu(), "sign in", "the products page is shown"))
     assert not met2 and reason2.startswith("subgoal verify")
+
+
+def test_subgoal_check_ignores_the_answer_required_rule_and_sends_only_the_subgoal():
+    client = FakeClient(load("verify_answer_required"))
+    hook = ArbiterHook(Verifier(client), REQS)
+    agent = _fake_agent()
+    agent.task = "Find who created Python and report the name"
+    _met, reason = asyncio.run(hook.judge_subgoal(agent, menu(), "open the Python article", "the Python article is shown"))
+    state = client.calls[0]["state"]
+    assert state["task"] == "open the Python article" and "report the name" not in state["task"]
+    assert "asks for an answer" not in reason

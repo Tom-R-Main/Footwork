@@ -514,3 +514,13 @@ def test_delegated_typing_takes_a_literal_from_the_assignment_but_not_from_the_t
     out = asyncio.run(s1.decide(agent, state))
     assert out is not None and out.action[0].model_dump(exclude_unset=True)["input"]["text"] == "brass lantern"
     assert agent.delegation is not None and agent.delegation.steps_taken == 1
+
+
+def test_single_known_value_binds_to_a_search_field():
+    from jevdual.menu import Candidate
+    from jevdual.s1 import _known_value_for
+
+    box = Candidate(id=1, label="Search Wikipedia", role="input", operations=("type",), input_type="search")
+    assert _known_value_for(box, (("query", "Eiffel Tower"),)) == "Eiffel Tower"
+    user = Candidate(id=2, label="Username", role="input", operations=("type",), input_type="text")
+    assert _known_value_for(user, (("query", "Eiffel Tower"),)) is None

@@ -198,14 +198,17 @@ def register_act_toward_goal(tools: Any, *, decide: DecideFn, text_source: TextF
 # --- Q9: delegation as a mode of the evaluated agent -------------------------------------------
 
 
-_NEEDS_VALUES = re.compile(r"\b(sign|log)[ -]?in\b|\bfill\b|\benter\b|\btype\b|\bform\b|\busername\b|\bpassword\b", re.IGNORECASE)
+_NEEDS_VALUES = re.compile(
+    r"\b(sign|log)[ -]?in\b|\bfill\b|\benter\b|\btype\b|\bform\b|\busername\b|\bpassword\b|\bsearch\b|\bquery\b", re.IGNORECASE
+)
+_QUOTED = re.compile(r"[\"'\u201c\u2018]([^\"'\u201d\u2019]{1,120})[\"'\u201d\u2019]")
 
 
 class SubgoalParams(BaseModel):
     goal: str = Field(description="One concrete subgoal for the fast navigator, e.g. 'add the Sauce Labs Backpack to the cart'.")
     stop_condition: str = Field(description="The observable outcome that means the subgoal is done, e.g. 'the cart badge shows 1 and the backpack button reads Remove'.")
     allowed_operations: list[str] = Field(default_factory=list, description="Operations the navigator may use: click, type, select, enter. Empty means all.")
-    known_values: dict[str, str] = Field(default_factory=dict, description="Field name or label -> value to type, e.g. {'First Name': 'Ada'}; secrets by placeholder as usual.")
+    known_values: dict[str, str] = Field(default_factory=dict, description="Field name or label -> value to type, e.g. {'search': 'Eiffel Tower'} or {'First Name': 'Ada'}; secrets by placeholder as usual. Required for any goal that searches, signs in or fills a form.")
     max_steps: int = Field(default=8, ge=1, le=20, description="Step budget before it reports back.")
 
 
@@ -229,10 +232,11 @@ def register_delegation(tools: Any, agent_ref: Callable[[], Any]) -> None:
             return ActionResult(error="delegation unavailable: no agent")
         if getattr(agent, "delegation", None) is not None:
             return ActionResult(error="a delegation is already active")
-        if _NEEDS_VALUES.search(params.goal) and not params.known_values:
+        if _NEEDS_VALUES.search(params.goal) and not params.known_values and not _QUOTED.search(params.goal):
             return ActionResult(
-                error="this assignment types into fields but gave no known_values; call again with a value for each "
-                "field, e.g. {'username': 'standard_user', 'password': '<secret>sauce_password</secret>'}"
+                error="this assignment types into a field but gave no value: pass known_values (e.g. {'search': 'Eiffel Tower'} "
+                "or {'username': 'standard_user', 'password': '<secret>sauce_password</secret>'}) or put the exact text in "
+                "quotes in the goal"
             )
         agent.delegation = Delegation(
             goal=params.goal,

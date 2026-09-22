@@ -81,10 +81,13 @@ def _known_value_for(target: Candidate, known: tuple[tuple[str, str], ...]) -> s
     """A value System 2 supplied for this field, matched on the field's label or section (case-insensitive)."""
     if not known:
         return None
-    hay = " ".join(x for x in (target.label, getattr(target, "section", None) or "") if x).casefold()
+    hay = " ".join(x for x in (target.label, getattr(target, "section", None) or "", getattr(target, "input_type", None) or "") if x).casefold()
     for key, value in known:
         if key.casefold() in hay:
             return value
+    # a single known value and a search-type field: the driver meant the query
+    if len(known) == 1 and ("search" in hay or (getattr(target, "input_type", None) or "") == "search"):
+        return known[0][1]
     return None
 
 

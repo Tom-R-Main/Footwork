@@ -132,3 +132,19 @@ def test_delegate_subgoal_refuses_a_typing_assignment_without_values():
     assert r.error and "known_values" in r.error and agent.delegation is None
     r2 = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Sign in with username standard_user and the password provided", "stop_condition": "products page shown", "known_values": {"username": "standard_user", "password": "<secret>pw</secret>"}}))
     assert r2.error is None and agent.delegation is not None
+
+
+def test_delegate_subgoal_search_goals_need_a_value_or_a_quoted_query():
+    import asyncio
+    from types import SimpleNamespace
+
+    from browser_use import Tools
+    from jevdual.tools import register_delegation
+
+    agent = SimpleNamespace(delegation=None, state=SimpleNamespace(n_steps=1))
+    tools = Tools()
+    register_delegation(tools, lambda: agent)
+    r = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Search Wikipedia for Eiffel Tower and open its article", "stop_condition": "article shown"}))
+    assert r.error and "value" in r.error and agent.delegation is None
+    r2 = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Search Wikipedia for 'Eiffel Tower' and open its article", "stop_condition": "article shown"}))
+    assert r2.error is None and agent.delegation is not None
