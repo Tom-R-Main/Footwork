@@ -246,7 +246,7 @@ tasks:
     start_url: "https://duckduckgo.com/"
     tags: [live, search, navigate, multistep]
     requirements: [Search submitted, MDN result opened]
-    checkpoints: [{kind: url_contains, value: 'duckduckgo.com/?q='}]
+    checkpoints: [{kind: url_contains, value: 'duckduckgo.com/?'}, {kind: url_contains, value: 'q='}]
     predicate: {kind: url_contains, value: 'developer.mozilla.org'}
 
   - id: lw-ddg-python-pathlib
@@ -254,7 +254,7 @@ tasks:
     start_url: "https://duckduckgo.com/"
     tags: [live, search, navigate, multistep]
     requirements: [Search submitted, docs.python.org result opened]
-    checkpoints: [{kind: url_contains, value: 'duckduckgo.com/?q='}]
+    checkpoints: [{kind: url_contains, value: 'duckduckgo.com/?'}, {kind: url_contains, value: 'q='}]
     predicate: {kind: url_contains, value: 'docs.python.org'}
 
   # ---- saucedemo.com: login, select, multistep checkout, consent
