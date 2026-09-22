@@ -10,6 +10,7 @@ watchdogs, history, GIF, callbacks) is inherited.
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 from typing import TYPE_CHECKING, Any, Protocol
 
@@ -53,11 +54,16 @@ class DualProcessAgent(Agent):
         #: Pre-dispatch gate for BOTH systems: an index-bearing action whose target label matches a
         #: destructive keyword is replaced by a failed done asking for confirmation, unless the task
         #: authorized irreversible actions. System 2 clicked "Delete account" without this.
-        if destructive_keywords is None:
-            from jevdual.arbiter import ArbiterPolicy
+        from jevdual.arbiter import ArbiterPolicy
 
-            destructive_keywords = ArbiterPolicy.from_toml().destructive_keywords
-        self.destructive_keywords = destructive_keywords
+        self.gate_policy = ArbiterPolicy.from_toml()
+        if destructive_keywords is not None:
+            self.gate_policy = dataclasses.replace(self.gate_policy, destructive_keywords=tuple(destructive_keywords))
+        self.destructive_keywords = self.gate_policy.destructive_keywords
+        #: Q8: `evaluate` is refused recoverably (the step becomes a wait plus a message) up to this many
+        #: times per run, then paused. Three of every arm's live misses were terminal evaluate pauses.
+        self.max_evaluate_refusals = 2
+        self.evaluate_refusals = 0
         self.authorized_destructive = authorized_destructive
         #: Scope of the task's authorisation: keywords a target must match for the gate and the
         #: arbiter to stand down (place order, submit, finish). Empty with authorized_destructive
@@ -84,8 +90,19 @@ class DualProcessAgent(Agent):
         low = (text or "").casefold()
         return any(k in low for k in self.authorized_actions)
 
+    def _gate_rules(self) -> Any:
+        """The gate's keyword policy; a stand-in agent without one gets the shipped defaults."""
+        policy = getattr(self, "gate_policy", None)
+        if policy is None:
+            from jevdual.arbiter import ArbiterPolicy
+
+            policy = ArbiterPolicy.from_toml()
+            if getattr(self, "destructive_keywords", None):
+                policy = dataclasses.replace(policy, destructive_keywords=tuple(self.destructive_keywords))
+        return policy
+
     def _destructive_hit(self, actions: list[Any]) -> tuple[str, str, int] | None:
-        from jevdual.arbiter import match_destructive_keyword
+        from jevdual.arbiter import destructive_match
 
         session = self.browser_session
         cached = getattr(session, "_cached_browser_state_summary", None)
@@ -97,10 +114,25 @@ class DualProcessAgent(Agent):
             node = selector_map[idx]
             label = (node.ax_node.name if node.ax_node and node.ax_node.name else "") or node.get_all_children_text(max_depth=2) or ""
             label = label or (node.attributes or {}).get("value", "") or (node.attributes or {}).get("aria-label", "")
-            kw = match_destructive_keyword(label, self.destructive_keywords)
+            kw = destructive_match(label, DualProcessAgent._gate_context(self, node), DualProcessAgent._gate_rules(self))
             if kw:
                 return label[:80], kw, idx
         return None
+
+    def _gate_context(self, node: Any = None) -> str:
+        """URL, title and the nearest ancestor text of a node: what a contextual keyword is judged against."""
+        cached = getattr(self.browser_session, "_cached_browser_state_summary", None)
+        parts = [str(getattr(cached, "url", "") or ""), str(getattr(cached, "title", "") or "")]
+        parent = getattr(node, "parent_node", None)
+        hops = 0
+        while parent is not None and hops < 4:
+            attrs = getattr(parent, "attributes", None) or {}
+            for key in ("aria-label", "id", "class", "name"):
+                if attrs.get(key):
+                    parts.append(str(attrs[key]))
+            parent = getattr(parent, "parent_node", None)
+            hops += 1
+        return " ".join(parts)
 
     async def _active_element_label(self) -> str:
         """Label of the focused element and its form's submit control, for gating Enter."""
@@ -126,12 +158,13 @@ class DualProcessAgent(Agent):
         navigate is checked against the destination url; send_keys with Enter is checked
         against the focused element and its form's submit control.
         """
-        from jevdual.arbiter import match_destructive_keyword
+        from jevdual.arbiter import destructive_match
 
         hit = self._destructive_hit(actions)
         if hit is not None:
             return hit
         keywords = tuple(k.casefold() for k in self.destructive_keywords)
+        context = DualProcessAgent._gate_context(self)
         for action in actions:
             data = action.model_dump(exclude_unset=True)
             name = next(iter(data))
@@ -148,7 +181,7 @@ class DualProcessAgent(Agent):
                 label = await self._active_element_label()
                 if not label:
                     return ("Enter with unknown focused element", "enter", -1)
-                kw = match_destructive_keyword(label, self.destructive_keywords)
+                kw = destructive_match(label, context, DualProcessAgent._gate_rules(self))
                 if kw:
                     return (f"Enter in {label[:80]!r}", kw, -1)
         return None
@@ -211,6 +244,21 @@ class DualProcessAgent(Agent):
             hit = await self._destructive_hit_any(list(out.action))
             if hit is not None and self.is_authorized(f"{hit[0]} {hit[1]}"):
                 hit = None  # within the task's authorised scope (matched by label or keyword)
+            if hit is not None and hit[1] == "evaluate" and self.evaluate_refusals < self.max_evaluate_refusals:
+                # recoverable refusal: the driver loses this step and is told what it may use instead
+                from browser_use.llm.messages import UserMessage
+
+                self.evaluate_refusals += 1
+                log.warning("step %s: evaluate refused (%s of %s); the driver keeps control", self.state.n_steps, self.evaluate_refusals, self.max_evaluate_refusals)
+                out.action = [self.ActionModel(wait={"seconds": 1})]
+                self._message_manager._add_context_message(
+                    UserMessage(
+                        content="evaluate (page script) is not permitted here. Use click, input, select_dropdown, send_keys, "
+                        "scroll, navigate, extract or find_evidence instead, or report what you found. If a click had no effect, "
+                        "try the element's text or a different control rather than scripting it."
+                    )
+                )
+                hit = None
             if hit is not None:
                 label, kw, idx = hit
                 system = self.step_systems.get(self.state.n_steps, "s2")

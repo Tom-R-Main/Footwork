@@ -47,6 +47,8 @@ class TaskResult:
     evidence_calls: int = 0
     #: actual model requests recorded by browser-use's token tracker (driver steps, retries, judge), not the S2 step count
     llm_requests: int = 0
+    #: Q8: recoverable evaluate refusals in this run (the terminal pause is counted under paused)
+    evaluate_refusals: int = 0
 
     @property
     def cost_usd(self) -> float:
@@ -91,6 +93,7 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "delegations": sum(r.delegations for r in rs),
             "subgoals_reached": sum(r.subgoals_reached for r in rs),
             "evidence_calls": sum(r.evidence_calls for r in rs),
+            "evaluate_refusals": sum(r.evaluate_refusals for r in rs),
         }
     return out
 
@@ -115,12 +118,12 @@ def render_markdown(results: list[TaskResult], title: str) -> str:
         "",
         "## Outcomes (external success and claimed completion kept apart)",
         "",
-        "| arm | verified pass (passed and claimed) | unclaimed pass (passed, UNVERIFIED or paused) | false done | model requests (tracker) | cost per verified pass |",
-        "|---|---|---|---|---|---|",
+        "| arm | verified pass (passed and claimed) | unclaimed pass (passed, UNVERIFIED or paused) | false done | model requests (tracker) | evaluate refusals | cost per verified pass |",
+        "|---|---|---|---|---|---|---|",
     ]
     for arm, a in agg.items():
         vp = a["verified_pass"]
-        lines.append(f"| {arm} | {vp:.0f} | {a['unclaimed_pass']:.0f} | {a['false_done']:.0f} | {a['llm_requests']:.0f} | {(a['cost_usd'] / vp) if vp else 0:.4f} |")
+        lines.append(f"| {arm} | {vp:.0f} | {a['unclaimed_pass']:.0f} | {a['false_done']:.0f} | {a['llm_requests']:.0f} | {a['evaluate_refusals']:.0f} | {(a['cost_usd'] / vp) if vp else 0:.4f} |")
     if any(r.judge_verdict is not None for r in results):
         lines += [
             "",

@@ -200,3 +200,22 @@ def test_authorized_task_skips_the_confirm_rules_and_delegation_lowers_the_opera
     delegated = FakeAgent()
     delegated.delegation = object()
     assert judge(Arbiter.from_toml(), flat, m, agent=delegated).kind == "act"
+
+
+def test_contextual_keywords_are_destructive_only_in_a_durable_context():
+    from jevdual.arbiter import ArbiterPolicy, destructive_match
+
+    p = ArbiterPolicy.from_toml()
+    assert destructive_match("Remove", "https://www.saucedemo.com/cart.html Swag Labs cart", p) is None
+    assert destructive_match("Remove", "https://site/account/settings Account settings", p) == "remove"
+    assert destructive_match("Delete account", "https://www.saucedemo.com/cart.html", p) == "delete"
+    assert destructive_match("Cancel", "Cancel subscription billing", p) == "cancel"
+    assert destructive_match("Cancel", "search dialog", p) is None
+
+
+def test_arbiter_confirm_rule_uses_the_menu_context_for_contextual_keywords():
+    remove_in_cart = menu(url="https://www.saucedemo.com/cart.html", title="Swag Labs", cands=(Candidate(id=1, label="Remove", role="button", operations=("click",)),))
+    remove_in_account = menu(url="https://site/account", title="Account settings", cands=(Candidate(id=1, label="Remove", role="button", operations=("click",)),))
+    d = decision("click", 1)
+    assert judge(Arbiter.from_toml(), d, remove_in_cart).kind == "act"
+    assert judge(Arbiter.from_toml(), d, remove_in_account).kind == "confirm"

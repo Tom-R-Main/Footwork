@@ -23,10 +23,14 @@ repeat_target_window = 6          # ... within this many steps -> escalate
 # --- confirm before anything hard to undo (never auto-executed)
 destructive_confirm = 0.5
 destructive_keywords = [
-  "delete", "remove", "pay", "purchase", "buy now", "place order", "send",
+  "delete", "pay", "purchase", "buy now", "place order", "send",
   "submit payment", "confirm order", "unsubscribe", "deactivate",
   "删除", "支付", "购买", "确认订单", "发送",
 ]
+# Q8 consent classes: these words are destructive only in a context that names something durable
+# (an account, a subscription, stored data); "Remove" in a shopping cart is not irreversible.
+contextual_keywords = ["remove", "cancel", "clear"]
+destructive_contexts = ["account", "subscription", "profile", "settings", "billing", "payment", "membership", "delete", "deactivate", "unsubscribe", "permanently"]
 
 # --- next-best retry from the distribution already paid for
 retry_alternate_margin = 0.15     # alternate must be within this probability of the chosen target

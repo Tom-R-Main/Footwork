@@ -67,10 +67,12 @@ class ArbiterPolicy:
     repeat_target_count: int = 3
     repeat_target_window: int = 6
     destructive_confirm: float = 0.5
+    #: Q8: words that are destructive only when the surrounding context names something durable
+    contextual_keywords: tuple[str, ...] = ("remove", "cancel", "clear")
+    destructive_contexts: tuple[str, ...] = ("account", "subscription", "profile", "settings", "billing", "payment", "membership", "delete", "deactivate", "unsubscribe", "permanently")
     destructive_keywords: tuple[str, ...] = (
         "delete",
-        "remove",
-        "pay",
+                "pay",
         "purchase",
         "buy now",
         "place order",
@@ -95,8 +97,9 @@ class ArbiterPolicy:
         unknown = set(data) - known
         if unknown:
             raise ValueError(f"unknown arbiter policy keys: {sorted(unknown)}")
-        if "destructive_keywords" in data:
-            data["destructive_keywords"] = tuple(data["destructive_keywords"])
+        for key in ("destructive_keywords", "contextual_keywords", "destructive_contexts"):
+            if key in data:
+                data[key] = tuple(data[key])
         return cls(**data)
 
 
@@ -109,6 +112,19 @@ def _keyword_pattern(keyword: str) -> re.Pattern[str] | None:
     if not kw or not _LATIN.match(kw):
         return None
     return re.compile(r"(?<![A-Za-z0-9])" + re.escape(kw) + r"(?![A-Za-z0-9])", re.IGNORECASE)
+
+
+def destructive_match(text: str, context: str, policy: ArbiterPolicy) -> str | None:
+    """Q8 consent classes: a hard keyword matches anywhere; a contextual keyword ("remove", "cancel",
+    "clear") matches only when ``context`` (URL, title, section, nearby text) names something durable
+    (account, subscription, billing, stored data). A cart "Remove" is consent-gated, not destructive."""
+    hit = match_destructive_keyword(text, policy.destructive_keywords)
+    if hit:
+        return hit
+    soft = match_destructive_keyword(text, policy.contextual_keywords)
+    if soft and match_destructive_keyword(context or "", policy.destructive_contexts):
+        return soft
+    return None
 
 
 def match_destructive_keyword(text: str, keywords: tuple[str, ...]) -> str | None:
@@ -252,7 +268,9 @@ class Arbiter:
         if not authorized and destructive >= p.destructive_confirm:
             return self._rule("destructive", "confirm", f"destructive {destructive:.2f} >= {p.destructive_confirm}")
         if not authorized and target_label is not None:
-            hit = match_destructive_keyword(target_label, p.destructive_keywords)
+            cand = menu.candidate(decision.target) if decision.target is not None else None
+            context = " ".join(x for x in (menu.url, menu.title, getattr(cand, "section", None) or "") if x)
+            hit = destructive_match(target_label, context, p)
             if hit is not None:
                 return self._rule("destructive", "confirm", f"keyword {hit!r} in target {target_label!r}")
 

@@ -465,6 +465,7 @@ async def _run_task_once(
         delegation_jev_calls=sum(getattr(d, "jev_calls", 0) for d in (getattr(agent, "delegations", []) or [])),
         evidence_calls=getattr(holder.get("evidence"), "calls", 0),
         llm_requests=int(getattr(usage, "entry_count", 0) or 0) if usage else 0,
+        evaluate_refusals=int(getattr(agent, "evaluate_refusals", 0) or 0),
         trace_path=str(trace_path),
     )
 

@@ -114,3 +114,16 @@ def test_is_authorized_scope_on_the_agent():
     assert DualProcessAgent.is_authorized(a2, "Delete account")  # task-wide, the old behaviour
     a3 = SimpleNamespace(authorized_destructive=False, authorized_actions=("finish",))
     assert not DualProcessAgent.is_authorized(a3, "Finish")
+
+
+async def test_evaluate_is_refused_recoverably_twice_then_paused(httpserver):
+    llm = create_mock_llm([
+        step({"evaluate": {"code": "document.title"}}),
+        step({"evaluate": {"code": "document.title"}}),
+        step({"evaluate": {"code": "document.title"}}),
+    ])
+    agent, history, _ = await _run(httpserver, llm, max_steps=6)
+    assert agent.evaluate_refusals == 2
+    assert agent.paused_before_action is not None and agent.paused_before_action["keyword"] == "evaluate"
+    names = [n for h in history.history for a in (h.model_output.action if h.model_output else []) for n in a.model_dump(exclude_unset=True)]
+    assert names[:2] == ["wait", "wait"] and names[-1] == "done"
