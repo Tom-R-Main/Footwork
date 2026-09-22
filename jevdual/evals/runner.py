@@ -36,10 +36,11 @@ from evals.predicates import EndState, checkpoints_missed, evaluate
 from evals.report import TaskResult, write_results
 from evals.tasks.schema import Task, load_tasks
 
-Arm = Literal["stock", "s1_only", "dual", "guarded", "scripted"]
+Arm = Literal["stock", "s1_only", "dual", "guarded", "delegate", "scripted"]
 JEV_TOKENS_PER_CALL = 2400  # observed mean request size on the local site
 JEV_USD_PER_MTOK = 0.042
-ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "scripted")
+ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "delegate", "scripted")
+S2_ARMS = ("dual", "guarded", "delegate")  # arms whose System 2 is the real model and whose done is verified
 log = logging.getLogger("evals.runner")
 
 PolicyFactory = Callable[[Task, Any, str], S1Policy]  # (task, secret store, arm)
@@ -91,7 +92,15 @@ def default_policy_factory() -> PolicyFactory:
             from jevdual.verify import ArbiterHook, Verifier
 
             hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected)
-            s1 = JevS1(policy, arbiter=_dual_arbiter(), requirements=tuple(task.requirements), verifier=hook, secrets=store)
+            s1 = JevS1(
+                policy,
+                arbiter=_dual_arbiter(),
+                requirements=tuple(task.requirements),
+                verifier=hook,
+                secrets=store,
+                # Q9 delegate arm: S1 acts only inside a bounded assignment from System 2
+                only_when_delegated=(arm == "delegate"),
+            )
         s1.jev_counter = client  # type: ignore[attr-defined]
         return s1
 
@@ -317,18 +326,28 @@ async def _run_task_once(
             raise ValueError(f"{arm} arm needs a policy_factory")
         from jevdual.testing import RefusingLLM
 
+        tools = None
+        holder: dict[str, Any] = {}
+        if arm == "delegate":
+            from browser_use import Tools
+            from jevdual.tools import register_delegation
+
+            tools = Tools()
+            register_delegation(tools, lambda: holder.get("agent"))
         agent = DualProcessAgent(
             task=task.task,
-            llm=llm if (arm in ("dual", "guarded") and llm is not None) else RefusingLLM(),
+            llm=llm if (arm in S2_ARMS and llm is not None) else RefusingLLM(),
             browser_profile=profile,
             s1_policy=policy_factory(task, store, arm),
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
             # the upstream judge runs on the System 2 model after the run; nothing to judge with on S1-only
-            use_judge=llm is not None and arm in ("dual", "guarded"),
+            use_judge=llm is not None and arm in S2_ARMS,
             ground_truth=task.judge_ground_truth,
+            **({"tools": tools} if tools is not None else {}),
         )
+        holder["agent"] = agent
     capture = _EndStateCapture()
     try:
         await agent.browser_session.start()
@@ -409,6 +428,8 @@ async def _run_task_once(
         judge_reason=(redactor(str(judgement.get("failure_reason") or "")) if judgement and redactor is not None else (str(judgement.get("failure_reason") or "") if judgement else None)),
         judge_impossible=bool(judgement.get("impossible_task")) if judgement else False,
         judge_captcha=bool(judgement.get("reached_captcha")) if judgement else False,
+        delegations=len(getattr(agent, "delegations", []) or []) + (1 if getattr(agent, "delegation", None) is not None else 0),
+        subgoals_reached=sum(1 for d in (getattr(agent, "delegations", []) or []) if getattr(d, "status", "") == "reached"),
         trace_path=str(trace_path),
     )
 
@@ -508,7 +529,7 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual", "guarded") for a in arms) else None
+    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual", "guarded", "delegate") for a in arms) else None
     results = asyncio.run(
         run_split(
             args.split,

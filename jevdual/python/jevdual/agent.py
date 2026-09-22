@@ -66,6 +66,9 @@ class DualProcessAgent(Agent):
         self.s2_steps = 0
         #: step number -> "s1" | "s2", read by the eval rig when it builds the trace.
         self.step_systems: dict[int, str] = {}
+        #: Q9: the bounded assignment System 2 handed to System 1, if any, and the finished ones.
+        self.delegation: Any = None
+        self.delegations: list[Any] = []
 
     def _destructive_hit(self, actions: list[Any]) -> tuple[str, str, int] | None:
         from jevdual.arbiter import match_destructive_keyword

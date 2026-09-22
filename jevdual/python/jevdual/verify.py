@@ -397,6 +397,31 @@ class Verifier:
         return verdict
 
 
+    async def verify_subgoal(
+        self, task: str, subgoal: str, stop_condition: str, menu: Menu, trajectory: list[dict[str, Any]] | None = None
+    ) -> tuple[float, str]:
+        """Observed support for a delegated subgoal: one Noul over the page and the trajectory."""
+        questions = {
+            "subgoal_met": Noul(
+                instructions=prompts.VERIFY_SUBGOAL["instructions"],
+                criteria={"true": prompts.VERIFY_SUBGOAL["true"], "false": prompts.VERIFY_SUBGOAL["false"]},
+            )
+        }
+        state: dict[str, Any] = {
+            "task": task,
+            "subgoal": subgoal,
+            "stop_condition": stop_condition,
+            "page": {"url": menu.url, "title": menu.title, "text": menu.page_text},
+        }
+        if trajectory:
+            state["trajectory"] = trajectory
+        response = await _call_client(self.client, state, questions, model=self.model, retry=self.retry)
+        if "subgoal_met" not in response.nouls:
+            raise PolicyError("subgoal verification answer missing `subgoal_met`")
+        p = response.nouls["subgoal_met"].noul
+        return p, f"subgoal_met p={p:.2f}"
+
+
 class ArbiterHook:
     """Minimal surface for task D2: the arbiter calls ``judge_done`` when the policy picks ``done``.
 
@@ -411,6 +436,7 @@ class ArbiterHook:
         #: one ledger per hook, and the hook is created per run (evals.runner.default_policy_factory)
         self.ledger = Ledger()
         self.use_trajectory = use_trajectory
+        self.subgoal_met_threshold = 0.80
 
     async def judge_done(self, agent: Any, menu: Menu, answer: str | None = None) -> tuple[Band, str]:
         trajectory = None
@@ -422,3 +448,12 @@ class ArbiterHook:
         )
         self.last = verdict
         return verdict.band, verdict.reason
+
+    async def judge_subgoal(self, agent: Any, menu: Menu, subgoal: str, stop_condition: str) -> tuple[bool, str]:
+        """True when the delegated subgoal's stop condition has observed support (page or trajectory)."""
+        trajectory = None
+        if self.use_trajectory:
+            store = getattr(getattr(agent, "s1_policy", None), "secrets", None)
+            trajectory = trajectory_from_agent(agent, store.redactor() if store is not None else None)
+        p, reason = await self.verifier.verify_subgoal(agent.task, subgoal, stop_condition, menu, trajectory)
+        return p >= self.subgoal_met_threshold, reason

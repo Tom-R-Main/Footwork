@@ -69,13 +69,17 @@ TARGET_RULES: tuple[str, ...] = (
 )
 
 
-def target_instructions(task: str, operation: str) -> dict[str, object]:
-    return {
+def target_instructions(task: str, operation: str, subgoal: str | None = None) -> dict[str, object]:
+    out: dict[str, object] = {
         "question": f"If the next operation is `{operation}`, which element is its target?",
         "task": task,
         "operation": operation,
         "rules": list(TARGET_RULES),
     }
+    if subgoal:
+        out["subgoal"] = subgoal
+        out["rules"] = ["Choose for `subgoal`, the bounded assignment now in progress; `task` is only background.", *TARGET_RULES]
+    return out
 
 
 GROUP_RULES: tuple[str, ...] = (
@@ -85,13 +89,17 @@ GROUP_RULES: tuple[str, ...] = (
 )
 
 
-def group_instructions(task: str, operation: str) -> dict[str, object]:
-    return {
+def group_instructions(task: str, operation: str, subgoal: str | None = None) -> dict[str, object]:
+    out: dict[str, object] = {
         "question": f"If the next operation is `{operation}`, which group contains its target element?",
         "task": task,
         "operation": operation,
         "rules": list(GROUP_RULES),
     }
+    if subgoal:
+        out["subgoal"] = subgoal
+        out["rules"] = ["Choose for `subgoal`, the bounded assignment now in progress; `task` is only background.", *GROUP_RULES]
+    return out
 
 
 # --- nouls (absolute judgments) ------------------------------------------------------------
@@ -201,3 +209,13 @@ def verify_kind(index: int, requirement: str) -> dict[str, Any]:
             "answer": "It names information to be reported back: a value, a name, a year, a message, a price.",
         },
     }
+
+
+VERIFY_SUBGOAL: dict[str, str] = {
+    "instructions": "Is `stop_condition` (the observable outcome the bounded assignment `subgoal` was to reach) "
+    "now satisfied, judging from `page.text` as it is and from the actions recorded in `trajectory`?",
+    "true": "The page shows the outcome the stop condition names, or the trajectory records the action it names "
+    "as executed with no later error, and nothing since has undone it.",
+    "false": "The outcome is not shown and no such action is recorded, the page shows only a way to reach it, "
+    "or a later step undid it or errored.",
+}

@@ -56,6 +56,17 @@ class AlwaysAct:
 TextSource = Callable[[str, Candidate, Menu], Any]  # returns str | None, possibly awaitable
 
 
+def _known_value_for(target: Candidate, known: tuple[tuple[str, str], ...]) -> str | None:
+    """A value System 2 supplied for this field, matched on the field's label or section (case-insensitive)."""
+    if not known:
+        return None
+    hay = " ".join(x for x in (target.label, getattr(target, "section", None) or "") if x).casefold()
+    for key, value in known:
+        if key.casefold() in hay:
+            return value
+    return None
+
+
 def literal_text_source(task: str, target: Candidate, menu: Menu) -> str | None:
     """Placeholder until D4: only a single double-quoted literal in the task is typed verbatim."""
     parts = task.split('"')
@@ -104,6 +115,28 @@ def redact_menu(menu: Menu, red: Callable[[str], str]) -> Menu:
     )
 
 
+@dataclass
+class Delegation:
+    """A bounded assignment System 2 handed to System 1 (docs/experiments/Q9.md)."""
+
+    goal: str
+    stop_condition: str
+    allowed_operations: tuple[str, ...] = ()
+    known_values: tuple[tuple[str, str], ...] = ()
+    budget: int = 8
+    started_step: int = 0
+    steps_taken: int = 0
+    escalations: int = 0
+    status: str = "active"
+    reason: str = ""
+
+    def summary(self, url: str) -> str:
+        return (
+            f"Fast navigator finished the subgoal {self.goal!r}: {self.status} ({self.reason}) after "
+            f"{self.steps_taken} step(s); now at {url}. Decide what to do next."
+        )
+
+
 class GuardOnly:
     """The guarded arm (docs/experiments/Q9.md): never decides, never calls Jev for a menu, but carries
     the verifier and secrets so System 2's done goes through the same verification and the gate as in
@@ -130,7 +163,12 @@ class JevS1:
         verifier: Any = None,
         escalation_streak: int = 3,
         s2_control_steps: int = 3,
+        only_when_delegated: bool = False,
+        subgoal_done_floor: float = 0.85,
     ):
+        #: Q9 delegate arms: S1 decides only inside a Delegation; ordinary System 2 steps never call Jev.
+        self.only_when_delegated = only_when_delegated
+        self.subgoal_done_floor = subgoal_done_floor
         self.policy = policy
         self.arbiter: Arbiter = arbiter or AlwaysAct()
         #: Call economy (Q9 item 5): after ``escalation_streak`` consecutive escalations for the same
@@ -154,6 +192,39 @@ class JevS1:
             ).compose
         self.text_source = text_source
         self.last_menu: Menu | None = None
+
+    async def _delegated_step(self, agent: Any, delegation: Delegation, decision: Decision, menu: Menu, rec: S1Record, step: int) -> bool:
+        """Inside a delegation: a done or a confident goal_done means "check the stop condition with
+        observed support"; reached ends the delegation, otherwise a done escalates and the delegation
+        stays. Returns True when this step must escalate, False to continue with the ordinary act path."""
+        goal_done = decision.nouls.get("goal_done", 0.0)
+        if decision.operation != "done" and goal_done < self.subgoal_done_floor:
+            return False
+        if self.verifier is not None and hasattr(self.verifier, "judge_subgoal"):
+            met, reason = await self.verifier.judge_subgoal(agent, menu, delegation.goal, delegation.stop_condition)
+            rec.verify = {"subgoal": delegation.goal, "met": met, "reason": reason}
+        else:
+            met, reason = goal_done >= self.subgoal_done_floor, f"goal_done={goal_done:.2f} (unverified)"
+        if met:
+            self._end_delegation(agent, delegation, "reached", reason, menu.url)
+            rec.verdict = Verdict("escalate", f"delegation reached: {reason}")
+            return True  # System 2 takes this step with the summary in context
+        if decision.operation == "done":
+            rec.verdict = Verdict("escalate", f"subgoal not yet met: {reason}")
+            log.info("step %s: %s", step, rec.verdict.reason)
+            return True
+        return False  # goal_done was high but unsupported: keep acting
+
+    def _end_delegation(self, agent: Any, delegation: Delegation, status: str, reason: str, url: str) -> None:
+        delegation.status, delegation.reason = status, reason
+        agent.delegation = None
+        agent.__dict__.setdefault("delegations", []).append(delegation)
+        log.info("delegation %r ended: %s (%s) after %s step(s)", delegation.goal, status, reason, delegation.steps_taken)
+        mm = getattr(agent, "_message_manager", None)
+        if mm is not None and hasattr(mm, "_add_context_message"):
+            from browser_use.llm.messages import UserMessage
+
+            mm._add_context_message(UserMessage(content=delegation.summary(url)))
 
     def _s2_control_reason(self, agent: Any, records: dict[int, S1Record], step: int, url: str) -> str | None:
         """None when S1 should be consulted; otherwise the reason this step is left to System 2."""
@@ -181,12 +252,17 @@ class JevS1:
         if self.secrets is not None:
             red = self.secrets.redactor()
             lines = [red(line) for line in lines]
+        d: Delegation | None = getattr(agent, "delegation", None)
         return StepContext(
             task=agent.task,
             requirements=self.requirements,
             recent_actions=tuple(lines[-self.recent_window :]),
             step=agent.state.n_steps,
             secrets_names=self.secrets.names() if self.secrets is not None else (),
+            subgoal=d.goal if d is not None else None,
+            allowed_operations=d.allowed_operations if d is not None else (),
+            known_values=d.known_values if d is not None else (),
+            stop_condition=d.stop_condition if d is not None else None,
         )
 
     async def decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
@@ -195,7 +271,16 @@ class JevS1:
         rec = S1Record(step=step, decision=None, verdict=None)
         records[step] = rec
 
-        skip = self._s2_control_reason(agent, records, step, getattr(state, "url", "") or "")
+        delegation: Delegation | None = getattr(agent, "delegation", None)
+        if self.only_when_delegated and delegation is None:
+            rec.verdict = Verdict("escalate", "idle: no delegation from System 2 (no menu call)")
+            return None
+        if delegation is not None and delegation.steps_taken >= delegation.budget:
+            self._end_delegation(agent, delegation, "budget_exhausted", f"{delegation.budget} step budget used", getattr(state, "url", "") or "")
+            rec.verdict = Verdict("escalate", "delegation ended: budget_exhausted")
+            return None
+
+        skip = None if delegation is not None else self._s2_control_reason(agent, records, step, getattr(state, "url", "") or "")
         if skip is not None:
             rec.verdict = Verdict("escalate", skip)
             log.info("step %s: %s", step, skip)
@@ -225,13 +310,15 @@ class JevS1:
         rec.decision = decision
 
         done_text: str | None = None
-        if decision.operation == "done" and self.verifier is not None and getattr(self.verifier, "answer_expected", False):
+        if delegation is not None and await self._delegated_step(agent, delegation, decision, menu, rec, step):
+            return None
+        if delegation is None and decision.operation == "done" and self.verifier is not None and getattr(self.verifier, "answer_expected", False):
             # S1 cannot compose an answer, so its done on an answer task is refused every time; skip the
             # verification call (14 of 77 S1 vetoes on the post-ledger live run were exactly this).
             rec.verdict = Verdict("escalate", "done without an answer on an answer task; not verified")
             log.info("step %s: done vetoed without a call, %s", step, rec.verdict.reason)
             return None
-        if decision.operation == "done" and self.verifier is not None:
+        if delegation is None and decision.operation == "done" and self.verifier is not None:
             band, reason = await self.verifier.judge_done(agent, menu)
             last = getattr(self.verifier, "last", None)
             rec.verify = last.to_trace() if last is not None and hasattr(last, "to_trace") else {"band": band, "reason": reason}
@@ -250,13 +337,20 @@ class JevS1:
         rec.verdict = verdict
         if verdict.kind in ("escalate", "confirm"):
             log.info("step %s: %s (%s)", step, verdict.kind, verdict.reason)
+            if delegation is not None:
+                head = verdict.reason.split(":", 1)[0].strip()
+                delegation.escalations += 1
+                if head in ("stuck", "blocked", "no_effect", "repeated_target") or verdict.kind == "confirm":
+                    self._end_delegation(agent, delegation, head if verdict.kind != "confirm" else "paused_before_action", verdict.reason, menu.url)
             return None
 
         text = None
         if decision.operation in ("type", "select") and decision.target is not None:
             target = menu.candidate(decision.target)
             if target is not None:
-                text = self.text_source(agent.task, target, menu)
+                text = _known_value_for(target, delegation.known_values) if delegation is not None else None
+                if text is None:
+                    text = self.text_source(agent.task, target, menu)
                 if inspect.isawaitable(text):
                     text = await text
             if text is None:
@@ -278,4 +372,6 @@ class JevS1:
             log.warning("step %s: %s; escalating", step, rec.error)
             return None
         rec.proposed = bridged.proposed
+        if delegation is not None:
+            delegation.steps_taken += 1
         return bridged.output

@@ -274,3 +274,104 @@ def test_guard_only_never_decides_but_carries_the_verifier():
     g = GuardOnly(verifier=v, secrets=None)
     assert asyncio.run(g.decide(FakeAgent(state), state)) is None
     assert g.verifier is v
+
+
+# ---- bounded delegation (Q9) -----------------------------------------------------------------
+
+
+class _CapturingPolicy(FakePolicy):
+    def __init__(self, decision):
+        super().__init__(decision)
+        self.contexts = []
+
+    async def decide(self, menu, ctx):
+        self.contexts.append(ctx)
+        return await super().decide(menu, ctx)
+
+
+class _SubgoalVerifier:
+    answer_expected = False
+
+    def __init__(self, met: bool):
+        self.met = met
+        self.calls = []
+
+    async def judge_subgoal(self, agent, menu, subgoal, stop_condition):
+        self.calls.append((subgoal, stop_condition))
+        return self.met, f"subgoal_met p={'0.91' if self.met else '0.20'}"
+
+
+def _delegating_agent(state, **kw):
+    from jevdual.s1 import Delegation
+
+    agent = FakeAgent(state)
+    agent.delegation = Delegation(goal="open the About page", stop_condition="the About page is shown", **kw)
+    agent.delegations = []
+    agent.messages = []
+    agent._message_manager = SimpleNamespace(_add_context_message=lambda m: agent.messages.append(m))
+    return agent
+
+
+def test_only_when_delegated_is_idle_without_a_delegation_and_makes_no_call():
+    state, _ = _fresh_state_and_link()
+    agent = FakeAgent(state)
+    s1 = JevS1(_RaisingPolicy(), arbiter=AlwaysAct(), only_when_delegated=True)
+    assert asyncio.run(s1.decide(agent, state)) is None
+    assert agent.s1_records[1].verdict.reason.startswith("idle")
+
+
+def test_delegation_supplies_subgoal_allowed_ops_and_known_values_and_counts_steps():
+    state, idx = _fresh_state_and_link()
+    agent = _delegating_agent(state, allowed_operations=("click",), known_values=(("Email", "ada@example.com"),), budget=3)
+    policy = _CapturingPolicy(_decision("click", idx))
+    s1 = JevS1(policy, arbiter=AlwaysAct(), only_when_delegated=True)
+    out = asyncio.run(s1.decide(agent, state))
+    assert out is not None and out.action[0].model_dump(exclude_unset=True) == {"click": {"index": idx}}
+    ctx = policy.contexts[0]
+    assert ctx.subgoal == "open the About page" and ctx.allowed_operations == ("click",) and ctx.stop_condition
+    assert dict(ctx.known_values) == {"Email": "ada@example.com"}
+    assert agent.delegation.steps_taken == 1
+
+
+def test_delegated_done_with_observed_support_ends_the_delegation_and_briefs_system_2():
+    state, _ = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    verifier = _SubgoalVerifier(met=True)
+    s1 = JevS1(FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier)
+    assert asyncio.run(s1.decide(agent, state)) is None  # System 2 takes this step with the summary
+    assert verifier.calls == [("open the About page", "the About page is shown")]
+    assert agent.delegation is None and agent.delegations[0].status == "reached"
+    assert agent.messages and "finished the subgoal" in agent.messages[0].content and "reached" in agent.messages[0].content
+
+
+def test_delegated_done_without_support_escalates_but_keeps_the_delegation():
+    state, _ = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    verifier = _SubgoalVerifier(met=False)
+    s1 = JevS1(FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier)
+    assert asyncio.run(s1.decide(agent, state)) is None
+    assert agent.delegation is not None and agent.delegation.status == "active"
+    assert "not yet met" in agent.s1_records[1].verdict.reason
+
+
+def test_delegation_budget_exhaustion_ends_it_without_a_call():
+    state, _ = _fresh_state_and_link()
+    agent = _delegating_agent(state, budget=2)
+    agent.delegation.steps_taken = 2
+    s1 = JevS1(_RaisingPolicy(), arbiter=AlwaysAct(), only_when_delegated=True)
+    assert asyncio.run(s1.decide(agent, state)) is None
+    assert agent.delegation is None and agent.delegations[0].status == "budget_exhausted"
+
+
+def test_allowed_operations_filter_the_offered_operations():
+    from jevdual.policy import JevPolicy, StepContext
+
+    state, _ = _fresh_state_and_link()
+    from jevdual.menu import build_menu
+
+    menu = build_menu(state)
+    pol = JevPolicy(client=None)
+    everything = pol.offered_operations(menu, StepContext(task="t"))
+    only_click = pol.offered_operations(menu, StepContext(task="t", allowed_operations=("click",)))
+    assert "click" in only_click and "type" not in only_click and "done" in only_click
+    assert set(only_click) < set(everything) or set(only_click) == set(everything)

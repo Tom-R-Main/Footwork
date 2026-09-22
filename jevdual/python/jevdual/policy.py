@@ -81,6 +81,11 @@ class StepContext:
     step: int = 1
     secrets_names: tuple[str, ...] = ()
     subgoal: str | None = None
+    #: Bounded assignment from System 2 (jevdual.s1.Delegation): only these targeted operations are
+    #: offered; known field values are typed without composing text; the stop condition is stated.
+    allowed_operations: tuple[str, ...] = ()
+    known_values: tuple[tuple[str, str], ...] = ()
+    stop_condition: str | None = None
 
 
 @dataclass(frozen=True)
@@ -191,16 +196,24 @@ class JevPolicy:
             state["tabs"] = [dict(t) for t in menu.tabs]
         if ctx.secrets_names:
             state["stored_secrets"] = list(ctx.secrets_names)
+        if ctx.subgoal:
+            state["subgoal"] = ctx.subgoal
+        if ctx.stop_condition:
+            state["stop_condition"] = ctx.stop_condition
+        if ctx.known_values:
+            state["known_values"] = {k: v for k, v in ctx.known_values}
         return state
 
-    def offered_operations(self, menu: Menu) -> tuple[str, ...]:
+    def offered_operations(self, menu: Menu, ctx: StepContext | None = None) -> tuple[str, ...]:
         targeted = tuple(op for op in OPERATIONS if menu.by_operation.get(op))
+        if ctx is not None and ctx.allowed_operations:
+            targeted = tuple(op for op in targeted if op in ctx.allowed_operations)
         return targeted + NON_TARGETED
 
     def build_request(self, menu: Menu, ctx: StepContext) -> Request:
         b = self.budget
         state = self.build_state(menu, ctx)
-        offered = self.offered_operations(menu)
+        offered = self.offered_operations(menu, ctx)
         questions: dict[str, Choice | Noul] = {
             "operation": Choice(
                 instructions=prompts.operation_instructions(ctx.task, ctx.subgoal),
@@ -223,7 +236,7 @@ class JevPolicy:
                 raise PolicyError(f"{op}: {len(cands)} candidates exceed even the grouped option cap")
             groups[op] = chunks
             questions[f"{op}_group"] = Choice(
-                instructions=prompts.group_instructions(ctx.task, op),
+                instructions=prompts.group_instructions(ctx.task, op, ctx.subgoal),
                 criteria={str(i): " | ".join(c.label[:40] for c in chunk) for i, chunk in enumerate(chunks)},
             )
             for i, chunk in enumerate(chunks):
@@ -250,7 +263,7 @@ class JevPolicy:
         # Attributes go in the criteria, not only in state: fastbrowse measured that a criterion the
         # model has to look up elsewhere is a worse criterion, and the request was never the slow part.
         return Choice(
-            instructions=prompts.target_instructions(ctx.task, op),
+            instructions=prompts.target_instructions(ctx.task, op, ctx.subgoal),
             criteria={str(c.id): c.to_state() for c in cands},
         )
 

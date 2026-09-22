@@ -97,3 +97,22 @@ def test_pause_keyword_halts_before_action():
     finally:
         stop()
     assert r.status == "paused_before_action" and not r.steps[0]["executed"]
+
+
+def test_delegate_subgoal_tool_starts_a_delegation_on_the_agent():
+    import asyncio
+    from types import SimpleNamespace
+
+    from browser_use import Tools
+    from jevdual.tools import register_delegation
+
+    agent = SimpleNamespace(delegation=None, state=SimpleNamespace(n_steps=3))
+    tools = Tools()
+    register_delegation(tools, lambda: agent)
+    assert "delegate_subgoal" in tools.registry.registry.actions
+    params = {"goal": "add the backpack to the cart", "stop_condition": "cart badge shows 1", "allowed_operations": ["click"], "known_values": {}, "max_steps": 5}
+    result = asyncio.run(tools.registry.execute_action("delegate_subgoal", params))
+    assert result.error is None and "Delegated" in (result.extracted_content or "")
+    assert agent.delegation.goal == "add the backpack to the cart" and agent.delegation.budget == 5 and agent.delegation.started_step == 3
+    again = asyncio.run(tools.registry.execute_action("delegate_subgoal", params))
+    assert again.error and "already active" in again.error

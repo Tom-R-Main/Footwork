@@ -192,3 +192,49 @@ def register_act_toward_goal(tools: Any, *, decide: DecideFn, text_source: TextF
         result = await run_micro_loop(params.goal, browser_session, tools, decide=decide, text_source=text_source, config=config, max_steps=params.max_steps)
         log.info("act_toward_goal: %s", result.summary())
         return ActionResult(extracted_content=json.dumps(result.to_json(), ensure_ascii=False), long_term_memory=result.summary())
+
+
+# --- Q9: delegation as a mode of the evaluated agent -------------------------------------------
+
+
+class SubgoalParams(BaseModel):
+    goal: str = Field(description="One concrete subgoal for the fast navigator, e.g. 'add the Sauce Labs Backpack to the cart'.")
+    stop_condition: str = Field(description="The observable outcome that means the subgoal is done, e.g. 'the cart badge shows 1 and the backpack button reads Remove'.")
+    allowed_operations: list[str] = Field(default_factory=list, description="Operations the navigator may use: click, type, select, enter. Empty means all.")
+    known_values: dict[str, str] = Field(default_factory=dict, description="Field name or label -> value to type, e.g. {'First Name': 'Ada'}; secrets by placeholder as usual.")
+    max_steps: int = Field(default=8, ge=1, le=20, description="Step budget before it reports back.")
+
+
+def register_delegation(tools: Any, agent_ref: Callable[[], Any]) -> None:
+    """Register ``delegate_subgoal`` on a Tools registry. The action starts a bounded delegation on the
+    agent returned by ``agent_ref``; the agent's own loop then runs System 1 under that assignment
+    (gate, secrets, freshness and verification apply as for any step) until the stop condition has
+    observed support, the budget is used, or it gets stuck, and System 2 gets a summary message."""
+    from jevdual.s1 import Delegation
+
+    @tools.action(
+        "Delegate one bounded, mechanical subgoal (navigate, search, fill and submit a form, add an item, sign in) to a "
+        "fast navigator that acts without you. Give it a concrete goal, the observable stop condition, the values it "
+        "should type, and a step budget. It reports back with a summary; you then continue. Do not delegate reading, "
+        "comparing or answering.",
+        param_model=SubgoalParams,
+    )
+    async def delegate_subgoal(params: SubgoalParams) -> ActionResult:
+        agent = agent_ref()
+        if agent is None:
+            return ActionResult(error="delegation unavailable: no agent")
+        if getattr(agent, "delegation", None) is not None:
+            return ActionResult(error="a delegation is already active")
+        agent.delegation = Delegation(
+            goal=params.goal,
+            stop_condition=params.stop_condition,
+            allowed_operations=tuple(params.allowed_operations),
+            known_values=tuple((k, v) for k, v in params.known_values.items()),
+            budget=params.max_steps,
+            started_step=getattr(getattr(agent, "state", None), "n_steps", 0),
+        )
+        log.info("delegation started: %r (budget %s)", params.goal, params.max_steps)
+        return ActionResult(
+            extracted_content=f"Delegated to the fast navigator: {params.goal!r} until {params.stop_condition!r} (budget {params.max_steps}). It will report back.",
+            include_in_memory=True,
+        )

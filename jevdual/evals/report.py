@@ -37,6 +37,9 @@ class TaskResult:
     judge_reason: str | None = None
     judge_impossible: bool = False
     judge_captcha: bool = False
+    #: Q9 delegate arms: bounded assignments System 2 issued, and how many reached their stop condition with observed support
+    delegations: int = 0
+    subgoals_reached: int = 0
 
     @property
     def cost_usd(self) -> float:
@@ -73,6 +76,8 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "captcha": sum(1 for r in rs if r.judge_captcha),
             "impossible": sum(1 for r in rs if r.judge_impossible),
             "graded_by_judge": sum(1 for r in rs if r.graded_by == "judge"),
+            "delegations": sum(r.delegations for r in rs),
+            "subgoals_reached": sum(r.subgoals_reached for r in rs),
         }
     return out
 
@@ -111,10 +116,16 @@ def render_markdown(results: list[TaskResult], title: str) -> str:
                 f"| {arm} | {a['judged']:.0f} | {a['judge_pass']:.0f} | {a['judge_agree']:.0f} | {a['judge_false_accept']:.0f} | "
                 f"{a['judge_false_reject']:.0f} | {a['captcha']:.0f} | {a['impossible']:.0f} | {a['graded_by_judge']:.0f} |"
             )
-    lines += ["", "## Per task", "", "| task | arm | pass | graded by | judge | steps | s1/s2 | est. cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|---|---|"]
+    if any(r.delegations for r in results):
+        lines += ["", "## Delegation (Q9)", "", "| arm | delegations | subgoals reached | reached per delegation | S1 steps | S2 steps |", "|---|---|---|---|---|---|"]
+        for arm, a in agg.items():
+            rs = [r for r in results if r.arm == arm]
+            d = a["delegations"]
+            lines.append(f"| {arm} | {d:.0f} | {a['subgoals_reached']:.0f} | {(a['subgoals_reached'] / d) if d else 0:.2f} | {sum(r.s1_steps for r in rs)} | {sum(r.s2_steps for r in rs)} |")
+    lines += ["", "## Per task", "", "| task | arm | pass | graded by | judge | steps | s1/s2 | deleg. | est. cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in sorted(results, key=lambda r: (r.task_id, r.arm)):
         judge = "-" if r.judge_verdict is None else ("yes" if r.judge_verdict else "no")
-        lines.append(f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.graded_by} | {judge} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |")
+        lines.append(f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.graded_by} | {judge} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.subgoals_reached}/{r.delegations} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |")
     return "\n".join(lines) + "\n"
 
 
