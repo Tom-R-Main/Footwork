@@ -6,6 +6,7 @@
 # --- acting floors (confidence-gated routing; docs.typesafe.ai/patterns/confidence-routing)
 act_operation_confidence = 0.55   # below this the operation head is too flat to act on
 act_target_confidence = 0.45      # below this the target head is too flat; retry_alternate or escalate
+delegated_operation_confidence = 0.45  # inside a bounded assignment from System 2 (Q9c: 8 of 30 assignments handed back at 0.29-0.51)
 
 # --- escalate to System 2
 goal_done_escalate = 0.85         # S1 never declares victory alone: verify (D3) or let S2 judge

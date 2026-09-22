@@ -361,6 +361,12 @@ class JevS1:
             target = menu.candidate(decision.target)
             if target is not None:
                 text = _known_value_for(target, delegation.known_values) if delegation is not None else None
+                if text is not None and (getattr(target, "value", None) or "") == text:
+                    # the field already holds this value: typing it again is the loop that ended seven
+                    # sign-in assignments as stuck (Q9c); hand the assignment back instead
+                    rec.verdict = Verdict("escalate", f"known value already in field {decision.target}; nothing left to type")
+                    self._end_delegation(agent, delegation, "not_reached", rec.verdict.reason, menu.url)
+                    return None
                 if text is None:
                     text = self.text_source(agent.task, target, menu)
                 if inspect.isawaitable(text):

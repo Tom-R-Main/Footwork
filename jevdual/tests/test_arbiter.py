@@ -185,3 +185,18 @@ def test_stats_and_summary():
     assert "step 3: escalated (policy error: boom); error: policy: boom" in text
     assert arb.stats["act"] == 1 and arb.stats["goal_done"] == 1
     assert set(arb.stats) <= set(RULES)
+
+
+def test_authorized_task_skips_the_confirm_rules_and_delegation_lowers_the_operation_floor():
+    # a fresh arbiter per case: its no-effect and repeat-target state is per run
+    m = menu(cands=(Candidate(id=1, label="Submit order", role="button", operations=("click",)),))
+    hot = decision("click", 1, destructive=0.75)
+    assert judge(Arbiter.from_toml(), hot, m).kind == "confirm"
+    authorized = FakeAgent()
+    authorized.authorized_destructive = True
+    assert judge(Arbiter.from_toml(), hot, m, agent=authorized).kind == "act"
+    flat = decision("click", 1, op_conf=0.48)
+    assert judge(Arbiter.from_toml(), flat, m).kind == "escalate"
+    delegated = FakeAgent()
+    delegated.delegation = object()
+    assert judge(Arbiter.from_toml(), flat, m, agent=delegated).kind == "act"

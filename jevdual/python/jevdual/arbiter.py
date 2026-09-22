@@ -53,6 +53,9 @@ RULES: tuple[str, ...] = (
 class ArbiterPolicy:
     act_operation_confidence: float = 0.55
     act_target_confidence: float = 0.45
+    #: inside a bounded assignment from System 2 the driver has already bounded the risk, so a flatter
+    #: operation head may act (a wrong harmless step costs one step, a handback costs the assignment)
+    delegated_operation_confidence: float = 0.45
     goal_done_escalate: float = 0.85
     stuck_escalate: float = 0.85
     stuck_min_step: int = 3
@@ -241,9 +244,13 @@ class Arbiter:
         if goal_done >= p.goal_done_escalate:
             return self._rule("goal_done", "escalate", f"goal_done {goal_done:.2f} >= {p.goal_done_escalate}")
 
-        if destructive >= p.destructive_confirm:
+        # A task that authorises irreversible actions (order placed, form sent) turns the confirm rules
+        # off here as it does at the agent-level gate; five authorised form fills were paused at zero
+        # steps by the destructive noul on 2026-09-22 before this.
+        authorized = bool(getattr(agent, "authorized_destructive", False))
+        if not authorized and destructive >= p.destructive_confirm:
             return self._rule("destructive", "confirm", f"destructive {destructive:.2f} >= {p.destructive_confirm}")
-        if target_label is not None:
+        if not authorized and target_label is not None:
             hit = match_destructive_keyword(target_label, p.destructive_keywords)
             if hit is not None:
                 return self._rule("destructive", "confirm", f"keyword {hit!r} in target {target_label!r}")
@@ -273,11 +280,12 @@ class Arbiter:
         if self._no_effect_run >= p.no_effect_steps:
             return self._rule("no_effect", "escalate", f"{self._no_effect_run} consecutive steps with no visible change")
 
-        if decision.operation_confidence < p.act_operation_confidence:
+        op_floor = p.delegated_operation_confidence if getattr(agent, "delegation", None) is not None else p.act_operation_confidence
+        if decision.operation_confidence < op_floor:
             return self._rule(
                 "operation_confidence",
                 "escalate",
-                f"operation confidence {decision.operation_confidence:.2f} < {p.act_operation_confidence}",
+                f"operation confidence {decision.operation_confidence:.2f} < {op_floor}",
             )
 
         if decision.targeted:

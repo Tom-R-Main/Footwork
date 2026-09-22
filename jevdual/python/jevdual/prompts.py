@@ -128,7 +128,14 @@ def target_instructions(task: str, operation: str, subgoal: str | None = None) -
     }
     if subgoal:
         out["subgoal"] = subgoal
-        out["rules"] = ["Choose for `subgoal`, the bounded assignment now in progress; `task` is only background.", *TARGET_RULES]
+        out["rules"] = [
+            "Choose for `subgoal`, the bounded assignment now in progress; `task` is only background.",
+            (
+                "Each entry in `known_values` belongs in the field whose label or name matches its key; a field whose "
+                "current `value` already holds its known value is finished, so choose the next unfilled field, not it again."
+            ),
+            *TARGET_RULES,
+        ]
     return out
 
 

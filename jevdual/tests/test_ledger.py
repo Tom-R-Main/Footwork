@@ -146,3 +146,15 @@ def test_first_verification_asks_kinds_once_and_the_ledger_learns_them():
     assert hook.ledger.kinds == {REQS[0]: "current_state", REQS[1]: "answer"}
     asyncio.run(hook.judge_done(_agent(), menu()))
     assert "kind_0" not in client.calls[1]["questions"]  # asked once per run
+
+
+def test_subgoal_check_uses_the_done_verification_band():
+    client = FakeClient(load("verify_accept"), load("verify_reject_unmet"))
+    hook = ArbiterHook(Verifier(client), REQS)
+    agent = _fake_agent()
+    met, reason = asyncio.run(hook.judge_subgoal(agent, menu(), "sign in", "the products page is shown"))
+    assert met and reason.startswith("subgoal accept")
+    state = client.calls[0]["state"]
+    assert state["requirements"] == ["the products page is shown"] and "sign in" in state["task"] and "trajectory" in state
+    met2, reason2 = asyncio.run(hook.judge_subgoal(agent, menu(), "sign in", "the products page is shown"))
+    assert not met2 and reason2.startswith("subgoal verify")

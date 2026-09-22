@@ -450,10 +450,19 @@ class ArbiterHook:
         return verdict.band, verdict.reason
 
     async def judge_subgoal(self, agent: Any, menu: Menu, subgoal: str, stop_condition: str) -> tuple[bool, str]:
-        """True when the delegated subgoal's stop condition has observed support (page or trajectory)."""
+        """True when the delegated subgoal's stop condition has observed support. Uses the same
+        verification and accept band as a done (complete on the subgoal, unmet on the stop condition,
+        trajectory in view) so a page the done verifier accepts is not refused as a subgoal: the
+        single-noul check refused a reached sign-in at p=0.75 (Q9c)."""
         trajectory = None
         if self.use_trajectory:
             store = getattr(getattr(agent, "s1_policy", None), "secrets", None)
             trajectory = trajectory_from_agent(agent, store.redactor() if store is not None else None)
-        p, reason = await self.verifier.verify_subgoal(agent.task, subgoal, stop_condition, menu, trajectory)
-        return p >= self.subgoal_met_threshold, reason
+        verdict = await self.verifier.verify(
+            f"{subgoal} (a bounded assignment inside the task: {agent.task})",
+            (stop_condition,),
+            menu,
+            None,
+            trajectory=trajectory,
+        )
+        return verdict.band == "accept", f"subgoal {verdict.band}: {verdict.reason}"
