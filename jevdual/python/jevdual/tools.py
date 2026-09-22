@@ -241,14 +241,19 @@ def register_delegation(tools: Any, agent_ref: Callable[[], Any]) -> None:
 
 
 DELEGATION_GUIDANCE = """
-You have a fast navigator you can hand a bounded assignment to with `delegate_subgoal`. Use it when the
-assignment would take you two or more steps or needs finding the right control among many (sign in, fill and
-submit a form, run a search and open the matching result, add a named item to the cart, open a named article
-from a search box). Give it a concrete goal, the observable stop condition, the values to type and a step
-budget; it acts on its own and reports back with a summary, and control is yours again. Do not delegate a
-single action whose target you can already see (one link, one button): do it yourself. Keep for yourself:
-reading, comparing, deciding between options, composing the final answer, and any action that pays, deletes
-or sends. If the navigator reports not reached, stuck or paused, decide the next step yourself.
+You have a fast navigator you can hand a bounded assignment to with `delegate_subgoal`. It acts on its own and
+reports back with a summary; control is yours again afterwards.
+
+Always delegate these workflows as your first step on them: signing in (username, password and the submit);
+filling and submitting a form with values you already know; adding a named item to the cart and opening the
+cart; running a search and opening the matching result; opening a named page or article from a search box or
+menu; dismissing a dialog and then continuing. Give it a concrete goal, the observable stop condition (what
+the page will show when it is done), the values to type, and a step budget of 6 to 10.
+
+Do it yourself when the whole remaining job is one click on a target you can already see. Keep for yourself:
+reading, comparing, choosing between options, composing the final answer, and any action that pays, deletes
+or sends. If the navigator reports not reached, stuck or paused, decide the next step yourself; do not
+re-delegate the same goal more than once.
 """.strip()
 
 EVIDENCE_GUIDANCE = """
