@@ -16,7 +16,7 @@ question is in the table.
 | [Q4](Q4.md) | Per-step arbitration or per-subgoal delegation? | pre-registered | Q6 multistep tasks, arm configs |
 | [Q8](Q8.md) | Consent: completion under policy versus false pauses | pre-registered | Q6 consent tasks |
 | [Q7](Q7.md) | Should the arbiter learn? | pre-registered | Q6 sites, memory mechanism |
-| [Q9](Q9.md) | Does System 2 directing System 1 beat S1 from the front? Four arms incl. a guarded S2 baseline | result recorded (`results/q9-live-dev.md`): delegation falsified on cost with the first build; guarded matches on completions at lowest cost; coherent build measured next | guarded arm, call economy, ledger semantics, delegation and evidence workflows |
+| [Q9](Q9.md) | Does System 2 directing System 1 beat S1 from the front? Four arms incl. a guarded S2 baseline | result recorded (`results/q9-live-dev.md`): delegation falsified on cost with the first build; guarded matches on completions at lowest cost; coherent build measured (`results/q9c-coherent-delegation.md`): falsification stands, executor reach rate 5 of 30 | guarded arm, call economy, ledger semantics, delegation and evidence workflows |
 
 ## Ground rules
 
