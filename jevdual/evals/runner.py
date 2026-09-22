@@ -36,10 +36,10 @@ from evals.predicates import EndState, checkpoints_missed, evaluate
 from evals.report import TaskResult, write_results
 from evals.tasks.schema import Task, load_tasks
 
-Arm = Literal["stock", "s1_only", "dual", "scripted"]
+Arm = Literal["stock", "s1_only", "dual", "guarded", "scripted"]
 JEV_TOKENS_PER_CALL = 2400  # observed mean request size on the local site
 JEV_USD_PER_MTOK = 0.042
-ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "scripted")
+ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "scripted")
 log = logging.getLogger("evals.runner")
 
 PolicyFactory = Callable[[Task, Any, str], S1Policy]  # (task, secret store, arm)
@@ -78,6 +78,15 @@ def default_policy_factory() -> PolicyFactory:
         if arm == "s1_only":
             # S1's own done stands, so false completions are measured, not hidden.
             s1 = JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
+        elif arm == "guarded":
+            # System 2 alone behind the same gate and done verification: the fair baseline (Q9).
+            from jevdual.s1 import GuardOnly
+            from jevdual.verify import ArbiterHook, Verifier
+
+            hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected)
+            guard = GuardOnly(verifier=hook, secrets=store)
+            guard.jev_counter = client  # type: ignore[attr-defined]
+            return guard
         else:
             from jevdual.verify import ArbiterHook, Verifier
 
@@ -310,14 +319,14 @@ async def _run_task_once(
 
         agent = DualProcessAgent(
             task=task.task,
-            llm=llm if (arm == "dual" and llm is not None) else RefusingLLM(),
+            llm=llm if (arm in ("dual", "guarded") and llm is not None) else RefusingLLM(),
             browser_profile=profile,
             s1_policy=policy_factory(task, store, arm),
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
             # the upstream judge runs on the System 2 model after the run; nothing to judge with on S1-only
-            use_judge=llm is not None and arm == "dual",
+            use_judge=llm is not None and arm in ("dual", "guarded"),
             ground_truth=task.judge_ground_truth,
         )
     capture = _EndStateCapture()
@@ -499,7 +508,7 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual") for a in arms) else None
+    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual", "guarded") for a in arms) else None
     results = asyncio.run(
         run_split(
             args.split,

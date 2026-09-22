@@ -104,6 +104,19 @@ def redact_menu(menu: Menu, red: Callable[[str], str]) -> Menu:
     )
 
 
+class GuardOnly:
+    """The guarded arm (docs/experiments/Q9.md): never decides, never calls Jev for a menu, but carries
+    the verifier and secrets so System 2's done goes through the same verification and the gate as in
+    the dual arm. Isolates what the guard contributes from what S1 contributes."""
+
+    def __init__(self, verifier: Any = None, secrets: SecretStore | None = None):
+        self.verifier = verifier
+        self.secrets = secrets
+
+    async def decide(self, agent: Any, state: Any) -> None:
+        return None
+
+
 class JevS1:
     def __init__(
         self,
@@ -115,9 +128,17 @@ class JevS1:
         recent_window: int = 8,
         secrets: SecretStore | None = None,
         verifier: Any = None,
+        escalation_streak: int = 3,
+        s2_control_steps: int = 3,
     ):
         self.policy = policy
         self.arbiter: Arbiter = arbiter or AlwaysAct()
+        #: Call economy (Q9 item 5): after ``escalation_streak`` consecutive escalations for the same
+        #: reason class at the same URL, hand System 2 ``s2_control_steps`` steps without a menu call;
+        #: a URL change ends the stretch early. 0 disables.
+        self.escalation_streak = escalation_streak
+        self.s2_control_steps = s2_control_steps
+        self._s2_control: tuple[int, str] | None = None  # (until step, url the stretch started on)
         self.secrets = secrets
         self.requirements = requirements
         self.recent_window = recent_window
@@ -133,6 +154,27 @@ class JevS1:
             ).compose
         self.text_source = text_source
         self.last_menu: Menu | None = None
+
+    def _s2_control_reason(self, agent: Any, records: dict[int, S1Record], step: int, url: str) -> str | None:
+        """None when S1 should be consulted; otherwise the reason this step is left to System 2."""
+        if self.escalation_streak <= 0:
+            return None
+        if self._s2_control is not None:
+            until, start_url = self._s2_control
+            if step <= until and url == start_url:
+                return f"s2_control: System 2 keeps control until step {until} (no menu call)"
+            self._s2_control = None
+        recent = [records[i] for i in range(step - self.escalation_streak, step) if i in records]
+        if len(recent) < self.escalation_streak:
+            return None
+        reasons = {(r.verdict.reason.split(":", 1)[0].strip() if r.verdict else "") for r in recent}
+        if len(reasons) != 1 or not all(r.verdict is not None and r.verdict.kind == "escalate" for r in recent):
+            return None
+        reason = reasons.pop()
+        if reason in ("s2_control", "destructive", "verification accept", "act"):
+            return None
+        self._s2_control = (step + self.s2_control_steps - 1, url)
+        return f"s2_control: {self.escalation_streak} consecutive escalations on {reason!r}; System 2 keeps control until step {self._s2_control[0]} (no menu call)"
 
     def _context(self, agent: DualProcessAgent) -> StepContext:
         lines = [h.model_output.memory for h in agent.history.history if h.model_output and h.model_output.memory]
@@ -152,6 +194,12 @@ class JevS1:
         records: dict[int, S1Record] = agent.__dict__.setdefault("s1_records", {})
         rec = S1Record(step=step, decision=None, verdict=None)
         records[step] = rec
+
+        skip = self._s2_control_reason(agent, records, step, getattr(state, "url", "") or "")
+        if skip is not None:
+            rec.verdict = Verdict("escalate", skip)
+            log.info("step %s: %s", step, skip)
+            return None
 
         t0 = time.perf_counter()
         menu = build_menu(state)
@@ -177,6 +225,12 @@ class JevS1:
         rec.decision = decision
 
         done_text: str | None = None
+        if decision.operation == "done" and self.verifier is not None and getattr(self.verifier, "answer_expected", False):
+            # S1 cannot compose an answer, so its done on an answer task is refused every time; skip the
+            # verification call (14 of 77 S1 vetoes on the post-ledger live run were exactly this).
+            rec.verdict = Verdict("escalate", "done without an answer on an answer task; not verified")
+            log.info("step %s: done vetoed without a call, %s", step, rec.verdict.reason)
+            return None
         if decision.operation == "done" and self.verifier is not None:
             band, reason = await self.verifier.judge_done(agent, menu)
             last = getattr(self.verifier, "last", None)

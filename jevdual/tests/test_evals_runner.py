@@ -165,3 +165,19 @@ def test_remove_temp_profile_only_touches_browser_use_dirs_in_tmp(tmp_path, monk
     _remove_temp_profile(SimpleNamespace(browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(ours)))))
     _remove_temp_profile(SimpleNamespace(browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(theirs)))))
     assert not ours.exists() and theirs.exists()
+
+
+def test_default_policy_factory_guarded_arm_has_a_verifier_and_no_decisions(monkeypatch):
+    import asyncio
+
+    from jevdual.s1 import GuardOnly
+
+    from evals.runner import default_policy_factory
+    from evals.tasks.schema import Task
+
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test-key-not-real")
+    t = Task(id="g", task="Report the total on the page", start_url="https://x.example/", tags=("live", "read"),
+             requirements=("Total reported",), predicate={"kind": "answer_contains", "value": "1"}, answer_expected=True)
+    g = default_policy_factory()(t, None, "guarded")
+    assert isinstance(g, GuardOnly) and g.verifier is not None and g.verifier.answer_expected is True
+    assert asyncio.run(g.decide(None, None)) is None

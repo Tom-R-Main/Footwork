@@ -1,10 +1,11 @@
 import asyncio
 from types import SimpleNamespace
 
+import pytest
 from browser_use.agent.views import AgentOutput
 from browser_use.tools.service import Tools
 from jevdual.policy import Decision, PolicyError
-from jevdual.s1 import JevS1, Verdict, literal_text_source
+from jevdual.s1 import AlwaysAct, JevS1, Verdict, literal_text_source
 
 from tests.fixtures.replay import replay_state
 
@@ -32,6 +33,18 @@ class FakeAgent:
         self.state = SimpleNamespace(n_steps=1)
         self.history = SimpleNamespace(history=[])
         self.browser_session = SimpleNamespace(_cached_browser_state_summary=state)
+
+
+def replace_url(state, url):
+    """A copy of a BrowserStateSummary at another URL (pydantic model_copy when available)."""
+    try:
+        return state.model_copy(update={"url": url})
+    except AttributeError:
+        import copy
+
+        c = copy.copy(state)
+        c.url = url
+        return c
 
 
 def _state_and_link():
@@ -182,3 +195,82 @@ def test_gate_covers_index_less_actions():
     assert asyncio.run(a._destructive_hit_any([am(navigate={"url": "http://s/about.html"})])) is None
     hit = asyncio.run(a._destructive_hit_any([am(send_keys={"keys": "Enter"})]))
     assert hit is not None and hit[1] == "enter"  # focus unknown: gate conservatively
+
+
+# ---- call economy and the guarded arm (Q9) ---------------------------------------------------
+
+
+def _fresh_state_and_link():
+    """Earlier tests in this file swap ax nodes on the cached replay fixture; start from a clean replay."""
+    from tests.fixtures import replay as _replay
+
+    for name in ("replay_state", "replay_serialized", "load_fixture"):
+        fn = getattr(_replay, name, None)
+        if fn is not None and hasattr(fn, "cache_clear"):
+            fn.cache_clear()
+    return _state_and_link()
+
+
+class _RaisingPolicy:
+    async def decide(self, menu, ctx):
+        raise AssertionError("S1 must not be consulted on this step")
+
+
+class _RaisingVerifier:
+    answer_expected = True
+
+    async def judge_done(self, agent, menu, answer=None):
+        raise AssertionError("verification must not be called for an answer-less done on an answer task")
+
+
+def test_answer_less_done_on_answer_task_is_vetoed_without_a_verification_call():
+    state, _ = _fresh_state_and_link()
+    agent = FakeAgent(state, task="Report the keeper's name")
+    s1 = JevS1(FakePolicy(_decision("done")), arbiter=AlwaysAct(), verifier=_RaisingVerifier())
+    assert asyncio.run(s1.decide(agent, state)) is None
+    rec = agent.s1_records[1]
+    assert rec.verdict.kind == "escalate" and "not verified" in rec.verdict.reason
+
+
+def test_escalation_streak_hands_control_to_system_2_without_menu_calls():
+    from jevdual.s1 import S1Record, Verdict
+
+    state, _ = _fresh_state_and_link()
+    agent = FakeAgent(state)
+    agent.s1_records = {i: S1Record(step=i, decision=None, verdict=Verdict("escalate", "needs_reasoning: 0.9 >= 0.6")) for i in (1, 2, 3)}
+    s1 = JevS1(_RaisingPolicy(), arbiter=AlwaysAct(), escalation_streak=3, s2_control_steps=2)
+    agent.state.n_steps = 4
+    assert asyncio.run(s1.decide(agent, state)) is None
+    assert agent.s1_records[4].verdict.reason.startswith("s2_control: 3 consecutive escalations on 'needs_reasoning'")
+    agent.state.n_steps = 5
+    assert asyncio.run(s1.decide(agent, state)) is None  # still System 2's stretch, still no menu call
+    assert "keeps control" in agent.s1_records[5].verdict.reason
+    # the stretch is over at step 6: S1 is consulted again (the raising policy proves it)
+    agent.state.n_steps = 6
+    with pytest.raises(AssertionError, match="must not be consulted"):
+        asyncio.run(s1.decide(agent, state))
+
+
+def test_escalation_streak_ends_early_on_a_url_change():
+    from jevdual.s1 import S1Record, Verdict
+
+    state, _ = _fresh_state_and_link()
+    agent = FakeAgent(state)
+    agent.s1_records = {i: S1Record(step=i, decision=None, verdict=Verdict("escalate", "stuck: 0.9 >= 0.85")) for i in (1, 2, 3)}
+    s1 = JevS1(_RaisingPolicy(), arbiter=AlwaysAct(), escalation_streak=3, s2_control_steps=5)
+    agent.state.n_steps = 4
+    assert asyncio.run(s1.decide(agent, state)) is None
+    moved = replace_url(state, "http://s/elsewhere.html")
+    agent.state.n_steps = 5
+    with pytest.raises(AssertionError, match="must not be consulted"):
+        asyncio.run(s1.decide(agent, moved))
+
+
+def test_guard_only_never_decides_but_carries_the_verifier():
+    from jevdual.s1 import GuardOnly
+
+    state, _ = _fresh_state_and_link()
+    v = _RaisingVerifier()
+    g = GuardOnly(verifier=v, secrets=None)
+    assert asyncio.run(g.decide(FakeAgent(state), state)) is None
+    assert g.verifier is v
