@@ -15,6 +15,7 @@ the caller then asks ``decide_target`` with the chosen group's candidate ids.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import logging
 import time
@@ -86,6 +87,24 @@ class StepContext:
     allowed_operations: tuple[str, ...] = ()
     known_values: tuple[tuple[str, str], ...] = ()
     stop_condition: str | None = None
+
+
+def shrink_menu(menu: Menu, level: int) -> Menu:
+    """A smaller menu for a retry: level 1 halves the page text, level 2 also keeps only the first half
+    of the candidates (document order), rebuilding the per-operation index. Recorded in ``omitted``."""
+    text = menu.page_text[: max(500, len(menu.page_text) // 2)]
+    cands = menu.candidates
+    if level >= 2:
+        cands = cands[: max(1, len(cands) // 2)]
+    keep = {c.id for c in cands}
+    by_op = {op: tuple(c for c in cs if c.id in keep) for op, cs in menu.by_operation.items()}
+    by_op = {op: cs for op, cs in by_op.items() if cs}
+    omitted = dict(menu.omitted)
+    omitted["shrunk_level"] = level
+    omitted["page_text_chars"] = omitted.get("page_text_chars", 0) + (len(menu.page_text) - len(text))
+    if len(cands) < len(menu.candidates):
+        omitted["elements_dropped_for_size"] = len(menu.candidates) - len(cands)
+    return dataclasses.replace(menu, page_text=text, candidates=cands, by_operation=by_op, omitted=omitted)
 
 
 @dataclass(frozen=True)
@@ -297,7 +316,22 @@ class JevPolicy:
         return response, (time.perf_counter() - started) * 1000
 
     async def decide(self, menu: Menu, ctx: StepContext) -> Decision:
-        request = self.build_request(menu, ctx)
+        """One decision. When Jev refuses the request as too large (the local token estimate runs
+        under on dense pages: 9 to 32 such refusals per 55-task live run), the page text is halved and
+        the request retried, then half the candidates are dropped; only then does the step escalate."""
+        shrunk = 0
+        while True:
+            request = self.build_request(menu, ctx)
+            try:
+                return await self._decide_once(request, ctx)
+            except PolicyError as exc:
+                if "max_tokens_exceeded" not in str(exc) or shrunk >= 2:
+                    raise
+                shrunk += 1
+                menu = shrink_menu(menu, shrunk)
+                log.warning("step %s: Jev refused the request as too large; retrying with a smaller menu (level %s)", ctx.step, shrunk)
+
+    async def _decide_once(self, request: Request, ctx: StepContext) -> Decision:
         last_error: str | None = None
         for attempt in (1, 2):
             response, latency = await self._call(request.state, request.questions)

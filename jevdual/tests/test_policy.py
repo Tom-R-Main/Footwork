@@ -268,3 +268,29 @@ def test_prompts_are_literal_and_versioned():
     for spec in prompts.NOULS.values():
         assert spec["instructions"].endswith("?") and spec["true"] and spec["false"]
     assert set(prompts.OPERATION_CRITERIA) == set(OPERATIONS) | set(NON_TARGETED)
+
+
+async def test_decide_shrinks_the_menu_when_jev_refuses_the_request_as_too_large():
+    import httpx
+    from jevdual.policy import shrink_menu
+    from typesafe_sdk import TypeSafeAPIError
+
+    class RefusingOnce:
+        def __init__(self, good):
+            self.good = good
+            self.calls = []
+
+        async def system_one(self, state, questions, **kwargs):
+            self.calls.append(state)
+            if len(self.calls) == 1:
+                raise TypeSafeAPIError(400, {"detail": {"error_type": "max_tokens_exceeded"}}, httpx.Headers(), endpoint="POST /v1/systemone")
+            return self.good
+
+    m = small_menu()
+    client = RefusingOnce(load_response("small_menu_click"))
+    d = await JevPolicy(client).decide(m, ctx())
+    assert d.operation == "click"
+    assert len(client.calls) == 2
+    assert len(client.calls[1]["page"]["text"]) <= max(500, len(client.calls[0]["page"]["text"]) // 2) or len(m.page_text) <= 500
+    s2 = shrink_menu(shrink_menu(m, 1), 2)
+    assert s2.omitted["shrunk_level"] == 2 and len(s2.candidates) <= max(1, len(m.candidates) // 2)
