@@ -87,7 +87,7 @@ class RunHeader(BaseModel):
     kind: Literal["header"] = "header"
     run_id: str
     task: str
-    arm: Literal["stock", "s1_only", "dual"]
+    arm: Literal["stock", "s1_only", "dual", "guarded", "delegate"]
     backend: str
     browser_use_version: str
     patches: dict[str, Any] = Field(default_factory=dict)

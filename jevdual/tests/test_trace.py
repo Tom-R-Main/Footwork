@@ -43,3 +43,12 @@ def test_stock_run_is_representable():
     # An S2-only (stock browser-use) run has no decision; the rig compares arms on this shape.
     rec = StepRecord(run_id="r", step=1, system="s2")
     assert rec.decision is None and rec.arbiter_reason is None
+
+
+def test_run_header_accepts_every_eval_arm():
+    from jevdual.trace import RunHeader
+
+    from evals.runner import ARMS
+
+    for arm in ARMS:
+        RunHeader(run_id="r", task="t", arm=("s1_only" if arm == "scripted" else arm), backend="pure-python", browser_use_version="0")
