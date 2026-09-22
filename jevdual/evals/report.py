@@ -42,6 +42,8 @@ class TaskResult:
     subgoals_reached: int = 0
     #: Q9 evidence arm: find_evidence calls System 2 made
     evidence_calls: int = 0
+    #: actual model requests recorded by browser-use's token tracker (driver steps, retries, judge), not the S2 step count
+    llm_requests: int = 0
 
     @property
     def cost_usd(self) -> float:
@@ -64,6 +66,11 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "paused": sum(1 for r in rs if r.paused),
             "mean_steps": (sum(r.steps for r in rs) / n) if n else 0.0,
             "llm_calls": sum(r.llm_calls for r in rs),
+            "llm_requests": sum(r.llm_requests for r in rs),
+            # a pass the agent also claimed (success=True): external success and supported claimed completion together
+            "verified_pass": sum(1 for r in rs if r.passed and r.success is True),
+            # a pass the agent refused to claim (UNVERIFIED or paused): correct outcome, abstained claim
+            "unclaimed_pass": sum(1 for r in rs if r.passed and r.success is not True),
             "jev_calls": sum(r.jev_calls for r in rs),
             "llm_tokens": sum(r.llm_tokens for r in rs),
             "cost_usd": sum(r.cost_usd for r in rs),
@@ -101,6 +108,16 @@ def render_markdown(results: list[TaskResult], title: str) -> str:
             f"| {arm} | {a['tasks']:.0f} | {a['pass']:.0f} | {a['pass_rate']:.0%} | {a['false_done']:.0f} | {a['paused']:.0f} | {a['mean_steps']:.1f} | "
             f"{a['llm_calls']:.0f} | {a['jev_calls']:.0f} | {a['llm_tokens']:.0f} | {a['cost_usd']:.4f} | {a['wall_s']:.0f} | {a['errors']:.0f} |"
         )
+    lines += [
+        "",
+        "## Outcomes (external success and claimed completion kept apart)",
+        "",
+        "| arm | verified pass (passed and claimed) | unclaimed pass (passed, UNVERIFIED or paused) | false done | model requests (tracker) | cost per verified pass |",
+        "|---|---|---|---|---|---|",
+    ]
+    for arm, a in agg.items():
+        vp = a["verified_pass"]
+        lines.append(f"| {arm} | {vp:.0f} | {a['unclaimed_pass']:.0f} | {a['false_done']:.0f} | {a['llm_requests']:.0f} | {(a['cost_usd'] / vp) if vp else 0:.4f} |")
     if any(r.judge_verdict is not None for r in results):
         lines += [
             "",

@@ -132,6 +132,7 @@ def test_report_separates_judge_grading_from_predicates(tmp_path):
         TaskResult(task_id="e", arm="stock", passed=True, **base),
     ]
     agg = aggregate(rows)["dual"]
+    assert agg["verified_pass"] == 0 and agg["unclaimed_pass"] == 3  # rows above carry no success flag
     assert agg["judged"] == 4 and agg["judge_pass"] == 3
     assert agg["judge_agree"] == 1 and agg["judge_false_accept"] == 1 and agg["judge_false_reject"] == 1
     assert agg["graded_by_judge"] == 1

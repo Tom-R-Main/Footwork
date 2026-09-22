@@ -456,6 +456,7 @@ async def _run_task_once(
         delegations=len(getattr(agent, "delegations", []) or []) + (1 if getattr(agent, "delegation", None) is not None else 0),
         subgoals_reached=sum(1 for d in (getattr(agent, "delegations", []) or []) if getattr(d, "status", "") == "reached"),
         evidence_calls=getattr(holder.get("evidence"), "calls", 0),
+        llm_requests=int(getattr(usage, "entry_count", 0) or 0) if usage else 0,
         trace_path=str(trace_path),
     )
 
