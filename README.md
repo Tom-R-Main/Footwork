@@ -1,5 +1,8 @@
 # Footwork
 
+[![ci](https://github.com/Tom-R-Main/Footwork/actions/workflows/ci.yml/badge.svg)](https://github.com/Tom-R-Main/Footwork/actions/workflows/ci.yml)
+![python](https://img.shields.io/badge/python-3.11%2B-blue) ![rust](https://img.shields.io/badge/rust-1.95-orange) ![license](https://img.shields.io/badge/license-MIT-green)
+
 **A verified browser agent.** Footwork puts a cheap, calibrated guard from
 [TypeSafe Jev](https://docs.typesafe.ai) in front of any LLM browser driver: every claimed completion is
 checked against page evidence and the trajectory before it counts, and every irreversible action passes a
