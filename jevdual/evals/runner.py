@@ -353,6 +353,11 @@ async def _run_task_once(
                 return m.url, text_
 
             register_find_evidence(tools, selector, _page_text, task=lambda: holder["agent"].task)
+        extend: str | None = None
+        if arm in DELEGATE_ARMS:
+            from jevdual.tools import DELEGATION_GUIDANCE, EVIDENCE_GUIDANCE
+
+            extend = DELEGATION_GUIDANCE + ("\n\n" + EVIDENCE_GUIDANCE if arm == "delegate_evidence" else "")
         agent = DualProcessAgent(
             task=task.task,
             llm=llm if (arm in S2_ARMS and llm is not None) else RefusingLLM(),
@@ -365,6 +370,7 @@ async def _run_task_once(
             use_judge=llm is not None and arm in S2_ARMS,
             ground_truth=task.judge_ground_truth,
             **({"tools": tools} if tools is not None else {}),
+            **({"extend_system_message": extend} if extend else {}),
         )
         holder["agent"] = agent
     capture = _EndStateCapture()

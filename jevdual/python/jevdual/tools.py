@@ -238,3 +238,18 @@ def register_delegation(tools: Any, agent_ref: Callable[[], Any]) -> None:
             extracted_content=f"Delegated to the fast navigator: {params.goal!r} until {params.stop_condition!r} (budget {params.max_steps}). It will report back.",
             include_in_memory=True,
         )
+
+
+DELEGATION_GUIDANCE = """
+You have a fast navigator. Before acting yourself on any mechanical subgoal (open a page or article by name,
+run a search, sign in, fill and submit a form, add an item to the cart, press a button and wait), call
+`delegate_subgoal` with a concrete goal, the observable stop condition, the values to type and a step
+budget, then wait for its report. Delegate one subgoal at a time. Keep for yourself: reading, comparing,
+deciding between options, composing the final answer, and any action that pays, deletes or sends. If the
+navigator reports it did not reach the goal, decide the next subgoal or act yourself.
+""".strip()
+
+EVIDENCE_GUIDANCE = """
+Before answering a question from a page, call `find_evidence` with the exact question; quote from the
+spans it returns. If it reports no answer present, navigate elsewhere rather than guessing.
+""".strip()
