@@ -138,6 +138,9 @@ def test_upstream_import_is_judge_graded_and_reproducible(tasks, tmp_path: Path)
     import subprocess
     import sys
 
+    if not (Path(__file__).resolve().parents[2] / "browser-use" / "tests" / "mind2web_data" / "processed.json").is_file():
+        pytest.skip("browser-use submodule not checked out (git submodule update --init)")
+
     up = tasks["live-upstream"]
     assert len(up) >= 30
     for t in up:
