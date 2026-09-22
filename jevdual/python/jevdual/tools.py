@@ -13,6 +13,7 @@ from the policy end the loop with a status, and the caller decides.
 import inspect
 import json
 import logging
+import re
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
@@ -197,6 +198,9 @@ def register_act_toward_goal(tools: Any, *, decide: DecideFn, text_source: TextF
 # --- Q9: delegation as a mode of the evaluated agent -------------------------------------------
 
 
+_NEEDS_VALUES = re.compile(r"\b(sign|log)[ -]?in\b|\bfill\b|\benter\b|\btype\b|\bform\b|\busername\b|\bpassword\b", re.IGNORECASE)
+
+
 class SubgoalParams(BaseModel):
     goal: str = Field(description="One concrete subgoal for the fast navigator, e.g. 'add the Sauce Labs Backpack to the cart'.")
     stop_condition: str = Field(description="The observable outcome that means the subgoal is done, e.g. 'the cart badge shows 1 and the backpack button reads Remove'.")
@@ -225,6 +229,11 @@ def register_delegation(tools: Any, agent_ref: Callable[[], Any]) -> None:
             return ActionResult(error="delegation unavailable: no agent")
         if getattr(agent, "delegation", None) is not None:
             return ActionResult(error="a delegation is already active")
+        if _NEEDS_VALUES.search(params.goal) and not params.known_values:
+            return ActionResult(
+                error="this assignment types into fields but gave no known_values; call again with a value for each "
+                "field, e.g. {'username': 'standard_user', 'password': '<secret>sauce_password</secret>'}"
+            )
         agent.delegation = Delegation(
             goal=params.goal,
             stop_condition=params.stop_condition,

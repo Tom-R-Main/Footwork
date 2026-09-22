@@ -56,22 +56,34 @@ assignment; the subgoal check runs through the done verification band with the t
 already holding its known value is finished. Delegate arm alone on the twelve sign-in, form, cart
 and search tasks; the other arms are the same tasks from the same-day runs.
 
-| arm | pass | verified | est. cost USD | wall s | LLM calls | Jev calls | assignments | reached |
-|---|---|---|---|---|---|---|---|---|
-| guarded (q9b, 11 of the 12) | 10/11 | 7 | 0.065 | 906 | 38 | 19 | | |
-| dual (q9b, 11 of the 12) | 10/11 | 8 | 0.069 | 722 | 26 | 72 | | |
-| delegate v3 (q9c, 11 of the 12) | 11/11 | 7 | 0.093 | 1,316 | 56 | 53 | | |
-| delegate with fixes (this smoke) | 12/12 | 7 | 0.094 | 1,064 | 49 | 70 | 10 | 2 |
+| arm | predicate pass | passed and claimed | est. cost USD | wall s | assignments | reached |
+|---|---|---|---|---|---|---|
+| guarded (q9b) | 11/12 | 8 | 0.070 | 980 | | |
+| dual (q9b) | 11/12 | 8 | 0.076 | 854 | | |
+| delegate, coherent build (q9c) | 12/12 | 8 | 0.101 | 1,394 | | |
+| delegate with fixes (this smoke) | 12/12 | 7 | 0.094 | 1,064 | 10 | 2 |
+
+(Matched on all twelve tasks after restoring a task id the results redactor had rewritten; an
+earlier version of this table matched only eleven. On the matched set the fixed build keeps the
+coherent build's predicate passes, has one fewer passed-and-claimed completion, costs 34% more
+than guarded and 25% more than dual, and is faster than the coherent build but slower than both
+baselines. These are sequential development runs, not an isolation of each fix's effect.)
 
 The fixes removed the two defect classes they targeted: no assignment was paused by the gate and
-none looped on a retyped value. Reach did not move: 2 of 10. The remaining closings are 5
-"not reached" where the subgoal verification sat in the uncertain band on pages that were plainly
-signed in (complete 0.45 to 0.81, one at 0.79 against the 0.80 floor), 2 sign-ins handed back on a
-collapsed target head (0.05 and 0.31 on the username field), 1 stuck form. Cost stayed 40% above
+none looped on a retyped value. Reach did not move: 2 of 10. The remaining closings, re-read after an audit: 3 "not reached"
+where the subgoal verification sat in the uncertain band on signed-in pages (complete 0.45 to 0.81,
+one at 0.79 against the 0.80 floor); 1 "not reached" that was correct (the locked-out login's
+expected error, judged not signed in); 1 "not reached" on a form filled but deliberately not
+submitted; 2 sign-ins handed back on a collapsed target head after S1 had typed the product name
+from the task text into the Username field (every assignment in this smoke carried empty
+`known_values`, so the executor fell back to the task's quoted literal: a software defect, not a
+confidence problem, fixed in the correctness tranche); 1 stuck form. Cost stayed 40% above
 guarded and dual on these tasks.
 
-Reading: with the instrument coherent and its defects fixed, delegation on live pages is limited
-by two things the loop structure cannot change: the executor's target grounding on forms, and the
-verifier's confidence on multi-step state. Both are calibration questions (Q1, Q3) that need the
-labelled steps and trajectories, and moving the 0.80 floor to fit this smoke would be exactly the
-tuning the program forbids. Q9's decision stands: reactive loop by default, delegation a tool.
+Reading, corrected: this smoke does not show that only calibration remains. An audit found two
+reproducible software defects behind the failures (values typed from the task literal when the
+assignment supplied none; the two-stage target path discarding the first stage's confidence and
+safety nouls) and three handback paths that left assignments open. Those are fixed in the
+correctness tranche and need their own measurement before any calibration claim. The delegated
+operation floor of 0.45 introduced here was an exploratory tuning change and is recorded as such.
+Q9's decision stands on the measurements so far: reactive loop by default, delegation a tool.

@@ -247,7 +247,8 @@ class Arbiter:
         # A task that authorises irreversible actions (order placed, form sent) turns the confirm rules
         # off here as it does at the agent-level gate; five authorised form fills were paused at zero
         # steps by the destructive noul on 2026-09-22 before this.
-        authorized = bool(getattr(agent, "authorized_destructive", False))
+        is_auth = getattr(agent, "is_authorized", None)
+        authorized = is_auth(target_label) if callable(is_auth) else bool(getattr(agent, "authorized_destructive", False))
         if not authorized and destructive >= p.destructive_confirm:
             return self._rule("destructive", "confirm", f"destructive {destructive:.2f} >= {p.destructive_confirm}")
         if not authorized and target_label is not None:

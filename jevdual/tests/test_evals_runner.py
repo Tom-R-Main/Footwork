@@ -182,3 +182,25 @@ def test_default_policy_factory_guarded_arm_has_a_verifier_and_no_decisions(monk
     g = default_policy_factory()(t, None, "guarded")
     assert isinstance(g, GuardOnly) and g.verifier is not None and g.verifier.answer_expected is True
     assert asyncio.run(g.decide(None, None)) is None
+
+
+def test_redact_results_keeps_task_ids_intact(tmp_path):
+    import json
+    import subprocess
+    import sys
+
+    from evals.tasks.schema import load_all
+
+    tasks = [t for ts in load_all().values() for t in ts if t.secrets]
+    victim = next((t for t in tasks for v in t.secrets.values() if v and v in t.id), None)
+    if victim is None:
+        import pytest
+
+        pytest.skip("no task id contains a secret value")
+    secret = next(v for v in victim.secrets.values() if v in victim.id)
+    run = tmp_path / "run"
+    run.mkdir()
+    (run / "results.json").write_text(json.dumps([{"task_id": victim.id, "arm": "dual", "answer": f"typed {secret} here"}]))
+    subprocess.run([sys.executable, "scripts/redact_results.py", str(run)], check=True, capture_output=True)
+    row = json.loads((run / "results.json").read_text())[0]
+    assert row["task_id"] == victim.id and secret not in row["answer"] and "[REDACTED" in row["answer"]

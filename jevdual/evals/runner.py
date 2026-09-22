@@ -240,7 +240,7 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
                     url_after=h.state.url,
                     decision=decision,
                     arbiter_reason=(rec.verdict.reason if rec and rec.verdict else None),
-                    proposed=list(rec.proposed) if rec and rec.proposed else actions,
+                    proposed=list(rec.proposed) if rec and rec.proposed else [],  # S1's own proposal only; executed carries what ran
                     executed=actions,
                     result_error=next((r.error for r in h.result if r.error), None),
                     is_done=any(r.is_done for r in h.result),
@@ -367,6 +367,7 @@ async def _run_task_once(
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
+            authorized_actions=task.authorized_actions,
             # the upstream judge runs on the System 2 model after the run; nothing to judge with on S1-only
             use_judge=llm is not None and arm in S2_ARMS,
             ground_truth=task.judge_ground_truth,

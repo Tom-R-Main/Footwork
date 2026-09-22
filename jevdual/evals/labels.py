@@ -1,4 +1,4 @@
-"""Labelling sheet for Q1: one row per S1-eligible step of the dual arm, with an empty ``label``
+"""Labelling sheet for Q1: one row per S1-eligible step of every arm where S1 decided, with an empty ``label``
 column (right / wrong) and a heuristic ``auto_label`` to be overwritten by a person.
 
     uv run python -m evals.labels results/<run>   ->   results/<run>/labels.csv
@@ -23,13 +23,13 @@ BAD_NEXT = {"stuck", "no_effect", "repeated_target"}
 
 def rows_for(run_dir: Path) -> list[dict]:
     results = {(r["task_id"], r["arm"]): r for r in json.loads((run_dir / "results.json").read_text())}
-    steps = [s for s in load_steps(run_dir) if s.arm == "dual" and s.op_choice is not None]
+    steps = [s for s in load_steps(run_dir) if s.op_choice is not None]  # every arm where S1 decided (dual, s1_only, delegate)
     by_task: dict[str, list[Step]] = {}
     for s in steps:
-        by_task.setdefault(s.task_id, []).append(s)
+        by_task.setdefault(f"{s.task_id}|{s.arm}", []).append(s)
     # url and proposal per step from traces
     detail: dict[tuple[str, int], dict] = {}
-    for f in sorted((run_dir / "traces").glob("*-dual-*.jsonl")):
+    for f in sorted((run_dir / "traces").glob("*.jsonl")):
         task_id = None
         for line in f.read_text().splitlines():
             r = json.loads(line)
@@ -38,13 +38,15 @@ def rows_for(run_dir: Path) -> list[dict]:
                 continue
             detail[(task_id or f.stem, r["step"])] = r
     out = []
-    for task_id, ss in by_task.items():
+    for key, ss in by_task.items():
+        task_id = key.split("|", 1)[0]
         ss.sort(key=lambda s: s.step)
-        passed = bool(results.get((task_id, "dual"), {}).get("passed"))
+        arm = ss[0].arm
+        passed = bool(results.get((task_id, arm), {}).get("passed"))
         last_step = max(s.step for s in ss)
         for i, s in enumerate(ss):
             nxt = ss[i + 1] if i + 1 < len(ss) else None
-            d = detail.get((task_id, s.step), {})
+            d = detail.get((task_id, s.step), {})  # note: candidate menus are not traced; target ids alone cannot be judged offline
             proposed = d.get("proposed") or []
             if s.system == "s1":
                 bad = bool(s.result_error) or (nxt is not None and reason_class(nxt.reason) in BAD_NEXT) or (not passed and s.step >= last_step - 1)
@@ -54,10 +56,12 @@ def rows_for(run_dir: Path) -> list[dict]:
             out.append(
                 {
                     "task": task_id,
+                    "arm": arm,
                     "step": s.step,
                     "system": s.system,
                     "url": d.get("url_after") or "",
-                    "proposed": json.dumps(proposed)[:200],
+                    "proposed": json.dumps(proposed),
+                    "proposed_source": "s1" if proposed else "none (S1 decision only: see op_choice, target id)",
                     "executed": ",".join(s.executed),
                     "op_choice": s.op_choice,
                     "op_conf": s.op_conf,

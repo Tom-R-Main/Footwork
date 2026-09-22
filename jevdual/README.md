@@ -41,8 +41,9 @@ Live split, 55 tasks on public and practice sites, three arms after the verifica
 Q9, the four-arm test of System 2 directing System 1 on the same 55 live tasks
 (`results/q9-live-dev.md`): a guarded System 2 alone (gate and verification, no S1 decisions)
 matched every arm on verified completions at the lowest cost, $0.0100 per verified pass against
-dual's $0.0117 and delegation's $0.0137, with zero false completions everywhere. Dual keeps 26%
-fewer LLM calls than the guarded arm and the fewest steps; the first delegation build cost more and
+dual's $0.0117 and delegation's $0.0137, with zero false completions on these predicates everywhere.
+Dual keeps 26 to 29% fewer driver steps than the guarded arm (23% fewer model requests by
+browser-use's tracker in the second sample) and the fewest steps; the first delegation build cost more and
 was rebuilt with explicit ownership and measured again (`results/q9c-coherent-delegation.md`): it
 reached 5 of 30 assignments and stayed costlier and slower than both baselines, so the reactive loop
 remains the default and delegation a tool.
@@ -51,9 +52,10 @@ What the splits say: Jev alone handles navigation, search, pagination, modals an
 five steps and cannot read or answer; the LLM alone reads and answers and will click "Delete
 account" when asked to reach a page, and its own judge accepts that as success; the pair is the only
 arm with zero false completions on every split. On the fixture heldout the pair now matches stock's
-cost with 27% fewer LLM calls and 26% less wall time. On live sites it uses 26% fewer LLM calls than
+cost with 27% fewer driver steps and 26% less wall time. On live sites it uses 26% fewer driver steps than
 stock at 1.32× its estimated cost, with the whole gap being Jev call volume (458 calls), and wall time
-not distinguishable. Steps run by Jev take a median 1.4 s against 15.7 s for a Muse step. Jev calls
+not distinguishable. Steps run by Jev take a median 1.4 s against 15.7 s for a Muse step; that is a per-step figure, and task
+wall time between the arms is not distinguishable on live sites. Jev calls
 count every request, including verification. Live pass rates are against sites that drift between
 runs (stock lost 5 saucedemo checkout tasks in an evening run that passed in the morning). Per-run
 failure taxonomies are in each run directory's `taxonomy.md`.

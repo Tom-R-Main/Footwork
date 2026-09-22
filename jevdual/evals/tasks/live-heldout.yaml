@@ -136,6 +136,7 @@ tasks:
     requirements: [Signed in, Bike Light in cart, Checkout information entered, Order finished]
     secrets: {sauce_password: secret_sauce}
     authorize: true
+    authorized_actions: [finish, checkout, continue]
     checkpoints: [{kind: url_contains, value: 'cart.html'}, {kind: url_contains, value: 'checkout-step-one.html'}, {kind: url_contains, value: 'checkout-step-two.html'}]
     predicate: {kind: page_text_contains, value: 'Thank you for your order'}
 
@@ -187,6 +188,7 @@ tasks:
     tags: [live, form, type, select, consent]
     requirements: [Customer name entered, Telephone entered, Email entered, Size chosen, Form submitted]
     authorize: true
+    authorized_actions: [submit]
     predicate: {kind: page_text_contains, value: '"custname": "Emmy Noether"'}
 
   - id: lhh-form-fill-no-submit

@@ -45,6 +45,7 @@ class DualProcessAgent(Agent):
         s1_policy: S1Policy | None = None,
         destructive_keywords: tuple[str, ...] | None = None,
         authorized_destructive: bool = False,
+        authorized_actions: tuple[str, ...] = (),
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -58,6 +59,10 @@ class DualProcessAgent(Agent):
             destructive_keywords = ArbiterPolicy.from_toml().destructive_keywords
         self.destructive_keywords = destructive_keywords
         self.authorized_destructive = authorized_destructive
+        #: Scope of the task's authorisation: keywords a target must match for the gate and the
+        #: arbiter to stand down (place order, submit, finish). Empty with authorized_destructive
+        #: means task-wide, which is the old behaviour and is reported as such.
+        self.authorized_actions = tuple(k.casefold() for k in authorized_actions)
         self.paused_before_action: dict[str, Any] | None = None
         self.s2_verifications: list[dict[str, Any]] = []
         self.s2_done_rejections = 0
@@ -69,6 +74,15 @@ class DualProcessAgent(Agent):
         #: Q9: the bounded assignment System 2 handed to System 1, if any, and the finished ones.
         self.delegation: Any = None
         self.delegations: list[Any] = []
+
+    def is_authorized(self, text: str | None) -> bool:
+        """Whether the task authorises an irreversible action on ``text`` (a target label, URL or keyword)."""
+        if not self.authorized_destructive:
+            return False
+        if not self.authorized_actions:
+            return True  # task-wide authorisation
+        low = (text or "").casefold()
+        return any(k in low for k in self.authorized_actions)
 
     def _destructive_hit(self, actions: list[Any]) -> tuple[str, str, int] | None:
         from jevdual.arbiter import match_destructive_keyword
@@ -191,8 +205,10 @@ class DualProcessAgent(Agent):
         out = self.state.last_model_output
         if out is not None and self.step_systems.get(self.state.n_steps) == "s2":
             await self._verify_s2_done(out)
-        if out is not None and not self.authorized_destructive:
+        if out is not None:
             hit = await self._destructive_hit_any(list(out.action))
+            if hit is not None and self.is_authorized(f"{hit[0]} {hit[1]}"):
+                hit = None  # within the task's authorised scope (matched by label or keyword)
             if hit is not None:
                 label, kw, idx = hit
                 system = self.step_systems.get(self.state.n_steps, "s2")

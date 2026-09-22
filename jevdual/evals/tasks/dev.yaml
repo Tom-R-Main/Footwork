@@ -51,6 +51,7 @@ tasks:
     requirements: [Name and email filled, Topic Damaged item selected, Message entered, Form submitted]
     predicate: {kind: page_text_contains, value: 'The lantern arrived broken.'}
     authorize: true
+    authorized_actions: [send]
 
   - id: contact-form-newsletter
     task: Fill in the contact form as Grace Hopper (grace@example.com), topic Returns, subscribe to the newsletter, message "Returning the wool blanket", and send it.
@@ -59,6 +60,7 @@ tasks:
     requirements: [Navigated to contact page, All fields filled, Newsletter checked, Submitted]
     predicate: {kind: url_contains, value: 'newsletter=yes'}
     authorize: true
+    authorized_actions: [send]
 
   - id: modal-close-and-continue
     task: Dismiss the announcement dialog and continue to the pricing page.
@@ -116,6 +118,7 @@ tasks:
     answer_expected: true
     predicate: {kind: answer_contains, value: 'KB-20260921'}
     authorize: true
+    authorized_actions: [place order, confirm order]
 
   - id: checkout-total
     task: What is the order total on the checkout page?

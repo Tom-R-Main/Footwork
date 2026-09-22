@@ -116,3 +116,19 @@ def test_delegate_subgoal_tool_starts_a_delegation_on_the_agent():
     assert agent.delegation.goal == "add the backpack to the cart" and agent.delegation.budget == 5 and agent.delegation.started_step == 3
     again = asyncio.run(tools.registry.execute_action("delegate_subgoal", params))
     assert again.error and "already active" in again.error
+
+
+def test_delegate_subgoal_refuses_a_typing_assignment_without_values():
+    import asyncio
+    from types import SimpleNamespace
+
+    from browser_use import Tools
+    from jevdual.tools import register_delegation
+
+    agent = SimpleNamespace(delegation=None, state=SimpleNamespace(n_steps=1))
+    tools = Tools()
+    register_delegation(tools, lambda: agent)
+    r = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Sign in with username standard_user and the password provided", "stop_condition": "products page shown", "known_values": {}}))
+    assert r.error and "known_values" in r.error and agent.delegation is None
+    r2 = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Sign in with username standard_user and the password provided", "stop_condition": "products page shown", "known_values": {"username": "standard_user", "password": "<secret>pw</secret>"}}))
+    assert r2.error is None and agent.delegation is not None

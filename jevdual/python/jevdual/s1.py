@@ -13,6 +13,7 @@ from __future__ import annotations
 import dataclasses
 import inspect
 import logging
+import re
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -54,6 +55,26 @@ class AlwaysAct:
 
 
 TextSource = Callable[[str, Candidate, Menu], Any]  # returns str | None, possibly awaitable
+
+
+_HANDBACK_STATUS = (
+    ("secret", "secret_disallowed"),
+    ("needs composed text", "needs_values"),
+    ("no known value", "needs_values"),
+    ("stale", "stale_state"),
+    ("bridge", "bridge_error"),
+    ("policy error", "error"),
+    ("idle", "idle"),
+)
+
+
+def _handback_status(reason: str) -> str:
+    low = reason.casefold()
+    for needle, status in _HANDBACK_STATUS:
+        if needle in low:
+            return status
+    head = reason.split(":", 1)[0].strip()
+    return re.sub(r"[^a-z0-9_]+", "_", head.casefold()).strip("_")[:40] or "handback"
 
 
 def _known_value_for(target: Candidate, known: tuple[tuple[str, str], ...]) -> str | None:
@@ -272,6 +293,19 @@ class JevS1:
         )
 
     async def decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
+        """One S1 step. Inside a delegation every handback closes the assignment: whatever path
+        returned None (arbiter, verifier, text, secrets, bridge, freshness, policy error) the
+        assignment ends with a status derived from the step's reason, so System 1 never resumes an
+        assignment System 2 acted in."""
+        delegation: Delegation | None = getattr(agent, "delegation", None)
+        out = await self._decide(agent, state)
+        if out is None and delegation is not None and getattr(agent, "delegation", None) is delegation:
+            rec = agent.__dict__.get("s1_records", {}).get(agent.state.n_steps)
+            reason = (rec.verdict.reason if rec is not None and rec.verdict is not None else (rec.error if rec is not None else None)) or "handback"
+            self._end_delegation(agent, delegation, _handback_status(reason), reason, getattr(state, "url", "") or "")
+        return out
+
+    async def _decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
         step = agent.state.n_steps
         records: dict[int, S1Record] = agent.__dict__.setdefault("s1_records", {})
         rec = S1Record(step=step, decision=None, verdict=None)
@@ -306,7 +340,23 @@ class JevS1:
         try:
             decision = await self.policy.decide(menu, ctx)
             if decision.two_stage and decision.pending_group:
-                decision = await self.policy.decide_target(menu, ctx, decision.operation, decision.pending_group)
+                # The second stage refines the target only; the first stage's operation confidence and
+                # situation nouls (destructive, stuck, needs_reasoning, goal_done) must survive it. The
+                # previous code replaced the whole decision, so a 0.20-confidence, destructive=0.99 step
+                # reached the arbiter as confidence 1.0 with no signals (audit, 2026-09-22).
+                second = await self.policy.decide_target(menu, ctx, decision.operation, decision.pending_group)
+                decision = dataclasses.replace(
+                    decision,
+                    target=second.target,
+                    target_confidence=second.target_confidence,
+                    target_probabilities=second.target_probabilities,
+                    alternates=second.alternates,
+                    two_stage=False,
+                    pending_group=(),
+                    request_tokens=(decision.request_tokens or 0) + (second.request_tokens or 0),
+                    latency_ms=decision.latency_ms + second.latency_ms,
+                    raw=second.raw,
+                )
         except PolicyError as exc:
             rec.error = f"policy: {exc}"
             rec.verdict = Verdict("escalate", f"policy error: {exc}")
@@ -366,6 +416,11 @@ class JevS1:
                     # sign-in assignments as stuck (Q9c); hand the assignment back instead
                     rec.verdict = Verdict("escalate", f"known value already in field {decision.target}; nothing left to type")
                     self._end_delegation(agent, delegation, "not_reached", rec.verdict.reason, menu.url)
+                    return None
+                if text is None and delegation is not None:
+                    # inside an assignment the driver owns the values: never guess from the task text
+                    # (that typed a product name into Username twice on 2026-09-22)
+                    rec.verdict = Verdict("escalate", f"no known value for field {decision.target} ({target.label[:40]!r}); the assignment needs known_values")
                     return None
                 if text is None:
                     text = self.text_source(agent.task, target, menu)

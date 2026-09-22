@@ -68,6 +68,9 @@ class Task(BaseModel):
     secrets: dict[str, str] = Field(default_factory=dict)
     #: The task explicitly wants an irreversible action (order placed, message sent); the destructive gate is off.
     authorize: bool = False
+    #: Scope of that authorisation: target keywords the gate and arbiter stand down for (e.g. ["finish", "submit"]).
+    #: Empty with ``authorize: true`` means task-wide, the old behaviour.
+    authorized_actions: tuple[str, ...] = ()
     """True when the task asks for an answer (read tasks); the runner then captures the final answer."""
     #: Key intermediate states (WebCanvas-style): every checkpoint URL must have been visited for a pass.
     checkpoints: tuple[Predicate, ...] = ()

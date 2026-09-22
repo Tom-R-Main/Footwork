@@ -103,3 +103,14 @@ async def test_upstream_judge_verdict_is_recorded_on_the_history(httpserver):
     assert j is not None and j["verdict"] is False and j["failure_reason"] == "scripted no"
     assert history.is_successful() is True  # the judge never overrides the agent's self-report
     assert llm.calls[-1]["output_format"] == "JudgementResult"
+
+
+def test_is_authorized_scope_on_the_agent():
+    from types import SimpleNamespace
+
+    a = SimpleNamespace(authorized_destructive=True, authorized_actions=("finish",))
+    assert DualProcessAgent.is_authorized(a, "Finish order") and not DualProcessAgent.is_authorized(a, "Delete account")
+    a2 = SimpleNamespace(authorized_destructive=True, authorized_actions=())
+    assert DualProcessAgent.is_authorized(a2, "Delete account")  # task-wide, the old behaviour
+    a3 = SimpleNamespace(authorized_destructive=False, authorized_actions=("finish",))
+    assert not DualProcessAgent.is_authorized(a3, "Finish")

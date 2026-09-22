@@ -1,4 +1,5 @@
 import asyncio
+import dataclasses
 from types import SimpleNamespace
 
 import pytest
@@ -407,3 +408,78 @@ def test_allowed_operations_filter_the_offered_operations():
     only_click = pol.offered_operations(menu, StepContext(task="t", allowed_operations=("click",)))
     assert "click" in only_click and "type" not in only_click and "done" in only_click
     assert set(only_click) < set(everything) or set(only_click) == set(everything)
+
+
+# ---- correctness tranche after the 2026-09-22 audit -------------------------------------------
+
+
+class _TwoStagePolicy:
+    """First stage: flat, destructive-flagged, pending group; second stage: a confident target."""
+
+    async def decide(self, menu, ctx):
+        d = _decision("click", None)
+        return dataclasses.replace(d, operation_confidence=0.2, nouls={"goal_done": 0.1, "stuck": 0.0, "destructive": 0.99}, two_stage=True, pending_group=(3, 4))
+
+    async def decide_target(self, menu, ctx, operation, group):
+        return dataclasses.replace(_decision("click", group[0]), operation_confidence=1.0, nouls={}, target_confidence=0.95)
+
+
+def test_two_stage_target_keeps_the_first_stage_confidence_and_safety_signals():
+    from jevdual.arbiter import Arbiter
+
+    state, _ = _fresh_state_and_link()
+    agent = FakeAgent(state)
+    s1 = JevS1(_TwoStagePolicy(), arbiter=Arbiter.from_toml())
+    assert asyncio.run(s1.decide(agent, state)) is None
+    rec = agent.s1_records[1]
+    assert rec.decision.operation_confidence == 0.2 and rec.decision.nouls["destructive"] == 0.99
+    assert rec.decision.target == 3 and not rec.decision.two_stage
+    assert rec.verdict.kind in ("escalate", "confirm")  # the flat, destructive first stage rules, not the 1.0 second stage
+
+
+def test_every_handback_inside_a_delegation_closes_it_with_a_status():
+    state, idx = _fresh_state_and_link()
+    # stale snapshot -> bridge/freshness handback
+    agent = _delegating_agent(state)
+    agent.browser_session._cached_browser_state_summary = object()
+    s1 = JevS1(FakePolicy(_decision("click", idx)), arbiter=AlwaysAct(), only_when_delegated=True)
+    assert asyncio.run(s1.decide(agent, state)) is None
+    assert agent.delegation is None and agent.delegations[0].status == "stale_state"
+    # typing with no known value inside an assignment -> needs_values, never the task literal
+    state2, _ = _fresh_state_and_link()
+    from jevdual.menu import build_menu
+
+    field = next(c for c in build_menu(state2).candidates if "type" in c.operations)
+    agent2 = _delegating_agent(state2)
+    agent2.task = 'Open the About page and search for "lighthouse"'
+    s1b = JevS1(FakePolicy(_decision("type", field.id)), arbiter=AlwaysAct(), only_when_delegated=True)
+    assert asyncio.run(s1b.decide(agent2, state2)) is None
+    assert agent2.delegation is None and agent2.delegations[0].status == "needs_values"
+    assert "known_values" in agent2.messages[0].content
+
+
+def test_scoped_authorisation_lets_the_named_action_through_and_pauses_the_rest():
+    from jevdual.arbiter import Arbiter
+
+    from tests.test_arbiter import Candidate as C
+    from tests.test_arbiter import decision as dec
+    from tests.test_arbiter import menu as mk
+
+    class Scoped:
+        authorized_destructive = True
+        authorized_actions = ("finish", "checkout")
+
+        def __init__(self):
+            self.s1_records = {}
+
+        def is_authorized(self, text):
+            low = (text or "").casefold()
+            return any(k in low for k in self.authorized_actions)
+
+    finish = mk(cands=(C(id=1, label="Finish", role="button", operations=("click",)),))
+    delete = mk(cands=(C(id=1, label="Delete account", role="button", operations=("click",)),))
+    hot = dec("click", 1, destructive=0.8)
+    from tests.test_arbiter import ctx as mkctx
+
+    assert Arbiter.from_toml().judge(hot, finish, mkctx(), Scoped()).kind == "act"
+    assert Arbiter.from_toml().judge(hot, delete, mkctx(), Scoped()).kind == "confirm"

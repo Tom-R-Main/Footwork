@@ -50,3 +50,12 @@ def test_strict_contract():
 
 def test_password_never_typed_from_literal():
     assert asyncio.run(TextSource().compose('use password "hunter2"', PW, MENU)) is None
+
+
+def test_lone_literal_never_goes_into_an_identity_field_unless_its_words_bind():
+    username = Candidate(id=6, label="Username", role="input", operations=("type",), input_type="text")
+    search = Candidate(id=9, label="Search", role="input", operations=("type",), input_type="search")
+    task = 'Sign in as standard_user, then find the "Sauce Labs Bike Light" and report its price.'
+    assert literal_from_task(task, username) is None  # the audit's exact shape: a product name is not a username
+    assert literal_from_task(task, search) == "Sauce Labs Bike Light"
+    assert literal_from_task('Sign in with username "ada" and the password provided.', username) == "ada"

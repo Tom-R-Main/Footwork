@@ -35,6 +35,9 @@ SecretPlaceholder = Callable[[Candidate], str | None]
 HelperFn = Callable[[str, Candidate, Menu], Awaitable[str | None]]
 
 
+_IDENTITY_FIELDS = frozenset({"username", "user", "login", "password", "passwd", "email", "phone", "tel", "telephone", "mobile", "zip", "postal", "postcode"})
+
+
 def _tokens(s: str) -> set[str]:
     return {t for t in re.findall(r"[a-z0-9]+", s.casefold()) if t not in _STOP}
 
@@ -49,9 +52,16 @@ def literal_from_task(task: str, target: Candidate) -> str | None:
     matches = list(_QUOTE_RE.finditer(task))
     if not matches:
         return None
+    label = _tokens(target.label) | _tokens(target.input_type or "") | _tokens(getattr(target, "section", None) or "")
     if len(matches) == 1:
-        return matches[0].group(1).strip() or None
-    label = _tokens(target.label) | _tokens(target.input_type or "")
+        m = matches[0]
+        if label & _IDENTITY_FIELDS:
+            # a credential or identity field takes a lone literal only when the words before it name
+            # the field ('username "ada"'); "find 'Sauce Labs Bike Light'" is not a username
+            before = task[max(0, m.start() - 60) : m.start()]
+            if not (_tokens(before) & label):
+                return None
+        return m.group(1).strip() or None
     best: tuple[int, str] | None = None
     for m in matches:
         before = task[max(0, m.start() - 60) : m.start()]
