@@ -524,3 +524,27 @@ def test_single_known_value_binds_to_a_search_field():
     assert _known_value_for(box, (("query", "Eiffel Tower"),)) == "Eiffel Tower"
     user = Candidate(id=2, label="Username", role="input", operations=("type",), input_type="text")
     assert _known_value_for(user, (("query", "Eiffel Tower"),)) is None
+
+
+def test_assignment_context_uses_its_own_steps_not_the_drivers_memory():
+    from types import SimpleNamespace
+
+    from jevdual.s1 import S1Record
+    from jevdual.trace import ActionRecord
+
+    state, idx = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    agent.delegation.started_step = 2
+    agent.delegation.steps_taken = 1
+    agent.history = SimpleNamespace(history=[SimpleNamespace(model_output=SimpleNamespace(memory="delegated sign-in to the navigator")) for _ in range(3)])
+    agent.s1_records = {
+        1: S1Record(step=1, decision=None, verdict=None, proposed=(ActionRecord(name="click", params={"index": 9}),)),  # before the assignment
+        3: S1Record(step=3, decision=None, verdict=None, proposed=(ActionRecord(name="input", params={"index": idx}),), menu=({"id": idx, "label": "Username"},)),
+    }
+    policy = _CapturingPolicy(_decision("click", idx))
+    s1 = JevS1(policy, arbiter=AlwaysAct(), only_when_delegated=True)
+    agent.state.n_steps = 4
+    asyncio.run(s1.decide(agent, state))
+    ctx = policy.contexts[0]
+    assert ctx.recent_actions == ("assignment step 1: input(Username)",)
+    assert ctx.step == 2  # the assignment's second step, whatever the run's step count

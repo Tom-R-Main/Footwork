@@ -280,21 +280,45 @@ class JevS1:
         return f"s2_control: {self.escalation_streak} consecutive escalations on {reason!r}; System 2 keeps control until step {self._s2_control[0]} (no menu call)"
 
     def _context(self, agent: DualProcessAgent) -> StepContext:
+        d: Delegation | None = getattr(agent, "delegation", None)
+        if d is not None:
+            # Inside an assignment the recent actions are the assignment's own S1 steps, not the driver's
+            # memory lines: those repeat "delegated sign-in" and made the stuck noul fire at 0.9 on the
+            # first delegated step, before S1 had acted (Q8/Q9e run, 2026-09-22). The step counter is
+            # the assignment's too, so stuck_min_step counts assignment steps.
+            records: dict[int, S1Record] = agent.__dict__.get("s1_records", {})
+            lines = []
+            for i in sorted(records):
+                rec = records[i]
+                if i <= d.started_step or not rec.proposed:
+                    continue
+                labels = {m["id"]: m["label"] for m in rec.menu}
+                acts = ", ".join(f"{a.name}({labels.get(a.params.get('index'), a.params.get('index', ''))})" for a in rec.proposed)
+                lines.append(f"assignment step {len(lines) + 1}: {acts}")
+            if self.secrets is not None:
+                red = self.secrets.redactor()
+                lines = [red(line) for line in lines]
+            return StepContext(
+                task=agent.task,
+                requirements=self.requirements,
+                recent_actions=tuple(lines[-self.recent_window :]),
+                step=d.steps_taken + 1,
+                secrets_names=self.secrets.names() if self.secrets is not None else (),
+                subgoal=d.goal,
+                allowed_operations=d.allowed_operations,
+                known_values=d.known_values,
+                stop_condition=d.stop_condition,
+            )
         lines = [h.model_output.memory for h in agent.history.history if h.model_output and h.model_output.memory]
         if self.secrets is not None:
             red = self.secrets.redactor()
             lines = [red(line) for line in lines]
-        d: Delegation | None = getattr(agent, "delegation", None)
         return StepContext(
             task=agent.task,
             requirements=self.requirements,
             recent_actions=tuple(lines[-self.recent_window :]),
             step=agent.state.n_steps,
             secrets_names=self.secrets.names() if self.secrets is not None else (),
-            subgoal=d.goal if d is not None else None,
-            allowed_operations=d.allowed_operations if d is not None else (),
-            known_values=d.known_values if d is not None else (),
-            stop_condition=d.stop_condition if d is not None else None,
         )
 
     async def decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
