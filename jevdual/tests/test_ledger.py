@@ -115,3 +115,34 @@ def test_arbiter_hook_builds_the_trajectory_and_keeps_one_ledger_per_run():
     hook.ledger.update({REQS[1]: 0.05})
     band2, reason2 = asyncio.run(hook.judge_done(agent, menu()))
     assert band2 == "verify" and "ledger carried" in reason2
+
+
+def test_ledger_kinds_carry_history_invalidate_state_and_never_carry_answers():
+    led = Ledger()
+    led.set_kinds({"Form submitted": "historical_action", "Backpack in cart": "current_state", "Total reported": "answer"})
+    led.update({"Form submitted": 0.05, "Backpack in cart": 0.05, "Total reported": 0.05})
+    # historical carries through anything; state carries through uncertainty but not a confident "no"
+    fresh = {"Form submitted": 0.95, "Backpack in cart": 0.55, "Total reported": 0.95}
+    assert led.apply(fresh) == {"Form submitted": 0.05, "Backpack in cart": 0.05, "Total reported": 0.95}
+    led.update({"Backpack in cart": 0.90})  # the verifier saw the cart empty: reset
+    assert led.apply({"Backpack in cart": 0.55}) == {"Backpack in cart": 0.55}
+    assert led.best_unmet["Backpack in cart"] == 0.90
+    assert led.kind("unknown requirement") == "historical_action"
+
+
+def test_first_verification_asks_kinds_once_and_the_ledger_learns_them():
+    from typesafe_sdk import SystemOneResponse
+
+    base = json.loads((FIXTURES / "verify_reject_unmet.json").read_text())
+    first = json.loads(json.dumps(base))
+    first["answers"]["kind_0"] = {"type": "choice", "choice": "current_state", "confidence": 0.9, "probabilities": {"current_state": 0.9, "historical_action": 0.05, "answer": 0.05}}
+    first["answers"]["kind_1"] = {"type": "choice", "choice": "answer", "confidence": 0.9, "probabilities": {"answer": 0.9, "historical_action": 0.05, "current_state": 0.05}}
+    client = FakeClient(SystemOneResponse.model_validate(first), SystemOneResponse.model_validate(base))
+    hook = ArbiterHook(Verifier(client), REQS)
+    from tests.test_ledger import _fake_agent as _agent
+
+    asyncio.run(hook.judge_done(_agent(), menu()))
+    assert "kind_0" in client.calls[0]["questions"] and "kind_1" in client.calls[0]["questions"]
+    assert hook.ledger.kinds == {REQS[0]: "current_state", REQS[1]: "answer"}
+    asyncio.run(hook.judge_done(_agent(), menu()))
+    assert "kind_0" not in client.calls[1]["questions"]  # asked once per run

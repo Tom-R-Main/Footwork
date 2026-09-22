@@ -26,6 +26,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from typesafe_sdk import (
+    Choice,
     Noul,
     RetryPolicy,
     SystemOneResponse,
@@ -272,8 +273,8 @@ class Verifier:
         self.policy = policy or VerifyPolicy()
         self.retry = retry
 
-    def build_questions(self, requirements: tuple[str, ...]) -> dict[str, Noul]:
-        questions: dict[str, Noul] = {
+    def build_questions(self, requirements: tuple[str, ...], *, ask_kinds: bool = False) -> dict[str, Any]:
+        questions: dict[str, Any] = {
             "complete": Noul(
                 instructions=prompts.VERIFY_COMPLETE["instructions"],
                 criteria={"true": prompts.VERIFY_COMPLETE["true"], "false": prompts.VERIFY_COMPLETE["false"]},
@@ -286,6 +287,11 @@ class Verifier:
             instructions=prompts.VERIFY_ANSWER_REQUIRED["instructions"],
             criteria={"true": prompts.VERIFY_ANSWER_REQUIRED["true"], "false": prompts.VERIFY_ANSWER_REQUIRED["false"]},
         )
+        if ask_kinds:
+            # task-static: asked in the first verification of a run only, in the same request
+            for i, req in enumerate(requirements):
+                spec = prompts.verify_kind(i, req)
+                questions[f"kind_{i}"] = Choice(instructions=spec["instructions"], criteria=spec["criteria"])
         return questions
 
     @staticmethod
@@ -319,7 +325,8 @@ class Verifier:
         trajectory: list[dict[str, Any]] | None = None,
         ledger: Ledger | None = None,
     ) -> Verdict:
-        questions = self.build_questions(requirements)
+        ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
+        questions = self.build_questions(requirements, ask_kinds=ask_kinds)
         state = self.build_state(task, requirements, menu, answer, trajectory)
         started = time.perf_counter()
         response = await _call_client(self.client, state, questions, model=self.model, retry=self.retry)
@@ -335,7 +342,14 @@ class Verifier:
                 raise PolicyError(f"verification answer missing `{key}`")
             unmet[req] = response.nouls[key].noul
 
-        # a requirement judged met earlier in this run stays met (jevdual.ledger)
+        if ask_kinds and ledger is not None:
+            kinds = {}
+            for i, req in enumerate(requirements):
+                ans = response.choices.get(f"kind_{i}")
+                if ans is not None and getattr(ans, "choice", None) in ("historical_action", "current_state", "answer"):
+                    kinds[req] = ans.choice
+            ledger.set_kinds(kinds)
+        # what earlier verifications in this run established, by requirement kind (jevdual.ledger)
         unmet_effective = ledger.apply(unmet) if ledger is not None else dict(unmet)
         if ledger is not None:
             ledger.update(unmet)

@@ -14,6 +14,8 @@ Adapted in spirit from browser-use/jev-ultrafast and fastbrowse (both MIT).
 
 from __future__ import annotations
 
+from typing import Any
+
 PROMPTS_VERSION = "2026-09-21.1"
 
 # --- operation choice -------------------------------------------------------------------
@@ -184,3 +186,18 @@ VERIFY_ANSWER_REQUIRED: dict[str, str] = {
     "a message or a fact to be returned.",
     "false": "The task only asks to open, reach, submit, select, sign in, or otherwise change what the page shows.",
 }
+
+
+def verify_kind(index: int, requirement: str) -> dict[str, Any]:
+    """Choice: what kind of thing ``requirements[index]`` is, asked once per run (jevdual.ledger)."""
+    return {
+        "instructions": f"What kind of requirement is `requirements[{index}]` (\"{requirement}\")?",
+        "criteria": {
+            "historical_action": "It names an action that, once performed, stays performed: a form submitted, a "
+            "page or article opened, text entered, a button clicked, a search run, a key pressed.",
+            "current_state": "It names a condition of the page, session or account that can change later: an "
+            "item is in the cart, the user is signed in, a dialog is dismissed, a field is enabled, the order is "
+            "not finished.",
+            "answer": "It names information to be reported back: a value, a name, a year, a message, a price.",
+        },
+    }

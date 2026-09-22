@@ -85,19 +85,59 @@ def trajectory_from_agent(agent: Any, redact: Callable[[str], str] | None = None
     return out[-max_steps:]
 
 
+KINDS = ("historical_action", "current_state", "answer")
+
+
 @dataclass
 class Ledger:
-    """Lowest ``unmet`` seen per requirement in this run; met once means met."""
+    """What earlier verifications in this run established, per requirement, with three semantics:
+
+    * ``historical_action`` (a form submitted, a page opened, text entered): once observed done it
+      stays done; the lowest ``unmet`` ever seen carries forward.
+    * ``current_state`` (an item is in the cart, signed in, a dialog dismissed): can change later, so
+      the carried value is overridden by a *confident* fresh ``unmet`` (>= ``invalidate_at``), which is
+      the verifier observing that the state no longer holds. A merely uncertain fresh reading keeps
+      the carry.
+    * ``answer`` (a value reported): evidence is per answer; nothing carries.
+
+    Kinds come from one Choice per requirement asked in the first verification of the run (task
+    static, one call). Until they are known every requirement is treated as historical, the
+    behaviour before kinds existed.
+    """
 
     best_unmet: dict[str, float] = field(default_factory=dict)
+    kinds: dict[str, str] = field(default_factory=dict)
     met_threshold: float = 0.20
+    invalidate_at: float = 0.70
+
+    def kind(self, req: str) -> str:
+        return self.kinds.get(req, "historical_action")
 
     def apply(self, unmet: dict[str, float]) -> dict[str, float]:
-        return {req: min(p, self.best_unmet.get(req, 1.0)) for req, p in unmet.items()}
+        out: dict[str, float] = {}
+        for req, p in unmet.items():
+            best = self.best_unmet.get(req, 1.0)
+            k = self.kind(req)
+            if k == "answer":
+                out[req] = p
+            elif k == "current_state" and p >= self.invalidate_at:
+                out[req] = p  # fresh confident "not so": the state changed; the carry is void
+            else:
+                out[req] = min(p, best)
+        return out
 
     def update(self, unmet: dict[str, float]) -> None:
         for req, p in unmet.items():
-            self.best_unmet[req] = min(p, self.best_unmet.get(req, 1.0))
+            k = self.kind(req)
+            if k == "current_state" and p >= self.invalidate_at:
+                self.best_unmet[req] = p  # reset: it must be observed met again to carry
+            else:
+                self.best_unmet[req] = min(p, self.best_unmet.get(req, 1.0))
+
+    def set_kinds(self, kinds: dict[str, str]) -> None:
+        for req, k in kinds.items():
+            if k in KINDS:
+                self.kinds[req] = k
 
     def met(self) -> tuple[str, ...]:
         return tuple(req for req, p in self.best_unmet.items() if p <= self.met_threshold)
