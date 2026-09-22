@@ -424,10 +424,16 @@ class JevS1:
                     self._end_delegation(agent, delegation, "not_reached", rec.verdict.reason, menu.url)
                     return None
                 if text is None and delegation is not None:
-                    # inside an assignment the driver owns the values: never guess from the task text
-                    # (that typed a product name into Username twice on 2026-09-22)
-                    rec.verdict = Verdict("escalate", f"no known value for field {decision.target} ({target.label[:40]!r}); the assignment needs known_values")
-                    return None
+                    # inside an assignment the driver owns the values: known_values first, then a quoted
+                    # literal in the assignment text itself (the driver's own spec, e.g. Search for
+                    # "Python (programming language)"), never a literal from the whole task (that typed a
+                    # product name into Username twice on 2026-09-22)
+                    from jevdual.text import literal_from_task
+
+                    text = literal_from_task(delegation.goal, target)
+                    if text is None:
+                        rec.verdict = Verdict("escalate", f"no known value for field {decision.target} ({target.label[:40]!r}); the assignment needs known_values")
+                        return None
                 if text is None:
                     text = self.text_source(agent.task, target, menu)
                 if inspect.isawaitable(text):

@@ -493,3 +493,24 @@ def test_s1_record_keeps_a_redacted_menu_snapshot():
     rec = agent.s1_records[1]
     assert rec.menu and any(m["id"] == idx for m in rec.menu)
     assert set(rec.menu[0]) == {"id", "label", "role", "section", "value", "input_type", "href", "offscreen"}
+
+
+def test_delegated_typing_takes_a_literal_from_the_assignment_but_not_from_the_task():
+    from jevdual.menu import build_menu
+
+    from tests.fixtures import replay as _replay
+
+    for name in ("replay_state", "replay_serialized", "load_fixture"):
+        fn = getattr(_replay, name, None)
+        if fn is not None and hasattr(fn, "cache_clear"):
+            fn.cache_clear()
+    state = _replay.replay_state("wikipedia-python")  # its text field is a search box, not an identity field
+    field = next(c for c in build_menu(state).candidates if "type" in c.operations)
+    assert field.label == "Search Wikipedia"
+    agent = _delegating_agent(state)
+    agent.task = 'Find the "Sauce Labs Bike Light" price after signing in.'
+    agent.delegation.goal = 'Search the catalog for "brass lantern" and open the result'
+    s1 = JevS1(FakePolicy(_decision("type", field.id)), arbiter=AlwaysAct(), only_when_delegated=True)
+    out = asyncio.run(s1.decide(agent, state))
+    assert out is not None and out.action[0].model_dump(exclude_unset=True)["input"]["text"] == "brass lantern"
+    assert agent.delegation is not None and agent.delegation.steps_taken == 1
