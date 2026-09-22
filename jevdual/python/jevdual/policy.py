@@ -216,8 +216,8 @@ class JevPolicy:
         offered = self.offered_operations(menu, ctx)
         questions: dict[str, Choice | Noul] = {
             "operation": Choice(
-                instructions=prompts.operation_instructions(ctx.task, ctx.subgoal),
-                criteria={op: prompts.OPERATION_CRITERIA[op] for op in offered},
+                instructions=prompts.operation_instructions(ctx.task, ctx.subgoal, ctx.stop_condition),
+                criteria={op: prompts.operation_criteria_for(ctx.subgoal)[op] for op in offered},
             )
         }
         targets: dict[str, tuple[Candidate, ...]] = {}
@@ -242,7 +242,7 @@ class JevPolicy:
             for i, chunk in enumerate(chunks):
                 questions[f"{op}_target_g{i}"] = self._target_question(ctx, op, chunk)
             group_heads[op] = True
-        for name, spec in prompts.NOULS.items():
+        for name, spec in prompts.nouls_for(ctx.subgoal).items():
             questions[name] = Noul(
                 instructions=spec["instructions"], criteria={"true": spec["true"], "false": spec["false"]}
             )

@@ -241,12 +241,14 @@ def register_delegation(tools: Any, agent_ref: Callable[[], Any]) -> None:
 
 
 DELEGATION_GUIDANCE = """
-You have a fast navigator. Before acting yourself on any mechanical subgoal (open a page or article by name,
-run a search, sign in, fill and submit a form, add an item to the cart, press a button and wait), call
-`delegate_subgoal` with a concrete goal, the observable stop condition, the values to type and a step
-budget, then wait for its report. Delegate one subgoal at a time. Keep for yourself: reading, comparing,
-deciding between options, composing the final answer, and any action that pays, deletes or sends. If the
-navigator reports it did not reach the goal, decide the next subgoal or act yourself.
+You have a fast navigator you can hand a bounded assignment to with `delegate_subgoal`. Use it when the
+assignment would take you two or more steps or needs finding the right control among many (sign in, fill and
+submit a form, run a search and open the matching result, add a named item to the cart, open a named article
+from a search box). Give it a concrete goal, the observable stop condition, the values to type and a step
+budget; it acts on its own and reports back with a summary, and control is yours again. Do not delegate a
+single action whose target you can already see (one link, one button): do it yourself. Keep for yourself:
+reading, comparing, deciding between options, composing the final answer, and any action that pays, deletes
+or sends. If the navigator reports not reached, stuck or paused, decide the next step yourself.
 """.strip()
 
 EVIDENCE_GUIDANCE = """

@@ -40,6 +40,9 @@ class TaskResult:
     #: Q9 delegate arms: bounded assignments System 2 issued, and how many reached their stop condition with observed support
     delegations: int = 0
     subgoals_reached: int = 0
+    #: how each delegation ended (reached, not_reached, budget_exhausted, stuck, low_confidence, ...) and Jev calls spent inside them
+    delegation_statuses: dict[str, int] = field(default_factory=dict)
+    delegation_jev_calls: int = 0
     #: Q9 evidence arm: find_evidence calls System 2 made
     evidence_calls: int = 0
     #: actual model requests recorded by browser-use's token tracker (driver steps, retries, judge), not the S2 step count

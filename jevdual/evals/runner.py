@@ -20,6 +20,7 @@ import logging
 import os
 import time
 import uuid
+from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Literal
@@ -455,6 +456,8 @@ async def _run_task_once(
         judge_captcha=bool(judgement.get("reached_captcha")) if judgement else False,
         delegations=len(getattr(agent, "delegations", []) or []) + (1 if getattr(agent, "delegation", None) is not None else 0),
         subgoals_reached=sum(1 for d in (getattr(agent, "delegations", []) or []) if getattr(d, "status", "") == "reached"),
+        delegation_statuses=dict(Counter(getattr(d, "status", "?") for d in (getattr(agent, "delegations", []) or []))),
+        delegation_jev_calls=sum(getattr(d, "jev_calls", 0) for d in (getattr(agent, "delegations", []) or [])),
         evidence_calls=getattr(holder.get("evidence"), "calls", 0),
         llm_requests=int(getattr(usage, "entry_count", 0) or 0) if usage else 0,
         trace_path=str(trace_path),

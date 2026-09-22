@@ -127,13 +127,15 @@ class Delegation:
     started_step: int = 0
     steps_taken: int = 0
     escalations: int = 0
+    jev_calls: int = 0
     status: str = "active"
     reason: str = ""
 
     def summary(self, url: str) -> str:
         return (
             f"Fast navigator finished the subgoal {self.goal!r}: {self.status} ({self.reason}) after "
-            f"{self.steps_taken} step(s); now at {url}. Decide what to do next."
+            f"{self.steps_taken} step(s) and {self.jev_calls} fast-model call(s); now at {url}. "
+            "Control is back with you. Decide what to do next."
         )
 
 
@@ -202,6 +204,7 @@ class JevS1:
             return False
         if self.verifier is not None and hasattr(self.verifier, "judge_subgoal"):
             met, reason = await self.verifier.judge_subgoal(agent, menu, delegation.goal, delegation.stop_condition)
+            delegation.jev_calls += 1
             rec.verify = {"subgoal": delegation.goal, "met": met, "reason": reason}
         else:
             met, reason = goal_done >= self.subgoal_done_floor, f"goal_done={goal_done:.2f} (unverified)"
@@ -210,7 +213,10 @@ class JevS1:
             rec.verdict = Verdict("escalate", f"delegation reached: {reason}")
             return True  # System 2 takes this step with the summary in context
         if decision.operation == "done":
-            rec.verdict = Verdict("escalate", f"subgoal not yet met: {reason}")
+            # S1 has nothing further to do and the stop condition lacks support: the assignment ends here,
+            # not reached, and System 2 decides with the summary in context.
+            self._end_delegation(agent, delegation, "not_reached", reason, menu.url)
+            rec.verdict = Verdict("escalate", f"delegation not reached: {reason}")
             log.info("step %s: %s", step, rec.verdict.reason)
             return True
         return False  # goal_done was high but unsupported: keep acting
@@ -305,9 +311,13 @@ class JevS1:
             rec.error = f"policy: {exc}"
             rec.verdict = Verdict("escalate", f"policy error: {exc}")
             log.warning("step %s: %s; escalating", step, rec.error)
+            if delegation is not None:
+                self._end_delegation(agent, delegation, "error", str(exc)[:120], menu.url)
             return None
         rec.jev_ms = decision.latency_ms
         rec.decision = decision
+        if delegation is not None:
+            delegation.jev_calls += 1
 
         done_text: str | None = None
         if delegation is not None and await self._delegated_step(agent, delegation, decision, menu, rec, step):
@@ -338,10 +348,12 @@ class JevS1:
         if verdict.kind in ("escalate", "confirm"):
             log.info("step %s: %s (%s)", step, verdict.kind, verdict.reason)
             if delegation is not None:
+                # Explicit ownership: while a delegation is active only S1 acts; anything S1 cannot resolve
+                # ends the assignment with that status and hands control back with a reason. System 2 never
+                # acts inside someone else's assignment.
                 head = verdict.reason.split(":", 1)[0].strip()
                 delegation.escalations += 1
-                if head in ("stuck", "blocked", "no_effect", "repeated_target") or verdict.kind == "confirm":
-                    self._end_delegation(agent, delegation, head if verdict.kind != "confirm" else "paused_before_action", verdict.reason, menu.url)
+                self._end_delegation(agent, delegation, head if verdict.kind != "confirm" else "paused_before_action", verdict.reason, menu.url)
             return None
 
         text = None

@@ -344,14 +344,46 @@ def test_delegated_done_with_observed_support_ends_the_delegation_and_briefs_sys
     assert agent.messages and "finished the subgoal" in agent.messages[0].content and "reached" in agent.messages[0].content
 
 
-def test_delegated_done_without_support_escalates_but_keeps_the_delegation():
+def test_delegated_done_without_support_ends_the_delegation_not_reached():
     state, _ = _fresh_state_and_link()
     agent = _delegating_agent(state)
     verifier = _SubgoalVerifier(met=False)
     s1 = JevS1(FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier)
     assert asyncio.run(s1.decide(agent, state)) is None
-    assert agent.delegation is not None and agent.delegation.status == "active"
-    assert "not yet met" in agent.s1_records[1].verdict.reason
+    assert agent.delegation is None and agent.delegations[0].status == "not_reached"
+    assert agent.delegations[0].jev_calls == 2  # the menu call and the subgoal check
+    assert "Control is back with you" in agent.messages[0].content
+
+
+def test_any_escalation_inside_a_delegation_transfers_control_with_a_reason():
+    class LowConfidence:
+        def judge(self, decision, menu, ctx, agent):
+            return Verdict("escalate", "operation_confidence: operation confidence 0.40 < 0.55")
+
+    state, idx = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    s1 = JevS1(FakePolicy(_decision("click", idx)), arbiter=LowConfidence(), only_when_delegated=True)
+    assert asyncio.run(s1.decide(agent, state)) is None
+    assert agent.delegation is None and agent.delegations[0].status == "operation_confidence"
+    assert agent.messages and "operation_confidence" in agent.messages[0].content
+
+
+def test_delegated_questions_are_scoped_to_the_subgoal():
+    from jevdual.policy import JevPolicy, StepContext
+
+    state, _ = _fresh_state_and_link()
+    from jevdual.menu import build_menu
+
+    menu = build_menu(state)
+    pol = JevPolicy(client=None)
+    req = pol.build_request(menu, StepContext(task="whole task", subgoal="open the About page", stop_condition="the About page is shown"))
+    op = req.questions["operation"]
+    assert op.instructions["question"].endswith("advance `subgoal` from the current page?")
+    assert op.instructions["stop_condition"] == "the About page is shown"
+    assert "stop_condition" in op.criteria["done"]
+    assert "stop_condition" in req.questions["goal_done"].instructions
+    plain = pol.build_request(menu, StepContext(task="whole task"))
+    assert "stop_condition" not in plain.questions["goal_done"].instructions
 
 
 def test_delegation_budget_exhaustion_ends_it_without_a_call():
