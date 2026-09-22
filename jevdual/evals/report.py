@@ -40,6 +40,8 @@ class TaskResult:
     #: Q9 delegate arms: bounded assignments System 2 issued, and how many reached their stop condition with observed support
     delegations: int = 0
     subgoals_reached: int = 0
+    #: Q9 evidence arm: find_evidence calls System 2 made
+    evidence_calls: int = 0
 
     @property
     def cost_usd(self) -> float:
@@ -78,6 +80,7 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "graded_by_judge": sum(1 for r in rs if r.graded_by == "judge"),
             "delegations": sum(r.delegations for r in rs),
             "subgoals_reached": sum(r.subgoals_reached for r in rs),
+            "evidence_calls": sum(r.evidence_calls for r in rs),
         }
     return out
 

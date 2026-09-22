@@ -36,11 +36,12 @@ from evals.predicates import EndState, checkpoints_missed, evaluate
 from evals.report import TaskResult, write_results
 from evals.tasks.schema import Task, load_tasks
 
-Arm = Literal["stock", "s1_only", "dual", "guarded", "delegate", "scripted"]
+Arm = Literal["stock", "s1_only", "dual", "guarded", "delegate", "delegate_evidence", "scripted"]
 JEV_TOKENS_PER_CALL = 2400  # observed mean request size on the local site
 JEV_USD_PER_MTOK = 0.042
-ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "delegate", "scripted")
-S2_ARMS = ("dual", "guarded", "delegate")  # arms whose System 2 is the real model and whose done is verified
+ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "delegate", "delegate_evidence", "scripted")
+S2_ARMS = ("dual", "guarded", "delegate", "delegate_evidence")
+DELEGATE_ARMS = ("delegate", "delegate_evidence")  # arms whose System 2 is the real model and whose done is verified
 log = logging.getLogger("evals.runner")
 
 PolicyFactory = Callable[[Task, Any, str], S1Policy]  # (task, secret store, arm)
@@ -99,7 +100,7 @@ def default_policy_factory() -> PolicyFactory:
                 verifier=hook,
                 secrets=store,
                 # Q9 delegate arm: S1 acts only inside a bounded assignment from System 2
-                only_when_delegated=(arm == "delegate"),
+                only_when_delegated=(arm in DELEGATE_ARMS),
             )
         s1.jev_counter = client  # type: ignore[attr-defined]
         return s1
@@ -310,6 +311,7 @@ async def _run_task_once(
     sensitive = store.to_browser_use_for(start_url) if store is not None else None
     t0 = time.perf_counter()
     error: str | None = None
+    holder: dict[str, Any] = {}
     if arm == "stock":
         if llm is None:
             raise ValueError("stock arm needs an llm")
@@ -327,18 +329,35 @@ async def _run_task_once(
         from jevdual.testing import RefusingLLM
 
         tools = None
-        holder: dict[str, Any] = {}
-        if arm == "delegate":
+        s1_policy = policy_factory(task, store, arm)
+        if arm in DELEGATE_ARMS:
             from browser_use import Tools
             from jevdual.tools import register_delegation
 
             tools = Tools()
             register_delegation(tools, lambda: holder.get("agent"))
+        if arm == "delegate_evidence":
+            from jevdual.evidence import EvidenceSelector, register_find_evidence
+            from jevdual.menu import build_menu
+
+            selector = EvidenceSelector(getattr(s1_policy, "jev_counter", None) or getattr(getattr(s1_policy, "policy", None), "client", None))
+            holder["evidence"] = selector
+
+            async def _page_text() -> tuple[str, str]:
+                agent_ = holder["agent"]
+                state_ = await agent_.browser_session.get_browser_state_summary(include_screenshot=False)
+                m = build_menu(state_)
+                text_ = m.full_text or m.page_text
+                if store is not None:
+                    text_ = store.redactor()(text_)
+                return m.url, text_
+
+            register_find_evidence(tools, selector, _page_text, task=lambda: holder["agent"].task)
         agent = DualProcessAgent(
             task=task.task,
             llm=llm if (arm in S2_ARMS and llm is not None) else RefusingLLM(),
             browser_profile=profile,
-            s1_policy=policy_factory(task, store, arm),
+            s1_policy=s1_policy,
             calculate_cost=llm is not None,
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
@@ -430,6 +449,7 @@ async def _run_task_once(
         judge_captcha=bool(judgement.get("reached_captcha")) if judgement else False,
         delegations=len(getattr(agent, "delegations", []) or []) + (1 if getattr(agent, "delegation", None) is not None else 0),
         subgoals_reached=sum(1 for d in (getattr(agent, "delegations", []) or []) if getattr(d, "status", "") == "reached"),
+        evidence_calls=getattr(holder.get("evidence"), "calls", 0),
         trace_path=str(trace_path),
     )
 
@@ -529,7 +549,7 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual", "guarded", "delegate") for a in arms) else None
+    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual", "guarded", "delegate", "delegate_evidence") for a in arms) else None
     results = asyncio.run(
         run_split(
             args.split,
