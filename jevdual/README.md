@@ -12,7 +12,8 @@ Rust through PyO3, each with a pure-Python twin and equality tests.
 
 Every number below is in a file under `results/`.
 
-Dev split, 23 local tasks (`results/g2-dev-three-arms.md`):
+Dev split, 23 local tasks (`results/g2-dev-three-arms.md`; measured before the verification changes
+below, not rerun since):
 
 | arm | pass | false done | LLM calls | Jev calls | est. cost USD | wall s |
 |---|---|---|---|---|---|---|
@@ -20,23 +21,33 @@ Dev split, 23 local tasks (`results/g2-dev-three-arms.md`):
 | stock browser-use (Muse Spark 1.3 Contributor) | 21/23 | 2 | 65 | 0 | 0.098 | 1,578 |
 | dual (Jev + Muse) | 23/23 | 0 (2 paused) | 55 | 189 | 0.122 | 1,412 |
 
-Heldout split, 10 local tasks, settings frozen first (`results/heldout-final.md`):
+Heldout split, 10 local tasks, settings frozen, rerun once on adoption of the verification changes
+(`results/heldout-adopt.md`):
 
 | arm | pass | false done | LLM calls | Jev calls | est. cost USD | wall s |
 |---|---|---|---|---|---|---|
-| S1 only | 1/10 | 7 (1 paused) | 0 | 49 | 0.009 | 80 |
-| stock | 8/10 | 1 (+1 browser-start crash) | 35 | 0 | 0.044 | 727 |
-| dual | 10/10 | 0 (1 paused) | 37 | 111 | 0.075 | 904 |
+| stock | 9/10 | 1 | 33 | 0 | 0.049 | 708 |
+| dual | 10/10 | 0 (1 paused) | 24 | 76 | 0.049 | 522 |
 
-What the split says: Jev alone handles navigation, search, pagination, modals and login in two to
+Live split, 55 tasks on public and practice sites, three arms after the verification changes
+(`results/q6-live-paired.md`):
+
+| arm | pass | false done | LLM calls | Jev calls | est. cost USD | wall s |
+|---|---|---|---|---|---|---|
+| S1 only | 13/55 | 23 | 0 | 427 | 0.192 | 787 |
+| stock | 51/55 | 1 | 265 | 0 | 0.382 | 5,508 |
+| dual | 51/55 | 0 (2 paused) | 196 | 458 | 0.504 | 6,158 |
+
+What the splits say: Jev alone handles navigation, search, pagination, modals and login in two to
 five steps and cannot read or answer; the LLM alone reads and answers and will click "Delete
-account" when asked to reach a page; the pair does both and is the only arm with zero false
-completions. It is not cheaper: verifying System 2's completions costs a Jev call per done and a
-System 2 step per rejection, and on these runs dual used 15% fewer LLM calls than stock on dev and
-the same number on heldout, at 24% and 70% higher estimated cost. 13 of 23 dev passes and 7 of 10
-heldout passes ended with the agent marking its own completion `UNVERIFIED` (over-rejection of
-multi-step requirements judged on the final page; open dev work). Jev calls count every request,
-including verification. The failure taxonomy per run is in each run directory's `taxonomy.md`.
+account" when asked to reach a page, and its own judge accepts that as success; the pair is the only
+arm with zero false completions on every split. On the fixture heldout the pair now matches stock's
+cost with 27% fewer LLM calls and 26% less wall time. On live sites it uses 26% fewer LLM calls than
+stock at 1.32× its estimated cost, with the whole gap being Jev call volume (458 calls), and wall time
+not distinguishable. Steps run by Jev take a median 1.4 s against 15.7 s for a Muse step. Jev calls
+count every request, including verification. Live pass rates are against sites that drift between
+runs (stock lost 5 saucedemo checkout tasks in an evening run that passed in the morning). Per-run
+failure taxonomies are in each run directory's `taxonomy.md`.
 
 Native hot paths, replayed DOM CPU per step on recorded pages (`results/r5-dom-pipeline.md`,
 `results/r7-boundary-decision.md`):
