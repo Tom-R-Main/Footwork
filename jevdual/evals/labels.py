@@ -30,15 +30,19 @@ def rows_for(run_dir: Path) -> list[dict]:
     for s in steps:
         by_task.setdefault(f"{s.task_id}|{s.arm}", []).append(s)
     # url and proposal per step from traces
-    detail: dict[tuple[str, int], dict] = {}
+    detail: dict[
+        tuple[str, str, int], dict
+    ] = {}  # keyed by task AND arm: arms of one task overwrote each other before
     for f in sorted((run_dir / "traces").glob("*.jsonl")):
         task_id = None
+        arm_ = None
         for line in f.read_text().splitlines():
             r = json.loads(line)
             if r.get("kind") == "header":
                 task_id = r["run_id"].rsplit("-", 2)[0]
+                arm_ = r["arm"]
                 continue
-            detail[(task_id or f.stem, r["step"])] = r
+            detail[(task_id or f.stem, arm_ or "", r["step"])] = r
     out = []
     for key, ss in by_task.items():
         task_id = key.split("|", 1)[0]
@@ -48,7 +52,7 @@ def rows_for(run_dir: Path) -> list[dict]:
         last_step = max(s.step for s in ss)
         for i, s in enumerate(ss):
             nxt = ss[i + 1] if i + 1 < len(ss) else None
-            d = detail.get((task_id, s.step), {})
+            d = detail.get((task_id, arm, s.step), {})
             proposed = d.get("proposed") or []
             if s.system == "s1":
                 bad = (
