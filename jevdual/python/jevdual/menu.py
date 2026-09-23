@@ -58,7 +58,12 @@ class Candidate:
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
-        out: dict[str, Any] = {"id": self.id, "label": self.label, "role": self.role, "operations": list(self.operations)}
+        out: dict[str, Any] = {
+            "id": self.id,
+            "label": self.label,
+            "role": self.role,
+            "operations": list(self.operations),
+        }
         for key in ("value", "href", "input_type", "checked", "selected", "expanded", "section"):
             val = getattr(self, key)
             if val is not None:
@@ -108,15 +113,44 @@ class Menu:
 
 _TEXT_INPUT_TYPES = frozenset(
     {
-        "", "text", "search", "email", "url", "tel", "password", "number", "date", "datetime-local",
-        "month", "week", "time", "color",
+        "",
+        "text",
+        "search",
+        "email",
+        "url",
+        "tel",
+        "password",
+        "number",
+        "date",
+        "datetime-local",
+        "month",
+        "week",
+        "time",
+        "color",
     }
 )
-_CLICK_ONLY_INPUT_TYPES = frozenset({"checkbox", "radio", "button", "submit", "reset", "image", "file", "range"})
+_CLICK_ONLY_INPUT_TYPES = frozenset(
+    {"checkbox", "radio", "button", "submit", "reset", "image", "file", "range"}
+)
 _CLICK_ROLES = frozenset(
     {
-        "button", "link", "checkbox", "radio", "switch", "menuitem", "menuitemcheckbox", "menuitemradio",
-        "tab", "option", "treeitem", "listbox", "menu", "menubar", "slider", "spinbutton", "img",
+        "button",
+        "link",
+        "checkbox",
+        "radio",
+        "switch",
+        "menuitem",
+        "menuitemcheckbox",
+        "menuitemradio",
+        "tab",
+        "option",
+        "treeitem",
+        "listbox",
+        "menu",
+        "menubar",
+        "slider",
+        "spinbutton",
+        "img",
     }
 )
 _TEXT_ROLES = frozenset({"textbox", "searchbox", "combobox"})
@@ -175,7 +209,11 @@ def _label(node: EnhancedDOMTreeNode, attrs: dict[str, str], tag: str) -> str:
     for key in ("placeholder", "title", "alt"):
         if _clean(attrs.get(key)):
             return _clean(attrs.get(key), _LABEL_CAP)
-    if tag in ("INPUT", "BUTTON") and attrs.get("type", "").lower() in ("submit", "button", "reset") and attrs.get("value"):
+    if (
+        tag in ("INPUT", "BUTTON")
+        and attrs.get("type", "").lower() in ("submit", "button", "reset")
+        and attrs.get("value")
+    ):
         return _clean(attrs["value"], _LABEL_CAP)
     if attrs.get("name"):
         return _clean(attrs["name"], _LABEL_CAP)
@@ -184,11 +222,21 @@ def _label(node: EnhancedDOMTreeNode, attrs: dict[str, str], tag: str) -> str:
     return tag.lower()
 
 
-def _operations(node: EnhancedDOMTreeNode, attrs: dict[str, str], tag: str, role: str) -> tuple[Operation, ...]:
+def _operations(
+    node: EnhancedDOMTreeNode, attrs: dict[str, str], tag: str, role: str
+) -> tuple[Operation, ...]:
     ops: list[Operation] = []
     input_type = attrs.get("type", "").lower() if tag == "INPUT" else ""
-    contenteditable = attrs.get("contenteditable", "").lower() in ("", "true", "plaintext-only") and "contenteditable" in attrs
-    if tag == "TEXTAREA" or contenteditable or (tag == "INPUT" and input_type in _TEXT_INPUT_TYPES) or role in _TEXT_ROLES:
+    contenteditable = (
+        attrs.get("contenteditable", "").lower() in ("", "true", "plaintext-only")
+        and "contenteditable" in attrs
+    )
+    if (
+        tag == "TEXTAREA"
+        or contenteditable
+        or (tag == "INPUT" and input_type in _TEXT_INPUT_TYPES)
+        or role in _TEXT_ROLES
+    ):
         ops.extend(("type", "click", "enter"))
     elif tag == "SELECT":
         ops.extend(("select", "click"))
@@ -284,7 +332,9 @@ def _select_options(node: EnhancedDOMTreeNode) -> tuple[str, ...] | None:
     while stack and len(out) < _MAX_OPTIONS:
         child = stack.pop(0)
         if child.node_name.upper() == "OPTION":
-            text = _clean(child.get_all_children_text(), _LABEL_CAP) or _clean(child.attributes.get("value"), _LABEL_CAP)
+            text = _clean(child.get_all_children_text(), _LABEL_CAP) or _clean(
+                child.attributes.get("value"), _LABEL_CAP
+            )
             if text:
                 out.append(text)
         elif child.node_name.upper() == "OPTGROUP":
@@ -316,10 +366,22 @@ def candidate_from_node(index: int, node: EnhancedDOMTreeNode, vp: _Viewport | N
     href = None
     if tag == "A" and attrs.get("href"):
         href = _clean(attrs["href"], _HREF_CAP)
-    checked = _tri(props.get("checked")) if "checked" in props else _tri(attrs.get("checked")) if "checked" in attrs else None
+    checked = (
+        _tri(props.get("checked"))
+        if "checked" in props
+        else _tri(attrs.get("checked"))
+        if "checked" in attrs
+        else None
+    )
     if checked is None and "aria-checked" in attrs:
         checked = _tri(attrs["aria-checked"])
-    selected = _tri(props.get("selected")) if "selected" in props else _tri(attrs.get("selected")) if "selected" in attrs else None
+    selected = (
+        _tri(props.get("selected"))
+        if "selected" in props
+        else _tri(attrs.get("selected"))
+        if "selected" in attrs
+        else None
+    )
     if selected is None and "aria-selected" in attrs:
         selected = _tri(attrs["aria-selected"])
     expanded = _tri(props.get("expanded")) if "expanded" in props else None
@@ -399,7 +461,9 @@ def _root_of(state: BrowserStateSummary) -> EnhancedDOMTreeNode | None:
 
 
 def estimate_tokens(page_text: str, candidates: tuple[Candidate, ...], chars_per_token: float) -> int:
-    payload = json.dumps({"text": page_text, "elements": [c.to_state() for c in candidates]}, ensure_ascii=False)
+    payload = json.dumps(
+        {"text": page_text, "elements": [c.to_state() for c in candidates]}, ensure_ascii=False
+    )
     return int(len(payload) / chars_per_token) + 1
 
 
@@ -412,7 +476,9 @@ def build_menu(state: BrowserStateSummary, budget: MenuBudget | None = None) -> 
     budget = budget or MenuBudget()
     info = state.page_info
     vp = (
-        _Viewport(info.viewport_width, info.viewport_height, info.scroll_x, info.scroll_y) if info is not None else None
+        _Viewport(info.viewport_width, info.viewport_height, info.scroll_x, info.scroll_y)
+        if info is not None
+        else None
     )
 
     selector_map = state.dom_state.selector_map

@@ -46,7 +46,9 @@ def segment_text(full_text: str, chars: int = SEGMENT_CHARS) -> list[Segment]:
     while pos < n:
         end = min(n, pos + chars)
         if end < n:
-            cut = max(full_text.rfind(". ", pos + chars // 2, end), full_text.rfind("\n", pos + chars // 2, end))
+            cut = max(
+                full_text.rfind(". ", pos + chars // 2, end), full_text.rfind("\n", pos + chars // 2, end)
+            )
             if cut > pos:
                 end = cut + 1
         text = full_text[pos:end].strip()
@@ -77,7 +79,9 @@ class EvidenceSelector:
         except Exception as exc:
             raise PolicyError(f"evidence selection failed: {type(exc).__name__}: {exc}") from exc
 
-    async def select(self, question: str, url: str, full_text: str, task: str | None = None) -> dict[str, Any]:
+    async def select(
+        self, question: str, url: str, full_text: str, task: str | None = None
+    ) -> dict[str, Any]:
         segments = segment_text(full_text)
         if not segments:
             return {"url": url, "answer_present": 0.0, "spans": [], "note": "empty page"}
@@ -88,11 +92,15 @@ class EvidenceSelector:
             gstate = {
                 "question": question,
                 "page": {"url": url},
-                "groups": [{"id": gi, "preview": " ".join(s.text[:60] for s in g[:3])} for gi, g in enumerate(groups)],
+                "groups": [
+                    {"id": gi, "preview": " ".join(s.text[:60] for s in g[:3])} for gi, g in enumerate(groups)
+                ],
             }
             gq = {
                 "group": Choice(
-                    instructions={"question": "Which group of page segments most likely contains the answer to `question`?"},
+                    instructions={
+                        "question": "Which group of page segments most likely contains the answer to `question`?"
+                    },
                     criteria={str(gi): f"group {gi}" for gi in range(len(groups))},
                 )
             }
@@ -112,7 +120,9 @@ class EvidenceSelector:
             "segment": Choice(
                 instructions={
                     "question": "Which segment in `segments` best answers `question`?",
-                    "rules": ["Choose the segment whose own text states the answer; a segment that only mentions the topic is not it."],
+                    "rules": [
+                        "Choose the segment whose own text states the answer; a segment that only mentions the topic is not it."
+                    ],
                 },
                 criteria={str(s.id): f"segment {s.id}" for s in candidates},
             ),
@@ -130,13 +140,31 @@ class EvidenceSelector:
             raise PolicyError("evidence selection answer missing `segment` or `answer_present`")
         probs = _choice_probs(seg_ans)
         by_id = {s.id: s for s in candidates}
-        ranked = sorted(((p, int(k)) for k, p in probs.items() if k.isdigit() and int(k) in by_id), reverse=True)[:TOP_K]
-        spans = [{"id": sid, "p": round(p, 3), "start": by_id[sid].start, "end": by_id[sid].start + len(by_id[sid].text), "text": by_id[sid].text} for p, sid in ranked]
-        return {"url": url, "answer_present": round(resp.nouls["answer_present"].noul, 3), "spans": spans, "segments": len(segments)}
+        ranked = sorted(
+            ((p, int(k)) for k, p in probs.items() if k.isdigit() and int(k) in by_id), reverse=True
+        )[:TOP_K]
+        spans = [
+            {
+                "id": sid,
+                "p": round(p, 3),
+                "start": by_id[sid].start,
+                "end": by_id[sid].start + len(by_id[sid].text),
+                "text": by_id[sid].text,
+            }
+            for p, sid in ranked
+        ]
+        return {
+            "url": url,
+            "answer_present": round(resp.nouls["answer_present"].noul, 3),
+            "spans": spans,
+            "segments": len(segments),
+        }
 
 
 def render_packet(packet: dict[str, Any]) -> str:
-    lines = [f"Evidence from {packet['url']} (answer present p={packet.get('answer_present', 0):.2f}; {packet.get('segments', 0)} segments scanned):"]
+    lines = [
+        f"Evidence from {packet['url']} (answer present p={packet.get('answer_present', 0):.2f}; {packet.get('segments', 0)} segments scanned):"
+    ]
     for sp in packet.get("spans", []):
         lines.append(f"- [segment {sp['id']}, chars {sp['start']}-{sp['end']}, p={sp['p']:.2f}] {sp['text']}")
     if not packet.get("spans"):
@@ -146,7 +174,9 @@ def render_packet(packet: dict[str, Any]) -> str:
 
 
 class EvidenceParams(BaseModel):
-    question: str = Field(description="The specific question the current page should answer, e.g. 'Which module provides lru_cache?'")
+    question: str = Field(
+        description="The specific question the current page should answer, e.g. 'Which module provides lru_cache?'"
+    )
 
 
 def register_find_evidence(
@@ -174,7 +204,12 @@ def register_find_evidence(
             return ActionResult(error=str(exc))
         if on_call is not None:
             on_call(packet)
-        log.info("find_evidence: %r -> %s span(s), answer_present=%.2f", params.question[:60], len(packet["spans"]), packet["answer_present"])
+        log.info(
+            "find_evidence: %r -> %s span(s), answer_present=%.2f",
+            params.question[:60],
+            len(packet["spans"]),
+            packet["answer_present"],
+        )
         return ActionResult(extracted_content=render_packet(packet), include_in_memory=True)
 
 

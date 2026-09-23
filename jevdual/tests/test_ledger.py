@@ -27,7 +27,13 @@ class FakeClient:
 
 
 def menu():
-    return Menu(url="http://s/confirm.html", title="Thanks", page_text="Thank you for your order", candidates=(), by_operation={})
+    return Menu(
+        url="http://s/confirm.html",
+        title="Thanks",
+        page_text="Thank you for your order",
+        candidates=(),
+        by_operation={},
+    )
 
 
 def test_ledger_is_monotone_and_carries_met_requirements():
@@ -58,7 +64,13 @@ def test_verifier_uses_ledger_adjusted_unmet_for_the_band():
 def test_state_carries_the_trajectory_next_to_the_page():
     client = FakeClient(load("verify_accept"))
     v = Verifier(client)
-    traj = [{"step": 1, "url": "http://s/login", "actions": ["input(index=3, text='[REDACTED]') on input type=password"]}]
+    traj = [
+        {
+            "step": 1,
+            "url": "http://s/login",
+            "actions": ["input(index=3, text='[REDACTED]') on input type=password"],
+        }
+    ]
     asyncio.run(v.verify("Sign in", REQS, menu(), None, trajectory=traj))
     state = client.calls[0]["state"]
     assert state["trajectory"] == traj and state["page"]["url"] == "http://s/confirm.html"
@@ -76,13 +88,19 @@ def _fake_agent(secret: str = "hunter2"):
     el = SimpleNamespace(node_name="INPUT", attributes={"type": "password", "name": "pw"}, node_value="")
     steps = [
         SimpleNamespace(
-            model_output=SimpleNamespace(action=[Action({"input": {"index": 3, "text": secret, "clear": True}})], memory="typed the password"),
+            model_output=SimpleNamespace(
+                action=[Action({"input": {"index": 3, "text": secret, "clear": True}})],
+                memory="typed the password",
+            ),
             state=SimpleNamespace(url="http://s/login", interacted_element=[el]),
             result=[SimpleNamespace(error=None)],
         ),
         SimpleNamespace(
             model_output=SimpleNamespace(action=[Action({"click": {"index": 4}})], memory="submitted"),
-            state=SimpleNamespace(url="http://s/login", interacted_element=[SimpleNamespace(node_name="BUTTON", attributes={}, node_value="Sign in")]),
+            state=SimpleNamespace(
+                url="http://s/login",
+                interacted_element=[SimpleNamespace(node_name="BUTTON", attributes={}, node_value="Sign in")],
+            ),
             result=[SimpleNamespace(error="click failed")],
         ),
     ]
@@ -119,7 +137,13 @@ def test_arbiter_hook_builds_the_trajectory_and_keeps_one_ledger_per_run():
 
 def test_ledger_kinds_carry_history_invalidate_state_and_never_carry_answers():
     led = Ledger()
-    led.set_kinds({"Form submitted": "historical_action", "Backpack in cart": "current_state", "Total reported": "answer"})
+    led.set_kinds(
+        {
+            "Form submitted": "historical_action",
+            "Backpack in cart": "current_state",
+            "Total reported": "answer",
+        }
+    )
     led.update({"Form submitted": 0.05, "Backpack in cart": 0.05, "Total reported": 0.05})
     # historical carries through anything; state carries through uncertainty but not a confident "no"
     fresh = {"Form submitted": 0.95, "Backpack in cart": 0.55, "Total reported": 0.95}
@@ -135,8 +159,18 @@ def test_first_verification_asks_kinds_once_and_the_ledger_learns_them():
 
     base = json.loads((FIXTURES / "verify_reject_unmet.json").read_text())
     first = json.loads(json.dumps(base))
-    first["answers"]["kind_0"] = {"type": "choice", "choice": "current_state", "confidence": 0.9, "probabilities": {"current_state": 0.9, "historical_action": 0.05, "answer": 0.05}}
-    first["answers"]["kind_1"] = {"type": "choice", "choice": "answer", "confidence": 0.9, "probabilities": {"answer": 0.9, "historical_action": 0.05, "current_state": 0.05}}
+    first["answers"]["kind_0"] = {
+        "type": "choice",
+        "choice": "current_state",
+        "confidence": 0.9,
+        "probabilities": {"current_state": 0.9, "historical_action": 0.05, "answer": 0.05},
+    }
+    first["answers"]["kind_1"] = {
+        "type": "choice",
+        "choice": "answer",
+        "confidence": 0.9,
+        "probabilities": {"answer": 0.9, "historical_action": 0.05, "current_state": 0.05},
+    }
     client = FakeClient(SystemOneResponse.model_validate(first), SystemOneResponse.model_validate(base))
     hook = ArbiterHook(Verifier(client), REQS)
     from tests.test_ledger import _fake_agent as _agent
@@ -155,7 +189,11 @@ def test_subgoal_check_uses_the_done_verification_band():
     met, reason = asyncio.run(hook.judge_subgoal(agent, menu(), "sign in", "the products page is shown"))
     assert met and reason.startswith("subgoal accept")
     state = client.calls[0]["state"]
-    assert state["requirements"] == ["the products page is shown"] and "sign in" in state["task"] and "trajectory" in state
+    assert (
+        state["requirements"] == ["the products page is shown"]
+        and "sign in" in state["task"]
+        and "trajectory" in state
+    )
     met2, reason2 = asyncio.run(hook.judge_subgoal(agent, menu(), "sign in", "the products page is shown"))
     assert not met2 and reason2.startswith("subgoal verify")
 
@@ -165,7 +203,9 @@ def test_subgoal_check_ignores_the_answer_required_rule_and_sends_only_the_subgo
     hook = ArbiterHook(Verifier(client), REQS)
     agent = _fake_agent()
     agent.task = "Find who created Python and report the name"
-    _met, reason = asyncio.run(hook.judge_subgoal(agent, menu(), "open the Python article", "the Python article is shown"))
+    _met, reason = asyncio.run(
+        hook.judge_subgoal(agent, menu(), "open the Python article", "the Python article is shown")
+    )
     state = client.calls[0]["state"]
     assert state["task"] == "open the Python article" and "report the name" not in state["task"]
     assert "asks for an answer" not in reason

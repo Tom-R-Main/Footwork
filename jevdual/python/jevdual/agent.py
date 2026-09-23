@@ -58,12 +58,18 @@ class DualProcessAgent(Agent):
 
         self.gate_policy = ArbiterPolicy.from_toml()
         if destructive_keywords is not None:
-            self.gate_policy = dataclasses.replace(self.gate_policy, destructive_keywords=tuple(destructive_keywords))
+            self.gate_policy = dataclasses.replace(
+                self.gate_policy, destructive_keywords=tuple(destructive_keywords)
+            )
         self.destructive_keywords = self.gate_policy.destructive_keywords
-        #: Q8: `evaluate` is refused recoverably (the step becomes a wait plus a message) up to this many
-        #: times per run, then paused. Three of every arm's live misses were terminal evaluate pauses.
-        self.max_evaluate_refusals = 2
+        #: Q8: the recoverable `evaluate` refusal (a wait plus a message, twice, then a pause) was
+        #: measured and removed: 18 of 19 runs where it fired paused two steps later anyway
+        #: (results/q8-consent.md). The counter stays for the report and is always 0.
+        self.max_evaluate_refusals = 0
         self.evaluate_refusals = 0
+        #: Q8 gate: the Jev destructive judgment asked on System 2's proposed click targets, one record
+        #: per judged step: {"step", "targets": [(label, p)], "hit": label or None}.
+        self.gate_judgments: list[dict[str, Any]] = []
         self.authorized_destructive = authorized_destructive
         #: Scope of the task's authorisation: keywords a target must match for the gate and the
         #: arbiter to stand down (place order, submit, finish). Empty with authorized_destructive
@@ -112,9 +118,19 @@ class DualProcessAgent(Agent):
             if idx is None or idx not in selector_map:
                 continue
             node = selector_map[idx]
-            label = (node.ax_node.name if node.ax_node and node.ax_node.name else "") or node.get_all_children_text(max_depth=2) or ""
-            label = label or (node.attributes or {}).get("value", "") or (node.attributes or {}).get("aria-label", "")
-            kw = destructive_match(label, DualProcessAgent._gate_context(self, node), DualProcessAgent._gate_rules(self))
+            label = (
+                (node.ax_node.name if node.ax_node and node.ax_node.name else "")
+                or node.get_all_children_text(max_depth=2)
+                or ""
+            )
+            label = (
+                label
+                or (node.attributes or {}).get("value", "")
+                or (node.attributes or {}).get("aria-label", "")
+            )
+            kw = destructive_match(
+                label, DualProcessAgent._gate_context(self, node), DualProcessAgent._gate_rules(self)
+            )
             if kw:
                 return label[:80], kw, idx
         return None
@@ -145,7 +161,9 @@ class DualProcessAgent(Agent):
         )
         try:
             cdp = await self.browser_session.get_or_create_cdp_session()
-            r = await cdp.cdp_client.send.Runtime.evaluate(params={"expression": js, "returnByValue": True}, session_id=cdp.session_id)
+            r = await cdp.cdp_client.send.Runtime.evaluate(
+                params={"expression": js, "returnByValue": True}, session_id=cdp.session_id
+            )
             return str(r.get("result", {}).get("value") or "")
         except Exception as exc:  # noqa: BLE001 - if we cannot see the focus, we gate conservatively below
             log.warning("active element lookup failed: %s", exc)
@@ -186,6 +204,73 @@ class DualProcessAgent(Agent):
                     return (f"Enter in {label[:80]!r}", kw, -1)
         return None
 
+    def _click_targets(self, actions: list[Any]) -> list[tuple[int, str, str]]:
+        """(index, label, context) of every proposed click, as the keyword gate sees them."""
+        cached = getattr(self.browser_session, "_cached_browser_state_summary", None)
+        selector_map = getattr(getattr(cached, "dom_state", None), "selector_map", None) or {}
+        out = []
+        for action in actions:
+            data = action.model_dump(exclude_unset=True)
+            if next(iter(data)) != "click":
+                continue
+            idx = action.get_index()
+            if idx is None or idx not in selector_map:
+                continue
+            node = selector_map[idx]
+            label = (
+                (node.ax_node.name if node.ax_node and node.ax_node.name else "")
+                or node.get_all_children_text(max_depth=2)
+                or ""
+            )
+            label = (
+                label
+                or (node.attributes or {}).get("value", "")
+                or (node.attributes or {}).get("aria-label", "")
+            )
+            out.append((idx, label[:80], DualProcessAgent._gate_context(self, node)))
+        return out
+
+    async def _destructive_judgment(self, actions: list[Any]) -> tuple[str, str, int] | None:
+        """Q8 gate: ask the verifier's Jev destructive noul on each click System 2 proposes.
+
+        The keyword list missed "Submit order" and "Finish" on every arm (results/q8-consent.md) while
+        System 1's own noul judged "Submit order" at 0.80 inside a delegation. A judgment at or above
+        ``destructive_confirm`` pauses like a keyword hit; a failed call falls back to the keyword gate.
+        """
+        verifier = getattr(getattr(self.s1_policy, "verifier", None), "verifier", None)
+        judge = getattr(verifier, "judge_destructive", None)
+        targets = self._click_targets(actions)
+        if judge is None or not targets:
+            return None
+        cached = getattr(self.browser_session, "_cached_browser_state_summary", None)
+        store = getattr(self.s1_policy, "secrets", None)
+        red = store.redactor() if store is not None else (lambda s: s)
+        try:
+            probs = await judge(
+                red(self.task),
+                [{"label": red(label), "context": red(ctx)} for _, label, ctx in targets],
+                url=red(str(getattr(cached, "url", "") or "")),
+                title=red(str(getattr(cached, "title", "") or "")),
+            )
+        except Exception as exc:  # noqa: BLE001 - the keyword gate already ran; a failed judgment must not block the step
+            log.warning(
+                "step %s: destructive judgment failed (%s); keyword gate only", self.state.n_steps, exc
+            )
+            return None
+        floor = self.gate_policy.destructive_confirm
+        record = {
+            "step": self.state.n_steps,
+            "targets": [(label, round(p, 3)) for (_, label, _), p in zip(targets, probs, strict=True)],
+            "hit": None,
+        }
+        self.gate_judgments.append(record)
+        for (idx, label, _), p in zip(targets, probs, strict=True):
+            if p >= floor:
+                record["hit"] = label
+                log.info("step %s: destructive judgment %.2f on %r", self.state.n_steps, p, label)
+                return (label, f"destructive p={p:.2f}", idx)
+        return None
+
     async def _verify_s2_done(self, out: Any) -> None:
         """System 2's own done goes through the same verifier as System 1's.
 
@@ -215,15 +300,28 @@ class DualProcessAgent(Agent):
             menu = redact_menu(menu, store.redactor())
         band, reason = await verifier.judge_done(self, menu, answer=params.get("text"))
         last = getattr(verifier, "last", None)
-        scores = last.to_trace() if last is not None and hasattr(last, "to_trace") else {"band": band, "reason": reason}
-        self.s2_verifications.append({"step": self.state.n_steps, "band": band, "reason": reason, **{k: v for k, v in scores.items() if k not in ("band", "reason")}})
+        scores = (
+            last.to_trace()
+            if last is not None and hasattr(last, "to_trace")
+            else {"band": band, "reason": reason}
+        )
+        self.s2_verifications.append(
+            {
+                "step": self.state.n_steps,
+                "band": band,
+                "reason": reason,
+                **{k: v for k, v in scores.items() if k not in ("band", "reason")},
+            }
+        )
         if band == "accept":
             return
         self.s2_done_rejections += 1
         if self.s2_done_rejections <= self.max_done_rejections:
             from browser_use.llm.messages import UserMessage
 
-            log.info("step %s: System 2 done rejected by verification (%s): %s", self.state.n_steps, band, reason)
+            log.info(
+                "step %s: System 2 done rejected by verification (%s): %s", self.state.n_steps, band, reason
+            )
             out.action = [self.ActionModel(wait={"seconds": 1})]
             self._message_manager._add_context_message(
                 UserMessage(
@@ -242,28 +340,27 @@ class DualProcessAgent(Agent):
             await self._verify_s2_done(out)
         if out is not None:
             hit = await self._destructive_hit_any(list(out.action))
+            if hit is None and self.step_systems.get(self.state.n_steps, "s2") == "s2":
+                hit = await self._destructive_judgment(list(out.action))
             if hit is not None and self.is_authorized(f"{hit[0]} {hit[1]}"):
                 hit = None  # within the task's authorised scope (matched by label or keyword)
-            if hit is not None and hit[1] == "evaluate" and self.evaluate_refusals < self.max_evaluate_refusals:
-                # recoverable refusal: the driver loses this step and is told what it may use instead
-                from browser_use.llm.messages import UserMessage
-
-                self.evaluate_refusals += 1
-                log.warning("step %s: evaluate refused (%s of %s); the driver keeps control", self.state.n_steps, self.evaluate_refusals, self.max_evaluate_refusals)
-                out.action = [self.ActionModel(wait={"seconds": 1})]
-                self._message_manager._add_context_message(
-                    UserMessage(
-                        content="evaluate (page script) is not permitted here. Use click, input, select_dropdown, send_keys, "
-                        "scroll, navigate, extract or find_evidence instead, or report what you found. If a click had no effect, "
-                        "try the element's text or a different control rather than scripting it."
-                    )
-                )
-                hit = None
             if hit is not None:
                 label, kw, idx = hit
                 system = self.step_systems.get(self.state.n_steps, "s2")
-                self.paused_before_action = {"step": self.state.n_steps, "system": system, "label": label, "keyword": kw, "index": idx}
-                log.warning("step %s: %s proposed an action on %r (matches %r); pausing for confirmation", self.state.n_steps, system, label, kw)
+                self.paused_before_action = {
+                    "step": self.state.n_steps,
+                    "system": system,
+                    "label": label,
+                    "keyword": kw,
+                    "index": idx,
+                }
+                log.warning(
+                    "step %s: %s proposed an action on %r (matches %r); pausing for confirmation",
+                    self.state.n_steps,
+                    system,
+                    label,
+                    kw,
+                )
                 out.action = [
                     self.ActionModel(
                         done={

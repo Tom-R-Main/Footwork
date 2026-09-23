@@ -2,7 +2,16 @@ from evals.paired import bootstrap_mean_ci, compare
 
 
 def _r(task, passed, steps, cost, unv=0):
-    return {"task_id": task, "passed": passed, "steps": steps, "llm_calls": steps, "jev_calls": 0, "cost": cost, "wall_s": 10.0 * steps, "unverified": unv}
+    return {
+        "task_id": task,
+        "passed": passed,
+        "steps": steps,
+        "llm_calls": steps,
+        "jev_calls": 0,
+        "cost": cost,
+        "wall_s": 10.0 * steps,
+        "unverified": unv,
+    }
 
 
 def test_compare_pairs_on_common_tasks_and_reports_direction():

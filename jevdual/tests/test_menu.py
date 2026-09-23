@@ -87,7 +87,9 @@ def test_sensitive_values_never_reach_the_menu(menus):
 def test_modal_fixture_builds(menus):
     menu = menus["modal-over-content"]
     assert menu.candidates
-    assert any("modal" in (c.label + (c.section or "")).lower() or c.role == "button" for c in menu.candidates)
+    assert any(
+        "modal" in (c.label + (c.section or "")).lower() or c.role == "button" for c in menu.candidates
+    )
 
 
 def test_wikipedia_text_and_sections(menus):
@@ -115,7 +117,10 @@ def test_budget_trims_text_then_offscreen_then_overflow():
     tight = build_menu(state, MenuBudget(state_tokens=3000))
     assert tight.estimated_tokens <= 3000
     assert tight.omitted.get("page_text_chars", 0) > 0
-    assert len(tight.page_text) >= MenuBudget().min_page_text_chars or len(full.page_text) < MenuBudget().min_page_text_chars
+    assert (
+        len(tight.page_text) >= MenuBudget().min_page_text_chars
+        or len(full.page_text) < MenuBudget().min_page_text_chars
+    )
     assert tight.omitted.get("offscreen", 0) > 0
     # No off-screen candidate survives while on-screen ones were dropped.
     if tight.omitted.get("overflow"):
@@ -138,6 +143,13 @@ def test_menu_keeps_full_text_beyond_the_budgeted_page_text():
     assert m.full_text == ""  # default for hand-built menus
     from jevdual.s1 import redact_menu
 
-    m2 = Menu(url="u", title="t", page_text="secret1 here", candidates=(), by_operation={}, full_text="secret1 here and there")
+    m2 = Menu(
+        url="u",
+        title="t",
+        page_text="secret1 here",
+        candidates=(),
+        by_operation={},
+        full_text="secret1 here and there",
+    )
     r = redact_menu(m2, lambda s: s.replace("secret1", "[X]"))
     assert r.full_text == "[X] here and there" and r.page_text == "[X] here"

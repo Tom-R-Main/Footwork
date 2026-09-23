@@ -111,7 +111,15 @@ def test_trace_redaction_via_install(tmp_path):
     with TraceWriter(path) as w:
         kwargs = install({"task": "log in as tom@example.com with hunter2-SECRET-9f3a"}, STORE, w)
         assert kwargs["sensitive_data"] == STORE.to_browser_use()
-        w.write(RunHeader(run_id="r", task=kwargs["task"], arm="dual", backend="pure-python", browser_use_version="0.13.10"))
+        w.write(
+            RunHeader(
+                run_id="r",
+                task=kwargs["task"],
+                arm="dual",
+                backend="pure-python",
+                browser_use_version="0.13.10",
+            )
+        )
     text = path.read_text()
     assert "hunter2" not in text and "tom@example.com" not in text and "[REDACTED:x_password]" in text
 
@@ -119,8 +127,9 @@ def test_trace_redaction_via_install(tmp_path):
 def test_assert_no_secrets_walks_nested():
     assert_no_secrets({"a": ["<secret>x_password</secret>", {"b": "fine"}]}, STORE)
     with pytest.raises(SecretLeak):
-        assert_no_secrets({"messages": [{"content": "pw is " + quote("hunter2-SECRET-9f3a", safe="")}]}, STORE)
-
+        assert_no_secrets(
+            {"messages": [{"content": "pw is " + quote("hunter2-SECRET-9f3a", safe="")}]}, STORE
+        )
 
 
 def test_plaintext_http_rejected_for_remote_hosts_even_when_pattern_says_http():

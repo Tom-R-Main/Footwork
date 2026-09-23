@@ -123,7 +123,10 @@ def split_claims(answer: str) -> list[str]:
 
 _URL_RE = re.compile(r"https?://\S+")
 _QUOTED_RE = re.compile(r"[\"“”']([^\"“”']{2,120})[\"“”']")
-_NUMBER_RE = re.compile(r"(?<![\w.])[$€£]?\d[\d,]*(?:\.\d+)?(?:\s?(?:%|per\s+\w+|nautical\s+miles|miles|km|m|kg|items?|results?))?", re.IGNORECASE)
+_NUMBER_RE = re.compile(
+    r"(?<![\w.])[$€£]?\d[\d,]*(?:\.\d+)?(?:\s?(?:%|per\s+\w+|nautical\s+miles|miles|km|m|kg|items?|results?))?",
+    re.IGNORECASE,
+)
 _AFTER_COLON_RE = re.compile(r":\s*([^:;]{2,160})$")
 
 
@@ -194,7 +197,9 @@ def _excerpt_needles(claim: str) -> list[str]:
     return needles
 
 
-def evidence_excerpt(full_text: str, answer: str | None, *, head: int = 2_500, window: int = 350, cap: int = 6_000) -> str:
+def evidence_excerpt(
+    full_text: str, answer: str | None, *, head: int = 2_500, window: int = 350, cap: int = 6_000
+) -> str:
     """Page text for verification: the head of the page plus windows around every place the answer's
     evidence atoms occur, so a fact deep in a long page (a definition 9,000 characters down) is in view.
     Without an answer, or when everything fits, this is just the head."""
@@ -248,7 +253,12 @@ def band_for(complete: float, unmet: dict[str, float], policy: VerifyPolicy) -> 
 
 
 async def _call_client(
-    client: SystemOneClient, state: dict[str, Any], questions: dict[str, Any], *, model: str, retry: RetryPolicy | None
+    client: SystemOneClient,
+    state: dict[str, Any],
+    questions: dict[str, Any],
+    *,
+    model: str,
+    retry: RetryPolicy | None,
 ) -> SystemOneResponse:
     """One ``system_one`` call with SDK errors mapped to ``PolicyError`` (mirrors ``JevPolicy._call``)."""
     kwargs: dict[str, Any] = {"model": model}
@@ -267,7 +277,14 @@ async def _call_client(
 
 
 class Verifier:
-    def __init__(self, client: SystemOneClient, *, model: str = JEV_MODEL, policy: VerifyPolicy | None = None, retry: RetryPolicy | None = DEFAULT_RETRY):
+    def __init__(
+        self,
+        client: SystemOneClient,
+        *,
+        model: str = JEV_MODEL,
+        policy: VerifyPolicy | None = None,
+        retry: RetryPolicy | None = DEFAULT_RETRY,
+    ):
         self.client = client
         self.model = model
         self.policy = policy or VerifyPolicy()
@@ -282,10 +299,15 @@ class Verifier:
         }
         for i, req in enumerate(requirements):
             spec = prompts.verify_unmet(i, req)
-            questions[f"unmet_{i}"] = Noul(instructions=spec["instructions"], criteria={"true": spec["true"], "false": spec["false"]})
+            questions[f"unmet_{i}"] = Noul(
+                instructions=spec["instructions"], criteria={"true": spec["true"], "false": spec["false"]}
+            )
         questions["answer_required"] = Noul(
             instructions=prompts.VERIFY_ANSWER_REQUIRED["instructions"],
-            criteria={"true": prompts.VERIFY_ANSWER_REQUIRED["true"], "false": prompts.VERIFY_ANSWER_REQUIRED["false"]},
+            criteria={
+                "true": prompts.VERIFY_ANSWER_REQUIRED["true"],
+                "false": prompts.VERIFY_ANSWER_REQUIRED["false"],
+            },
         )
         if ask_kinds:
             # task-static: asked in the first verification of a run only, in the same request
@@ -313,6 +335,50 @@ class Verifier:
         if answer:
             state["answer"] = answer
         return state
+
+    async def judge_destructive(
+        self, task: str, targets: list[dict[str, str]], *, url: str, title: str
+    ) -> list[float]:
+        """Q8 gate: one Noul per proposed click target, asked together, before System 2's action executes.
+
+        The System 1 arbiter already answers this for its own decisions; System 2's proposals went
+        through the keyword list alone and posted an unauthorised order labelled "Submit order"
+        (results/q8-consent.md). ``targets`` carry ``label`` and ``context`` (URL, title, ancestor text).
+        """
+        if not targets:
+            return []
+        state = {
+            "task": task,
+            "page": {"url": url, "title": title},
+            "targets": [
+                {"label": t.get("label", ""), "context": t.get("context", "")[:300]} for t in targets
+            ],
+        }
+        questions = {
+            f"destructive_{i}": Noul(
+                instructions=(
+                    f"Would clicking the control `targets[{i}].label` on this page do something that cannot be undone "
+                    "by going back: place, finish or submit an order, submit a form that sends data to someone else, "
+                    "make a payment, delete or remove stored data, send or publish a message? Judge the control, "
+                    "not whether `task` asks for it."
+                ),
+                criteria={
+                    "true": "The control commits: place order, finish, submit order, confirm purchase, pay, checkout "
+                    "and pay, send, publish, delete account, remove stored data.",
+                    "false": "The control navigates, opens, sorts, filters, selects, adds to a cart, signs in, continues "
+                    "to a later step that does not itself commit, or fills a field.",
+                },
+            )
+            for i in range(len(targets))
+        }
+        response = await _call_client(self.client, state, questions, model=self.model, retry=self.retry)
+        out = []
+        for i in range(len(targets)):
+            key = f"destructive_{i}"
+            if key not in response.nouls:
+                raise PolicyError(f"gate answer missing `{key}`")
+            out.append(float(response.nouls[key].noul))
+        return out
 
     async def verify(
         self,
@@ -347,7 +413,11 @@ class Verifier:
             kinds = {}
             for i, req in enumerate(requirements):
                 ans = response.choices.get(f"kind_{i}")
-                if ans is not None and getattr(ans, "choice", None) in ("historical_action", "current_state", "answer"):
+                if ans is not None and getattr(ans, "choice", None) in (
+                    "historical_action",
+                    "current_state",
+                    "answer",
+                ):
                     kinds[req] = ans.choice
             ledger.set_kinds(kinds)
         # what earlier verifications in this run established, by requirement kind (jevdual.ledger)
@@ -376,10 +446,17 @@ class Verifier:
                 reason = f"answer carries no fact found on the page ({len(unsupported)} unsupported, rest narrative); {reason}"
             elif unsupported:
                 reason = f"{len(unsupported)} unsupported claim(s) dropped; {reason}"
-        if answer_matters and answer_required >= self.policy.answer_required and not supported_answer and band == "accept":
+        if (
+            answer_matters
+            and answer_required >= self.policy.answer_required
+            and not supported_answer
+            and band == "accept"
+        ):
             # The page may show the outcome, but the task asked for it to be reported; System 1 cannot compose it.
             band = "verify"
-            reason = f"task asks for an answer (answer_required={answer_required:.2f}) and none is given; {reason}"
+            reason = (
+                f"task asks for an answer (answer_required={answer_required:.2f}) and none is given; {reason}"
+            )
 
         verdict = Verdict(
             band=band,
@@ -397,9 +474,13 @@ class Verifier:
         log.info("verify: %s (%s)", band, reason)
         return verdict
 
-
     async def verify_subgoal(
-        self, task: str, subgoal: str, stop_condition: str, menu: Menu, trajectory: list[dict[str, Any]] | None = None
+        self,
+        task: str,
+        subgoal: str,
+        stop_condition: str,
+        menu: Menu,
+        trajectory: list[dict[str, Any]] | None = None,
     ) -> tuple[float, str]:
         """Observed support for a delegated subgoal: one Noul over the page and the trajectory."""
         questions = {
@@ -429,7 +510,14 @@ class ArbiterHook:
     ``answer`` is the text the run is about to report; pass ``None`` for navigation-only tasks.
     """
 
-    def __init__(self, verifier: Verifier, requirements: tuple[str, ...], *, answer_expected: bool = False, use_trajectory: bool = True):
+    def __init__(
+        self,
+        verifier: Verifier,
+        requirements: tuple[str, ...],
+        *,
+        answer_expected: bool = False,
+        use_trajectory: bool = True,
+    ):
         self.answer_expected = answer_expected
         self.verifier = verifier
         self.requirements = requirements
@@ -445,12 +533,20 @@ class ArbiterHook:
             store = getattr(getattr(agent, "s1_policy", None), "secrets", None)
             trajectory = trajectory_from_agent(agent, store.redactor() if store is not None else None)
         verdict = await self.verifier.verify(
-            agent.task, self.requirements, menu, answer, answer_expected=self.answer_expected, trajectory=trajectory, ledger=self.ledger
+            agent.task,
+            self.requirements,
+            menu,
+            answer,
+            answer_expected=self.answer_expected,
+            trajectory=trajectory,
+            ledger=self.ledger,
         )
         self.last = verdict
         return verdict.band, verdict.reason
 
-    async def judge_subgoal(self, agent: Any, menu: Menu, subgoal: str, stop_condition: str) -> tuple[bool, str]:
+    async def judge_subgoal(
+        self, agent: Any, menu: Menu, subgoal: str, stop_condition: str
+    ) -> tuple[bool, str]:
         """True when the delegated subgoal's stop condition has observed support. Uses the same
         verification and accept band as a done (complete on the subgoal, unmet on the stop condition,
         trajectory in view) so a page the done verifier accepts is not refused as a subgoal: the
@@ -461,5 +557,7 @@ class ArbiterHook:
             trajectory = trajectory_from_agent(agent, store.redactor() if store is not None else None)
         # the subgoal alone is the task here: the whole task's wording made the answer-required rule
         # refuse navigation subgoals on answer tasks (Q8/Q9e second launch)
-        verdict = await self.verifier.verify(subgoal, (stop_condition,), menu, None, trajectory=trajectory, answer_matters=False)
+        verdict = await self.verifier.verify(
+            subgoal, (stop_condition,), menu, None, trajectory=trajectory, answer_matters=False
+        )
         return verdict.band == "accept", f"subgoal {verdict.band}: {verdict.reason}"

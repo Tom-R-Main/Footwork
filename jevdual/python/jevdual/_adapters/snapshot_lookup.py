@@ -91,7 +91,9 @@ def build(snapshot: dict[str, Any], out: dict[str, Any]) -> dict[int, EnhancedSn
     return result
 
 
-def snapshot_lookup(snapshot: dict[str, Any], device_pixel_ratio: float = 1.0) -> dict[int, EnhancedSnapshotNode]:
+def snapshot_lookup(
+    snapshot: dict[str, Any], device_pixel_ratio: float = 1.0
+) -> dict[int, EnhancedSnapshotNode]:
     """Same signature and result as the pure twin, computed natively."""
     if not snapshot.get("documents"):
         return {}

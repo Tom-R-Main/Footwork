@@ -12,6 +12,8 @@ from browser_use.dom.enhanced_snapshot import build_snapshot_lookup
 from browser_use.dom.views import EnhancedSnapshotNode
 
 
-def snapshot_lookup(snapshot: dict[str, Any], device_pixel_ratio: float = 1.0) -> dict[int, EnhancedSnapshotNode]:
+def snapshot_lookup(
+    snapshot: dict[str, Any], device_pixel_ratio: float = 1.0
+) -> dict[int, EnhancedSnapshotNode]:
     """Map backend_node_id -> EnhancedSnapshotNode for a raw CaptureSnapshotReturns dict."""
     return build_snapshot_lookup(snapshot, device_pixel_ratio)  # type: ignore[arg-type]

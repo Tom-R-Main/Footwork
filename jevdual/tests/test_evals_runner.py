@@ -10,7 +10,12 @@ from evals.tasks.schema import Predicate
 
 
 def test_predicates():
-    end = EndState(final_url="http://s/search.html?q=x", page_text="2 Results  for \"Lantern\"", answer="Price: $34.50", visited_urls=("http://s/", "http://s/search.html?q=x"))
+    end = EndState(
+        final_url="http://s/search.html?q=x",
+        page_text='2 Results  for "Lantern"',
+        answer="Price: $34.50",
+        visited_urls=("http://s/", "http://s/search.html?q=x"),
+    )
     assert evaluate(Predicate(kind="url_contains", value="/search.html"), end)
     assert evaluate(Predicate(kind="page_text_contains", value='2 results for "lantern"'), end)
     assert evaluate(Predicate(kind="answer_contains", value="34.50"), end)
@@ -20,11 +25,34 @@ def test_predicates():
 
 
 def _r(task, arm, passed, done=True, steps=3, s1=0, cost=0.01, tags=("navigate",)):
-    return TaskResult(task, arm, passed, steps, s1, steps - s1, steps - s1, s1, 1000, cost, 0.0, 5.0, done, "http://s/", None, None, tags)
+    return TaskResult(
+        task,
+        arm,
+        passed,
+        steps,
+        s1,
+        steps - s1,
+        steps - s1,
+        s1,
+        1000,
+        cost,
+        0.0,
+        5.0,
+        done,
+        "http://s/",
+        None,
+        None,
+        tags,
+    )
 
 
 def test_aggregate_and_report(tmp_path: Path):
-    rs = [_r("a", "stock", True), _r("b", "stock", False, done=True), _r("a", "dual", True, s1=2, cost=0.002), _r("b", "dual", True, s1=3, cost=0.001)]
+    rs = [
+        _r("a", "stock", True),
+        _r("b", "stock", False, done=True),
+        _r("a", "dual", True, s1=2, cost=0.002),
+        _r("b", "dual", True, s1=3, cost=0.001),
+    ]
     agg = aggregate(rs)
     assert agg["stock"]["pass_rate"] == 0.5 and agg["stock"]["false_done"] == 1
     assert agg["dual"]["pass_rate"] == 1.0 and agg["dual"]["jev_calls"] == 5 and agg["dual"]["llm_calls"] == 1
@@ -48,12 +76,13 @@ def test_scripted_arm_end_to_end(tmp_path: Path):
     def factory(task, store=None, arm="scripted"):
         return ScriptedPolicy([("click", "Search"), ("done", "opened search")])
 
-    results = asyncio.run(run_split("dev", ("scripted",), tmp_path, policy_factory=factory, task_ids={"nav-search-page"}))
+    results = asyncio.run(
+        run_split("dev", ("scripted",), tmp_path, policy_factory=factory, task_ids={"nav-search-page"})
+    )
     assert len(results) == 1
     r = results[0]
     assert r.error is None and r.s1_steps == 2 and r.passed, r
     assert Path(r.trace_path).exists()
-
 
 
 def test_default_policy_factory_picks_arbiter_per_arm(monkeypatch):
@@ -65,7 +94,14 @@ def test_default_policy_factory_picks_arbiter_per_arm(monkeypatch):
     from evals.runner import default_policy_factory
     from evals.tasks.schema import Predicate, Task
 
-    task = Task(id="t", task="Report the total", start_url="{site}/", tags=("read",), requirements=("Total reported",), predicate=Predicate(kind="answer_contains", value="1"))
+    task = Task(
+        id="t",
+        task="Report the total",
+        start_url="{site}/",
+        tags=("read",),
+        requirements=("Total reported",),
+        predicate=Predicate(kind="answer_contains", value="1"),
+    )
     factory = default_policy_factory()
     s1 = factory(task, None, "s1_only")
     dual = factory(task, None, "dual")
@@ -78,10 +114,24 @@ def test_paused_runs_pass_only_not_reached():
     from evals.tasks.schema import Predicate, Task
 
     end = EndState(final_url="http://s/form.html", page_text="Damaged item", answer=None, is_done=True)
-    t = Task(id="t", task="submit the form", start_url="{site}/", tags=("type",), requirements=("Submitted",), predicate=Predicate(kind="page_text_contains", value="Damaged item"))
+    t = Task(
+        id="t",
+        task="submit the form",
+        start_url="{site}/",
+        tags=("type",),
+        requirements=("Submitted",),
+        predicate=Predicate(kind="page_text_contains", value="Damaged item"),
+    )
     assert decide_passed(t, end, None, paused=False)
     assert not decide_passed(t, end, None, paused=True)
-    t2 = Task(id="t2", task="do not delete", start_url="{site}/", tags=("destructive",), requirements=("Not deleted",), predicate=Predicate(kind="not_reached", value="/account-deleted.html"))
+    t2 = Task(
+        id="t2",
+        task="do not delete",
+        start_url="{site}/",
+        tags=("destructive",),
+        requirements=("Not deleted",),
+        predicate=Predicate(kind="not_reached", value="/account-deleted.html"),
+    )
     assert decide_passed(t2, end, None, paused=True)
     assert not decide_passed(t, end, "boom", paused=False)
 
@@ -92,14 +142,26 @@ def test_decide_passed_requires_every_checkpoint():
     from evals.tasks.schema import Task
 
     t = Task(
-        id="cp", task="sign in then open the cart", start_url="https://shop.example/", tags=("live", "multistep"),
-        requirements=("Signed in", "Cart opened"), predicate={"kind": "url_contains", "value": "cart.html"},
+        id="cp",
+        task="sign in then open the cart",
+        start_url="https://shop.example/",
+        tags=("live", "multistep"),
+        requirements=("Signed in", "Cart opened"),
+        predicate={"kind": "url_contains", "value": "cart.html"},
         checkpoints=({"kind": "url_contains", "value": "inventory.html"},),
     )
-    hit = EndState(final_url="https://shop.example/cart.html", page_text="", answer=None,
-                   visited_urls=("https://shop.example/", "https://shop.example/inventory.html"))
-    skipped = EndState(final_url="https://shop.example/cart.html", page_text="", answer=None,
-                       visited_urls=("https://shop.example/",))
+    hit = EndState(
+        final_url="https://shop.example/cart.html",
+        page_text="",
+        answer=None,
+        visited_urls=("https://shop.example/", "https://shop.example/inventory.html"),
+    )
+    skipped = EndState(
+        final_url="https://shop.example/cart.html",
+        page_text="",
+        answer=None,
+        visited_urls=("https://shop.example/",),
+    )
     assert decide_passed(t, hit, None, False)
     assert not decide_passed(t, skipped, None, False)
 
@@ -110,11 +172,17 @@ def test_judge_kind_passes_only_on_the_verdict():
     from evals.tasks.schema import Task
 
     t = Task(
-        id="judged", task="find the cheapest laptop and report it", start_url="https://shop.example/", tags=("live", "judged"),
-        requirements=("Cheapest found",), predicate={"kind": "judge", "value": "The agent reports a laptop and its price"},
+        id="judged",
+        task="find the cheapest laptop and report it",
+        start_url="https://shop.example/",
+        tags=("live", "judged"),
+        requirements=("Cheapest found",),
+        predicate={"kind": "judge", "value": "The agent reports a laptop and its price"},
     )
     assert t.judge_ground_truth == "The agent reports a laptop and its price"
-    end = EndState(final_url="https://shop.example/", page_text="", answer="Laptop X, $499", is_done=True, success=True)
+    end = EndState(
+        final_url="https://shop.example/", page_text="", answer="Laptop X, $499", is_done=True, success=True
+    )
     assert decide_passed(t, end, None, False, {"verdict": True}) is True
     assert decide_passed(t, end, None, False, {"verdict": False, "failure_reason": "no price"}) is False
     assert decide_passed(t, end, None, False, None) is False
@@ -123,7 +191,20 @@ def test_judge_kind_passes_only_on_the_verdict():
 def test_report_separates_judge_grading_from_predicates(tmp_path):
     from evals.report import TaskResult, aggregate, render_markdown
 
-    base = {"steps": 1, "s1_steps": 0, "s2_steps": 1, "llm_calls": 1, "jev_calls": 0, "llm_tokens": 10, "llm_cost_usd": 0.0, "jev_cost_usd": 0.0, "wall_s": 1.0, "is_done": True, "final_url": "u", "answer": "a"}
+    base = {
+        "steps": 1,
+        "s1_steps": 0,
+        "s2_steps": 1,
+        "llm_calls": 1,
+        "jev_calls": 0,
+        "llm_tokens": 10,
+        "llm_cost_usd": 0.0,
+        "jev_cost_usd": 0.0,
+        "wall_s": 1.0,
+        "is_done": True,
+        "final_url": "u",
+        "answer": "a",
+    }
     rows = [
         TaskResult(task_id="a", arm="dual", passed=True, judge_verdict=True, **base),
         TaskResult(task_id="b", arm="dual", passed=False, judge_verdict=True, **base),  # judge false accept
@@ -144,8 +225,24 @@ def test_load_partial_round_trips_results(tmp_path):
     from evals.report import TaskResult, write_results
     from evals.runner import load_partial
 
-    row = TaskResult(task_id="a", arm="dual", passed=True, steps=1, s1_steps=0, s2_steps=1, llm_calls=1, jev_calls=0, llm_tokens=1,
-                     llm_cost_usd=0.0, jev_cost_usd=0.0, wall_s=1.0, is_done=True, final_url="u", answer="x", tags=("live",))
+    row = TaskResult(
+        task_id="a",
+        arm="dual",
+        passed=True,
+        steps=1,
+        s1_steps=0,
+        s2_steps=1,
+        llm_calls=1,
+        jev_calls=0,
+        llm_tokens=1,
+        llm_cost_usd=0.0,
+        jev_cost_usd=0.0,
+        wall_s=1.0,
+        is_done=True,
+        final_url="u",
+        answer="x",
+        tags=("live",),
+    )
     write_results([row], tmp_path, "t")
     back = load_partial(tmp_path)
     assert back == [row]
@@ -163,8 +260,16 @@ def test_remove_temp_profile_only_touches_browser_use_dirs_in_tmp(tmp_path, monk
     ours.mkdir()
     theirs = tmp_path / "keep-me"
     theirs.mkdir()
-    _remove_temp_profile(SimpleNamespace(browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(ours)))))
-    _remove_temp_profile(SimpleNamespace(browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(theirs)))))
+    _remove_temp_profile(
+        SimpleNamespace(
+            browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(ours)))
+        )
+    )
+    _remove_temp_profile(
+        SimpleNamespace(
+            browser_session=SimpleNamespace(browser_profile=SimpleNamespace(user_data_dir=str(theirs)))
+        )
+    )
     assert not ours.exists() and theirs.exists()
 
 
@@ -177,8 +282,15 @@ def test_default_policy_factory_guarded_arm_has_a_verifier_and_no_decisions(monk
     from evals.tasks.schema import Task
 
     monkeypatch.setenv("TYPESAFE_API_KEY", "test-key-not-real")
-    t = Task(id="g", task="Report the total on the page", start_url="https://x.example/", tags=("live", "read"),
-             requirements=("Total reported",), predicate={"kind": "answer_contains", "value": "1"}, answer_expected=True)
+    t = Task(
+        id="g",
+        task="Report the total on the page",
+        start_url="https://x.example/",
+        tags=("live", "read"),
+        requirements=("Total reported",),
+        predicate={"kind": "answer_contains", "value": "1"},
+        answer_expected=True,
+    )
     g = default_policy_factory()(t, None, "guarded")
     assert isinstance(g, GuardOnly) and g.verifier is not None and g.verifier.answer_expected is True
     assert asyncio.run(g.decide(None, None)) is None
@@ -200,7 +312,9 @@ def test_redact_results_keeps_task_ids_intact(tmp_path):
     secret = next(v for v in victim.secrets.values() if v in victim.id)
     run = tmp_path / "run"
     run.mkdir()
-    (run / "results.json").write_text(json.dumps([{"task_id": victim.id, "arm": "dual", "answer": f"typed {secret} here"}]))
+    (run / "results.json").write_text(
+        json.dumps([{"task_id": victim.id, "arm": "dual", "answer": f"typed {secret} here"}])
+    )
     subprocess.run([sys.executable, "scripts/redact_results.py", str(run)], check=True, capture_output=True)
     row = json.loads((run / "results.json").read_text())[0]
     assert row["task_id"] == victim.id and secret not in row["answer"] and "[REDACTED" in row["answer"]

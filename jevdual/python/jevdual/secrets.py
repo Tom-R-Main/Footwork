@@ -133,7 +133,9 @@ class SecretStore:
         if not isinstance(value, str):
             raise SecretError(f"secret {name!r}: value must be a string")
         if len(" ".join(value.split())) < MIN_SECRET_CHARS:
-            raise SecretError(f"secret {name!r}: value shorter than {MIN_SECRET_CHARS} characters after whitespace normalization")
+            raise SecretError(
+                f"secret {name!r}: value shorter than {MIN_SECRET_CHARS} characters after whitespace normalization"
+            )
 
     def names(self) -> tuple[str, ...]:
         """The only thing a model ever sees."""
@@ -167,7 +169,9 @@ class SecretStore:
         return out
 
     def allowed_for(self, url: str, name: str) -> bool:
-        return any(name in entries and origin_allows(url, pattern) for pattern, entries in self._scoped.items())
+        return any(
+            name in entries and origin_allows(url, pattern) for pattern, entries in self._scoped.items()
+        )
 
     @staticmethod
     def placeholder(name: str) -> str:
@@ -221,7 +225,9 @@ class Redactor:
                 patterns.append((len(variant), pat, name))
         # Longest first so a value that contains another is replaced whole.
         patterns.sort(key=lambda p: p[0], reverse=True)
-        self._rules: list[tuple[re.Pattern[str], str]] = [(re.compile(pat), name) for _, pat, name in patterns]
+        self._rules: list[tuple[re.Pattern[str], str]] = [
+            (re.compile(pat), name) for _, pat, name in patterns
+        ]
 
     def __call__(self, text: str) -> str:
         if not text or not self._rules:
@@ -256,7 +262,13 @@ def assert_no_secrets(obj: Any, store: SecretStore, *, where: str = "model-facin
             raise SecretLeak(f"secret value present in {where}")
 
 
-def install(agent_kwargs: dict[str, Any], store: SecretStore, trace_writer: Any | None = None, *, url: str | None = None) -> dict[str, Any]:
+def install(
+    agent_kwargs: dict[str, Any],
+    store: SecretStore,
+    trace_writer: Any | None = None,
+    *,
+    url: str | None = None,
+) -> dict[str, Any]:
     """Return Agent kwargs with ``sensitive_data`` set and wire the trace redactor.
 
     With ``url``, only scopes the strict rule allows for that url are handed to

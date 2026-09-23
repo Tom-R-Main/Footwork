@@ -13,14 +13,24 @@ from jevdual.trace import (
 def test_round_trip_and_redaction(tmp_path):
     path = tmp_path / "run.jsonl"
     with TraceWriter(path, redactor=lambda s: s.replace("hunter2", "[REDACTED]")) as w:
-        w.write(RunHeader(run_id="r1", task="log in with hunter2", arm="dual", backend="pure-python", browser_use_version="0.13.10"))
+        w.write(
+            RunHeader(
+                run_id="r1",
+                task="log in with hunter2",
+                arm="dual",
+                backend="pure-python",
+                browser_use_version="0.13.10",
+            )
+        )
         w.write(
             StepRecord(
                 run_id="r1",
                 step=1,
                 system="s1",
                 decision=DecisionRecord(
-                    operation=JevHead(choice="click", confidence=0.8, probabilities={"click": 0.8, "type": 0.2}),
+                    operation=JevHead(
+                        choice="click", confidence=0.8, probabilities={"click": 0.8, "type": 0.2}
+                    ),
                     target=JevHead(choice="7", confidence=0.6, probabilities={"7": 0.6, "9": 0.4}),
                     nouls={"goal_done": 0.05, "stuck": 0.1},
                 ),
@@ -51,15 +61,26 @@ def test_run_header_accepts_every_eval_arm():
     from evals.runner import ARMS
 
     for arm in ARMS:
-        RunHeader(run_id="r", task="t", arm=("s1_only" if arm == "scripted" else arm), backend="pure-python", browser_use_version="0")
+        RunHeader(
+            run_id="r",
+            task="t",
+            arm=("s1_only" if arm == "scripted" else arm),
+            backend="pure-python",
+            browser_use_version="0",
+        )
 
 
 def test_step_record_carries_menu_and_verification_scores():
     from jevdual.trace import TRACE_SCHEMA_VERSION, MenuEntry, StepRecord
 
     r = StepRecord(
-        run_id="r", step=1, system="s1",
-        menu=[MenuEntry(id=3, label="Sign in", role="button"), MenuEntry(id=6, label="Username", role="input", input_type="text", value="")],
+        run_id="r",
+        step=1,
+        system="s1",
+        menu=[
+            MenuEntry(id=3, label="Sign in", role="button"),
+            MenuEntry(id=6, label="Username", role="input", input_type="text", value=""),
+        ],
         verify={"band": "verify", "complete": 0.81, "unmet": {"Signed in": 0.35}},
     )
     d = r.model_dump()

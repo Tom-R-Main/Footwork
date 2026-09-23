@@ -99,7 +99,11 @@ def diff_report(expected: Any, actual: Any, limit: int = 10) -> list[str]:
                 if len(diffs) >= limit:
                     return
         elif a != b:
-            if isinstance(a, float) and isinstance(b, float) and abs(a - b) <= 1e-9 * max(1.0, abs(a), abs(b)):
+            if (
+                isinstance(a, float)
+                and isinstance(b, float)
+                and abs(a - b) <= 1e-9 * max(1.0, abs(a), abs(b))
+            ):
                 return
             diffs.append(f"{path}: pure={a!r} native={b!r}")
 

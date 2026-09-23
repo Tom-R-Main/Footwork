@@ -33,7 +33,10 @@ def classify(result: dict, steps) -> str:
         return "destructive_paused"
     reasons = [s.arbiter_reason or "" for s in steps]
     joined = " | ".join(reasons).lower()
-    if any(s.result_error and "policy" in (s.result_error or "").lower() for s in steps) or "policy error" in joined:
+    if (
+        any(s.result_error and "policy" in (s.result_error or "").lower() for s in steps)
+        or "policy error" in joined
+    ):
         return "policy_error"
     if result.get("is_done"):
         return "premature_done"
@@ -63,7 +66,11 @@ def main(run_dir: str) -> None:
     escalations: Counter[str] = Counter()
     ops: Counter[str] = Counter()
     for r in results:
-        _header, steps = read_trace(r["trace_path"]) if r.get("trace_path") and Path(r["trace_path"]).exists() else (None, [])
+        _header, steps = (
+            read_trace(r["trace_path"])
+            if r.get("trace_path") and Path(r["trace_path"]).exists()
+            else (None, [])
+        )
         cls = classify(r, steps)
         counts[cls] += 1
         for s in steps:
@@ -72,12 +79,29 @@ def main(run_dir: str) -> None:
             for a in s.executed:
                 ops[a.name] += 1
         last = steps[-1] if steps else None
-        rows.append((r["task_id"], r["arm"], cls, len(steps), r.get("final_url") or "", (last.arbiter_reason or "")[:60] if last else ""))
+        rows.append(
+            (
+                r["task_id"],
+                r["arm"],
+                cls,
+                len(steps),
+                r.get("final_url") or "",
+                (last.arbiter_reason or "")[:60] if last else "",
+            )
+        )
     lines = [f"# Failure taxonomy: {run.name}", "", "| class | count |", "|---|---|"]
     lines += [f"| {k} | {v} |" for k, v in counts.most_common()]
-    lines += ["", "## Per task", "", "| task | arm | class | steps | final url | last reason |", "|---|---|---|---|---|---|"]
+    lines += [
+        "",
+        "## Per task",
+        "",
+        "| task | arm | class | steps | final url | last reason |",
+        "|---|---|---|---|---|---|",
+    ]
     lines += [f"| {t} | {a} | {c} | {n} | {u} | {reason} |" for t, a, c, n, u, reason in rows]
-    lines += ["", "## Escalation reasons (S1 steps not executed)", ""] + [f"- {k}: {v}" for k, v in escalations.most_common()]
+    lines += ["", "## Escalation reasons (S1 steps not executed)", ""] + [
+        f"- {k}: {v}" for k, v in escalations.most_common()
+    ]
     lines += ["", "## Executed actions", ""] + [f"- {k}: {v}" for k, v in ops.most_common()]
     text = "\n".join(lines) + "\n"
     (run / "taxonomy.md").write_text(text)

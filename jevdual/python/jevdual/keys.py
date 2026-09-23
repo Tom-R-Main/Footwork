@@ -17,7 +17,11 @@ import os
 from pathlib import Path
 
 KEY_DIR = Path(os.environ.get("JEVDUAL_KEY_DIR", Path.home() / ".config" / "jevdual"))
-FILES = {"TYPESAFE_API_KEY": "TYPESAFE_API_KEY", "META_MODEL_API_KEY": "MODEL_API_KEY", "OPENAI_API_KEY": "OPENAI_API_KEY"}
+FILES = {
+    "TYPESAFE_API_KEY": "TYPESAFE_API_KEY",
+    "META_MODEL_API_KEY": "MODEL_API_KEY",
+    "OPENAI_API_KEY": "OPENAI_API_KEY",
+}
 
 META_BASE_URL = "https://api.meta.ai/v1"
 MUSE_CONTRIBUTOR = "muse-spark-1.3-contributor"

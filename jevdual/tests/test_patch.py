@@ -139,11 +139,12 @@ def test_lazy_uuid_patch_keeps_pipeline_equal():
     assert service.EnhancedDOMTreeNode is views.EnhancedDOMTreeNode
 
 
-
 def test_uninstall_clears_every_active_flag():
     patch.install()
     patch.uninstall()
-    assert patch.active_patches() == {"orjson_decode": True} or all(not v for k, v in patch.active_patches().items() if k != "orjson_decode")
+    assert patch.active_patches() == {"orjson_decode": True} or all(
+        not v for k, v in patch.active_patches().items() if k != "orjson_decode"
+    )
 
 
 def test_lazy_uuid_subclass_keeps_upstream_repr_and_hash():

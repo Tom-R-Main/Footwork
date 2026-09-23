@@ -24,7 +24,13 @@ def triage(rows: list[dict]) -> dict[str, list]:
     by_task: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         by_task[r["task_id"]].append(r)
-    out: dict[str, list] = {"unreachable": [], "predicate_suspect": [], "blocked": [], "crashed": [], "reachable": []}
+    out: dict[str, list] = {
+        "unreachable": [],
+        "predicate_suspect": [],
+        "blocked": [],
+        "crashed": [],
+        "reachable": [],
+    }
     for task, rs in sorted(by_task.items()):
         judged = [r for r in rs if r.get("judge_verdict") is not None]
         if any(r["passed"] for r in rs):
@@ -34,12 +40,18 @@ def triage(rows: list[dict]) -> dict[str, list]:
             out["crashed"].append((task, rs[0]["error"][:80]))
             continue
         if judged and all(r.get("judge_impossible") or r.get("judge_captcha") for r in judged):
-            out["blocked"].append((task, "; ".join(sorted({(r.get("judge_reason") or "")[:80] for r in judged}))))
+            out["blocked"].append(
+                (task, "; ".join(sorted({(r.get("judge_reason") or "")[:80] for r in judged})))
+            )
             continue
         if judged and all(r["judge_verdict"] for r in judged):
-            out["predicate_suspect"].append((task, "; ".join(sorted({str(r.get("answer") or r.get("final_url") or "")[:80] for r in rs}))))
+            out["predicate_suspect"].append(
+                (task, "; ".join(sorted({str(r.get("answer") or r.get("final_url") or "")[:80] for r in rs})))
+            )
             continue
-        out["unreachable"].append((task, "; ".join(sorted({(r.get("judge_reason") or "no judge")[:80] for r in rs}))))
+        out["unreachable"].append(
+            (task, "; ".join(sorted({(r.get("judge_reason") or "no judge")[:80] for r in rs})))
+        )
     return out
 
 
@@ -67,14 +79,28 @@ def render(run_dir: Path, rows: list[dict]) -> str:
     lines += [f"- reachable (some arm passed): {len(t['reachable'])}"]
     for key in ("predicate_suspect", "blocked", "unreachable", "crashed"):
         lines.append(f"- {key.replace('_', ' ')}: {len(t[key])}")
-    for key, title in (("predicate_suspect", "Predicate suspects (judge passes, predicate fails on every arm)"), ("blocked", "Blocked (judge: impossible or captcha on every arm)"), ("unreachable", "Unreachable (no arm passed)"), ("crashed", "Crashed on every arm")):
+    for key, title in (
+        ("predicate_suspect", "Predicate suspects (judge passes, predicate fails on every arm)"),
+        ("blocked", "Blocked (judge: impossible or captcha on every arm)"),
+        ("unreachable", "Unreachable (no arm passed)"),
+        ("crashed", "Crashed on every arm"),
+    ):
         if t[key]:
             lines += ["", f"## {title}", ""]
             lines += [f"- `{task}`: {note}" for task, note in t[key]]
     ct = consent_table(rows)
     if ct:
-        lines += ["", "## Consent tasks", "", "| task | arm | pass | paused | done | success |", "|---|---|---|---|---|---|"]
-        lines += [f"| {c['task']} | {c['arm']} | {'yes' if c['passed'] else 'no'} | {c['paused']} | {c['done']} | {c['success']} |" for c in ct]
+        lines += [
+            "",
+            "## Consent tasks",
+            "",
+            "| task | arm | pass | paused | done | success |",
+            "|---|---|---|---|---|---|",
+        ]
+        lines += [
+            f"| {c['task']} | {c['arm']} | {'yes' if c['passed'] else 'no'} | {c['paused']} | {c['done']} | {c['success']} |"
+            for c in ct
+        ]
     return "\n".join(lines) + "\n"
 
 

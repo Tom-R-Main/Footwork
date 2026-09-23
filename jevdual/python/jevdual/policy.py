@@ -70,7 +70,9 @@ class PolicyError(Exception):
 
 
 class SystemOneClient(Protocol):
-    async def system_one(self, state: Any, questions: Any, *, model: str | None = None, **kwargs: Any) -> SystemOneResponse: ...
+    async def system_one(
+        self, state: Any, questions: Any, *, model: str | None = None, **kwargs: Any
+    ) -> SystemOneResponse: ...
 
 
 @dataclass(frozen=True)
@@ -298,7 +300,9 @@ class JevPolicy:
 
     # ---- calling and consuming ------------------------------------------------------------
 
-    async def _call(self, state: dict[str, Any], questions: dict[str, Choice | Noul]) -> tuple[SystemOneResponse, float]:
+    async def _call(
+        self, state: dict[str, Any], questions: dict[str, Choice | Noul]
+    ) -> tuple[SystemOneResponse, float]:
         kwargs: dict[str, Any] = {"model": self.model}
         if self.retry is not None:
             kwargs["retry"] = self.retry
@@ -329,7 +333,11 @@ class JevPolicy:
                     raise
                 shrunk += 1
                 menu = shrink_menu(menu, shrunk)
-                log.warning("step %s: Jev refused the request as too large; retrying with a smaller menu (level %s)", ctx.step, shrunk)
+                log.warning(
+                    "step %s: Jev refused the request as too large; retrying with a smaller menu (level %s)",
+                    ctx.step,
+                    shrunk,
+                )
 
     async def _decide_once(self, request: Request, ctx: StepContext) -> Decision:
         last_error: str | None = None
@@ -342,7 +350,9 @@ class JevPolicy:
                 log.warning("step %s attempt %s: invalid Jev answer: %s", ctx.step, attempt, exc)
         raise PolicyError(f"invalid answer twice: {last_error}")
 
-    async def decide_target(self, menu: Menu, ctx: StepContext, operation: str, candidate_ids: tuple[int, ...]) -> Decision:
+    async def decide_target(
+        self, menu: Menu, ctx: StepContext, operation: str, candidate_ids: tuple[int, ...]
+    ) -> Decision:
         """Second stage after a ``two_stage`` decision: pick the element inside the chosen group."""
         cands = tuple(c for c in menu.candidates if c.id in set(candidate_ids))
         if not cands:
@@ -393,12 +403,16 @@ class JevPolicy:
 
         if op in request.targets:
             key = f"{op}_target"
-            answer = _validate_choice(response.choices.get(key), {str(c.id) for c in request.targets[op]}, key)
+            answer = _validate_choice(
+                response.choices.get(key), {str(c.id) for c in request.targets[op]}, key
+            )
             target_probs = {int(k): v for k, v in answer.probabilities.items()}
             target, target_conf = int(answer.choice), answer.confidence
         elif op in request.groups:
             chunks = request.groups[op]
-            g_answer = _validate_choice(response.choices.get(f"{op}_group"), {str(i) for i in range(len(chunks))}, f"{op}_group")
+            g_answer = _validate_choice(
+                response.choices.get(f"{op}_group"), {str(i) for i in range(len(chunks))}, f"{op}_group"
+            )
             gi = int(g_answer.choice)
             group_conf = g_answer.confidence
             chunk = chunks[gi]

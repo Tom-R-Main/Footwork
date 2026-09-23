@@ -29,13 +29,47 @@ log = logging.getLogger("jevdual.text")
 
 MAX_TEXT_CHARS = 2000
 _QUOTE_RE = re.compile(r"[\"“”']([^\"“”']{1,200})[\"“”']")
-_STOP = {"the", "a", "an", "into", "in", "to", "for", "with", "as", "field", "box", "and", "then", "search", "type", "enter", "fill"}
+_STOP = {
+    "the",
+    "a",
+    "an",
+    "into",
+    "in",
+    "to",
+    "for",
+    "with",
+    "as",
+    "field",
+    "box",
+    "and",
+    "then",
+    "search",
+    "type",
+    "enter",
+    "fill",
+}
 
 SecretPlaceholder = Callable[[Candidate], str | None]
 HelperFn = Callable[[str, Candidate, Menu], Awaitable[str | None]]
 
 
-_IDENTITY_FIELDS = frozenset({"username", "user", "login", "password", "passwd", "email", "phone", "tel", "telephone", "mobile", "zip", "postal", "postcode"})
+_IDENTITY_FIELDS = frozenset(
+    {
+        "username",
+        "user",
+        "login",
+        "password",
+        "passwd",
+        "email",
+        "phone",
+        "tel",
+        "telephone",
+        "mobile",
+        "zip",
+        "postal",
+        "postcode",
+    }
+)
 
 
 def _tokens(s: str) -> set[str]:
@@ -52,7 +86,11 @@ def literal_from_task(task: str, target: Candidate) -> str | None:
     matches = list(_QUOTE_RE.finditer(task))
     if not matches:
         return None
-    label = _tokens(target.label) | _tokens(target.input_type or "") | _tokens(getattr(target, "section", None) or "")
+    label = (
+        _tokens(target.label)
+        | _tokens(target.input_type or "")
+        | _tokens(getattr(target, "section", None) or "")
+    )
     if len(matches) == 1:
         m = matches[0]
         if label & _IDENTITY_FIELDS:
@@ -117,7 +155,12 @@ class TextHelper:
             return self._cache[key]
         import httpx
 
-        body = {"model": self.model, "messages": self._prompt(task, target, menu), "temperature": 0, "max_tokens": 600}
+        body = {
+            "model": self.model,
+            "messages": self._prompt(task, target, menu),
+            "temperature": 0,
+            "max_tokens": 600,
+        }
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 r = await client.post(
@@ -200,10 +243,19 @@ def helper_from_env() -> TextHelper | None:
     """JEVDUAL_TEXT_BASE_URL, JEVDUAL_TEXT_API_KEY, JEVDUAL_TEXT_MODEL; None if unset."""
     import os
 
-    base, key, model = (os.environ.get(k) for k in ("JEVDUAL_TEXT_BASE_URL", "JEVDUAL_TEXT_API_KEY", "JEVDUAL_TEXT_MODEL"))
+    base, key, model = (
+        os.environ.get(k) for k in ("JEVDUAL_TEXT_BASE_URL", "JEVDUAL_TEXT_API_KEY", "JEVDUAL_TEXT_MODEL")
+    )
     if not (base and key and model):
         return None
     return TextHelper(base, key, model)
 
 
-__all__: list[Any] = ["MAX_TEXT_CHARS", "TextHelper", "TextSource", "as_sync_literal_source", "helper_from_env", "literal_from_task"]
+__all__: list[Any] = [
+    "MAX_TEXT_CHARS",
+    "TextHelper",
+    "TextSource",
+    "as_sync_literal_source",
+    "helper_from_env",
+    "literal_from_task",
+]

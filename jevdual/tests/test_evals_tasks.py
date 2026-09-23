@@ -89,7 +89,9 @@ def test_checkpoints_only_url_contains(tmp_path: Path):
 def test_checkpoints_missed_reads_visited_and_final_urls(tasks):
     t = next(t for t in tasks["live-dev"] if len(t.checkpoints) >= 2)
     first = t.checkpoints[0].value
-    end = EndState(final_url="https://x/" + first, page_text="", answer=None, visited_urls=("https://x/start",))
+    end = EndState(
+        final_url="https://x/" + first, page_text="", answer=None, visited_urls=("https://x/start",)
+    )
     missed = checkpoints_missed(t, end)
     assert first not in missed and len(missed) == len(t.checkpoints) - 1
 
@@ -138,7 +140,9 @@ def test_upstream_import_is_judge_graded_and_reproducible(tasks, tmp_path: Path)
     import subprocess
     import sys
 
-    if not (Path(__file__).resolve().parents[2] / "browser-use" / "tests" / "mind2web_data" / "processed.json").is_file():
+    if not (
+        Path(__file__).resolve().parents[2] / "browser-use" / "tests" / "mind2web_data" / "processed.json"
+    ).is_file():
         pytest.skip("browser-use submodule not checked out (git submodule update --init)")
 
     up = tasks["live-upstream"]
@@ -149,6 +153,9 @@ def test_upstream_import_is_judge_graded_and_reproducible(tasks, tmp_path: Path)
         assert "multistep" not in t.tags  # judge tasks have no checkpoints
     out = subprocess.run(
         [sys.executable, "scripts/import_upstream_tasks.py", "--mind2web", "40", "--seed", "7"],
-        capture_output=True, text=True, check=True, cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
     ).stdout
     assert out == (Path(__file__).resolve().parents[1] / "evals/tasks/live-upstream.yaml").read_text()

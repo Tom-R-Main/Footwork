@@ -15,10 +15,28 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Tag = Literal[
-    "navigate", "read", "type", "select", "destructive", "login", "modal", "pagination", "enter-submit", "live",
-    "search", "form", "multistep", "consent", "tabs", "judged", "mind2web", "upstream"
+    "navigate",
+    "read",
+    "type",
+    "select",
+    "destructive",
+    "login",
+    "modal",
+    "pagination",
+    "enter-submit",
+    "live",
+    "search",
+    "form",
+    "multistep",
+    "consent",
+    "tabs",
+    "judged",
+    "mind2web",
+    "upstream",
 ]
-PredicateKind = Literal["url_contains", "page_text_contains", "answer_contains", "answer_equals", "not_reached", "judge"]
+PredicateKind = Literal[
+    "url_contains", "page_text_contains", "answer_contains", "answer_equals", "not_reached", "judge"
+]
 
 TASKS_DIR = Path(__file__).parent
 DEV = TASKS_DIR / "dev.yaml"

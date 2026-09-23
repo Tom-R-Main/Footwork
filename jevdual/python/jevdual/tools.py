@@ -9,7 +9,6 @@ micro-steps. It never executes a ``done`` action itself: ``done``/``blocked``
 from the policy end the loop with a status, and the caller decides.
 """
 
-
 import inspect
 import json
 import logging
@@ -30,9 +29,33 @@ from jevdual.policy import Decision, PolicyError, StepContext
 
 log = logging.getLogger("jevdual.tools")
 
-Status = Literal["reached", "paused_before_action", "blocked", "budget_exhausted", "low_confidence", "needs_text", "stuck", "error"]
+Status = Literal[
+    "reached",
+    "paused_before_action",
+    "blocked",
+    "budget_exhausted",
+    "low_confidence",
+    "needs_text",
+    "stuck",
+    "error",
+]
 
-DEFAULT_PAUSE_KEYWORDS: tuple[str, ...] = ("delete", "remove", "pay", "purchase", "buy now", "place order", "send", "unsubscribe", "deactivate", "删除", "支付", "购买", "确认订单", "发送")
+DEFAULT_PAUSE_KEYWORDS: tuple[str, ...] = (
+    "delete",
+    "remove",
+    "pay",
+    "purchase",
+    "buy now",
+    "place order",
+    "send",
+    "unsubscribe",
+    "deactivate",
+    "删除",
+    "支付",
+    "购买",
+    "确认订单",
+    "发送",
+)
 
 
 @dataclass(frozen=True)
@@ -56,16 +79,28 @@ class MicroLoopResult:
     wall_ms: float = 0.0
 
     def summary(self) -> str:
-        acts = "; ".join(f"{s['operation']} {s.get('label', '')}".strip() for s in self.steps if s.get("executed"))
+        acts = "; ".join(
+            f"{s['operation']} {s.get('label', '')}".strip() for s in self.steps if s.get("executed")
+        )
         tail = f" Last: {acts}." if acts else ""
         return f"act_toward_goal({self.goal!r}) -> {self.status} after {len(self.steps)} step(s) at {self.final_url}. {self.reason}{tail}".strip()
 
     def to_json(self) -> dict[str, Any]:
-        return {"status": self.status, "goal": self.goal, "final_url": self.final_url, "reason": self.reason, "steps": self.steps, "jev_calls": self.jev_calls, "wall_ms": round(self.wall_ms, 1)}
+        return {
+            "status": self.status,
+            "goal": self.goal,
+            "final_url": self.final_url,
+            "reason": self.reason,
+            "steps": self.steps,
+            "jev_calls": self.jev_calls,
+            "wall_ms": round(self.wall_ms, 1),
+        }
 
 
 class GoalParams(BaseModel):
-    goal: str = Field(description="A short, concrete subgoal for the fast navigator, e.g. 'open the pricing page'.")
+    goal: str = Field(
+        description="A short, concrete subgoal for the fast navigator, e.g. 'open the pricing page'."
+    )
     max_steps: int = Field(default=10, ge=1, le=25, description="Step budget for the micro-loop.")
 
 
@@ -111,7 +146,10 @@ async def run_micro_loop(
         if prev_menu is not None:
             no_effect = no_effect + 1 if effect.no_effect else 0
             if no_effect >= cfg.no_effect_limit:
-                result.status, result.reason = "stuck", f"{no_effect} consecutive steps with no visible change"
+                result.status, result.reason = (
+                    "stuck",
+                    f"{no_effect} consecutive steps with no visible change",
+                )
                 break
         prev_menu = menu
         ctx = StepContext(task=goal, step=step, recent_actions=tuple(lines[-6:]))
@@ -122,20 +160,42 @@ async def run_micro_loop(
             break
         result.jev_calls += 1
         target = menu.candidate(decision.target) if decision.target is not None else None
-        rec: dict[str, Any] = {"step": step, "operation": decision.operation, "target": decision.target, "label": target.label[:60] if target else None, "op_p": round(decision.operation_confidence, 2), "target_p": decision.target_confidence, "url": menu.url, "executed": False}
+        rec: dict[str, Any] = {
+            "step": step,
+            "operation": decision.operation,
+            "target": decision.target,
+            "label": target.label[:60] if target else None,
+            "op_p": round(decision.operation_confidence, 2),
+            "target_p": decision.target_confidence,
+            "url": menu.url,
+            "executed": False,
+        }
         result.steps.append(rec)
 
         if decision.operation == "done":
-            result.status, result.reason = "reached", f"policy reports goal reached (goal_done={decision.nouls.get('goal_done', 0):.2f})"
+            result.status, result.reason = (
+                "reached",
+                f"policy reports goal reached (goal_done={decision.nouls.get('goal_done', 0):.2f})",
+            )
             break
         if decision.operation == "blocked":
             result.status, result.reason = "blocked", "policy reports no operation can make progress"
             break
-        if decision.operation_confidence < cfg.operation_floor or (decision.targeted and (decision.target_confidence or 0.0) < cfg.target_floor):
-            result.status, result.reason = "low_confidence", f"op p={decision.operation_confidence:.2f}, target p={decision.target_confidence}"
+        if decision.operation_confidence < cfg.operation_floor or (
+            decision.targeted and (decision.target_confidence or 0.0) < cfg.target_floor
+        ):
+            result.status, result.reason = (
+                "low_confidence",
+                f"op p={decision.operation_confidence:.2f}, target p={decision.target_confidence}",
+            )
             break
-        if decision.nouls.get("destructive", 0.0) >= cfg.destructive_floor or (target and _keyword_hit(target.label, cfg.pause_before_keywords)):
-            result.status, result.reason = "paused_before_action", f"would act on {target.label!r} " if target else "destructive"
+        if decision.nouls.get("destructive", 0.0) >= cfg.destructive_floor or (
+            target and _keyword_hit(target.label, cfg.pause_before_keywords)
+        ):
+            result.status, result.reason = (
+                "paused_before_action",
+                f"would act on {target.label!r} " if target else "destructive",
+            )
             result.reason += f"(destructive={decision.nouls.get('destructive', 0):.2f})"
             break
 
@@ -145,7 +205,10 @@ async def run_micro_loop(
             if inspect.isawaitable(text):
                 text = await text
         if decision.operation in ("type", "select") and text is None:
-            result.status, result.reason = "needs_text", f"{decision.operation} into {target.label!r} needs composed text"
+            result.status, result.reason = (
+                "needs_text",
+                f"{decision.operation} into {target.label!r} needs composed text",
+            )
             break
 
         try:
@@ -178,7 +241,9 @@ class _OutputShim:
         self.memory = memory
 
 
-def register_act_toward_goal(tools: Any, *, decide: DecideFn, text_source: TextFn | None = None, config: MicroLoopConfig | None = None) -> None:
+def register_act_toward_goal(
+    tools: Any, *, decide: DecideFn, text_source: TextFn | None = None, config: MicroLoopConfig | None = None
+) -> None:
     """Register ``act_toward_goal`` on a browser-use Tools registry."""
 
     @tools.action(
@@ -190,25 +255,47 @@ def register_act_toward_goal(tools: Any, *, decide: DecideFn, text_source: TextF
         param_model=GoalParams,
     )
     async def act_toward_goal(params: GoalParams, browser_session: BrowserSession) -> ActionResult:
-        result = await run_micro_loop(params.goal, browser_session, tools, decide=decide, text_source=text_source, config=config, max_steps=params.max_steps)
+        result = await run_micro_loop(
+            params.goal,
+            browser_session,
+            tools,
+            decide=decide,
+            text_source=text_source,
+            config=config,
+            max_steps=params.max_steps,
+        )
         log.info("act_toward_goal: %s", result.summary())
-        return ActionResult(extracted_content=json.dumps(result.to_json(), ensure_ascii=False), long_term_memory=result.summary())
+        return ActionResult(
+            extracted_content=json.dumps(result.to_json(), ensure_ascii=False),
+            long_term_memory=result.summary(),
+        )
 
 
 # --- Q9: delegation as a mode of the evaluated agent -------------------------------------------
 
 
 _NEEDS_VALUES = re.compile(
-    r"\b(sign|log)[ -]?in\b|\bfill\b|\benter\b|\btype\b|\bform\b|\busername\b|\bpassword\b|\bsearch\b|\bquery\b", re.IGNORECASE
+    r"\b(sign|log)[ -]?in\b|\bfill\b|\benter\b|\btype\b|\bform\b|\busername\b|\bpassword\b|\bsearch\b|\bquery\b",
+    re.IGNORECASE,
 )
 _QUOTED = re.compile(r"[\"'\u201c\u2018]([^\"'\u201d\u2019]{1,120})[\"'\u201d\u2019]")
 
 
 class SubgoalParams(BaseModel):
-    goal: str = Field(description="One concrete subgoal for the fast navigator, e.g. 'add the Sauce Labs Backpack to the cart'.")
-    stop_condition: str = Field(description="The observable outcome that means the subgoal is done, e.g. 'the cart badge shows 1 and the backpack button reads Remove'.")
-    allowed_operations: list[str] = Field(default_factory=list, description="Operations the navigator may use: click, type, select, enter. Empty means all.")
-    known_values: dict[str, str] = Field(default_factory=dict, description="Field name or label -> value to type, e.g. {'search': 'Eiffel Tower'} or {'First Name': 'Ada'}; secrets by placeholder as usual. Required for any goal that searches, signs in or fills a form.")
+    goal: str = Field(
+        description="One concrete subgoal for the fast navigator, e.g. 'add the Sauce Labs Backpack to the cart'."
+    )
+    stop_condition: str = Field(
+        description="The observable outcome that means the subgoal is done, e.g. 'the cart badge shows 1 and the backpack button reads Remove'."
+    )
+    allowed_operations: list[str] = Field(
+        default_factory=list,
+        description="Operations the navigator may use: click, type, select, enter. Empty means all.",
+    )
+    known_values: dict[str, str] = Field(
+        default_factory=dict,
+        description="Field name or label -> value to type, e.g. {'search': 'Eiffel Tower'} or {'First Name': 'Ada'}; secrets by placeholder as usual. Required for any goal that searches, signs in or fills a form.",
+    )
     max_steps: int = Field(default=8, ge=1, le=20, description="Step budget before it reports back.")
 
 

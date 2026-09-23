@@ -29,7 +29,13 @@ DONE = {
 def step(*actions: dict[str, Any], memory: str = "step") -> str:
     """One scripted System 2 step: ``step({"navigate": {"url": ...}})``."""
     return json.dumps(
-        {"thinking": "null", "evaluation_previous_goal": "ok", "memory": memory, "next_goal": memory, "action": list(actions)}
+        {
+            "thinking": "null",
+            "evaluation_previous_goal": "ok",
+            "memory": memory,
+            "next_goal": memory,
+            "action": list(actions),
+        }
     )
 
 
@@ -37,7 +43,9 @@ def done(text: str = "Task completed successfully", success: bool = True) -> str
     return step({"done": {"text": text, "success": success}}, memory="done")
 
 
-def judgement(verdict: bool, failure_reason: str = "", impossible: bool = False, captcha: bool = False) -> str:
+def judgement(
+    verdict: bool, failure_reason: str = "", impossible: bool = False, captcha: bool = False
+) -> str:
     return json.dumps(
         {
             "reasoning": "scripted",

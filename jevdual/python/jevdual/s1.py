@@ -81,7 +81,15 @@ def _known_value_for(target: Candidate, known: tuple[tuple[str, str], ...]) -> s
     """A value System 2 supplied for this field, matched on the field's label or section (case-insensitive)."""
     if not known:
         return None
-    hay = " ".join(x for x in (target.label, getattr(target, "section", None) or "", getattr(target, "input_type", None) or "") if x).casefold()
+    hay = " ".join(
+        x
+        for x in (
+            target.label,
+            getattr(target, "section", None) or "",
+            getattr(target, "input_type", None) or "",
+        )
+        if x
+    ).casefold()
     for key, value in known:
         if key.casefold() in hay:
             return value
@@ -221,7 +229,9 @@ class JevS1:
         self.text_source = text_source
         self.last_menu: Menu | None = None
 
-    async def _delegated_step(self, agent: Any, delegation: Delegation, decision: Decision, menu: Menu, rec: S1Record, step: int) -> bool:
+    async def _delegated_step(
+        self, agent: Any, delegation: Delegation, decision: Decision, menu: Menu, rec: S1Record, step: int
+    ) -> bool:
         """Inside a delegation: a done or a confident goal_done means "check the stop condition with
         observed support"; reached ends the delegation, otherwise a done escalates and the delegation
         stays. Returns True when this step must escalate, False to continue with the ordinary act path."""
@@ -229,7 +239,9 @@ class JevS1:
         if decision.operation != "done" and goal_done < self.subgoal_done_floor:
             return False
         if self.verifier is not None and hasattr(self.verifier, "judge_subgoal"):
-            met, reason = await self.verifier.judge_subgoal(agent, menu, delegation.goal, delegation.stop_condition)
+            met, reason = await self.verifier.judge_subgoal(
+                agent, menu, delegation.goal, delegation.stop_condition
+            )
             delegation.jev_calls += 1
             rec.verify = {"subgoal": delegation.goal, "met": met, "reason": reason}
         else:
@@ -251,7 +263,13 @@ class JevS1:
         delegation.status, delegation.reason = status, reason
         agent.delegation = None
         agent.__dict__.setdefault("delegations", []).append(delegation)
-        log.info("delegation %r ended: %s (%s) after %s step(s)", delegation.goal, status, reason, delegation.steps_taken)
+        log.info(
+            "delegation %r ended: %s (%s) after %s step(s)",
+            delegation.goal,
+            status,
+            reason,
+            delegation.steps_taken,
+        )
         mm = getattr(agent, "_message_manager", None)
         if mm is not None and hasattr(mm, "_add_context_message"):
             from browser_use.llm.messages import UserMessage
@@ -271,7 +289,9 @@ class JevS1:
         if len(recent) < self.escalation_streak:
             return None
         reasons = {(r.verdict.reason.split(":", 1)[0].strip() if r.verdict else "") for r in recent}
-        if len(reasons) != 1 or not all(r.verdict is not None and r.verdict.kind == "escalate" for r in recent):
+        if len(reasons) != 1 or not all(
+            r.verdict is not None and r.verdict.kind == "escalate" for r in recent
+        ):
             return None
         reason = reasons.pop()
         if reason in ("s2_control", "destructive", "verification accept", "act"):
@@ -293,7 +313,10 @@ class JevS1:
                 if i <= d.started_step or not rec.proposed:
                     continue
                 labels = {m["id"]: m["label"] for m in rec.menu}
-                acts = ", ".join(f"{a.name}({labels.get(a.params.get('index'), a.params.get('index', ''))})" for a in rec.proposed)
+                acts = ", ".join(
+                    f"{a.name}({labels.get(a.params.get('index'), a.params.get('index', ''))})"
+                    for a in rec.proposed
+                )
                 lines.append(f"assignment step {len(lines) + 1}: {acts}")
             if self.secrets is not None:
                 red = self.secrets.redactor()
@@ -309,7 +332,9 @@ class JevS1:
                 known_values=d.known_values,
                 stop_condition=d.stop_condition,
             )
-        lines = [h.model_output.memory for h in agent.history.history if h.model_output and h.model_output.memory]
+        lines = [
+            h.model_output.memory for h in agent.history.history if h.model_output and h.model_output.memory
+        ]
         if self.secrets is not None:
             red = self.secrets.redactor()
             lines = [red(line) for line in lines]
@@ -330,8 +355,14 @@ class JevS1:
         out = await self._decide(agent, state)
         if out is None and delegation is not None and getattr(agent, "delegation", None) is delegation:
             rec = agent.__dict__.get("s1_records", {}).get(agent.state.n_steps)
-            reason = (rec.verdict.reason if rec is not None and rec.verdict is not None else (rec.error if rec is not None else None)) or "handback"
-            self._end_delegation(agent, delegation, _handback_status(reason), reason, getattr(state, "url", "") or "")
+            reason = (
+                rec.verdict.reason
+                if rec is not None and rec.verdict is not None
+                else (rec.error if rec is not None else None)
+            ) or "handback"
+            self._end_delegation(
+                agent, delegation, _handback_status(reason), reason, getattr(state, "url", "") or ""
+            )
         return out
 
     async def _decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
@@ -345,11 +376,21 @@ class JevS1:
             rec.verdict = Verdict("escalate", "idle: no delegation from System 2 (no menu call)")
             return None
         if delegation is not None and delegation.steps_taken >= delegation.budget:
-            self._end_delegation(agent, delegation, "budget_exhausted", f"{delegation.budget} step budget used", getattr(state, "url", "") or "")
+            self._end_delegation(
+                agent,
+                delegation,
+                "budget_exhausted",
+                f"{delegation.budget} step budget used",
+                getattr(state, "url", "") or "",
+            )
             rec.verdict = Verdict("escalate", "delegation ended: budget_exhausted")
             return None
 
-        skip = None if delegation is not None else self._s2_control_reason(agent, records, step, getattr(state, "url", "") or "")
+        skip = (
+            None
+            if delegation is not None
+            else self._s2_control_reason(agent, records, step, getattr(state, "url", "") or "")
+        )
         if skip is not None:
             rec.verdict = Verdict("escalate", skip)
             log.info("step %s: %s", step, skip)
@@ -364,7 +405,16 @@ class JevS1:
         rec.menu_ms = (time.perf_counter() - t0) * 1000
         rec.menu_omitted = dict(menu.omitted)
         rec.menu = tuple(
-            {"id": c.id, "label": c.label[:120], "role": c.role, "section": (c.section or None), "value": (c.value[:80] if c.value else None), "input_type": c.input_type, "href": (c.href[:160] if c.href else None), "offscreen": c.offscreen}
+            {
+                "id": c.id,
+                "label": c.label[:120],
+                "role": c.role,
+                "section": (c.section or None),
+                "value": (c.value[:80] if c.value else None),
+                "input_type": c.input_type,
+                "href": (c.href[:160] if c.href else None),
+                "offscreen": c.offscreen,
+            }
             for c in menu.candidates
         )
         self.last_menu = menu
@@ -377,7 +427,9 @@ class JevS1:
                 # situation nouls (destructive, stuck, needs_reasoning, goal_done) must survive it. The
                 # previous code replaced the whole decision, so a 0.20-confidence, destructive=0.99 step
                 # reached the arbiter as confidence 1.0 with no signals (audit, 2026-09-22).
-                second = await self.policy.decide_target(menu, ctx, decision.operation, decision.pending_group)
+                second = await self.policy.decide_target(
+                    menu, ctx, decision.operation, decision.pending_group
+                )
                 decision = dataclasses.replace(
                     decision,
                     target=second.target,
@@ -403,9 +455,16 @@ class JevS1:
             delegation.jev_calls += 1
 
         done_text: str | None = None
-        if delegation is not None and await self._delegated_step(agent, delegation, decision, menu, rec, step):
+        if delegation is not None and await self._delegated_step(
+            agent, delegation, decision, menu, rec, step
+        ):
             return None
-        if delegation is None and decision.operation == "done" and self.verifier is not None and getattr(self.verifier, "answer_expected", False):
+        if (
+            delegation is None
+            and decision.operation == "done"
+            and self.verifier is not None
+            and getattr(self.verifier, "answer_expected", False)
+        ):
             # S1 cannot compose an answer, so its done on an answer task is refused every time; skip the
             # verification call (14 of 77 S1 vetoes on the post-ledger live run were exactly this).
             rec.verdict = Verdict("escalate", "done without an answer on an answer task; not verified")
@@ -414,7 +473,11 @@ class JevS1:
         if delegation is None and decision.operation == "done" and self.verifier is not None:
             band, reason = await self.verifier.judge_done(agent, menu)
             last = getattr(self.verifier, "last", None)
-            rec.verify = last.to_trace() if last is not None and hasattr(last, "to_trace") else {"band": band, "reason": reason}
+            rec.verify = (
+                last.to_trace()
+                if last is not None and hasattr(last, "to_trace")
+                else {"band": band, "reason": reason}
+            )
             if band != "accept":
                 rec.verdict = Verdict("escalate", f"verification {band}: {reason}")
                 log.info("step %s: done vetoed, %s", step, rec.verdict.reason)
@@ -424,7 +487,9 @@ class JevS1:
         else:
             verdict = self.arbiter.judge(decision, menu, ctx, agent)
         if verdict.kind == "retry_alternate" and decision.alternates:
-            decision = dataclasses.replace(decision, target=decision.alternates[0], alternates=decision.alternates[1:])
+            decision = dataclasses.replace(
+                decision, target=decision.alternates[0], alternates=decision.alternates[1:]
+            )
             rec.decision = decision
             verdict = Verdict("act", f"retry_alternate: {verdict.reason}")
         rec.verdict = verdict
@@ -436,7 +501,13 @@ class JevS1:
                 # acts inside someone else's assignment.
                 head = verdict.reason.split(":", 1)[0].strip()
                 delegation.escalations += 1
-                self._end_delegation(agent, delegation, head if verdict.kind != "confirm" else "paused_before_action", verdict.reason, menu.url)
+                self._end_delegation(
+                    agent,
+                    delegation,
+                    head if verdict.kind != "confirm" else "paused_before_action",
+                    verdict.reason,
+                    menu.url,
+                )
             return None
 
         text = None
@@ -447,7 +518,9 @@ class JevS1:
                 if text is not None and (getattr(target, "value", None) or "") == text:
                     # the field already holds this value: typing it again is the loop that ended seven
                     # sign-in assignments as stuck (Q9c); hand the assignment back instead
-                    rec.verdict = Verdict("escalate", f"known value already in field {decision.target}; nothing left to type")
+                    rec.verdict = Verdict(
+                        "escalate", f"known value already in field {decision.target}; nothing left to type"
+                    )
                     self._end_delegation(agent, delegation, "not_reached", rec.verdict.reason, menu.url)
                     return None
                 if text is None and delegation is not None:
@@ -459,7 +532,10 @@ class JevS1:
 
                     text = literal_from_task(delegation.goal, target)
                     if text is None:
-                        rec.verdict = Verdict("escalate", f"no known value for field {decision.target} ({target.label[:40]!r}); the assignment needs known_values")
+                        rec.verdict = Verdict(
+                            "escalate",
+                            f"no known value for field {decision.target} ({target.label[:40]!r}); the assignment needs known_values",
+                        )
                         return None
                 if text is None:
                     text = self.text_source(agent.task, target, menu)
@@ -476,7 +552,9 @@ class JevS1:
                     return None
 
         try:
-            bridged: Bridged = Bridge(agent.ActionModel, agent.AgentOutput).build(decision, menu, step=step, text=text, done_text=done_text)
+            bridged: Bridged = Bridge(agent.ActionModel, agent.AgentOutput).build(
+                decision, menu, step=step, text=text, done_text=done_text
+            )
             assert_fresh(agent, state, menu, decision)
         except BridgeError as exc:
             rec.error = f"bridge/{exc.reason}: {exc}"

@@ -105,7 +105,13 @@ def escalation_summary(steps: list[Step], arm: str = "dual") -> EscalationSummar
     rows = [s for s in steps if s.arm == arm]
     eligible = [s for s in rows if s.op_choice is not None]
     esc = [s for s in eligible if s.system == "s2"]
-    summary = EscalationSummary(arm=arm, steps=len(rows), s1_eligible=len(eligible), escalated=len(esc), acted=len(eligible) - len(esc))
+    summary = EscalationSummary(
+        arm=arm,
+        steps=len(rows),
+        s1_eligible=len(eligible),
+        escalated=len(esc),
+        acted=len(eligible) - len(esc),
+    )
     summary.by_reason = dict(Counter(reason_class(s.reason) for s in esc).most_common())
     for s in eligible:
         if s.op_conf is None:
@@ -140,7 +146,16 @@ def reliability(pairs: list[tuple[float, bool]], bins: int = 10) -> dict[str, An
         conf = sum(p for p, _ in items) / len(items)
         acc = sum(1 for _, y in items if y) / len(items)
         ece += abs(conf - acc) * len(items) / n
-        rows.append({"bin": b, "lo": b / bins, "hi": (b + 1) / bins, "n": len(items), "confidence": conf, "accuracy": acc})
+        rows.append(
+            {
+                "bin": b,
+                "lo": b / bins,
+                "hi": (b + 1) / bins,
+                "n": len(items),
+                "confidence": conf,
+                "accuracy": acc,
+            }
+        )
     return {"bins": rows, "ece": ece, "n": n}
 
 
@@ -178,11 +193,21 @@ def signals_from_labels(csv_path: Path, *, use_auto: bool = True) -> dict[str, A
     rows = list(csv.DictReader(csv_path.open()))
     labelled = []
     for r in rows:
-        lab = (r.get("label") or "").strip().lower() or ((r.get("auto_label") or "").strip().lower() if use_auto else "")
+        lab = (r.get("label") or "").strip().lower() or (
+            (r.get("auto_label") or "").strip().lower() if use_auto else ""
+        )
         if lab in ("right", "wrong"):
             labelled.append((r, lab == "wrong"))
-    out: dict[str, Any] = {"n": len(labelled), "wrong": sum(1 for _, w in labelled if w), "auroc": {}, "source": {}}
-    out["source"] = {"human": sum(1 for r, _ in labelled if (r.get("label") or "").strip()), "auto": sum(1 for r, _ in labelled if not (r.get("label") or "").strip())}
+    out: dict[str, Any] = {
+        "n": len(labelled),
+        "wrong": sum(1 for _, w in labelled if w),
+        "auroc": {},
+        "source": {},
+    }
+    out["source"] = {
+        "human": sum(1 for r, _ in labelled if (r.get("label") or "").strip()),
+        "auto": sum(1 for r, _ in labelled if not (r.get("label") or "").strip()),
+    }
     for sig in SIGNALS:
         pairs = []
         for r, wrong in labelled:
@@ -212,7 +237,9 @@ def render(summary: EscalationSummary, baseline: EscalationSummary | None = None
     if baseline is not None:
         lines.append(row(baseline, "baseline"))
         if baseline.escalation_rate:
-            lines.append(f"\nEscalation rate ratio (this / baseline): {summary.escalation_rate / baseline.escalation_rate:.2f}")
+            lines.append(
+                f"\nEscalation rate ratio (this / baseline): {summary.escalation_rate / baseline.escalation_rate:.2f}"
+            )
     lines += ["", "Escalations by arbiter reason:", ""]
     lines += [f"- {k}: {v}" for k, v in summary.by_reason.items()]
     lines += ["", "Nouls at or above their floors (S1-eligible steps):", ""]
@@ -225,14 +252,18 @@ def main() -> None:
     ap.add_argument("run_dir")
     ap.add_argument("--baseline")
     ap.add_argument("--arm", default="dual")
-    ap.add_argument("--labels", help="labels.csv from evals.labels: print AUROC per signal for predicting a wrong step")
+    ap.add_argument(
+        "--labels", help="labels.csv from evals.labels: print AUROC per signal for predicting a wrong step"
+    )
     args = ap.parse_args()
     summary = escalation_summary(load_steps(Path(args.run_dir)), args.arm)
     base = escalation_summary(load_steps(Path(args.baseline)), args.arm) if args.baseline else None
     print(render(summary, base))
     if args.labels:
         sig = signals_from_labels(Path(args.labels))
-        print(f"Labelled steps: {sig['n']} ({sig['wrong']} wrong; labels from human {sig['source']['human']}, heuristic {sig['source']['auto']})")
+        print(
+            f"Labelled steps: {sig['n']} ({sig['wrong']} wrong; labels from human {sig['source']['human']}, heuristic {sig['source']['auto']})"
+        )
         print("| signal | AUROC for a wrong step | n |", "|---|---|---|", sep="\n")
         for name, v in sig["auroc"].items():
             a = "n/a" if v["auroc"] is None else f"{v['auroc']:.2f}"

@@ -58,7 +58,9 @@ def _action_line(action: Any, element: Any, redact: Callable[[str], str]) -> str
     return f"{line} on {label}" if label else line
 
 
-def trajectory_from_agent(agent: Any, redact: Callable[[str], str] | None = None, *, max_steps: int = 12) -> list[dict[str, Any]]:
+def trajectory_from_agent(
+    agent: Any, redact: Callable[[str], str] | None = None, *, max_steps: int = 12
+) -> list[dict[str, Any]]:
     """Per-step summary of the run so far, oldest first, at most ``max_steps`` most recent steps."""
     red = redact or (lambda s: s)
     history = getattr(getattr(agent, "history", None), "history", None) or []
@@ -75,7 +77,11 @@ def trajectory_from_agent(agent: Any, redact: Callable[[str], str] | None = None
             except Exception:  # noqa: BLE001 - a malformed action must not break verification
                 lines.append("?")
         errors = [r.error for r in (getattr(h, "result", None) or []) if getattr(r, "error", None)]
-        entry: dict[str, Any] = {"step": i, "url": red(getattr(getattr(h, "state", None), "url", "") or ""), "actions": lines}
+        entry: dict[str, Any] = {
+            "step": i,
+            "url": red(getattr(getattr(h, "state", None), "url", "") or ""),
+            "actions": lines,
+        }
         memory = getattr(model_output, "memory", None)
         if memory:
             entry["note"] = red(str(memory))[:200]

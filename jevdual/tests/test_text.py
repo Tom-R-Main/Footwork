@@ -5,9 +5,15 @@ from jevdual.text import MAX_TEXT_CHARS, TextHelper, TextSource, literal_from_ta
 
 MENU = Menu(url="http://s/form.html", title="Form", page_text="", candidates=(), by_operation={})
 NAME = Candidate(id=1, label="Name", role="input", operations=("type", "click", "enter"), input_type="text")
-EMAIL = Candidate(id=2, label="Email address", role="input", operations=("type", "click", "enter"), input_type="email")
-PW = Candidate(id=3, label="Password", role="input", operations=("type", "click", "enter"), input_type="password")
-TOPIC = Candidate(id=4, label="Topic", role="select", operations=("select", "click"), options=("Billing", "Support"))
+EMAIL = Candidate(
+    id=2, label="Email address", role="input", operations=("type", "click", "enter"), input_type="email"
+)
+PW = Candidate(
+    id=3, label="Password", role="input", operations=("type", "click", "enter"), input_type="password"
+)
+TOPIC = Candidate(
+    id=4, label="Topic", role="select", operations=("select", "click"), options=("Billing", "Support")
+)
 
 
 def test_single_literal():
@@ -26,7 +32,10 @@ def test_source_order_and_counters():
     async def helper(task, target, menu):
         return "Support"
 
-    src = TextSource(helper=helper, secret_placeholder=lambda c: "<secret>pw</secret>" if c.input_type == "password" else None)
+    src = TextSource(
+        helper=helper,
+        secret_placeholder=lambda c: "<secret>pw</secret>" if c.input_type == "password" else None,
+    )
     assert asyncio.run(src.compose('Type "hi" in name', NAME, MENU)) == "hi"
     assert asyncio.run(src.compose("log in", PW, MENU)) == "<secret>pw</secret>"
     assert asyncio.run(src.compose("choose the support topic", TOPIC, MENU)) == "Support"
@@ -56,6 +65,8 @@ def test_lone_literal_never_goes_into_an_identity_field_unless_its_words_bind():
     username = Candidate(id=6, label="Username", role="input", operations=("type",), input_type="text")
     search = Candidate(id=9, label="Search", role="input", operations=("type",), input_type="search")
     task = 'Sign in as standard_user, then find the "Sauce Labs Bike Light" and report its price.'
-    assert literal_from_task(task, username) is None  # the audit's exact shape: a product name is not a username
+    assert (
+        literal_from_task(task, username) is None
+    )  # the audit's exact shape: a product name is not a username
     assert literal_from_task(task, search) == "Sauce Labs Bike Light"
     assert literal_from_task('Sign in with username "ada" and the password provided.', username) == "ada"

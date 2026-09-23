@@ -58,7 +58,9 @@ def _handler(recorder: Recorder) -> type[BaseHTTPRequestHandler]:
                 user = fields.get("user", "")
                 ok = user and fields.get("password") == "hunter2"
                 self.send_response(303)
-                self.send_header("Location", f"/account.html?user={quote(user)}&ok=1" if ok else "/login.html?error=1")
+                self.send_header(
+                    "Location", f"/account.html?user={quote(user)}&ok=1" if ok else "/login.html?error=1"
+                )
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return

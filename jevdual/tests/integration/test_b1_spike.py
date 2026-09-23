@@ -24,7 +24,9 @@ def test_spike_b1_probes():
         try:
             out = Path(os.environ.get("JEVDUAL_SPIKE_OUT", "/tmp/jevdual_spike"))
             out.mkdir(parents=True, exist_ok=True)
-            r1 = await spike_b1.run_task(base, "t1", "Open About", [("click", "About"), ("done", "ok")], out, 4)
+            r1 = await spike_b1.run_task(
+                base, "t1", "Open About", [("click", "About"), ("done", "ok")], out, 4
+            )
             r4 = await spike_b1.run_task(base, "t4", "Escalate", [("escalate",)], out, 1)
             return r1, r4
         finally:

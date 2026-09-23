@@ -8,15 +8,36 @@ from jevdual.s1 import Verdict
 
 
 def menu(url="http://s/", cands=None, text="hello world " * 40, title="Home"):
-    cands = tuple(cands or (Candidate(id=3, label="About", role="a", operations=("click",), href="/about.html"),))
+    cands = tuple(
+        cands or (Candidate(id=3, label="About", role="a", operations=("click",), href="/about.html"),)
+    )
     return Menu(url=url, title=title, page_text=text, candidates=cands, by_operation={})
 
 
 def decision(op="click", target=3, op_conf=0.9, t_conf=0.8, probs=None, alternates=(), **nouls):
-    base = {"goal_done": 0.1, "stuck": 0.0, "destructive": 0.0, "needs_reasoning": 0.1, "login_required": 0.0, "bot_check": 0.0}
+    base = {
+        "goal_done": 0.1,
+        "stuck": 0.0,
+        "destructive": 0.0,
+        "needs_reasoning": 0.1,
+        "login_required": 0.0,
+        "bot_check": 0.0,
+    }
     base.update(nouls)
     tp = probs if probs is not None else ({target: t_conf} if target is not None else {})
-    return Decision(op, op_conf, {op: op_conf}, target, t_conf if target is not None else None, tp, tuple(alternates), base, "jev-1.13.0", 50, 10.0)
+    return Decision(
+        op,
+        op_conf,
+        {op: op_conf},
+        target,
+        t_conf if target is not None else None,
+        tp,
+        tuple(alternates),
+        base,
+        "jev-1.13.0",
+        50,
+        10.0,
+    )
 
 
 class FakeAgent:
@@ -141,7 +162,12 @@ def test_operation_confidence_floor():
 
 
 def test_target_confidence_retry_then_escalate():
-    m = menu(cands=[Candidate(id=3, label="About", role="a", operations=("click",)), Candidate(id=4, label="Docs", role="a", operations=("click",))])
+    m = menu(
+        cands=[
+            Candidate(id=3, label="About", role="a", operations=("click",)),
+            Candidate(id=4, label="Docs", role="a", operations=("click",)),
+        ]
+    )
     d = decision(target=3, t_conf=0.3, probs={3: 0.4, 4: 0.35}, alternates=(4,))
     v = judge(Arbiter(), d, m)
     assert v.kind == "retry_alternate" and "alternate 4" in v.reason
@@ -150,7 +176,9 @@ def test_target_confidence_retry_then_escalate():
     arb = Arbiter()
     assert judge(arb, decision(target=4), m, step=1).kind == "act"  # 4 tried at this url
     assert judge(arb, d, m, step=2).reason.startswith("target_confidence")  # alternate already tried
-    assert judge(Arbiter(), decision(target=3, t_conf=0.3), m).reason.startswith("target_confidence")  # no alternate
+    assert judge(Arbiter(), decision(target=3, t_conf=0.3), m).reason.startswith(
+        "target_confidence"
+    )  # no alternate
 
 
 def test_from_toml_round_trips_every_field():
@@ -178,7 +206,9 @@ def test_stats_and_summary():
     agent = FakeAgent()
     judge(arb, decision(), step=1, agent=agent)
     judge(arb, decision(goal_done=0.95), step=2, agent=agent)
-    agent.s1_records[3] = SimpleNamespace(verdict=Verdict("escalate", "policy error: boom"), error="policy: boom")
+    agent.s1_records[3] = SimpleNamespace(
+        verdict=Verdict("escalate", "policy error: boom"), error="policy: boom"
+    )
     text = arb.summary_for_s2(agent, n=8)
     assert "step 1: click [3] 'About' -> act" in text
     assert "step 2: click [3] 'About' -> escalate (goal_done" in text
@@ -214,8 +244,16 @@ def test_contextual_keywords_are_destructive_only_in_a_durable_context():
 
 
 def test_arbiter_confirm_rule_uses_the_menu_context_for_contextual_keywords():
-    remove_in_cart = menu(url="https://www.saucedemo.com/cart.html", title="Swag Labs", cands=(Candidate(id=1, label="Remove", role="button", operations=("click",)),))
-    remove_in_account = menu(url="https://site/account", title="Account settings", cands=(Candidate(id=1, label="Remove", role="button", operations=("click",)),))
+    remove_in_cart = menu(
+        url="https://www.saucedemo.com/cart.html",
+        title="Swag Labs",
+        cands=(Candidate(id=1, label="Remove", role="button", operations=("click",)),),
+    )
+    remove_in_account = menu(
+        url="https://site/account",
+        title="Account settings",
+        cands=(Candidate(id=1, label="Remove", role="button", operations=("click",)),),
+    )
     d = decision("click", 1)
     assert judge(Arbiter.from_toml(), d, remove_in_cart).kind == "act"
     assert judge(Arbiter.from_toml(), d, remove_in_account).kind == "confirm"

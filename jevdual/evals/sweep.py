@@ -96,10 +96,14 @@ def sweep(run_dir: Path) -> str:
         _, steps = read_trace(p)
         if any(s.decision for s in steps):
             traces.append((r, steps))
-    lines = [f"# Arbiter sweep over {run_dir.name} ({len(traces)} traces with S1 decisions)", "",
-             "Counts are recorded S1 steps re-judged offline; 'on failed tasks' means the task did not pass in this run.", "",
-             "| setting | value | act | escalate | confirm | retry | escalations on passed tasks | escalations on failed tasks | top rules |",
-             "|---|---|---|---|---|---|---|---|---|"]
+    lines = [
+        f"# Arbiter sweep over {run_dir.name} ({len(traces)} traces with S1 decisions)",
+        "",
+        "Counts are recorded S1 steps re-judged offline; 'on failed tasks' means the task did not pass in this run.",
+        "",
+        "| setting | value | act | escalate | confirm | retry | escalations on passed tasks | escalations on failed tasks | top rules |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
     variants: list[tuple[str, float, ArbiterPolicy]] = [("baseline", 0.0, base)]
     for name, values in GRID.items():
         for v in values:
@@ -120,7 +124,9 @@ def sweep(run_dir: Path) -> str:
                     else:
                         esc_fail += 1
         top = ", ".join(f"{k} {v}" for k, v in rules.most_common(3))
-        lines.append(f"| {name} | {value if name != 'baseline' else ''} | {kinds['act']} | {kinds['escalate']} | {kinds['confirm']} | {kinds['retry_alternate']} | {esc_pass} | {esc_fail} | {top} |")
+        lines.append(
+            f"| {name} | {value if name != 'baseline' else ''} | {kinds['act']} | {kinds['escalate']} | {kinds['confirm']} | {kinds['retry_alternate']} | {esc_pass} | {esc_fail} | {top} |"
+        )
     return "\n".join(lines) + "\n"
 
 

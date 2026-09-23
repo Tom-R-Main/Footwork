@@ -12,7 +12,19 @@ from tests.fixtures.replay import replay_state
 
 
 def _decision(op, target=None, alternates=()):
-    return Decision(op, 0.9, {op: 0.9}, target, 0.8 if target else None, {target: 0.8} if target else {}, tuple(alternates), {"goal_done": 0.1, "stuck": 0.0, "destructive": 0.0}, "jev-1.13.0", 50, 12.0)
+    return Decision(
+        op,
+        0.9,
+        {op: 0.9},
+        target,
+        0.8 if target else None,
+        {target: 0.8} if target else {},
+        tuple(alternates),
+        {"goal_done": 0.1, "stuck": 0.0, "destructive": 0.0},
+        "jev-1.13.0",
+        50,
+        12.0,
+    )
 
 
 class FakePolicy:
@@ -75,7 +87,10 @@ def test_escalate_on_policy_error_and_arbiter():
             return Verdict("escalate", "needs reasoning")
 
     agent2 = FakeAgent(state)
-    assert asyncio.run(JevS1(FakePolicy(_decision("click", idx)), arbiter=Escalator()).decide(agent2, state)) is None
+    assert (
+        asyncio.run(JevS1(FakePolicy(_decision("click", idx)), arbiter=Escalator()).decide(agent2, state))
+        is None
+    )
     assert agent2.s1_records[1].verdict.reason == "needs reasoning"
 
 
@@ -90,7 +105,11 @@ def test_retry_alternate_uses_next_best():
             return Verdict("retry_alternate", "low target confidence")
 
     agent = FakeAgent(state)
-    out = asyncio.run(JevS1(FakePolicy(_decision("click", links[0], alternates=(links[1],))), arbiter=Retry()).decide(agent, state))
+    out = asyncio.run(
+        JevS1(FakePolicy(_decision("click", links[0], alternates=(links[1],))), arbiter=Retry()).decide(
+            agent, state
+        )
+    )
     assert out.action[0].model_dump(exclude_unset=True) == {"click": {"index": links[1]}}
 
 
@@ -127,7 +146,9 @@ def test_destructive_gate_replaces_action_for_either_system():
             am = Tools().registry.create_action_model()
             self.ActionModel = am
             self.AgentOutput = AgentOutput.type_with_custom_actions(am)
-            self.state = SimpleNamespace(n_steps=3, last_model_output=self.AgentOutput(action=[am(click={"index": idx})]))
+            self.state = SimpleNamespace(
+                n_steps=3, last_model_output=self.AgentOutput(action=[am(click={"index": idx})])
+            )
             self.browser_session = SimpleNamespace(_cached_browser_state_summary=state)
             self.step_systems = {3: "s2"}
             from jevdual.arbiter import ArbiterPolicy
@@ -161,7 +182,10 @@ def test_destructive_gate_replaces_action_for_either_system():
     agent = Fake()
     asyncio.run(go(agent))
     assert agent.paused_before_action["system"] == "s2" and agent.paused_before_action["keyword"] == "delete"
-    assert agent.executed[0]["done"]["success"] is False and "Delete account" in agent.executed[0]["done"]["text"]
+    assert (
+        agent.executed[0]["done"]["success"] is False
+        and "Delete account" in agent.executed[0]["done"]["text"]
+    )
 
 
 def test_redact_menu_scrubs_every_model_facing_string():
@@ -170,12 +194,19 @@ def test_redact_menu_scrubs_every_model_facing_string():
     from jevdual.secrets import SecretStore
 
     red = SecretStore({"password": "hunter2"}).redactor()
-    m = Menu(url="http://s/account.html?user=ada&password=hunter2", title="hunter2 page", page_text="you typed hunter2",
-             candidates=(Candidate(1, "hunter2", "a", ("click",), href="/x?p=hunter2", value="hunter2"),), by_operation={"click": ()})
+    m = Menu(
+        url="http://s/account.html?user=ada&password=hunter2",
+        title="hunter2 page",
+        page_text="you typed hunter2",
+        candidates=(Candidate(1, "hunter2", "a", ("click",), href="/x?p=hunter2", value="hunter2"),),
+        by_operation={"click": ()},
+    )
     r = redact_menu(m, red)
     import json
 
-    assert "hunter2" not in json.dumps({"u": r.url, "t": r.title, "p": r.page_text, "c": [c.to_state() for c in r.candidates]})
+    assert "hunter2" not in json.dumps(
+        {"u": r.url, "t": r.title, "p": r.page_text, "c": [c.to_state() for c in r.candidates]}
+    )
     assert r.candidates[0].id == 1
 
 
@@ -191,8 +222,16 @@ def test_gate_covers_index_less_actions():
     a = DualProcessAgent.__new__(DualProcessAgent)
     a.destructive_keywords = ArbiterPolicy.from_toml().destructive_keywords
     a.browser_session = SimpleNamespace(_cached_browser_state_summary=None, get_or_create_cdp_session=None)
-    assert asyncio.run(a._destructive_hit_any([am(evaluate={"code": "document.querySelector('#del').click()"})]))[1] == "evaluate"
-    assert asyncio.run(a._destructive_hit_any([am(navigate={"url": "http://s/delete-confirm.html"})]))[1] == "delete"
+    assert (
+        asyncio.run(
+            a._destructive_hit_any([am(evaluate={"code": "document.querySelector('#del').click()"})])
+        )[1]
+        == "evaluate"
+    )
+    assert (
+        asyncio.run(a._destructive_hit_any([am(navigate={"url": "http://s/delete-confirm.html"})]))[1]
+        == "delete"
+    )
     assert asyncio.run(a._destructive_hit_any([am(navigate={"url": "http://s/about.html"})])) is None
     hit = asyncio.run(a._destructive_hit_any([am(send_keys={"keys": "Enter"})]))
     assert hit is not None and hit[1] == "enter"  # focus unknown: gate conservatively
@@ -238,11 +277,16 @@ def test_escalation_streak_hands_control_to_system_2_without_menu_calls():
 
     state, _ = _fresh_state_and_link()
     agent = FakeAgent(state)
-    agent.s1_records = {i: S1Record(step=i, decision=None, verdict=Verdict("escalate", "needs_reasoning: 0.9 >= 0.6")) for i in (1, 2, 3)}
+    agent.s1_records = {
+        i: S1Record(step=i, decision=None, verdict=Verdict("escalate", "needs_reasoning: 0.9 >= 0.6"))
+        for i in (1, 2, 3)
+    }
     s1 = JevS1(_RaisingPolicy(), arbiter=AlwaysAct(), escalation_streak=3, s2_control_steps=2)
     agent.state.n_steps = 4
     assert asyncio.run(s1.decide(agent, state)) is None
-    assert agent.s1_records[4].verdict.reason.startswith("s2_control: 3 consecutive escalations on 'needs_reasoning'")
+    assert agent.s1_records[4].verdict.reason.startswith(
+        "s2_control: 3 consecutive escalations on 'needs_reasoning'"
+    )
     agent.state.n_steps = 5
     assert asyncio.run(s1.decide(agent, state)) is None  # still System 2's stretch, still no menu call
     assert "keeps control" in agent.s1_records[5].verdict.reason
@@ -257,7 +301,10 @@ def test_escalation_streak_ends_early_on_a_url_change():
 
     state, _ = _fresh_state_and_link()
     agent = FakeAgent(state)
-    agent.s1_records = {i: S1Record(step=i, decision=None, verdict=Verdict("escalate", "stuck: 0.9 >= 0.85")) for i in (1, 2, 3)}
+    agent.s1_records = {
+        i: S1Record(step=i, decision=None, verdict=Verdict("escalate", "stuck: 0.9 >= 0.85"))
+        for i in (1, 2, 3)
+    }
     s1 = JevS1(_RaisingPolicy(), arbiter=AlwaysAct(), escalation_streak=3, s2_control_steps=5)
     agent.state.n_steps = 4
     assert asyncio.run(s1.decide(agent, state)) is None
@@ -323,13 +370,17 @@ def test_only_when_delegated_is_idle_without_a_delegation_and_makes_no_call():
 
 def test_delegation_supplies_subgoal_allowed_ops_and_known_values_and_counts_steps():
     state, idx = _fresh_state_and_link()
-    agent = _delegating_agent(state, allowed_operations=("click",), known_values=(("Email", "ada@example.com"),), budget=3)
+    agent = _delegating_agent(
+        state, allowed_operations=("click",), known_values=(("Email", "ada@example.com"),), budget=3
+    )
     policy = _CapturingPolicy(_decision("click", idx))
     s1 = JevS1(policy, arbiter=AlwaysAct(), only_when_delegated=True)
     out = asyncio.run(s1.decide(agent, state))
     assert out is not None and out.action[0].model_dump(exclude_unset=True) == {"click": {"index": idx}}
     ctx = policy.contexts[0]
-    assert ctx.subgoal == "open the About page" and ctx.allowed_operations == ("click",) and ctx.stop_condition
+    assert (
+        ctx.subgoal == "open the About page" and ctx.allowed_operations == ("click",) and ctx.stop_condition
+    )
     assert dict(ctx.known_values) == {"Email": "ada@example.com"}
     assert agent.delegation.steps_taken == 1
 
@@ -338,18 +389,26 @@ def test_delegated_done_with_observed_support_ends_the_delegation_and_briefs_sys
     state, _ = _fresh_state_and_link()
     agent = _delegating_agent(state)
     verifier = _SubgoalVerifier(met=True)
-    s1 = JevS1(FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier)
+    s1 = JevS1(
+        FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier
+    )
     assert asyncio.run(s1.decide(agent, state)) is None  # System 2 takes this step with the summary
     assert verifier.calls == [("open the About page", "the About page is shown")]
     assert agent.delegation is None and agent.delegations[0].status == "reached"
-    assert agent.messages and "finished the subgoal" in agent.messages[0].content and "reached" in agent.messages[0].content
+    assert (
+        agent.messages
+        and "finished the subgoal" in agent.messages[0].content
+        and "reached" in agent.messages[0].content
+    )
 
 
 def test_delegated_done_without_support_ends_the_delegation_not_reached():
     state, _ = _fresh_state_and_link()
     agent = _delegating_agent(state)
     verifier = _SubgoalVerifier(met=False)
-    s1 = JevS1(FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier)
+    s1 = JevS1(
+        FakePolicy(_decision("done")), arbiter=AlwaysAct(), only_when_delegated=True, verifier=verifier
+    )
     assert asyncio.run(s1.decide(agent, state)) is None
     assert agent.delegation is None and agent.delegations[0].status == "not_reached"
     assert agent.delegations[0].jev_calls == 2  # the menu call and the subgoal check
@@ -377,7 +436,12 @@ def test_delegated_questions_are_scoped_to_the_subgoal():
 
     menu = build_menu(state)
     pol = JevPolicy(client=None)
-    req = pol.build_request(menu, StepContext(task="whole task", subgoal="open the About page", stop_condition="the About page is shown"))
+    req = pol.build_request(
+        menu,
+        StepContext(
+            task="whole task", subgoal="open the About page", stop_condition="the About page is shown"
+        ),
+    )
     op = req.questions["operation"]
     assert op.instructions["question"].endswith("advance `subgoal` from the current page?")
     assert op.instructions["stop_condition"] == "the About page is shown"
@@ -418,10 +482,18 @@ class _TwoStagePolicy:
 
     async def decide(self, menu, ctx):
         d = _decision("click", None)
-        return dataclasses.replace(d, operation_confidence=0.2, nouls={"goal_done": 0.1, "stuck": 0.0, "destructive": 0.99}, two_stage=True, pending_group=(3, 4))
+        return dataclasses.replace(
+            d,
+            operation_confidence=0.2,
+            nouls={"goal_done": 0.1, "stuck": 0.0, "destructive": 0.99},
+            two_stage=True,
+            pending_group=(3, 4),
+        )
 
     async def decide_target(self, menu, ctx, operation, group):
-        return dataclasses.replace(_decision("click", group[0]), operation_confidence=1.0, nouls={}, target_confidence=0.95)
+        return dataclasses.replace(
+            _decision("click", group[0]), operation_confidence=1.0, nouls={}, target_confidence=0.95
+        )
 
 
 def test_two_stage_target_keeps_the_first_stage_confidence_and_safety_signals():
@@ -434,7 +506,10 @@ def test_two_stage_target_keeps_the_first_stage_confidence_and_safety_signals():
     rec = agent.s1_records[1]
     assert rec.decision.operation_confidence == 0.2 and rec.decision.nouls["destructive"] == 0.99
     assert rec.decision.target == 3 and not rec.decision.two_stage
-    assert rec.verdict.kind in ("escalate", "confirm")  # the flat, destructive first stage rules, not the 1.0 second stage
+    assert rec.verdict.kind in (
+        "escalate",
+        "confirm",
+    )  # the flat, destructive first stage rules, not the 1.0 second stage
 
 
 def test_every_handback_inside_a_delegation_closes_it_with_a_status():
@@ -512,7 +587,9 @@ def test_delegated_typing_takes_a_literal_from_the_assignment_but_not_from_the_t
     agent.delegation.goal = 'Search the catalog for "brass lantern" and open the result'
     s1 = JevS1(FakePolicy(_decision("type", field.id)), arbiter=AlwaysAct(), only_when_delegated=True)
     out = asyncio.run(s1.decide(agent, state))
-    assert out is not None and out.action[0].model_dump(exclude_unset=True)["input"]["text"] == "brass lantern"
+    assert (
+        out is not None and out.action[0].model_dump(exclude_unset=True)["input"]["text"] == "brass lantern"
+    )
     assert agent.delegation is not None and agent.delegation.steps_taken == 1
 
 
@@ -536,10 +613,23 @@ def test_assignment_context_uses_its_own_steps_not_the_drivers_memory():
     agent = _delegating_agent(state)
     agent.delegation.started_step = 2
     agent.delegation.steps_taken = 1
-    agent.history = SimpleNamespace(history=[SimpleNamespace(model_output=SimpleNamespace(memory="delegated sign-in to the navigator")) for _ in range(3)])
+    agent.history = SimpleNamespace(
+        history=[
+            SimpleNamespace(model_output=SimpleNamespace(memory="delegated sign-in to the navigator"))
+            for _ in range(3)
+        ]
+    )
     agent.s1_records = {
-        1: S1Record(step=1, decision=None, verdict=None, proposed=(ActionRecord(name="click", params={"index": 9}),)),  # before the assignment
-        3: S1Record(step=3, decision=None, verdict=None, proposed=(ActionRecord(name="input", params={"index": idx}),), menu=({"id": idx, "label": "Username"},)),
+        1: S1Record(
+            step=1, decision=None, verdict=None, proposed=(ActionRecord(name="click", params={"index": 9}),)
+        ),  # before the assignment
+        3: S1Record(
+            step=3,
+            decision=None,
+            verdict=None,
+            proposed=(ActionRecord(name="input", params={"index": idx}),),
+            menu=({"id": idx, "label": "Username"},),
+        ),
     }
     policy = _CapturingPolicy(_decision("click", idx))
     s1 = JevS1(policy, arbiter=AlwaysAct(), only_when_delegated=True)
@@ -548,3 +638,87 @@ def test_assignment_context_uses_its_own_steps_not_the_drivers_memory():
     ctx = policy.contexts[0]
     assert ctx.recent_actions == ("assignment step 1: input(Username)",)
     assert ctx.step == 2  # the assignment's second step, whatever the run's step count
+
+
+def _gate_fake(label: str, probs: list[float], *, authorized_actions=(), system="s2"):
+    """A DualProcessAgent shell with one proposed click on ``label`` and a verifier whose destructive noul answers ``probs``."""
+    from jevdual.agent import DualProcessAgent
+    from jevdual.arbiter import ArbiterPolicy
+
+    state = replay_state("modal-over-content")
+    idx, node = next(iter(state.dom_state.selector_map.items()))
+    node.ax_node = SimpleNamespace(name=label, role="button")
+    asked: list = []
+
+    class FakeVerifier:
+        async def judge_destructive(self, task, targets, *, url, title):
+            asked.append((task, targets, url, title))
+            return probs
+
+    class Fake(DualProcessAgent):
+        def __init__(self):
+            am = Tools().registry.create_action_model()
+            self.ActionModel = am
+            self.AgentOutput = AgentOutput.type_with_custom_actions(am)
+            self.state = SimpleNamespace(
+                n_steps=3, last_model_output=self.AgentOutput(action=[am(click={"index": idx})])
+            )
+            self.browser_session = SimpleNamespace(_cached_browser_state_summary=state)
+            self.step_systems = {3: system}
+            self.task = "Fill the pizza form and submit the order"
+            self.gate_policy = ArbiterPolicy.from_toml()
+            self.destructive_keywords = self.gate_policy.destructive_keywords
+            self.authorized_destructive = bool(authorized_actions)
+            self.authorized_actions = tuple(k.casefold() for k in authorized_actions)
+            self.paused_before_action = None
+            self.s1_policy = SimpleNamespace(verifier=SimpleNamespace(verifier=FakeVerifier()), secrets=None)
+            self.s2_verifications = []
+            self.s2_done_rejections = 0
+            self.max_done_rejections = 2
+            self.gate_judgments = []
+            self.executed = None
+
+        async def _super_execute(self):
+            self.executed = [a.model_dump(exclude_unset=True) for a in self.state.last_model_output.action]
+
+    async def go(agent):
+        import jevdual.agent as mod
+
+        orig = mod.Agent._execute_actions
+        mod.Agent._execute_actions = Fake._super_execute
+        try:
+            await DualProcessAgent._execute_actions(agent)
+        finally:
+            mod.Agent._execute_actions = orig
+
+    agent = Fake()
+    asyncio.run(go(agent))
+    return agent, asked
+
+
+def test_destructive_judgment_pauses_a_system_2_click_the_keywords_miss():
+    """Q8: "Submit order" matches no keyword; the Jev destructive noul at 0.80 pauses it (results/q8-consent.md)."""
+    agent, asked = _gate_fake("Submit order", [0.80])
+    assert len(asked) == 1 and asked[0][1][0]["label"] == "Submit order" and "submit the order" in asked[0][0]
+    assert (
+        agent.paused_before_action is not None
+        and agent.paused_before_action["keyword"] == "destructive p=0.80"
+    )
+    assert agent.executed[0]["done"]["success"] is False and agent.gate_judgments[0]["hit"] == "Submit order"
+
+
+def test_destructive_judgment_below_the_floor_lets_the_click_through_and_records_it():
+    agent, _ = _gate_fake("Continue", [0.12])
+    assert agent.paused_before_action is None and "click" in agent.executed[0]
+    assert agent.gate_judgments == [{"step": 3, "targets": [("Continue", 0.12)], "hit": None}]
+
+
+def test_destructive_judgment_defers_to_scoped_authorisation():
+    agent, _ = _gate_fake("Submit order", [0.95], authorized_actions=("submit order",))
+    assert agent.paused_before_action is None and "click" in agent.executed[0]
+
+
+def test_destructive_judgment_is_not_asked_for_system_1_decisions():
+    """System 1's own arbiter already answered the destructive noul for its decision; no second call."""
+    agent, asked = _gate_fake("Submit order", [0.95], system="s1")
+    assert asked == [] and "click" in agent.executed[0]

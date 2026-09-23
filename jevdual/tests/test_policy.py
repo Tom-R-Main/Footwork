@@ -31,12 +31,24 @@ def small_menu() -> Menu:
     )
     by_op = {op: tuple(c for c in cands if op in c.operations) for op in OPERATIONS}
     by_op = {op: v for op, v in by_op.items() if v}
-    return Menu(url="http://site/", title="Home", page_text="Welcome. Search or browse.", candidates=cands, by_operation=by_op)
+    return Menu(
+        url="http://site/",
+        title="Home",
+        page_text="Welcome. Search or browse.",
+        candidates=cands,
+        by_operation=by_op,
+    )
 
 
 def big_menu(n: int = 300) -> Menu:
     cands = tuple(cand(i, f"Link {i}", href=f"/p/{i}") for i in range(1, n + 1))
-    return Menu(url="http://site/list", title="List", page_text="Many links", candidates=cands, by_operation={"click": cands})
+    return Menu(
+        url="http://site/list",
+        title="List",
+        page_text="Many links",
+        candidates=cands,
+        by_operation={"click": cands},
+    )
 
 
 def ctx(**kw) -> StepContext:
@@ -49,7 +61,9 @@ def load_response(name: str) -> SystemOneResponse:
     return SystemOneResponse.model_validate(json.loads((FIXTURES / f"{name}.json").read_text()))
 
 
-def synth_response(questions, picks: dict[str, str], nouls: dict[str, float] | None = None, *, model=JEV_MODEL) -> SystemOneResponse:
+def synth_response(
+    questions, picks: dict[str, str], nouls: dict[str, float] | None = None, *, model=JEV_MODEL
+) -> SystemOneResponse:
     """Well-formed answers for every question: chosen option gets 0.7, rest share 0.3."""
     answers: dict[str, dict] = {}
     for key, q in questions.items():
@@ -61,8 +75,15 @@ def synth_response(questions, picks: dict[str, str], nouls: dict[str, float] | N
         rest = [o for o in opts if o != chosen]
         probs = {o: (0.3 / len(rest) if rest else 0.0) for o in rest}
         probs[chosen] = 1.0 if not rest else 0.7
-        answers[key] = {"type": "choice", "choice": chosen, "confidence": 0.7 if rest else 1.0, "probabilities": probs}
-    return SystemOneResponse.model_validate({"model": model, "usage": {"input_tokens": 1234, "output_tokens": 0}, "answers": answers})
+        answers[key] = {
+            "type": "choice",
+            "choice": chosen,
+            "confidence": 0.7 if rest else 1.0,
+            "probabilities": probs,
+        }
+    return SystemOneResponse.model_validate(
+        {"model": model, "usage": {"input_tokens": 1234, "output_tokens": 0}, "answers": answers}
+    )
 
 
 class FakeClient:
@@ -97,16 +118,30 @@ def test_request_shape_small_menu():
     assert op.instructions["task"] == "Open the About page"
     click = req.questions["click_target"]
     assert set(click.criteria) == {"1", "2"}
-    assert click.criteria["2"] == {"id": 2, "label": "About", "role": "a", "operations": ["click"], "href": "/about.html"}
+    assert click.criteria["2"] == {
+        "id": 2,
+        "label": "About",
+        "role": "a",
+        "operations": ["click"],
+        "href": "/about.html",
+    }
     assert req.questions["select_target"].criteria["4"]["options"] == ["Billing", "Support"]
     assert req.state["page"]["url"] == "http://site/" and req.state["requirements"] == ["About page is open"]
-    assert "omitted_elements" not in req.state and "tabs" not in req.state and "stored_secrets" not in req.state
+    assert (
+        "omitted_elements" not in req.state and "tabs" not in req.state and "stored_secrets" not in req.state
+    )
     assert req.estimated_tokens > 0
 
 
 def test_state_optional_fields():
     m = small_menu()
-    m = Menu(**{**m.__dict__, "omitted": {"offscreen": 12}, "tabs": ({"id": 1, "title": "a"}, {"id": 2, "title": "b"})})
+    m = Menu(
+        **{
+            **m.__dict__,
+            "omitted": {"offscreen": 12},
+            "tabs": ({"id": 1, "title": "a"}, {"id": 2, "title": "b"}),
+        }
+    )
     req = JevPolicy(FakeClient()).build_request(m, ctx(secrets_names=("x_password",)))
     assert req.state["omitted_elements"] == {"offscreen": 12}
     assert len(req.state["tabs"]) == 2 and req.state["stored_secrets"] == ["x_password"]
@@ -196,7 +231,9 @@ async def test_sdk_errors_are_wrapped():
 
 def test_grouping_over_cap_emits_group_and_speculative_heads():
     m = big_menu(300)
-    req = JevPolicy(FakeClient(), budget=MenuBudget(group_size=40)).build_request(m, ctx(task="Open link 287"))
+    req = JevPolicy(FakeClient(), budget=MenuBudget(group_size=40)).build_request(
+        m, ctx(task="Open link 287")
+    )
     assert "click_target" not in req.questions and "click_group" in req.questions
     assert set(req.questions["click_group"].criteria) == {str(i) for i in range(8)}
     assert all(f"click_target_g{i}" in req.questions for i in range(8))
@@ -208,7 +245,13 @@ def test_grouping_over_cap_emits_group_and_speculative_heads():
 
 async def test_grouped_decide_consumes_only_chosen_group():
     m = big_menu(300)
-    policy = JevPolicy(FakeClient(factory=lambda qs: synth_response(qs, {"operation": "click", "click_group": "7", "click_target_g7": "287"})))
+    policy = JevPolicy(
+        FakeClient(
+            factory=lambda qs: synth_response(
+                qs, {"operation": "click", "click_group": "7", "click_target_g7": "287"}
+            )
+        )
+    )
     d = await policy.decide(m, ctx(task="Open link 287"))
     assert d.operation == "click" and d.target == 287 and not d.two_stage
     assert d.group_confidence == 0.7 and d.target_confidence == pytest.approx(0.7 * 0.7)
@@ -220,10 +263,14 @@ async def test_two_stage_when_budget_forces_it():
     # Pick a budget that admits state + the group question but not state + any per-group element head.
     from jevdual.policy import _estimate_tokens, _question_tokens
 
-    probe = JevPolicy(FakeClient(), budget=MenuBudget(group_size=40)).build_request(m, ctx(task="Open link 287"))
+    probe = JevPolicy(FakeClient(), budget=MenuBudget(group_size=40)).build_request(
+        m, ctx(task="Open link 287")
+    )
     cpt = MenuBudget().chars_per_token
     floor = _estimate_tokens(probe.state, cpt) + _question_tokens(probe.questions["click_group"], cpt)
-    heads = max(_question_tokens(q, cpt) for k, q in probe.questions.items() if k.startswith("click_target_g"))
+    heads = max(
+        _question_tokens(q, cpt) for k, q in probe.questions.items() if k.startswith("click_target_g")
+    )
     assert floor < _estimate_tokens(probe.state, cpt) + heads
     tight = MenuBudget(group_size=40, state_tokens=floor + 5)
     seen_questions = []
@@ -264,7 +311,14 @@ async def test_to_trace_round_trip():
 
 def test_prompts_are_literal_and_versioned():
     assert prompts.PROMPTS_VERSION
-    assert set(prompts.NOULS) == {"goal_done", "stuck", "destructive", "login_required", "bot_check", "needs_reasoning"}
+    assert set(prompts.NOULS) == {
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning",
+    }
     for spec in prompts.NOULS.values():
         assert spec["instructions"].endswith("?") and spec["true"] and spec["false"]
     assert set(prompts.OPERATION_CRITERIA) == set(OPERATIONS) | set(NON_TARGETED)
@@ -283,7 +337,12 @@ async def test_decide_shrinks_the_menu_when_jev_refuses_the_request_as_too_large
         async def system_one(self, state, questions, **kwargs):
             self.calls.append(state)
             if len(self.calls) == 1:
-                raise TypeSafeAPIError(400, {"detail": {"error_type": "max_tokens_exceeded"}}, httpx.Headers(), endpoint="POST /v1/systemone")
+                raise TypeSafeAPIError(
+                    400,
+                    {"detail": {"error_type": "max_tokens_exceeded"}},
+                    httpx.Headers(),
+                    endpoint="POST /v1/systemone",
+                )
             return self.good
 
     m = small_menu()
@@ -291,6 +350,9 @@ async def test_decide_shrinks_the_menu_when_jev_refuses_the_request_as_too_large
     d = await JevPolicy(client).decide(m, ctx())
     assert d.operation == "click"
     assert len(client.calls) == 2
-    assert len(client.calls[1]["page"]["text"]) <= max(500, len(client.calls[0]["page"]["text"]) // 2) or len(m.page_text) <= 500
+    assert (
+        len(client.calls[1]["page"]["text"]) <= max(500, len(client.calls[0]["page"]["text"]) // 2)
+        or len(m.page_text) <= 500
+    )
     s2 = shrink_menu(shrink_menu(m, 1), 2)
     assert s2.omitted["shrunk_level"] == 2 and len(s2.candidates) <= max(1, len(m.candidates) // 2)

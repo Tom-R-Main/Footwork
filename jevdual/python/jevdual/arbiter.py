@@ -69,10 +69,22 @@ class ArbiterPolicy:
     destructive_confirm: float = 0.5
     #: Q8: words that are destructive only when the surrounding context names something durable
     contextual_keywords: tuple[str, ...] = ("remove", "cancel", "clear")
-    destructive_contexts: tuple[str, ...] = ("account", "subscription", "profile", "settings", "billing", "payment", "membership", "delete", "deactivate", "unsubscribe", "permanently")
+    destructive_contexts: tuple[str, ...] = (
+        "account",
+        "subscription",
+        "profile",
+        "settings",
+        "billing",
+        "payment",
+        "membership",
+        "delete",
+        "deactivate",
+        "unsubscribe",
+        "permanently",
+    )
     destructive_keywords: tuple[str, ...] = (
         "delete",
-                "pay",
+        "pay",
         "purchase",
         "buy now",
         "place order",
@@ -217,7 +229,13 @@ class Arbiter:
                 acted_target = decision.alternates[0]
             self._acted.append((step, menu.url, acted_target))
         self._log[step] = _StepLog(
-            step, menu.url, decision.operation, decision.target, label, verdict, effect.summary if effect else None
+            step,
+            menu.url,
+            decision.operation,
+            decision.target,
+            label,
+            verdict,
+            effect.summary if effect else None,
         )
         return verdict
 
@@ -245,11 +263,17 @@ class Arbiter:
             if self.on_done is not None:
                 self.stats["done_requires_verification"] += 1
                 return self.on_done(decision, menu, ctx, agent)
-            return self._rule("done_requires_verification", "escalate", f"done requires verification (goal_done {goal_done:.2f})")
+            return self._rule(
+                "done_requires_verification",
+                "escalate",
+                f"done requires verification (goal_done {goal_done:.2f})",
+            )
 
         if op == "blocked":
             if login >= p.login_required_escalate:
-                return self._rule("blocked", "escalate", f"login_required {login:.2f} >= {p.login_required_escalate}")
+                return self._rule(
+                    "blocked", "escalate", f"login_required {login:.2f} >= {p.login_required_escalate}"
+                )
             if bot >= p.bot_check_escalate:
                 return self._rule("blocked", "escalate", f"bot_check {bot:.2f} >= {p.bot_check_escalate}")
             return self._rule("blocked", "escalate", "no offered operation can make progress")
@@ -264,9 +288,15 @@ class Arbiter:
         # off here as it does at the agent-level gate; five authorised form fills were paused at zero
         # steps by the destructive noul on 2026-09-22 before this.
         is_auth = getattr(agent, "is_authorized", None)
-        authorized = is_auth(target_label) if callable(is_auth) else bool(getattr(agent, "authorized_destructive", False))
+        authorized = (
+            is_auth(target_label)
+            if callable(is_auth)
+            else bool(getattr(agent, "authorized_destructive", False))
+        )
         if not authorized and destructive >= p.destructive_confirm:
-            return self._rule("destructive", "confirm", f"destructive {destructive:.2f} >= {p.destructive_confirm}")
+            return self._rule(
+                "destructive", "confirm", f"destructive {destructive:.2f} >= {p.destructive_confirm}"
+            )
         if not authorized and target_label is not None:
             cand = menu.candidate(decision.target) if decision.target is not None else None
             context = " ".join(x for x in (menu.url, menu.title, getattr(cand, "section", None) or "") if x)
@@ -275,13 +305,19 @@ class Arbiter:
                 return self._rule("destructive", "confirm", f"keyword {hit!r} in target {target_label!r}")
 
         if needs_reasoning >= p.needs_reasoning_escalate:
-            return self._rule("needs_reasoning", "escalate", f"needs_reasoning {needs_reasoning:.2f} >= {p.needs_reasoning_escalate}")
+            return self._rule(
+                "needs_reasoning",
+                "escalate",
+                f"needs_reasoning {needs_reasoning:.2f} >= {p.needs_reasoning_escalate}",
+            )
 
         if step >= p.stuck_min_step and stuck >= p.stuck_escalate:
             return self._rule("stuck", "escalate", f"stuck {stuck:.2f} >= {p.stuck_escalate} at step {step}")
 
         if decision.targeted and (decision.target is None or not decision.target_probabilities):
-            return self._rule("head_disagreement", "escalate", f"operation {op!r} chosen but no target head answer")
+            return self._rule(
+                "head_disagreement", "escalate", f"operation {op!r} chosen but no target head answer"
+            )
 
         if decision.targeted:
             hits = self._acted_recently(menu.url, decision.target, step, p.repeat_target_window)
@@ -297,9 +333,15 @@ class Arbiter:
             return self._rule("s1_streak", "escalate", f"{streak} consecutive S1 steps >= {p.s1_streak_max}")
 
         if self._no_effect_run >= p.no_effect_steps:
-            return self._rule("no_effect", "escalate", f"{self._no_effect_run} consecutive steps with no visible change")
+            return self._rule(
+                "no_effect", "escalate", f"{self._no_effect_run} consecutive steps with no visible change"
+            )
 
-        op_floor = p.delegated_operation_confidence if getattr(agent, "delegation", None) is not None else p.act_operation_confidence
+        op_floor = (
+            p.delegated_operation_confidence
+            if getattr(agent, "delegation", None) is not None
+            else p.act_operation_confidence
+        )
         if decision.operation_confidence < op_floor:
             return self._rule(
                 "operation_confidence",
@@ -321,9 +363,17 @@ class Arbiter:
                             "retry_alternate",
                             f"target confidence {tconf:.2f} < {p.act_target_confidence}; alternate {alt} p={alt_p:.2f} within {p.retry_alternate_margin} of chosen p={chosen_p:.2f}",
                         )
-                return self._rule("target_confidence", "escalate", f"target confidence {tconf:.2f} < {p.act_target_confidence}")
+                return self._rule(
+                    "target_confidence",
+                    "escalate",
+                    f"target confidence {tconf:.2f} < {p.act_target_confidence}",
+                )
 
-        return self._rule("act", "act", f"operation {decision.operation_confidence:.2f}, target {decision.target_confidence}")
+        return self._rule(
+            "act",
+            "act",
+            f"operation {decision.operation_confidence:.2f}, target {decision.target_confidence}",
+        )
 
     # ---- reporting -------------------------------------------------------------
 
@@ -338,7 +388,11 @@ class Arbiter:
             log = self._log.get(s)
             rec = records.get(s)
             if log is not None:
-                where = f" [{log.target}] {log.label[:50]!r}" if log.target is not None and log.label else (f" [{log.target}]" if log.target is not None else "")
+                where = (
+                    f" [{log.target}] {log.label[:50]!r}"
+                    if log.target is not None and log.label
+                    else (f" [{log.target}]" if log.target is not None else "")
+                )
                 line = f"  step {s}: {log.operation}{where} -> {log.verdict.kind} ({log.verdict.reason})"
                 if log.effect:
                     line += f"; effect: {log.effect}"

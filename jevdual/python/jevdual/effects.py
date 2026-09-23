@@ -79,7 +79,17 @@ def diff(
 ) -> Effect:
     """Compare two observations. ``prev=None`` (first step) is reported as a navigation."""
     if prev is None:
-        return Effect(True, True, len(cur.candidates), 0, 0, 0.0, cur_dialog is not None, False, f"first observation of {_path(cur.url)}")
+        return Effect(
+            True,
+            True,
+            len(cur.candidates),
+            0,
+            0,
+            0.0,
+            cur_dialog is not None,
+            False,
+            f"first observation of {_path(cur.url)}",
+        )
 
     url_changed = prev.url != cur.url
     title_changed = prev.title != cur.title
@@ -125,4 +135,6 @@ def diff(
     if not parts and text_ratio < TEXT_UNCHANGED_RATIO:
         parts.append(f"page text changed ({text_ratio:.0%} similar)")
     summary = "; ".join(parts) if parts else "no visible change"
-    return Effect(url_changed, title_changed, added, removed, changed, text_ratio, dialog_changed, tabs_changed, summary)
+    return Effect(
+        url_changed, title_changed, added, removed, changed, text_ratio, dialog_changed, tabs_changed, summary
+    )

@@ -34,7 +34,9 @@ MENU = Menu(
     page_text="hi",
     candidates=(
         Candidate(id=3, label="About", role="a", operations=("click",), href="/about.html"),
-        Candidate(id=5, label="Search", role="input", operations=("type", "click", "enter"), input_type="search"),
+        Candidate(
+            id=5, label="Search", role="input", operations=("type", "click", "enter"), input_type="search"
+        ),
         Candidate(id=8, label="Topic", role="select", operations=("select", "click"), options=("a", "b")),
         Candidate(id=9, label="Feed", role="div", operations=("scroll",)),
     ),
@@ -55,17 +57,30 @@ def test_click_and_memory(bridge):
 
 
 def test_type_select_enter_scroll(bridge):
-    assert dumped(bridge.build(decision("type", 5), MENU, step=1, text="hello")) == [{"input": {"index": 5, "text": "hello", "clear": True}}]
-    assert dumped(bridge.build(decision("select", 8), MENU, step=1, text="b")) == [{"select_dropdown": {"index": 8, "text": "b"}}]
-    assert dumped(bridge.build(decision("enter", 5), MENU, step=1)) == [{"click": {"index": 5}}, {"send_keys": {"keys": "Enter"}}]
-    assert dumped(bridge.build(decision("scroll", 9), MENU, step=1)) == [{"scroll": {"down": True, "pages": 1.0, "index": 9}}]
+    assert dumped(bridge.build(decision("type", 5), MENU, step=1, text="hello")) == [
+        {"input": {"index": 5, "text": "hello", "clear": True}}
+    ]
+    assert dumped(bridge.build(decision("select", 8), MENU, step=1, text="b")) == [
+        {"select_dropdown": {"index": 8, "text": "b"}}
+    ]
+    assert dumped(bridge.build(decision("enter", 5), MENU, step=1)) == [
+        {"click": {"index": 5}},
+        {"send_keys": {"keys": "Enter"}},
+    ]
+    assert dumped(bridge.build(decision("scroll", 9), MENU, step=1)) == [
+        {"scroll": {"down": True, "pages": 1.0, "index": 9}}
+    ]
 
 
 def test_non_targeted(bridge):
-    assert dumped(bridge.build(decision("scroll_page"), MENU, step=1)) == [{"scroll": {"down": True, "pages": 1.0}}]
+    assert dumped(bridge.build(decision("scroll_page"), MENU, step=1)) == [
+        {"scroll": {"down": True, "pages": 1.0}}
+    ]
     assert dumped(bridge.build(decision("back"), MENU, step=1)) == [{"go_back": {}}]
     assert dumped(bridge.build(decision("wait"), MENU, step=1)) == [{"wait": {"seconds": 2}}]
-    assert dumped(bridge.build(decision("done"), MENU, step=1, done_text="ok")) == [{"done": {"text": "ok", "success": True}}]
+    assert dumped(bridge.build(decision("done"), MENU, step=1, done_text="ok")) == [
+        {"done": {"text": "ok", "success": True}}
+    ]
     blocked = dumped(bridge.build(decision("blocked"), MENU, step=1, blocked_reason="login wall"))
     assert blocked[0]["done"]["success"] is False and "login wall" in blocked[0]["done"]["text"]
 

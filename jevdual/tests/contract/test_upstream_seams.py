@@ -39,7 +39,10 @@ def test_agent_step_phase_order():
     from browser_use.agent.service import Agent
 
     src = _src(Agent.step)
-    positions = [src.find(name) for name in ("_prepare_context", "_get_next_action", "_execute_actions", "_post_process")]
+    positions = [
+        src.find(name)
+        for name in ("_prepare_context", "_get_next_action", "_execute_actions", "_post_process")
+    ]
     assert all(p >= 0 for p in positions), positions
     assert positions == sorted(positions), positions
 
@@ -99,7 +102,14 @@ def test_tools_action_decorator_signatures():
 
     assert list(inspect.signature(Tools.action).parameters) == ["self", "description", "kwargs"]
     reg_params = inspect.signature(Registry.action).parameters
-    assert list(reg_params) == ["self", "description", "param_model", "domains", "allowed_domains", "terminates_sequence"]
+    assert list(reg_params) == [
+        "self",
+        "description",
+        "param_model",
+        "domains",
+        "allowed_domains",
+        "terminates_sequence",
+    ]
 
 
 # Names as they exist in 0.13.10. Surprises relative to the plan's assumptions:
@@ -145,7 +155,9 @@ def registry_actions():
 
 def test_default_registry_action_names(registry_actions):
     # bridge.py: every operation in the Jev policy maps to one of these names
-    assert set(registry_actions) == set(EXPECTED_ACTIONS), sorted(set(registry_actions) ^ set(EXPECTED_ACTIONS))
+    assert set(registry_actions) == set(EXPECTED_ACTIONS), sorted(
+        set(registry_actions) ^ set(EXPECTED_ACTIONS)
+    )
 
 
 def test_default_registry_param_fields(registry_actions):
@@ -177,7 +189,10 @@ def test_serializer_allocates_indices_from_backend_node_id():
     # menu.py: selector_index keys are allocated per backend_node_id and map to original nodes
     from browser_use.dom.serializer.serializer import DOMTreeSerializer
 
-    assert list(inspect.signature(DOMTreeSerializer._allocate_selector_index).parameters) == ["self", "backend_node_id"]
+    assert list(inspect.signature(DOMTreeSerializer._allocate_selector_index).parameters) == [
+        "self",
+        "backend_node_id",
+    ]
     assert "self._selector_map[node.selector_index] = node.original_node" in _src(DOMTreeSerializer)
 
 
@@ -322,7 +337,9 @@ def test_serializer_calls_paint_order_remover_through_its_own_module_binding():
     assert ser_mod.PaintOrderRemover is po_mod.PaintOrderRemover
     src = inspect.getsource(ser_mod.DOMTreeSerializer.serialize_accessible_elements)
     assert "PaintOrderRemover(simplified_tree).calculate_paint_order()" in src
-    assert "from browser_use.dom.serializer.paint_order import PaintOrderRemover" in inspect.getsource(ser_mod)
+    assert "from browser_use.dom.serializer.paint_order import PaintOrderRemover" in inspect.getsource(
+        ser_mod
+    )
 
 
 def test_dom_service_calls_build_snapshot_lookup_through_its_own_module_binding():
@@ -361,7 +378,10 @@ def test_tree_builder_binds_node_class_by_module_name():
 
     from browser_use.dom import service, views
 
-    assert service.EnhancedDOMTreeNode is views.EnhancedDOMTreeNode or getattr(service.EnhancedDOMTreeNode, "__name__", "") == "EnhancedDOMTreeNode"
+    assert (
+        service.EnhancedDOMTreeNode is views.EnhancedDOMTreeNode
+        or getattr(service.EnhancedDOMTreeNode, "__name__", "") == "EnhancedDOMTreeNode"
+    )
     # _construct_enhanced_node is a closure inside get_dom_tree, so it resolves the class name at call time.
     src = inspect.getsource(service.DomService.get_dom_tree)
     assert "def _construct_enhanced_node" in src and "EnhancedDOMTreeNode(" in src

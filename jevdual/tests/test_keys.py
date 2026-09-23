@@ -5,7 +5,14 @@ from jevdual import keys
 
 def test_load_keys_from_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(keys, "KEY_DIR", tmp_path)
-    for var in ("TYPESAFE_API_KEY", "MODEL_API_KEY", "OPENAI_API_KEY", "JEVDUAL_TEXT_BASE_URL", "JEVDUAL_TEXT_API_KEY", "JEVDUAL_TEXT_MODEL"):
+    for var in (
+        "TYPESAFE_API_KEY",
+        "MODEL_API_KEY",
+        "OPENAI_API_KEY",
+        "JEVDUAL_TEXT_BASE_URL",
+        "JEVDUAL_TEXT_API_KEY",
+        "JEVDUAL_TEXT_MODEL",
+    ):
         monkeypatch.delenv(var, raising=False)
     (tmp_path / "META_MODEL_API_KEY").write_text("abc123\n")
     present = keys.load_keys()

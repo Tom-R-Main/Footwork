@@ -9,7 +9,19 @@ from jevdual.tools import GoalParams, MicroLoopResult, register_act_toward_goal
 
 
 def _decision(op, target=None, op_p=0.9, t_p=0.8, **nouls):
-    return Decision(op, op_p, {op: op_p}, target, t_p if target is not None else None, {target: t_p} if target is not None else {}, (), {"goal_done": 0.1, "stuck": 0.0, "destructive": 0.0, **nouls}, "jev-1.13.0", 50, 10.0)
+    return Decision(
+        op,
+        op_p,
+        {op: op_p},
+        target,
+        t_p if target is not None else None,
+        {target: t_p} if target is not None else {},
+        (),
+        {"goal_done": 0.1, "stuck": 0.0, "destructive": 0.0, **nouls},
+        "jev-1.13.0",
+        50,
+        10.0,
+    )
 
 
 def test_registration_and_schema():
@@ -27,7 +39,13 @@ def test_registration_and_schema():
 
 
 def test_result_summary_shape():
-    r = MicroLoopResult(status="reached", goal="open about", steps=[{"operation": "click", "label": "About", "executed": True}], final_url="http://s/about.html", reason="policy reports goal reached")
+    r = MicroLoopResult(
+        status="reached",
+        goal="open about",
+        steps=[{"operation": "click", "label": "About", "executed": True}],
+        final_url="http://s/about.html",
+        reason="policy reports goal reached",
+    )
     assert "reached after 1 step(s)" in r.summary() and r.to_json()["status"] == "reached"
 
 
@@ -64,7 +82,12 @@ def test_micro_loop_end_to_end():
         r = asyncio.run(go())
     finally:
         stop()
-    assert r.status == "reached" and r.final_url.endswith("/about.html") and r.steps[0]["executed"] and r.jev_calls == 2
+    assert (
+        r.status == "reached"
+        and r.final_url.endswith("/about.html")
+        and r.steps[0]["executed"]
+        and r.jev_calls == 2
+    )
 
 
 @pytest.mark.skipif(os.environ.get("JEVDUAL_BROWSER_TESTS") != "1", reason="set JEVDUAL_BROWSER_TESTS=1")
@@ -88,7 +111,13 @@ def test_pause_keyword_halts_before_action():
         await bs.start()
         try:
             await bs.navigate_to(base + "/")
-            return await run_micro_loop("open about", bs, Tools(), decide=decide, config=MicroLoopConfig(pause_before_keywords=("about",)))
+            return await run_micro_loop(
+                "open about",
+                bs,
+                Tools(),
+                decide=decide,
+                config=MicroLoopConfig(pause_before_keywords=("about",)),
+            )
         finally:
             await bs.kill()
 
@@ -110,10 +139,20 @@ def test_delegate_subgoal_tool_starts_a_delegation_on_the_agent():
     tools = Tools()
     register_delegation(tools, lambda: agent)
     assert "delegate_subgoal" in tools.registry.registry.actions
-    params = {"goal": "add the backpack to the cart", "stop_condition": "cart badge shows 1", "allowed_operations": ["click"], "known_values": {}, "max_steps": 5}
+    params = {
+        "goal": "add the backpack to the cart",
+        "stop_condition": "cart badge shows 1",
+        "allowed_operations": ["click"],
+        "known_values": {},
+        "max_steps": 5,
+    }
     result = asyncio.run(tools.registry.execute_action("delegate_subgoal", params))
     assert result.error is None and "Delegated" in (result.extracted_content or "")
-    assert agent.delegation.goal == "add the backpack to the cart" and agent.delegation.budget == 5 and agent.delegation.started_step == 3
+    assert (
+        agent.delegation.goal == "add the backpack to the cart"
+        and agent.delegation.budget == 5
+        and agent.delegation.started_step == 3
+    )
     again = asyncio.run(tools.registry.execute_action("delegate_subgoal", params))
     assert again.error and "already active" in again.error
 
@@ -128,9 +167,27 @@ def test_delegate_subgoal_refuses_a_typing_assignment_without_values():
     agent = SimpleNamespace(delegation=None, state=SimpleNamespace(n_steps=1))
     tools = Tools()
     register_delegation(tools, lambda: agent)
-    r = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Sign in with username standard_user and the password provided", "stop_condition": "products page shown", "known_values": {}}))
+    r = asyncio.run(
+        tools.registry.execute_action(
+            "delegate_subgoal",
+            {
+                "goal": "Sign in with username standard_user and the password provided",
+                "stop_condition": "products page shown",
+                "known_values": {},
+            },
+        )
+    )
     assert r.error and "known_values" in r.error and agent.delegation is None
-    r2 = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Sign in with username standard_user and the password provided", "stop_condition": "products page shown", "known_values": {"username": "standard_user", "password": "<secret>pw</secret>"}}))
+    r2 = asyncio.run(
+        tools.registry.execute_action(
+            "delegate_subgoal",
+            {
+                "goal": "Sign in with username standard_user and the password provided",
+                "stop_condition": "products page shown",
+                "known_values": {"username": "standard_user", "password": "<secret>pw</secret>"},
+            },
+        )
+    )
     assert r2.error is None and agent.delegation is not None
 
 
@@ -144,7 +201,23 @@ def test_delegate_subgoal_search_goals_need_a_value_or_a_quoted_query():
     agent = SimpleNamespace(delegation=None, state=SimpleNamespace(n_steps=1))
     tools = Tools()
     register_delegation(tools, lambda: agent)
-    r = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Search Wikipedia for Eiffel Tower and open its article", "stop_condition": "article shown"}))
+    r = asyncio.run(
+        tools.registry.execute_action(
+            "delegate_subgoal",
+            {
+                "goal": "Search Wikipedia for Eiffel Tower and open its article",
+                "stop_condition": "article shown",
+            },
+        )
+    )
     assert r.error and "value" in r.error and agent.delegation is None
-    r2 = asyncio.run(tools.registry.execute_action("delegate_subgoal", {"goal": "Search Wikipedia for 'Eiffel Tower' and open its article", "stop_condition": "article shown"}))
+    r2 = asyncio.run(
+        tools.registry.execute_action(
+            "delegate_subgoal",
+            {
+                "goal": "Search Wikipedia for 'Eiffel Tower' and open its article",
+                "stop_condition": "article shown",
+            },
+        )
+    )
     assert r2.error is None and agent.delegation is not None

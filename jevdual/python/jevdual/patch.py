@@ -94,8 +94,14 @@ def install_paint_order() -> bool:
 
     for mod in (po_mod, ser_mod):
         current = getattr(mod, "PaintOrderRemover", None)
-        if current is not None and current is not po_mod.PaintOrderRemover and current is not _NativePaintOrderRemover:
-            log.warning("%s.PaintOrderRemover already replaced by something else; leaving it alone", mod.__name__)
+        if (
+            current is not None
+            and current is not po_mod.PaintOrderRemover
+            and current is not _NativePaintOrderRemover
+        ):
+            log.warning(
+                "%s.PaintOrderRemover already replaced by something else; leaving it alone", mod.__name__
+            )
             return False
     _ORIGINALS.setdefault("PaintOrderRemover", po_mod.PaintOrderRemover)
     po_mod.PaintOrderRemover = _NativePaintOrderRemover  # type: ignore[assignment]
@@ -121,8 +127,14 @@ def install_snapshot_lookup() -> bool:
 
     for mod in (es_mod, svc_mod):
         current = getattr(mod, "build_snapshot_lookup", None)
-        if current is not None and current is not es_mod.build_snapshot_lookup and current is not adapter.snapshot_lookup:
-            log.warning("%s.build_snapshot_lookup already replaced by something else; leaving it alone", mod.__name__)
+        if (
+            current is not None
+            and current is not es_mod.build_snapshot_lookup
+            and current is not adapter.snapshot_lookup
+        ):
+            log.warning(
+                "%s.build_snapshot_lookup already replaced by something else; leaving it alone", mod.__name__
+            )
             return False
     _ORIGINALS.setdefault("build_snapshot_lookup", es_mod.build_snapshot_lookup)
     es_mod.build_snapshot_lookup = adapter.snapshot_lookup  # type: ignore[assignment]

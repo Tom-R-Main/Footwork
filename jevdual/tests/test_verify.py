@@ -35,7 +35,9 @@ PAGE = (
 
 
 def menu(text=PAGE):
-    return Menu(url="http://s/article.html", title="Kestrel Bay", page_text=text, candidates=(), by_operation={})
+    return Menu(
+        url="http://s/article.html", title="Kestrel Bay", page_text=text, candidates=(), by_operation={}
+    )
 
 
 REQS = ("Order was placed", "Confirmation names the customer")
@@ -62,7 +64,7 @@ def test_evidence_match_grades_and_spans():
 
 def test_evidence_match_curly_quotes_and_nbsp():
     page = "The keeper’s cottage “became” a museum"
-    res = evidence_match(["keeper's cottage \"became\" a museum"], page)
+    res = evidence_match(['keeper\'s cottage "became" a museum'], page)
     assert res[0]["grade"] == "normalized" and page[res[0]["start"] : res[0]["end"]].startswith("keeper")
 
 
@@ -113,7 +115,11 @@ def test_accept_path():
     assert verdict.unmet == {REQS[0]: 0.05, REQS[1]: 0.08}
     assert verdict.claims == [] and verdict.supported_answer is None
     t = verdict.to_trace()
-    assert t["band"] == "accept" and t["unsupported"] == 0 and set(t) == {"band", "complete", "unmet", "unmet_effective", "claims", "unsupported", "reason"}
+    assert (
+        t["band"] == "accept"
+        and t["unsupported"] == 0
+        and set(t) == {"band", "complete", "unmet", "unmet_effective", "claims", "unsupported", "reason"}
+    )
 
 
 def test_reject_on_one_unmet():
@@ -138,14 +144,26 @@ def test_unsupported_claims_are_dropped_but_accept_survives_if_some_supported():
 
 def test_confidently_wrong_done_cannot_accept_without_evidence():
     # Jev says complete=0.90, unmet=0.10, but the answer quotes a value the page does not contain.
-    verdict = run(Verifier(FakeClient(load("verify_confident_wrong"))), "Report the height", ("Height reported",), menu(), "It stands 45 metres tall.")
+    verdict = run(
+        Verifier(FakeClient(load("verify_confident_wrong"))),
+        "Report the height",
+        ("Height reported",),
+        menu(),
+        "It stands 45 metres tall.",
+    )
     assert verdict.band == "verify"
     assert verdict.supported_answer is None and verdict.unsupported_claims == ("It stands 45 metres tall.",)
     assert "no fact found on the page" in verdict.reason
 
 
 def test_missing_answer_key_is_policy_error():
-    bad = SystemOneResponse.model_validate({"model": "jev-1.13.0", "usage": {"input_tokens": 1, "output_tokens": 0}, "answers": {"complete": {"type": "noul", "noul": 0.9}}})
+    bad = SystemOneResponse.model_validate(
+        {
+            "model": "jev-1.13.0",
+            "usage": {"input_tokens": 1, "output_tokens": 0},
+            "answers": {"complete": {"type": "noul", "noul": 0.9}},
+        }
+    )
     with pytest.raises(PolicyError):
         run(Verifier(FakeClient(bad)), "t", ("r",), menu(), None)
 
@@ -161,7 +179,9 @@ def test_arbiter_hook():
 
 def test_answer_required_blocks_done_without_answer():
     """A done on an answer task with no answer text cannot be accepted even if the page shows the outcome."""
-    verdict = run(Verifier(FakeClient(load("verify_answer_required"))), "Report the order total", REQS, menu(), None)
+    verdict = run(
+        Verifier(FakeClient(load("verify_answer_required"))), "Report the order total", REQS, menu(), None
+    )
     assert verdict.band == "verify" and "asks for an answer" in verdict.reason
     ok = run(Verifier(FakeClient(load("verify_accept"))), "Open the checkout", REQS, menu(), None)
     assert ok.band == "accept"
@@ -172,13 +192,18 @@ def test_atoms_and_narrative_grading():
 
     page = 'Catalog. Showing page 2 of 3. Fender, blue $12.00. Rope, 30 m $19.99. 0 results for "kayak". The Fleet plan costs $99 per month.'
     assert extract_atoms("The 30 m rope in the catalog costs $19.99.") == ["30 m", "$19.99"]
-    assert extract_atoms("Navigated to page 2 at http://127.0.0.1:5/list.html?page=2 (Showing page 2 of 3). The first item listed there is: Fender, blue.")[-1] == "Fender, blue"
+    assert (
+        extract_atoms(
+            "Navigated to page 2 at http://127.0.0.1:5/list.html?page=2 (Showing page 2 of 3). The first item listed there is: Fender, blue."
+        )[-1]
+        == "Fender, blue"
+    )
     checks = check_claims(
         'Searched the catalog for "kayak" at http://127.0.0.1:5/search.html?q=kayak. The page displays: 0 results for "kayak". I clicked around a bit. The lighthouse is 45 metres tall.',
         page,
     )
     grades = {c.claim[:22]: c.grade for c in checks}
-    assert grades['Searched the catalog f'] in ("exact", "normalized")
+    assert grades["Searched the catalog f"] in ("exact", "normalized")
     assert grades["The page displays: 0 r"] in ("exact", "normalized")
     assert grades["I clicked around a bit"] == "narrative"
     assert grades["The lighthouse is 45 m"] == "none"
@@ -188,8 +213,19 @@ def test_claims_are_checked_against_the_full_page_text_and_the_excerpt_centres_o
     from jevdual.verify import evidence_excerpt
 
     filler = "Built-in exceptions. " * 500  # ~10k chars before the definition
-    full = filler + "exception KeyError Raised when a mapping (dictionary) key is not found in the set of existing keys. " + "More text. " * 300
-    m = Menu(url="http://s/exceptions.html", title="Exceptions", page_text=full[:6000], candidates=(), by_operation={}, full_text=full)
+    full = (
+        filler
+        + "exception KeyError Raised when a mapping (dictionary) key is not found in the set of existing keys. "
+        + "More text. " * 300
+    )
+    m = Menu(
+        url="http://s/exceptions.html",
+        title="Exceptions",
+        page_text=full[:6000],
+        candidates=(),
+        by_operation={},
+        full_text=full,
+    )
     answer = "The exception raised when a dictionary key is not found is KeyError."
     client = FakeClient(load("verify_accept"))
     verdict = run(Verifier(client), "Find the exception name", ("Exception name reported",), m, answer)

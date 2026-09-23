@@ -12,7 +12,14 @@ def link(i, label, href=None):
 
 
 def field(i, label, value=None):
-    return Candidate(id=i, label=label, role="textbox", operations=("type", "click", "enter"), value=value, input_type="text")
+    return Candidate(
+        id=i,
+        label=label,
+        role="textbox",
+        operations=("type", "click", "enter"),
+        value=value,
+        input_type="text",
+    )
 
 
 def test_identical_is_no_effect():

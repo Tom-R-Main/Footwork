@@ -91,7 +91,9 @@ SUBGOAL_ACTION_RULES: tuple[str, ...] = (
 )
 
 
-def operation_instructions(task: str, subgoal: str | None = None, stop_condition: str | None = None) -> dict[str, object]:
+def operation_instructions(
+    task: str, subgoal: str | None = None, stop_condition: str | None = None
+) -> dict[str, object]:
     if subgoal:
         out: dict[str, object] = {
             "question": "Which one operation should run next to advance `subgoal` from the current page?",
@@ -155,7 +157,10 @@ def group_instructions(task: str, operation: str, subgoal: str | None = None) ->
     }
     if subgoal:
         out["subgoal"] = subgoal
-        out["rules"] = ["Choose for `subgoal`, the bounded assignment now in progress; `task` is only background.", *GROUP_RULES]
+        out["rules"] = [
+            "Choose for `subgoal`, the bounded assignment now in progress; `task` is only background.",
+            *GROUP_RULES,
+        ]
     return out
 
 
@@ -234,7 +239,7 @@ VERIFY_COMPLETE: dict[str, str] = {
 def verify_unmet(index: int, requirement: str) -> dict[str, str]:
     """Noul asking whether ONE requirement is NOT satisfied. Absolute; independent of `complete`."""
     return {
-        "instructions": f"Is `requirements[{index}]` (\"{requirement}\") NOT satisfied, judging from `page.text` as it "
+        "instructions": f'Is `requirements[{index}]` ("{requirement}") NOT satisfied, judging from `page.text` as it '
         "is now and from the actions recorded in `trajectory`?",
         "true": "Nothing in `page.text` shows this requirement's outcome and no entry in `trajectory` records the "
         "action it names as executed, or the page shows only a way to reach it, or it shows a different outcome "
@@ -256,7 +261,7 @@ VERIFY_ANSWER_REQUIRED: dict[str, str] = {
 def verify_kind(index: int, requirement: str) -> dict[str, Any]:
     """Choice: what kind of thing ``requirements[index]`` is, asked once per run (jevdual.ledger)."""
     return {
-        "instructions": f"What kind of requirement is `requirements[{index}]` (\"{requirement}\")?",
+        "instructions": f'What kind of requirement is `requirements[{index}]` ("{requirement}")?',
         "criteria": {
             "historical_action": "It names an action that, once performed, stays performed: a form submitted, a "
             "page or article opened, text entered, a button clicked, a search run, a key pressed.",

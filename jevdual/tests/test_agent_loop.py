@@ -38,7 +38,9 @@ class EscalatingPolicy:
 
 async def _run(httpserver, llm, *, policy=None, authorized=False, max_steps=6, use_judge=False):
     httpserver.expect_request("/").respond_with_data(PAGE, content_type="text/html")
-    httpserver.expect_request("/delete-account").respond_with_data("<html><body>Deleted</body></html>", content_type="text/html")
+    httpserver.expect_request("/delete-account").respond_with_data(
+        "<html><body>Deleted</body></html>", content_type="text/html"
+    )
     agent = DualProcessAgent(
         task="Open the account page and report the balance.",
         llm=llm,
@@ -69,7 +71,9 @@ async def test_gate_pauses_an_unauthorized_navigation_to_a_destructive_url(https
 
 
 async def test_gate_lets_an_authorized_task_through(httpserver):
-    llm = create_mock_llm([step({"navigate": {"url": httpserver.url_for("/delete-account")}}), done("deleted")])
+    llm = create_mock_llm(
+        [step({"navigate": {"url": httpserver.url_for("/delete-account")}}), done("deleted")]
+    )
     agent, history, urls = await _run(httpserver, llm, authorized=True)
     assert agent.paused_before_action is None
     assert any(u.endswith("/delete-account") for u in urls)
@@ -109,21 +113,27 @@ def test_is_authorized_scope_on_the_agent():
     from types import SimpleNamespace
 
     a = SimpleNamespace(authorized_destructive=True, authorized_actions=("finish",))
-    assert DualProcessAgent.is_authorized(a, "Finish order") and not DualProcessAgent.is_authorized(a, "Delete account")
+    assert DualProcessAgent.is_authorized(a, "Finish order") and not DualProcessAgent.is_authorized(
+        a, "Delete account"
+    )
     a2 = SimpleNamespace(authorized_destructive=True, authorized_actions=())
     assert DualProcessAgent.is_authorized(a2, "Delete account")  # task-wide, the old behaviour
     a3 = SimpleNamespace(authorized_destructive=False, authorized_actions=("finish",))
     assert not DualProcessAgent.is_authorized(a3, "Finish")
 
 
-async def test_evaluate_is_refused_recoverably_twice_then_paused(httpserver):
-    llm = create_mock_llm([
-        step({"evaluate": {"code": "document.title"}}),
-        step({"evaluate": {"code": "document.title"}}),
-        step({"evaluate": {"code": "document.title"}}),
-    ])
+async def test_evaluate_pauses_at_once(httpserver):
+    """The recoverable refusal was measured and removed (results/q8-consent.md): evaluate pauses on first use."""
+    llm = create_mock_llm(
+        [step({"evaluate": {"code": "document.title"}}), step({"evaluate": {"code": "document.title"}})]
+    )
     agent, history, _ = await _run(httpserver, llm, max_steps=6)
-    assert agent.evaluate_refusals == 2
+    assert agent.evaluate_refusals == 0
     assert agent.paused_before_action is not None and agent.paused_before_action["keyword"] == "evaluate"
-    names = [n for h in history.history for a in (h.model_output.action if h.model_output else []) for n in a.model_dump(exclude_unset=True)]
-    assert names[:2] == ["wait", "wait"] and names[-1] == "done"
+    names = [
+        n
+        for h in history.history
+        for a in (h.model_output.action if h.model_output else [])
+        for n in a.model_dump(exclude_unset=True)
+    ]
+    assert names == ["done"]

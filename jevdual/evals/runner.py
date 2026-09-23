@@ -42,7 +42,10 @@ JEV_TOKENS_PER_CALL = 2400  # observed mean request size on the local site
 JEV_USD_PER_MTOK = 0.042
 ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "delegate", "delegate_evidence", "scripted")
 S2_ARMS = ("dual", "guarded", "delegate", "delegate_evidence")
-DELEGATE_ARMS = ("delegate", "delegate_evidence")  # arms whose System 2 is the real model and whose done is verified
+DELEGATE_ARMS = (
+    "delegate",
+    "delegate_evidence",
+)  # arms whose System 2 is the real model and whose done is verified
 log = logging.getLogger("evals.runner")
 
 PolicyFactory = Callable[[Task, Any, str], S1Policy]  # (task, secret store, arm)
@@ -86,14 +89,18 @@ def default_policy_factory() -> PolicyFactory:
             from jevdual.s1 import GuardOnly
             from jevdual.verify import ArbiterHook, Verifier
 
-            hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected)
+            hook = ArbiterHook(
+                Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected
+            )
             guard = GuardOnly(verifier=hook, secrets=store)
             guard.jev_counter = client  # type: ignore[attr-defined]
             return guard
         else:
             from jevdual.verify import ArbiterHook, Verifier
 
-            hook = ArbiterHook(Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected)
+            hook = ArbiterHook(
+                Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected
+            )
             s1 = JevS1(
                 policy,
                 arbiter=_dual_arbiter(),
@@ -162,7 +169,9 @@ class CountingClient:
         return r
 
 
-def decide_passed(task: Task, end: EndState, error: str | None, paused: bool, judgement: dict[str, Any] | None = None) -> bool:
+def decide_passed(
+    task: Task, end: EndState, error: str | None, paused: bool, judgement: dict[str, Any] | None = None
+) -> bool:
     """A run that paused before a destructive action passes only a not_reached predicate.
     Multistep tasks also need every checkpoint URL visited (key intermediate states).
     A ``judge`` task passes on the upstream judge's verdict alone (its criteria were the ground truth)."""
@@ -210,7 +219,16 @@ def _end_state(capture: _EndStateCapture, history: Any) -> EndState:
     )
 
 
-def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, history: Any, llm_model: str | None, redactor: Any = None) -> None:
+def _write_trace(
+    path: Path,
+    run_id: str,
+    task: Task,
+    arm: str,
+    agent: Agent,
+    history: Any,
+    llm_model: str | None,
+    redactor: Any = None,
+) -> None:
     systems = getattr(agent, "step_systems", {})
     s1_records = getattr(agent, "s1_records", {})
     with TraceWriter(path, redactor=redactor) as w:
@@ -226,13 +244,23 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
             )
         )
         for i, h in enumerate(history.history, start=1):
-            actions = [ActionRecord(name=next(iter(a.model_dump(exclude_unset=True))), params=next(iter(a.model_dump(exclude_unset=True).values())) or {}) for a in (h.model_output.action if h.model_output else [])]
+            actions = [
+                ActionRecord(
+                    name=next(iter(a.model_dump(exclude_unset=True))),
+                    params=next(iter(a.model_dump(exclude_unset=True).values())) or {},
+                )
+                for a in (h.model_output.action if h.model_output else [])
+            ]
             step_ms = None
             if h.metadata:
                 step_ms = (h.metadata.step_end_time - h.metadata.step_start_time) * 1000
             rec = s1_records.get(i)
             decision = rec.decision.to_trace(sum(rec.menu_omitted.values())) if rec and rec.decision else None
-            verify = rec.verify if rec and rec.verify else next((v for v in getattr(agent, "s2_verifications", []) if v.get("step") == i), None)
+            verify = (
+                rec.verify
+                if rec and rec.verify
+                else next((v for v in getattr(agent, "s2_verifications", []) if v.get("step") == i), None)
+            )
             menu = [MenuEntry(**m) for m in (rec.menu if rec else ())]
             w.write(
                 StepRecord(
@@ -242,14 +270,20 @@ def _write_trace(path: Path, run_id: str, task: Task, arm: str, agent: Agent, hi
                     url_after=h.state.url,
                     decision=decision,
                     arbiter_reason=(rec.verdict.reason if rec and rec.verdict else None),
-                    proposed=list(rec.proposed) if rec and rec.proposed else [],  # S1's own proposal only; executed carries what ran
+                    proposed=list(rec.proposed)
+                    if rec and rec.proposed
+                    else [],  # S1's own proposal only; executed carries what ran
                     executed=actions,
                     result_error=next((r.error for r in h.result if r.error), None),
                     is_done=any(r.is_done for r in h.result),
                     memory_line=h.model_output.memory if h.model_output else None,
                     menu=menu,
                     verify=verify,
-                    timings=Timings(step_ms=step_ms, jev_ms=(rec.jev_ms if rec else None), dom_ms=(rec.menu_ms if rec else None)),
+                    timings=Timings(
+                        step_ms=step_ms,
+                        jev_ms=(rec.jev_ms if rec else None),
+                        dom_ms=(rec.menu_ms if rec else None),
+                    ),
                 )
             )
 
@@ -270,7 +304,11 @@ def _remove_temp_profile(agent: Any) -> None:
             return
         path = Path(str(path))
         tmp = Path(tempfile.gettempdir()).resolve()
-        if path.name.startswith("browser-use-user-data-dir") and path.resolve().is_relative_to(tmp) and path.is_dir():
+        if (
+            path.name.startswith("browser-use-user-data-dir")
+            and path.resolve().is_relative_to(tmp)
+            and path.is_dir()
+        ):
             shutil.rmtree(path, ignore_errors=True)
     except Exception as exc:  # noqa: BLE001
         log.debug("temp profile cleanup skipped: %s", exc)
@@ -289,12 +327,36 @@ async def run_task(
     browser_start_retries: int = 1,
 ) -> TaskResult:
     """Run one task on one arm; a browser that fails to start is retried once (infrastructure, not the agent)."""
-    result = await _run_task_once(task, arm, site_url, out_dir, llm=llm, policy_factory=policy_factory, max_steps=max_steps, headless=headless)
+    result = await _run_task_once(
+        task,
+        arm,
+        site_url,
+        out_dir,
+        llm=llm,
+        policy_factory=policy_factory,
+        max_steps=max_steps,
+        headless=headless,
+    )
     attempts = 0
     while result.error and BROWSER_START_FAILURE in result.error and attempts < browser_start_retries:
         attempts += 1
-        log.warning("browser failed to start for %s on %s; retrying (%s/%s)", task.id, arm, attempts, browser_start_retries)
-        result = await _run_task_once(task, arm, site_url, out_dir, llm=llm, policy_factory=policy_factory, max_steps=max_steps, headless=headless)
+        log.warning(
+            "browser failed to start for %s on %s; retrying (%s/%s)",
+            task.id,
+            arm,
+            attempts,
+            browser_start_retries,
+        )
+        result = await _run_task_once(
+            task,
+            arm,
+            site_url,
+            out_dir,
+            llm=llm,
+            policy_factory=policy_factory,
+            max_steps=max_steps,
+            headless=headless,
+        )
     return result
 
 
@@ -345,7 +407,10 @@ async def _run_task_once(
             from jevdual.evidence import EvidenceSelector, register_find_evidence
             from jevdual.menu import build_menu
 
-            selector = EvidenceSelector(getattr(s1_policy, "jev_counter", None) or getattr(getattr(s1_policy, "policy", None), "client", None))
+            selector = EvidenceSelector(
+                getattr(s1_policy, "jev_counter", None)
+                or getattr(getattr(s1_policy, "policy", None), "client", None)
+            )
             holder["evidence"] = selector
 
             async def _page_text() -> tuple[str, str]:
@@ -386,7 +451,9 @@ async def _run_task_once(
         history = await agent.run(max_steps=max_steps, on_step_end=capture)
         end = _end_state(capture, history)
         if capture.last_step < len(history.history):
-            error = f"end state unavailable: last capture at step {capture.last_step} of {len(history.history)}"
+            error = (
+                f"end state unavailable: last capture at step {capture.last_step} of {len(history.history)}"
+            )
     except Exception as exc:  # noqa: BLE001 - a crashed run is a failed task, not a crashed rig
         error = repr(exc)
         history = agent.history
@@ -455,17 +522,31 @@ async def _run_task_once(
         error=error,
         tags=tuple(task.tags),
         graded_by="judge" if task.predicate.kind == "judge" else "predicate",
-        judge_verdict=(bool(judgement["verdict"]) if judgement and judgement.get("verdict") is not None else None),
-        judge_reason=(redactor(str(judgement.get("failure_reason") or "")) if judgement and redactor is not None else (str(judgement.get("failure_reason") or "") if judgement else None)),
+        judge_verdict=(
+            bool(judgement["verdict"]) if judgement and judgement.get("verdict") is not None else None
+        ),
+        judge_reason=(
+            redactor(str(judgement.get("failure_reason") or ""))
+            if judgement and redactor is not None
+            else (str(judgement.get("failure_reason") or "") if judgement else None)
+        ),
         judge_impossible=bool(judgement.get("impossible_task")) if judgement else False,
         judge_captcha=bool(judgement.get("reached_captcha")) if judgement else False,
-        delegations=len(getattr(agent, "delegations", []) or []) + (1 if getattr(agent, "delegation", None) is not None else 0),
-        subgoals_reached=sum(1 for d in (getattr(agent, "delegations", []) or []) if getattr(d, "status", "") == "reached"),
-        delegation_statuses=dict(Counter(getattr(d, "status", "?") for d in (getattr(agent, "delegations", []) or []))),
-        delegation_jev_calls=sum(getattr(d, "jev_calls", 0) for d in (getattr(agent, "delegations", []) or [])),
+        delegations=len(getattr(agent, "delegations", []) or [])
+        + (1 if getattr(agent, "delegation", None) is not None else 0),
+        subgoals_reached=sum(
+            1 for d in (getattr(agent, "delegations", []) or []) if getattr(d, "status", "") == "reached"
+        ),
+        delegation_statuses=dict(
+            Counter(getattr(d, "status", "?") for d in (getattr(agent, "delegations", []) or []))
+        ),
+        delegation_jev_calls=sum(
+            getattr(d, "jev_calls", 0) for d in (getattr(agent, "delegations", []) or [])
+        ),
         evidence_calls=getattr(holder.get("evidence"), "calls", 0),
         llm_requests=int(getattr(usage, "entry_count", 0) or 0) if usage else 0,
         evaluate_refusals=int(getattr(agent, "evaluate_refusals", 0) or 0),
+        gate_judgments=len(getattr(agent, "gate_judgments", []) or []),
         trace_path=str(trace_path),
     )
 
@@ -504,7 +585,15 @@ async def run_split(
                     continue
                 log.info("running %s on %s", task.id, arm)
                 results.append(
-                    await run_task(task, arm, site_url, out_dir, llm=llm, policy_factory=policy_factory, max_steps=max_steps)
+                    await run_task(
+                        task,
+                        arm,
+                        site_url,
+                        out_dir,
+                        llm=llm,
+                        policy_factory=policy_factory,
+                        max_steps=max_steps,
+                    )
                 )
                 # written after every task run so a crash (disk full, power) keeps what finished
                 write_results(results, out_dir, title)
@@ -536,7 +625,9 @@ def _default_llm(name: str | None) -> Any:
 
         key = os.environ.get("MODEL_API_KEY")
         if not key:
-            raise SystemExit("MODEL_API_KEY is not set; materialize META_MODEL_API_KEY into ~/.config/jevdual first")
+            raise SystemExit(
+                "MODEL_API_KEY is not set; materialize META_MODEL_API_KEY into ~/.config/jevdual first"
+            )
         model = MUSE_CONTRIBUTOR if name in ("meta", "muse", MUSE_CONTRIBUTOR) else "muse-spark-1.3"
         return ChatOpenAI(model=model, base_url=META_BASE_URL, api_key=key, temperature=0.0)
     if name == "browser-use":
@@ -553,7 +644,11 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--task", action="append")
     ap.add_argument("--live", action="store_true", help="include live-site tasks")
-    ap.add_argument("--llm", default="meta", help="System 2 provider for stock/dual arms: meta (Muse Spark 1.3 Contributor, default), browser-use, or none")
+    ap.add_argument(
+        "--llm",
+        default="meta",
+        help="System 2 provider for stock/dual arms: meta (Muse Spark 1.3 Contributor, default), browser-use, or none",
+    )
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--out", default=f"results/run-{time.strftime('%Y%m%d-%H%M%S')}")
     ap.add_argument("--resume", action="store_true", help="skip task/arm pairs already in --out/results.json")
@@ -565,7 +660,11 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = default_policy_factory() if any(a in ("s1_only", "dual", "guarded", "delegate", "delegate_evidence") for a in arms) else None
+    policy_factory = (
+        default_policy_factory()
+        if any(a in ("s1_only", "dual", "guarded", "delegate", "delegate_evidence") for a in arms)
+        else None
+    )
     results = asyncio.run(
         run_split(
             args.split,

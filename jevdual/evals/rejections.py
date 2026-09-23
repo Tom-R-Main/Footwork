@@ -30,7 +30,10 @@ PROCESS_WORDS = re.compile(
     r"dismissed|handled|performed|navigated|followed|added|pressed|waited|sorted|filled|logged)\b",
     re.IGNORECASE,
 )
-OUTCOME_WORDS = re.compile(r"\b(reported|found|price|answer|name|year|total|message|amount|title|author|license|language)\b", re.IGNORECASE)
+OUTCOME_WORDS = re.compile(
+    r"\b(reported|found|price|answer|name|year|total|message|amount|title|author|license|language)\b",
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -80,7 +83,9 @@ def load(run_dir: Path) -> list[Rejection]:
             if m:
                 cur = (m.group(1), m.group(2))
                 continue
-            m = re.search(r"step (\d+): System 2 done rejected by verification \((verify|reject)\): (.*)$", line)
+            m = re.search(
+                r"step (\d+): System 2 done rejected by verification \((verify|reject)\): (.*)$", line
+            )
             if m and cur and cur[1] == "dual":
                 cat, req = categorise(m.group(3))
                 out.append(Rejection(cur[0], "s2", int(m.group(1)), m.group(2), m.group(3).strip(), cat, req))
@@ -123,10 +128,17 @@ def render(run_dir: Path, rejections: list[Rejection]) -> str:
     lines = [f"# Done rejections: {run_dir.name}", ""]
     for system, label in (("s2", "System 2 done rejected"), ("s1", "System 1 done vetoed")):
         rs = [r for r in rejections if r.system == system]
-        lines += [f"## {label} ({len(rs)})", "", "| category | count | run later passed | at final URL and passed (false reject by predicate) |", "|---|---|---|---|"]
+        lines += [
+            f"## {label} ({len(rs)})",
+            "",
+            "| category | count | run later passed | at final URL and passed (false reject by predicate) |",
+            "|---|---|---|---|",
+        ]
         for cat, n in Counter(r.category for r in rs).most_common():
             sub = [r for r in rs if r.category == cat]
-            lines.append(f"| {cat} | {n} | {sum(1 for r in sub if r.passed)} | {sum(1 for r in sub if r.false_reject)} |")
+            lines.append(
+                f"| {cat} | {n} | {sum(1 for r in sub if r.passed)} | {sum(1 for r in sub if r.false_reject)} |"
+            )
         reqs = Counter(r.requirement for r in rs if r.requirement)
         if reqs:
             lines += ["", "Requirements judged unmet most often:", ""]

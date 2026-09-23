@@ -41,7 +41,9 @@ class _StubBrowserSession:
         self.logger = logging.getLogger("jevdual.replay")
         self._cdp = _StubCdpSession()
 
-    async def get_or_create_cdp_session(self, target_id: str | None = None, focus: bool = False) -> _StubCdpSession:
+    async def get_or_create_cdp_session(
+        self, target_id: str | None = None, focus: bool = False
+    ) -> _StubCdpSession:
         return self._cdp
 
     async def get_all_frames(self) -> tuple[dict, dict]:  # only reached with cross_origin_iframes=True

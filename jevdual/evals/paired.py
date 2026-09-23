@@ -45,7 +45,12 @@ def bootstrap_mean_ci(diffs: list[float], n: int = 4000, seed: int = 7) -> tuple
 
 def compare(a: dict[str, dict], b: dict[str, dict]) -> dict[str, Any]:
     common = sorted(set(a) & set(b))
-    out: dict[str, Any] = {"n": len(common), "only_a": sorted(set(a) - set(b)), "only_b": sorted(set(b) - set(a)), "fields": {}}
+    out: dict[str, Any] = {
+        "n": len(common),
+        "only_a": sorted(set(a) - set(b)),
+        "only_b": sorted(set(b) - set(a)),
+        "fields": {},
+    }
     for f in FIELDS:
         diffs = [float(b[t][f]) - float(a[t][f]) for t in common]
         if not diffs:
@@ -66,10 +71,15 @@ def render(res: dict[str, Any], label_a: str, label_b: str) -> str:
     lines = [f"Paired on {res['n']} tasks: A = {label_a}, B = {label_b}", ""]
     if res["only_a"] or res["only_b"]:
         lines += [f"only in A: {res['only_a']}", f"only in B: {res['only_b']}", ""]
-    lines += ["| field | A total | B total | mean B−A per task | 95% CI | tasks B better | tasks A better |", "|---|---|---|---|---|---|---|"]
+    lines += [
+        "| field | A total | B total | mean B−A per task | 95% CI | tasks B better | tasks A better |",
+        "|---|---|---|---|---|---|---|",
+    ]
     for f, v in res["fields"].items():
         lo, hi = v["ci95"]
-        lines.append(f"| {f} | {v['a_total']:.3f} | {v['b_total']:.3f} | {v['mean_diff']:+.3f} | [{lo:+.3f}, {hi:+.3f}] | {v['b_better']} | {v['a_better']} |")
+        lines.append(
+            f"| {f} | {v['a_total']:.3f} | {v['b_total']:.3f} | {v['mean_diff']:+.3f} | [{lo:+.3f}, {hi:+.3f}] | {v['b_better']} | {v['a_better']} |"
+        )
     return "\n".join(lines) + "\n"
 
 

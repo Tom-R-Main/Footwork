@@ -58,8 +58,12 @@ def memory_line(step: int, decision: Decision, target: Candidate | None, menu: M
     """One line per S1 step; System 2 reads these from history on escalation."""
     where = f"[{target.id}] {target.label[:60]!r}" if target is not None else ""
     tp = f" p={decision.target_confidence:.2f}" if decision.target_confidence is not None else ""
-    nouls = " ".join(f"{k}={v:.2f}" for k, v in decision.nouls.items() if k in ("goal_done", "stuck", "destructive"))
-    return f"S1 step {step}: {decision.operation} {where}{tp} (op p={decision.operation_confidence:.2f}; {nouls}) on {menu.url}".replace("  ", " ")
+    nouls = " ".join(
+        f"{k}={v:.2f}" for k, v in decision.nouls.items() if k in ("goal_done", "stuck", "destructive")
+    )
+    return f"S1 step {step}: {decision.operation} {where}{tp} (op p={decision.operation_confidence:.2f}; {nouls}) on {menu.url}".replace(
+        "  ", " "
+    )
 
 
 class Bridge:
@@ -88,7 +92,9 @@ class Bridge:
             if target is None:
                 raise BridgeError("target_missing", f"target {decision.target} is not in the menu")
             if op not in target.operations and not (op == "hover" and "click" in target.operations):
-                raise BridgeError("unsupported", f"candidate {target.id} does not support {op} (has {target.operations})")
+                raise BridgeError(
+                    "unsupported", f"candidate {target.id} does not support {op} (has {target.operations})"
+                )
 
         A = self.ActionModel
         actions: list[Any]
@@ -118,13 +124,26 @@ class Bridge:
         elif op == "done":
             actions = [A(done={"text": done_text or "Task complete.", "success": True})]
         elif op == "blocked":
-            actions = [A(done={"text": f"Blocked: {blocked_reason or 'no offered operation can make progress'}", "success": False})]
+            actions = [
+                A(
+                    done={
+                        "text": f"Blocked: {blocked_reason or 'no offered operation can make progress'}",
+                        "success": False,
+                    }
+                )
+            ]
         else:
             raise BridgeError("unknown_operation", f"policy returned unknown operation {op!r}")
 
         line = memory_line(step, decision, target, menu)
         output = self.AgentOutput(action=actions, memory=line)
-        return Bridged(output=output, proposed=tuple(_record(a) for a in actions), memory_line=line, operation=op, target=target)
+        return Bridged(
+            output=output,
+            proposed=tuple(_record(a) for a in actions),
+            memory_line=line,
+            operation=op,
+            target=target,
+        )
 
 
 def assert_fresh(agent: Any, state: BrowserStateSummary, menu: Menu, decision: Decision) -> None:
@@ -137,8 +156,14 @@ def assert_fresh(agent: Any, state: BrowserStateSummary, menu: Menu, decision: D
     session = getattr(agent, "browser_session", None)
     cached = getattr(session, "_cached_browser_state_summary", None)
     if cached is not state:
-        raise BridgeError("stale", "decision was made on a snapshot that is no longer the session's cached state")
+        raise BridgeError(
+            "stale", "decision was made on a snapshot that is no longer the session's cached state"
+        )
     if menu.url != state.url:
         raise BridgeError("stale", f"menu url {menu.url!r} != state url {state.url!r}")
-    if decision.targeted and decision.target is not None and decision.target not in state.dom_state.selector_map:
+    if (
+        decision.targeted
+        and decision.target is not None
+        and decision.target not in state.dom_state.selector_map
+    ):
         raise BridgeError("stale", f"target {decision.target} is no longer in the selector map")

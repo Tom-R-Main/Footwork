@@ -49,6 +49,7 @@ class TaskResult:
     llm_requests: int = 0
     #: Q8: recoverable evaluate refusals in this run (the terminal pause is counted under paused)
     evaluate_refusals: int = 0
+    gate_judgments: int = 0
 
     @property
     def cost_usd(self) -> float:
@@ -67,7 +68,9 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "pass": sum(r.passed for r in rs),
             "pass_rate": (sum(r.passed for r in rs) / n) if n else 0.0,
             # a run that ended with done(success=False) or paused before a destructive action is not a claimed success
-            "false_done": sum(1 for r in rs if r.is_done and not r.passed and r.success is not False and not r.paused),
+            "false_done": sum(
+                1 for r in rs if r.is_done and not r.passed and r.success is not False and not r.paused
+            ),
             "paused": sum(1 for r in rs if r.paused),
             "mean_steps": (sum(r.steps for r in rs) / n) if n else 0.0,
             "llm_calls": sum(r.llm_calls for r in rs),
@@ -84,9 +87,17 @@ def aggregate(results: list[TaskResult]) -> dict[str, dict[str, float]]:
             "judged": sum(1 for r in rs if r.judge_verdict is not None),
             "judge_pass": sum(1 for r in rs if r.judge_verdict),
             # agreement between the judge and the predicate, over predicate-graded rows the judge saw
-            "judge_agree": sum(1 for r in rs if r.judge_verdict is not None and r.graded_by == "predicate" and r.judge_verdict == r.passed),
-            "judge_false_accept": sum(1 for r in rs if r.judge_verdict and r.graded_by == "predicate" and not r.passed),
-            "judge_false_reject": sum(1 for r in rs if r.judge_verdict is False and r.graded_by == "predicate" and r.passed),
+            "judge_agree": sum(
+                1
+                for r in rs
+                if r.judge_verdict is not None and r.graded_by == "predicate" and r.judge_verdict == r.passed
+            ),
+            "judge_false_accept": sum(
+                1 for r in rs if r.judge_verdict and r.graded_by == "predicate" and not r.passed
+            ),
+            "judge_false_reject": sum(
+                1 for r in rs if r.judge_verdict is False and r.graded_by == "predicate" and r.passed
+            ),
             "captcha": sum(1 for r in rs if r.judge_captcha),
             "impossible": sum(1 for r in rs if r.judge_impossible),
             "graded_by_judge": sum(1 for r in rs if r.graded_by == "judge"),
@@ -108,7 +119,12 @@ def by_tag(results: list[TaskResult]) -> dict[str, dict[str, dict[str, float]]]:
 
 def render_markdown(results: list[TaskResult], title: str) -> str:
     agg = aggregate(results)
-    lines = [f"# {title}", "", "| arm | tasks | pass | pass rate | false done | paused | mean steps | LLM calls | Jev calls | LLM tokens | est. cost USD | wall s | errors |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    lines = [
+        f"# {title}",
+        "",
+        "| arm | tasks | pass | pass rate | false done | paused | mean steps | LLM calls | Jev calls | LLM tokens | est. cost USD | wall s | errors |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
     for arm, a in agg.items():
         lines.append(
             f"| {arm} | {a['tasks']:.0f} | {a['pass']:.0f} | {a['pass_rate']:.0%} | {a['false_done']:.0f} | {a['paused']:.0f} | {a['mean_steps']:.1f} | "
@@ -123,7 +139,9 @@ def render_markdown(results: list[TaskResult], title: str) -> str:
     ]
     for arm, a in agg.items():
         vp = a["verified_pass"]
-        lines.append(f"| {arm} | {vp:.0f} | {a['unclaimed_pass']:.0f} | {a['false_done']:.0f} | {a['llm_requests']:.0f} | {a['evaluate_refusals']:.0f} | {(a['cost_usd'] / vp) if vp else 0:.4f} |")
+        lines.append(
+            f"| {arm} | {vp:.0f} | {a['unclaimed_pass']:.0f} | {a['false_done']:.0f} | {a['llm_requests']:.0f} | {a['evaluate_refusals']:.0f} | {(a['cost_usd'] / vp) if vp else 0:.4f} |"
+        )
     if any(r.judge_verdict is not None for r in results):
         lines += [
             "",
@@ -143,20 +161,38 @@ def render_markdown(results: list[TaskResult], title: str) -> str:
                 f"{a['judge_false_reject']:.0f} | {a['captcha']:.0f} | {a['impossible']:.0f} | {a['graded_by_judge']:.0f} |"
             )
     if any(r.delegations for r in results):
-        lines += ["", "## Delegation (Q9)", "", "| arm | delegations | subgoals reached | reached per delegation | S1 steps | S2 steps |", "|---|---|---|---|---|---|"]
+        lines += [
+            "",
+            "## Delegation (Q9)",
+            "",
+            "| arm | delegations | subgoals reached | reached per delegation | S1 steps | S2 steps |",
+            "|---|---|---|---|---|---|",
+        ]
         for arm, a in agg.items():
             rs = [r for r in results if r.arm == arm]
             d = a["delegations"]
-            lines.append(f"| {arm} | {d:.0f} | {a['subgoals_reached']:.0f} | {(a['subgoals_reached'] / d) if d else 0:.2f} | {sum(r.s1_steps for r in rs)} | {sum(r.s2_steps for r in rs)} |")
-    lines += ["", "## Per task", "", "| task | arm | pass | graded by | judge | steps | s1/s2 | deleg. | est. cost USD | wall s | error |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+            lines.append(
+                f"| {arm} | {d:.0f} | {a['subgoals_reached']:.0f} | {(a['subgoals_reached'] / d) if d else 0:.2f} | {sum(r.s1_steps for r in rs)} | {sum(r.s2_steps for r in rs)} |"
+            )
+    lines += [
+        "",
+        "## Per task",
+        "",
+        "| task | arm | pass | graded by | judge | steps | s1/s2 | deleg. | est. cost USD | wall s | error |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
     for r in sorted(results, key=lambda r: (r.task_id, r.arm)):
         judge = "-" if r.judge_verdict is None else ("yes" if r.judge_verdict else "no")
-        lines.append(f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.graded_by} | {judge} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.subgoals_reached}/{r.delegations} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |")
+        lines.append(
+            f"| {r.task_id} | {r.arm} | {'yes' if r.passed else 'no'} | {r.graded_by} | {judge} | {r.steps} | {r.s1_steps}/{r.s2_steps} | {r.subgoals_reached}/{r.delegations} | {r.cost_usd:.4f} | {r.wall_s:.0f} | {(r.error or '')[:60]} |"
+        )
     return "\n".join(lines) + "\n"
 
 
 def write_results(results: list[TaskResult], out_dir: Path, title: str) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "results.json").write_text(json.dumps([asdict(r) for r in results], indent=1, default=str))
-    (out_dir / "summary.json").write_text(json.dumps({"arms": aggregate(results), "by_tag": by_tag(results)}, indent=1))
+    (out_dir / "summary.json").write_text(
+        json.dumps({"arms": aggregate(results), "by_tag": by_tag(results)}, indent=1)
+    )
     (out_dir / "report.md").write_text(render_markdown(results, title))
