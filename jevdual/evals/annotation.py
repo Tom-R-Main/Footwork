@@ -158,7 +158,7 @@ def main() -> None:
     path = Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
     by = Counter((r["run"], r["arm"], r["system"]) for r in rows)
