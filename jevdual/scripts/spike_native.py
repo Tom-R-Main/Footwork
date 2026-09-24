@@ -125,6 +125,58 @@ async def run_task(bridge: NativeBridge, task: str, steps: int, act: bool, log) 
     print("display:", nm.menu.page_text.replace("\n", " / "))
 
 
+async def run_agent(
+    bridge: NativeBridge, task: str, requirements: tuple[str, ...], steps: int, log_path: Path | None
+) -> None:
+    """The real loop: NativeAgent with JevPolicy, Arbiter (arbiter.toml), Verifier on done, schema-2 trace."""
+    from jevdual.arbiter import Arbiter
+    from jevdual.desktop import NativeAgent
+    from jevdual.keys import load_keys
+    from jevdual.policy import JevPolicy
+    from jevdual.trace import TraceWriter
+    from jevdual.verify import ArbiterHook, Verifier
+    from typesafe_sdk import AsyncTypeSafeClient
+
+    if not load_keys().get("TYPESAFE_API_KEY"):
+        print("TYPESAFE_API_KEY missing (see jevdual.keys)")
+        return
+    trace = TraceWriter(log_path) if log_path else None
+    async with AsyncTypeSafeClient() as client:
+        policy = JevPolicy(client)
+        hook = ArbiterHook(Verifier(client), requirements, use_trajectory=False)
+        agent = NativeAgent(
+            bridge,
+            policy,
+            task=task,
+            requirements=requirements,
+            arbiter=Arbiter.from_toml(),
+            verifier=hook,
+            trace=trace,
+            run_id=f"spike-{bridge.pid}",
+            max_steps=steps,
+        )
+        run = await agent.run()
+    if trace:
+        trace.close()
+    for o in run.steps:
+        d = o.decision
+        head = f"{d.operation} p={d.operation_confidence:.2f}" if d else "-"
+        tgt = ""
+        if d and d.target is not None and o.menu is not None:
+            c = o.menu.menu.candidate(d.target)
+            tgt = f" -> [{d.target}] {c.label if c else '?'!r} p={d.target_confidence:.2f}"
+        eff = f" | {o.effect.effect} via {o.effect.route}" if o.effect else ""
+        ver = f" | verify {o.verify}" if o.verify else ""
+        print(
+            f"step {o.step} ({o.system}): {head}{tgt} | {o.verdict.kind if o.verdict else '?'}: {(o.verdict.reason if o.verdict else '')[:90]}{eff}{ver} | menu {o.menu_ms:.0f} ms jev {o.jev_ms:.0f} ms"
+        )
+    print(
+        f"run: {run.status} ({run.reason[:120]}) s1 {run.s1_steps} s2 {run.s2_steps} jev calls {agent.jev_calls}"
+    )
+    if run.final_menu:
+        print("display:", run.final_menu.menu.page_text.replace("\n", " / "))
+
+
 async def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--app", default="Calculator")
@@ -135,6 +187,10 @@ async def main() -> None:
     ap.add_argument("--task")
     ap.add_argument("--steps", type=int, default=8)
     ap.add_argument("--act", action="store_true", help="execute System 1 decisions (default: dry run)")
+    ap.add_argument(
+        "--agent", action="store_true", help="run NativeAgent (policy + arbiter + verifier + trace) on --task"
+    )
+    ap.add_argument("--requirements", default="", help="semicolon-separated requirements for the verifier")
     ap.add_argument("--log", help="JSONL log path")
     args = ap.parse_args()
 
@@ -192,7 +248,10 @@ async def main() -> None:
             return
         if args.script:
             await run_script(bridge, [s.strip() for s in args.script.split(",") if s.strip()], log)
-        if args.task:
+        if args.task and args.agent:
+            reqs = tuple(r.strip() for r in args.requirements.split(";") if r.strip())
+            await run_agent(bridge, args.task, reqs, args.steps, log_path)
+        elif args.task:
             await run_task(bridge, args.task, args.steps, args.act, log)
     finally:
         await driver.shutdown()
