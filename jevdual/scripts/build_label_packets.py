@@ -13,6 +13,12 @@ import json
 from pathlib import Path
 
 
+def row_key(r: dict) -> str:
+    """Rows from runs with repeats carry the trace's run_id; older sets are keyed by task and arm."""
+    mid = r.get("run_id") or f"{r['task']}|{r['arm']}"
+    return f"{r['run']}|{mid}|{r['step']}"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("csv")
@@ -27,7 +33,11 @@ def main() -> None:
     packets: list[list[dict]] = [[]]
     size = 0
     for r in rows:
-        f = glob.glob(f"results/{r['run']}/traces/{r['task']}-{r['arm']}-*.jsonl")[0]
+        f = (
+            f"results/{r['run']}/traces/{r['run_id']}.jsonl"
+            if r.get("run_id")
+            else glob.glob(f"results/{r['run']}/traces/{r['task']}-{r['arm']}-*.jsonl")[0]
+        )
         if f not in cache:
             recs = {}
             for line in Path(f).read_text().splitlines():
@@ -62,8 +72,20 @@ def main() -> None:
         for a in rec.get("proposed") or []:
             if a.get("name") in ("input", "type"):
                 value = (a.get("params") or {}).get("text")
+        # what ran before this step in the same run (labels only, no outcomes of this step): a Calculator
+        # digit is only judgeable against the keys already pressed
+        prior = []
+        for st in sorted(cache[f]):
+            if st >= int(r["step"]):
+                break
+            for a in cache[f][st].get("executed") or []:
+                pr = a.get("params") or {}
+                prior.append(
+                    f"{a.get('name')}({pr.get('label') or pr.get('text') or pr.get('keys') or pr.get('path') or pr.get('index', '')})"
+                )
         item = {
-            "key": f"{r['run']}|{r['task']}|{r['arm']}|{r['step']}",
+            "key": row_key(r),
+            "prior_actions": prior[-12:],
             "task": r["task_text"],
             "page": r["url"],
             "step_in_run": int(r["step"]),

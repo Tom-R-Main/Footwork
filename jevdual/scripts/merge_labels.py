@@ -55,6 +55,12 @@ def kappa(a: list[str], b: list[str]) -> float:
     return (po - pe) / (1 - pe) if pe < 1 else 1.0
 
 
+def row_key(r: dict) -> str:
+    """Rows from runs with repeats carry the trace's run_id; older sets are keyed by task and arm."""
+    mid = r.get("run_id") or f"{r['task']}|{r['arm']}"
+    return f"{r['run']}|{mid}|{r['step']}"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("csv")
@@ -67,7 +73,7 @@ def main() -> None:
     la, lb = load(args.labels_a), load(args.labels_b)
     missing = 0
     for r in rows:
-        key = f"{r['run']}|{r['task']}|{r['arm']}|{r['step']}"
+        key = row_key(r)
         a, b = la.get(key), lb.get(key)
         if a is None or b is None:
             missing += 1

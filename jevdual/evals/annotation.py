@@ -108,6 +108,7 @@ def rows_for(run_dir: Path) -> list[dict]:
             out.append(
                 {
                     "run": run_dir.name,
+                    "run_id": header["run_id"],
                     "task": task_id,
                     "arm": arm,
                     "step": r["step"],

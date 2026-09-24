@@ -21,7 +21,8 @@ FIELDS = ("passed", "steps", "llm_calls", "jev_calls", "cost", "wall_s", "unveri
 
 
 def _rows(run_dir: Path, arm: str) -> dict[str, dict[str, Any]]:
-    out = {}
+    """One row per task; a task run several times (``--repeats``) contributes the mean of each field."""
+    groups: dict[str, list[dict[str, Any]]] = {}
     for r in json.loads((run_dir / "results.json").read_text()):
         if r["arm"] != arm:
             continue
@@ -29,7 +30,14 @@ def _rows(run_dir: Path, arm: str) -> dict[str, dict[str, Any]]:
         r["cost"] = float(r.get("llm_cost_usd", 0.0)) + float(r.get("jev_cost_usd", 0.0))
         r["unverified"] = 1 if str(r.get("answer") or "").startswith("UNVERIFIED") else 0
         r["passed"] = 1 if r["passed"] else 0
-        out[r["task_id"]] = r
+        groups.setdefault(r["task_id"], []).append(r)
+    out = {}
+    for task_id, rs in groups.items():
+        row = dict(rs[0])
+        for f in FIELDS:
+            row[f] = sum(float(x.get(f) or 0.0) for x in rs) / len(rs)
+        row["repeats"] = len(rs)
+        out[task_id] = row
     return out
 
 
