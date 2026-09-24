@@ -1,0 +1,5 @@
+{"kind": "script", "label": "All Clear", "operation": "click", "target": 2, "effect": "refused", "route": null, "evidence": [], "summary": "tool='click', message='AX action failed: AXUIElementPerformAction(AXPress) returned -25204', error_code=''", "error_code": "Tool"}
+{"kind": "script", "label": "6", "operation": "click", "target": 11, "effect": "unverifiable", "route": "accessibility", "evidence": [], "summary": "", "error_code": null}
+{"kind": "script", "label": "Multiply", "operation": "click", "target": 8, "effect": "unverifiable", "route": "accessibility", "evidence": [], "summary": "", "error_code": null}
+{"kind": "script", "label": "7", "operation": "click", "target": 5, "effect": "unverifiable", "route": "accessibility", "evidence": [], "summary": "", "error_code": null}
+{"kind": "script", "label": "Equals", "operation": "click", "target": 20, "effect": "unverifiable", "route": "accessibility", "evidence": [], "summary": "", "error_code": null}

@@ -17,6 +17,7 @@ dependencies = [
     "browser-use==0.13.10",
     "typesafe-sdk>=0.7,<1",
     "orjson>=3.10",
+    "cua-driver>=0.28.2",
 ]
 
 [dependency-groups]
