@@ -285,7 +285,7 @@ async def run_task(
             store = SecretStore({f"app://{task.app}": dict(task.secrets)}) if task.secrets else None
             policy = deps.policy_factory(task)
             verifier = deps.verifier_factory(task)
-            s2 = deps.s2_factory(task, verifier) if arm in ("dual", "guarded") else None
+            system_two = deps.s2_factory(task, verifier) if arm in ("dual", "guarded") else None
             redactor = store.redactor() if store is not None else None
             with TraceWriter(trace_path, redactor=redactor) as trace:
                 trace.write(
@@ -297,7 +297,7 @@ async def run_task(
                         browser_use_version="n/a",
                         patches={"native": True},
                         jev_model=deps.jev_model,
-                        llm_model=deps.llm_model if s2 is not None else None,
+                        llm_model=deps.llm_model if system_two is not None else None,
                     )
                 )
                 agent = NativeAgent(
@@ -308,7 +308,7 @@ async def run_task(
                     arbiter=deps.arbiter_factory(),
                     verifier=verifier,
                     secrets=store,
-                    s2=s2,
+                    s2=system_two,
                     trace=trace,
                     run_id=run_id,
                     max_steps=max_steps,
@@ -377,6 +377,18 @@ async def run_task(
 # ---- split ---------------------------------------------------------------------------
 
 
+def load_partial(out_dir: Path) -> list[TaskResult]:
+    """Rows already in ``out_dir/results.json`` (for ``--resume``)."""
+    path = out_dir / "results.json"
+    if not path.is_file():
+        return []
+    out = []
+    for r in json.loads(path.read_text()):
+        r["tags"] = tuple(r.get("tags") or ())
+        out.append(TaskResult(**r))
+    return out
+
+
 def default_deps(llm: str | None, client: Any) -> Deps:
     from jevdual.arbiter import Arbiter, ArbiterPolicy
     from jevdual.desktop_s2 import NativeS2, meta_chat_from_env
@@ -419,6 +431,7 @@ async def run_split(
     limit: int | None = None,
     max_steps: int = 25,
     repeats: int = 1,
+    resume: bool = False,
 ) -> list[TaskResult]:
     tasks = load_tasks(SPLITS[split])
     if task_ids:
@@ -431,12 +444,17 @@ async def run_split(
 
         driver = CuaDriver.create()
     title = f"native {split} split, arms {', '.join(arms)}"
-    results: list[TaskResult] = []
+    results: list[TaskResult] = load_partial(out_dir) if resume else []
+    if results:
+        log.info("resuming: %s rows already in %s", len(results), out_dir / "results.json")
     try:
-        for _ in range(repeats):
+        for rep in range(repeats):
             for task in tasks:
                 for arm in arms:
-                    log.info("running %s on %s", task.id, arm)
+                    have = sum(1 for r in results if r.task_id == task.id and r.arm == arm)
+                    if have > rep:
+                        continue
+                    log.info("running %s on %s (repeat %s)", task.id, arm, rep + 1)
                     results.append(await run_task(driver, task, arm, out_dir, deps, max_steps=max_steps))  # type: ignore[arg-type]
                     write_results(results, out_dir, title)
     finally:
@@ -459,6 +477,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--llm", default="meta", help="System 2 provider: meta (Muse Spark) or none")
     ap.add_argument("--out", default=f"results/native-{time.strftime('%Y%m%d-%H%M%S')}")
+    ap.add_argument(
+        "--resume", action="store_true", help="fill missing (task, arm, repeat) rows in --out/results.json"
+    )
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     present = load_keys()
@@ -476,6 +497,7 @@ def main(argv: list[str] | None = None) -> None:
                 limit=args.limit,
                 max_steps=args.max_steps,
                 repeats=args.repeats,
+                resume=args.resume,
             )
         from typesafe_sdk import AsyncTypeSafeClient
 
@@ -490,6 +512,7 @@ def main(argv: list[str] | None = None) -> None:
                 limit=args.limit,
                 max_steps=args.max_steps,
                 repeats=args.repeats,
+                resume=args.resume,
             )
 
     results = asyncio.run(go())

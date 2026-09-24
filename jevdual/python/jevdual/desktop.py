@@ -372,7 +372,17 @@ class NativeAgent:
     async def run(self) -> NativeRun:
         final: NativeMenu | None = None
         for step in range(1, self.max_steps + 1):
-            nm, menu_ms = await self.observe()
+            try:
+                nm, menu_ms = await self.observe()
+            except Exception as exc:  # noqa: BLE001 - a lost window ends the run as an error row, not a crash
+                log.warning("observation failed at step %s: %s", step, exc)
+                return NativeRun(
+                    "error",
+                    f"observation failed: {type(exc).__name__}: {str(exc)[:160]}",
+                    self.steps,
+                    None,
+                    final,
+                )
             final = nm
             out = StepOutcome(step=step, system="s1", menu=nm, menu_ms=menu_ms)
             self.steps.append(out)
