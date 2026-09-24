@@ -59,21 +59,26 @@ tasks:
     open: ["{tmp}/draft.txt"]
     window_title: draft.txt
     tags: [type, multistep]
-    requirements: [The document reads First line. on the first line and Second line. on the second line]
+    requirements: [The document contains both the line First line. and the line Second line.]
     # TextEdit autosaves in place; the file is the observable. Q10's predecessor task passed the loss of the
     # first line because it only checked that the new line existed (secondary audit, 2026-09-24).
     predicate: {kind: file_equals, value: "First line.\nSecond line.", path: '{tmp}/draft.txt'}
     solve: [append textbox Second line., wait 1]
 
-  - id: textedit-read-word-count
-    task: Report the second word of the document's only line.
+  - id: textedit-read-word-after
+    task: Report the word that comes right after "brass" on the document's only line.
     app: TextEdit
     bundle_id: com.apple.TextEdit
     files: {words.txt: "brass lantern compass\n"}
     open: ["{tmp}/words.txt"]
     window_title: words.txt
     tags: [read]
-    requirements: [The reported answer is the second word of the document's line]
+    # "the second word" asked the verifier to count, which the prompts forbid (Q10b stage 1: complete 0.48).
+    # Held out of stage 2: even reworded, a read task with no action in the trajectory sits at complete
+    # 0.60 to 0.65 on its own oracle end state (results/q10b-verifier-probe-20260924c); the verifier, not the
+    # task, is the variable, and it is not tuned inside Q10b.
+    enabled: false
+    requirements: [The reported answer is the word that follows brass in the document]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'lantern'}
     solve: [answer lantern]

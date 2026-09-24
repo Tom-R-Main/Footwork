@@ -1,0 +1,183 @@
+[
+ {
+  "task": "textedit-append-line",
+  "oracle_error": null,
+  "window_text": "draft.txt\nFirst line.\nSecond line.",
+  "answer": null,
+  "requirements": [
+   "The document still contains First line.",
+   "The document contains Second line. after it"
+  ],
+  "calls": [
+   {
+    "band": "verify",
+    "complete": 0.67,
+    "unmet_effective": {
+     "The document still contains First line.": 0.09,
+     "The document contains Second line. after it": 0.39
+    },
+    "unmet": {
+     "The document still contains First line.": 0.09,
+     "The document contains Second line. after it": 0.39
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.67, max unmet p=0.39"
+   },
+   {
+    "band": "verify",
+    "complete": 0.66,
+    "unmet_effective": {
+     "The document still contains First line.": 0.09,
+     "The document contains Second line. after it": 0.46
+    },
+    "unmet": {
+     "The document still contains First line.": 0.09,
+     "The document contains Second line. after it": 0.46
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.66, max unmet p=0.46"
+   },
+   {
+    "band": "verify",
+    "complete": 0.69,
+    "unmet_effective": {
+     "The document still contains First line.": 0.09,
+     "The document contains Second line. after it": 0.36
+    },
+    "unmet": {
+     "The document still contains First line.": 0.09,
+     "The document contains Second line. after it": 0.36
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.69, max unmet p=0.36"
+   },
+   {
+    "band": "verify",
+    "complete": 0.65,
+    "unmet_effective": {
+     "The document still contains First line.": 0.08,
+     "The document contains Second line. after it": 0.39
+    },
+    "unmet": {
+     "The document still contains First line.": 0.08,
+     "The document contains Second line. after it": 0.39
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.65, max unmet p=0.39"
+   },
+   {
+    "band": "verify",
+    "complete": 0.64,
+    "unmet_effective": {
+     "The document still contains First line.": 0.08,
+     "The document contains Second line. after it": 0.37
+    },
+    "unmet": {
+     "The document still contains First line.": 0.08,
+     "The document contains Second line. after it": 0.37
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.64, max unmet p=0.37"
+   }
+  ],
+  "bands": {
+   "verify": 5
+  },
+  "accept_rate": 0.0
+ },
+ {
+  "task": "textedit-read-word-after",
+  "oracle_error": null,
+  "window_text": "words.txt\nbrass lantern compass",
+  "answer": "lantern",
+  "requirements": [
+   "The reported answer is the word that follows brass in the document"
+  ],
+  "calls": [
+   {
+    "band": "verify",
+    "complete": 0.63,
+    "unmet_effective": {
+     "The reported answer is the word that follows brass in the document": 0.15
+    },
+    "unmet": {
+     "The reported answer is the word that follows brass in the document": 0.15
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.63, max unmet p=0.15"
+   },
+   {
+    "band": "verify",
+    "complete": 0.65,
+    "unmet_effective": {
+     "The reported answer is the word that follows brass in the document": 0.16
+    },
+    "unmet": {
+     "The reported answer is the word that follows brass in the document": 0.16
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.65, max unmet p=0.16"
+   },
+   {
+    "band": "verify",
+    "complete": 0.6,
+    "unmet_effective": {
+     "The reported answer is the word that follows brass in the document": 0.13
+    },
+    "unmet": {
+     "The reported answer is the word that follows brass in the document": 0.13
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.60, max unmet p=0.13"
+   },
+   {
+    "band": "verify",
+    "complete": 0.59,
+    "unmet_effective": {
+     "The reported answer is the word that follows brass in the document": 0.15
+    },
+    "unmet": {
+     "The reported answer is the word that follows brass in the document": 0.15
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.59, max unmet p=0.15"
+   },
+   {
+    "band": "verify",
+    "complete": 0.58,
+    "unmet_effective": {
+     "The reported answer is the word that follows brass in the document": 0.16
+    },
+    "unmet": {
+     "The reported answer is the word that follows brass in the document": 0.16
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.58, max unmet p=0.16"
+   }
+  ],
+  "bands": {
+   "verify": 5
+  },
+  "accept_rate": 0.0
+ }
+]

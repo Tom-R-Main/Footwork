@@ -435,7 +435,7 @@ async def run_split(
     repeats: int = 1,
     resume: bool = False,
 ) -> list[TaskResult]:
-    tasks = load_tasks(SPLITS[split])
+    tasks = [t for t in load_tasks(SPLITS[split]) if t.enabled]
     if task_ids:
         tasks = [t for t in tasks if t.id in task_ids]
     if limit:

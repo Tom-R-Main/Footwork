@@ -1,0 +1,82 @@
+[
+ {
+  "task": "textedit-append-line",
+  "oracle_error": null,
+  "window_text": "draft.txt\nFirst line.\nSecond line.",
+  "answer": null,
+  "requirements": [
+   "The document contains both the line First line. and the line Second line."
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.86,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.14
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.14
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.86, max unmet p=0.14"
+   },
+   {
+    "band": "accept",
+    "complete": 0.84,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.14
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.14
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.84, max unmet p=0.14"
+   },
+   {
+    "band": "accept",
+    "complete": 0.81,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.15
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.15
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.81, max unmet p=0.15"
+   },
+   {
+    "band": "accept",
+    "complete": 0.85,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.15
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.15
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.85, max unmet p=0.15"
+   },
+   {
+    "band": "accept",
+    "complete": 0.81,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.19
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.19
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.81, max unmet p=0.19"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ }
+]

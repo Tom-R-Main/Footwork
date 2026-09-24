@@ -104,6 +104,9 @@ class NativeTask(BaseModel):
     authorize: bool = False
     authorized_actions: tuple[str, ...] = ()
     source: str | None = None
+    #: False keeps the task in the file but out of every run (a task whose own oracle end state the verifier
+    #: refuses is held until the verifier changes; the reason lives next to the task)
+    enabled: bool = True
 
     @field_validator("predicate")
     @classmethod
