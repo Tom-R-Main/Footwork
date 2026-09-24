@@ -1,0 +1,78 @@
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|1", "label": "right", "reason": "Task says clear first; nothing cleared yet, All Clear is the first step"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|2", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|3", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 2"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|4", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Multiply"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|5", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|6", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|7", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Equals"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-15967f68|8", "label": "right", "reason": "12 x 11 = entered in full; task complete on display, done is right"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|1", "label": "right", "reason": "Task says clear first; nothing cleared yet, All Clear is the first step"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|2", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|3", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 2"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|4", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Multiply"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|5", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|6", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|7", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Equals"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-1a509c6c|8", "label": "right", "reason": "12 x 11 = entered in full; task complete on display, done is right"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|1", "label": "right", "reason": "Task says clear first; nothing cleared yet, All Clear is the first step"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|2", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|3", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 2"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|4", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Multiply"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|5", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|6", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|7", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Equals"}
+{"key": "q10-native-dev-20260924|calc-multiply-dual-729a1414|8", "label": "right", "reason": "12 x 11 = entered in full; task complete on display, done is right"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|1", "label": "right", "reason": "Task says clear first; nothing cleared yet, All Clear is the first step"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|2", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|3", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 2"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|4", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Multiply"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|5", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|6", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|7", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Equals"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-66fb2bed|8", "label": "right", "reason": "12 x 11 = entered in full; task complete on display, done is right"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|1", "label": "right", "reason": "Task says clear first; nothing cleared yet, All Clear is the first step"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|2", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|3", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 2"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|4", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Multiply"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|5", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|6", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|7", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Equals"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-ddff5add|8", "label": "right", "reason": "12 x 11 = entered in full; task complete on display, done is right"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|1", "label": "right", "reason": "Task says clear first; nothing cleared yet, All Clear is the first step"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|2", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|3", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 2"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|4", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Multiply"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|5", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|6", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: 1"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|7", "label": "right", "reason": "Next key of 1,2,Multiply,1,1,Equals given prior actions: Equals"}
+{"key": "q10-native-dev-20260924|calc-multiply-s1_only-e358dc33|8", "label": "right", "reason": "12 x 11 = entered in full; task complete on display, done is right"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|1", "label": "right", "reason": "Task says clear first; nothing cleared yet"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|2", "label": "wrong", "reason": "Sequence should start with 2 (2,4,0,Multiply,1,5,Percent,Equals); 1 is wrong order"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|3", "label": "wrong", "reason": "Continues wrong-order entry (15 before 240); Clear was the better recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|4", "label": "wrong", "reason": "Percent after 15 with no 240 entered; wrong order"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|5", "label": "wrong", "reason": "Continues a wrong sequence (15% then 2); should clear"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|6", "label": "wrong", "reason": "3 is a wrong digit; 240 needs 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|7", "label": "wrong", "reason": "Continues wrong operand 230 on a wrong sequence"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|8", "label": "wrong", "reason": "Equals completes a wrong computation (15% 230); Clear/All Clear was the recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|9", "label": "wrong", "reason": "blocked but All Clear on the menu can restart the task"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|10", "label": "wrong", "reason": "After recovery clear, sequence should start with 2; 1 is wrong order"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|11", "label": "wrong", "reason": "Continues wrong-order entry (15 before 240)"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|12", "label": "wrong", "reason": "Percent after 15 with no 240 entered; wrong order"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|13", "label": "wrong", "reason": "Continues a wrong sequence (15% then 2) instead of clearing"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|14", "label": "wrong", "reason": "0 after 2 gives 20; 240 needs 4 next, and the sequence was already wrong"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|15", "label": "wrong", "reason": "Equals completes a wrong computation (15% 20)"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|16", "label": "wrong", "reason": "blocked but All Clear on the menu can restart the task"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|17", "label": "wrong", "reason": "Calculator was just cleared (last action All Clear); redundant clear, 2 was the next key"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|18", "label": "wrong", "reason": "Wrong digit: after 2 the next key is 4, not 0"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|19", "label": "wrong", "reason": "Multiply after 20 uses a wrong operand; should clear"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|20", "label": "wrong", "reason": "Continues wrong sequence 20 x 1"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|21", "label": "wrong", "reason": "Percent after 20 x 1; wrong operands"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|22", "label": "wrong", "reason": "Equals completes wrong computation (20 x 1%)"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|23", "label": "right", "reason": "All Clear after a wrong sequence (Clear alone leaves pending op) is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|24", "label": "wrong", "reason": "Already All Cleared; redundant clear, 2 was the next key"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-1597c380|25", "label": "wrong", "reason": "Clears a correct first digit 2 after a fresh All Clear; 4 was the next key"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|1", "label": "right", "reason": "Task says clear first; nothing cleared yet"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|2", "label": "wrong", "reason": "Sequence should start with 2 (2,4,0,Multiply,1,5,Percent,Equals); 1 is wrong order"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|3", "label": "wrong", "reason": "Continues wrong-order entry (15 before 240); Clear was the better recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|4", "label": "wrong", "reason": "Multiply after 15; wrong order (240 should be first operand)"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|5", "label": "wrong", "reason": "Percent with no second operand after 15 x; wrong sequence"}

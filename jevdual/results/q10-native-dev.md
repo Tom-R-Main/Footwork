@@ -95,6 +95,55 @@ Confound to record: Calculator was in Scientific mode for the whole run (a spike
 switched it and the setting persists), so every Calculator menu had 54 candidates including memory
 and parenthesis keys rather than the 24 of Basic mode. All arms saw the same menus.
 
-## Calibration (pending labels)
+## Calibration (`results/annotation/q10/`, labels by the Q1 protocol)
 
-Filled in from `results/annotation/q10/` when the two blinded passes and their agreement are in.
+286 System 1 decision rows (203 acted or escalated by System 1, 83 System 1 proposals on steps
+System 2 took). Two blinded Fable passes over three packets, each row with the prior actions of its
+run: agreement 0.892, kappa 0.742 (web set: 0.91). All 31 disagreements are calc-percent key
+presses where the passes differ on whether "15, %, ×, 240" is a valid percent-key order (it is on
+macOS Calculator); the labelling note asserted one order, so those rows are excluded, and the
+audit sheet (`audit-sheet.csv`, 40 rows) is where the human decides. Agreed labels: 185 right, 70
+wrong; the wrong rows are 41 calc-percent clicks, 24 textedit-append-and-save (17 dones, 7 clicks
+on an unlabelled toolbar button), 3 calc-read-result dones, 2 blocked. Full tables:
+`q10-calibration.md`.
+
+| rows | signal | AUROC (wrong step) | 95% CI |
+|---|---|---|---|
+| all S1 decisions (255) | target confidence | 0.899 | [0.853, 0.942] |
+| all S1 decisions (255) | operation confidence | 0.875 | [0.830, 0.914] |
+| acted only (179) | target confidence | 0.938 | [0.901, 0.974] |
+| acted only (179) | operation confidence | 0.928 | [0.886, 0.964] |
+| all | stuck noul | 0.827 | [0.759, 0.888] |
+| all | goal_done, needs_reasoning, destructive | 0.48 to 0.61 | |
+
+Operating points on all rows: the current target floor 0.45 catches 25% of wrong steps and
+escalates 5% of right ones; 0.60 catches 77% at 15% false escalation (the ≤20% operating point).
+The web set (Q1) gave target AUROC 0.80 on clicks with 0.70 catching 54% at 12%.
+
+So on the secondary metric the calibration transfers and is, if anything, sharper on native menus:
+the wrong steps are concentrated in one task and one failure mode (arithmetic order), and the
+confidence heads see it. The caveat is the concentration: 41 of 70 wrong rows come from
+calc-percent, so the AUROC is one task's shape more than a distribution over failure modes.
+
+## Reading against the pre-registered rule
+
+- H1 needed three things. Two hold (AUROC ≥ 0.70, false escalation ≤ 20% at the current floors);
+  the first does not (`dual` 6 verified completions vs `guarded` 11). **H1 is not supported on the
+  primary metric.**
+- H0(a) (confidence flat on native menus) is falsified by the calibration table.
+- H0(b) (end state reached, done refused) describes calc-subtract on every arm and the two
+  answer tasks on `dual`: nine rows where the predicate passed and every done was refused, plus the
+  calc-read-result asymmetry (same answer accepted under `guarded`, refused under `dual`). The
+  verifier and the task wording are the variables there.
+- A third cause was not in the pre-registration: on calc-percent, System 1 acts confidently on a
+  key order the operation and target heads cannot evaluate, and under `dual` System 2's recovery
+  (clear) hands the same step back to System 1, which repeats it; the `repeated_target` rule keys
+  on one target and does not see a repeated sequence.
+
+Decision, per the rule: **not adopted; the verifier and the tasks are the variables, System 2 is not
+made the default.** Before re-measuring: (1) native end state carries structured fields (window
+title, focused control, text-area values with newlines kept, dialog text) and requirements name
+observables, never arithmetic; (2) a verifier probe on one fixed state, repeated, to size the
+0.49 vs 0.91 variance; (3) an arbiter rule for a repeated action sequence after a System 2
+recovery; (4) tranche 2 (consent classes) pre-registered as an amendment. The native backend
+stays in the tree as an experimental configuration.

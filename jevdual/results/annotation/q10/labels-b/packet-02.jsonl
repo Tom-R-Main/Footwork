@@ -1,0 +1,131 @@
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|7", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-a419e0fb|1", "label": "wrong", "reason": "done with no prior actions; nothing has been cleared or computed"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-bb087f20|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-bb087f20|2", "label": "right", "reason": "clicks 9, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-bb087f20|3", "label": "right", "reason": "clicks Multiply, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-bb087f20|4", "label": "right", "reason": "clicks 9, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-bb087f20|5", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-bb087f20|6", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-c625d856|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-c625d856|2", "label": "right", "reason": "clicks 9, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-c625d856|3", "label": "right", "reason": "clicks Multiply, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-c625d856|4", "label": "right", "reason": "clicks 9, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-c625d856|5", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-read-result-s1_only-c625d856|6", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|2", "label": "right", "reason": "clicks 2, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|3", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|4", "label": "right", "reason": "clicks 0, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|5", "label": "right", "reason": "clicks Subtract, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|6", "label": "right", "reason": "clicks 7, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|7", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|8", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|9", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-64cb6712|10", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|2", "label": "right", "reason": "clicks 2, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|3", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|4", "label": "right", "reason": "clicks 0, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|5", "label": "right", "reason": "clicks Subtract, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|6", "label": "right", "reason": "clicks 7, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|7", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|8", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|9", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-ba3ec6d7|10", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|2", "label": "right", "reason": "clicks 2, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|3", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|4", "label": "right", "reason": "clicks 0, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|5", "label": "right", "reason": "clicks Subtract, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|6", "label": "right", "reason": "clicks 7, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|7", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|8", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|9", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-dual-d258513c|10", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|2", "label": "right", "reason": "clicks 2, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|3", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|4", "label": "right", "reason": "clicks 0, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|5", "label": "right", "reason": "clicks Subtract, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|6", "label": "right", "reason": "clicks 7, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|7", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|8", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-5fb794b4|9", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-a4fe9051|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-a4fe9051|2", "label": "right", "reason": "clicks 2, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-a4fe9051|3", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|1", "label": "right", "reason": "clicks All Clear, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|2", "label": "right", "reason": "clicks 2, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|3", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|4", "label": "right", "reason": "clicks 0, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|5", "label": "right", "reason": "clicks Subtract, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|6", "label": "right", "reason": "clicks 7, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|7", "label": "right", "reason": "clicks 5, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|8", "label": "right", "reason": "clicks Equals, the correct next key in the requested sequence given prior actions"}
+{"key": "q10-native-dev-20260924|calc-subtract-s1_only-f21dc52e|9", "label": "right", "reason": "prior actions completed the requested computation (ending in Equals); done is right"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|3", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|4", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|5", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|6", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|7", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|8", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|9", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|10", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|11", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|12", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|13", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|14", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|15", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|16", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|17", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|18", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-0d073fda|19", "label": "wrong", "reason": "text area now shows only \"Second line.\" (First line. gone), so the append requirement is not met"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-62ccb520|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-62ccb520|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-62ccb520|3", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-62ccb520|4", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-62ccb520|5", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-62ccb520|6", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-682cb6de|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-682cb6de|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-682cb6de|3", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-682cb6de|4", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-682cb6de|5", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-682cb6de|6", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-d66beaf3|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-d66beaf3|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-d66beaf3|3", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-d66beaf3|4", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-dual-d66beaf3|5", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-52987838|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-52987838|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-52987838|3", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-7e981859|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-7e981859|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-7e981859|3", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-96bbaeba|1", "label": "right", "reason": "types into the text area, the control needed to add the line (value to be supplied)"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-96bbaeba|2", "label": "wrong", "reason": "clicks an unlabelled button; nothing shows it saves, and saving via the menu or cmd+s is the needed step"}
+{"key": "q10-native-dev-20260924|textedit-append-and-save-s1_only-96bbaeba|3", "label": "right", "reason": "menu is empty, so nothing on it can advance the task"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-dual-92c4667e|1", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-dual-92c4667e|2", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-dual-bce79b91|1", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-dual-bce79b91|2", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-dual-fbd80f5a|1", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-dual-fbd80f5a|2", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-s1_only-45ea0201|1", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-s1_only-d0575e42|1", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-read-word-count-s1_only-d8ea00e4|1", "label": "right", "reason": "reading task; document text is visible and no in-app action is needed, so done is right"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-dual-18763224|1", "label": "right", "reason": "types into the document text view the task names"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-dual-18763224|2", "label": "right", "reason": "text area already contains the requested sentence; task complete"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-dual-8f1f2af6|1", "label": "right", "reason": "types into the document text view the task names"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-dual-8f1f2af6|2", "label": "right", "reason": "text area already contains the requested sentence; task complete"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-dual-95175952|1", "label": "right", "reason": "types into the document text view the task names"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-dual-95175952|2", "label": "right", "reason": "text area already contains the requested sentence; task complete"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-s1_only-1032ae10|1", "label": "right", "reason": "types into the document text view the task names"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-s1_only-1032ae10|2", "label": "right", "reason": "text area already contains the requested sentence; task complete"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-s1_only-a0c5084a|1", "label": "right", "reason": "types into the document text view the task names"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-s1_only-a0c5084a|2", "label": "right", "reason": "text area already contains the requested sentence; task complete"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-s1_only-c727191f|1", "label": "right", "reason": "types into the document text view the task names"}
+{"key": "q10-native-dev-20260924|textedit-type-sentence-s1_only-c727191f|2", "label": "right", "reason": "text area already contains the requested sentence; task complete"}

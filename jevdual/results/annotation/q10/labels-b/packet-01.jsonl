@@ -1,0 +1,77 @@
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|6", "label": "wrong", "reason": "Sequence 1,5,Multiply,Percent is already off (order should be 240 first); entering 2 continues a garbage expression instead of clearing"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|7", "label": "wrong", "reason": "Equals commits a malformed expression (15 x % 2); Clear/All Clear to recover was on the menu"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|8", "label": "right", "reason": "All Clear after a wrong sequence is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|9", "label": "wrong", "reason": "All Clear pressed again right after All Clear; display already clear, next should be 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|10", "label": "wrong", "reason": "Second 2 makes 22, wrong digit for 240"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|11", "label": "right", "reason": "Clear after the wrong entry 22 is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|12", "label": "wrong", "reason": "Redundant All Clear: nothing pending after Clear; should start entering 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|13", "label": "wrong", "reason": "Clears a correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|14", "label": "right", "reason": "Display cleared; 2 starts entering 240"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|15", "label": "wrong", "reason": "Clears the correct first digit 2 instead of continuing with 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|16", "label": "right", "reason": "After 2,4 on a cleared display, 0 completes 240"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|17", "label": "wrong", "reason": "Clears 240 when the next step is Multiply"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|18", "label": "wrong", "reason": "Redundant All Clear after Clear with no pending operation; should enter 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|19", "label": "wrong", "reason": "Clears the correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|20", "label": "wrong", "reason": "Redundant All Clear after Clear with no pending operation; should enter 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|21", "label": "wrong", "reason": "Clears the correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|22", "label": "wrong", "reason": "Clears correct 24 instead of pressing 0"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|23", "label": "wrong", "reason": "Clears correct 240 instead of pressing Multiply"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|24", "label": "right", "reason": "240 x entered; 1 begins 15"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-6b4eae95|25", "label": "right", "reason": "240 x 1 entered; 5 completes 15"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|1", "label": "right", "reason": "Task says clear first; All Clear at step 1"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|2", "label": "wrong", "reason": "Wrong order: after clearing the sequence starts with 2 of 240, not 1"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|3", "label": "wrong", "reason": "Continues the wrong-order sequence (15 before 240) instead of clearing"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|4", "label": "wrong", "reason": "Continues the wrong-order sequence (15 Percent before 240)"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|5", "label": "wrong", "reason": "Continues the wrong-order sequence (15 % x) instead of recovering"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|6", "label": "wrong", "reason": "Continues the wrong-order sequence (15 % x 2)"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|7", "label": "right", "reason": "Clear after a wrong-order sequence is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|8", "label": "right", "reason": "All Clear after Clear removes the still-pending 15% x operation; reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|9", "label": "wrong", "reason": "Continues entering digits on top of the pending wrong-order 15% x expression"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|10", "label": "right", "reason": "Clear during a wrong-order sequence is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|11", "label": "right", "reason": "All Clear resets the still-pending 15% x operation; reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|12", "label": "right", "reason": "Pending wrong-order 15% x still active; Clear is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|13", "label": "right", "reason": "All Clear resets the pending wrong-order operation; reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|14", "label": "right", "reason": "Pending wrong-order 15% x never fully cleared; Clear is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|15", "label": "right", "reason": "All Clear after Clear resets the still-pending wrong-order operation"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|16", "label": "wrong", "reason": "Escape (the All Clear key) just reset the calculator; another All Clear is redundant, should enter 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|17", "label": "wrong", "reason": "Calculator was reset; clears the correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|18", "label": "wrong", "reason": "Redundant All Clear after Clear with nothing pending; should enter 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|19", "label": "wrong", "reason": "Clears the correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|20", "label": "wrong", "reason": "Redundant All Clear after Clear with nothing pending; should enter 2"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|21", "label": "wrong", "reason": "Clears the correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|22", "label": "wrong", "reason": "Clears correct 24 instead of pressing 0"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|23", "label": "wrong", "reason": "Clears correct 240 instead of pressing Multiply"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|24", "label": "right", "reason": "240 x entered; 1 begins 15"}
+{"key": "q10-native-dev-20260924|calc-percent-dual-ba312949|25", "label": "right", "reason": "240 x 1 entered; 5 completes 15"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-8ce79861|1", "label": "right", "reason": "Task says clear first; All Clear at step 1"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-8ce79861|2", "label": "wrong", "reason": "Wrong order: after clearing the sequence starts with 2 of 240, not 1"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-8ce79861|3", "label": "wrong", "reason": "Continues the wrong-order sequence (15 before 240) instead of clearing"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|1", "label": "right", "reason": "Task says clear first; All Clear at step 1"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|2", "label": "wrong", "reason": "Wrong order: after clearing the sequence starts with 2 of 240, not 1"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|3", "label": "wrong", "reason": "Continues the wrong-order sequence (15 before 240) instead of clearing"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|4", "label": "right", "reason": "Clear after the wrong-order entry 15 is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|5", "label": "right", "reason": "Entry cleared with nothing pending; 2 starts 240"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|6", "label": "wrong", "reason": "Wrong digit: 3 makes 23, should be 4"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|7", "label": "right", "reason": "Clear after the wrong entry 23 is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a0fb30af|8", "label": "wrong", "reason": "Redundant All Clear after Clear with nothing pending; should enter 2"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a3a6d193|1", "label": "right", "reason": "Task says clear first; All Clear at step 1"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a3a6d193|2", "label": "wrong", "reason": "Wrong order: after clearing the sequence starts with 2 of 240, not 1"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a3a6d193|3", "label": "wrong", "reason": "Continues the wrong-order sequence (15 before 240) instead of clearing"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a3a6d193|4", "label": "right", "reason": "Clear after the wrong-order entry 15 is a reasonable recovery"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a3a6d193|5", "label": "right", "reason": "Entry cleared with nothing pending; 2 starts 240"}
+{"key": "q10-native-dev-20260924|calc-percent-s1_only-a3a6d193|6", "label": "wrong", "reason": "Clears the correct first digit 2 instead of pressing 4"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|1", "label": "right", "reason": "Task says clear first; All Clear at step 1"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|2", "label": "right", "reason": "After clearing, 9 is the first operand"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|3", "label": "right", "reason": "9 entered; Multiply is next"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|4", "label": "right", "reason": "9 x entered; 9 is the second operand"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|5", "label": "right", "reason": "9 x 9 entered; Equals computes the result"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|6", "label": "right", "reason": "Clear, 9 x 9, Equals all done; reporting is not System 1's job"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-3f9a2fb3|7", "label": "right", "reason": "Clear, 9 x 9, Equals all done; reporting is not System 1's job"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-414a11ec|1", "label": "wrong", "reason": "Nothing has been done yet; clear and computation remain"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-414a11ec|2", "label": "wrong", "reason": "No prior actions; clear and computation remain"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|1", "label": "right", "reason": "Task says clear first; All Clear at step 1"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|2", "label": "right", "reason": "After clearing, 9 is the first operand"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|3", "label": "right", "reason": "9 entered; Multiply is next"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|4", "label": "right", "reason": "9 x entered; 9 is the second operand"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|5", "label": "right", "reason": "9 x 9 entered; Equals computes the result"}
+{"key": "q10-native-dev-20260924|calc-read-result-dual-49bdb107|6", "label": "right", "reason": "Clear, 9 x 9, Equals all done; reporting is not System 1's job"}

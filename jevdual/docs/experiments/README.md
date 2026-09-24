@@ -17,7 +17,7 @@ question is in the table.
 | [Q8](Q8.md) | Consent: completion under policy versus false pauses | pre-registered | Q6 consent tasks |
 | [Q7](Q7.md) | Should the arbiter learn? | pre-registered | Q6 sites, memory mechanism |
 | [Q9](Q9.md) | Does System 2 directing System 1 beat S1 from the front? Four arms incl. a guarded S2 baseline | result recorded (`results/q9-live-dev.md`): delegation falsified on cost with the first build; guarded matches on completions at lowest cost; coherent build measured (`results/q9c-coherent-delegation.md`): falsification stands, executor reach rate 5 of 30 | guarded arm, call economy, ledger semantics, delegation and evidence workflows |
-| [Q10](Q10.md) | Does the arbiter's calibration transfer from DOM menus to accessibility-tree menus (native computer use through Cua Driver)? | pre-registered | native dev split (`evals/native/tasks/dev.yaml`, oracles 7/7), Q1 labelling protocol |
+| [Q10](Q10.md) | Does the arbiter's calibration transfer from DOM menus to accessibility-tree menus (native computer use through Cua Driver)? | result recorded (`results/q10-native-dev.md`): calibration transfers (target AUROC 0.90), dual loses to guarded on verified completions through verifier refusals and one repeated-sequence task; not adopted, verifier and tasks fixed first | native dev split (`evals/native/tasks/dev.yaml`, oracles 7/7), Q1 labelling protocol |
 
 ## Ground rules
 
