@@ -25,6 +25,7 @@ items are reachable through ``invoke_menu`` when we add a ``menu`` operation.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import logging
 import re
@@ -161,9 +162,13 @@ def _offscreen(frame: Any, bounds: Any) -> bool:
     return fx + fw <= bx or fy + fh <= by or fx >= bx + bw or fy >= by + bh
 
 
+_TEXT_AX_ROLES = frozenset({"AXTextArea", "AXTextField", "AXComboBox", "AXSearchField"})
+
+
 def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
     """Static text in reading order, from the markdown the Driver renders (leaf text carries no
-    token, so it is not in ``elements``), plus the current value of every text field."""
+    token, so it is not in ``elements``), then the current value of every text field and area
+    (a document's body is the value of its AXTextArea, not a static-text leaf)."""
     lines: list[str] = []
     for raw in (tree_markdown or "").splitlines():
         m = _STATIC_LINE.search(raw.strip())
@@ -171,6 +176,11 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
             t = _clean(m.group(1).replace('\\"', '"'))
             if t:
                 lines.append(t)
+    for el in elements:
+        if _get(el, "role") in _TEXT_AX_ROLES and _get(el, "role") != "AXSecureTextField":
+            v = _clean(_get(el, "value"))
+            if v and v not in lines:
+                lines.append(v)
     out = "\n".join(lines)
     return out[:cap]
 
@@ -228,6 +238,10 @@ def menu_from_snapshot(
         if not label:
             label = role
         sensitive = ax_role == "AXSecureTextField"
+        if role in _TEXT_ROLES and raw_value not in (None, "") and label == _clean(raw_value, _LABEL_CAP):
+            label = (
+                "text area" if ax_role == "AXTextArea" else role
+            )  # the Driver echoed the content as the label
         value: str | None = None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
             value = _clean(raw_value, _VALUE_CAP)
@@ -363,6 +377,7 @@ class NativeBridge:
         self.window_id = window_id
         self.session = session
         self.last: NativeMenu | None = None
+        self.dispatches = 0
 
     async def observe(
         self,
@@ -483,9 +498,50 @@ class NativeBridge:
             code = getattr(exc, "code", None) or type(exc).__name__
             log.info("native %s on [%s] refused: %s", operation, id, exc)
             self.last = None
+            self.dispatches += 1
+            if self.dispatches == 1 and "-25204" in str(exc) and operation == "click":
+                # The first AX press of a fresh runtime fails with kAXErrorCannotComplete on every
+                # launch seen so far (Calculator, 2026-09-24); a refusal carries no delivery, so one
+                # retry on a fresh snapshot is not a blind replay. Recorded in the effect summary.
+                fresh = await self.observe()
+                again = fresh.menu.candidate(id)
+                if again is not None and fresh.token(id) is not None:
+                    eff = await self.act(fresh, operation, id, text)
+                    return dataclasses.replace(
+                        eff, summary=f"retried after first-press -25204; {eff.summary}"[:200]
+                    )
             return NativeEffect(operation, id, cand.label, "refused", None, (), str(exc)[:200], str(code))
         self.last = None
+        self.dispatches += 1
         return effect_from_action_result(operation, id, cand.label, result)
+
+    async def key(self, nm: NativeMenu, key: str, modifiers: list[str] | None = None) -> NativeEffect:
+        """Press one key in the window (System 2 only; System 1's menu has no key operation)."""
+        from cua_driver import PressKeyInput
+
+        mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
+        if self.last is None or nm.snapshot_id != self.last.snapshot_id:
+            raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
+        try:
+            result = await self.driver.press_key(
+                PressKeyInput(
+                    key=key, target=self._target(), scope=None, session=self.session, modifiers=mods or None
+                )
+            )
+        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            self.last = None
+            return NativeEffect(
+                "key",
+                -1,
+                key,
+                "refused",
+                None,
+                (),
+                str(exc)[:200],
+                getattr(exc, "code", None) or type(exc).__name__,
+            )
+        self.last = None
+        return effect_from_action_result("key", -1, "+".join([*mods, key]), result)
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of

@@ -28,7 +28,7 @@ from jevdual.menu import Candidate, Menu
 from jevdual.native import NativeBridge, NativeBridgeError, NativeEffect, NativeMenu
 from jevdual.policy import Decision, PolicyError, StepContext
 from jevdual.s1 import AlwaysAct, Verdict, redact_menu
-from jevdual.trace import ActionRecord, MenuEntry, StepRecord, Timings, TraceWriter
+from jevdual.trace import ActionRecord, Cost, MenuEntry, StepRecord, Timings, TraceWriter
 
 log = logging.getLogger("jevdual.desktop")
 
@@ -64,6 +64,8 @@ class StepOutcome:
     jev_ms: float = 0.0
     llm_ms: float = 0.0
     exec_ms: float = 0.0
+    llm_input_tokens: int = 0
+    llm_output_tokens: int = 0
 
 
 @dataclass
@@ -398,6 +400,10 @@ class NativeAgent:
                 return NativeRun("done", "System 2 done", self.steps, out.answer, nm)
             if out.verdict is not None and out.verdict.kind == "confirm":
                 return NativeRun("paused", out.verdict.reason, self.steps, None, nm)
+            if out.error == "s2 fatal: blocked":
+                return NativeRun(
+                    "blocked", out.verdict.reason if out.verdict else out.error, self.steps, None, nm
+                )
             if out.error and out.error.startswith("s2 fatal"):
                 return NativeRun("error", out.error, self.steps, None, nm)
         return NativeRun("budget_exhausted", f"{self.max_steps} steps", self.steps, None, final)
@@ -440,6 +446,7 @@ class NativeAgent:
                     llm_ms=out.llm_ms or None,
                     exec_ms=out.exec_ms or None,
                 ),
+                cost=Cost(llm_input_tokens=out.llm_input_tokens, llm_output_tokens=out.llm_output_tokens),
             )
         )
 
@@ -447,3 +454,23 @@ class NativeAgent:
 @dataclass
 class _PolicyShim:
     secrets: Any = None
+
+
+def keyword_gate(
+    policy: Any = None, *, authorized_actions: tuple[str, ...] = (), authorize_all: bool = False
+) -> Callable[[NativeMenu, Candidate], str | None]:
+    """The keyword fast path of the destructive gate for System 1 clicks (System 1 decisions are not
+    judged twice: its own ``destructive`` noul already went through the arbiter)."""
+    from jevdual.arbiter import ArbiterPolicy, destructive_match
+
+    pol = policy or ArbiterPolicy.from_toml()
+    allowed = tuple(a.casefold() for a in authorized_actions)
+
+    def gate(nm: NativeMenu, target: Candidate) -> str | None:
+        if authorize_all or any(a in target.label.casefold() for a in allowed):
+            return None
+        context = " ".join(x for x in (target.section or "", nm.menu.title) if x)
+        hit = destructive_match(target.label, context, pol)
+        return f"keyword {hit!r}" if hit else None
+
+    return gate

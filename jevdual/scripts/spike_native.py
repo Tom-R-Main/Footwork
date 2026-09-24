@@ -126,11 +126,19 @@ async def run_task(bridge: NativeBridge, task: str, steps: int, act: bool, log) 
 
 
 async def run_agent(
-    bridge: NativeBridge, task: str, requirements: tuple[str, ...], steps: int, log_path: Path | None
+    bridge: NativeBridge,
+    task: str,
+    requirements: tuple[str, ...],
+    steps: int,
+    log_path: Path | None,
+    *,
+    with_s2: bool = False,
+    authorized: tuple[str, ...] = (),
 ) -> None:
     """The real loop: NativeAgent with JevPolicy, Arbiter (arbiter.toml), Verifier on done, schema-2 trace."""
-    from jevdual.arbiter import Arbiter
-    from jevdual.desktop import NativeAgent
+    from jevdual.arbiter import Arbiter, ArbiterPolicy
+    from jevdual.desktop import NativeAgent, keyword_gate
+    from jevdual.desktop_s2 import NativeS2, meta_chat_from_env
     from jevdual.keys import load_keys
     from jevdual.policy import JevPolicy
     from jevdual.trace import TraceWriter
@@ -143,7 +151,17 @@ async def run_agent(
     trace = TraceWriter(log_path) if log_path else None
     async with AsyncTypeSafeClient() as client:
         policy = JevPolicy(client)
-        hook = ArbiterHook(Verifier(client), requirements, use_trajectory=False)
+        verifier = Verifier(client)
+        hook = ArbiterHook(verifier, requirements, use_trajectory=False)
+        s2 = None
+        if with_s2:
+            chat = meta_chat_from_env()
+            if chat is None:
+                print("MODEL_API_KEY missing; System 2 unavailable")
+                return
+            s2 = NativeS2(
+                chat, policy=ArbiterPolicy.from_toml(), verifier=verifier, authorized_actions=authorized
+            )
         agent = NativeAgent(
             bridge,
             policy,
@@ -154,6 +172,8 @@ async def run_agent(
             trace=trace,
             run_id=f"spike-{bridge.pid}",
             max_steps=steps,
+            s2=s2,
+            gate=keyword_gate(authorized_actions=authorized),
         )
         run = await agent.run()
     if trace:
@@ -191,6 +211,10 @@ async def main() -> None:
         "--agent", action="store_true", help="run NativeAgent (policy + arbiter + verifier + trace) on --task"
     )
     ap.add_argument("--requirements", default="", help="semicolon-separated requirements for the verifier")
+    ap.add_argument("--s2", action="store_true", help="with --agent: escalations go to Muse (dual arm)")
+    ap.add_argument(
+        "--authorized", default="", help="comma-separated target keywords the gate stands down for"
+    )
     ap.add_argument("--log", help="JSONL log path")
     args = ap.parse_args()
 
@@ -250,7 +274,8 @@ async def main() -> None:
             await run_script(bridge, [s.strip() for s in args.script.split(",") if s.strip()], log)
         if args.task and args.agent:
             reqs = tuple(r.strip() for r in args.requirements.split(";") if r.strip())
-            await run_agent(bridge, args.task, reqs, args.steps, log_path)
+            auth = tuple(a.strip() for a in args.authorized.split(",") if a.strip())
+            await run_agent(bridge, args.task, reqs, args.steps, log_path, with_s2=args.s2, authorized=auth)
         elif args.task:
             await run_task(bridge, args.task, args.steps, args.act, log)
     finally:

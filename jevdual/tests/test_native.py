@@ -148,7 +148,7 @@ def test_text_field_mapping_and_sensitive_value():
     assert by["Remember me"].checked is True
     assert "Sign In" not in by and nm.menu.omitted["disabled"] == 1
     assert "footer" not in by and nm.menu.omitted["unmapped_role"] == 2  # footer and the AXGroup
-    assert nm.menu.page_text == "Welcome back"
+    assert nm.menu.page_text == "Welcome back\ntom"  # static text, then text-field values
     assert set(nm.menu.by_operation) == {"type", "enter", "click"}
 
 
