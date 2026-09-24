@@ -1,0 +1,11 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|dual|1", "label": "right", "reason": "Typing 'Eiffel Tower' into the Wikipedia search box from Main Page is the obvious first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|dual|2", "label": "right", "reason": "Search box already holds 'Eiffel Tower'; pressing enter submits the search, the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|dual|3", "label": "right", "reason": "On the Eiffel Tower article; infobox row 'Completed 31 March 1889' is in the menu, so done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-browser-use-license|dual|1", "label": "right", "reason": "Repository page is open and the menu shows 'MIT license' in Resources; the answer is on this page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-browser-use-license|dual|2", "label": "right", "reason": "On the LICENSE file whose content starts 'MIT License'; task is answerable here, done fits."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-pyo3-issues|dual|1", "label": "right", "reason": "Clicking the 'Issues 295' tab is exactly what the task asks."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-pyo3-issues|dual|2", "label": "right", "reason": "Menu shows the Issues page (Search Issues, New issue, open-issue list); task complete, done fits."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-pride|dual|1", "label": "right", "reason": "The 'Pride and Prejudice by Jane Austen' link to /ebooks/1342 is the ebook page the task wants."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-pride|dual|2", "label": "wrong", "reason": "Already on the ebook page (title, author, eBook-No. 1342); task is complete, done was right, not 'Read online now'."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-top|dual|1", "label": "right", "reason": "'Frequently Downloaded' links to /browse/scores/top, the Top 100 page; no closer link on the menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-top|dual|2", "label": "right", "reason": "Menu shows 'Top 100 EBooks yesterday' list on /browse/scores/top; task complete, done fits."}

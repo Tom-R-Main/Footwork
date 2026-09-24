@@ -1,0 +1,17 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-linux-creator|dual|1", "label": "right", "reason": "Typing 'Linux kernel' into the Wikipedia searchbox is the direct way to reach the article; no Linux link on the Main Page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-linux-creator|dual|2", "label": "right", "reason": "Searchbox already holds 'Linux kernel'; pressing enter submits the search, the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-418|dual|1", "label": "right", "reason": "418 not in menu; scrolling down the status-code list advances the task, comparable to the 'Client error responses' anchor."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-418|dual|2", "label": "right", "reason": "Same page and menu, 418 still not listed; scrolling toward the 4xx section remains a reasonable step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-418|dual|3", "label": "right", "reason": "Menu unchanged, 418 still offscreen and unlisted; scrolling on is a reasonable way to reach the 4xx section."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-418|dual|6", "label": "right", "reason": "Menu shows the 418 page open (breadcrumb and section '418 I'm a teapot'); the reason phrase is visible, so done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-array-map|dual|1", "label": "right", "reason": "Page is a 'site can't be reached' error with only a Reload button; reloading is the only sensible next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-array-map|dual|2", "label": "right", "reason": "Menu shows the Array.prototype.map() reference page open (breadcrumb 'map()', Syntax, Parameters); task complete, done is right."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|1", "label": "right", "reason": "Opening site search from the MDN home page is a reasonable way to find the bold-text property; CSS link is an equal alternative."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|2", "label": "right", "reason": "Search dialog is open with an empty combobox; typing a query into it is the correct next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|3", "label": "right", "reason": "Search combobox still empty; typing the query into it remains the correct next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|4", "label": "right", "reason": "Search combobox still empty; typing the query into it remains the correct next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|5", "label": "right", "reason": "Search combobox still empty; typing the query into it remains the correct next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|6", "label": "right", "reason": "Search box holds 'CSS bold text' and a site-search option is offered; pressing enter submits the search."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|7", "label": "unclear", "reason": "Menu shows only header and footer links, no results or search field; page state does not show what advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-mdn-font-weight|dual|8", "label": "wrong", "reason": "Results are loaded (5,562 documents); waiting advances nothing, refining the query or opening a CSS text result was available."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pride-author|dual|1", "label": "right", "reason": "Typing 'Pride and Prejudice' into the Wikipedia searchbox is the direct route to the novel's article."}

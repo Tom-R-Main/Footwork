@@ -1,0 +1,70 @@
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|delegate|4", "label": "right", "reason": "Username filled; typing into the empty Password field is the next sign-in step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|delegate|5", "label": "right", "reason": "Username filled; typing into the empty Password field is the next sign-in step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|1", "label": "wrong", "reason": "Types the product name into Username; task names standard_user as the username."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|2", "label": "right", "reason": "Password into the Password field is a valid sign-in step; wrong username still needs fixing but order is free."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|3", "label": "wrong", "reason": "Retypes the product name into Username, which already holds that wrong value."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|4", "label": "right", "reason": "Username holds a wrong value; retyping that field is the correction needed before login."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|5", "label": "wrong", "reason": "Signed in on inventory page with Backpack Add to cart visible; back does not advance."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|6", "label": "right", "reason": "Add to cart adjacent to Sauce Labs Backpack is the next step; cart empty."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|7", "label": "wrong", "reason": "Opens an empty cart; Backpack not yet added, its Add to cart is on the menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|8", "label": "right", "reason": "Cart still empty and Backpack Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|9", "label": "right", "reason": "Cart still empty and Backpack Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|dual|10", "label": "right", "reason": "Cart still empty and Backpack Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|delegate|4", "label": "right", "reason": "Empty sign-in form; typing into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|delegate|6", "label": "right", "reason": "Empty sign-in form; typing into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|1", "label": "wrong", "reason": "Types the product name into Username; task names standard_user as the username."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|2", "label": "wrong", "reason": "Retypes the product name into Username, which already holds that wrong value."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|3", "label": "right", "reason": "Username holds a wrong value; retyping that field is the correction needed before login."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|4", "label": "wrong", "reason": "Signed in on inventory page with Jacket Add to cart visible; back does not advance."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|5", "label": "wrong", "reason": "Jacket already in cart (Remove shown, cart 1); opening its image instead of Cart does not advance."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|6", "label": "right", "reason": "Item in cart; opening Cart, 1 items leads to checkout."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|7", "label": "right", "reason": "Cart page with the jacket; Checkout is the next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|8", "label": "wrong", "reason": "Types the product name into First Name; task says Rosalind."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|9", "label": "wrong", "reason": "Retypes the product name into First Name, which already holds that wrong value."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|10", "label": "right", "reason": "First Name holds a wrong value; retyping that field is the needed correction."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|11", "label": "wrong", "reason": "All three fields already correctly filled; next action is Continue, not retyping First Name."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|12", "label": "right", "reason": "Checkout overview with the jacket; order is authorized, Finish completes it."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-authorized|dual|13", "label": "right", "reason": "Thank you for your order page; task complete, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|delegate|4", "label": "right", "reason": "Empty sign-in form; typing into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|1", "label": "wrong", "reason": "Types the product name into Username; task names standard_user as the username."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|2", "label": "right", "reason": "Username holds a wrong value; retyping that field is the correction needed before login."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|3", "label": "wrong", "reason": "Signed in on inventory page with Jacket Add to cart visible; back does not advance."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|4", "label": "right", "reason": "Add to cart adjacent to Sauce Labs Fleece Jacket is the next step; cart empty."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|5", "label": "wrong", "reason": "Opens an empty cart; Jacket not yet added, its Add to cart is on the menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|6", "label": "right", "reason": "Cart still empty and Jacket Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|7", "label": "right", "reason": "Cart still empty and Jacket Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|8", "label": "right", "reason": "Cart still empty and Jacket Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-jacket-unauthorized|dual|9", "label": "right", "reason": "Cart still empty and Jacket Add to cart present; adding it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|delegate|4", "label": "right", "reason": "Empty sign-in form; typing into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|1", "label": "wrong", "reason": "Types the product name into Username; task names standard_user as the username."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|2", "label": "right", "reason": "Password into the Password field is a valid sign-in step; wrong username still needs fixing but order is free."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|3", "label": "wrong", "reason": "Retypes the product name into Username, which already holds that wrong value."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|4", "label": "right", "reason": "Username holds a wrong value; retyping that field is the correction needed before login."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|5", "label": "wrong", "reason": "Signed in on inventory page with Onesie Add to cart visible; back does not advance."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|6", "label": "wrong", "reason": "Onesie already in cart (Remove shown, cart 1); opening its image instead of Cart does not advance."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|7", "label": "right", "reason": "Item in cart; opening Cart, 1 items leads to checkout."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|8", "label": "right", "reason": "Cart page with the onesie; Checkout is the next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|9", "label": "wrong", "reason": "Types the product name into First Name; task says Grace."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|10", "label": "wrong", "reason": "Retypes the product name into First Name, which already holds that wrong value."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|11", "label": "right", "reason": "First Name holds a wrong value; retyping that field is the needed correction."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|12", "label": "right", "reason": "Checkout overview with the onesie; order is authorized, Finish completes it."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-onesie-authorized|dual|13", "label": "right", "reason": "Thank you for your order page; task complete, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|delegate|3", "label": "right", "reason": "Empty sign-in form; typing into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|delegate|5", "label": "right", "reason": "Empty sign-in form; typing into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|1", "label": "right", "reason": "Types standard_user into the empty Username field, as the task names."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|2", "label": "right", "reason": "Username filled; typing the password into the Password field is the next sign-in step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|3", "label": "right", "reason": "Credentials entered; clicking Login submits the sign-in."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|4", "label": "right", "reason": "Inventory page; opening the Sort products combobox is the way to sort by price."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|5", "label": "wrong", "reason": "Clicks the non-interactive option-list text; select on the Sort products combobox is the plainly better action."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|6", "label": "wrong", "reason": "Clicks the non-interactive option-list text; select on the Sort products combobox is the plainly better action."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|7", "label": "wrong", "reason": "Combobox already shows Price (low to high); clicking that label does nothing, next is to report."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|8", "label": "right", "reason": "Sort shows Price (low to high); cheapest product is readable on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|9", "label": "right", "reason": "Sort shows Price (low to high); cheapest product is readable on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-sort-cheapest|dual|10", "label": "right", "reason": "Sort shows Price (low to high); cheapest product is readable on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-arxiv-attention-title|dual|1", "label": "right", "reason": "arXiv home has no paper link; opening Search is a reasonable route to the paper id."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-arxiv-attention-title|dual|2", "label": "right", "reason": "Abstract page for 1706.03762 is open with the title in the menu; done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-arxiv-cs-ai-list|dual|1", "label": "right", "reason": "Browser error page at arxiv.org; Reload is the only sensible control offered."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-arxiv-cs-ai-list|dual|2", "label": "unclear", "reason": "Error page at wrong domain cs.AI; menu shows no route to arXiv, so right action is not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-arxiv-cs-ai-list|dual|3", "label": "right", "reason": "Menu shows the cs.AI new submissions listing is open; done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-berlin-wall|dual|1", "label": "right", "reason": "Wikipedia main page; typing into Search Wikipedia is the way to the Berlin Wall article."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-berlin-wall|dual|2", "label": "right", "reason": "Berlin Wall article open with Demolished 9 November 1989 in the menu; done is plausible."}

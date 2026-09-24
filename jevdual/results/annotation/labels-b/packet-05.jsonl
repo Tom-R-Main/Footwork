@@ -1,0 +1,7 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-rust-hoare|dual|1", "label": "right", "reason": "Main Page has no Rust link; typing the article title into the search box is the correct first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-rust-hoare|dual|2", "label": "right", "reason": "Search box already holds the title; submitting with enter opens the article, equal to clicking the suggestion."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-rust-hoare|dual|3", "label": "wrong", "reason": "Mozilla is a company, not the designer; clicking leaves the Rust article. Designer link absent, scroll or History was next."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-rust-hoare|dual|4", "label": "wrong", "reason": "Same Mozilla click on the Rust article; does not identify the designer and navigates away from the chain."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-rust-hoare|dual|5", "label": "wrong", "reason": "Third Mozilla click; a company link cannot be the original designer, and it abandons the article."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-rust-hoare|dual|9", "label": "right", "reason": "Graydon Hoare link is on the Rust article; opening it completes the chain exactly as the task asks."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-turing-machine|dual|1", "label": "right", "reason": "Main Page has no Alan Turing link; typing the name into the search box is the correct first step."}

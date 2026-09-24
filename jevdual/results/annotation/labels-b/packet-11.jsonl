@@ -1,0 +1,14 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|dual|3", "label": "right", "reason": "Python article is on screen with 'Designed by Guido van Rossum' in the infobox; task is answerable here."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|1", "label": "right", "reason": "Typing into the 'Find an RFC' search box is the natural first step; no RFC 8259 link is on the menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|2", "label": "right", "reason": "Search box still shows no value, so typing the RFC number into it remains the right next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|3", "label": "right", "reason": "Types '8259' into the empty RFC search box; that is the query the task needs."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|4", "label": "right", "reason": "Search box holds '8259'; pressing enter submits the search, the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|5", "label": "right", "reason": "Results list RFC 8259 titled JSON Data Interchange Format; the answer is visible, so done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|1", "label": "right", "reason": "No RFC 9110 link on the home page menu; typing into the 'Find an RFC' search box advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|2", "label": "right", "reason": "Search box shows no value yet; typing into it is still the correct action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|3", "label": "right", "reason": "Search box still empty per menu; typing the RFC number into it is the right target and operation."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|4", "label": "right", "reason": "Menu shows the RFC 9110 document itself (Core Semantics, HTTP sections); the RFC is open, done fits."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|delegate|2", "label": "right", "reason": "Types 'World Wide Web' into Search Wikipedia; correct field and query for the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|delegate|3", "label": "right", "reason": "Search field holds 'World Wide Web'; enter submits it, the right next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|delegate|4", "label": "right", "reason": "World Wide Web article on screen with 'Authors Tim Berners-Lee' in the infobox; task answerable here."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|dual|1", "label": "right", "reason": "Typing into Search Wikipedia from the main page is the right first step; no WWW link on the menu."}

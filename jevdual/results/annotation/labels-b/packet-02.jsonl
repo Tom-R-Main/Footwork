@@ -1,0 +1,8 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-berlin-wall|dual|3", "label": "right", "reason": "On the Berlin Wall article; menu shows '9 November 1989' infobox row and links, so the year is findable here; done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|1", "label": "right", "reason": "Main Page, no Australia link on menu; typing into the Search Wikipedia box is the right first step (value not supplied, target correct)."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|2", "label": "right", "reason": "Still Main Page with an empty search box on the menu; typing into Search Wikipedia remains the right action, nothing yet to submit."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|3", "label": "right", "reason": "URL says Main Page but the menu is the Australia article with 'Capital Canberra' infobox row; done is plausible on this menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|4", "label": "right", "reason": "On the Australia article; menu shows 'Capital Canberra' row and Canberra link; task complete here, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|5", "label": "right", "reason": "Same Australia article menu with 'Capital Canberra' visible; done is plausible, though it repeats the previous step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-austen-year|dual|1", "label": "right", "reason": "Chain start on Main Page, no Jane Austen link on menu; typing 'Jane Austen' into Search Wikipedia opens X first."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-austen-year|dual|2", "label": "right", "reason": "Search box already holds 'Jane Austen'; pressing enter submits the search, the correct next step of the chain."}

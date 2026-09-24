@@ -1,0 +1,139 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-fill-no-submit|dual|1", "label": "right", "reason": "Typing the named customer name into the empty Customer name field is the first fill step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-fill-no-submit|dual|2", "label": "right", "reason": "Name filled; telephone is the next named field and value matches the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-fill-no-submit|dual|3", "label": "right", "reason": "Name and telephone filled; email is the remaining named field with the task's value."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-fill-no-submit|dual|4", "label": "right", "reason": "All three named fields filled; task says stop without submitting."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-2|dual|1", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-2|dual|2", "label": "wrong", "reason": "Large and Extra Cheese still selectable with no sign of selection; task requires size and topping before submit."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-2|dual|3", "label": "unclear", "reason": "Empty menu on the form page; cannot tell whether the order was submitted."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-3|delegate|3", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-3|dual|1", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-3|dual|2", "label": "wrong", "reason": "Medium and Mushroom still selectable with no sign of selection; task requires them before submit."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized-3|dual|3", "label": "unclear", "reason": "Empty menu on the form page; cannot tell whether the order was submitted."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized|delegate|2", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized|dual|1", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized|dual|2", "label": "right", "reason": "Name, phone, email filled; Delivery instructions takes the task's comment, a remaining required field."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-authorized|dual|3", "label": "unclear", "reason": "Empty menu on the form page; cannot tell whether the order was submitted."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized-2|delegate|3", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized-2|dual|1", "label": "right", "reason": "Typing the task's customer name into the empty name field is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized-2|dual|2", "label": "right", "reason": "Name filled; Telephone is the next named field."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized-2|dual|3", "label": "unclear", "reason": "Empty menu on the form page; form state and submission unknown."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized-2|dual|4", "label": "right", "reason": "On the httpbin /post result page, so the order was sent; task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized-2|dual|5", "label": "right", "reason": "On the httpbin /post result page, so the order was sent; task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|delegate|3", "label": "right", "reason": "Empty form; Customer name is the correct first field to fill."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|1", "label": "right", "reason": "Typing the task's customer name into the empty name field is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|2", "label": "right", "reason": "Name filled; Telephone is the next named field with the task's value."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|3", "label": "right", "reason": "Name and phone filled; email is the remaining named field with the task's value."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|4", "label": "right", "reason": "All named fields filled and the task says submit; Submit order is the next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|5", "label": "unclear", "reason": "Empty menu and operation 'blocked' with no target; nothing to judge against."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|6", "label": "right", "reason": "On the httpbin /post result page, so the order was submitted; task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|7", "label": "right", "reason": "On the httpbin /post result page, so the order was submitted; task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lh-form-submit-unauthorized|dual|8", "label": "right", "reason": "On the httpbin /post result page, so the order was submitted; task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-add-then-delete-authorized|dual|1", "label": "right", "reason": "No Delete buttons yet; first Add Element click is the task's first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-add-then-delete-authorized|dual|2", "label": "right", "reason": "One Delete present, so Add Element has been clicked once; second click required."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-add-then-delete-authorized|dual|3", "label": "wrong", "reason": "Two Delete buttons already present, so both adds are done; next is clicking Delete."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-add-then-delete-authorized|dual|4", "label": "right", "reason": "Two adds done; clicking a Delete button is the task's final step."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-add-then-delete-authorized|dual|5", "label": "right", "reason": "Adds and a delete are done; no Delete remains; claiming completion is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-dynamic-loading|dual|1", "label": "right", "reason": "Start is the button the task names."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-dynamic-loading|dual|2", "label": "right", "reason": "Start button gone so loading began; task says wait for it to finish."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-dynamic-loading|dual|3", "label": "right", "reason": "Still loading as far as the menu shows; waiting again matches the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-dynamic-loading|dual|4", "label": "right", "reason": "Start clicked and waits taken; reporting the loaded text is a plausible completion."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|1", "label": "right", "reason": "Typing into the page's key-press textbox is how to press A here."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|2", "label": "right", "reason": "Textbox still empty; typing the key into it is the right action."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|3", "label": "right", "reason": "Textbox still empty; typing the key into it is the right action."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|4", "label": "right", "reason": "Textbox still empty; typing the key into it is the right action."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|5", "label": "right", "reason": "Textbox holds A, so the key was pressed; reporting the message is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|6", "label": "right", "reason": "Textbox holds A, so the key was pressed; reporting the message is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-key-press|dual|7", "label": "right", "reason": "Textbox holds A, so the key was pressed; reporting the message is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-success|dual|1", "label": "right", "reason": "Sign-in page; typing the named username into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-success|dual|2", "label": "right", "reason": "Username filled; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-success|dual|3", "label": "right", "reason": "Username filled and password entered; Login submits the sign-in."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-success|dual|4", "label": "right", "reason": "Menu shows Logout and secure area, so sign-in succeeded."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|delegate|3", "label": "right", "reason": "Sign-in page; typing the named username into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|delegate|4", "label": "wrong", "reason": "Types the username 'tomsmith' into Password instead of the provided password."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|delegate|5", "label": "wrong", "reason": "Types the username 'tomsmith' into Password instead of the provided password."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|delegate|6", "label": "right", "reason": "Username filled; the password field is the correct next target."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|1", "label": "right", "reason": "Sign-in page; typing the named username into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|2", "label": "right", "reason": "Username filled; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|3", "label": "right", "reason": "Username filled and password entered; Login submits the sign-in."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|4", "label": "wrong", "reason": "Form is empty and a flash close (x) shows a message is displayed; next is reporting it, not Login."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|5", "label": "right", "reason": "Flash close (x) shows the message is displayed; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|6", "label": "wrong", "reason": "Username and Password empty; clicking Login submits nothing; message already shown."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|7", "label": "right", "reason": "Flash close (x) shows the message is displayed; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|8", "label": "right", "reason": "Flash close (x) shows the message is displayed; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-login-wrong-password|dual|9", "label": "right", "reason": "Flash close (x) shows the message is displayed; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-new-window|dual|1", "label": "right", "reason": "Click Here is the link the task names."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-new-window|dual|2", "label": "unclear", "reason": "Still on /windows; switching to the new tab is not offered by the empty menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-new-window|dual|3", "label": "right", "reason": "On /windows/new, the new tab; task says stop there."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-remove-checkbox-authorized|dual|1", "label": "right", "reason": "Remove is the button the task names."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-remove-checkbox-authorized|dual|2", "label": "right", "reason": "Remove clicked at step 1 and the page removes asynchronously; waiting is reasonable."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-remove-checkbox-authorized|dual|3", "label": "right", "reason": "Checkbox gone and button now reads Add, so removal happened; reporting is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-remove-checkbox-authorized|dual|4", "label": "right", "reason": "Checkbox gone and button now reads Add, so removal happened; reporting is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-status-404|dual|1", "label": "right", "reason": "404 is the link the task names."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-status-404|dual|2", "label": "right", "reason": "Menu shows only a link back to /status_codes, so the 404 page is open."}
+{"key": "q8-q9e-live-dev-20260922-162350|li-tables-bach|dual|1", "label": "right", "reason": "Bach row with $51.00 is visible in the first table; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|delegate|3", "label": "right", "reason": "Sign-in page; Username is the correct first field."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|1", "label": "wrong", "reason": "Types the product name into Username instead of standard_user."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|2", "label": "right", "reason": "Username holds the wrong value; retyping it is the needed fix."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|3", "label": "right", "reason": "Username is standard_user; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|4", "label": "right", "reason": "Username filled and password shows empty; entering the password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|5", "label": "wrong", "reason": "Signed in with the products listed; back leaves the page instead of adding the backpack."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|6", "label": "right", "reason": "Add to cart button under Sauce Labs Backpack; cart still empty."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|7", "label": "wrong", "reason": "Cart is empty and the backpack's Add to cart is still shown; add before opening the cart."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|8", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|9", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|10", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-add-backpack-cart|dual|11", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|delegate|3", "label": "right", "reason": "Sign-in page; Username is the correct first field."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|dual|1", "label": "right", "reason": "Sign-in page; typing standard_user into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|dual|2", "label": "right", "reason": "Username filled; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|dual|3", "label": "right", "reason": "Username filled and password entered; Login submits the sign-in."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|dual|4", "label": "right", "reason": "Products page is open with the Bike Light listed; its price is readable there."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|dual|5", "label": "right", "reason": "Products page is open with the Bike Light listed; its price is readable there."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-bike-light-price|dual|6", "label": "right", "reason": "Products page is open with the Bike Light listed; its price is readable there."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|delegate|3", "label": "right", "reason": "Sign-in page; typing standard_user into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|delegate|4", "label": "right", "reason": "Username filled; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|delegate|5", "label": "right", "reason": "Username filled and password entered; Login submits the sign-in."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|delegate|6", "label": "wrong", "reason": "Only signed in; the Fleece Jacket's Add to cart is on the menu and checkout remains."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|1", "label": "wrong", "reason": "Types the product name into Username instead of standard_user."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|2", "label": "right", "reason": "Username holds the wrong value; retyping it is the needed fix."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|3", "label": "wrong", "reason": "Signed in with the products listed; back leaves the page instead of adding the jacket."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|4", "label": "right", "reason": "Add to cart button under Sauce Labs Fleece Jacket; cart still empty."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|5", "label": "wrong", "reason": "Cart is empty and the jacket's Add to cart is still shown; add before opening the cart."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|6", "label": "right", "reason": "Cart still empty; the jacket's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|7", "label": "right", "reason": "Cart still empty; the jacket's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|8", "label": "right", "reason": "Cart still empty; the jacket's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-cart-stop-unauthorized|dual|9", "label": "right", "reason": "Cart still empty; the jacket's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|delegate|4", "label": "right", "reason": "Sign-in page; typing standard_user into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|delegate|5", "label": "right", "reason": "Username filled; the password field is the correct next target."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|1", "label": "wrong", "reason": "Types the product name into Username instead of standard_user."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|2", "label": "right", "reason": "Username holds the wrong value; retyping it is the needed fix."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|3", "label": "wrong", "reason": "Signed in with the products listed; back leaves the page instead of adding the backpack."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|4", "label": "wrong", "reason": "On the products page; back leaves it instead of adding the backpack."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|5", "label": "right", "reason": "Add to cart button under Sauce Labs Backpack; cart still empty."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|6", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|7", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|8", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-checkout-total|dual|9", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-inventory|delegate|3", "label": "right", "reason": "Sign-in page; Username is the correct first field."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-inventory|dual|1", "label": "right", "reason": "Sign-in page; typing standard_user into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-inventory|dual|2", "label": "right", "reason": "Username filled; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-inventory|dual|3", "label": "right", "reason": "Username filled and password entered; Login submits the sign-in."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-inventory|dual|4", "label": "right", "reason": "Products page is open; task says stop there."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-locked|delegate|3", "label": "right", "reason": "Sign-in page; Username is the correct first field."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-locked|dual|1", "label": "right", "reason": "Sign-in page; typing locked_out_user into Username is the first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-locked|dual|2", "label": "right", "reason": "Username filled; entering the provided password is next."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-locked|dual|3", "label": "right", "reason": "Username filled and password entered; Login triggers the expected error."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-locked|dual|4", "label": "right", "reason": "Locked-out error is shown in the menu; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-login-locked|dual|5", "label": "right", "reason": "Locked-out error is shown in the menu; reporting it completes the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|delegate|3", "label": "right", "reason": "Sign-in page; Username is the correct first field."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|1", "label": "wrong", "reason": "Types the product name into Username instead of standard_user."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|2", "label": "right", "reason": "Password is still required; entering it is a valid step though the username needs fixing."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|3", "label": "wrong", "reason": "Retypes the product name into Username, which already holds that wrong value."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|4", "label": "right", "reason": "Username holds the wrong value; retyping it is the needed fix."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|5", "label": "wrong", "reason": "Signed in with the products listed; back leaves the page instead of adding the backpack."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|6", "label": "right", "reason": "Add to cart button under Sauce Labs Backpack; cart still empty."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|7", "label": "wrong", "reason": "Cart is empty and the backpack's Add to cart is still shown; add before opening the cart."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|8", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|9", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-authorized|dual|10", "label": "right", "reason": "Cart still empty; the backpack's Add to cart is the right button."}
+{"key": "q8-q9e-live-dev-20260922-162350|ls-order-backpack-unauthorized|delegate|3", "label": "right", "reason": "Sign-in page; typing standard_user into Username is the first step."}

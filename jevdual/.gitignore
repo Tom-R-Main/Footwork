@@ -15,3 +15,4 @@ evals/runs/
 # eval run artifacts that may contain page text or model inputs
 results/**/traces/
 results/**/run.log
+results/annotation/packets/

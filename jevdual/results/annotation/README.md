@@ -42,3 +42,19 @@ needs more than the CSV shows.
 Q1 (`docs/experiments/Q1.md`): calibration of System 1's operation and target confidences against
 human right/wrong, the AUROC of the confidence floors, and the threshold sweep the arbiter policy is
 frozen from. Rows labelled `unclear` are excluded from calibration and counted separately.
+
+## Model labels and the audit (2026-09-23)
+
+The CSV now carries `label_a`/`reason_a` and `label_b`/`reason_b` from two blinded Claude Fable
+passes (see `docs/experiments/Q1.md`, amendment of 2026-09-23) and `model_label`, the agreed label or
+`disagree`. Agreement 96.8%, kappa 0.91. `labels-a/` and `labels-b/` hold the raw passes per packet;
+`packets/` (not committed, rebuilt by `scripts/build_label_packets.py`) is what the labellers saw.
+
+**Your part: `audit-sheet.csv`**, 40 rows, blind (no outcome columns, no model labels). Fill
+`audit_label` with right / wrong / unclear per `RUBRIC.md` and anything useful in `audit_note`. Then:
+
+    uv run python scripts/audit_agreement.py results/annotation/audit-sheet.csv results/annotation/q1-s1-decisions.csv
+
+reports your agreement with each pass and with the agreed label. `q1-calibration.md` is the Q1
+analysis on the agreed labels and is provisional until that number is in.
+

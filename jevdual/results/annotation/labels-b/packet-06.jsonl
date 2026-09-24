@@ -1,0 +1,23 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-turing-machine|dual|2", "label": "right", "reason": "Search box already holds 'Alan Turing'; pressing enter submits the search, the right next step of the chain."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-turing-machine|dual|4", "label": "right", "reason": "Menu shows the Turing machine article open (Article link, contents); chain endpoint reached, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|1", "label": "unclear", "reason": "Menu is the MDN homepage, not DuckDuckGo; no control leads to DuckDuckGo, so the required search step is undecidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|2", "label": "unclear", "reason": "Menu shows only a DuckDuckGo promo/nav overlay; no search box or results listed; purpose of 'Submit' undeterminable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|3", "label": "unclear", "reason": "Menu shows only a DuckDuckGo promo overlay; no search box or MDN result listed; waiting is not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|4", "label": "unclear", "reason": "Results page URL but menu lists only a promo overlay; the MDN result link the task needs is not listed."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|5", "label": "unclear", "reason": "Results page URL but menu lists only a promo overlay; the MDN result link the task needs is not listed."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|6", "label": "unclear", "reason": "Menu has only unlabeled images and 'Submit'; no MDN result link listed, so the right action is undecidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|7", "label": "right", "reason": "Menu shows the MDN Window: fetch() article open (breadcrumb Web APIs > Window > fetch()); task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|8", "label": "right", "reason": "Menu shows the MDN Window: fetch() article open (breadcrumb Web APIs > Window > fetch()); task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|9", "label": "right", "reason": "Menu shows the MDN Window: fetch() article open on developer.mozilla.org; task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|2", "label": "right", "reason": "Types the task's query into the DuckDuckGo search box; the right first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|3", "label": "right", "reason": "Search box already holds the query; enter submits the search, equally good as the Search button."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|4", "label": "unclear", "reason": "Menu is empty; the search results the task needs are not listed, so scrolling is not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|5", "label": "unclear", "reason": "Menu lists only a promo overlay; the docs.python.org result link is not listed, so blocking is undecidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|1", "label": "right", "reason": "Types the task's query into the DuckDuckGo search box; the right first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|2", "label": "right", "reason": "Search box already holds the query; enter submits the search, equally good as the Search button."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|3", "label": "unclear", "reason": "Menu is empty; the search results the task needs are not listed, so scrolling is not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|4", "label": "unclear", "reason": "Results page URL but menu lists only a promo overlay; the docs.python.org result link is not listed."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|5", "label": "right", "reason": "Menu shows the docs.python.org pathlib page open (3.14.7 Documentation navigation); task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|delegate|3", "label": "right", "reason": "Types 'Eiffel Tower' into the empty Wikipedia search box; the right first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|delegate|4", "label": "right", "reason": "Search box already holds 'Eiffel Tower'; enter submits the search, equally good as the Search button."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|delegate|5", "label": "right", "reason": "Menu shows the Eiffel Tower article with infobox 'Completed 31 March 1889'; the year is on this page."}

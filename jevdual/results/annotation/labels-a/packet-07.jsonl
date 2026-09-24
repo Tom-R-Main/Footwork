@@ -1,0 +1,11 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|dual|1", "label": "right", "reason": "No Eiffel Tower link on the main page; typing the topic into the Search Wikipedia box is the way to reach the article."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|dual|2", "label": "right", "reason": "Search box already holds 'Eiffel Tower'; pressing enter submits it, equivalent to clicking the Search button."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|dual|3", "label": "right", "reason": "Menu is the Eiffel Tower article with the infobox row 'Completed 31 March 1889'; the answer is on this page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-browser-use-license|dual|1", "label": "right", "reason": "Repository page is open and the sidebar shows 'MIT license'; the license is reportable from this page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-browser-use-license|dual|2", "label": "right", "reason": "LICENSE file is open with content 'MIT License'; the license is plainly established, task complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-pyo3-issues|dual|1", "label": "right", "reason": "Clicking the 'Issues 295' tab link (/PyO3/pyo3/issues) is exactly what the task asks."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-github-pyo3-issues|dual|2", "label": "right", "reason": "Menu shows the Issues list (Search Issues, Open/Closed, issue links); the Issues tab is reached, so done is correct."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-pride|dual|1", "label": "right", "reason": "Clicking the 'Read free -> Pride and Prejudice by Jane Austen' link (/ebooks/1342) opens the ebook page directly."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-pride|dual|2", "label": "wrong", "reason": "The ebook page is already open (About this eBook, /ebooks/1342); done was right, 'Read online now' navigates away."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-top|dual|1", "label": "right", "reason": "'Frequently Downloaded' (href /browse/scores/top) is the Top 100 page; no link labelled Top 100 exists on the menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-gutenberg-top|dual|2", "label": "right", "reason": "Menu shows the 'Top 100 EBooks yesterday' list; the Top 100 page is open, so done is correct."}

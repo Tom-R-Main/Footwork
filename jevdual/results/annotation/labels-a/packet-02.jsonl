@@ -1,0 +1,8 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-berlin-wall|dual|3", "label": "right", "reason": "On the Berlin Wall article; menu shows infobox 'Demolished 9 November 1989' and a Fall section, so task is plausibly complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|1", "label": "right", "reason": "Main Page has no Australia link; typing a query into the Search Wikipedia box is the right next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|2", "label": "right", "reason": "Still on Main Page, search box shows no value; typing the query into Search Wikipedia remains the right next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|3", "label": "right", "reason": "Menu is the Australia article with infobox row 'Capital Canberra' visible; task is plausibly complete on this page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|4", "label": "right", "reason": "Australia article with infobox row 'Capital Canberra' on screen; done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-canberra|dual|5", "label": "right", "reason": "Same Australia article, 'Capital Canberra' visible in infobox; done remains plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-austen-year|dual|1", "label": "right", "reason": "Chain starts on Main Page with no Jane Austen link; typing 'Jane Austen' into the search box opens X."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-austen-year|dual|2", "label": "right", "reason": "Search box already holds 'Jane Austen'; submitting it with enter is the right next step, not retyping."}

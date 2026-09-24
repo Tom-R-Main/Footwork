@@ -1,0 +1,11 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-austen-year|dual|3", "label": "right", "reason": "Menu shows the Jane Austen article; clicked the Pride and Prejudice link whose href is the novel article, not the film/TV decoys."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-austen-year|dual|4", "label": "right", "reason": "Menu shows the Pride and Prejudice article with 'Publication date 28 January 1813'; chain complete, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-curie-nobel|dual|1", "label": "right", "reason": "Main Page, no Marie Curie link on the menu; typing the article title into the empty search box is the way in."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-curie-nobel|dual|2", "label": "right", "reason": "Search box already holds 'Marie Curie'; submitting it with enter is the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-curie-nobel|dual|4", "label": "right", "reason": "Menu shows the Nobel Prize in Physics article with 'First award 1901'; chain complete, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-dune-herbert|dual|1", "label": "right", "reason": "Main Page, no Dune link on the menu; typing 'Dune (novel)' into the empty search box is the way in."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-dune-herbert|dual|2", "label": "right", "reason": "Search box already holds 'Dune (novel)'; submitting it with enter is the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-dune-herbert|dual|3", "label": "right", "reason": "Menu shows the Dune (novel) article; clicked the Frank Herbert author link (infobox Author row), which advances the chain."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|delegate|2", "label": "right", "reason": "Main Page, no Eiffel Tower link on the menu; typing the article title into the empty search box is the way in."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|delegate|3", "label": "right", "reason": "Search box already holds 'Eiffel Tower'; submitting it with enter is the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|delegate|4", "label": "right", "reason": "Menu shows the Eiffel Tower article; clicked the Gustave Eiffel link to his article, which advances the chain."}

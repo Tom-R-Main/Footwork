@@ -1,0 +1,9 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|delegate|5", "label": "right", "reason": "Menu shows Gustave Eiffel article with Born row (15 December 1832) visible; chain complete, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|dual|1", "label": "right", "reason": "Main Page has no Eiffel Tower link; typing the article title into the search box is the way to open it."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|dual|2", "label": "right", "reason": "Search box already holds 'Eiffel Tower'; pressing enter submits the search and opens the article."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|dual|3", "label": "right", "reason": "On the Eiffel Tower article; clicking the Gustave Eiffel link is exactly the chain's next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-eiffel-gustave|dual|4", "label": "right", "reason": "Menu shows Gustave Eiffel article with Born row (1832) visible; the birth year is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-python-guido|dual|1", "label": "right", "reason": "Main Page has no Python link; typing the article title into the search box is the way to open it."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-python-guido|dual|2", "label": "right", "reason": "Search box holds the article title; enter submits it (the matching suggestion option would be equally good)."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-python-guido|dual|3", "label": "right", "reason": "On the Python article; the 'Designed by' Guido van Rossum link is the creator link the task names."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-python-guido|dual|4", "label": "right", "reason": "Menu shows the Guido van Rossum article (infobox, Born row); task says stop there, so done is correct."}

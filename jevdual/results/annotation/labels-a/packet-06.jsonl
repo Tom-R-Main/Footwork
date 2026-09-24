@@ -1,0 +1,23 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-turing-machine|dual|2", "label": "right", "reason": "Search box already holds \"Alan Turing\"; pressing enter submits the search, the correct first step of the chain."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-chain-turing-machine|dual|4", "label": "right", "reason": "Menu shows the Turing machine article (Article link /wiki/Turing_machine); chain endpoint reached, so done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|1", "label": "unclear", "reason": "Menu is the MDN homepage, not DuckDuckGo; no DDG search control listed, so the right step is undecidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|2", "label": "unclear", "reason": "Menu shows DDG promo chrome only; no result link or search box listed, so Submit cannot be judged."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|3", "label": "unclear", "reason": "Menu shows only DDG promo chrome, no results or search box; whether waiting advances the task is undecidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|4", "label": "unclear", "reason": "Same promo-only menu with no result links; the developer.mozilla.org result is not listed."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|5", "label": "unclear", "reason": "Same promo-only menu; the needed result link is absent, so wait cannot be judged right or wrong."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|6", "label": "unclear", "reason": "Menu is nine unlabeled images and a Submit button; no result link or search box to judge against."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|7", "label": "right", "reason": "Menu shows the MDN Window: fetch() page (breadcrumb Web APIs > Window > fetch()); task goal reached, done plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|8", "label": "right", "reason": "Menu shows the MDN fetch() article; task complete on this page, done plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-mdn-fetch|dual|9", "label": "right", "reason": "On developer.mozilla.org fetch() page per menu and URL; done is the correct action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|2", "label": "right", "reason": "Types the task's exact query into the empty DuckDuckGo search combobox."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|3", "label": "right", "reason": "Search box already filled with the query; enter submits it, equally good as the Search button."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|4", "label": "unclear", "reason": "Menu is empty; no control to judge against, so the right action is undecidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|delegate|5", "label": "unclear", "reason": "Results URL but menu shows only promo chrome and no result links; blocked cannot be judged against a missing target."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|1", "label": "right", "reason": "Types the task's exact query into the empty DuckDuckGo search combobox."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|2", "label": "right", "reason": "Search box holds the query; enter submits the search."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|3", "label": "unclear", "reason": "Menu is empty; nothing to judge the scroll against."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|4", "label": "unclear", "reason": "Results URL but menu shows only promo chrome; the docs.python.org result link is not listed."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-ddg-python-pathlib|dual|5", "label": "right", "reason": "Menu shows the docs.python.org pathlib page (3.14.7 Documentation); task goal reached, done plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|delegate|3", "label": "right", "reason": "Types \"Eiffel Tower\" into the empty Search Wikipedia box; correct first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|delegate|4", "label": "right", "reason": "Search box holds \"Eiffel Tower\"; enter submits the search."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-eiffel-completed|delegate|5", "label": "right", "reason": "Menu shows the Eiffel Tower article with infobox row \"Completed 31 March 1889\"; answer visible, done plausible."}

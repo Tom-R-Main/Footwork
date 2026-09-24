@@ -1,0 +1,17 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pride-author|dual|2", "label": "right", "reason": "Search box already holds 'Pride and Prejudice'; pressing enter submits the search, the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pride-author|dual|3", "label": "right", "reason": "Menu shows the Pride and Prejudice article with 'Author Jane Austen' row; task is complete here."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|1", "label": "right", "reason": "Focusing Quick search to look up the exception is a reasonable path; Built-ins reference equally good, no direct link on page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|2", "label": "right", "reason": "Menu is the Built-in Exceptions page with a KeyError link present; task plausibly complete on this page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|3", "label": "right", "reason": "Built-in Exceptions page with KeyError listed; answer is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|4", "label": "right", "reason": "Clicking the KeyError link opens its entry on the exceptions page, confirming the answer; Concrete exceptions equally good."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|5", "label": "right", "reason": "Built-in Exceptions page with KeyError listed; answer is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|6", "label": "right", "reason": "Clicking the KeyError link opens its entry on the exceptions page, confirming the answer."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|7", "label": "right", "reason": "Built-in Exceptions page with KeyError listed; answer is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|8", "label": "right", "reason": "Built-in Exceptions page with KeyError listed; answer is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-keyerror|dual|9", "label": "right", "reason": "Built-in Exceptions page with KeyError listed; answer is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-lru-cache|dual|1", "label": "right", "reason": "Library reference is where functools lives; a good first step from the docs home page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-lru-cache|dual|2", "label": "right", "reason": "Same home-page menu; Library reference is still the right route to the module list."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-lru-cache|dual|3", "label": "right", "reason": "Library index shown; functools is the module that provides lru_cache, so opening it advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-lru-cache|dual|4", "label": "right", "reason": "Menu shows the functools page with @lru_cache links; the module name is found, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-lru-cache|dual|5", "label": "right", "reason": "functools page with @lru_cache visible; task complete on this page."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-pathlib|dual|1", "label": "right", "reason": "The modules index lists pathlib; a reasonable route from the home page, as good as Library reference."}

@@ -1,0 +1,14 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-pathlib|dual|2", "label": "right", "reason": "No pathlib link in the visible module-index menu; typing the module name into Quick search is a reasonable next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-pathlib|dual|3", "label": "right", "reason": "Menu shows the pathlib module page content and heading; task is to open that page, so done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|1", "label": "right", "reason": "PyPI home has no direct browser-use link; typing the package name into Search PyPI advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|2", "label": "right", "reason": "Search box already holds browser-use; submitting with enter is the correct next action."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|3", "label": "unclear", "reason": "Menu is empty; no control listed, so the right action is not decidable from the menu."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|4", "label": "right", "reason": "Menu shows the browser-use 0.13.10 project page (tabs, project links, maintainer); task complete, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|1", "label": "right", "reason": "No direct requests link on PyPI home; typing requests into Search PyPI is the right first step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|2", "label": "right", "reason": "Search box already filled with requests; enter submits the search."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|3", "label": "unclear", "reason": "Menu is empty; nothing listed to act on, so the right action is not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|4", "label": "right", "reason": "Menu shows the requests 2.34.2 project page with Apache Software License classifier; task plausibly complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|delegate|2", "label": "right", "reason": "Main Page has no Python link; typing the article name into Search Wikipedia advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|delegate|3", "label": "right", "reason": "Search box filled with the query; enter submits it (clicking the suggestion option would be equally good)."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|dual|1", "label": "right", "reason": "No Python link on the Main Page menu; typing the article name into Search Wikipedia is the right step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|dual|2", "label": "right", "reason": "Search box already holds the query; enter submits the search."}

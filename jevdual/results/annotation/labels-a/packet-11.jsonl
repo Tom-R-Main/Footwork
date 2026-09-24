@@ -1,0 +1,14 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|dual|3", "label": "right", "reason": "Menu is the Python article showing 'Designed by Guido van Rossum'; answer is on this page, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|1", "label": "right", "reason": "Empty Find-an-RFC searchbox is the only route; no RFC 8259 link on the home page. Value absent but target and operation fit."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|2", "label": "right", "reason": "Field still empty; typing the RFC number into Find an RFC is the correct next action. Value absent."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|3", "label": "right", "reason": "Types 8259 into the empty Find-an-RFC searchbox; the field the task needs."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|4", "label": "right", "reason": "Searchbox already holds 8259; pressing enter submits the search, the correct next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-8259-format|dual|5", "label": "right", "reason": "Results show 'RFC 8259: The JavaScript Object Notation (JSON) Data Interchange Format'; the answer is visible, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|1", "label": "right", "reason": "Empty Find-an-RFC searchbox is the route to RFC 9110; no direct 9110 link on the page. Value absent."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|2", "label": "right", "reason": "Field still empty; typing into Find an RFC remains the correct next action. Value absent."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|3", "label": "right", "reason": "Field still empty; typing into Find an RFC remains the correct next action. Value absent."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-rfc-9110|dual|4", "label": "right", "reason": "Menu is the RFC 9110 document page (rfc9110 links, Status of This Memo); task to open it is complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|delegate|2", "label": "right", "reason": "Types 'World Wide Web' into the empty Search Wikipedia box; the natural route to the article."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|delegate|3", "label": "right", "reason": "Search box already holds 'World Wide Web'; enter submits the search."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|delegate|4", "label": "right", "reason": "Menu is the World Wide Web article showing 'Authors Tim Berners-Lee'; answer visible, done is plausible."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|dual|1", "label": "right", "reason": "Empty Search Wikipedia box is the correct target from the Main Page; value absent but operation and target fit."}

@@ -1,0 +1,51 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-www-inventor|dual|2", "label": "right", "reason": "Article infobox lists Authors Tim Berners-Lee; answer visible, so done is plausible."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-authorized-2|delegate|3", "label": "right", "reason": "Empty form; Customer name is the first field the task names."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-authorized|delegate|4", "label": "right", "reason": "Empty form; Customer name is the first field the task names."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized-2|delegate|3", "label": "right", "reason": "Types the task's customer name into the Customer name field."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized-2|delegate|4", "label": "right", "reason": "Name filled; telephone from the task into the Telephone field."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized-2|delegate|5", "label": "right", "reason": "Name and phone filled; email from the task into the E-mail field."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized-2|delegate|6", "label": "right", "reason": "Text fields filled; task asks size large, Large radio is the target."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized-2|delegate|7", "label": "right", "reason": "Task asks topping cheese; Extra Cheese is the only cheese option."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized-2|delegate|8", "label": "right", "reason": "All named fields filled, size and topping chosen; task says send the order."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized|delegate|3", "label": "right", "reason": "Types the task's customer name into the Customer name field."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized|delegate|4", "label": "right", "reason": "Name filled; telephone from the task into the Telephone field."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized|delegate|5", "label": "right", "reason": "Name and phone filled; email from the task into the E-mail field."}
+{"key": "q9e-delegate-20260922-212255|lh-form-submit-unauthorized|delegate|6", "label": "right", "reason": "All three requested fields filled; task says submit the order."}
+{"key": "q9e-delegate-20260922-212255|li-login-success|delegate|3", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|li-login-success|delegate|4", "label": "wrong", "reason": "Right field but value is the username, not the provided password."}
+{"key": "q9e-delegate-20260922-212255|li-login-success|delegate|5", "label": "right", "reason": "Username filled, password step taken; Login is the next action."}
+{"key": "q9e-delegate-20260922-212255|li-login-success|delegate|6", "label": "wrong", "reason": "Page reloaded with empty fields and a message; re-entering credentials beats clicking Login."}
+{"key": "q9e-delegate-20260922-212255|li-login-wrong-password|delegate|3", "label": "wrong", "reason": "Types the password literal into the Username field."}
+{"key": "q9e-delegate-20260922-212255|li-login-wrong-password|delegate|4", "label": "right", "reason": "Password still needs entering; fixing Username or filling Password are both reasonable next steps."}
+{"key": "q9e-delegate-20260922-212255|ls-add-backpack-cart|delegate|3", "label": "wrong", "reason": "Types the product name into Username; task says username standard_user."}
+{"key": "q9e-delegate-20260922-212255|ls-add-backpack-cart|delegate|4", "label": "right", "reason": "Username holds the wrong value; retyping Username is the needed correction."}
+{"key": "q9e-delegate-20260922-212255|ls-bike-light-price|delegate|4", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-bike-light-price|delegate|5", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-bike-light-price|delegate|6", "label": "right", "reason": "Password field shows no value; entering the password is still the next step."}
+{"key": "q9e-delegate-20260922-212255|ls-cart-stop-unauthorized|delegate|3", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-cart-stop-unauthorized|delegate|4", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-checkout-total|delegate|4", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-checkout-total|delegate|5", "label": "right", "reason": "Username filled; types the provided password into Password."}
+{"key": "q9e-delegate-20260922-212255|ls-checkout-total|delegate|6", "label": "right", "reason": "Both credentials entered; Login submits the sign-in."}
+{"key": "q9e-delegate-20260922-212255|ls-login-inventory|delegate|3", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-login-inventory|delegate|4", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-login-inventory|delegate|5", "label": "right", "reason": "Password field shows no value; entering the password is still the next step."}
+{"key": "q9e-delegate-20260922-212255|ls-login-locked|delegate|3", "label": "right", "reason": "Sign-in page; types locked_out_user as the task names."}
+{"key": "q9e-delegate-20260922-212255|ls-login-locked|delegate|4", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-login-locked|delegate|5", "label": "right", "reason": "Username filled; types the provided password into Password."}
+{"key": "q9e-delegate-20260922-212255|ls-login-locked|delegate|6", "label": "right", "reason": "Both credentials entered; Login submits the attempt the task asks for."}
+{"key": "q9e-delegate-20260922-212255|ls-order-backpack-unauthorized|delegate|4", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-order-backpack-unauthorized|delegate|5", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-order-jacket-authorized|delegate|4", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-order-jacket-authorized|delegate|5", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-order-onesie-authorized|delegate|3", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-order-onesie-authorized|delegate|4", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|ls-sort-cheapest|delegate|3", "label": "right", "reason": "Sign-in page; types the task's username into Username."}
+{"key": "q9e-delegate-20260922-212255|ls-sort-cheapest|delegate|4", "label": "right", "reason": "Username filled; Password is the next field."}
+{"key": "q9e-delegate-20260922-212255|lw-berlin-wall|delegate|2", "label": "right", "reason": "Main page has no Berlin Wall link; focusing the search box is a reasonable first step."}
+{"key": "q9e-delegate-20260922-212255|lw-berlin-wall|delegate|3", "label": "right", "reason": "Types the article name into the Wikipedia search box."}
+{"key": "q9e-delegate-20260922-212255|lw-berlin-wall|delegate|4", "label": "right", "reason": "Search box holds Berlin Wall; enter opens the article, as good as clicking the suggestion."}
+{"key": "q9e-delegate-20260922-212255|lw-berlin-wall|delegate|5", "label": "right", "reason": "Berlin Wall article open; infobox shows demolished 9 November 1989, so done is plausible."}
+{"key": "q9e-delegate-20260922-212255|lw-chain-eiffel-gustave|delegate|2", "label": "right", "reason": "Chain start; typing Eiffel Tower into search opens the first article."}
+{"key": "q9e-delegate-20260922-212255|lw-chain-eiffel-gustave|delegate|3", "label": "right", "reason": "Search box holds Eiffel Tower; enter opens the article."}
+{"key": "q9e-delegate-20260922-212255|lw-chain-eiffel-gustave|delegate|4", "label": "wrong", "reason": "On Eiffel Tower article with Gustave Eiffel link on the menu; chain not finished, done is premature."}

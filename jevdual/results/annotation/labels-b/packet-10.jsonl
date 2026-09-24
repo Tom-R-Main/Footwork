@@ -1,0 +1,14 @@
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-pathlib|dual|2", "label": "right", "reason": "pathlib link not in menu; searching Quick search is a fair route, on par with the 'p' index link."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pydocs-pathlib|dual|3", "label": "right", "reason": "Menu is the pathlib module page (heading, section links); task plausibly complete here."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|1", "label": "right", "reason": "No browser-use link on the page; typing the package name into Search PyPI advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|2", "label": "right", "reason": "Search box already holds browser-use; submitting it is the next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|3", "label": "unclear", "reason": "Menu is empty; no control to judge against, right action not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-browser-use|dual|4", "label": "right", "reason": "Menu shows the browser-use project page (pip instructions, repository, maintainer); task plausibly complete."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|1", "label": "right", "reason": "No requests link on the page; typing the package name into Search PyPI advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|2", "label": "right", "reason": "Search box already holds requests; submitting it is the next step."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|3", "label": "unclear", "reason": "Menu is empty; no control to judge against, right action not decidable."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-pypi-requests-license|dual|4", "label": "right", "reason": "Menu is the requests project page with its Apache license classifier listed; task plausibly complete here."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|delegate|2", "label": "right", "reason": "No Python article link on Main Page; typing the topic into Search Wikipedia advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|delegate|3", "label": "right", "reason": "Search box already filled; submitting it is as good as clicking the article suggestion."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|dual|1", "label": "right", "reason": "No Python article link on Main Page; typing the topic into Search Wikipedia advances the task."}
+{"key": "q8-q9e-live-dev-20260922-162350|lw-python-creator|dual|2", "label": "right", "reason": "Search box already filled with the query; submitting it is the next step."}
