@@ -19,12 +19,16 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 from collections import Counter
 from pathlib import Path
 
 from evals.metrics import reason_class
 
 BAD_NEXT = {"stuck", "no_effect", "repeated_target"}
+
+
+log = logging.getLogger("evals.annotation")
 
 
 def _start_urls() -> dict[str, str]:
@@ -48,11 +52,19 @@ def _menu_label(menu: dict[int, dict], sid: object) -> str:
 
 
 def rows_for(run_dir: Path) -> list[dict]:
-    results = {(r["task_id"], r["arm"]): r for r in json.loads((run_dir / "results.json").read_text())}
+    rows_json = json.loads((run_dir / "results.json").read_text())
+    results = {(r["task_id"], r["arm"]): r for r in rows_json}
     tasks_text = {r["task_id"]: r.get("task") or "" for r in results.values()}
     start_urls = _start_urls()
+    # the measured population is the manifest: a trace with no result row (an aborted attempt, a crash
+    # before its row was written) is exploratory and stays out unless the manifest has no trace paths at all
+    manifest = {Path(r["trace_path"]).name for r in rows_json if r.get("trace_path")}
     out = []
+    skipped: list[str] = []
     for f in sorted((run_dir / "traces").glob("*.jsonl")):
+        if manifest and f.name not in manifest:
+            skipped.append(f.name)
+            continue
         header = None
         steps = []
         for line in f.read_text().splitlines():
@@ -143,6 +155,8 @@ def rows_for(run_dir: Path) -> list[dict]:
                     "note": "",
                 }
             )
+    if skipped:
+        log.info("annotation: %s trace(s) not in the results manifest skipped: %s", len(skipped), skipped[:5])
     return out
 
 

@@ -10,7 +10,8 @@ from types import SimpleNamespace
 
 import pytest
 from jevdual.arbiter import Arbiter, ArbiterPolicy
-from jevdual.desktop import NativeAgent, keyword_gate
+from jevdual.authorize import Authorizer
+from jevdual.desktop import NativeAgent
 from jevdual.desktop_s2 import ChatReply, NativeS2, parse_reply
 from jevdual.native import NativeBridge
 
@@ -198,7 +199,9 @@ def test_keyword_gate_pauses_s2_click_and_authorisation_stands_it_down(snapshot,
     policy = SeqPolicy(_decision("click", ids["6"], tconf=0.1))
     chat = ScriptedChat({"note": "delete it", "action": {"name": "click", "id": 900}})
     driver = FakeDriver(snap)
-    run = asyncio.run(_agent(driver, policy, NativeS2(chat, policy=ArbiterPolicy.from_toml())).run())
+    run = asyncio.run(
+        _agent(driver, policy, NativeS2(chat), authorizer=Authorizer(policy=ArbiterPolicy.from_toml())).run()
+    )
     assert run.status == "paused" and "keyword 'delete'" in run.reason
     assert not [n for n, _ in driver.calls if n == "click"]
     # authorised: the same click goes through
@@ -208,8 +211,8 @@ def test_keyword_gate_pauses_s2_click_and_authorisation_stands_it_down(snapshot,
         {"note": "nothing to do", "action": {"name": "blocked"}},
     )
     driver = FakeDriver(snap)
-    s2 = NativeS2(chat, policy=ArbiterPolicy.from_toml(), authorized_actions=("delete account",))
-    run = asyncio.run(_agent(driver, policy, s2).run())
+    auth = Authorizer(policy=ArbiterPolicy.from_toml(), authorized_actions=("delete account",))
+    run = asyncio.run(_agent(driver, policy, NativeS2(chat), authorizer=auth).run())
     assert [n for n, _ in driver.calls if n == "click"] == ["click"]
 
 
@@ -224,16 +227,18 @@ def test_judgment_gate_asks_jev_on_s2_clicks_only(snapshot, stub_sdk):
 
     policy = SeqPolicy(_decision("click", ids["Equals"], tconf=0.1), _decision("click", ids["6"]))
     chat = ScriptedChat({"note": "equals", "action": {"name": "click", "id": ids["Equals"]}})
-    s2 = NativeS2(chat, policy=ArbiterPolicy.from_toml(), verifier=V())
+    s2 = NativeS2(chat)
+    auth = Authorizer(policy=ArbiterPolicy.from_toml(), judge=V().judge_destructive)
     driver = FakeDriver(snapshot)
-    run = asyncio.run(_agent(driver, policy, s2, gate=keyword_gate()).run())
+    run = asyncio.run(_agent(driver, policy, s2, authorizer=auth).run())
     assert run.status == "paused" and "judgment p=0.90" in run.reason
-    assert asked == [["Equals"]] and s2.gate_judgments[0]["hit"] == "Equals"
+    assert asked == [["Equals"]] and auth.judgments[0]["p"] == 0.9
     # S1's own confident click on 6 is not judged (its destructive noul already passed the arbiter)
     policy = SeqPolicy(_decision("click", ids["6"]), _decision("blocked"))
     asked.clear()
     s2.chat = ScriptedChat({"note": "nothing to do", "action": {"name": "blocked"}})
-    run = asyncio.run(_agent(FakeDriver(snapshot), policy, s2, gate=keyword_gate()).run())
+    auth = Authorizer(policy=ArbiterPolicy.from_toml(), judge=V().judge_destructive)
+    run = asyncio.run(_agent(FakeDriver(snapshot), policy, s2, authorizer=auth).run())
     assert asked == [] and run.steps[0].executed
 
 

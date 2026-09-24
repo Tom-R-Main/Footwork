@@ -137,7 +137,8 @@ async def run_agent(
 ) -> None:
     """The real loop: NativeAgent with JevPolicy, Arbiter (arbiter.toml), Verifier on done, schema-2 trace."""
     from jevdual.arbiter import Arbiter, ArbiterPolicy
-    from jevdual.desktop import NativeAgent, keyword_gate
+    from jevdual.authorize import Authorizer
+    from jevdual.desktop import NativeAgent
     from jevdual.desktop_s2 import NativeS2, meta_chat_from_env
     from jevdual.keys import load_keys
     from jevdual.policy import JevPolicy
@@ -173,7 +174,11 @@ async def run_agent(
             run_id=f"spike-{bridge.pid}",
             max_steps=steps,
             s2=s2,
-            gate=keyword_gate(authorized_actions=authorized),
+            authorizer=Authorizer(
+                policy=ArbiterPolicy.from_toml(),
+                authorized_actions=authorized,
+                judge=verifier.judge_destructive if with_s2 else None,
+            ),
         )
         run = await agent.run()
     if trace:

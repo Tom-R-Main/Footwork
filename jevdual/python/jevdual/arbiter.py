@@ -98,6 +98,12 @@ class ArbiterPolicy:
         "购买",
         "确认订单",
         "发送",
+        "replace",
+        "move to trash",
+        "empty trash",
+        "don't save",
+        "don’t save",
+        "quit",
     )
     retry_alternate_margin: float = 0.15
     retry_alternate_lookback: int = 3

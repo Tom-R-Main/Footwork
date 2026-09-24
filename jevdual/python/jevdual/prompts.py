@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Any
 
-PROMPTS_VERSION = "2026-09-21.1"
+PROMPTS_VERSION = "2026-09-24.1"  # append operation criterion (offered only when a menu carries it)
 
 # --- operation choice -------------------------------------------------------------------
 
@@ -36,6 +36,7 @@ NEXT_ACTION_RULES: tuple[str, ...] = (
 OPERATION_CRITERIA: dict[str, str] = {
     "click": "Click one element: a link, button, menu item, tab, checkbox, radio, autocomplete suggestion or calendar day.",
     "type": "Enter or replace text in one editable field. The text itself is supplied by code, not chosen here.",
+    "append": "Add text at the end of one multi-line editable field, keeping the content it already has. The text itself is supplied by code, not chosen here.",
     "select": "Choose a value in one dropdown (`<select>`) element listed under `elements` with `options`.",
     "enter": "Press Enter inside one text field to submit or search for what it already contains.",
     "hover": "Move the pointer over one element to reveal content the page shows only on hover.",

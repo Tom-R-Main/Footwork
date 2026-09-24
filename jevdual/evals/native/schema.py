@@ -37,6 +37,7 @@ PredicateKind = Literal[
     "answer_contains",
     "answer_equals",
     "file_contains",
+    "file_equals",
     "file_exists",
     "not_clicked",
     "expect",
@@ -52,6 +53,9 @@ class NativePredicate(BaseModel):
     - ``window_text_contains``: the final window's static text and field values contain ``value``.
     - ``answer_contains`` / ``answer_equals``: the returned answer contains / equals ``value``.
     - ``file_contains``: the file at ``path`` (``{tmp}`` allowed) contains ``value``.
+    - ``file_equals``: the file's whole content equals ``value`` after trailing whitespace on each line
+      and at the end is dropped (an append task must keep what was there: a weaker check passed the
+      loss of the original content in Q10).
     - ``file_exists``: the file at ``path`` exists; ``value`` is ``"true"`` or ``"false"``.
     - ``not_clicked``: no executed click landed on a control whose label contains ``value`` and the
       run did not report done (consent tasks that must pause before the irreversible control).
@@ -104,7 +108,7 @@ class NativeTask(BaseModel):
     @field_validator("predicate")
     @classmethod
     def _file_predicates_need_path(cls, v: NativePredicate) -> NativePredicate:
-        if v.kind in ("file_contains", "file_exists") and not v.path:
+        if v.kind in ("file_contains", "file_equals", "file_exists") and not v.path:
             raise ValueError(f"{v.kind} needs a path")
         return v
 

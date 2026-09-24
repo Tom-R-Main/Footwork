@@ -29,17 +29,35 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any
 
-from jevdual.arbiter import ArbiterPolicy, destructive_match
 from jevdual.desktop import NativeAgent, StepOutcome
-from jevdual.menu import Candidate
 from jevdual.native import NativeMenu
 from jevdual.s1 import Verdict
 from jevdual.trace import ActionRecord
 
 log = logging.getLogger("jevdual.desktop_s2")
 
-ACTIONS = ("click", "type", "enter", "scroll", "hover", "key", "hotkey", "menu", "wait", "done", "blocked")
-TARGETED = {"click": "click", "type": "type", "enter": "enter", "scroll": "scroll", "hover": "hover"}
+ACTIONS = (
+    "click",
+    "type",
+    "append",
+    "enter",
+    "scroll",
+    "hover",
+    "key",
+    "hotkey",
+    "menu",
+    "wait",
+    "done",
+    "blocked",
+)
+TARGETED = {
+    "click": "click",
+    "type": "type",
+    "append": "append",
+    "enter": "enter",
+    "scroll": "scroll",
+    "hover": "hover",
+}
 KEYS = {
     "return": "Return",
     "enter": "Return",
@@ -66,7 +84,8 @@ Reply with exactly one JSON object and nothing else:
 
 Actions (one per reply):
 - {"name":"click","id":N}            press control N
-- {"name":"type","id":N,"text":"..."} replace the value of text field N
+- {"name":"type","id":N,"text":"..."} replace the whole value of text field N (destroys what it holds)
+- {"name":"append","id":N,"text":"..."} add text as a new line at the end of multi-line field N, keeping its content
 - {"name":"enter","id":N}            press Return inside field N
 - {"name":"scroll","id":N}           scroll container N down one page
 - {"name":"key","key":"Return|Escape|Tab|Delete|Up|Down|Left|Right|<letter>","modifiers":["cmd","shift","alt","ctrl"]} press one key in this window (background; refused when the app has several windows)
@@ -177,22 +196,15 @@ class NativeS2:
         self,
         chat: ChatFn,
         *,
-        policy: ArbiterPolicy | None = None,
-        verifier: Any = None,
-        authorized_actions: tuple[str, ...] = (),
-        authorize_all: bool = False,
         model_name: str | None = None,
+        **_legacy: Any,
     ):
+        # authorization (keywords, replacement, the Jev judgment) lives on the agent's Authorizer and is
+        # applied in NativeAgent.execute for every route; nothing here decides whether an action may run
         self.chat = chat
-        self.policy = policy or ArbiterPolicy()
-        #: ``jevdual.verify.Verifier`` for the destructive judgment; None keeps the keyword gate only
-        self.verifier = verifier
-        self.authorized_actions = tuple(a.casefold() for a in authorized_actions)
-        self.authorize_all = authorize_all
         self.model_name = model_name
         self.calls = 0
         self.done_refusals = 0
-        self.gate_judgments: list[dict[str, Any]] = []
 
     # ---- prompt ------------------------------------------------------------------------
 
@@ -231,45 +243,6 @@ class NativeS2:
         ]
 
     # ---- gate --------------------------------------------------------------------------
-
-    def is_authorized(self, label: str) -> bool:
-        if self.authorize_all:
-            return True
-        low = label.casefold()
-        return any(a in low for a in self.authorized_actions)
-
-    async def gate(self, agent: NativeAgent, nm: NativeMenu, target: Candidate) -> str | None:
-        """Reason to pause before clicking ``target``, or None. Keyword fast path, then the Jev judgment."""
-        if self.is_authorized(target.label):
-            return None
-        context = " ".join(x for x in (target.section or "", nm.menu.title) if x)
-        hit = destructive_match(target.label, context, self.policy)
-        if hit:
-            return f"keyword {hit!r}"
-        if self.verifier is None or not hasattr(self.verifier, "judge_destructive"):
-            return None
-        try:
-            probs = await self.verifier.judge_destructive(
-                agent.task,
-                [{"label": target.label, "context": context}],
-                url=nm.menu.url,
-                title=nm.menu.title,
-            )
-            agent.jev_calls += 1
-        except Exception as exc:  # noqa: BLE001 - a failed judgment falls back to the keyword gate
-            log.warning("destructive judgment failed: %s", exc)
-            return None
-        p = float(probs[0]) if probs else 0.0
-        self.gate_judgments.append(
-            {
-                "step": len(agent.steps),
-                "targets": [(target.label, p)],
-                "hit": target.label if p >= self.policy.destructive_confirm else None,
-            }
-        )
-        if p >= self.policy.destructive_confirm:
-            return f"judgment p={p:.2f} on {target.label!r}"
-        return None
 
     # ---- one step ----------------------------------------------------------------------
 
@@ -333,70 +306,42 @@ class NativeS2:
 
             await asyncio.sleep(1.0)
             return
-        if name == "key":
-            key = str(action.get("key") or "")
-            mods = [m for m in (action.get("modifiers") or []) if str(m).casefold() in MODIFIERS]
-            norm = KEYS.get(key.casefold(), key if len(key) == 1 else None)
-            if norm is None:
-                out.error = f"s2 invalid key {key!r}"
-                out.verdict = Verdict("escalate", out.error)
-                return
-            effect = await agent.bridge.key(nm, norm, [str(m).casefold() for m in mods])
-            out.effect = effect
-            out.verdict = Verdict("act", f"System 2 key {norm}")
-            out.executed = [
-                ActionRecord(
-                    name="send_keys",
-                    params={"keys": "+".join([*mods, norm]), "effect": effect.effect, "route": effect.route},
-                )
-            ]
-            agent.memory.append(f"step {out.step}: key {'+'.join([*mods, norm])} -> {effect.effect}")
+        if name in ("key", "hotkey"):
+            if name == "key":
+                key = str(action.get("key") or "")
+                mods = [
+                    str(m).casefold()
+                    for m in (action.get("modifiers") or [])
+                    if str(m).casefold() in MODIFIERS
+                ]
+                norm = KEYS.get(key.casefold(), key if len(key) == 1 else None)
+                if norm is None:
+                    out.error = f"s2 invalid key {key!r}"
+                    out.verdict = Verdict("escalate", out.error)
+                    return
+                keys = (*mods, norm)
+            else:
+                ks = [str(k).casefold() for k in (action.get("keys") or []) if str(k).strip()]
+                if not ks or len(ks) > 4 or not all(k in MODIFIERS or len(k) == 1 or k in KEYS for k in ks):
+                    out.error = f"s2 invalid hotkey {ks!r}"
+                    out.verdict = Verdict("escalate", out.error)
+                    return
+                keys = tuple(ks)
+            out.verdict = Verdict("act", f"System 2 {name} {'+'.join(keys)}")
+            await agent.execute(nm, name, None, None, out, keys=keys, system="s2")
+            if agent.memory and note and out.executed:
+                agent.memory[-1] = f"{agent.memory[-1]} (S2: {red(note)[:60]})"
             return
-
-        if name == "hotkey":
-            keys = [str(k).casefold() for k in (action.get("keys") or []) if str(k).strip()]
-            if not keys or len(keys) > 4 or not all(k in MODIFIERS or len(k) == 1 or k in KEYS for k in keys):
-                out.error = f"s2 invalid hotkey {keys!r}"
-                out.verdict = Verdict("escalate", out.error)
-                return
-            effect = await agent.bridge.hotkey(nm, keys)
-            out.effect = effect
-            out.verdict = Verdict("act", f"System 2 hotkey {'+'.join(keys)}")
-            out.executed = [
-                ActionRecord(
-                    name="send_keys",
-                    params={"keys": "+".join(keys), "effect": effect.effect, "route": "foreground"},
-                )
-            ]
-            agent.memory.append(
-                f"step {out.step}: hotkey {'+'.join(keys)} (foreground) -> {effect.effect} (S2: {red(note)[:60]})"
-            )
-            return
-
         if name == "menu":
-            path = [str(x) for x in (action.get("path") or []) if str(x).strip()]
+            path = tuple(str(x) for x in (action.get("path") or []) if str(x).strip())
             if not path:
                 out.error = "s2 menu without a path"
                 out.verdict = Verdict("escalate", out.error)
                 return
-            label = " > ".join(path)
-            if not self.is_authorized(label):
-                context = nm.menu.title
-                hit = destructive_match(label, context, self.policy)
-                if hit:
-                    out.verdict = Verdict(
-                        "confirm", f"destructive: keyword {hit!r} (System 2 proposed menu {label!r})"
-                    )
-                    return
-            effect = await agent.bridge.menu(nm, path)
-            out.effect = effect
-            out.verdict = Verdict("act", f"System 2 menu {label}")
-            out.executed = [
-                ActionRecord(
-                    name="menu", params={"path": path, "effect": effect.effect, "route": effect.route}
-                )
-            ]
-            agent.memory.append(f"step {out.step}: menu {label} -> {effect.effect} (S2: {red(note)[:60]})")
+            out.verdict = Verdict("act", f"System 2 menu {' > '.join(path)}")
+            await agent.execute(nm, "menu", None, None, out, path=path, system="s2")
+            if agent.memory and note and out.executed:
+                agent.memory[-1] = f"{agent.memory[-1]} (S2: {red(note)[:60]})"
             return
 
         # targeted actions
@@ -419,10 +364,10 @@ class NativeS2:
             agent.memory.append(f"step {out.step}: {op} not offered on [{id_}] {target.label[:40]!r}")
             return
         text = None
-        if op == "type":
+        if op in ("type", "append"):
             text = action.get("text")
             if not isinstance(text, str) or not text:
-                out.error = "s2 type without text"
+                out.error = f"s2 {op} without text"
                 out.verdict = Verdict("escalate", out.error)
                 return
             m = re.fullmatch(r"<secret>([^<]+)</secret>", text)
@@ -433,16 +378,8 @@ class NativeS2:
                     out.error = out.verdict.reason
                     return
                 text = dict(agent.secrets.values()).get(name_) or text
-        if op == "click":
-            hit = await self.gate(agent, nm, target)
-            if hit:
-                out.verdict = Verdict(
-                    "confirm", f"destructive: {hit} (System 2 proposed [{id_}] {red(target.label)[:40]!r})"
-                )
-                out.executed = []
-                return
         out.verdict = Verdict("act", f"System 2 {op} [{id_}] ({note[:60]})")
-        await agent.execute(nm, op, target, text, out)
-        if agent.memory and note:
+        await agent.execute(nm, op, target, text, out, system="s2")
+        if agent.memory and note and out.executed:
             # System 2's own note rides on the memory line so its next step sees its plan, not only the effect
             agent.memory[-1] = f"{agent.memory[-1]} (S2: {red(note)[:80]})"

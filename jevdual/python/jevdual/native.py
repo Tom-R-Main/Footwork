@@ -48,7 +48,7 @@ ROLE_MAP: dict[str, tuple[str, tuple[Operation, ...]]] = {
     "AXRadioButton": ("radio", ("click",)),
     "AXTextField": ("textbox", ("type", "enter")),
     "AXSecureTextField": ("textbox", ("type", "enter")),
-    "AXTextArea": ("textbox", ("type",)),
+    "AXTextArea": ("textbox", ("type", "append")),
     "AXSearchField": ("searchbox", ("type", "enter")),
     "AXLink": ("link", ("click",)),
     "AXTab": ("tab", ("click",)),
@@ -81,6 +81,22 @@ def _clean(text: Any, cap: int | None = None) -> str:
     if text is None:
         return ""
     s = _WS.sub(" ", _INVISIBLE.sub("", str(text))).strip()
+    if cap is not None and len(s) > cap:
+        s = s[: cap - 1] + "…"
+    return s
+
+
+_WS_INLINE = re.compile(r"[ \t\r\f\v]+")
+
+
+def _clean_multiline(text: Any, cap: int | None = None) -> str:
+    """Like ``_clean`` but line breaks survive: a document's body is lines, and collapsing them made
+    System 2 retype a two-line document ten times (Q10)."""
+    if text is None:
+        return ""
+    raw = _INVISIBLE.sub("", str(text)).replace("\r\n", "\n")
+    lines = [_WS_INLINE.sub(" ", ln).strip() for ln in raw.split("\n")]
+    s = "\n".join(lines).strip("\n")
     if cap is not None and len(s) > cap:
         s = s[: cap - 1] + "…"
     return s
@@ -179,7 +195,11 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
                 lines.append(t)
     for el in elements:
         if _get(el, "role") in _TEXT_AX_ROLES and _get(el, "role") != "AXSecureTextField":
-            v = _clean(_get(el, "value"))
+            v = (
+                _clean_multiline(_get(el, "value"))
+                if _get(el, "role") == "AXTextArea"
+                else _clean(_get(el, "value"))
+            )
             if v and v not in lines:
                 lines.append(v)
     out = "\n".join(lines)
@@ -239,13 +259,14 @@ def menu_from_snapshot(
         if not label:
             label = role
         sensitive = ax_role == "AXSecureTextField"
+        multiline = ax_role == "AXTextArea"
         if role in _TEXT_ROLES and raw_value not in (None, "") and label == _clean(raw_value, _LABEL_CAP):
-            label = (
-                "text area" if ax_role == "AXTextArea" else role
-            )  # the Driver echoed the content as the label
+            label = "text area" if multiline else role  # the Driver echoed the content as the label
         value: str | None = None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
-            value = _clean(raw_value, _VALUE_CAP)
+            value = (
+                _clean_multiline(raw_value, _VALUE_CAP * 4) if multiline else _clean(raw_value, _VALUE_CAP)
+            )
         checked = _checked(raw_value) if role in ("checkbox", "radio", "switch") else None
         frame = _get(el, "frame")
         cand = Candidate(
@@ -254,7 +275,8 @@ def menu_from_snapshot(
             role=role,
             operations=ops,
             value=value,
-            input_type="password" if sensitive else None,
+            input_type="password" if sensitive else ("textarea" if multiline else None),
+            has_value=(raw_value not in (None, "")) if sensitive else None,
             checked=checked,
             selected=_get(el, "selected"),
             section=_section_of(el, by_index),
@@ -450,9 +472,12 @@ class NativeBridge:
         try:
             if operation == "click":
                 result = await self._click_token(token)
-            elif operation == "type":
+            elif operation in ("type", "append"):
                 if text is None:
-                    raise NativeBridgeError("text_required", f"type on [{id}] needs a value")
+                    raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
+                if operation == "append":
+                    current = cand.value or ""
+                    text = f"{current}\n{text}" if current else text
                 args = {"element_token": token, "value": text, "pid": self.pid}
                 if self.session:
                     args["session"] = self.session

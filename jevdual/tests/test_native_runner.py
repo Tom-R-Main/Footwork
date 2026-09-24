@@ -48,6 +48,17 @@ def test_predicates(tmp_path):
     assert not evaluate(NativePredicate(kind="answer_equals", value="132"), end)
     assert evaluate(NativePredicate(kind="file_contains", value="second line.", path="{tmp}/a.txt"), end)
     assert evaluate(NativePredicate(kind="file_exists", value="false", path="{tmp}/b.txt"), end)
+    (tmp_path / "d.txt").write_text("First line.\nSecond line.\n")
+    assert evaluate(
+        NativePredicate(kind="file_equals", value="First line.\\nSecond line.", path="{tmp}/d.txt"), end
+    )
+    (tmp_path / "d.txt").write_text(
+        "Second line.\n"
+    )  # the Q10 overwrite: contains the new line, is not equal
+    assert evaluate(NativePredicate(kind="file_contains", value="Second line.", path="{tmp}/d.txt"), end)
+    assert not evaluate(
+        NativePredicate(kind="file_equals", value="First line.\\nSecond line.", path="{tmp}/d.txt"), end
+    )
     assert not evaluate(NativePredicate(kind="not_clicked", value="equals"), end)
     paused = NativeEndState("x", None, ("Cancel",), False, tmp_path, None)
     assert evaluate(NativePredicate(kind="not_clicked", value="Move to Trash"), paused)

@@ -6,7 +6,7 @@ tasks:
     app: Calculator
     bundle_id: com.apple.calculator
     tags: [click, multistep]
-    requirements: [The display shows the product of 12 and 11]
+    requirements: [The display shows 132]
     predicate: {kind: window_text_contains, value: '132'}
     solve: [click All Clear, click 1, click 2, click Multiply, click 1, click 1, click Equals]
 
@@ -15,7 +15,7 @@ tasks:
     app: Calculator
     bundle_id: com.apple.calculator
     tags: [click, multistep]
-    requirements: [The display shows 250 minus 75]
+    requirements: [The display shows 175]
     predicate: {kind: window_text_contains, value: '175'}
     solve: [click All Clear, click 2, click 5, click 0, click Subtract, click 7, click 5, click Equals]
 
@@ -24,7 +24,7 @@ tasks:
     app: Calculator
     bundle_id: com.apple.calculator
     tags: [click, multistep]
-    requirements: [The display shows 15 percent of 240]
+    requirements: [The display shows 36]
     predicate: {kind: window_text_contains, value: '36'}
     solve: [click All Clear, click 2, click 4, click 0, click Multiply, click 1, click 5, click Percent, click Equals]
 
@@ -51,17 +51,19 @@ tasks:
     predicate: {kind: window_text_contains, value: 'The lantern arrived broken.'}
     solve: [type textbox The lantern arrived broken.]
 
-  - id: textedit-append-and-save
-    task: 'Add the line "Second line." to the end of the document and save it.'
+  - id: textedit-append-line
+    task: 'Add the line "Second line." at the end of the document, keeping the first line as it is.'
     app: TextEdit
     bundle_id: com.apple.TextEdit
     files: {draft.txt: "First line.\n"}
     open: ["{tmp}/draft.txt"]
     window_title: draft.txt
-    tags: [type, key, multistep]
-    requirements: [The document ends with the line Second line., The document was saved]
-    predicate: {kind: file_contains, value: 'Second line.', path: '{tmp}/draft.txt'}
-    solve: [type textbox First line.\nSecond line., hotkey cmd+s, wait 1]
+    tags: [type, multistep]
+    requirements: [The document reads First line. on the first line and Second line. on the second line]
+    # TextEdit autosaves in place; the file is the observable. Q10's predecessor task passed the loss of the
+    # first line because it only checked that the new line existed (secondary audit, 2026-09-24).
+    predicate: {kind: file_equals, value: "First line.\nSecond line.", path: '{tmp}/draft.txt'}
+    solve: [append textbox Second line., wait 1]
 
   - id: textedit-read-word-count
     task: Report the second word of the document's only line.
@@ -71,7 +73,7 @@ tasks:
     open: ["{tmp}/words.txt"]
     window_title: words.txt
     tags: [read]
-    requirements: [Reported the second word of the line]
+    requirements: [The reported answer is the second word of the document's line]
     answer_expected: true
     predicate: {kind: answer_contains, value: 'lantern'}
     solve: [answer lantern]

@@ -26,6 +26,8 @@ destructive_keywords = [
   "delete", "pay", "purchase", "buy now", "place order", "send",
   "submit payment", "confirm order", "unsubscribe", "deactivate",
   "删除", "支付", "购买", "确认订单", "发送",
+  # native consent classes (Q10 tranche 2): a sheet's default button or a chord can carry these
+  "replace", "move to trash", "empty trash", "don't save", "don’t save", "quit",
 ]
 # Q8 consent classes: these words are destructive only in a context that names something durable
 # (an account, a subscription, stored data); "Remove" in a shopping cart is not irreversible.

@@ -24,6 +24,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
+from jevdual.authorize import Authorizer, action_for
 from jevdual.menu import Candidate, Menu
 from jevdual.native import NativeBridge, NativeBridgeError, NativeEffect, NativeMenu
 from jevdual.policy import Decision, PolicyError, StepContext
@@ -38,10 +39,14 @@ Status = Literal["done", "escalated", "paused", "blocked", "budget_exhausted", "
 _ACTION_NAMES = {
     "click": "click",
     "type": "input",
+    "append": "input",
     "select": "select_dropdown",
     "enter": "send_keys",
     "scroll": "scroll",
     "hover": "hover",
+    "key": "send_keys",
+    "hotkey": "send_keys",
+    "menu": "menu",
 }
 REOBSERVE_MAX = 2
 
@@ -54,6 +59,7 @@ class StepOutcome:
     decision: Decision | None = None
     verdict: Verdict | None = None
     executed: list[ActionRecord] = field(default_factory=list)
+    proposed: list[ActionRecord] = field(default_factory=list)
     effect: NativeEffect | None = None
     verify: dict[str, Any] | None = None
     error: str | None = None
@@ -116,6 +122,7 @@ class NativeAgent:
         answer_expected: bool = False,
         gate: Callable[[NativeMenu, Candidate], Awaitable[str | None] | str | None] | None = None,
         s1_enabled: bool = True,
+        authorizer: Authorizer | None = None,
     ):
         self.bridge = bridge
         self.policy = policy
@@ -130,8 +137,13 @@ class NativeAgent:
         self.max_steps = max_steps
         self.recent_window = recent_window
         self.answer_expected = answer_expected
-        #: returns a reason string when the target must not be clicked without confirmation
-        self.gate = gate
+        #: the one authorization boundary every dispatch route passes (``execute``); a legacy ``gate``
+        #: callable becomes an extra rule on it
+        if authorizer is None and isinstance(gate, Authorizer):
+            authorizer, gate = gate, None
+        self.authorizer = authorizer or Authorizer()
+        if gate is not None:
+            self.authorizer.extra = gate
         #: False is the guarded arm: System 2 decides every step behind the same gate, System 1 is never asked
         self.s1_enabled = s1_enabled
         if text_source is None:
@@ -313,7 +325,7 @@ class NativeAgent:
             return out.verdict
 
         text: str | None = None
-        if decision.operation in ("type", "select"):
+        if decision.operation in ("type", "append", "select"):
             try:
                 text = await self._text_for(target, nm)
             except NativeBridgeError as exc:
@@ -322,47 +334,86 @@ class NativeAgent:
             if text is None:
                 out.verdict = Verdict("escalate", f"{decision.operation} needs composed text")
                 return out.verdict
-        if self.gate is not None and decision.operation == "click":
-            hit = self.gate(nm, target)
-            if inspect.isawaitable(hit):
-                hit = await hit
-            if hit:
-                out.verdict = Verdict("confirm", f"destructive: {hit}")
-                return out.verdict
         await self.execute(nm, decision.operation, target, text, out)
         return out.verdict
 
     async def execute(
-        self, nm: NativeMenu, operation: str, target: Candidate, text: str | None, out: StepOutcome
+        self,
+        nm: NativeMenu,
+        operation: str,
+        target: Candidate | None,
+        text: str | None,
+        out: StepOutcome,
+        *,
+        keys: tuple[str, ...] = (),
+        path: tuple[str, ...] = (),
+        system: Literal["s1", "s2"] | None = None,
     ) -> NativeEffect | None:
-        """Dispatch one operation and record it in the browser vocabulary. Never raises for a
-        Driver refusal; a bridge error (stale, unsupported) is recorded as ``result_error``."""
+        """The only path to the bridge's mutating methods. Every route (click, type, append, enter,
+        scroll, hover, key, hotkey, menu) becomes a :class:`NativeAction`, passes the authorizer, is
+        dispatched, and is recorded in the browser vocabulary. A pause sets ``out.verdict`` to
+        ``confirm`` and dispatches nothing. Never raises for a Driver refusal; a bridge error (stale,
+        unsupported) is recorded as ``result_error``."""
         t0 = time.perf_counter()
-        params: dict[str, Any] = {"index": target.id, "label": target.label[:60]}
-        if operation == "type":
-            params["text"] = text if self.secrets is None else self.secrets.redactor()(text or "")
+        sysname: Literal["s1", "s2"] = system or out.system
+        action = action_for(operation, nm, sysname, target=target, text=text, keys=keys, path=path)  # type: ignore[arg-type]
+        red = self.secrets.redactor() if self.secrets is not None else (lambda x: x)
+        name = _ACTION_NAMES.get(operation, operation)
+        params: dict[str, Any] = {}
+        if target is not None:
+            params = {"index": target.id, "label": target.label[:60]}
+        if operation in ("type", "append"):
+            params["text"] = red(text or "")
+            params["append"] = operation == "append"
         if operation == "enter":
-            params = {"keys": "Enter", "index": target.id}
+            params = {"keys": "Enter", **params}
         if operation == "scroll":
-            params = {"down": True, "pages": 1.0, "index": target.id}
+            params = {"down": True, "pages": 1.0, **params}
+        if operation in ("key", "hotkey"):
+            params = {
+                "keys": "+".join(keys),
+                "route": "foreground" if operation == "hotkey" else "background",
+            }
+        if operation == "menu":
+            params = {"path": list(path)}
+        out.proposed = [ActionRecord(name=name, params=dict(params))]
+        hit = await self.authorizer.check(nm, action, task=self.task)
+        if hit:
+            out.verdict = Verdict("confirm", f"destructive: {hit}")
+            out.executed = []
+            self.memory.append(
+                f"step {out.step}: {operation} {red(action.label)[:60]!r} -> paused before dispatch ({red(hit)[:80]})"
+            )
+            return None
         try:
-            effect = await self.bridge.act(nm, operation, target.id, text)
+            if operation in ("key", "hotkey"):
+                effect = await (
+                    self.bridge.hotkey(nm, list(keys))
+                    if operation == "hotkey"
+                    else self.bridge.key(nm, keys[-1], list(keys[:-1]))
+                )
+            elif operation == "menu":
+                effect = await self.bridge.menu(nm, list(path))
+            else:
+                assert target is not None
+                effect = await self.bridge.act(nm, operation, target.id, text)
         except NativeBridgeError as exc:
             out.error = f"bridge/{exc.reason}: {exc}"
             out.exec_ms = (time.perf_counter() - t0) * 1000
-            out.executed = [ActionRecord(name=_ACTION_NAMES.get(operation, operation), params=params)]
+            out.executed = [ActionRecord(name=name, params=params)]
             self.memory.append(
-                f"step {out.step}: {operation} [{target.id}] {target.label[:60]!r} -> not dispatched ({exc.reason})"
+                f"step {out.step}: {operation} {red(action.label)[:60]!r} -> not dispatched ({exc.reason})"
             )
             return None
         out.exec_ms = (time.perf_counter() - t0) * 1000
         out.effect = effect
         params.update({"effect": effect.effect, "route": effect.route})
-        out.executed = [ActionRecord(name=_ACTION_NAMES.get(operation, operation), params=params)]
+        out.executed = [ActionRecord(name=name, params=params)]
         if effect.effect == "refused":
             out.error = f"driver refused: {effect.error_code or ''} {effect.summary[:120]}".strip()
+        where = f"[{target.id}] " if target is not None else ""
         self.memory.append(
-            f"step {out.step}: {operation} [{target.id}] {target.label[:60]!r} -> {effect.effect}"
+            f"step {out.step}: {operation} {where}{red(action.label)[:60]!r} -> {effect.effect}"
             + (f" ({effect.error_code})" if effect.error_code else "")
         )
         return effect
@@ -400,7 +451,8 @@ class NativeAgent:
             if verdict.kind == "act":
                 self._write(out, nm)
                 continue
-            if verdict.kind == "confirm" and self.s2 is None:
+            if verdict.kind == "confirm":
+                # a pause is a pause: System 2 never takes over a step the boundary refused
                 self._write(out, nm)
                 return NativeRun("paused", verdict.reason, self.steps, None, nm)
             if self.s2 is None:
@@ -439,6 +491,7 @@ class NativeAgent:
                 value=(c.value[:80] if c.value else None),
                 input_type=c.input_type,
                 offscreen=c.offscreen,
+                has_value=c.has_value,
             )
             for c in nm.menu.candidates
         ]
@@ -452,8 +505,10 @@ class NativeAgent:
                 url_after=nm.menu.url,
                 decision=out.decision.to_trace(omitted) if out.decision is not None else None,
                 arbiter_reason=out.verdict.reason if out.verdict is not None else None,
+                proposed=list(out.proposed),
                 executed=list(out.executed),
                 result_error=out.error,
+                page_text=nm.menu.page_text[:2000],
                 is_done=out.is_done,
                 effect=(out.effect.summary[:200] if out.effect is not None and out.effect.summary else None),
                 memory_line=self.memory[-1] if self.memory else None,
@@ -477,19 +532,12 @@ class _PolicyShim:
 
 def keyword_gate(
     policy: Any = None, *, authorized_actions: tuple[str, ...] = (), authorize_all: bool = False
-) -> Callable[[NativeMenu, Candidate], str | None]:
-    """The keyword fast path of the destructive gate for System 1 clicks (System 1 decisions are not
-    judged twice: its own ``destructive`` noul already went through the arbiter)."""
-    from jevdual.arbiter import ArbiterPolicy, destructive_match
+) -> Authorizer:
+    """An :class:`Authorizer` with the keyword rules only (no Jev judgment): the System 1-only arms."""
+    from jevdual.arbiter import ArbiterPolicy
 
-    pol = policy or ArbiterPolicy.from_toml()
-    allowed = tuple(a.casefold() for a in authorized_actions)
-
-    def gate(nm: NativeMenu, target: Candidate) -> str | None:
-        if authorize_all or any(a in target.label.casefold() for a in allowed):
-            return None
-        context = " ".join(x for x in (target.section or "", nm.menu.title) if x)
-        hit = destructive_match(target.label, context, pol)
-        return f"keyword {hit!r}" if hit else None
-
-    return gate
+    return Authorizer(
+        policy=policy or ArbiterPolicy.from_toml(),
+        authorized_actions=authorized_actions,
+        authorize_all=authorize_all,
+    )

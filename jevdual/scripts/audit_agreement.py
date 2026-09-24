@@ -19,17 +19,20 @@ def kappa(a: list[str], b: list[str]) -> float:
     return (po - pe) / (1 - pe) if pe < 1 else 1.0
 
 
+def _key(r: dict) -> tuple:
+    """Repeats of one task and arm are distinct runs: the run_id keeps them apart (176 collisions without it)."""
+    return (r["run"], r.get("run_id") or "", r["task"], r["arm"], r["step"])
+
+
 def main() -> None:
     audit_path, full_path = Path(sys.argv[1]), Path(sys.argv[2])
     with audit_path.open(newline="") as fh:
         audit = [r for r in csv.DictReader(fh) if (r.get("audit_label") or "").strip()]
     with full_path.open(newline="") as fh:
-        full = {(r["run"], r["task"], r["arm"], r["step"]): r for r in csv.DictReader(fh)}
+        full = {_key(r): r for r in csv.DictReader(fh)}
     if not audit:
         raise SystemExit("no audit labels filled in yet")
-    pairs = [
-        (r["audit_label"].strip().lower(), full[(r["run"], r["task"], r["arm"], r["step"])]) for r in audit
-    ]
+    pairs = [(r["audit_label"].strip().lower(), full[_key(r)]) for r in audit]
     print(f"{len(pairs)} audited rows")
     for name, pick in (
         ("pass A", lambda m: m["label_a"]),

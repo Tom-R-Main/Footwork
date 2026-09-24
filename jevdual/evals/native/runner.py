@@ -159,13 +159,13 @@ async def run_oracle(bridge: NativeBridge, task: NativeTask) -> tuple[list[dict[
             if eff.effect == "refused":
                 return steps, f"oracle: menu {rest!r} refused: {eff.summary[:80]}"
             continue
-        if op == "type":
+        if op in ("type", "append"):
             # "type <label> <text>": the label is the first token or the first candidate label prefix
             label, text = _split_type(rest, nm)
             cand = find_candidate(nm, label)
             if cand is None:
                 return steps, f"oracle: no candidate for {label!r}"
-            eff = await bridge.act(nm, "type", cand.id, text.replace("\\n", "\n"))
+            eff = await bridge.act(nm, op, cand.id, text.replace("\\n", "\n"))
         elif op in ("click", "enter"):
             cand = find_candidate(nm, rest.strip())
             if cand is None:
@@ -279,7 +279,9 @@ async def run_task(
             trace_path.write_text(json.dumps({"kind": "oracle", "run_id": run_id, "steps": executed}) + "\n")
         else:
             assert deps is not None
-            from jevdual.desktop import NativeAgent, keyword_gate
+            from jevdual.arbiter import ArbiterPolicy
+            from jevdual.authorize import Authorizer
+            from jevdual.desktop import NativeAgent
             from jevdual.secrets import SecretStore
 
             store = SecretStore({f"app://{task.app}": dict(task.secrets)}) if task.secrets else None
@@ -313,9 +315,15 @@ async def run_task(
                     run_id=run_id,
                     max_steps=max_steps,
                     answer_expected=task.answer_expected,
-                    gate=keyword_gate(
+                    authorizer=Authorizer(
+                        policy=ArbiterPolicy.from_toml(),
                         authorized_actions=task.authorized_actions,
                         authorize_all=task.authorize and not task.authorized_actions,
+                        judge=(
+                            getattr(getattr(verifier, "verifier", None), "judge_destructive", None)
+                            if system_two is not None
+                            else None
+                        ),
                     ),
                     s1_enabled=(arm != "guarded"),
                 )
@@ -324,7 +332,7 @@ async def run_task(
             s1 = sum(1 for o in agent.steps if o.system == "s1")
             s2 = sum(1 for o in agent.steps if o.system == "s2")
             llm_calls = getattr(agent.s2, "calls", 0) if agent.s2 is not None else 0
-            gate_judgments = len(getattr(agent.s2, "gate_judgments", []) or []) if agent.s2 is not None else 0
+            gate_judgments = len(agent.authorizer.judgments)
             jev_calls = agent.jev_calls
             jev_tokens = sum((o.decision.request_tokens or 0) for o in agent.steps if o.decision is not None)
             llm_in = sum(o.llm_input_tokens for o in agent.steps)
@@ -390,7 +398,7 @@ def load_partial(out_dir: Path) -> list[TaskResult]:
 
 
 def default_deps(llm: str | None, client: Any) -> Deps:
-    from jevdual.arbiter import Arbiter, ArbiterPolicy
+    from jevdual.arbiter import Arbiter
     from jevdual.desktop_s2 import NativeS2, meta_chat_from_env
     from jevdual.policy import JEV_MODEL, JevPolicy
     from jevdual.verify import ArbiterHook, Verifier
@@ -400,13 +408,7 @@ def default_deps(llm: str | None, client: Any) -> Deps:
     def s2_factory(task: NativeTask, verifier: Any):
         if chat is None:
             raise SystemExit("MODEL_API_KEY missing for a System 2 arm; run with --llm none for s1_only")
-        return NativeS2(
-            chat,
-            policy=ArbiterPolicy.from_toml(),
-            verifier=getattr(verifier, "verifier", None),
-            authorized_actions=task.authorized_actions,
-            authorize_all=task.authorize and not task.authorized_actions,
-        )
+        return NativeS2(chat)
 
     return Deps(
         policy_factory=lambda task: JevPolicy(client),

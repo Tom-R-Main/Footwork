@@ -43,6 +43,9 @@ def load(dir_: str) -> dict[str, dict]:
             if not line.strip():
                 continue
             x = json.loads(line)
+            if "label" not in x and "target" in x:
+                # split protocol: target correctness is the row label; argument and completion ride along
+                x = {**x, "label": x["target"]}
             out[x["key"]] = x
     return out
 
@@ -78,6 +81,12 @@ def main() -> None:
         if a is None or b is None:
             missing += 1
         r["label_a"] = (a or {}).get("label", "")
+        for side, lab in (("a", a), ("b", b)):
+            for extra in ("argument", "completion"):
+                r[f"{extra}_{side}"] = (lab or {}).get(extra, "") if lab else ""
+        for side, lab in (("a", a), ("b", b)):
+            for extra in ("argument", "completion"):
+                r[f"{extra}_{side}"] = (lab or {}).get(extra, "") if lab else ""
         r["reason_a"] = (a or {}).get("reason", "")[:160]
         r["label_b"] = (b or {}).get("label", "")
         r["reason_b"] = (b or {}).get("reason", "")[:160]

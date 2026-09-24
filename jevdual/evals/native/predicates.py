@@ -42,6 +42,14 @@ def evaluate(pred: NativePredicate, end: NativeEndState) -> bool:
             return _norm(value) in _norm(p.read_text(errors="replace"))
         except OSError:
             return False
+    if kind == "file_equals":
+        p = resolve_path(pred.path or "", end.tmp)
+        try:
+            got = p.read_text(errors="replace")
+        except OSError:
+            return False
+        norm = lambda t: "\n".join(ln.rstrip() for ln in t.replace("\r\n", "\n").split("\n")).strip("\n")
+        return norm(got) == norm(value.replace("\\n", "\n"))
     if kind == "file_exists":
         p = resolve_path(pred.path or "", end.tmp)
         return p.exists() == (value.strip().lower() == "true")

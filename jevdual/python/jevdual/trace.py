@@ -52,6 +52,8 @@ class MenuEntry(BaseModel):
     input_type: str | None = None
     href: str | None = None
     offscreen: bool = False
+    #: a secure field's value is never recorded; this says whether it held one
+    has_value: bool | None = None
 
 
 class ActionRecord(BaseModel):
@@ -93,6 +95,8 @@ class StepRecord(BaseModel):
     #: the candidates S1 chose among (empty when S1 was not consulted), and the verification scores of
     #: any done judged on this step (S1's own or System 2's): complete, unmet per requirement, band
     menu: list[MenuEntry] = Field(default_factory=list)
+    #: the page text System 1 saw before acting (redacted, capped); native runs record it, browser runs may
+    page_text: str | None = None
     verify: dict[str, Any] | None = None
     timings: Timings = Field(default_factory=Timings)
     cost: Cost = Field(default_factory=Cost)

@@ -37,3 +37,27 @@ Rules:
 6. When the task is a chain ("open X, then find Y"), judge against where the chain stands on this
    page: a step that opens X from the start page is `right` even though Y is the goal.
 7. Do not open any other file. The packet is all the evidence there is.
+
+
+## Split labels (protocol 2, from the native set onward)
+
+One row still is one decision, but the answer has three parts, so a right target with a wrong value
+or an unsupported completion stops being one blurred `wrong`:
+
+- `target`: was `s1_operation` on `s1_target` the right next action? (`right` / `wrong` / `unclear`,
+  the rules above.)
+- `argument`: for `type`, `append` and `select`, is `value` the right thing to enter? (`right` /
+  `wrong` / `unclear` / `n/a` when the value is `<needs value>` or the operation takes none.) A
+  `type` that would overwrite a document to add a line is `wrong` here even when the target is right.
+- `completion`: for `done` rows, do `prior_actions` and `window_text` show the task's requirements
+  satisfied? (`supported` / `unsupported` / `insufficient` when the packet lacks the evidence, for
+  example a Calculator run without its display.) A `done` can be the right stopping point
+  (`target` right) while its `completion` is `insufficient`; do not turn missing evidence into
+  `wrong`.
+
+Packets under this protocol carry `window_text` (what the model saw before acting) and
+`prior_actions` with their effects, and carry no confidence scores, probabilities or routing reasons:
+you judge the decision, not the model's opinion of it. Write `{"key", "target", "argument",
+"completion", "reason"}` per row. Calculator: an operand order that reaches the result through the
+percent key is right whichever operand comes first; a digit that no valid sequence from the keys
+already pressed can use is wrong; when the display is missing and the order matters, `unclear`.

@@ -28,8 +28,8 @@ if TYPE_CHECKING:
     from browser_use.browser.views import BrowserStateSummary
     from browser_use.dom.views import EnhancedDOMTreeNode
 
-Operation = Literal["click", "type", "select", "enter", "hover", "scroll"]
-OPERATIONS: tuple[Operation, ...] = ("click", "type", "select", "enter", "hover", "scroll")
+Operation = Literal["click", "type", "append", "select", "enter", "hover", "scroll"]
+OPERATIONS: tuple[Operation, ...] = ("click", "type", "append", "select", "enter", "hover", "scroll")
 
 #: Jev 1.13 limits (docs.typesafe.ai/models): 255 options per Choice; 32k tokens for
 #: state plus the longest question; 64k for the whole request.
@@ -55,6 +55,8 @@ class Candidate:
     section: str | None = None
     offscreen: bool = False
     options: tuple[str, ...] | None = None
+    #: a secure field never carries its value; True says it holds one (a person can judge readiness)
+    has_value: bool | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -72,6 +74,8 @@ class Candidate:
             out["options"] = list(self.options)
         if self.offscreen:
             out["offscreen"] = True
+        if self.has_value is not None and self.value is None:
+            out["has_value"] = self.has_value
         return out
 
 

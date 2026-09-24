@@ -62,6 +62,7 @@ def main() -> None:
                     "input_type": m.get("input_type"),
                     "href": (m.get("href") or "")[:60] or None,
                     "offscreen": m.get("offscreen") or None,
+                    "has_value": m.get("has_value"),
                 }.items()
                 if v not in (None, "", False)
             }
@@ -78,28 +79,42 @@ def main() -> None:
         for st in sorted(cache[f]):
             if st >= int(r["step"]):
                 break
-            for a in cache[f][st].get("executed") or []:
+            rec_prev = cache[f][st]
+            execd = rec_prev.get("executed") or []
+            if not execd:
+                if rec_prev.get("arbiter_reason"):
+                    prior.append(f"(step {st}: no action; {str(rec_prev['arbiter_reason'])[:50]})")
+                continue
+            for a in execd:
                 pr = a.get("params") or {}
-                prior.append(
-                    f"{a.get('name')}({pr.get('label') or pr.get('text') or pr.get('keys') or pr.get('path') or pr.get('index', '')})"
-                )
+                what = pr.get("label") or pr.get("keys") or pr.get("path") or pr.get("index", "")
+                txt = f" text={pr['text']!r}" if pr.get("text") else ""
+                eff = f" -> {pr['effect']}" if pr.get("effect") else ""
+                err = " (error)" if rec_prev.get("result_error") else ""
+                prior.append(f"{a.get('name')}({what}){txt}{eff}{err}")
+        # what S1 proposed to type: native runs record the proposal; browser runs record S1's own proposal only
+        value = None
+        for a in rec.get("proposed") or []:
+            if a.get("name") in ("input", "type"):
+                value = (a.get("params") or {}).get("text")
+        alt_labels = [x.rsplit(" (", 1)[0] for x in (r.get("alternatives") or "").split("; ") if x]
         item = {
             "key": row_key(r),
             "prior_actions": prior[-12:],
             "task": r["task_text"],
             "page": r["url"],
+            "window_text": (rec.get("page_text") or "")[:1500] or None,
             "step_in_run": int(r["step"]),
             "menu": menu,
             "s1_operation": op.get("choice"),
-            "s1_operation_confidence": op.get("confidence"),
             "s1_target_id": tg.get("choice"),
             "s1_target_label": r["s1_target"],
-            "s1_target_confidence": tg.get("confidence"),
             "value": value
             if value is not None
-            else ("<needs value>" if op.get("choice") == "type" else None),
-            "alternatives": r["alternatives"],
+            else ("<needs value>" if op.get("choice") in ("type", "append") else None),
+            "alternative_targets": alt_labels[:5],
         }
+        item = {k: v for k, v in item.items() if v not in (None, [], "")}
         s = len(json.dumps(item))
         if size + s > args.max_chars and packets[-1]:
             packets.append([])
