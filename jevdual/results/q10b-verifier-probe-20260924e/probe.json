@@ -1,0 +1,93 @@
+[
+ {
+  "task": "textedit-append-line",
+  "oracle_error": null,
+  "window_text": "\u2014\ndraft.txt\nFirst line.\nSecond line.",
+  "answer": null,
+  "requirements": [
+   "The document contains both the line First line. and the line Second line.",
+   "The document was saved with Command-S or File > Save"
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.9,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.08,
+     "The document was saved with Command-S or File > Save": 0.11
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.08,
+     "The document was saved with Command-S or File > Save": 0.11
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.90, max unmet p=0.11"
+   },
+   {
+    "band": "accept",
+    "complete": 0.88,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.08,
+     "The document was saved with Command-S or File > Save": 0.12
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.08,
+     "The document was saved with Command-S or File > Save": 0.12
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.88, max unmet p=0.12"
+   },
+   {
+    "band": "accept",
+    "complete": 0.89,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.1,
+     "The document was saved with Command-S or File > Save": 0.13
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.1,
+     "The document was saved with Command-S or File > Save": 0.13
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.89, max unmet p=0.13"
+   },
+   {
+    "band": "accept",
+    "complete": 0.89,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.09,
+     "The document was saved with Command-S or File > Save": 0.11
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.09,
+     "The document was saved with Command-S or File > Save": 0.11
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.89, max unmet p=0.11"
+   },
+   {
+    "band": "accept",
+    "complete": 0.9,
+    "unmet_effective": {
+     "The document contains both the line First line. and the line Second line.": 0.09,
+     "The document was saved with Command-S or File > Save": 0.12
+    },
+    "unmet": {
+     "The document contains both the line First line. and the line Second line.": 0.09,
+     "The document was saved with Command-S or File > Save": 0.12
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.90, max unmet p=0.12"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ }
+]

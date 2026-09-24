@@ -52,18 +52,19 @@ tasks:
     solve: [type textbox The lantern arrived broken.]
 
   - id: textedit-append-line
-    task: 'Add the line "Second line." at the end of the document, keeping the first line as it is.'
+    task: 'Add the line "Second line." at the end of the document, keeping the first line as it is, and save the document.'
     app: TextEdit
     bundle_id: com.apple.TextEdit
     files: {draft.txt: "First line.\n"}
     open: ["{tmp}/draft.txt"]
     window_title: draft.txt
-    tags: [type, multistep]
-    requirements: [The document contains both the line First line. and the line Second line.]
-    # TextEdit autosaves in place; the file is the observable. Q10's predecessor task passed the loss of the
-    # first line because it only checked that the new line existed (secondary audit, 2026-09-24).
+    tags: [type, key, multistep]
+    # The file is the observable, so the task asks for the save (autosave does not flush before teardown:
+    # the oracle without a save left the file unchanged, 2026-09-24). Q10's predecessor task passed the loss
+    # of the first line because it only checked that the new line existed (secondary audit).
+    requirements: [The document contains both the line First line. and the line Second line., The document was saved with Command-S or File > Save]
     predicate: {kind: file_equals, value: "First line.\nSecond line.", path: '{tmp}/draft.txt'}
-    solve: [append textbox Second line., wait 1]
+    solve: [append textbox Second line., hotkey cmd+s, wait 1]
 
   - id: textedit-read-word-after
     task: Report the word that comes right after "brass" on the document's only line.
