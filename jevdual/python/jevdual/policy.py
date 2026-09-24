@@ -18,6 +18,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import logging
+import math
 import time
 from dataclasses import dataclass, field
 from typing import Any, Protocol
@@ -457,6 +458,12 @@ def _validate_choice(answer: ChoiceAnswer | None, options: set[str], key: str) -
         raise _InvalidAnswer(f"{key}: choice {answer.choice!r} not in options")
     if set(answer.probabilities) != options:
         raise _InvalidAnswer(f"{key}: probability keys do not match options")
+    if any(
+        not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) or not 0.0 <= v <= 1.0
+        for v in answer.probabilities.values()
+    ):
+        # cua's decision_models.choose checks the same: a non-finite or out-of-range mass is not a distribution
+        raise _InvalidAnswer(f"{key}: a probability is not a finite number in [0, 1]")
     total = sum(answer.probabilities.values())
     if abs(total - 1.0) > PROBABILITY_SUM_TOLERANCE:
         raise _InvalidAnswer(f"{key}: probabilities sum to {total:.3f}")
