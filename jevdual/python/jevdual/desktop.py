@@ -115,6 +115,7 @@ class NativeAgent:
         recent_window: int = 8,
         answer_expected: bool = False,
         gate: Callable[[NativeMenu, Candidate], Awaitable[str | None] | str | None] | None = None,
+        s1_enabled: bool = True,
     ):
         self.bridge = bridge
         self.policy = policy
@@ -131,6 +132,8 @@ class NativeAgent:
         self.answer_expected = answer_expected
         #: returns a reason string when the target must not be clicked without confirmation
         self.gate = gate
+        #: False is the guarded arm: System 2 decides every step behind the same gate, System 1 is never asked
+        self.s1_enabled = s1_enabled
         if text_source is None:
             from jevdual.text import TextSource, helper_from_env, placeholder_from_store
 
@@ -335,7 +338,7 @@ class NativeAgent:
         """Dispatch one operation and record it in the browser vocabulary. Never raises for a
         Driver refusal; a bridge error (stale, unsupported) is recorded as ``result_error``."""
         t0 = time.perf_counter()
-        params: dict[str, Any] = {"index": target.id}
+        params: dict[str, Any] = {"index": target.id, "label": target.label[:60]}
         if operation == "type":
             params["text"] = text if self.secrets is None else self.secrets.redactor()(text or "")
         if operation == "enter":
@@ -373,7 +376,13 @@ class NativeAgent:
             final = nm
             out = StepOutcome(step=step, system="s1", menu=nm, menu_ms=menu_ms)
             self.steps.append(out)
-            verdict = await self.s1_step(step, nm, out)
+            if not self.s1_enabled:
+                if self.s2 is None:
+                    return NativeRun("error", "no System 1 and no System 2", self.steps, None, nm)
+                verdict = Verdict("escalate", "guarded arm: System 2 decides every step")
+                out.verdict = verdict
+            else:
+                verdict = await self.s1_step(step, nm, out)
             self.step_systems[step] = "s1"
             if out.is_done:
                 self._write(out, nm)

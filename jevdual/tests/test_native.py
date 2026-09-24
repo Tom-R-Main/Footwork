@@ -239,3 +239,60 @@ def test_bridge_refuses_stale_menu_and_dispatches_by_token(snapshot, monkeypatch
         asyncio.run(bridge.act(nm2, "type", six.id, "x"))
     assert e.value.reason == "unknown_operation"
     assert native.menu_from_snapshot(snapshot).snapshot_id == nm2.snapshot_id
+
+
+def test_bridge_menu_and_hotkey_go_foreground_and_record_it(snapshot, monkeypatch):
+    import sys
+
+    calls = []
+
+    class D(_FakeDriver):
+        async def call_tool(self, name, args_json):
+            calls.append((name, json.loads(args_json)))
+            return SimpleNamespace(
+                action=SimpleNamespace(
+                    effect=SimpleNamespace(name="UNVERIFIABLE"),
+                    route=SimpleNamespace(name="SYNTHETIC_EVENTS"),
+                    evidence=None,
+                    summary="chord",
+                ),
+                text="",
+                is_error=False,
+                error_code=None,
+            )
+
+        async def invoke_menu(self, inp):
+            calls.append(("invoke_menu", inp))
+            return SimpleNamespace(
+                action=SimpleNamespace(
+                    effect=SimpleNamespace(name="CONFIRMED"),
+                    route=SimpleNamespace(name="ACCESSIBILITY"),
+                    evidence=None,
+                    summary="File > Save",
+                ),
+                text="",
+                is_error=False,
+                error_code=None,
+            )
+
+    stub = SimpleNamespace(
+        GetWindowStateInput=lambda **kw: kw,
+        InvokeMenuInput=lambda **kw: kw,
+        HotkeyInput=lambda **kw: kw,
+        ActionTarget=SimpleNamespace(WINDOW=lambda pid, window_id: ("window", pid, window_id)),
+    )
+    monkeypatch.setitem(sys.modules, "cua_driver", stub)
+    bridge = NativeBridge(D(snapshot), pid=1, window_id=2)
+    nm = asyncio.run(bridge.observe())
+    eff = asyncio.run(bridge.menu(nm, ["File", "Save"]))
+    assert eff.effect == "confirmed" and eff.summary.startswith("foreground")
+    assert (
+        calls[0][0] == "bring_to_front"
+        and calls[1][0] == "invoke_menu"
+        and calls[1][1]["path"] == ["File", "Save"]
+    )
+    with pytest.raises(NativeBridgeError):  # one action per snapshot
+        asyncio.run(bridge.menu(nm, ["File", "Save"]))
+    nm = asyncio.run(bridge.observe())
+    eff = asyncio.run(bridge.hotkey(nm, ["cmd", "s"]))
+    assert eff.effect == "unverifiable" and eff.label == "cmd+s" and "foreground" in eff.summary

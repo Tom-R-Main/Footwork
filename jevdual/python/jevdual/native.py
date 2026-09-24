@@ -25,6 +25,7 @@ items are reachable through ``invoke_menu`` when we add a ``menu`` operation.
 
 from __future__ import annotations
 
+import asyncio
 import dataclasses
 import json
 import logging
@@ -543,6 +544,75 @@ class NativeBridge:
         self.last = None
         return effect_from_action_result("key", -1, "+".join([*mods, key]), result)
 
+    async def _front(self) -> None:
+        """Explicit foreground escalation: bring the bound window to the front (recorded by the caller)."""
+        await self.driver.call_tool(
+            "bring_to_front", json.dumps({"pid": self.pid, "window_id": self.window_id})
+        )
+
+    async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
+        """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and
+        restores the previous frontmost app). Process-scoped background key presses are refused when the
+        pid owns several eligible windows (``same_pid_keyboard_ambiguity``), so this is the honest route."""
+        if self.last is None or nm.snapshot_id != self.last.snapshot_id:
+            raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
+        self.last = None
+        label = "+".join(keys)
+        args: dict[str, Any] = {
+            "keys": list(keys),
+            "pid": self.pid,
+            "window_id": self.window_id,
+            "delivery_mode": "foreground",
+        }
+        if self.session:
+            args["session"] = self.session
+        try:
+            result = await self.driver.call_tool("hotkey", json.dumps(args))
+        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            return NativeEffect(
+                "hotkey",
+                -1,
+                label,
+                "refused",
+                "foreground",
+                (),
+                str(exc)[:200],
+                getattr(exc, "code", None) or type(exc).__name__,
+            )
+        eff = effect_from_action_result("hotkey", -1, label, result)
+        return dataclasses.replace(eff, summary=f"foreground; {eff.summary}"[:200])
+
+    async def menu(self, nm: NativeMenu, path: list[str]) -> NativeEffect:
+        """Invoke an application menu item by path (``["File", "Save"]``) through ``invoke_menu``, which
+        needs the window key and frontmost, so the window is brought to the front first."""
+        from cua_driver import InvokeMenuInput
+
+        if self.last is None or nm.snapshot_id != self.last.snapshot_id:
+            raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
+        self.last = None
+        label = " > ".join(path)
+        try:
+            await self._front()
+            await asyncio.sleep(0.4)  # activation settles before invoke_menu checks key/frontmost
+            result = await self.driver.invoke_menu(
+                InvokeMenuInput(pid=self.pid, window_id=self.window_id, path=list(path), session=self.session)
+            )
+        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            return NativeEffect(
+                "menu",
+                -1,
+                label,
+                "refused",
+                "foreground",
+                (),
+                str(exc)[:200],
+                getattr(exc, "code", None) or type(exc).__name__,
+            )
+        eff = effect_from_action_result("menu", -1, label, result)
+        return dataclasses.replace(
+            eff, route=eff.route or "foreground", summary=f"foreground; {eff.summary}"[:200]
+        )
+
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of
         satisfied / unsatisfied / unknown. ``unknown`` never means success."""
@@ -564,8 +634,9 @@ class NativeBridge:
         return status, str(getattr(res, "text", "") or "")
 
 
-async def find_window(driver: Any, app_name: str) -> tuple[int, int, str]:
-    """``(pid, window_id, title)`` of the largest on-screen titled window of a running app, or raise."""
+async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -> tuple[int, int, str]:
+    """``(pid, window_id, title)`` of the largest on-screen titled window of a running app (whose title
+    contains ``title_contains`` when given), or raise ``LookupError``."""
     from cua_driver import ListAppsInput, ListWindowsInput
 
     apps = await driver.list_apps(ListAppsInput())
@@ -574,8 +645,33 @@ async def find_window(driver: Any, app_name: str) -> tuple[int, int, str]:
         raise LookupError(f"{app_name!r} is not running (Driver list_apps)")
     pid = match[0].pid
     wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
-    titled = [w for w in wins.windows if w.title] or list(wins.windows)
+    titled = [w for w in wins.windows if w.title]
+    if title_contains:
+        titled = [w for w in titled if title_contains.casefold() in w.title.casefold()]
+    elif not titled:
+        titled = list(wins.windows)
     if not titled:
-        raise LookupError(f"{app_name!r} (pid {pid}) has no on-screen window")
+        raise LookupError(
+            f"{app_name!r} (pid {pid}) has no on-screen window"
+            + (f" titled {title_contains!r}" if title_contains else "")
+        )
     w = max(titled, key=lambda w: w.bounds.width * w.bounds.height)
     return pid, w.window_id, w.title
+
+
+async def find_window_for_pid(driver: Any, pid: int, *, title_contains: str = "") -> tuple[int, str]:
+    """``(window_id, title)`` of the largest on-screen titled window of one process (whose title contains
+    ``title_contains`` when given), or raise ``LookupError``. Used after ``launch_app`` returned the pid of a
+    fresh instance: ``list_apps`` reports one pid per bundle, so a second instance is invisible to it."""
+    from cua_driver import ListWindowsInput
+
+    wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+    titled = [w for w in wins.windows if w.title]
+    if title_contains:
+        titled = [w for w in titled if title_contains.casefold() in w.title.casefold()]
+    if not titled:
+        raise LookupError(
+            f"pid {pid} has no on-screen window" + (f" titled {title_contains!r}" if title_contains else "")
+        )
+    w = max(titled, key=lambda w: w.bounds.width * w.bounds.height)
+    return w.window_id, w.title

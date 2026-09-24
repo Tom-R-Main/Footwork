@@ -1,0 +1,77 @@
+split: dev
+tasks:
+  # --- Calculator (com.apple.calculator): deterministic, no state outside the window -----------------
+  - id: calc-multiply
+    task: Clear the calculator, then compute 12 times 11 and leave the result on the display.
+    app: Calculator
+    bundle_id: com.apple.calculator
+    tags: [click, multistep]
+    requirements: [The display shows the product of 12 and 11]
+    predicate: {kind: window_text_contains, value: '132'}
+    solve: [click All Clear, click 1, click 2, click Multiply, click 1, click 1, click Equals]
+
+  - id: calc-subtract
+    task: Clear the calculator, then compute 250 minus 75 and leave the result on the display.
+    app: Calculator
+    bundle_id: com.apple.calculator
+    tags: [click, multistep]
+    requirements: [The display shows 250 minus 75]
+    predicate: {kind: window_text_contains, value: '175'}
+    solve: [click All Clear, click 2, click 5, click 0, click Subtract, click 7, click 5, click Equals]
+
+  - id: calc-percent
+    task: Clear the calculator, then compute 15 percent of 240 using the percent key and leave the result on the display.
+    app: Calculator
+    bundle_id: com.apple.calculator
+    tags: [click, multistep]
+    requirements: [The display shows 15 percent of 240]
+    predicate: {kind: window_text_contains, value: '36'}
+    solve: [click All Clear, click 2, click 4, click 0, click Multiply, click 1, click 5, click Percent, click Equals]
+
+  - id: calc-read-result
+    task: Clear the calculator, compute 9 times 9 and report the result.
+    app: Calculator
+    bundle_id: com.apple.calculator
+    tags: [click, read]
+    requirements: [Computed 9 times 9, Reported the result]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: '81'}
+    solve: [click All Clear, click 9, click Multiply, click 9, click Equals, answer 81]
+
+  # --- TextEdit (com.apple.TextEdit): documents in the task folder ---------------------------------
+  - id: textedit-type-sentence
+    task: 'Type the sentence "The lantern arrived broken." into the document.'
+    app: TextEdit
+    bundle_id: com.apple.TextEdit
+    files: {note.txt: ""}
+    open: ["{tmp}/note.txt"]
+    window_title: note.txt
+    tags: [type]
+    requirements: [The document contains the sentence The lantern arrived broken.]
+    predicate: {kind: window_text_contains, value: 'The lantern arrived broken.'}
+    solve: [type textbox The lantern arrived broken.]
+
+  - id: textedit-append-and-save
+    task: 'Add the line "Second line." to the end of the document and save it.'
+    app: TextEdit
+    bundle_id: com.apple.TextEdit
+    files: {draft.txt: "First line.\n"}
+    open: ["{tmp}/draft.txt"]
+    window_title: draft.txt
+    tags: [type, key, multistep]
+    requirements: [The document ends with the line Second line., The document was saved]
+    predicate: {kind: file_contains, value: 'Second line.', path: '{tmp}/draft.txt'}
+    solve: [type textbox First line.\nSecond line., hotkey cmd+s, wait 1]
+
+  - id: textedit-read-word-count
+    task: Report the second word of the document's only line.
+    app: TextEdit
+    bundle_id: com.apple.TextEdit
+    files: {words.txt: "brass lantern compass\n"}
+    open: ["{tmp}/words.txt"]
+    window_title: words.txt
+    tags: [read]
+    requirements: [Reported the second word of the line]
+    answer_expected: true
+    predicate: {kind: answer_contains, value: 'lantern'}
+    solve: [answer lantern]

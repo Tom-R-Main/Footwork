@@ -38,7 +38,7 @@ from jevdual.trace import ActionRecord
 
 log = logging.getLogger("jevdual.desktop_s2")
 
-ACTIONS = ("click", "type", "enter", "scroll", "hover", "key", "wait", "done", "blocked")
+ACTIONS = ("click", "type", "enter", "scroll", "hover", "key", "hotkey", "menu", "wait", "done", "blocked")
 TARGETED = {"click": "click", "type": "type", "enter": "enter", "scroll": "scroll", "hover": "hover"}
 KEYS = {
     "return": "Return",
@@ -69,7 +69,9 @@ Actions (one per reply):
 - {"name":"type","id":N,"text":"..."} replace the value of text field N
 - {"name":"enter","id":N}            press Return inside field N
 - {"name":"scroll","id":N}           scroll container N down one page
-- {"name":"key","key":"Return|Escape|Tab|Delete|Up|Down|Left|Right|<letter>","modifiers":["cmd","shift","alt","ctrl"]} press one key in this window
+- {"name":"key","key":"Return|Escape|Tab|Delete|Up|Down|Left|Right|<letter>","modifiers":["cmd","shift","alt","ctrl"]} press one key in this window (background; refused when the app has several windows)
+- {"name":"hotkey","keys":["cmd","s"]}   press a chord with the window briefly brought to the front (use when "key" was refused)
+- {"name":"menu","path":["File","Save"]}  invoke an application menu item by its menu path (brings the window to the front)
 - {"name":"wait"}                     the window is still changing
 - {"name":"done","answer":"...","success":true}  every entry in `requirements` is visibly satisfied; `answer` holds the reported value on read tasks, else ""
 - {"name":"blocked"}                  nothing offered can advance the task
@@ -349,6 +351,52 @@ class NativeS2:
                 )
             ]
             agent.memory.append(f"step {out.step}: key {'+'.join([*mods, norm])} -> {effect.effect}")
+            return
+
+        if name == "hotkey":
+            keys = [str(k).casefold() for k in (action.get("keys") or []) if str(k).strip()]
+            if not keys or len(keys) > 4 or not all(k in MODIFIERS or len(k) == 1 or k in KEYS for k in keys):
+                out.error = f"s2 invalid hotkey {keys!r}"
+                out.verdict = Verdict("escalate", out.error)
+                return
+            effect = await agent.bridge.hotkey(nm, keys)
+            out.effect = effect
+            out.verdict = Verdict("act", f"System 2 hotkey {'+'.join(keys)}")
+            out.executed = [
+                ActionRecord(
+                    name="send_keys",
+                    params={"keys": "+".join(keys), "effect": effect.effect, "route": "foreground"},
+                )
+            ]
+            agent.memory.append(
+                f"step {out.step}: hotkey {'+'.join(keys)} (foreground) -> {effect.effect} (S2: {red(note)[:60]})"
+            )
+            return
+
+        if name == "menu":
+            path = [str(x) for x in (action.get("path") or []) if str(x).strip()]
+            if not path:
+                out.error = "s2 menu without a path"
+                out.verdict = Verdict("escalate", out.error)
+                return
+            label = " > ".join(path)
+            if not self.is_authorized(label):
+                context = nm.menu.title
+                hit = destructive_match(label, context, self.policy)
+                if hit:
+                    out.verdict = Verdict(
+                        "confirm", f"destructive: keyword {hit!r} (System 2 proposed menu {label!r})"
+                    )
+                    return
+            effect = await agent.bridge.menu(nm, path)
+            out.effect = effect
+            out.verdict = Verdict("act", f"System 2 menu {label}")
+            out.executed = [
+                ActionRecord(
+                    name="menu", params={"path": path, "effect": effect.effect, "route": effect.route}
+                )
+            ]
+            agent.memory.append(f"step {out.step}: menu {label} -> {effect.effect} (S2: {red(note)[:60]})")
             return
 
         # targeted actions
