@@ -1,0 +1,593 @@
+[
+ {
+  "task": "calc-multiply",
+  "oracle_error": null,
+  "window_text": "12\u00d711\n132",
+  "answer": null,
+  "requirements": [
+   "The display shows 132"
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 132": 0.06
+    },
+    "unmet": {
+     "The display shows 132": 0.06
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.06"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 132": 0.05
+    },
+    "unmet": {
+     "The display shows 132": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 132": 0.05
+    },
+    "unmet": {
+     "The display shows 132": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 132": 0.05
+    },
+    "unmet": {
+     "The display shows 132": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 132": 0.06
+    },
+    "unmet": {
+     "The display shows 132": 0.06
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.06"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ },
+ {
+  "task": "calc-subtract",
+  "oracle_error": null,
+  "window_text": "250-75\n175",
+  "answer": null,
+  "requirements": [
+   "The display shows 175"
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 175": 0.04
+    },
+    "unmet": {
+     "The display shows 175": 0.04
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.04"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 175": 0.05
+    },
+    "unmet": {
+     "The display shows 175": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 175": 0.05
+    },
+    "unmet": {
+     "The display shows 175": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 175": 0.05
+    },
+    "unmet": {
+     "The display shows 175": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The display shows 175": 0.05
+    },
+    "unmet": {
+     "The display shows 175": 0.05
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.05"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ },
+ {
+  "task": "calc-percent",
+  "oracle_error": null,
+  "window_text": "240\u00d715%\n36",
+  "answer": null,
+  "requirements": [
+   "The display shows 36"
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.95,
+    "unmet_effective": {
+     "The display shows 36": 0.07
+    },
+    "unmet": {
+     "The display shows 36": 0.07
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.95, max unmet p=0.07"
+   },
+   {
+    "band": "accept",
+    "complete": 0.96,
+    "unmet_effective": {
+     "The display shows 36": 0.06
+    },
+    "unmet": {
+     "The display shows 36": 0.06
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.96, max unmet p=0.06"
+   },
+   {
+    "band": "accept",
+    "complete": 0.96,
+    "unmet_effective": {
+     "The display shows 36": 0.06
+    },
+    "unmet": {
+     "The display shows 36": 0.06
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.96, max unmet p=0.06"
+   },
+   {
+    "band": "accept",
+    "complete": 0.95,
+    "unmet_effective": {
+     "The display shows 36": 0.06
+    },
+    "unmet": {
+     "The display shows 36": 0.06
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.95, max unmet p=0.06"
+   },
+   {
+    "band": "accept",
+    "complete": 0.96,
+    "unmet_effective": {
+     "The display shows 36": 0.06
+    },
+    "unmet": {
+     "The display shows 36": 0.06
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.96, max unmet p=0.06"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ },
+ {
+  "task": "calc-read-result",
+  "oracle_error": null,
+  "window_text": "9\u00d79\n81",
+  "answer": "81",
+  "requirements": [
+   "Computed 9 times 9",
+   "Reported the result"
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.94,
+    "unmet_effective": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.26
+    },
+    "unmet": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.26
+    },
+    "claims": [
+     "exact"
+    ],
+    "unsupported": 0,
+    "reason": "complete p=0.94, max unmet p=0.26"
+   },
+   {
+    "band": "accept",
+    "complete": 0.93,
+    "unmet_effective": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.24
+    },
+    "unmet": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.24
+    },
+    "claims": [
+     "exact"
+    ],
+    "unsupported": 0,
+    "reason": "complete p=0.93, max unmet p=0.24"
+   },
+   {
+    "band": "accept",
+    "complete": 0.93,
+    "unmet_effective": {
+     "Computed 9 times 9": 0.05,
+     "Reported the result": 0.28
+    },
+    "unmet": {
+     "Computed 9 times 9": 0.05,
+     "Reported the result": 0.28
+    },
+    "claims": [
+     "exact"
+    ],
+    "unsupported": 0,
+    "reason": "complete p=0.93, max unmet p=0.28"
+   },
+   {
+    "band": "accept",
+    "complete": 0.93,
+    "unmet_effective": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.3
+    },
+    "unmet": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.3
+    },
+    "claims": [
+     "exact"
+    ],
+    "unsupported": 0,
+    "reason": "complete p=0.93, max unmet p=0.30"
+   },
+   {
+    "band": "accept",
+    "complete": 0.92,
+    "unmet_effective": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.29
+    },
+    "unmet": {
+     "Computed 9 times 9": 0.04,
+     "Reported the result": 0.29
+    },
+    "claims": [
+     "exact"
+    ],
+    "unsupported": 0,
+    "reason": "complete p=0.92, max unmet p=0.29"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ },
+ {
+  "task": "textedit-type-sentence",
+  "oracle_error": null,
+  "window_text": "note.txt\nThe lantern arrived broken.",
+  "answer": null,
+  "requirements": [
+   "The document contains the sentence The lantern arrived broken."
+  ],
+  "calls": [
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The document contains the sentence The lantern arrived broken.": 0.08
+    },
+    "unmet": {
+     "The document contains the sentence The lantern arrived broken.": 0.08
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.08"
+   },
+   {
+    "band": "accept",
+    "complete": 0.96,
+    "unmet_effective": {
+     "The document contains the sentence The lantern arrived broken.": 0.09
+    },
+    "unmet": {
+     "The document contains the sentence The lantern arrived broken.": 0.09
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.96, max unmet p=0.09"
+   },
+   {
+    "band": "accept",
+    "complete": 0.96,
+    "unmet_effective": {
+     "The document contains the sentence The lantern arrived broken.": 0.08
+    },
+    "unmet": {
+     "The document contains the sentence The lantern arrived broken.": 0.08
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.96, max unmet p=0.08"
+   },
+   {
+    "band": "accept",
+    "complete": 0.96,
+    "unmet_effective": {
+     "The document contains the sentence The lantern arrived broken.": 0.07
+    },
+    "unmet": {
+     "The document contains the sentence The lantern arrived broken.": 0.07
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.96, max unmet p=0.07"
+   },
+   {
+    "band": "accept",
+    "complete": 0.97,
+    "unmet_effective": {
+     "The document contains the sentence The lantern arrived broken.": 0.08
+    },
+    "unmet": {
+     "The document contains the sentence The lantern arrived broken.": 0.08
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "complete p=0.97, max unmet p=0.08"
+   }
+  ],
+  "bands": {
+   "accept": 5
+  },
+  "accept_rate": 1.0
+ },
+ {
+  "task": "textedit-append-line",
+  "oracle_error": null,
+  "window_text": "draft.txt\nFirst line.\nSecond line.",
+  "answer": null,
+  "requirements": [
+   "The document reads First line. on the first line and Second line. on the second line"
+  ],
+  "calls": [
+   {
+    "band": "verify",
+    "complete": 0.81,
+    "unmet_effective": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.33
+    },
+    "unmet": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.33
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.81, max unmet p=0.33"
+   },
+   {
+    "band": "verify",
+    "complete": 0.82,
+    "unmet_effective": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.42
+    },
+    "unmet": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.42
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.82, max unmet p=0.42"
+   },
+   {
+    "band": "verify",
+    "complete": 0.83,
+    "unmet_effective": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.39
+    },
+    "unmet": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.39
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.83, max unmet p=0.39"
+   },
+   {
+    "band": "verify",
+    "complete": 0.83,
+    "unmet_effective": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.32
+    },
+    "unmet": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.32
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.83, max unmet p=0.32"
+   },
+   {
+    "band": "verify",
+    "complete": 0.79,
+    "unmet_effective": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.39
+    },
+    "unmet": {
+     "The document reads First line. on the first line and Second line. on the second line": 0.39
+    },
+    "claims": [],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.79, max unmet p=0.39"
+   }
+  ],
+  "bands": {
+   "verify": 5
+  },
+  "accept_rate": 0.0
+ },
+ {
+  "task": "textedit-read-word-count",
+  "oracle_error": null,
+  "window_text": "words.txt\nbrass lantern compass",
+  "answer": "lantern",
+  "requirements": [
+   "The reported answer is the second word of the document's line"
+  ],
+  "calls": [
+   {
+    "band": "verify",
+    "complete": 0.5,
+    "unmet_effective": {
+     "The reported answer is the second word of the document's line": 0.48
+    },
+    "unmet": {
+     "The reported answer is the second word of the document's line": 0.48
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.50, max unmet p=0.48"
+   },
+   {
+    "band": "verify",
+    "complete": 0.45,
+    "unmet_effective": {
+     "The reported answer is the second word of the document's line": 0.49
+    },
+    "unmet": {
+     "The reported answer is the second word of the document's line": 0.49
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.45, max unmet p=0.49"
+   },
+   {
+    "band": "verify",
+    "complete": 0.52,
+    "unmet_effective": {
+     "The reported answer is the second word of the document's line": 0.45
+    },
+    "unmet": {
+     "The reported answer is the second word of the document's line": 0.45
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.52, max unmet p=0.45"
+   },
+   {
+    "band": "verify",
+    "complete": 0.51,
+    "unmet_effective": {
+     "The reported answer is the second word of the document's line": 0.49
+    },
+    "unmet": {
+     "The reported answer is the second word of the document's line": 0.49
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.51, max unmet p=0.49"
+   },
+   {
+    "band": "verify",
+    "complete": 0.42,
+    "unmet_effective": {
+     "The reported answer is the second word of the document's line": 0.52
+    },
+    "unmet": {
+     "The reported answer is the second word of the document's line": 0.52
+    },
+    "claims": [
+     "narrative"
+    ],
+    "unsupported": 0,
+    "reason": "uncertain: complete p=0.42, max unmet p=0.52"
+   }
+  ],
+  "bands": {
+   "verify": 5
+  },
+  "accept_rate": 0.0
+ }
+]
