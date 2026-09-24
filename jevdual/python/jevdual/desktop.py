@@ -241,7 +241,7 @@ class NativeAgent:
             entry: dict[str, Any] = {
                 "step": o.step,
                 "url": o.menu.menu.url if o.menu is not None else "",
-                "actions": [red(f"{a.name}({a.params.get('index', '')})") for a in o.executed],
+                "actions": [red(_action_line(a)) for a in o.executed],
             }
             if o.memory_line or self.memory:
                 entry["note"] = red(o.memory_line or "")[:200] if o.memory_line else ""
@@ -523,6 +523,27 @@ class NativeAgent:
                 cost=Cost(llm_input_tokens=out.llm_input_tokens, llm_output_tokens=out.llm_output_tokens),
             )
         )
+
+
+def _action_line(a: ActionRecord) -> str:
+    """What the verifier reads: the control's label, the text entered, the chord or the menu path, never
+    a bare index (Q10b: ``click(8)`` and ``send_keys()`` carried no evidence, so the same display was
+    accepted with System 2's narrated lines and refused with System 1's)."""
+    p = a.params or {}
+    what = (
+        p.get("label")
+        or p.get("keys")
+        or (" > ".join(p["path"]) if p.get("path") else "")
+        or p.get("index", "")
+    )
+    line = f"{a.name}({what})"
+    if p.get("text"):
+        line += f" text={str(p['text'])[:80]!r}"
+    if p.get("append"):
+        line += " (appended, content kept)"
+    if p.get("effect"):
+        line += f" -> {p['effect']}"
+    return line
 
 
 @dataclass

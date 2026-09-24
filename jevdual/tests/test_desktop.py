@@ -171,7 +171,7 @@ def test_s1_acts_then_done_is_verified(snapshot, stub_sdk, tmp_path):
     trace.close()
     assert run.status == "done" and run.s1_steps == 3  # two clicks and the verified done
     assert [n for n, _ in driver.calls if n == "click"] == ["click", "click"]
-    assert hook.calls and hook.calls[0]["trajectory"][0]["actions"] == [f"click({ids['6']})"]
+    assert hook.calls and hook.calls[0]["trajectory"][0]["actions"] == ["click(6) -> confirmed"]
     _, steps = read_trace(tmp_path / "t.jsonl")
     assert [s.system for s in steps] == ["s1", "s1", "s1"]
     assert steps[0].executed[0].name == "click" and steps[0].executed[0].params["effect"] == "confirmed"
