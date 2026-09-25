@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "jevdual"
 version = "0.0.1"
-description = "Dual-process browser agent: TypeSafe Jev as System 1 on top of browser-use, with Rust hot paths."
+description = "Verified computer use for the browser and native macOS apps: a Jev guard and optional System 1 in front of any driver, with Rust hot paths."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11,<4.0"

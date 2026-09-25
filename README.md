@@ -3,18 +3,45 @@
 [![ci](https://github.com/Tom-R-Main/Footwork/actions/workflows/ci.yml/badge.svg)](https://github.com/Tom-R-Main/Footwork/actions/workflows/ci.yml)
 ![python](https://img.shields.io/badge/python-3.11%2B-blue) ![rust](https://img.shields.io/badge/rust-1.95-orange) ![license](https://img.shields.io/badge/license-MIT-green)
 
-**A verified browser agent.** Footwork puts a cheap, calibrated guard from
-[TypeSafe Jev](https://docs.typesafe.ai) in front of any LLM browser driver: every claimed completion is
-checked against page evidence and the trajectory before it counts, and every irreversible action passes a
-gate. On top of that guard, Jev can also take the fast, mechanical steps itself (System 1) while the LLM
-(System 2) keeps the reading, comparing and deciding. Built on
-[browser-use](https://github.com/browser-use/browser-use) 0.13.10 as a library, not a fork.
+**A verified computer-use agent, for the browser and for native macOS apps.** Footwork puts a cheap,
+calibrated guard from [TypeSafe Jev](https://docs.typesafe.ai) in front of whoever drives: every claimed
+completion is checked against observed state and the trajectory before it counts, every irreversible action
+passes a gate, and every action comes back with a receipt saying what visibly changed. On top of that guard,
+Jev can also take the fast, mechanical steps itself (System 1) while the driver (System 2) keeps the
+reading, comparing and deciding. The driver can be an LLM loop (browser-use 0.13.10 as a library, not a
+fork) or the operator at the keyboard: a person, or an agent such as a Claude Code session, one command at a
+time. Native apps are driven in the background through the [Cua Driver](https://github.com/trycua/cua)'s
+accessibility tree, beside a person still using the same Mac.
 
 The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the project. Every number below is
 from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
 
+## Drive it
+
+```sh
+footwork start "Compute 48 times 13" --app Calculator --require "The display shows 624"
+footwork look                    # the menu of what can be done now, with ids, and the last receipt
+footwork s1 --act                # System 1's proposal on this observation (one Jev call), dispatched
+footwork do click 12             # through the gate; settle, reobserve, print the receipt
+footwork done "624"              # the verifier judges the claim against the window and the trail
+```
+
+Also `do type | append | key | hotkey | menu | scroll | enter`, `status`, and `footwork run` for the whole
+loop with Jev as System 1 and an LLM as System 2 on escalation. Nothing dispatches on an id from an older
+observation; text comes from the task or from named secrets (`{NAME}` read from `$FOOTWORK_SECRET_NAME`,
+never printed); `--authorize "<label>"` names the one change the operator approved. Sessions default to
+`background_only`: the person's front app, pointer and keyboard are left alone (`--mode` grants more).
+`start --browser` drives footwork's own Chrome profile through the Driver's DevTools route instead of the
+accessibility tree. Needs macOS with Accessibility granted to the process that runs it, and a TypeSafe key.
+
+Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
+Calculator 48 × 13 in 30 s (System 1 proposed every step at p ≥ 0.94, verifier accept 0.98); TextEdit
+append-and-save in 9 s, the save confirmed by the window title losing its edited mark.
+
 ## What it does, measured
+
+### The browser
 
 Three arms are compared on the same tasks: **stock** browser-use with the LLM alone, **guarded** (the LLM behind
 Jev verification and the gate, no Jev actions), and **dual** (the guard plus Jev taking the mechanical steps).
@@ -52,6 +79,23 @@ What that says, in order of how sure we are:
   ([`Q9`](jevdual/docs/experiments/Q9.md)): more cost, no more completions. The executor reached 5 of 30
   assignments; an audit then found software defects behind most of those failures, fixed in the tree and
   not yet re-measured. Delegation stays available as a tool, off by default.
+- **Declaring the contract to the driver did not pay** ([`Q11`](jevdual/docs/experiments/Q11.md)): model
+  requests rose 21% per task with completions unchanged. Receipts for every action
+  ([`Q12`](jevdual/docs/experiments/Q12.md)) are the next test and are running now.
+
+### Native apps and a shared machine
+
+- **The arbiter's calibration transfers from DOM menus to accessibility-tree menus**
+  ([`Q10`](jevdual/docs/experiments/Q10.md), [`results/q10-native-dev.md`](jevdual/results/q10-native-dev.md)):
+  target-confidence AUROC for a wrong System 1 step is 0.90 [0.85, 0.94] on Calculator and TextEdit, against
+  0.80 on the web. After verifier and task fixes, dual is within one task of guarded (13 against 15 of 18,
+  [`results/q10b-native-dev.md`](jevdual/results/q10b-native-dev.md)); the gap is one repeated-sequence task.
+  Native stays experimental.
+- **A session runs beside a person without taking their work, input or focus**
+  ([`Q15`](jevdual/docs/experiments/Q15.md)): 15 of 15 coexistence cases passed every check (another app,
+  another document of the same process, a foreground step beside an idle or moving person, a conflicting
+  edit). `background_only` is the default; `foreground_permitted` holds the front for 36 to 65 ms and only
+  after 3 s of idle.
 
 ## How it works
 
@@ -131,20 +175,23 @@ verifier and no S1 policy; see `evals/runner.py` (`guarded` arm) for the exact w
 
 | path | what |
 |---|---|
-| [`jevdual/python/jevdual/`](jevdual/python/jevdual/) | the package: agent, policy, menu, arbiter, verify, ledger, secrets, tools, evidence, patch |
+| [`jevdual/python/jevdual/`](jevdual/python/jevdual/) | the package: agent, policy, menu, arbiter, verify, ledger, receipts, secrets, tools; native arm (`native`, `desktop`, `posture`, `coexist`); operator surface (`cli`, `session`) |
 | [`jevdual/crates/jevdual-core/`](jevdual/crates/jevdual-core/) | Rust hot paths (PyO3) with pure twins under `python/jevdual/_pure/` |
 | [`jevdual/evals/`](jevdual/evals/) | runner, predicates, report, metrics, paired comparison, task files, fixture site |
 | [`jevdual/results/`](jevdual/results/) | every run directory and its write-up; the README's numbers come from here |
-| [`jevdual/docs/experiments/`](jevdual/docs/experiments/) | pre-registered questions Q1 to Q9 with results and decisions |
-| [`jevdual/docs/`](jevdual/docs/) | design notes, the Rust boundary rule, upstream reuse inventory |
+| [`jevdual/docs/experiments/`](jevdual/docs/experiments/) | pre-registered questions Q1 to Q15 with results and decisions |
+| [`jevdual/docs/`](jevdual/docs/) | design notes, plans (`plans/legible-harness.md` is the current one), the Cua survey, the Rust boundary rule, upstream reuse inventory |
 | [`browser-use/`](browser-use/) | upstream pinned as a submodule at the studied commit; the package imports the PyPI release |
 
 ## Status
 
-Research code with a working product core. The guard and the reactive dual loop are measured and
-documented; delegation and evidence selection are experimental; calibration of the thresholds from human
-labels is the next open question ([`Q1`](jevdual/docs/experiments/Q1.md)). Read
-[`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change.
+Research code with a working product core. The guard and the reactive dual loop are measured on the
+browser; the native arm and the operator session are measured on a small native split and a coexistence
+suite and stay experimental. Delegation and evidence selection are off by default. Open, in order
+([`plan`](jevdual/docs/plans/legible-harness.md)): receipts (Q12, running), a narrower contract declaration
+(Q11b), native readback and the repeated-sequence rule, one contract across browser and native (Q13), and
+whether the browser should go through the accessibility tree too (Q14). Calibration claims wait on the human
+audit sheets. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change.
 
 ## Credits
 

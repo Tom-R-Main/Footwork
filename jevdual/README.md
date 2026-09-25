@@ -1,12 +1,17 @@
 # jevdual
 
-A dual-process browser agent on top of [browser-use](https://github.com/browser-use/browser-use),
-pinned and not forked. **System 1** is [TypeSafe Jev](https://docs.typesafe.ai): one speculative
-fan-out request per step that picks an operation and a target from a code-owned menu and answers six
-yes/no questions about the situation. **System 2** is the stock browser-use LLM loop. A code-owned
-arbiter decides which system acts; verification needs evidence before any run is called done; a
-destructive gate covers actions from either system. Measured hot paths in the DOM pipeline run in
-Rust through PyO3, each with a pure-Python twin and equality tests.
+The package behind [Footwork](../README.md): a guard (done verification against observed state, a
+destructive gate, a receipt for every action) in front of whoever drives, with
+[TypeSafe Jev](https://docs.typesafe.ai) as an optional System 1 that picks an operation and a target from a
+code-owned menu. Two surfaces share the menu, arbiter, verifier and receipt types: the browser, through
+[browser-use](https://github.com/browser-use/browser-use) 0.13.10 (pinned, not forked) or the Cua Driver's
+DevTools route, and native macOS apps through the [Cua Driver](https://github.com/trycua/cua)'s
+accessibility tree (`cua-driver` 0.28.2, pinned). The operator surface is the `footwork` CLI
+(`python/jevdual/cli.py`, `session.py`); see the [top-level README](../README.md#drive-it). Measured hot
+paths in the DOM pipeline run in Rust through PyO3, each with a pure-Python twin and equality tests.
+
+The browser tables below are the Q6 to Q9 measurements; native and coexistence results (Q10, Q15) are in
+the top-level README and `docs/experiments/`.
 
 ## Results
 
@@ -83,6 +88,10 @@ matcher is 46 to 82x faster and byte-identical to the Python reference on the fi
   placeholder or a strict helper contract for typed text; `secrets.py`: names only reach models,
   values resolve at dispatch on the matching origin; `tools.py`: `act_toward_goal`, the S1 loop as a
   tool System 2 can call.
+- Native arm: `native.py` builds the accessibility-tree menu and re-validates every id against the
+  snapshot it came from; `desktop.py` and `desktop_s2.py` run the loop; `posture.py` and `coexist.py`
+  keep a session off the person's input and focus; `ax.py` reads values back. `receipts.py` turns
+  either surface's effect into the Driver's five words.
 - `crates/jevdual-core`: paint order, snapshot lookup, element hashes, evidence matcher.
   `JEVDUAL_PURE_PY=1` forces the Python twins; CI runs both.
 
