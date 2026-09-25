@@ -161,6 +161,13 @@ was changed except a new empty note.
 | Notes | new note, add a line | New Note worked; append on the empty body came back `no_value` (no readable AXValue on an empty text view); the verifier rejected the done at p=0.95 unmet. Reported to the bridge's owner |
 | Safari | fill the order form, submit | fields exposed on the second snapshot; `type` into web inputs was a no-op on every field (WebKit takes no AXValue writes), and the receipts said so; the Submit click paused on the judgment at p=0.92, one `--authorize` sent it, and the verifier rejected the empty submission at p=0.83 unmet, which is right |
 
+Re-run on the bridge fix a21f74f (an empty text view reads as "", web fields typed by insertion with
+readback): Notes append `confirmed`, verifier accept p=0.83; Safari's three fields held the typed
+text on the fresh observation and the submit navigated after the judgment pause, but Safari exposes
+nothing of httpbin's JSON response page to the snapshot (12 elements, tab titles as page text), so
+the verifier refused the done at p=0.80 unmet on the response requirement. The same page through
+Chrome's DevTools route is read in full.
+
 Two menu-builder changes came out of it: an AXImage that opens is a clickable file (Finder icon
 view), and an unlabelled row takes the first static-text leaf beneath it (`child_text_labels`).
 The honest summary of the accessibility route on macOS after four batches: clicks and AX value
