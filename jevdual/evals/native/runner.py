@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
+from jevdual.posture import ExecutionPolicy
 from jevdual.trace import RunHeader, TraceWriter
 
 from evals.native.predicates import NativeEndState, evaluate
@@ -261,7 +262,8 @@ async def run_task(
     final_text = ""
     try:
         pid, window_id, _title = await launch(driver, task, tmp)
-        bridge = NativeBridge(driver, pid, window_id)
+        # the Q10 runs claimed the desktop (foreground hotkeys and menus, no idle gate): keep them comparable
+        bridge = NativeBridge(driver, pid, window_id, policy=ExecutionPolicy("exclusive_desktop"))
         if arm == "oracle":
             executed, error = await run_oracle(bridge, task)
             steps = len(executed)

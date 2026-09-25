@@ -1173,6 +1173,9 @@ dependencies = [
     { name = "browser-use" },
     { name = "cua-driver" },
     { name = "orjson" },
+    { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'" },
     { name = "typesafe-sdk" },
 ]
 
@@ -1194,6 +1197,9 @@ requires-dist = [
     { name = "browser-use", specifier = "==0.13.10" },
     { name = "cua-driver", specifier = ">=0.28.2" },
     { name = "orjson", specifier = ">=3.10" },
+    { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'", specifier = ">=12" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=12" },
+    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'", specifier = ">=12" },
     { name = "typesafe-sdk", specifier = ">=0.7,<1" },
 ]
 

@@ -97,6 +97,21 @@ Actions (one per reply):
 
 Rules: use only ids from `elements`; never repeat an action whose recorded effect was refused or changed nothing; fill fields before submitting; do not toggle a control already in the requested state; say `done` only when the requirements are visible in `window.text` or `elements`, not because you performed the steps."""
 
+#: the session's execution posture (jevdual.posture), declared to System 2 so a refusal is not a surprise;
+#: absent for exclusive_desktop, which is how the Q10 runs saw the prompt
+POSTURE_NOTE = {
+    "background_only": (
+        "\n\nThis session runs beside a person and may not take the foreground: `hotkey`, `menu`, and a `key`"
+        " when the app has several windows are not sent and are recorded `not sent (requires_foreground)`."
+        " Reach the goal with click, type, append, enter and scroll, or report `blocked`."
+    ),
+    "foreground_permitted": (
+        "\n\nThis session runs beside a person: `hotkey` and `menu` take the foreground only while the person"
+        " is idle, otherwise they are recorded `not sent (human_active)`; prefer click, type, append, enter"
+        " and scroll, and retry a foreground step later rather than repeating it at once."
+    ),
+}
+
 
 ChatFn = Callable[[list[dict[str, str]]], Awaitable["ChatReply"]]
 
@@ -237,8 +252,9 @@ class NativeS2:
         }
         if agent.secrets is not None:
             state["stored_secrets"] = list(agent.secrets.names())
+        mode = getattr(getattr(agent.bridge, "policy", None), "mode", "exclusive_desktop")
         return [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": SYSTEM_PROMPT + POSTURE_NOTE.get(mode, "")},
             {"role": "user", "content": json.dumps(state, ensure_ascii=False)},
         ]
 

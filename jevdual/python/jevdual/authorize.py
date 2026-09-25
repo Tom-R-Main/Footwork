@@ -15,7 +15,9 @@ Rules, in order:
    the default button"), and the labels of every button on the current menu are checked too: a
    Return with a "Replace" or "Don't Save" button on screen is a pause.
 3. Replacing existing content: a ``type`` that overwrites a multi-line field's non-empty content is
-   a pause unless the task authorises it (``append`` keeps the content and is not).
+   a pause unless the task authorises it. The content is the field's whole value (``NativeMenu.values``),
+   never the model's 480-character preview. ``append`` is not a replacement: the bridge inserts at the
+   end of the exact value and reports ``partial`` unless the old text reads back unchanged.
 4. The Jev destructive judgment (``Verifier.judge_destructive``) on System 2 proposals for click,
    menu and hotkey routes (System 1's own ``destructive`` noul already went through the arbiter).
    A judgment that fails is not an allow: ``on_judgment_failure`` is ``"confirm"`` by default.
@@ -64,12 +66,14 @@ class NativeAction:
     context: str = ""
     #: labels of every button on the current menu (a key press may activate one of them)
     buttons: tuple[str, ...] = ()
+    #: the target's whole current value (execution data), when it is a text element
+    current: str | None = None
 
     @property
     def replaces_content(self) -> bool:
         if self.route != "type" or self.target is None:
             return False
-        cur = self.target.value or ""
+        cur = self.current if self.current is not None else (self.target.value or "")
         return (
             self.target.input_type == "textarea"
             and len(cur) >= REPLACE_MIN_CHARS
@@ -104,7 +108,10 @@ def action_for(
         label = CHORD_MEANING["return"]
     else:
         label = target.label if target is not None else route
-    return NativeAction(route, label, system, target, text, tuple(keys), tuple(path), context, buttons)
+    current = nm.values.get(target.id) if target is not None else None
+    return NativeAction(
+        route, label, system, target, text, tuple(keys), tuple(path), context, buttons, current
+    )
 
 
 Judge = Callable[..., Awaitable[list[float]]]  # Verifier.judge_destructive(task, targets, *, url, title)
@@ -156,7 +163,8 @@ class Authorizer:
         if hit:
             return hit
         if action.replaces_content and not self.is_authorized("replace"):
-            return f"replaces {len(action.target.value or '')} characters of existing content in {action.label!r}"
+            n = len(action.current if action.current is not None else (action.target.value or ""))
+            return f"replaces {n} characters of existing content in {action.label!r}"
         if action.system == "s2" and action.route in ("click", "menu", "hotkey") and self.judge is not None:
             try:
                 probs = await self.judge(

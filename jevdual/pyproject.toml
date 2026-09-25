@@ -18,6 +18,9 @@ dependencies = [
     "typesafe-sdk>=0.7,<1",
     "orjson>=3.10",
     "cua-driver>=0.28.2",
+    "pyobjc-framework-applicationservices>=12 ; sys_platform == 'darwin'",
+    "pyobjc-framework-quartz>=12 ; sys_platform == 'darwin'",
+    "pyobjc-framework-cocoa>=12 ; sys_platform == 'darwin'",
 ]
 
 [dependency-groups]

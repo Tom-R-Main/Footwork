@@ -126,6 +126,11 @@ class NativeMenu:
     degraded: bool
     #: raw element rows kept for redaction-free diagnostics (role, label, frame); never sent to the model
     frames: dict[int, tuple[float, float, float, float]] = field(default_factory=dict)
+    #: execution data, never rendered to a model or a trace: each non-secure text element's value as the
+    #: Driver reports it (whole, not the 480-character preview; the Driver strips trailing whitespace, so
+    #: the append route reads the exact value through ``jevdual.ax``) and each candidate's AX role
+    values: dict[int, str] = field(default_factory=dict)
+    ax_roles: dict[int, str] = field(default_factory=dict)
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -261,6 +266,8 @@ def menu_from_snapshot(
     candidates: list[Candidate] = []
     tokens: dict[int, str] = {}
     frames: dict[int, tuple[float, float, float, float]] = {}
+    values: dict[int, str] = {}
+    ax_roles: dict[int, str] = {}
     omitted: dict[str, int] = {}
     for el in elements:
         token = _get(el, "element_token")
@@ -321,12 +328,18 @@ def menu_from_snapshot(
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)
+        ax_roles[cand.id] = ax_role
+        if role in _TEXT_ROLES and not sensitive and raw_value is not None:
+            values[cand.id] = str(raw_value)
         if frame is not None:
             fx, fy, fw, fh = (_get(frame, k) for k in ("x", "y", "w", "h"))
             if None not in (fx, fy, fw, fh):
                 frames[cand.id] = (float(fx), float(fy), float(fw), float(fh))
 
     candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
+    kept = {c.id for c in candidates}
+    values = {i: v for i, v in values.items() if i in kept}
+    ax_roles = {i: r for i, r in ax_roles.items() if i in kept}
     app_name = str(_get(snapshot, "app_name") or "")
     title = _clean(_get(snapshot, "window_title"), 120)
     page_text = _page_text(_get(snapshot, "tree_markdown"), elements, b.max_page_text_chars)
@@ -361,6 +374,8 @@ def menu_from_snapshot(
         truncated=bool(_get(snapshot, "truncated") or False),
         degraded=bool(_get(snapshot, "degraded") or False),
         frames=frames,
+        values=values,
+        ax_roles=ax_roles,
     )
 
 
@@ -378,7 +393,14 @@ class NativeBridgeError(Exception):
 @dataclass(frozen=True)
 class NativeEffect:
     """The Driver's account of one dispatched action, verbatim. ``effect`` is one of the Driver's
-    words (confirmed, partial, unverifiable, suspected_noop, refused); ``ok`` is our reading of it."""
+    words (confirmed, partial, unverifiable, suspected_noop, refused); ``ok`` is our reading of it.
+
+    ``delivery`` is how the bridge declared it would reach the target before sending anything
+    (background, foreground, desktop; see ``jevdual.posture``) and ``driver_delivery`` how the Driver says
+    it did. ``dispatched`` is False when nothing was sent: the posture refused the step
+    (``requires_foreground``, ``requires_desktop``, ``human_active``) or the Driver refused before
+    delivering (``same_pid_keyboard_ambiguity``). ``foreground`` carries the front app before and after a
+    foreground step."""
 
     operation: str
     target: int
@@ -388,13 +410,17 @@ class NativeEffect:
     evidence: tuple[str, ...] = ()
     summary: str = ""
     error_code: str | None = None
+    delivery: str | None = None
+    driver_delivery: str | None = None
+    dispatched: bool = True
+    foreground: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
         return self.effect in ("confirmed", "partial", "unverifiable")
 
     def to_record(self) -> dict[str, Any]:
-        return {
+        rec = {
             "operation": self.operation,
             "target": self.target,
             "label": self.label,
@@ -403,7 +429,13 @@ class NativeEffect:
             "evidence": list(self.evidence),
             "summary": self.summary[:200],
             "error_code": self.error_code,
+            "delivery": self.delivery,
+            "driver_delivery": self.driver_delivery,
+            "dispatched": self.dispatched,
         }
+        if self.foreground is not None:
+            rec["foreground"] = dict(self.foreground)
+        return rec
 
 
 def _enum_name(v: Any) -> str | None:
@@ -424,21 +456,71 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
     )
     summary = str(getattr(action, "summary", None) or getattr(result, "text", "") or "")
     code = getattr(result, "error_code", None)
+    delivered = _enum_name(getattr(getattr(action, "delivery", None), "mode", None))
     if getattr(result, "is_error", False) and effect not in ("refused",):
         effect = "refused"
-    return NativeEffect(operation, target, label, effect, route, evidence, summary, code)
+    return NativeEffect(
+        operation, target, label, effect, route, evidence, summary, code, driver_delivery=delivered
+    )
+
+
+#: the Driver's refusal when a process owns several eligible windows and a process-scoped key event
+#: cannot be proven to reach the bound one (measured 2026-09-25: an element token does not lift it)
+AMBIGUITY = "same_pid_keyboard_ambiguity"
+_TEXT_EDIT_ROLES = frozenset({"AXTextArea", "AXTextField", "AXComboBox", "AXSearchField"})
+
+
+def _refusal_text(outcome: Any) -> str:
+    if isinstance(outcome, BaseException):
+        return str(outcome)
+    if getattr(outcome, "is_error", False):
+        return str(getattr(outcome, "text", "") or "")
+    return ""
+
+
+def _norm_tail(s: str) -> str:
+    """The comparison the Driver's value supports: it strips trailing whitespace."""
+    return s.rstrip()
 
 
 class NativeBridge:
-    """Observe one native window through the Driver and execute menu decisions against it."""
+    """Observe one native window through the Driver and execute menu decisions against it.
 
-    def __init__(self, driver: Any, pid: int, window_id: int, *, session: str | None = None):
+    Every dispatch declares its delivery and asks the session's :class:`~jevdual.posture.ExecutionPolicy`
+    before anything is sent; the default is ``background_only``. With ``live_check`` every element action
+    first reobserves and requires the target to be the same element in the same state (identity and
+    precondition), then acts on the fresh token."""
+
+    def __init__(
+        self,
+        driver: Any,
+        pid: int,
+        window_id: int,
+        *,
+        session: str | None = None,
+        policy: Any = None,
+        live_check: bool = False,
+        ax: Any = None,
+    ):
+        from jevdual.posture import ExecutionPolicy
+
         self.driver = driver
         self.pid = pid
         self.window_id = window_id
         self.session = session
+        self.policy = policy if policy is not None else ExecutionPolicy("background_only")
+        self.live_check = live_check
+        self._ax = ax
         self.last: NativeMenu | None = None
         self.dispatches = 0
+
+    @property
+    def ax(self) -> Any:
+        if self._ax is None:
+            from jevdual import ax as _ax
+
+            self._ax = _ax
+        return self._ax
 
     async def observe(
         self,
@@ -486,14 +568,216 @@ class NativeBridge:
             raise NativeBridgeError("target_missing", f"id {id} is not on the menu from {nm.snapshot_id}")
         return cand, token
 
-    async def _click_token(self, token: str, *, foreground: bool = False) -> Any:
+    async def _live(self, nm: NativeMenu, id: int, operation: str) -> tuple[NativeMenu, int]:
+        """Reobserve and find the decided element again: the same (role, label, section), its id kept
+        when it still names it, else the unique element that does. A text field whose value changed, a
+        checkbox whose state changed, or an element that is gone or no longer unique refuses the step:
+        the person or another agent changed the window since the decision."""
+        cand = nm.menu.candidate(id)
+        assert cand is not None
+        fresh = await self.observe()
+        key = (cand.role, cand.label, cand.section)
+        same = fresh.menu.candidate(id)
+        if same is not None and (same.role, same.label, same.section) == key:
+            hit = same
+        else:
+            matches = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
+            if len(matches) != 1:
+                raise NativeBridgeError(
+                    "target_changed",
+                    f"[{id}] {cand.label!r} is {'gone' if not matches else 'no longer unique'} in the window now",
+                )
+            hit = matches[0]
+        if operation in ("type", "append", "enter") and _norm_tail(nm.values.get(id, "")) != _norm_tail(
+            fresh.values.get(hit.id, "")
+        ):
+            raise NativeBridgeError(
+                "precondition_changed", f"[{id}] {cand.label!r} holds different text than when decided"
+            )
+        if cand.checked is not None and hit.checked != cand.checked:
+            raise NativeBridgeError(
+                "precondition_changed", f"[{id}] {cand.label!r} changed state since the decision"
+            )
+        return fresh, hit.id
+
+    def _not_sent(
+        self, operation: str, target: int, label: str, code: str, reason: str, delivery: str
+    ) -> NativeEffect:
+        return NativeEffect(
+            operation,
+            target,
+            label,
+            "refused",
+            None,
+            (),
+            reason[:200],
+            code,
+            delivery=delivery,
+            dispatched=False,
+        )
+
+    def _effect(self, operation: str, target: int, label: str, outcome: Any, delivery: str) -> NativeEffect:
+        if isinstance(outcome, BaseException):
+            code = getattr(outcome, "code", None) or type(outcome).__name__
+            return NativeEffect(
+                operation,
+                target,
+                label,
+                "refused",
+                None,
+                (),
+                str(outcome)[:200],
+                str(code),
+                delivery=delivery,
+            )
+        eff = effect_from_action_result(operation, target, label, outcome)
+        return dataclasses.replace(eff, delivery=delivery)
+
+    async def _foreground(
+        self, operation: str, target: int, label: str, call: Any, *, why: str
+    ) -> NativeEffect:
+        """One foreground step: asked of the posture first, the front app read before and after."""
+        refusal = self.policy.permits("foreground", why=why)
+        if refusal is not None:
+            return self._not_sent(operation, target, label, refusal.code, refusal.reason, "foreground")
+        before = self.policy.before_foreground()
+        try:
+            outcome = await call()
+        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            outcome = exc
+        # Give the front back when our window still holds it (bring_to_front leaves it there). When the
+        # person has moved to a third app meanwhile, that is their choice: never fight it.
+        front_before = before.get("front_before")
+        now = self.policy._activity().frontmost_pid()
+        if now == self.pid and front_before not in (None, self.pid):
+            try:
+                await self.driver.call_tool("bring_to_front", json.dumps({"pid": front_before}))
+                before = {**before, "handed_back": front_before}
+            except Exception as exc:  # noqa: BLE001 - reported on the receipt, never retried
+                before = {**before, "hand_back_failed": str(exc)[:80]}
+        rec = self.policy.after_foreground(before)
+        eff = self._effect(operation, target, label, outcome, "foreground")
+        note = "front app restored" if rec.get("restored") else "front app changed"
+        return dataclasses.replace(eff, foreground=rec, summary=f"foreground ({note}); {eff.summary}"[:200])
+
+    async def _key_route(
+        self, operation: str, target: int, label: str, key: str, mods: list[str], token: str | None
+    ) -> NativeEffect:
+        """A key posted to the bound process in the background, focusing ``token`` first when given (one
+        Driver call, so the element and the key cannot come apart). When the process owns other windows
+        the Driver refuses; the step then needs the foreground, which the posture grants or refuses."""
+        args: dict[str, Any] = {
+            "pid": self.pid,
+            "window_id": self.window_id,
+            "key": key,
+            "delivery_mode": "background",
+        }
+        if mods:
+            args["modifiers"] = list(mods)
+        if token is not None:
+            args["element_token"] = token
+        if self.session:
+            args["session"] = self.session
+        try:
+            outcome = await self.driver.call_tool("press_key", json.dumps(args))
+        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            outcome = exc
+        if AMBIGUITY not in _refusal_text(outcome):
+            return self._effect(operation, target, label, outcome, "background")
+        fg = {**args, "delivery_mode": "foreground"}
+        eff = await self._foreground(
+            operation,
+            target,
+            label,
+            lambda: self.driver.call_tool("press_key", json.dumps(fg)),
+            why=f"{label} (the process owns other windows, so a background key cannot be proven to reach this one; {AMBIGUITY})",
+        )
+        if not eff.dispatched:
+            return dataclasses.replace(eff, evidence=(*eff.evidence, f"background: {AMBIGUITY}"))
+        return eff
+
+    async def _append(self, nm: NativeMenu, id: int, cand: Candidate, text: str) -> NativeEffect:
+        """Insert at the end of the exact value through AX and require ``after == before + inserted``.
+        Nothing is rebuilt from a preview; a value that no longer matches the decision is refused before
+        writing."""
+        role = nm.ax_roles.get(id, "AXTextArea")
+        frame = nm.frames.get(id)
+        ax = self.ax
+        try:
+            el = ax.resolve(self.pid, self.window_id, role, ax.Frame(*frame) if frame else None)
+            exact = ax.value(el)
+            if _norm_tail(exact) != _norm_tail(nm.values.get(id, "")):
+                return self._not_sent(
+                    "append",
+                    id,
+                    cand.label,
+                    "precondition_changed",
+                    "the field holds different text than when the step was decided; nothing written",
+                    "background",
+                )
+            sep = "" if exact == "" or exact.endswith("\n") else "\n"
+            before, after = ax.insert_at_end(el, sep + text, expect=exact)
+        except ax.AXError as exc:
+            return NativeEffect(
+                "append",
+                id,
+                cand.label,
+                "refused",
+                "accessibility",
+                (),
+                str(exc)[:200],
+                exc.reason,
+                delivery="background",
+                dispatched=exc.reason
+                not in (
+                    "precondition_changed",
+                    "element_missing",
+                    "element_ambiguous",
+                    "window_missing",
+                    "no_value",
+                ),
+            )
+        inserted = sep + text
+        if after == before + inserted:
+            return NativeEffect(
+                "append",
+                id,
+                cand.label,
+                "confirmed",
+                "accessibility",
+                (
+                    f"value_readback: {len(before)} characters kept exactly, {len(inserted)} inserted at the end",
+                ),
+                "appended",
+                delivery="background",
+                driver_delivery="background",
+            )
+        want = before + inserted
+        diverge = next((i for i, (a, b) in enumerate(zip(after, want, strict=False)) if a != b), None)
+        at = diverge if diverge is not None else min(len(after), len(want))
+        return NativeEffect(
+            "append",
+            id,
+            cand.label,
+            "partial",
+            "accessibility",
+            (
+                f"value_readback: expected {len(before) + len(inserted)} characters, read {len(after)}; first difference at {at}",
+            ),
+            "the field does not read back as the old text plus the insertion",
+            "content_mismatch",
+            delivery="background",
+            driver_delivery="background",
+        )
+
+    async def _click_token(self, token: str) -> Any:
         from cua_driver import ClickInput, ClickPosition, InputDeliveryMode
 
         return await self.driver.click(
             ClickInput(
                 target=self._target(),
                 position=ClickPosition.ELEMENT(element_token=token),
-                delivery_mode=InputDeliveryMode.FOREGROUND if foreground else InputDeliveryMode.BACKGROUND,
+                delivery_mode=InputDeliveryMode.BACKGROUND,
                 session=self.session,
                 button=None,
                 count=None,
@@ -508,85 +792,66 @@ class NativeBridge:
             raise NativeBridgeError(
                 "unknown_operation", f"{operation!r} is not offered on [{id}] {cand.label!r} ({cand.role})"
             )
+        if operation in ("type", "append") and text is None:
+            raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
+        if self.live_check:
+            decided_values = nm.values
+            nm, fresh_id = await self._live(nm, id, operation)
+            # the text the decision was based on is what the append compares against
+            nm = dataclasses.replace(nm, values={**nm.values, fresh_id: decided_values.get(id, "")})
+            id = fresh_id
+            cand, token = self._require_fresh(nm, id)
+        self.last = None
+        self.dispatches += 1
+        label = cand.label
+        if operation == "append":
+            assert text is not None
+            return await self._append(nm, id, cand, text)
+        if operation in ("enter",):
+            return await self._key_route("enter", id, label, "return", [], token)
+        if operation == "hover":
+            refusal = self.policy.permits("desktop", why=f"hover on {label!r} (it moves the real pointer)")
+            if refusal is not None:
+                return self._not_sent("hover", id, label, refusal.code, refusal.reason, "desktop")
+            fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
+            try:
+                outcome = await self.driver.call_tool(
+                    "move_cursor", json.dumps({"x": fx + fw / 2, "y": fy + fh / 2, "scope": "desktop"})
+                )
+            except Exception as exc:  # noqa: BLE001
+                outcome = exc
+            return self._effect("hover", id, label, outcome, "desktop")
         try:
             if operation == "click":
-                result = await self._click_token(token)
-            elif operation in ("type", "append"):
-                if text is None:
-                    raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
-                if operation == "append":
-                    current = cand.value or ""
-                    text = f"{current}\n{text}" if current else text
+                outcome: Any = await self._click_token(token)
+            elif operation == "type":
                 args = {"element_token": token, "value": text, "pid": self.pid}
                 if self.session:
                     args["session"] = self.session
-                result = await self.driver.call_tool("set_value", json.dumps(args))
-            elif operation == "enter":
-                from cua_driver import PressKeyInput
-
-                await self._click_token(token)  # focus the field; the Driver reads back focus
-                try:
-                    result = await self.driver.press_key(
-                        PressKeyInput(
-                            key="Return",
-                            target=self._target(),
-                            scope=None,
-                            session=self.session,
-                            modifiers=None,
-                        )
-                    )
-                except Exception as exc:  # one refusal has a known honest route
-                    if "same_pid_keyboard_ambiguity" not in str(exc):
-                        raise
-                    self.last = nm
-                    eff = await self.hotkey(nm, ["Return"])
-                    return dataclasses.replace(eff, operation="enter", target=id, label=cand.label)
-            elif operation == "scroll" and id not in nm.frames:
-                # no frame for the target: scroll the window with Page Down instead of a point the
-                # Driver refuses (a Chrome list at step 4 on 2026-09-25 came back "refused")
-                result = await self.driver.press_key(
-                    PressKeyInput(
-                        key="PageDown",
-                        target=self._target(),
-                        scope=None,
-                        session=self.session,
-                        modifiers=None,
-                    )
-                )
+                outcome = await self.driver.call_tool("set_value", json.dumps(args))
             elif operation == "scroll":
-                from cua_driver import ScrollDirection, ScrollInput
-
-                fx, fy, fw, fh = nm.frames[id]
-                result = await self.driver.scroll(
-                    ScrollInput(
-                        x=fx + fw / 2,
-                        y=fy + fh / 2,
-                        direction=ScrollDirection.DOWN,
-                        target=None,
-                        scope=None,
-                        session=self.session,
-                        by=None,
-                        amount=None,
-                    )
-                )
-            elif operation == "hover":
-                from cua_driver import MoveCursorInput
-
-                fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
-                result = await self.driver.move_cursor(
-                    MoveCursorInput(
-                        x=fx + fw / 2, y=fy + fh / 2, target=None, scope=None, session=self.session
-                    )
-                )
+                args = {
+                    "pid": self.pid,
+                    "window_id": self.window_id,
+                    "element_token": token,
+                    "direction": "down",
+                    "by": "page",
+                    "amount": 1,
+                    "delivery_mode": "background",
+                }
+                if self.session:
+                    args["session"] = self.session
+                outcome = await self.driver.call_tool("scroll", json.dumps(args))
+                if _refusal_text(outcome):
+                    # a wheel the Driver will not aim at this element: Page Down to the element instead,
+                    # through the key route and so through the posture (2026-09-25: a Chrome list refused)
+                    return await self._key_route("scroll", id, label, "pagedown", [], token)
             else:
                 raise NativeBridgeError("unsupported", f"{operation!r} has no native dispatch yet")
         except NativeBridgeError:
             raise
         except Exception as exc:  # noqa: BLE001 - DriverError.Tool carries the refusal; keep it as evidence
-            code = getattr(exc, "code", None) or type(exc).__name__
             log.info("native %s on [%s] refused: %s", operation, id, exc)
-            self.last = None
-            self.dispatches += 1
             if self.dispatches == 1 and "-25204" in str(exc) and operation == "click":
                 # The first AX press of a fresh runtime fails with kAXErrorCannotComplete on every
                 # launch seen so far (Calculator, 2026-09-24); a refusal carries no delivery, so one
@@ -598,45 +863,18 @@ class NativeBridge:
                     return dataclasses.replace(
                         eff, summary=f"retried after first-press -25204; {eff.summary}"[:200]
                     )
-            return NativeEffect(operation, id, cand.label, "refused", None, (), str(exc)[:200], str(code))
-        self.last = None
-        self.dispatches += 1
-        return effect_from_action_result(operation, id, cand.label, result)
+            return self._effect(operation, id, label, exc, "background")
+        return self._effect(operation, id, label, outcome, "background")
 
     async def key(self, nm: NativeMenu, key: str, modifiers: list[str] | None = None) -> NativeEffect:
-        """Press one key in the window (System 2 only; System 1's menu has no key operation)."""
-        from cua_driver import PressKeyInput
-
+        """Press one key or chord in the window in the background (System 2 only; System 1's menu has no
+        key operation). Needs the foreground only when the process owns other windows."""
         mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
-        try:
-            result = await self.driver.press_key(
-                PressKeyInput(
-                    key=key, target=self._target(), scope=None, session=self.session, modifiers=mods or None
-                )
-            )
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
-            if "same_pid_keyboard_ambiguity" in str(exc):
-                # the harness knows the honest route when the process owns several windows: take it
-                self.last = nm
-                eff = await self.hotkey(nm, [*mods, key])
-                return dataclasses.replace(
-                    eff, operation="key", summary=f"background refused; {eff.summary}"[:200]
-                )
-            self.last = None
-            return NativeEffect(
-                "key",
-                -1,
-                key,
-                "refused",
-                None,
-                (),
-                str(exc)[:200],
-                getattr(exc, "code", None) or type(exc).__name__,
-            )
         self.last = None
-        return effect_from_action_result("key", -1, "+".join([*mods, key]), result)
+        self.dispatches += 1
+        return await self._key_route("key", -1, "+".join([*mods, key]), key, mods, None)
 
     async def _front(self) -> None:
         """Explicit foreground escalation: bring the bound window to the front (recorded by the caller)."""
@@ -646,11 +884,12 @@ class NativeBridge:
 
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
         """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and
-        restores the previous frontmost app). Process-scoped background key presses are refused when the
-        pid owns several eligible windows (``same_pid_keyboard_ambiguity``), so this is the honest route."""
+        restores the previous frontmost app): the route for native menu key-equivalents, which ignore a
+        background chord. Asked of the posture first; ``key`` is the background route for a chord."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
         self.last = None
+        self.dispatches += 1
         label = "+".join(keys)
         args: dict[str, Any] = {
             "keys": list(keys),
@@ -660,52 +899,37 @@ class NativeBridge:
         }
         if self.session:
             args["session"] = self.session
-        try:
-            result = await self.driver.call_tool("hotkey", json.dumps(args))
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
-            return NativeEffect(
-                "hotkey",
-                -1,
-                label,
-                "refused",
-                "foreground",
-                (),
-                str(exc)[:200],
-                getattr(exc, "code", None) or type(exc).__name__,
-            )
-        eff = effect_from_action_result("hotkey", -1, label, result)
-        return dataclasses.replace(eff, summary=f"foreground; {eff.summary}"[:200])
+        return await self._foreground(
+            "hotkey",
+            -1,
+            label,
+            lambda: self.driver.call_tool("hotkey", json.dumps(args)),
+            why=f"hotkey {label} (a menu key-equivalent)",
+        )
 
     async def menu(self, nm: NativeMenu, path: list[str]) -> NativeEffect:
         """Invoke an application menu item by path (``["File", "Save"]``) through ``invoke_menu``, which
-        needs the window key and frontmost, so the window is brought to the front first."""
+        needs the window key and frontmost, so the window is brought to the front first. Asked of the
+        posture first."""
         from cua_driver import InvokeMenuInput
 
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
         self.last = None
+        self.dispatches += 1
         label = " > ".join(path)
-        try:
+
+        async def call() -> Any:
             await self._front()
             await asyncio.sleep(0.4)  # activation settles before invoke_menu checks key/frontmost
-            result = await self.driver.invoke_menu(
+            return await self.driver.invoke_menu(
                 InvokeMenuInput(pid=self.pid, window_id=self.window_id, path=list(path), session=self.session)
             )
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
-            return NativeEffect(
-                "menu",
-                -1,
-                label,
-                "refused",
-                "foreground",
-                (),
-                str(exc)[:200],
-                getattr(exc, "code", None) or type(exc).__name__,
-            )
-        eff = effect_from_action_result("menu", -1, label, result)
-        return dataclasses.replace(
-            eff, route=eff.route or "foreground", summary=f"foreground; {eff.summary}"[:200]
+
+        eff = await self._foreground(
+            "menu", -1, label, call, why=f"menu {label} (invoke_menu needs the window key)"
         )
+        return dataclasses.replace(eff, route=eff.route or ("foreground" if eff.dispatched else None))
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of

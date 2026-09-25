@@ -282,10 +282,21 @@ def test_bridge_menu_and_hotkey_go_foreground_and_record_it(snapshot, monkeypatc
         ActionTarget=SimpleNamespace(WINDOW=lambda pid, window_id: ("window", pid, window_id)),
     )
     monkeypatch.setitem(sys.modules, "cua_driver", stub)
-    bridge = NativeBridge(D(snapshot), pid=1, window_id=2)
+    from jevdual.posture import ExecutionPolicy
+
+    class Idle:
+        def idle_seconds(self):
+            return 60.0
+
+        def frontmost_pid(self):
+            return 77
+
+    policy = ExecutionPolicy("foreground_permitted", activity=Idle())
+    bridge = NativeBridge(D(snapshot), pid=1, window_id=2, policy=policy)
     nm = asyncio.run(bridge.observe())
     eff = asyncio.run(bridge.menu(nm, ["File", "Save"]))
     assert eff.effect == "confirmed" and eff.summary.startswith("foreground")
+    assert eff.delivery == "foreground" and eff.foreground["restored"] is True
     assert (
         calls[0][0] == "bring_to_front"
         and calls[1][0] == "invoke_menu"

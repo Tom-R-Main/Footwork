@@ -24,6 +24,7 @@ from types import SimpleNamespace
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "python"))
 
 from jevdual.native import NativeBridge, NativeBridgeError, find_window, menu_from_snapshot
+from jevdual.posture import ExecutionPolicy
 
 
 def _print_menu(nm) -> None:
@@ -205,6 +206,12 @@ async def run_agent(
 async def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--app", default="Calculator")
+    ap.add_argument(
+        "--mode",
+        default="background_only",
+        choices=("background_only", "foreground_permitted", "exclusive_desktop"),
+        help="execution posture (jevdual.posture)",
+    )
     ap.add_argument("--menu", action="store_true", help="print the menu and exit")
     ap.add_argument("--menu-bar", action="store_true", help="include menu bar items in the menu")
     ap.add_argument("--dump", help="write the raw snapshot JSON here (fixture recording)")
@@ -236,7 +243,7 @@ async def main() -> None:
     try:
         pid, window_id, title = await find_window(driver, args.app)
         print(f"{args.app}: pid {pid} window {window_id} {title!r}")
-        bridge = NativeBridge(driver, pid, window_id)
+        bridge = NativeBridge(driver, pid, window_id, policy=ExecutionPolicy(args.mode))
         if args.dump:
             from cua_driver import GetWindowStateInput
 

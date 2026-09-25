@@ -22,6 +22,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from jevdual.native import NativeBridge
+from jevdual.posture import ExecutionPolicy
 
 from evals.native.runner import launch, run_oracle, task_folder, teardown
 from evals.native.schema import SPLITS, load_tasks
@@ -57,7 +58,7 @@ async def main() -> None:
                 pid = None
                 try:
                     pid, window_id, _ = await launch(driver, task, tmp)
-                    bridge = NativeBridge(driver, pid, window_id)
+                    bridge = NativeBridge(driver, pid, window_id, policy=ExecutionPolicy("exclusive_desktop"))
                     executed, err = await run_oracle(bridge, task)
                     nm = await bridge.observe()
                     answer = next((e["text"] for e in executed if e.get("op") == "answer"), None)

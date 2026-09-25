@@ -421,13 +421,16 @@ class NativeAgent:
             return None
         out.exec_ms = (time.perf_counter() - t0) * 1000
         out.effect = effect
-        params.update({"effect": effect.effect, "route": effect.route})
+        params.update({"effect": effect.effect, "route": effect.route, "delivery": effect.delivery})
+        if not effect.dispatched:
+            params["dispatched"] = False
         out.executed = [ActionRecord(name=name, params=params)]
         if effect.effect == "refused":
             out.error = f"driver refused: {effect.error_code or ''} {effect.summary[:120]}".strip()
         where = f"[{target.id}] " if target is not None else ""
+        outcome = effect.effect if effect.dispatched else "not sent"
         self.memory.append(
-            f"step {out.step}: {operation} {where}{red(action.label)[:60]!r} -> {effect.effect}"
+            f"step {out.step}: {operation} {where}{red(action.label)[:60]!r} -> {outcome}"
             + (f" ({effect.error_code})" if effect.error_code else "")
         )
         return effect
