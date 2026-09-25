@@ -321,11 +321,15 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
 
 def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
     """The one candidate whose label contains ``label`` (case-insensitive); an exact match wins."""
+    role = None
+    if ":" in label and label.split(":", 1)[0].isalpha():
+        role, label = label.split(":", 1)  # button:Search narrows by role
     low = label.casefold()
-    exact = [c for c in nm.menu.candidates if c.label.casefold() == low]
+    pool = [c for c in nm.menu.candidates if role is None or c.role == role.casefold()]
+    exact = [c for c in pool if c.label.casefold() == low]
     if len(exact) == 1:
         return exact[0].id, ""
-    hits = exact or [c for c in nm.menu.candidates if low in c.label.casefold()]
+    hits = exact or [c for c in pool if low in c.label.casefold()]
     if len(hits) == 1:
         return hits[0].id, ""
     if not hits:
@@ -544,6 +548,14 @@ async def cmd_s1(args: Any) -> int:
         }
     )
     state.save()
+    if args.act and decision.operation in ("type", "append") and decision.target is not None:
+        # System 1 picks the field; the text is System 2's to supply (the harness never composes it)
+        c = nm.menu.candidate(decision.target)
+        print(
+            f"System 1 would {decision.operation} into [{decision.target}] {c.label if c else '?'!r}; supply the text: "
+            f'footwork do {decision.operation} {decision.target} "..."'
+        )
+        return 0
     if args.act and decision.operation in _ROUTES and decision.target is not None:
         text = getattr(decision, "text", None)
         words = [decision.operation, str(decision.target)] + ([text] if text else [])

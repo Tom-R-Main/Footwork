@@ -138,6 +138,17 @@ What driving it found, each fixed in the commit that adds this section:
 - `browser_type` in replace mode selects the field's content first, which an email input refuses,
   so the entry was a no-op; the receipt said so and append mode worked.
 
+| Wikipedia: search for Dune, open the article, report the author | start --browser --url; type (S1 picked the field, I supplied the text); click button:Search; s1 --act (S1 clicked the suggestion at p=0.98); s1 (proposed done); done | 19 s of commands | the article opened by System 1's own click; the verifier stayed in the `verify` band (0.75 to 0.94) on "The author is reported" for three phrasings of the answer while "Frank Herbert" was on the page. A read-task verifier limit (Q3, Q10b), not a driving failure; recorded, not tuned |
+
+Found on this task: typing into Wikipedia's header search box added 49 elements (the suggestion
+list) and the receipt called that `confirmed`, but the submit went out with an empty query; the
+value change was not what the receipt reported. A receipt for `type` should name the field's new
+value, not the element count; that is the next receipt change. System 1 proposed `type` on the
+field without text: the session now says so and asks the operator for the text, which is the right
+split (System 1 picks the control, System 2 supplies the content). `button:Search` narrows a label
+that matches two elements. Trusted CDP clicks: six no-op receipts, zero successes in this posture;
+the DOM route is now the browser default and `--route trusted` the opt-in.
+
 **What a command costs now.** `start` 10 to 13 s (driver, new window, navigate, first observation
 with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s, reobserve); `s1`
 about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per

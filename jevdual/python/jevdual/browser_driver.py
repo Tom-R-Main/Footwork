@@ -320,7 +320,11 @@ class BrowserBridge:
         c, ref = self._fresh(nm, id)
         base = {"target_id": self.target_id, "tab_id": self.tab_id}
         if operation == "click":
-            input_route = route or ("dom_event" if c.role in self.DOM_EVENT_ROLES else "trusted")
+            # 2026-09-25: in this background posture the trusted route toggled no radio or checkbox,
+            # activated no submit button and opened no suggestion link (six no-op receipts, zero
+            # successes); the DOM route did all of them. DOM is the default; the receipt proves the
+            # outcome either way, and --route trusted is there for controls that ignore synthetic clicks.
+            input_route = route or "dom_event"
             out = await self._tool("browser_click", {**base, "ref": ref, "input_route": input_route})
             eff = self._effect(out, operation, id, c.label)
             self.last = None
