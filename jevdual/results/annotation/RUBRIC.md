@@ -61,3 +61,13 @@ you judge the decision, not the model's opinion of it. Write `{"key", "target", 
 "completion", "reason"}` per row. Calculator: an operand order that reaches the result through the
 percent key is right whichever operand comes first; a digit that no valid sequence from the keys
 already pressed can use is wrong; when the display is missing and the order matters, `unclear`.
+
+## The audit page (2026-09-25)
+
+A human audit is graded on a private page, not on the CSV: one row at a time with the task, the
+window text before the step, the steps already taken with their effects, the menu with the chosen
+control filled and the runners-up outlined, and three buttons (right, wrong, unclear) plus an
+optional reason. Grades save to the page's own store; `scripts/audit_agreement.py` reads them from
+there. The page shows no model labels, probabilities or selection kind. Which rows are on the page
+and why is in `results/annotation/<set>/audit-page.json`. The first page is the Q10b native set:
+twelve rows (the three model-pass disagreements, five agreed-wrong, four agreed-right).

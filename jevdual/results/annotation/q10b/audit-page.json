@@ -1,0 +1,82 @@
+{
+ "artifact": "https://claude.ai/artifact/HLmJP8GC5pTLVi3GKy3fUw",
+ "collection": "decisions",
+ "selected": [
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-dual-92e983cb_7",
+   "key": "q10b-native-dev-20260924|calc-percent-dual-92e983cb|7",
+   "kind": "disagreement"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-dual-707b415c_16",
+   "key": "q10b-native-dev-20260924|calc-percent-dual-707b415c|16",
+   "kind": "disagreement"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-dual-7ee994b5_6",
+   "key": "q10b-native-dev-20260924|calc-percent-dual-7ee994b5|6",
+   "kind": "disagreement"
+  },
+  {
+   "id": "q10b-native-dev-20260924_textedit-append-line-s1_only-80fa6ec1_2",
+   "key": "q10b-native-dev-20260924|textedit-append-line-s1_only-80fa6ec1|2",
+   "kind": "wrong"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-dual-7ee994b5_4",
+   "key": "q10b-native-dev-20260924|calc-percent-dual-7ee994b5|4",
+   "kind": "wrong"
+  },
+  {
+   "id": "q10b-native-dev-20260924_textedit-append-line-s1_only-624ef358_2",
+   "key": "q10b-native-dev-20260924|textedit-append-line-s1_only-624ef358|2",
+   "kind": "wrong"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-dual-707b415c_5",
+   "key": "q10b-native-dev-20260924|calc-percent-dual-707b415c|5",
+   "kind": "wrong"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-dual-707b415c_14",
+   "key": "q10b-native-dev-20260924|calc-percent-dual-707b415c|14",
+   "kind": "wrong"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-percent-s1_only-79705101_1",
+   "key": "q10b-native-dev-20260924|calc-percent-s1_only-79705101|1",
+   "kind": "right"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-subtract-dual-b7a60279_7",
+   "key": "q10b-native-dev-20260924|calc-subtract-dual-b7a60279|7",
+   "kind": "right"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-multiply-dual-3349d1f2_2",
+   "key": "q10b-native-dev-20260924|calc-multiply-dual-3349d1f2|2",
+   "kind": "right"
+  },
+  {
+   "id": "q10b-native-dev-20260924_calc-read-result-s1_only-fd920e39_5",
+   "key": "q10b-native-dev-20260924|calc-read-result-s1_only-fd920e39|5",
+   "kind": "right"
+  }
+ ],
+ "page_order": [
+  "q10b-native-dev-20260924_calc-percent-dual-7ee994b5_6",
+  "q10b-native-dev-20260924_textedit-append-line-s1_only-624ef358_2",
+  "q10b-native-dev-20260924_calc-percent-dual-92e983cb_7",
+  "q10b-native-dev-20260924_calc-percent-dual-707b415c_5",
+  "q10b-native-dev-20260924_calc-multiply-dual-3349d1f2_2",
+  "q10b-native-dev-20260924_calc-percent-dual-7ee994b5_4",
+  "q10b-native-dev-20260924_calc-percent-dual-707b415c_16",
+  "q10b-native-dev-20260924_textedit-append-line-s1_only-80fa6ec1_2",
+  "q10b-native-dev-20260924_calc-subtract-dual-b7a60279_7",
+  "q10b-native-dev-20260924_calc-read-result-s1_only-fd920e39_5",
+  "q10b-native-dev-20260924_calc-percent-s1_only-79705101_1",
+  "q10b-native-dev-20260924_calc-percent-dual-707b415c_14"
+ ],
+ "selection_rule": "the 3 rows where the two model passes disagreed, 5 agreed-wrong rows spread across tasks, 4 agreed-right rows spread across tasks; all from the 40-row audit sheet",
+ "blind": "the page shows no model labels, probabilities or the selection kind"
+}
