@@ -27,7 +27,12 @@ def red(text: str) -> str:
 
 run = Path(sys.argv[1])
 n = 0
-for p in list(run.glob("*.json")) + list(run.glob("*.md")) + list(run.glob("traces/*.jsonl")) + list(run.glob("run.log")):
+for p in (
+    list(run.glob("*.json"))
+    + list(run.glob("*.md"))
+    + list(run.glob("traces/*.jsonl"))
+    + list(run.glob("run.log"))
+):
     t = p.read_text()
     r = red(t)
     if r != t:

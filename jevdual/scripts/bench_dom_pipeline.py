@@ -76,7 +76,9 @@ def main() -> None:
             lines.append(f"Residual per phase with patches on, {s}: {residual} ms.")
     g3 = all(on[s][0] < 50.0 for s in ("wikipedia-python", "amazon-usb-c-hub") if s in on)
     lines.append("")
-    lines.append(f"G3 gate (DOM CPU < 50 ms on wikipedia and amazon with patches on): {'MET' if g3 else 'NOT MET'}.")
+    lines.append(
+        f"G3 gate (DOM CPU < 50 ms on wikipedia and amazon with patches on): {'MET' if g3 else 'NOT MET'}."
+    )
     text = "\n".join(lines)
     print(text)
     Path("results").mkdir(exist_ok=True)

@@ -36,7 +36,9 @@ async def main() -> int:
 
     async with AsyncTypeSafeClient() as client:
         policy = JevPolicy(client)
-        d = await policy.decide(menu(), StepContext(task="Open the About page", requirements=("About page is open",)))
+        d = await policy.decide(
+            menu(), StepContext(task="Open the About page", requirements=("About page is open",))
+        )
     print(json.dumps({k: v for k, v in d.__dict__.items() if k != "raw"}, indent=1, default=str))
     return 0
 

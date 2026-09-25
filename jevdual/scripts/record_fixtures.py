@@ -46,16 +46,48 @@ class Page:
 
 def pages(local_base: str) -> list[Page]:
     return [
-        Page("wikipedia-python", "https://en.wikipedia.org/wiki/Python_(programming_language)", "long article, many links, tables"),
-        Page("github-browser-use", "https://github.com/browser-use/browser-use", "app-like layout, many buttons, nested menus"),
-        Page("amazon-usb-c-hub", "https://www.amazon.com/s?k=usb+c+hub", "dense commerce grid, heavy computed styles"),
+        Page(
+            "wikipedia-python",
+            "https://en.wikipedia.org/wiki/Python_(programming_language)",
+            "long article, many links, tables",
+        ),
+        Page(
+            "github-browser-use",
+            "https://github.com/browser-use/browser-use",
+            "app-like layout, many buttons, nested menus",
+        ),
+        Page(
+            "amazon-usb-c-hub",
+            "https://www.amazon.com/s?k=usb+c+hub",
+            "dense commerce grid, heavy computed styles",
+        ),
         Page("youtube-home", "https://www.youtube.com/", "shadow DOM everywhere (Polymer)", 5.0),
         Page("w3schools-iframe", "https://www.w3schools.com/html/html_iframe.asp", "cross-origin iframes"),
-        Page("modal-over-content", f"{local_base}/modal_over_content.html", "fixed modal + backdrop covering a product grid (paint-order occlusion)", 1.0),
-        Page("virtual-list", f"{local_base}/virtual_list.html", "virtualized list: 10,000 rows, only ~25 in the DOM at a time", 1.0),
+        Page(
+            "modal-over-content",
+            f"{local_base}/modal_over_content.html",
+            "fixed modal + backdrop covering a product grid (paint-order occlusion)",
+            1.0,
+        ),
+        Page(
+            "virtual-list",
+            f"{local_base}/virtual_list.html",
+            "virtualized list: 10,000 rows, only ~25 in the DOM at a time",
+            1.0,
+        ),
         Page("ja-wikipedia-python", "https://ja.wikipedia.org/wiki/Python", "CJK text and labels"),
-        Page("sensitive-fields", f"{local_base}/sensitive_fields.html", "password, cc-number, one-time-code, hidden and file inputs with pre-filled values", 1.0),
-        Page("dense-links", f"{local_base}/dense_links.html", ">255 interactive elements in one viewport (360 links + 360 buttons)", 1.0),
+        Page(
+            "sensitive-fields",
+            f"{local_base}/sensitive_fields.html",
+            "password, cc-number, one-time-code, hidden and file inputs with pre-filled values",
+            1.0,
+        ),
+        Page(
+            "dense-links",
+            f"{local_base}/dense_links.html",
+            ">255 interactive elements in one viewport (360 links + 360 buttons)",
+            1.0,
+        ),
         Page("hacker-news", "https://news.ycombinator.com/", "flat table layout, many small links"),
     ]
 
@@ -101,9 +133,13 @@ async def main(only: set[str]) -> None:
     server, base = serve_local()
     OUT.mkdir(parents=True, exist_ok=True)
     manifest_path = OUT / "manifest.json"
-    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"fixtures": [], "failed": []}
+    manifest = (
+        json.loads(manifest_path.read_text()) if manifest_path.exists() else {"fixtures": [], "failed": []}
+    )
     manifest["failed"] = [f for f in manifest["failed"] if not only or f["slug"] in only]
-    bs = BrowserSession(browser_profile=BrowserProfile(headless=True, window_size={"width": 1280, "height": 900}))
+    bs = BrowserSession(
+        browser_profile=BrowserProfile(headless=True, window_size={"width": 1280, "height": 900})
+    )
     await bs.start()
     try:
         for page in pages(base):
@@ -136,7 +172,9 @@ async def main(only: set[str]) -> None:
                 "size_kb": round(path.stat().st_size / 1024),
             }
             manifest["fixtures"] = [f for f in manifest["fixtures"] if f["slug"] != page.slug] + [entry]
-            print(f"OK   {page.slug}: {entry['element_count']} elements, {entry['documents']} docs, {entry['size_kb']} KB")
+            print(
+                f"OK   {page.slug}: {entry['element_count']} elements, {entry['documents']} docs, {entry['size_kb']} KB"
+            )
     finally:
         await bs.kill()
         server.shutdown()

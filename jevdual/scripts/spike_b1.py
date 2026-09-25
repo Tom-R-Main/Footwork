@@ -63,13 +63,17 @@ def serve():
     return f"http://127.0.0.1:{srv.server_port}", srv.shutdown
 
 
-def find_index(state: BrowserStateSummary, *, text: str | None = None, placeholder: str | None = None) -> int | None:
+def find_index(
+    state: BrowserStateSummary, *, text: str | None = None, placeholder: str | None = None
+) -> int | None:
     for idx, node in state.dom_state.selector_map.items():
         attrs = node.attributes or {}
         if placeholder and attrs.get("placeholder") == placeholder:
             return idx
         if text:
-            label = (node.ax_node.name if node.ax_node and node.ax_node.name else "") or node.get_all_children_text()
+            label = (
+                node.ax_node.name if node.ax_node and node.ax_node.name else ""
+            ) or node.get_all_children_text()
             if text.lower() in (label or "").lower():
                 return idx
     return None
@@ -137,10 +141,20 @@ async def run_task(base: str, name: str, task: str, script, outdir: Path, max_st
             "is_done": history.is_done(),
             "final_url": history.history[-1].state.url if history.history else None,
             "interacted_elements": [
-                [None if e is None else (e.node_name, (e.attributes or {}).get("href") or (e.attributes or {}).get("placeholder")) for e in h.state.interacted_element]
+                [
+                    None
+                    if e is None
+                    else (
+                        e.node_name,
+                        (e.attributes or {}).get("href") or (e.attributes or {}).get("placeholder"),
+                    )
+                    for e in h.state.interacted_element
+                ]
                 for h in history.history
             ],
-            "model_output_memory": [h.model_output.memory if h.model_output else None for h in history.history],
+            "model_output_memory": [
+                h.model_output.memory if h.model_output else None for h in history.history
+            ],
             "errors": [r.error for h in history.history for r in h.result if r.error],
             "gif_exists": gif.exists() and gif.stat().st_size > 0,
             "conversation_files": sorted(p.name for p in conv.glob("*")) if conv.exists() else [],
@@ -170,7 +184,12 @@ async def main():
         5,
     )
     results["t3_scroll"] = await run_task(
-        base, "t3", "Scroll the list", [("click", "List"), ("scroll",), ("scroll",), ("done", "scrolled")], outdir, 6
+        base,
+        "t3",
+        "Scroll the list",
+        [("click", "List"), ("scroll",), ("scroll",), ("done", "scrolled")],
+        outdir,
+        6,
     )
     results["t4_escalate"] = await run_task(base, "t4", "Escalate to S2", [("escalate",)], outdir, 1)
     stop()

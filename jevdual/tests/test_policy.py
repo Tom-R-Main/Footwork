@@ -212,7 +212,11 @@ async def test_probability_sum_and_argmax_checks():
     bad_argmax["answers"]["click_target"]["probabilities"] = {"1": 0.85, "2": 0.15}
     bad_range = json.loads(json.dumps(good))
     bad_range["answers"]["click_target"]["probabilities"] = {"1": -0.15, "2": 1.15}  # sums to 1, argmax holds
-    for payload, needle in ((bad_sum, "sum to"), (bad_argmax, "argmax"), (bad_range, "finite number in [0, 1]")):
+    for payload, needle in (
+        (bad_sum, "sum to"),
+        (bad_argmax, "argmax"),
+        (bad_range, "finite number in [0, 1]"),
+    ):
         r = SystemOneResponse.model_validate(payload)
         with pytest.raises(PolicyError) as ei:
             await JevPolicy(FakeClient([r, r])).decide(small_menu(), ctx())
