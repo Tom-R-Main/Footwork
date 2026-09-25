@@ -468,7 +468,7 @@ def test_menu_hands_the_front_back_but_never_fights_the_person():
     it; when the person moved to a third app during the step, the bridge leaves their choice alone."""
     # front before: the person's app 77; after invoke_menu our pid 1 is in front; handed back; 77 again
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 77))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 77))
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
     hands = [a for n, a in d.calls if n == "bring_to_front"]
@@ -510,3 +510,68 @@ def test_navigate_never_types_into_the_current_tab_when_new_tab_is_not_sent(monk
     with pytest.raises(RuntimeError) as e:
         run(new_window(b, "TextEdit"))
     assert "requires_foreground" in str(e.value)
+
+
+def test_empty_text_view_reads_as_empty_only_when_it_says_so(monkeypatch):
+    """Promise: a text view with no AXValue is empty only when AXNumberOfCharacters is 0; otherwise the
+    append refuses rather than guess."""
+    from jevdual import ax
+
+    attrs = {"AXValue": None, "AXNumberOfCharacters": 0}
+    monkeypatch.setattr(ax, "_attr", lambda el, name: attrs.get(name))
+    assert ax.value("el") == ""
+    attrs["AXNumberOfCharacters"] = 12
+    with pytest.raises(ax.AXError):
+        ax.value("el")
+
+
+def _web_snapshot(value: str, snap: str = "s00000001"):
+    s = doc_snapshot("", snap=snap)
+    s["elements"].append(
+        {
+            "element_index": 7,
+            "role": "AXTextField",
+            "label": "Customer name",
+            "value": value,
+            "element_token": f"{snap}:7",
+            "in_web_content": True,
+        }
+    )
+    return s
+
+
+def test_web_fields_are_typed_by_insertion_and_read_back():
+    """Promise: a field inside web content is never 'typed' by an AXValue write WebKit ignores: the text
+    is inserted with type_text on that element and `confirmed` only when the field reads back the text."""
+    d = FakeDriver(_web_snapshot(""), _web_snapshot("Ada", snap="s00000002"))
+    b = bridge_for(d)
+    nm = run(b.observe())
+    assert 7 in nm.web
+    eff = run(b.act(nm, "type", 7, "Ada"))
+    assert d.names() == ["type_text"] and d.calls[-2][1]["element_token"] == nm.tokens[7]
+    assert eff.effect == "confirmed" and "set_value" not in d.names()
+
+    d = FakeDriver(_web_snapshot(""), _web_snapshot("", snap="s00000002"))
+    b = bridge_for(d)
+    nm = run(b.observe())
+    assert run(b.act(nm, "type", 7, "Ada")).effect == "suspected_noop"
+
+
+def test_web_field_with_text_is_selected_first_under_the_posture():
+    """Promise: replacing web-field text selects it on that element first (Command-A with the token), and
+    when the process has other windows that selection is not sent and nothing is typed."""
+    d = FakeDriver(
+        _web_snapshot("old"), _web_snapshot("old", snap="s00000002"), _web_snapshot("Ada", snap="s00000003")
+    )
+    b = bridge_for(d)
+    nm = run(b.observe())
+    eff = run(b.act(nm, "type", 7, "Ada"))
+    keys = [a for n, a in d.calls if n == "press_key"]
+    assert keys[0]["key"] == "a" and keys[0]["modifiers"] == ["cmd"] and keys[0]["element_token"] == nm.tokens[7]
+    assert d.names() == ["press_key", "type_text"] and eff.effect == "confirmed"
+
+    d = FakeDriver(_web_snapshot("old"), replies={"press_key": [AMBIG]})
+    b = bridge_for(d)
+    nm = run(b.observe())
+    eff = run(b.act(nm, "type", 7, "Ada"))
+    assert eff.error_code == "requires_foreground" and not eff.dispatched and "type_text" not in d.names()

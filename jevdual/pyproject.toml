@@ -55,6 +55,7 @@ cache-keys = [
 [tool.pytest.ini_options]
 markers = [
     "browser: launches a headless browser (tests/test_agent_loop.py)",
+    "live: acts on this machine's real apps and keyboard (tests/live; FOOTWORK_LIVE=1)",
 ]
 testpaths = ["tests"]
 asyncio_mode = "auto"

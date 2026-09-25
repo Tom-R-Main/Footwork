@@ -131,6 +131,8 @@ class NativeMenu:
     #: the append route reads the exact value through ``jevdual.ax``) and each candidate's AX role
     values: dict[int, str] = field(default_factory=dict)
     ax_roles: dict[int, str] = field(default_factory=dict)
+    #: ids of elements inside web content (an AXWebArea ancestor): WebKit ignores AXValue writes there
+    web: frozenset[int] = frozenset()
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -295,6 +297,7 @@ def menu_from_snapshot(
     frames: dict[int, tuple[float, float, float, float]] = {}
     values: dict[int, str] = {}
     ax_roles: dict[int, str] = {}
+    web: set[int] = set()
     omitted: dict[str, int] = {}
     for el in elements:
         token = _get(el, "element_token")
@@ -361,6 +364,8 @@ def menu_from_snapshot(
         candidates.append(cand)
         tokens[cand.id] = str(token)
         ax_roles[cand.id] = ax_role
+        if _get(el, "in_web_content"):
+            web.add(cand.id)
         if role in _TEXT_ROLES and not sensitive and raw_value is not None:
             values[cand.id] = str(raw_value)
         if frame is not None:
@@ -408,6 +413,7 @@ def menu_from_snapshot(
         frames=frames,
         values=values,
         ax_roles=ax_roles,
+        web=frozenset(i for i in web if i in kept),
     )
 
 
@@ -802,6 +808,54 @@ class NativeBridge:
             driver_delivery="background",
         )
 
+    async def _type_web(
+        self, nm: NativeMenu, id: int, cand: Candidate, token: str, text: str
+    ) -> NativeEffect:
+        """Type into a field inside web content. WebKit ignores AXValue writes there (Safari, 2026-09-25:
+        the form was submitted empty), so the text is inserted with ``type_text`` (AX insertion, or the
+        Driver's character synthesis where the page does not take it); a field that already holds text is
+        selected first with Command-A on that element, through the key route and so through the posture.
+        The field is read back: ``confirmed`` only when it holds the text."""
+        label = cand.label
+        if nm.values.get(id, "").strip():
+            sel = await self._key_route("type", id, label, "a", ["cmd"], token)
+            if not sel.dispatched or sel.effect == "refused":
+                return dataclasses.replace(sel, summary=f"select-all before typing: {sel.summary}"[:200])
+            fresh = await self.observe()
+            token = fresh.token(id) or token
+        args: dict[str, Any] = {
+            "pid": self.pid,
+            "window_id": self.window_id,
+            "element_token": token,
+            "text": text,
+            "delivery_mode": "background",
+        }
+        if self.session:
+            args["session"] = self.session
+        try:
+            outcome: Any = await self.driver.call_tool("type_text", json.dumps(args))
+        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            outcome = exc
+        eff = self._effect("type", id, label, outcome, "background")
+        if eff.effect == "refused":
+            return eff
+        after = await self.observe()
+        self.last = None
+        same = after.menu.candidate(id)
+        got = after.values.get(id, "") if same is not None and same.label == label else None
+        if got is not None and got.strip() == text.strip():
+            return dataclasses.replace(
+                eff, effect="confirmed", evidence=(*eff.evidence, "value_readback: the field holds the text")
+            )
+        return dataclasses.replace(
+            eff,
+            effect="suspected_noop",
+            evidence=(
+                *eff.evidence,
+                f"value_readback: the field holds {len(got or '')} characters, not the text",
+            ),
+        )
+
     async def _click_token(self, token: str) -> Any:
         from cua_driver import ClickInput, ClickPosition, InputDeliveryMode
 
@@ -856,6 +910,8 @@ class NativeBridge:
         try:
             if operation == "click":
                 outcome: Any = await self._click_token(token)
+            elif operation == "type" and id in nm.web:
+                return await self._type_web(nm, id, cand, token, text or "")
             elif operation == "type":
                 args = {"element_token": token, "value": text, "pid": self.pid}
                 if self.session:

@@ -117,8 +117,12 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
 
 
 def value(el: Any) -> str:
+    """The element's exact AXValue. An empty text view reports none at all (Notes' new note body,
+    2026-09-25); it is the empty string only when the element says it holds no characters."""
     v = _attr(el, "AXValue")
     if v is None:
+        if _attr(el, "AXNumberOfCharacters") == 0:
+            return ""
         raise AXError("no_value", "element has no readable AXValue")
     return str(v)
 
