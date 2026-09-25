@@ -125,12 +125,44 @@ def receipt_for(state: SessionState, nm: NativeMenu) -> dict[str, Any] | None:
         url_after=nm.menu.url,
         error=state.pending.get("error"),
     )
+    r = _field_receipt(r, state.pending, nm)
     if r.effect == "suspected_noop" and state.pending.get("driver_effect") == "confirmed":
         # the driver confirmed the press but nothing on the menu changed: say both
         text = receipt_text(r) + " The driver reported the press as delivered."
     else:
         text = receipt_text(r)
     return {"effect": r.effect, "evidence": r.evidence, "text": text}
+
+
+def _field_receipt(r: Any, pending: dict[str, Any], nm: Any) -> Any:
+    """A receipt for ``type`` or ``append`` names what the field holds now, and its verdict follows
+    the field, not the element count: on 2026-09-25 typing into Wikipedia's search box added 49
+    elements (the suggestion list), the receipt said confirmed, and the query went out empty."""
+    if pending.get("op") not in ("type", "append") or not pending.get("target_label"):
+        return r
+    label = pending["target_label"]
+    low = label.casefold()
+    fields = [c for c in nm.menu.candidates if c.label.casefold() == low and "type" in c.operations]
+    field = fields[0] if fields else nm.menu.candidate(pending.get("target_id", -1))
+    if field is None:
+        return dataclasses.replace(
+            r, effect="unverifiable", evidence=f"{label!r} is not on the fresh observation"
+        )
+    if field.input_type == "password":
+        ok = bool(field.has_value)
+        shown, holds = "{secret}", "a value" if ok else "nothing"
+    else:
+        holds = field.value or ""
+        if pending.get("secret"):
+            ok, shown = bool(holds), "{secret}"
+        else:
+            intended = pending.get("intended") or ""
+            ok, shown = bool(intended) and intended in holds, intended
+    if ok:
+        return dataclasses.replace(r, effect="confirmed", evidence=f"{label!r} now holds {str(holds)[:80]!r}")
+    return dataclasses.replace(
+        r, effect="suspected_noop", evidence=f"{label!r} holds {str(holds)[:80]!r}, not {str(shown)[:60]!r}"
+    )
 
 
 def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[str, Any] | None) -> str:
@@ -166,7 +198,6 @@ async def bind(state: SessionState):
         await bridge.attach()
         return driver, bridge
     from cua_driver import CuaDriver
-
 
     driver = CuaDriver.create()
     return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
@@ -504,7 +535,17 @@ async def cmd_do(args: Any) -> int:
             driver_effect = "not dispatched"
             error = f"{getattr(exc, 'reason', 'error')}: {exc}"[:160]
         exec_ms = (time.perf_counter() - t0) * 1000
-        state.pending = {"line": line, "driver_effect": driver_effect, "error": error, "exec_ms": exec_ms}
+        state.pending = {
+            "line": line,
+            "driver_effect": driver_effect,
+            "error": error,
+            "exec_ms": exec_ms,
+            "op": op,
+            "target_id": target.id if target is not None else None,
+            "target_label": target.label if target is not None else None,
+            "intended": None if secret_used else text,
+            "secret": secret_used,
+        }
         state.log({"kind": "do", **state.pending})
         state.save()
         print(
