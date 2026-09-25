@@ -974,10 +974,11 @@ class NativeBridge:
         return await self._key_route("key", -1, "+".join([*mods, key]), key, mods, None)
 
     async def _front(self) -> None:
-        """Explicit foreground escalation: bring the bound window to the front (recorded by the caller)."""
-        await self.driver.call_tool(
-            "bring_to_front", json.dumps({"pid": self.pid, "window_id": self.window_id})
-        )
+        """Explicit foreground escalation: the bound window made its app's key window through AX, then the
+        app activated by exact pid (the Driver's bring_to_front took 1.2 s to return while the front was
+        already ours, and resolves apps by bundle)."""
+        self.ax.raise_window(self.pid, self.window_id)
+        await asyncio.to_thread(self.policy._activity().activate, self.pid)
 
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
         """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and

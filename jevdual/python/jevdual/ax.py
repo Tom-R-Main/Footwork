@@ -202,3 +202,16 @@ def press_menu(pid: int, path: list[str]) -> None:
     err = AXUIElementPerformAction(node, "AXPress")
     if err != 0:
         raise AXError("press_refused", f"AXPress on {' > '.join(path)} refused ({err})")
+
+
+def raise_window(pid: int, window_id: int) -> None:
+    """Make the bound window its app's main and key window through AX (``AXMain``, ``AXRaise``). It does
+    not activate the app; with ``posture.activate`` it replaces the Driver's ``bring_to_front``, which
+    took 1.2 s to return while our window already held the front (2026-09-25)."""
+    from ApplicationServices import AXUIElementPerformAction, AXUIElementSetAttributeValue
+
+    w = window_element(pid, window_id)
+    AXUIElementSetAttributeValue(w, "AXMain", True)
+    err = AXUIElementPerformAction(w, "AXRaise")
+    if err != 0:
+        raise AXError("raise_refused", f"AXRaise on window {window_id} refused ({err})")
