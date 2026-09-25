@@ -232,7 +232,8 @@ A step the posture will not take returns `requires_foreground`, `requires_deskto
 | the person's work, input and focus survive another app, another document of the same process, another tab of the same window | | C1, C2, C3 |
 
 Q15 runs each case three times and requires every check. A promise whose case fails is withdrawn or
-fixed, never averaged. Results are appended to `docs/experiments/Q15.md`.
+fixed, never averaged. **Result (2026-09-25): 15 of 15 passed** (`results/q15-coexistence/`); every row
+above stands, with the limits stated in `docs/experiments/Q15.md`.
 
 ## Phases
 
