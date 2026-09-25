@@ -738,6 +738,9 @@ async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -
     if not match:
         raise LookupError(f"{app_name!r} is not running (Driver list_apps)")
     pid = match[0].pid
+    if not pid or pid <= 0 or getattr(match[0], "running", True) is False:
+        # the Driver lists installed apps too, with pid 0: say so instead of a window-discovery error
+        raise LookupError(f"{app_name!r} is installed but not running; open it first")
     wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
     titled = [w for w in wins.windows if w.title]
     if title_contains:

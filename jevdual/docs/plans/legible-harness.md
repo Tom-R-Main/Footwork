@@ -100,6 +100,17 @@ into once, or the person's Chrome started with the existing-profile grant. Until
 through the accessibility route run in a window the person is not using and navigate by clicks, or
 run when the person is away from the keyboard.
 
+**Second batch, me as System 2 (2026-09-25, later the same day).**
+
+| task | commands | wall | outcome |
+|---|---|---|---|
+| Calculator, 48 × 13 | start; `s1 --act` × 6; done "624" | 30 s | verifier accept p=0.98; every click a `confirmed` receipt with the display value in it; S1 proposed every step at p ≥ 0.94 and I only had to say done |
+| TextEdit, append a line and save | start; `do append 1 "Second line."`; `do hotkey cmd s`; done | 9 s | file on disk verified; the receipt on Command-S read `confirmed (text changed)` from the window title losing its edited mark, the readback the Q10b append task lacked; verifier accept p=0.95 |
+| Chrome, open a bookmark and report the heading | start; s1; `do click 16`; done | 15 s | the bookmark opened the Siftable app; S1 proposed the bookmark at p=1.00; verifier `verify` band (0.63) because my requirement said "the ExecuFunction page" and the page says Siftable, which is the right refusal |
+| Chrome, click through to Knowledge | `do click 37` | 6 s | the page had changed under me (an overlay opened; 118 elements gone) and the guard let the click through to the element that now held id 37, a harmless no-op: the guard compared against the fresh observation, not the one I chose from. Fixed, nothing dispatches on a changed id and the fresh observation is printed instead |
+
+Three bugs found by driving, none by the test suite: `Decision` has no `text` attribute (s1 --act crashed); an installed-but-not-running app surfaced as a Driver window-discovery error (now "installed but not running; open it first"); the staleness guard above. The person used both Chrome windows during the batch (the session window ended on YouTube), which is the sharing limit named above, not a harness fault: a session on a person's live desktop needs its own app instance or the person's absence.
+
 **What a command costs now.** `start` 10 to 13 s (driver, new window, navigate, first observation
 with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s, reobserve); `s1`
 about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per

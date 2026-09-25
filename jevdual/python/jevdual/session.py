@@ -298,6 +298,8 @@ async def cmd_do(args: Any) -> int:
     driver, bridge = await bind(state)
     try:
         before = state.last_menu()
+        # the ids the operator chose from: the observation before this command, not the fresh one
+        chosen_from = {c["id"]: c["label"] for c in state.last_candidates}
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
@@ -313,16 +315,17 @@ async def cmd_do(args: Any) -> int:
         target = None
         if cid is not None:
             target = nm.menu.candidate(cid)
-            known = next((c for c in state.last_candidates if c["id"] == cid), None)
+            known = chosen_from.get(cid)
             if target is None:
                 print(f"id {cid} is not on the current observation; run `footwork look`", file=sys.stderr)
                 return 4
-            if known is not None and known["label"] != target.label:
+            if known is not None and known != target.label:
                 print(
-                    f"id {cid} is now {target.label!r}, it was {known['label']!r}; the page changed. "
-                    "Run `footwork look` and choose again.",
+                    f"id {cid} is now {target.label!r}, it was {known!r} when you looked; the page changed. "
+                    "Nothing dispatched. Choose again from the observation below.",
                     file=sys.stderr,
                 )
+                print(render_observation(nm, text_chars=args.text, receipt=None))
                 return 4
         authorizer = Authorizer(
             policy=ArbiterPolicy.from_toml(),
@@ -420,8 +423,8 @@ async def cmd_s1(args: Any) -> int:
                 for i, p in alts
             )
         )
-    if decision.text:
-        print(f"  text: {decision.text!r}")
+    if getattr(decision, "text", None):
+        print(f"  text: {decision.text!r}")  # type: ignore[attr-defined]
     state.log(
         {
             "kind": "s1",
@@ -433,7 +436,8 @@ async def cmd_s1(args: Any) -> int:
     )
     state.save()
     if args.act and decision.operation in _ROUTES and decision.target is not None:
-        words = [decision.operation, str(decision.target)] + ([decision.text] if decision.text else [])
+        text = getattr(decision, "text", None)
+        words = [decision.operation, str(decision.target)] + ([text] if text else [])
         args.words = words
         return await cmd_do(args)
     return 0
