@@ -197,8 +197,8 @@ def press_menu(pid: int, path: list[str]) -> None:
                 f"{len(hits)} menu items titled {name!r} under {' > '.join(path[:depth]) or 'the menu bar'}",
             )
         node = hits[0]
-    if _attr(node, "AXEnabled") is False:
-        raise AXError("menu_disabled", f"{' > '.join(path)} is disabled")
+    # AXEnabled is not checked first: a menu item's enabled state is validated when its menu opens, so it
+    # can read False for an item that works (Q15 smoke 6: Edit > Select All); the press reports a refusal
     err = AXUIElementPerformAction(node, "AXPress")
     if err != 0:
         raise AXError("press_refused", f"AXPress on {' > '.join(path)} refused ({err})")

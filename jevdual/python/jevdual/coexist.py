@@ -551,17 +551,19 @@ async def case_foreground_permitted(driver: Any, work: Path) -> CaseResult:
         await asyncio.sleep(3.6)
         nm = await b.observe()
 
-        async def move() -> None:
-            # the person clicks their other window once the agent's window has taken the front
-            for _ in range(150):
-                if await asyncio.to_thread(frontmost_pid) == te.pid:
-                    break
-                await asyncio.sleep(0.005)
-            await asyncio.to_thread(activate, tk2.pid)
+        def move() -> None:
+            # the person clicks their other window as soon as the agent's window has the front: a tight
+            # poll in its own thread, so the move can land inside a step that holds the front ~75 ms
+            t0 = time.time()
+            while time.time() - t0 < 5.0 and frontmost_pid() != te.pid:
+                pass
+            activate(tk2.pid)
 
-        mover = asyncio.create_task(move())
+        mover = threading.Thread(target=move, daemon=True)
+        mover.start()
         moved_step = await step(r, "menu", b.menu(nm, ["Edit", "Select All"]))
-        await mover
+        await asyncio.to_thread(mover.join, 6.0)
+        r.details["move_overlapped_step"] = tk2.pid in ((moved_step.foreground or {}).get("fronts_during") or [])
         await asyncio.sleep(0.5)
         front_after_c = frontmost_pid()
         p3 = Person(tk2.pid, "now over here.")
