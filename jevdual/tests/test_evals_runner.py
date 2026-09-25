@@ -318,3 +318,11 @@ def test_redact_results_keeps_task_ids_intact(tmp_path):
     subprocess.run([sys.executable, "scripts/redact_results.py", str(run)], check=True, capture_output=True)
     row = json.loads((run / "results.json").read_text())[0]
     assert row["task_id"] == victim.id and secret not in row["answer"] and "[REDACTED" in row["answer"]
+
+
+def test_cli_builds_a_policy_factory_for_every_policy_arm():
+    """Q11 smoke: the CLI once listed the arms by hand and the new guarded arms crashed with
+    "needs a policy_factory". Every arm except stock and scripted needs the factory."""
+    from evals.runner import ARMS, POLICY_ARMS
+
+    assert set(ARMS) - set(POLICY_ARMS) == {"stock", "scripted"}

@@ -66,6 +66,8 @@ S2_ARMS = ("dual", "guarded", "guarded_declared", "guarded_legible", "delegate",
 #: what System 2 is told changes (jevdual.contract).
 GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible")
 DECLARED_ARMS = ("guarded_declared", "guarded_legible")
+#: arms the CLI builds the default policy factory for: every arm with a System 1 policy behind it
+POLICY_ARMS = ("s1_only", *S2_ARMS)
 DELEGATE_ARMS = (
     "delegate",
     "delegate_evidence",
@@ -478,6 +480,10 @@ async def _run_task_once(
         feedback = None
         if arm in DECLARED_ARMS:
             extend, feedback = declaration_for(task, arm, s1_policy)
+            # the text the driver was given, kept beside the trace so a run can be audited
+            contracts = out_dir / "contracts"
+            contracts.mkdir(parents=True, exist_ok=True)
+            (contracts / f"{run_id}.txt").write_text(extend)
         agent = DualProcessAgent(
             task=task.task,
             llm=llm if (arm in S2_ARMS and llm is not None) else RefusingLLM(),
@@ -718,11 +724,7 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = (
-        default_policy_factory()
-        if any(a in ("s1_only", "dual", "guarded", "delegate", "delegate_evidence") for a in arms)
-        else None
-    )
+    policy_factory = default_policy_factory() if any(a in POLICY_ARMS for a in arms) else None
     results = asyncio.run(
         run_split(
             args.split,
