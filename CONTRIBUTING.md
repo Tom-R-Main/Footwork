@@ -18,6 +18,11 @@ Footwork is research code with an evaluation discipline. The discipline is the p
 - **Secrets never appear in the repo.** Task secrets are fixture demo logins scoped to their origin;
   `scripts/redact_results.py` runs on every run directory before it is committed; traces and `run.log`
   are git-ignored.
+- **A bug found by driving becomes a scenario first.** `jevdual/tests/test_session_scenarios.py` runs the
+  real `footwork` commands against a simulated Mac (`tests/fixtures/native_world.py`); reproduce the bug
+  there, see it fail, then fix the harness, not the scenario.
+- **Upstream seams are pinned.** browser-use and cua-driver are exact versions with contract tests under
+  `jevdual/tests/contract/`; a bump lands only with those tests green or updated in the same commit.
 - **Rust ports keep a pure-Python twin** and an equality test over the recorded fixtures
   (`jevdual/docs/rust-boundary.md`).
 
