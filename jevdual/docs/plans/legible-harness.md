@@ -111,6 +111,33 @@ run when the person is away from the keyboard.
 
 Three bugs found by driving, none by the test suite: `Decision` has no `text` attribute (s1 --act crashed); an installed-but-not-running app surfaced as a Driver window-discovery error (now "installed but not running; open it first"); the staleness guard above. The person used both Chrome windows during the batch (the session window ended on YouTube), which is the sharing limit named above, not a harness fault: a session on a person's live desktop needs its own app instance or the person's absence.
 
+**Third batch, browser mode (P6 answered, 2026-09-25).** The Driver refuses to launch Chrome itself
+here because `/Applications/Google Chrome.app` is user-writable, not a root-owned system install.
+The route that works: footwork launches the system Chrome with its own profile directory
+(`~/.config/jevdual/chrome-profile`, signed into once) and a loopback debugging port, and attaches to
+it as an existing-profile attachment authorized by an in-process host callback that allows exactly
+that pid and executable (`jevdual.browser_driver.FootworkAuthorizationHost`). The person's own
+Chrome profile is never touched. The binding needs `uniffi_set_event_loop` or the callback times out
+after 120 s with "no running event loop". Bind and semantic snapshot each take well under a second.
+
+| task | commands | wall | outcome |
+|---|---|---|---|
+| httpbin order form: five fields, size, topping, submit | start --browser --url; type × 3; click × 2; append; click Submit (paused, p=0.89); click Submit --authorize --route dom; done | 30 s of commands, 10 commands | verifier accept p=0.81 against the response page; every field's receipt read `confirmed` with the changed control; the retained decision paused on the Jev judgment and one `--authorize` let it through |
+
+What driving it found, each fixed in the commit that adds this section:
+
+- Snapshot refs renumber whenever the DOM changes, so ids chosen from one observation land on the
+  wrong control after the next (my second entry went into the name field). The staleness guard
+  cannot help when the operator chooses from an old listing. Fix: `do type "Telephone" ...`
+  addresses by label, resolved on the fresh observation.
+- The trusted (hardware-like) CDP click toggled neither a radio nor a checkbox in the background,
+  and did not activate the submit button; the receipts said `suspected no-op` and the next snapshot
+  agreed. A synthetic DOM click does all three. Radio, checkbox and switch default to the DOM route;
+  `--route dom` overrides for buttons. The receipt is what makes the DOM route honest: it proves
+  the outcome rather than the dispatch.
+- `browser_type` in replace mode selects the field's content first, which an email input refuses,
+  so the entry was a no-op; the receipt said so and append mode worked.
+
 **What a command costs now.** `start` 10 to 13 s (driver, new window, navigate, first observation
 with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s, reobserve); `s1`
 about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per

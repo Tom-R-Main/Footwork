@@ -280,7 +280,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     st = sub.add_parser("start", help="bind a window and start a session you drive as System 2")
     st.add_argument("task")
-    st.add_argument("--app", required=True)
+    st.add_argument("--app", default="Google Chrome", help="the running app (native route)")
+    st.add_argument(
+        "--browser", action="store_true", help="footwork's own Chrome through the Driver's DevTools route"
+    )
     st.add_argument("--url")
     st.add_argument("--window")
     st.add_argument("--require", default="")
@@ -297,6 +300,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--authorize", default="", help="stand the boundary down for these labels, this action only"
     )
     do.add_argument("--settle", type=float, default=S.SETTLE_S)
+    do.add_argument("--no-judge", action="store_true", help="skip the Jev destructive judgment on clicks")
+    do.add_argument(
+        "--route",
+        choices=("trusted", "dom"),
+        help="browser mode: the click route (default trusted; dom for radio, checkbox, switch)",
+    )
     common(do)
     do.set_defaults(fn=S.cmd_do)
     s1 = sub.add_parser("s1", help="System 1's proposal on the current observation")

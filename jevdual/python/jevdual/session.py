@@ -19,6 +19,7 @@ task, the last observation, the memory lines and a JSONL log.
 from __future__ import annotations
 
 import asyncio
+import dataclasses
 import json
 import os
 import re
@@ -55,6 +56,8 @@ class SessionState:
     last_candidates: list[dict[str, Any]] = field(default_factory=list)
     last_snapshot: str = ""
     pending: dict[str, Any] | None = None  # the action dispatched by the last `do`, awaiting its receipt
+    #: "native" (accessibility route) or "browser" (the Driver's DevTools route on footwork's Chrome)
+    mode: str = "native"
 
     @property
     def path(self) -> Path:
@@ -153,6 +156,13 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
 
 
 async def bind(state: SessionState):
+    if state.mode == "browser":
+        from jevdual.browser_driver import BrowserBridge, configured_driver
+
+        driver = configured_driver(state.pid)
+        bridge = BrowserBridge(driver, state.pid, state.window_id)
+        await bridge.attach()
+        return driver, bridge
     from cua_driver import CuaDriver
 
     driver = CuaDriver.create()
@@ -187,6 +197,8 @@ async def cmd_start(args: Any) -> int:
     d.mkdir(parents=True, exist_ok=True)
     for old in ("session.json", "session.jsonl"):
         (d / old).unlink(missing_ok=True)
+    if getattr(args, "browser", False):
+        return await _start_browser(args, d)
     driver = CuaDriver.create()
     try:
         pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
@@ -227,6 +239,37 @@ async def cmd_start(args: Any) -> int:
     return 0
 
 
+async def _start_browser(args: Any, d: Path) -> int:
+    """A session on footwork's own Chrome through the Driver's browser mode (jevdual.browser_driver)."""
+    from jevdual.browser_driver import bind_footwork_chrome
+
+    driver, bridge = await bind_footwork_chrome(args.url)
+    try:
+        state = SessionState(
+            dir=str(d),
+            app="Google Chrome (footwork)",
+            pid=bridge.pid,
+            window_id=bridge.window_id,
+            task=args.task,
+            requirements=_split(args.require, ";"),
+            authorized=_split(args.authorize, ","),
+            answer_expected=args.answer,
+            mode="browser",
+        )
+        print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
+        if args.url:
+            eff = await bridge.navigate(args.url)
+            print(f"navigate {args.url}: {eff.effect} {eff.summary[:80]}")
+            await asyncio.sleep(2.0)
+        state.log({"kind": "start", "task": args.task, "requirements": state.requirements, "mode": "browser"})
+        nm, _ = await observe(state, bridge)
+        print(render_observation(nm, text_chars=args.text, receipt=None))
+        print(f"\nsession: {d}  (export FOOTWORK_SESSION={d} to omit --session)")
+    finally:
+        await driver.shutdown()
+    return 0
+
+
 async def cmd_look(args: Any) -> int:
     state = SessionState.load(session_dir(args.session))
     driver, bridge = await bind(state)
@@ -238,7 +281,7 @@ async def cmd_look(args: Any) -> int:
     return 0
 
 
-_ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu")
+_ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
 
 
 def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, ...], tuple[str, ...]]:
@@ -256,17 +299,40 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
         if not keys:
             raise SystemExit("hotkey needs keys, e.g. hotkey cmd s, or hotkey Return (foreground route)")
         return op, None, None, keys, ()
+    if op == "navigate":
+        if len(words) != 2:
+            raise SystemExit("navigate needs one URL")
+        return op, None, words[1], (), ()
     if op == "menu":
         path = tuple(p.strip() for p in " ".join(words[1:]).split(">") if p.strip())
         if not path:
             raise SystemExit('menu needs a path, e.g. menu "File > Save"')
         return op, None, None, (), path
-    if len(words) < 2 or not words[1].lstrip("-").isdigit():
-        raise SystemExit(f"{op} needs an element id, e.g. {op} 65")
+    if len(words) < 2:
+        raise SystemExit(f'{op} needs an element id or a label, e.g. {op} 65 or {op} "Telephone"')
     text = " ".join(words[2:]) if len(words) > 2 else None
     if op in ("type", "append") and text is None:
         raise SystemExit(f"{op} needs text")
-    return op, int(words[1]), text, (), ()
+    if words[1].lstrip("-").isdigit():
+        return op, int(words[1]), text, (), ()
+    # a label: resolved against the fresh observation in cmd_do (ids renumber between snapshots)
+    return op, words[1], text, (), ()  # type: ignore[return-value]
+
+
+def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
+    """The one candidate whose label contains ``label`` (case-insensitive); an exact match wins."""
+    low = label.casefold()
+    exact = [c for c in nm.menu.candidates if c.label.casefold() == low]
+    if len(exact) == 1:
+        return exact[0].id, ""
+    hits = exact or [c for c in nm.menu.candidates if low in c.label.casefold()]
+    if len(hits) == 1:
+        return hits[0].id, ""
+    if not hits:
+        return None, f"no element labelled {label!r} on the current observation"
+    return None, f"{label!r} matches {len(hits)} elements: " + ", ".join(
+        f"[{c.id}] {c.label!r}" for c in hits[:6]
+    )
 
 
 def resolve_secrets(text: str | None) -> tuple[str | None, bool]:
@@ -313,6 +379,13 @@ async def cmd_do(args: Any) -> int:
                     "ids below are from the fresh observation"
                 )
         target = None
+        if isinstance(cid, str):
+            rid, why = resolve_label(nm, cid)
+            if rid is None:
+                print(why, file=sys.stderr)
+                return 4
+            cid = rid
+            chosen_from = {}  # a label is resolved on the fresh observation; nothing to compare
         if cid is not None:
             target = nm.menu.candidate(cid)
             known = chosen_from.get(cid)
@@ -327,15 +400,43 @@ async def cmd_do(args: Any) -> int:
                 )
                 print(render_observation(nm, text_chars=args.text, receipt=None))
                 return 4
+        judge = None
+        client = None
+        if not getattr(args, "no_judge", False) and op in ("click", "menu", "hotkey", "navigate"):
+            from jevdual.keys import load_keys
+
+            if load_keys().get("TYPESAFE_API_KEY"):
+                from typesafe_sdk import AsyncTypeSafeClient
+
+                from jevdual.verify import Verifier
+
+                client = AsyncTypeSafeClient()
+                await client.__aenter__()
+                judge = Verifier(client).judge_destructive
         authorizer = Authorizer(
             policy=ArbiterPolicy.from_toml(),
             authorized_actions=tuple(state.authorized) + _split(args.authorize, ","),
+            judge=judge,
         )
-        action = action_for(op, nm, "s2", target=target, text=text, keys=keys, path=path)
-        line = f"{op}({target.label if target else ('+'.join(keys) if keys else ' > '.join(path))})"
+        route = "click" if op == "navigate" else op
+        action = action_for(
+            route, nm, "s2", target=target, text=text if op != "navigate" else None, keys=keys, path=path
+        )
+        if op == "navigate":
+            action = dataclasses.replace(action, label=f"navigate to {text}", route="click")
+        line = f"{op}({target.label if target else (text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
         if shown_text:
             line += f" text={shown_text[:60]!r}"
         hit = await authorizer.check(nm, action, task=state.task)
+        if client is not None:
+            await client.__aexit__(None, None, None)
+        if authorizer.judgments:
+            j = authorizer.judgments[-1]
+            print(
+                f"destructive judgment: p={j.get('p', 0):.2f} on {j.get('label')!r}"
+                if "p" in j
+                else f"judgment failed: {j.get('error')}"
+            )
         if hit:
             state.memory.append(f"step {state.step + 1}: {line} -> paused before dispatch ({hit[:80]})")
             state.log({"kind": "paused", "line": line, "reason": hit})
@@ -348,7 +449,9 @@ async def cmd_do(args: Any) -> int:
         t0 = time.perf_counter()
         error = None
         try:
-            if op == "hotkey":
+            if op == "navigate":
+                eff = await bridge.navigate(text or "")
+            elif op == "hotkey":
                 eff = await bridge.hotkey(nm, list(keys))
             elif op == "key":
                 eff = await bridge.key(nm, keys[-1], list(keys[:-1]))
@@ -356,13 +459,19 @@ async def cmd_do(args: Any) -> int:
                 eff = await bridge.menu(nm, list(path))
             else:
                 assert target is not None
-                eff = await bridge.act(nm, op, target.id, text)
+                route_arg = getattr(args, "route", None)
+                if route_arg and state.mode == "browser":
+                    eff = await bridge.act(
+                        nm, op, target.id, text, route="dom_event" if route_arg == "dom" else "trusted"
+                    )
+                else:
+                    eff = await bridge.act(nm, op, target.id, text)
             driver_effect = eff.effect
             if eff.effect == "refused":
                 error = f"driver refused: {eff.error_code or ''} {eff.summary[:100]}".strip()
-        except NativeBridgeError as exc:
+        except (NativeBridgeError, RuntimeError) as exc:
             driver_effect = "not dispatched"
-            error = f"{exc.reason}: {exc}"[:160]
+            error = f"{getattr(exc, 'reason', 'error')}: {exc}"[:160]
         exec_ms = (time.perf_counter() - t0) * 1000
         state.pending = {"line": line, "driver_effect": driver_effect, "error": error, "exec_ms": exec_ms}
         state.log({"kind": "do", **state.pending})
