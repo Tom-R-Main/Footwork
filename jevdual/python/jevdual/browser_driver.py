@@ -234,16 +234,31 @@ class BrowserEffect:
     evidence: tuple[str, ...] = ()
     summary: str = ""
     error_code: str | None = None
+    #: False when the posture refused the step before anything reached the browser
+    dispatched: bool = True
 
 
 class BrowserBridge:
     """One bound tab of footwork's Chrome. ``attach`` once per Driver process (each command)."""
 
-    def __init__(self, driver: Any, pid: int, window_id: int, *, session: str = SESSION_LABEL):
+    def __init__(
+        self,
+        driver: Any,
+        pid: int,
+        window_id: int,
+        *,
+        session: str = SESSION_LABEL,
+        policy: Any = None,
+    ):
+        from jevdual.posture import ExecutionPolicy
+
         self.driver = driver
         self.pid = pid
         self.window_id = window_id
         self.session = session
+        #: the execution posture (jevdual.posture): a replace-typed field selects the tab for about
+        #: 100 ms (footwork-9c's tab probe, 2026-09-25), which is a foreground step for the posture
+        self.policy = policy or ExecutionPolicy("background_only")
         self.target_id: str | None = None
         self.tab_id: str | None = None
         self.last: WebMenu | None = None
@@ -330,8 +345,33 @@ class BrowserBridge:
             self.last = None
             return dataclasses.replace(eff, route=input_route)
         elif operation in ("type", "append"):
+            # browser_type selects the bound tab for about 100 ms in every mode except
+            # insert_text with replace=false (page visibility probe by footwork-9c, 2026-09-25): in
+            # that window the person's keystrokes can land in the agent's tab. Inserting into an
+            # empty field, or appending, is the only background-safe form; replacing held text is a
+            # foreground step and asks the posture. Keystroke mode is never used.
+            holds = (c.value or "") if c.role != "password" else ""
+            needs_replace = operation == "type" and bool(holds)
+            if needs_replace:
+                refusal = self.policy.permits(
+                    "foreground",
+                    why=f"replacing the text {c.label!r} holds selects its tab for ~100 ms",
+                )
+                if refusal is not None:
+                    self.last = None
+                    return BrowserEffect(
+                        operation,
+                        id,
+                        c.label,
+                        "refused",
+                        route="cdp",
+                        summary=refusal.reason[:200],
+                        error_code=refusal.code,
+                        dispatched=False,
+                    )
             out = await self._tool(
-                "browser_type", {**base, "ref": ref, "text": text or "", "replace": operation == "type"}
+                "browser_type",
+                {**base, "ref": ref, "text": text or "", "mode": "insert_text", "replace": needs_replace},
             )
         else:
             raise RuntimeError(f"browser mode has no {operation!r} operation (click, type, append, navigate)")
@@ -361,7 +401,7 @@ class BrowserBridge:
         )
 
 
-async def bind_footwork_chrome(url: str | None = None) -> tuple[Any, BrowserBridge]:
+async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) -> tuple[Any, BrowserBridge]:
     """Launch or find footwork's Chrome, build the configured Driver, bind its largest window."""
     from cua_driver import ListWindowsInput
 
@@ -371,6 +411,6 @@ async def bind_footwork_chrome(url: str | None = None) -> tuple[Any, BrowserBrid
     if not wins.windows:
         raise RuntimeError("footwork's Chrome has no on-screen window")
     w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
-    bridge = BrowserBridge(driver, pid, w.window_id)
+    bridge = BrowserBridge(driver, pid, w.window_id, policy=policy)
     await bridge.attach()
     return driver, bridge

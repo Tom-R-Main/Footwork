@@ -194,7 +194,9 @@ async def bind(state: SessionState):
         from jevdual.browser_driver import BrowserBridge, configured_driver
 
         driver = configured_driver(state.pid)
-        bridge = BrowserBridge(driver, state.pid, state.window_id)
+        from jevdual.posture import ExecutionPolicy
+
+        bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
         await bridge.attach()
         return driver, bridge
     from cua_driver import CuaDriver
@@ -296,8 +298,10 @@ async def cmd_start(args: Any) -> int:
 async def _start_browser(args: Any, d: Path) -> int:
     """A session on footwork's own Chrome through the Driver's browser mode (jevdual.browser_driver)."""
     from jevdual.browser_driver import bind_footwork_chrome
+    from jevdual.posture import ExecutionPolicy
 
-    driver, bridge = await bind_footwork_chrome(args.url)
+    posture = getattr(args, "mode", None) or "background_only"
+    driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
     try:
         state = SessionState(
             dir=str(d),
@@ -309,6 +313,7 @@ async def _start_browser(args: Any, d: Path) -> int:
             authorized=_split(args.authorize, ","),
             answer_expected=args.answer,
             mode="browser",
+            posture=posture,
         )
         print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
         if args.url:

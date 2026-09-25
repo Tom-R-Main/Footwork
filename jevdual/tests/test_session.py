@@ -90,3 +90,53 @@ def test_click_receipts_are_untouched_and_missing_fields_are_unverifiable(tmp_pa
     st = _state(tmp_path, [_field(3, "Name")], pend)
     r = receipt_for(st, _nm([Candidate(id=9, label="Done", role="button", operations=("click",))]))
     assert r["effect"] == "unverifiable" and "not on the fresh observation" in r["evidence"]
+
+
+def test_browser_replace_typing_asks_the_posture_and_never_keystrokes():
+    """footwork-9c's tab probe (2026-09-25): browser_type selects the bound tab for ~100 ms in every
+    mode but insert_text with replace=false. Inserting into an empty field or appending stays
+    background; replacing held text is a foreground step and a background_only bridge refuses it."""
+    import asyncio
+    import json
+
+    from jevdual.browser_driver import BrowserBridge, WebMenu
+    from jevdual.posture import ExecutionPolicy
+
+    calls = []
+
+    class Driver:
+        async def call_tool(self, name, args):
+            calls.append((name, json.loads(args)))
+            return SimpleNamespace(structured_json='{"status":"ok"}', text="typed", is_error=False)
+
+    def menu(value):
+        c = Candidate(id=1, label="Name", role="textbox", operations=("type",), value=value)
+        return WebMenu(
+            menu=Menu(url="u", title="t", page_text="", candidates=(c,), by_operation={}),
+            snapshot_id="p1",
+            refs={1: "p1:1"},
+        )
+
+    b = BrowserBridge(Driver(), 1, 2, policy=ExecutionPolicy("background_only"))
+    b.target_id, b.tab_id = "bt", "tab"
+    nm = menu(None)
+    b.last = nm
+    eff = asyncio.run(b.act(nm, "type", 1, "Ada"))
+    assert (
+        eff.effect != "refused" and calls[-1][1]["mode"] == "insert_text" and calls[-1][1]["replace"] is False
+    )
+    nm = menu("Old")
+    b.last = nm
+    eff = asyncio.run(b.act(nm, "append", 1, " more"))
+    assert calls[-1][1]["replace"] is False
+    b.last = nm
+    eff = asyncio.run(b.act(nm, "type", 1, "New"))
+    assert eff.effect == "refused" and eff.error_code == "requires_foreground" and eff.dispatched is False
+    assert "100 ms" in eff.summary and len(calls) == 2  # nothing reached the browser
+    b2 = BrowserBridge(Driver(), 1, 2, policy=ExecutionPolicy("exclusive_desktop"))
+    b2.target_id, b2.tab_id = "bt", "tab"
+    b2.last = nm
+    eff = asyncio.run(b2.act(nm, "type", 1, "New"))
+    assert (
+        eff.effect != "refused" and calls[-1][1]["replace"] is True and calls[-1][1]["mode"] == "insert_text"
+    )
