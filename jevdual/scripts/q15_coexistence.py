@@ -77,6 +77,9 @@ async def main() -> int:
                     if r.contaminated is None:
                         rows.append(rec)
                         break
+                    # someone is at the machine: wait for the full guard again before the retry
+                    while idle_seconds() < GUARD_IDLE_S:
+                        await asyncio.sleep(2.0)
     passed = sum(1 for r in rows if r["passed"])
     lines = [f"# Q15 run {time.strftime('%Y-%m-%d %H:%M')}", "", f"{passed} of {len(rows)} cases passed", ""]
     lines.append("| rep | case | passed | failed checks |")

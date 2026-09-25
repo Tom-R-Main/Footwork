@@ -173,6 +173,60 @@ with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s,
 about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per
 command at no visible cost.
 
+## Running alongside a person (added 2026-09-25)
+
+The Codex comparison and its review (2026-09-25) separated two milestones. Background-capable
+primitives, which footwork had, are not the same as a guarantee that a task stays in the background,
+which it did not have. The end state is a harness that can promise a task will run alongside you,
+with a test behind each promise.
+
+Found at bbba8d5:
+- a silent foreground fallback on the keyboard ambiguity;
+- `append` rebuilding the document from the model's 480-character preview (destructive);
+- compound steps that let go of the target (an unchecked focusing click before Return, a scroll to
+  an untargeted screen point, a hover that moved the real pointer);
+- a menu route that left the agent's window in front.
+
+Measured on this Mac while fixing them:
+- **The Driver strips trailing whitespace from AXValue.** TextEdit's own value is exact, so exact
+  reads go through `jevdual.ax`.
+- **An element token does not lift `same_pid_keyboard_ambiguity`**, and a one-window process takes
+  background keys.
+- **A background Return to TextEdit came back "confirmed" and inserted nothing.** Only our readback
+  decides.
+- **Posted HID events reset the idle counters**, so a scripted person registers as a real one.
+
+**Execution posture** (`jevdual.posture`) is declared per session and enforced at dispatch, beside
+the authorizer:
+- `background_only`: the operator's default.
+- `foreground_permitted`: the foreground only after 3 s idle, handed back afterwards, never fighting
+  a move the person made.
+- `exclusive_desktop`: the evaluation runner.
+
+A step the posture will not take returns `requires_foreground`, `requires_desktop` or
+`human_active` with `dispatched=False`.
+
+### The promises and the tests behind them
+
+| promise | unit test (`tests/test_posture.py`) | live case (Q15) |
+|---|---|---|
+| each mode permits exactly its deliveries; foreground yields to recent input | `test_policy_matrix` | C4a |
+| background_only never sends a foreground step; a typed refusal says so | `test_background_only_never_fronts_hotkey_or_menu` | C1 (the hotkey) |
+| the keyboard ambiguity is never escalated silently | `test_ambiguity_is_not_silently_escalated`, `test_foreground_permitted_escalates_only_when_idle` | C2 |
+| a foreground step records the front before and after and hands it back only when ours still holds it | `test_foreground_receipt_reports_front_app_not_restored`, `test_menu_hands_the_front_back_but_never_fights_the_person` | C4b, C4c |
+| compound steps keep the target (enter, scroll) and pointer moves are desktop-scoped | `test_enter_is_one_driver_call_carrying_the_element`, `test_scroll_is_aimed_at_the_element_and_falls_back_through_the_posture`, `test_hover_is_desktop_scoped` | C1 (scroll, no pointer move) |
+| append keeps the old text exactly and never writes the whole field | `test_append_preserves_existing_content_exactly` (six documents) | C1, C5 |
+| a field changed since the decision, or between the read and the write, is refused before writing | `test_append_refuses_when_the_field_changed_since_the_decision`, `test_append_refuses_an_edit_between_read_and_insert` | C5 |
+| an append that does not read back exactly is `partial`, never `confirmed` | `test_append_reports_partial_when_readback_differs` | |
+| the model's preview is not execution data | `test_values_are_whole_and_the_preview_is_not_execution_data` | |
+| a target that moved, was relabelled or changed state since the look is refused (live check) | `test_live_check_*` | C5 |
+| navigate never types a URL into the person's tab | `test_navigate_never_types_into_the_current_tab_when_new_tab_is_not_sent` | |
+| web fields are typed by insertion and confirmed only by readback | `test_web_fields_*` | |
+| the person's work, input and focus survive another app, another document of the same process, another tab of the same window | | C1, C2, C3 |
+
+Q15 runs each case three times and requires every check. A promise whose case fails is withdrawn or
+fixed, never averaged. Results are appended to `docs/experiments/Q15.md`.
+
 ## Phases
 
 **P1. Q12, receipts.** Build: `jevdual.receipts` with one frozen `Receipt(action, label, route,
