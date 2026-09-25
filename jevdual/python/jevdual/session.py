@@ -245,7 +245,12 @@ async def cmd_start(args: Any) -> int:
         return await _start_browser(args, d)
     driver = CuaDriver.create()
     try:
-        pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
+        try:
+            pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
+        except LookupError as exc:
+            # not running, installed but not running, or no on-screen window: say which, no traceback
+            print(f"not starting: {exc}", file=sys.stderr)
+            return 2
         state = SessionState(
             dir=str(d),
             app=args.app,
