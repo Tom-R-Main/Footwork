@@ -297,7 +297,7 @@ def test_bridge_hotkey_goes_foreground_and_records_it(snapshot, monkeypatch):
         def watch(self):
             from types import SimpleNamespace
 
-            return SimpleNamespace(fronts=[], stop=lambda: [])
+            return SimpleNamespace(fronts=[], stop=list)
 
     policy = ExecutionPolicy("foreground_permitted", activity=Idle())
     bridge = NativeBridge(D(snapshot), pid=1, window_id=2, policy=policy)

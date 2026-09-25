@@ -41,13 +41,9 @@ class Activity:
     def watch(self):
         during = self.during
 
-        class W:
-            fronts = list(during)
+        from types import SimpleNamespace
 
-            def stop(self):
-                return list(during)
-
-        return W()
+        return SimpleNamespace(fronts=list(during), stop=lambda: list(during))
 
 
 def _ok(effect: str = "CONFIRMED", route: str = "ACCESSIBILITY", mode: str = "BACKGROUND"):
@@ -174,7 +170,7 @@ class FakeAX:
 
     focused = 2
     menu_error: str | None = None
-    pressed: list = []
+    pressed: tuple = ()
 
     def focused_window_id(self, pid):
         return self.focused
@@ -185,7 +181,7 @@ class FakeAX:
     def press_menu(self, pid, path):
         if self.menu_error:
             raise self.AXError(self.menu_error, "no such item")
-        self.pressed = [*self.pressed, list(path)]
+        self.pressed = (*self.pressed, list(path))
 
     def resolve(self, pid, window_id, role, frame):
         assert (pid, window_id, role) == (1, 2, "AXTextArea")
@@ -509,7 +505,7 @@ def test_menu_hands_the_front_back_but_never_fights_the_person():
     b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 77), during=(77, 1), ax=ax)
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
-    assert ax.pressed == [["Edit", "Select All"]] and eff.dispatched and eff.route == "accessibility"
+    assert ax.pressed == (["Edit", "Select All"],) and eff.dispatched and eff.route == "accessibility"
     assert eff.foreground["handed_back"] == 77 and b.policy.activity.activated == [1, 77]
     assert ax.raised == [(1, 2)] and "invoke_menu" not in d.names() and "bring_to_front" not in d.names()
     # something re-took the front after the person moved to 99: it goes to 99, not back to 77
@@ -535,7 +531,7 @@ def test_menu_is_not_pressed_unless_the_bound_window_is_key():
     b = bridge_for(d, "foreground_permitted", fronts=(77, 1), ax=ax)
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
-    assert eff.error_code == "not_key" and not eff.dispatched and ax.pressed == []
+    assert eff.error_code == "not_key" and not eff.dispatched and ax.pressed == ()
 
 
 def test_invoke_menu_only_in_exclusive_desktop():
