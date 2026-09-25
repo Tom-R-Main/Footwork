@@ -47,6 +47,28 @@ progress, at no loss of verified completions and no effect beyond granted author
 The table is the conformance manifest: each row is a rule, each cell a test that either exists or
 is named by the phase that adds it. Rows are added only with a test.
 
+## The operator's experience (added 2026-09-25)
+
+A second agent experience sits above the driver's: an operator (a person, or another agent such as
+a Claude Code session) pointing jevdual at a real job. One such session tried to drive Chrome to
+the Apple developer portal through `scripts/spike_native.py` on 2026-09-25 and reported what it
+met. Its findings, verbatim in substance, each with the phase that answers it:
+
+| finding | answer | phase |
+|---|---|---|
+| no way to just give it a task: eight steps of reading code before a runnable command | a `footwork run --app <App> "<task>"` entry point with defaults (guarded arm, receipts, trace, screenshots) | P0 |
+| the native menu carries duplicates and unnamed items (two "New Tab", two `button 'button'`) | dedupe by role, label and frame; drop unnamed controls unless they carry an identifier hint | P0, P4 |
+| no way to open a URL in native mode: the address bar has to be driven through the menu | a `navigate` operation on the native backend (Chrome and Safari open a URL from the menu bar or AppleScript, verified by the window title) | P0 |
+| no way to pre-authorize the one approved change: `authorize.py` exists, the script ignores it, so every save pauses | `--authorize "<label>"` on the entry point, the same scoped authorization the runner gives tasks | P0 |
+| a sign-in prompt ends the run as "paused"; there is no hand-back-and-resume | the pause returns a resumable run: the operator does the sign-in, the run continues from its ledger and trace (delivery custody, in the Legible Loop's terms) | P0 |
+| the JSONL log has no screenshots, so the operator cannot show what it saw | a screenshot per step beside the trace, redacted like the trace | P0 |
+| web pages read through the accessibility tree are thinner than the DOM, and the browser backend opens its own unsigned-in browser | P6 decides which input path the browser gets; until then the entry point can attach the DOM backend to a signed-in Chrome profile | P6 |
+
+**P0, the operator surface.** These are not experiments; none needs a Q. They are the product-side
+half of the Legible Loop's rule, applied to the person or agent holding the harness: do not make
+the operator infer what the harness could declare. P0 is scheduled before P3 so that Q11b and Q13
+run through the same entry point an operator would use.
+
 ## Phases
 
 **P1. Q12, receipts.** Build: `jevdual.receipts` with one frozen `Receipt(action, label, route,

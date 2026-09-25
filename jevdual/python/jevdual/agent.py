@@ -48,9 +48,19 @@ class DualProcessAgent(Agent):
         authorized_destructive: bool = False,
         authorized_actions: tuple[str, ...] = (),
         rejection_feedback: Any = None,
+        receipts: str = "off",
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        #: Q12: "off" (as before), "record" (a Receipt per step in ``self.receipts``, trace only) or
+        #: "deliver" (also appended to the step's action result for the driver and put on the
+        #: verifier's trajectory line). jevdual.receipts.
+        if receipts not in ("off", "record", "deliver"):
+            raise ValueError(f"receipts must be off, record or deliver, not {receipts!r}")
+        self.receipts_mode = receipts
+        self.receipts: dict[int, Any] = {}
+        self._pre_step_menu: Any = None
+        self._pre_step_state: Any = None
         self.s1_policy = s1_policy
         #: Pre-dispatch gate for BOTH systems: an index-bearing action whose target label matches a
         #: destructive keyword is replaced by a failed done asking for confirmation, unless the task
@@ -377,8 +387,56 @@ class DualProcessAgent(Agent):
                     )
                 ]
         await super()._execute_actions()
+        if getattr(self, "receipts_mode", "off") != "off":
+            await self._issue_receipt()
+
+    async def _issue_receipt(self) -> None:
+        """Q12: one Receipt for the step just executed, from the state after it. One extra DOM read
+        per step (no screenshot); the next step's own read is unchanged."""
+        from jevdual.effects import diff
+        from jevdual.menu import build_menu
+        from jevdual.receipts import action_lines, receipt_from_effect, receipt_text
+
+        step = self.state.n_steps
+        results = list(self.state.last_result or [])
+        out = self.state.last_model_output
+        if self._pre_step_menu is None or not results or out is None or any(r.is_done for r in results):
+            return
+        try:
+            after = await self.browser_session.get_browser_state_summary(include_screenshot=False)
+            menu = build_menu(after)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("step %s: post-step state failed, no receipt: %s", step, exc)
+            return
+        effect = diff(self._pre_step_menu, menu)
+        error = next((r.error for r in results if r.error), None)
+        receipt = receipt_from_effect(
+            step,
+            action_lines(list(out.action), self._pre_step_state),
+            effect,
+            url_after=getattr(after, "url", "") or "",
+            error=error,
+        )
+        self.receipts[step] = receipt
+        log.info("step %s: receipt %s: %s", step, receipt.effect, receipt.evidence)
+        if self.receipts_mode == "deliver":
+            last = results[-1]
+            text = receipt_text(receipt)
+            prior = last.long_term_memory or (
+                last.extracted_content if not last.include_extracted_content_only_once else None
+            )
+            last.long_term_memory = f"{prior} | {text}" if prior else text
 
     async def _get_next_action(self, browser_state_summary: BrowserStateSummary) -> None:
+        if getattr(self, "receipts_mode", "off") != "off":
+            from jevdual.menu import build_menu
+
+            try:
+                self._pre_step_menu = build_menu(browser_state_summary)
+                self._pre_step_state = browser_state_summary
+            except Exception as exc:  # noqa: BLE001 - no receipt is better than a wrong one
+                log.warning("step %s: pre-step menu failed, no receipt: %s", self.state.n_steps, exc)
+                self._pre_step_menu = None
         if self.s1_policy is None:
             self.s2_steps += 1
             self.step_systems[self.state.n_steps] = "s2"

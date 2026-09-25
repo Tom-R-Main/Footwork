@@ -157,3 +157,50 @@ async def test_evaluate_pauses_at_once(httpserver):
         for n in a.model_dump(exclude_unset=True)
     ]
     assert names == ["done"]
+
+
+NOOP_PAGE = (
+    "<html><body><h1>Shop</h1><button id='add' type='button'>Add to cart</button>"
+    "<a href='/cart'>Cart</a></body></html>"
+)
+
+
+async def test_receipt_names_a_click_that_changed_nothing_and_reaches_the_driver(httpserver):
+    """Q12: a click on a button with no handler is a suspected no-op; in deliver mode the receipt is
+    appended to the step's result (what the driver reads next) and the verifier's trajectory line; in
+    record mode it is in ``agent.receipts`` only."""
+    httpserver.expect_request("/shop").respond_with_data(NOOP_PAGE, content_type="text/html")
+    httpserver.expect_request("/cart").respond_with_data(
+        "<html><body><h1>Cart</h1></body></html>", content_type="text/html"
+    )
+    for mode in ("deliver", "record"):
+        # browser-use numbers backend nodes, not visible controls: the button is index 8 on this page
+        # (probed with a bare BrowserSession); the assertion on the interacted node guards the guess
+        llm = create_mock_llm([step({"click": {"index": 8}}), done("stopped", success=False)])
+        agent = DualProcessAgent(
+            task="Add the item to the cart.",
+            llm=llm,
+            browser_profile=BrowserProfile(headless=True),
+            calculate_cost=False,
+            receipts=mode,
+        )
+        try:
+            await agent.browser_session.start()
+            await agent.browser_session.navigate_to(httpserver.url_for("/shop"))
+            history = await agent.run(max_steps=3)
+        finally:
+            await agent.close()
+        first = history.history[0]
+        clicked = (first.state.interacted_element or [None])[0]
+        assert clicked is not None and clicked.node_name.upper() == "BUTTON", clicked
+        receipt = agent.receipts[1]
+        assert receipt.effect == "suspected_noop", receipt
+        assert receipt.actions[0].startswith("click(")
+        memory = first.result[-1].long_term_memory or ""
+        if mode == "deliver":
+            assert "suspected no-op" in memory and "text unchanged" in memory
+            from jevdual.ledger import trajectory_from_agent
+
+            assert trajectory_from_agent(agent)[0]["actions"][0].endswith("-> suspected_noop")
+        else:
+            assert "suspected no-op" not in memory

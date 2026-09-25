@@ -44,6 +44,7 @@ Arm = Literal[
     "guarded",
     "guarded_declared",
     "guarded_legible",
+    "guarded_receipts",
     "delegate",
     "delegate_evidence",
     "scripted",
@@ -57,14 +58,26 @@ ARMS: tuple[Arm, ...] = (
     "guarded",
     "guarded_declared",
     "guarded_legible",
+    "guarded_receipts",
     "delegate",
     "delegate_evidence",
     "scripted",
 )
-S2_ARMS = ("dual", "guarded", "guarded_declared", "guarded_legible", "delegate", "delegate_evidence")
+S2_ARMS = (
+    "dual",
+    "guarded",
+    "guarded_declared",
+    "guarded_legible",
+    "guarded_receipts",
+    "delegate",
+    "delegate_evidence",
+)
 #: Q11: the guarded arm and its declaration ablations. Enforcement is identical across the three; only
 #: what System 2 is told changes (jevdual.contract).
-GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible")
+GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible", "guarded_receipts")
+#: Q12: the receipt arm delivers each step's receipt to the driver and the verifier; the silent
+#: guarded arm records receipts in the trace only (jevdual.receipts).
+RECEIPT_ARMS = ("guarded_receipts",)
 DECLARED_ARMS = ("guarded_declared", "guarded_legible")
 #: arms the CLI builds the default policy factory for: every arm with a System 1 policy behind it
 POLICY_ARMS = ("s1_only", *S2_ARMS)
@@ -235,6 +248,23 @@ def decide_passed(
     return evaluate(task.predicate, end)
 
 
+def _terminal_mode(end: EndState, paused: bool, error: str | None) -> str:
+    """Q12: how the run ended. ``done_claimed`` is a done with success=True (verified or not is the
+    predicate's business), ``done_stopped`` the driver's own success=False stop, ``unverified`` the
+    third refused done, ``cap`` the step limit, ``paused`` the gate, ``error`` a crash."""
+    if error is not None:
+        return "error"
+    if paused:
+        return "paused"
+    if end.is_done and str(end.answer or "").startswith("UNVERIFIED"):
+        return "unverified"
+    if end.is_done and end.success is True:
+        return "done_claimed"
+    if end.is_done:
+        return "done_stopped"
+    return "cap"
+
+
 class _EndStateCapture:
     """browser-use closes the session when run() returns, so the end state is captured
     from the on_step_end hook and the last capture wins. Predicates read innerText because
@@ -280,6 +310,7 @@ def _write_trace(
 ) -> None:
     systems = getattr(agent, "step_systems", {})
     s1_records = getattr(agent, "s1_records", {})
+    receipts = getattr(agent, "receipts", {}) or {}
     with TraceWriter(path, redactor=redactor) as w:
         w.write(
             RunHeader(
@@ -325,6 +356,8 @@ def _write_trace(
                     executed=actions,
                     result_error=next((r.error for r in h.result if r.error), None),
                     is_done=any(r.is_done for r in h.result),
+                    effect=(f"{receipts[i].effect}: {receipts[i].evidence}" if i in receipts else None),
+                    no_effect=bool(i in receipts and receipts[i].no_effect),
                     memory_line=h.model_output.memory if h.model_output else None,
                     menu=menu,
                     verify=verify,
@@ -494,6 +527,7 @@ async def _run_task_once(
             authorized_destructive=task.authorize,
             authorized_actions=task.authorized_actions,
             rejection_feedback=feedback,
+            receipts="deliver" if arm in RECEIPT_ARMS else ("record" if arm in GUARDED_ARMS else "off"),
             # the upstream judge runs on the System 2 model after the run; nothing to judge with on S1-only
             use_judge=llm is not None and arm in S2_ARMS,
             ground_truth=task.judge_ground_truth,
@@ -574,6 +608,10 @@ async def _run_task_once(
         is_done=end.is_done,
         success=end.success,
         paused=paused,
+        terminal_mode=_terminal_mode(end, paused, error),
+        checkpoints_reached=len(task.checkpoints) - len(checkpoints_missed(task, end)),
+        receipts=tuple(r.effect for _, r in sorted(getattr(agent, "receipts", {}).items())),
+        noop_receipts=sum(1 for r in getattr(agent, "receipts", {}).values() if r.no_effect),
         done_rejections=getattr(agent, "s2_done_rejections", 0),
         done_rejection_reasons=tuple(
             f"({v.get('band')}) {v.get('reason', '')}"
@@ -676,6 +714,7 @@ def load_partial(out_dir: Path) -> list[TaskResult]:
     for r in rows:
         r["tags"] = tuple(r.get("tags") or ())
         r["done_rejection_reasons"] = tuple(r.get("done_rejection_reasons") or ())
+        r["receipts"] = tuple(r.get("receipts") or ())
         out.append(TaskResult(**r))
     return out
 

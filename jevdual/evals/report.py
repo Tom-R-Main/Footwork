@@ -53,6 +53,12 @@ class TaskResult:
     #: Q11: System 2 dones the verifier refused in this run, and the verifier's reason for each
     done_rejections: int = 0
     done_rejection_reasons: tuple[str, ...] = ()
+    #: Q12: how the run ended (evals.runner._terminal_mode), checkpoints reached, and the receipt
+    #: effect word per step with the count of suspected no-ops
+    terminal_mode: str = ""
+    checkpoints_reached: int = 0
+    receipts: tuple[str, ...] = ()
+    noop_receipts: int = 0
 
     @property
     def cost_usd(self) -> float:

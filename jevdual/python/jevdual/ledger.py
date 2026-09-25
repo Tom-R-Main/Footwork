@@ -64,6 +64,9 @@ def trajectory_from_agent(
     """Per-step summary of the run so far, oldest first, at most ``max_steps`` most recent steps."""
     red = redact or (lambda s: s)
     history = getattr(getattr(agent, "history", None), "history", None) or []
+    # Q12: receipts reach the verifier only when they reach the driver (the receipt arm), so the
+    # silent arm's verifier sees exactly what it saw before.
+    receipts = getattr(agent, "receipts", {}) if getattr(agent, "receipts_mode", "off") == "deliver" else {}
     out: list[dict[str, Any]] = []
     for i, h in enumerate(history, start=1):
         model_output = getattr(h, "model_output", None)
@@ -77,11 +80,16 @@ def trajectory_from_agent(
             except Exception:  # noqa: BLE001 - a malformed action must not break verification
                 lines.append("?")
         errors = [r.error for r in (getattr(h, "result", None) or []) if getattr(r, "error", None)]
+        receipt = receipts.get(i)
+        if receipt is not None and lines:
+            lines[-1] = f"{lines[-1]} -> {receipt.effect}"
         entry: dict[str, Any] = {
             "step": i,
             "url": red(getattr(getattr(h, "state", None), "url", "") or ""),
             "actions": lines,
         }
+        if receipt is not None:
+            entry["effect"] = red(receipt.evidence)[:160]
         memory = getattr(model_output, "memory", None)
         if memory:
             entry["note"] = red(str(memory))[:200]

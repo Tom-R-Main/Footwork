@@ -26,12 +26,14 @@ FIELDS = (
     "llm_calls",
     "llm_requests",
     "done_rejections",
+    "noop_receipts",
+    "checkpoints_reached",
     "jev_calls",
     "cost",
     "wall_s",
     "unverified",
 )
-HIGHER_IS_BETTER = ("passed", "verified")
+HIGHER_IS_BETTER = ("passed", "verified", "checkpoints_reached")
 
 
 def _rows(run_dir: Path, arm: str) -> dict[str, dict[str, Any]]:
