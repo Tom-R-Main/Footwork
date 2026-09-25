@@ -291,6 +291,14 @@ def test_bridge_menu_and_hotkey_go_foreground_and_record_it(snapshot, monkeypatc
         def frontmost_pid(self):
             return 77
 
+        def activate(self, pid):
+            return True
+
+        def watch(self):
+            from types import SimpleNamespace
+
+            return SimpleNamespace(fronts=[], stop=lambda: [])
+
     policy = ExecutionPolicy("foreground_permitted", activity=Idle())
     bridge = NativeBridge(D(snapshot), pid=1, window_id=2, policy=policy)
     nm = asyncio.run(bridge.observe())

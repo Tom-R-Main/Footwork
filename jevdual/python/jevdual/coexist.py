@@ -39,7 +39,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, ClassVar
 
-from jevdual.posture import ExecutionPolicy, MacActivity, frontmost_pid
+from jevdual.posture import ExecutionPolicy, MacActivity, activate, frontmost_pid
 
 GUARD_IDLE_S = float(os.environ.get("FOOTWORK_Q15_IDLE_S", "20"))
 BETWEEN_S = 1.0
@@ -96,10 +96,10 @@ class Person(threading.Thread):
         self.start_after = start_after
         self.sent = ""
         self.held: list[tuple[str, int | None]] = []
-        self._stop = threading.Event()
+        self._halt = threading.Event()
 
     def stop(self) -> None:
-        self._stop.set()
+        self._halt.set()
 
     @staticmethod
     def post(ch: str) -> None:
@@ -117,7 +117,7 @@ class Person(threading.Thread):
         if self.start_after:
             time.sleep(self.start_after)
         for ch in self.text:
-            if self._stop.is_set():
+            if self._halt.is_set():
                 break
             front = frontmost_pid()
             if front != self.pid:
@@ -250,10 +250,12 @@ class TextEditInstance:
 
 async def front(driver: Any, pid: int, window_id: int | None = None, *, timeout: float = 3.0) -> None:
     """Bring ``pid`` to the front for the person (setup only, before the case's clock starts)."""
-    args: dict[str, Any] = {"pid": pid}
-    if window_id is not None:
-        args["window_id"] = window_id
-    await driver.call_tool("bring_to_front", json.dumps(args))
+    if window_id is None:
+        # exact pid: the Driver's bring_to_front resolves by bundle and picked the wrong one of two
+        # Python processes (2026-09-25)
+        await asyncio.to_thread(activate, pid)
+    else:
+        await driver.call_tool("bring_to_front", json.dumps({"pid": pid, "window_id": window_id}))
     t0 = time.time()
     while time.time() - t0 < timeout:
         if frontmost_pid() == pid:
@@ -331,7 +333,7 @@ class Watch:
 
 # ---- the cases -----------------------------------------------------------------------------------
 
-PERSON_TEXT = "the person keeps typing their own notes while the agent works nearby. "
+PERSON_TEXT = "The person keeps typing their own notes while the agent works nearby. "
 DOC = "".join(("\t" * (i % 3)) + f"line {i:03d}  two  spaces 🧪\n" for i in range(120)) + "tail  \n\n  "
 
 
@@ -555,7 +557,7 @@ async def case_foreground_permitted(driver: Any, work: Path) -> CaseResult:
                 if await asyncio.to_thread(frontmost_pid) == te.pid:
                     break
                 await asyncio.sleep(0.005)
-            await driver.call_tool("bring_to_front", json.dumps({"pid": tk2.pid}))
+            await asyncio.to_thread(activate, tk2.pid)
 
         mover = asyncio.create_task(move())
         moved_step = await step(r, "menu", b.menu(nm, ["Edit", "Select All"]))
@@ -670,8 +672,8 @@ async def case_background_tab(driver_unused: Any, work: Path) -> CaseResult:
             "--no-first-run",
             "--no-default-browser-check",
             "--window-size=1000,700",
-            f"{base}/b",
             f"{base}/a",
+            f"{base}/b",
         ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -702,6 +704,8 @@ async def case_background_tab(driver_unused: Any, work: Path) -> CaseResult:
         r.details["tabs"] = [{k: t.get(k) for k in ("tab_id", "active", "title", "url")} for t in tabs]
         tab_b = next(t for t in tabs if "/b" in str(t.get("url", "")) or t.get("title") == "agent tab")
         tab_a_active = any(t.get("active") and "/a" in str(t.get("url", "")) for t in tabs)
+        if not tab_a_active:
+            raise RuntimeError(f"setup: the person's tab is not the selected tab ({r.details['tabs']})")
         bridge.tab_id = tab_b["tab_id"]
         await front(driver, pid, w.window_id)
         await asyncio.sleep(0.5)

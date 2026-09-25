@@ -683,16 +683,15 @@ class NativeBridge:
             outcome = await call()
         except Exception as exc:  # noqa: BLE001 - refusal is evidence
             outcome = exc
-        # Give the front back when our window still holds it (bring_to_front leaves it there). When the
-        # person has moved to a third app meanwhile, that is their choice: never fight it.
-        front_before = before.get("front_before")
-        now = self.policy._activity().frontmost_pid()
-        if now == self.pid and front_before not in (None, self.pid):
-            try:
-                await self.driver.call_tool("bring_to_front", json.dumps({"pid": front_before}))
-                before = {**before, "handed_back": front_before}
-            except Exception as exc:  # noqa: BLE001 - reported on the receipt, never retried
-                before = {**before, "hand_back_failed": str(exc)[:80]}
+        # Give the front back when our window still holds it (bring_to_front leaves it there, and
+        # invoke_menu re-activated our app 34 ms after the person had moved away, Q15 smoke 2026-09-25).
+        # It goes to the person's latest choice during the step, never to where they were before it.
+        act = self.policy._activity()
+        if act.frontmost_pid() == self.pid:
+            target = self.policy.persons_choice(self.pid, before.get("front_before"))
+            if target not in (None, self.pid):
+                ok = act.activate(int(target))  # type: ignore[arg-type]
+                before = {**before, "handed_back": target, "hand_back_ok": ok}
         rec = self.policy.after_foreground(before)
         eff = self._effect(operation, target, label, outcome, "foreground")
         note = "front app restored" if rec.get("restored") else "front app changed"

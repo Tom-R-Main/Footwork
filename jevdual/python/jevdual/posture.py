@@ -54,6 +54,38 @@ class Activity(Protocol):
 
     def frontmost_pid(self) -> int | None: ...
 
+    def activate(self, pid: int) -> bool: ...
+
+    def watch(self) -> FrontWatch: ...
+
+
+class FrontWatch:
+    """The front app sampled every 20 ms while a foreground step runs, so the step can tell where the
+    person went during it (a front-before read alone cannot: it predates their move)."""
+
+    def __init__(self, read: object = None) -> None:
+        import threading
+
+        self.fronts: list[int | None] = []
+        self._read = read or frontmost_pid
+        self._halt = threading.Event()
+        self._t = threading.Thread(target=self._run, daemon=True)
+        self._t.start()
+
+    def _run(self) -> None:
+        import time
+
+        while not self._halt.is_set():
+            f = self._read()  # type: ignore[operator]
+            if not self.fronts or self.fronts[-1] != f:
+                self.fronts.append(f)
+            time.sleep(0.02)
+
+    def stop(self) -> list[int | None]:
+        self._halt.set()
+        self._t.join(timeout=1)
+        return self.fronts
+
 
 class MacActivity:
     """The HID system's idle counter and LaunchServices' front app. Posted HID events count as input
@@ -71,6 +103,30 @@ class MacActivity:
 
     def frontmost_pid(self) -> int | None:
         return frontmost_pid()
+
+    def activate(self, pid: int) -> bool:
+        """Activate exactly this process. The Driver's ``bring_to_front`` resolves an app by bundle and
+        activated the wrong one of two Python processes (2026-09-25); NSRunningApplication takes the pid."""
+        return activate(pid)
+
+    def watch(self) -> FrontWatch:
+        return FrontWatch()
+
+
+def activate(pid: int) -> bool:
+    import time
+
+    from AppKit import NSRunningApplication
+
+    app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
+    if app is None:
+        return False
+    app.activateWithOptions_(1 << 1)  # NSApplicationActivateIgnoringOtherApps
+    for _ in range(25):
+        if frontmost_pid() == pid:
+            return True
+        time.sleep(0.02)
+    return False
 
 
 def frontmost_pid() -> int | None:
@@ -133,15 +189,32 @@ class ExecutionPolicy:
         return None
 
     def before_foreground(self) -> dict[str, object]:
-        """What the receipt records about a foreground step, read just before it."""
+        """What the receipt records about a foreground step, read just before it; the front app is sampled
+        from here until ``after_foreground``."""
         act = self._activity()
+        self._watch = act.watch()
         return {"front_before": act.frontmost_pid(), "idle_before": round(act.idle_seconds(), 3)}
+
+    def persons_choice(self, own_pid: int, front_before: object) -> object:
+        """Where the person last went during the step: the last app other than ours seen in front after
+        ours first took it, else the app that was in front before the step."""
+        fronts = list(getattr(getattr(self, "_watch", None), "fronts", []) or [])
+        if own_pid in fronts:
+            after = fronts[fronts.index(own_pid) + 1 :]
+            others = [f for f in after if f not in (None, own_pid)]
+            if others:
+                return others[-1]
+        return front_before
 
     def after_foreground(self, before: dict[str, object]) -> dict[str, object]:
         """Front app after the step and whether the person gave input during it (idle shorter than the
         time since ``before`` was read cannot be told apart from our own events, so it is reported, never
         counted as success)."""
         act = self._activity()
+        watch = getattr(self, "_watch", None)
+        if watch is not None:
+            before = {**before, "fronts_during": watch.stop()}
+            self._watch = None
         rec = {**before, "front_after": act.frontmost_pid(), "idle_after": round(act.idle_seconds(), 3)}
         rec["restored"] = rec["front_after"] == rec["front_before"]
         self.foreground_log.append(rec)

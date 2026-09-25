@@ -19,15 +19,35 @@ from jevdual.posture import ExecutionPolicy
 
 
 class Activity:
-    def __init__(self, idle: float = 60.0, fronts: tuple[int, ...] = (77,)):
+    """Idle seconds, a scripted sequence of front pids (the last repeats), the fronts a foreground step
+    would sample while it runs, and the activations the bridge asked for."""
+
+    def __init__(self, idle: float = 60.0, fronts: tuple[int, ...] = (77,), during: tuple[int, ...] = ()):
         self.idle = idle
         self.fronts = list(fronts)
+        self.during = list(during)
+        self.activated: list[int] = []
 
     def idle_seconds(self) -> float:
         return self.idle
 
     def frontmost_pid(self) -> int:
         return self.fronts.pop(0) if len(self.fronts) > 1 else self.fronts[0]
+
+    def activate(self, pid: int) -> bool:
+        self.activated.append(pid)
+        return True
+
+    def watch(self):
+        during = self.during
+
+        class W:
+            fronts = list(during)
+
+            def stop(self):
+                return list(during)
+
+        return W()
 
 
 def _ok(effect: str = "CONFIRMED", route: str = "ACCESSIBILITY", mode: str = "BACKGROUND"):
@@ -189,8 +209,10 @@ def run(coro):
     return asyncio.run(coro)
 
 
-def bridge_for(driver, mode="background_only", *, idle=60.0, fronts=(77,), ax=None, live_check=False):
-    policy = ExecutionPolicy(mode, activity=Activity(idle, fronts))
+def bridge_for(
+    driver, mode="background_only", *, idle=60.0, fronts=(77,), during=(), ax=None, live_check=False
+):
+    policy = ExecutionPolicy(mode, activity=Activity(idle, fronts, during))
     return NativeBridge(driver, 1, 2, policy=policy, ax=ax, live_check=live_check)
 
 
@@ -464,22 +486,29 @@ def test_live_check_append_compares_against_the_decided_text():
 
 
 def test_menu_hands_the_front_back_but_never_fights_the_person():
-    """Promise: a foreground step that leaves our window in front gives the front back to the app that had
-    it; when the person moved to a third app during the step, the bridge leaves their choice alone."""
-    # front before: the person's app 77; after invoke_menu our pid 1 is in front; handed back; 77 again
+    """Promise: a foreground step that leaves our window in front gives the front back, by exact pid, to
+    the person's latest choice during the step (not to where they were before it); when their choice is
+    already in front, nothing is activated."""
+    # before: the person's app 77; after invoke_menu our pid 1 holds the front; handed back to 77
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 77))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 77), during=(77, 1))
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
-    hands = [a for n, a in d.calls if n == "bring_to_front"]
-    assert hands[-1] == {"pid": 77} and eff.foreground["handed_back"] == 77 and eff.foreground["restored"]
-    # the person switched to app 99 during the step: nothing is handed back
-    d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 99, 99))
-    nm = run(b.observe())
-    eff = run(b.menu(nm, ["Edit", "Select All"]))
+    assert eff.foreground["handed_back"] == 77 and b.policy.activity.activated == [77]
     assert [a for n, a in d.calls if n == "bring_to_front"] == [{"pid": 1, "window_id": 2}]
-    assert eff.foreground["front_after"] == 99 and "handed_back" not in eff.foreground
+    # the person moved to 99 during the step and invoke_menu re-took the front: it goes to 99, not 77
+    d = FakeDriver(doc_snapshot("hello"))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 99), during=(77, 1, 99, 1))
+    nm = run(b.observe())
+    eff = run(b.menu(nm, ["Edit", "Select All"]))
+    assert eff.foreground["handed_back"] == 99 and b.policy.activity.activated == [99]
+    # the person's choice already holds the front: nothing is activated
+    d = FakeDriver(doc_snapshot("hello"))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 99, 99), during=(77, 1, 99))
+    nm = run(b.observe())
+    eff = run(b.menu(nm, ["Edit", "Select All"]))
+    assert "handed_back" not in eff.foreground and b.policy.activity.activated == []
+    assert eff.foreground["front_after"] == 99
 
 
 def test_navigate_never_types_into_the_current_tab_when_new_tab_is_not_sent(monkeypatch):
@@ -567,7 +596,9 @@ def test_web_field_with_text_is_selected_first_under_the_posture():
     nm = run(b.observe())
     eff = run(b.act(nm, "type", 7, "Ada"))
     keys = [a for n, a in d.calls if n == "press_key"]
-    assert keys[0]["key"] == "a" and keys[0]["modifiers"] == ["cmd"] and keys[0]["element_token"] == nm.tokens[7]
+    assert (
+        keys[0]["key"] == "a" and keys[0]["modifiers"] == ["cmd"] and keys[0]["element_token"] == nm.tokens[7]
+    )
     assert d.names() == ["press_key", "type_text"] and eff.effect == "confirmed"
 
     d = FakeDriver(_web_snapshot("old"), replies={"press_key": [AMBIG]})
