@@ -345,3 +345,82 @@ def test_prune_drops_unnamed_and_duplicate_controls_and_caps():
     assert 5 in ids  # a text field keeps its role-name label (the value is the content)
     assert len(kept) == NATIVE_MENU_CAP and om["cap"] == 8  # 168 kept before the cap
     assert set(tok) == set(ids) and set(fr) == set(ids)
+
+
+def test_unlabelled_rows_take_their_child_static_text_and_finder_icons_are_files(monkeypatch):
+    """P0 breadth (2026-09-25): System Settings' sidebar rows are AXRow elements whose only text is a
+    child AXStaticText leaf; Finder icon-view items are AXImage elements with AXOpen."""
+    import sys
+    from types import SimpleNamespace
+
+    from jevdual.native import child_text_labels, menu_from_snapshot
+
+    monkeypatch.setitem(sys.modules, "cua_driver", SimpleNamespace())
+    md = (
+        '- [0] AXWindow "Settings"\n'
+        "  - [1] AXOutline\n"
+        "    - [2] AXRow [actions=[showdefaultui]]\n"
+        '      - [3] AXStaticText = "General" [id=x actions=[showmenu]]\n'
+        "    - [4] AXRow [actions=[showdefaultui]]\n"
+        '      - [5] AXStaticText = "About"\n'
+    )
+    assert child_text_labels(md) == {0: "General", 1: "General", 2: "General", 4: "About"}
+    snap = {
+        "snapshot_id": "s1",
+        "pid": 1,
+        "window_id": 2,
+        "app_name": "Finder",
+        "window_title": "scratch",
+        "elements_complete": True,
+        "tree_markdown": md,
+        "elements": [
+            {
+                "element_index": 0,
+                "element_token": "s1:0",
+                "role": "AXWindow",
+                "label": "scratch",
+                "actions": [],
+            },
+            {
+                "element_index": 2,
+                "element_token": "s1:2",
+                "role": "AXRow",
+                "label": "",
+                "actions": ["AXShowDefaultUI"],
+                "parent_index": 0,
+                "enabled": True,
+            },
+            {
+                "element_index": 4,
+                "element_token": "s1:4",
+                "role": "AXRow",
+                "label": "",
+                "actions": ["AXShowDefaultUI"],
+                "parent_index": 0,
+                "enabled": True,
+            },
+            {
+                "element_index": 9,
+                "element_token": "s1:9",
+                "role": "AXImage",
+                "label": "old-name.txt",
+                "actions": ["AXOpen", "AXShowMenu"],
+                "parent_index": 0,
+                "enabled": True,
+            },
+            {
+                "element_index": 10,
+                "element_token": "s1:10",
+                "role": "AXImage",
+                "label": "decoration",
+                "actions": [],
+                "parent_index": 0,
+                "enabled": True,
+            },
+        ],
+    }
+    nm = menu_from_snapshot(snap)
+    by = {c.id: c for c in nm.menu.candidates}
+    assert by[2].label == "General" and by[4].label == "About" and by[2].role == "option"
+    assert by[9].role == "file" and by[9].operations == ("click",)
+    assert 10 not in by  # an image that opens nothing is not a control

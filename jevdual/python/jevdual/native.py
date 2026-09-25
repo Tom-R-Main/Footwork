@@ -248,6 +248,32 @@ def _prune(
     return kept, {i: t for i, t in tokens.items() if i in ids}, {i: f for i, f in frames.items() if i in ids}
 
 
+_TREE_LINE = re.compile(r"^(\s*)- \[(\d+)\] (AX\w+)(.*)$")
+
+
+def child_text_labels(tree_markdown: str | None) -> dict[int, str]:
+    """Element index -> the first static-text leaf beneath it, for controls that carry no label of
+    their own (System Settings' sidebar rows, Finder's sidebar: an AXRow whose only text is a child
+    AXStaticText the Driver renders in the markdown but not in ``elements``)."""
+    out: dict[int, str] = {}
+    stack: list[tuple[int, int]] = []  # (indent, element index) of open ancestors
+    for raw in (tree_markdown or "").splitlines():
+        m = _TREE_LINE.match(raw)
+        if not m:
+            continue
+        indent, idx, role = len(m.group(1)), int(m.group(2)), m.group(3)
+        while stack and stack[-1][0] >= indent:
+            stack.pop()
+        if role == "AXStaticText":
+            t = _STATIC_LINE.search(raw.strip())
+            text = _clean(t.group(1).replace('\\"', '"')) if t else ""
+            if text:
+                for _, anc in stack:
+                    out.setdefault(anc, text)
+        stack.append((indent, idx))
+    return out
+
+
 def menu_from_snapshot(
     snapshot: Any,
     *,
@@ -263,6 +289,7 @@ def menu_from_snapshot(
         if idx is not None:
             by_index[int(idx)] = el
     bounds = _get(snapshot, "window_bounds")
+    child_labels = child_text_labels(_get(snapshot, "tree_markdown"))
     candidates: list[Candidate] = []
     tokens: dict[int, str] = {}
     frames: dict[int, tuple[float, float, float, float]] = {}
@@ -301,6 +328,8 @@ def menu_from_snapshot(
         label = _clean(_get(el, "label"), _LABEL_CAP)
         if not label:
             label = _clean(_get(el, "value_description"), _LABEL_CAP)
+        if not label and role not in _TEXT_ROLES:
+            label = _clean(child_labels.get(int(idx)), _LABEL_CAP)
         if not label and role not in _TEXT_ROLES:
             label = _clean(raw_value, _LABEL_CAP)
         if not label:
@@ -924,7 +953,12 @@ class NativeBridge:
 
         async def call() -> Any:
             await self._front()
-            await asyncio.sleep(0.4)  # activation settles before invoke_menu checks key/frontmost
+            # invoke_menu checks key/frontmost: wait for the activation, not a fixed 0.4 s, so the
+            # interval in which the person's keystrokes would land in this window stays short
+            for _ in range(30):
+                if self.policy._activity().frontmost_pid() == self.pid:
+                    break
+                await asyncio.sleep(0.02)
             return await self.driver.invoke_menu(
                 InvokeMenuInput(pid=self.pid, window_id=self.window_id, path=list(path), session=self.session)
             )

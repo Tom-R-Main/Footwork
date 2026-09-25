@@ -149,6 +149,25 @@ split (System 1 picks the control, System 2 supplies the content). `button:Searc
 that matches two elements. Trusted CDP clicks: six no-op receipts, zero successes in this posture;
 the DOM route is now the browser default and `--route trusted` the opt-in.
 
+**Fourth batch, native breadth under `background_only` (2026-09-25, on the posture bridge ba4c0f9).**
+Every row is what the receipts said; nothing was foregrounded and nothing on the person's desktop
+was changed except a new empty note.
+
+| app | task | what happened |
+|---|---|---|
+| Finder | rename a scratch file | the icon selected (`confirmed`); Return came back `requires_foreground` (Finder owns the Desktop window too); rename is a foreground task |
+| Finder | Move to Trash on a scratch file, the retained decision | the boundary paused on the keyword before dispatch and printed the `--authorize`; with it, the menu dispatch came back `requires_foreground`. Pause and posture are two separate gates and both fired in order |
+| System Settings | open General, About, read the name | sidebar rows were unnamed until the menu builder took each row's child static text (fixed here); a background element click on a row is confirmed by the driver and does not navigate; the search field took text and its results live in a popover outside the window. Read-only kept; task not completed |
+| Notes | new note, add a line | New Note worked; append on the empty body came back `no_value` (no readable AXValue on an empty text view); the verifier rejected the done at p=0.95 unmet. Reported to the bridge's owner |
+| Safari | fill the order form, submit | fields exposed on the second snapshot; `type` into web inputs was a no-op on every field (WebKit takes no AXValue writes), and the receipts said so; the Submit click paused on the judgment at p=0.92, one `--authorize` sent it, and the verifier rejected the empty submission at p=0.83 unmet, which is right |
+
+Two menu-builder changes came out of it: an AXImage that opens is a clickable file (Finder icon
+view), and an unlabelled row takes the first static-text leaf beneath it (`child_text_labels`).
+The honest summary of the accessibility route on macOS after four batches: clicks and AX value
+writes work in the background on native controls; keys need the foreground when the process owns
+more than one window; web content inside Safari takes clicks but not values; the Driver's browser
+mode is the route for the web.
+
 **What a command costs now.** `start` 10 to 13 s (driver, new window, navigate, first observation
 with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s, reobserve); `s1`
 about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per
