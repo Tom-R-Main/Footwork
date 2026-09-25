@@ -579,10 +579,14 @@ async def case_foreground_permitted(driver: Any, work: Path) -> CaseResult:
             got=tk.content(),
             held=p1.held + p2.held,
         )
+        # after the person's move lands, neither the agent's app nor their previous window takes the front
+        seq = [f for _, f in watch.fronts]
+        after_move = seq[seq.index(tk2.pid) :] if tk2.pid in seq else []
         r.check(
             "never_fights_persons_move",
-            front_after_c == tk2.pid and "handed_back" not in (moved_step.foreground or {}),
+            front_after_c == tk2.pid and bool(after_move) and set(after_move) == {tk2.pid},
             front_after=front_after_c,
+            after_move=after_move,
             foreground=moved_step.foreground,
         )
         r.check("person_work_after_move_exact", tk2.content() == p3.text and not p3.held, got=tk2.content())

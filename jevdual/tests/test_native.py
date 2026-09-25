@@ -241,7 +241,7 @@ def test_bridge_refuses_stale_menu_and_dispatches_by_token(snapshot, monkeypatch
     assert native.menu_from_snapshot(snapshot).snapshot_id == nm2.snapshot_id
 
 
-def test_bridge_menu_and_hotkey_go_foreground_and_record_it(snapshot, monkeypatch):
+def test_bridge_hotkey_goes_foreground_and_records_it(snapshot, monkeypatch):
     import sys
 
     calls = []
@@ -301,17 +301,6 @@ def test_bridge_menu_and_hotkey_go_foreground_and_record_it(snapshot, monkeypatc
 
     policy = ExecutionPolicy("foreground_permitted", activity=Idle())
     bridge = NativeBridge(D(snapshot), pid=1, window_id=2, policy=policy)
-    nm = asyncio.run(bridge.observe())
-    eff = asyncio.run(bridge.menu(nm, ["File", "Save"]))
-    assert eff.effect == "confirmed" and eff.summary.startswith("foreground")
-    assert eff.delivery == "foreground" and eff.foreground["restored"] is True
-    assert (
-        calls[0][0] == "bring_to_front"
-        and calls[1][0] == "invoke_menu"
-        and calls[1][1]["path"] == ["File", "Save"]
-    )
-    with pytest.raises(NativeBridgeError):  # one action per snapshot
-        asyncio.run(bridge.menu(nm, ["File", "Save"]))
     nm = asyncio.run(bridge.observe())
     eff = asyncio.run(bridge.hotkey(nm, ["cmd", "s"]))
     assert eff.effect == "unverifiable" and eff.label == "cmd+s" and "foreground" in eff.summary

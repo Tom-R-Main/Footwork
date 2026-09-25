@@ -172,6 +172,18 @@ class FakeAX:
         self.corrupt = corrupt
         self.inserts: list[str] = []
 
+    focused = 2
+    menu_error: str | None = None
+    pressed: list = []
+
+    def focused_window_id(self, pid):
+        return self.focused
+
+    def press_menu(self, pid, path):
+        if self.menu_error:
+            raise self.AXError(self.menu_error, "no such item")
+        self.pressed = [*self.pressed, list(path)]
+
     def resolve(self, pid, window_id, role, frame):
         assert (pid, window_id, role) == (1, 2, "AXTextArea")
         return "el"
@@ -486,29 +498,58 @@ def test_live_check_append_compares_against_the_decided_text():
 
 
 def test_menu_hands_the_front_back_but_never_fights_the_person():
-    """Promise: a foreground step that leaves our window in front gives the front back, by exact pid, to
-    the person's latest choice during the step (not to where they were before it); when their choice is
-    already in front, nothing is activated."""
-    # before: the person's app 77; after invoke_menu our pid 1 holds the front; handed back to 77
+    """Promise: a menu step fronts the bound window, presses through AX (which never re-activates the
+    app) and gives the front back, by exact pid, to the person's latest choice during the step; when
+    their choice already holds the front, nothing is activated."""
+    ax = FakeAX("")
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 77), during=(77, 1))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 77), during=(77, 1), ax=ax)
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
+    assert ax.pressed == [["Edit", "Select All"]] and eff.dispatched and eff.route == "accessibility"
     assert eff.foreground["handed_back"] == 77 and b.policy.activity.activated == [77]
-    assert [a for n, a in d.calls if n == "bring_to_front"] == [{"pid": 1, "window_id": 2}]
-    # the person moved to 99 during the step and invoke_menu re-took the front: it goes to 99, not 77
+    assert "invoke_menu" not in d.names() and [a for n, a in d.calls if n == "bring_to_front"] == [
+        {"pid": 1, "window_id": 2}
+    ]
+    # something re-took the front after the person moved to 99: it goes to 99, not back to 77
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 99), during=(77, 1, 99, 1))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 99), during=(77, 1, 99, 1), ax=FakeAX(""))
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
     assert eff.foreground["handed_back"] == 99 and b.policy.activity.activated == [99]
     # the person's choice already holds the front: nothing is activated
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 99, 99), during=(77, 1, 99))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 99, 99), during=(77, 1, 99), ax=FakeAX(""))
     nm = run(b.observe())
     eff = run(b.menu(nm, ["Edit", "Select All"]))
     assert "handed_back" not in eff.foreground and b.policy.activity.activated == []
-    assert eff.foreground["front_after"] == 99
+
+
+def test_menu_is_not_pressed_unless_the_bound_window_is_key():
+    """Promise: a menu press goes to the app's key window, so when the bound window does not become key
+    (another window of the app is key, or the person took the front) nothing is pressed."""
+    ax = FakeAX("")
+    ax.focused = 999  # another window of the same app is key
+    d = FakeDriver(doc_snapshot("hello"))
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1), ax=ax)
+    nm = run(b.observe())
+    eff = run(b.menu(nm, ["Edit", "Select All"]))
+    assert eff.error_code == "not_key" and not eff.dispatched and ax.pressed == []
+
+
+def test_invoke_menu_only_in_exclusive_desktop():
+    """Promise: the Driver's invoke_menu (which re-activates the app) is used only when the desktop is
+    reserved, and only for a path AX cannot resolve."""
+    for mode, used in (("foreground_permitted", False), ("exclusive_desktop", True)):
+        ax = FakeAX("")
+        ax.menu_error = "menu_missing"
+        d = FakeDriver(doc_snapshot("hello"))
+        b = bridge_for(d, mode, fronts=(77, 1, 1, 1), ax=ax)
+        nm = run(b.observe())
+        eff = run(b.menu(nm, ["Format", "Make Plain Text"]))
+        assert ("invoke_menu" in d.names()) is used
+        if not used:
+            assert eff.error_code == "menu_missing" and not eff.dispatched
 
 
 def test_navigate_never_types_into_the_current_tab_when_new_tab_is_not_sent(monkeypatch):

@@ -149,3 +149,56 @@ def insert_at_end(el: Any, text: str, *, expect: str | None = None) -> tuple[str
     if err != 0:
         raise AXError("insert_refused", f"AXSelectedText write refused ({err})")
     return before, value(el)
+
+
+def focused_window_id(pid: int) -> int | None:
+    """CGWindowID of the process's focused (key) window, or None."""
+    import objc
+    from ApplicationServices import AXUIElementCreateApplication
+
+    w = _attr(AXUIElementCreateApplication(pid), "AXFocusedWindow")
+    if w is None:
+        return None
+    wid = ctypes.c_uint32(0)
+    return wid.value if _hi()(objc.pyobjc_id(w), ctypes.byref(wid)) == 0 else None
+
+
+def _title(el: Any) -> str:
+    t = str(_attr(el, "AXTitle") or "").strip()
+    return t.removesuffix("…").removesuffix("...").strip().casefold()
+
+
+def _menu_items(node: Any) -> list[Any]:
+    role = _attr(node, "AXRole")
+    kids = list(_attr(node, "AXChildren") or ())
+    if role in ("AXMenuBar", "AXMenu"):
+        return kids
+    sub = next((k for k in kids if _attr(k, "AXRole") == "AXMenu"), None)
+    return list(_attr(sub, "AXChildren") or ()) if sub is not None else []
+
+
+def press_menu(pid: int, path: list[str]) -> None:
+    """Press an application menu item by its path through AX. It acts on the app's key window and does
+    nothing while the app is inactive (measured on TextEdit, 2026-09-25: the press returned success and
+    selected nothing in the background, and selected all with the window in front), and it never
+    activates the app itself, unlike the Driver's invoke_menu, which took the front back from a person
+    who had moved away during the step."""
+    from ApplicationServices import AXUIElementCreateApplication, AXUIElementPerformAction
+
+    node = _attr(AXUIElementCreateApplication(pid), "AXMenuBar")
+    if node is None:
+        raise AXError("menu_missing", f"pid {pid} has no menu bar")
+    for depth, name in enumerate(path):
+        want = name.strip().removesuffix("…").removesuffix("...").strip().casefold()
+        hits = [i for i in _menu_items(node) if _title(i) == want]
+        if len(hits) != 1:
+            raise AXError(
+                "menu_missing" if not hits else "menu_ambiguous",
+                f"{len(hits)} menu items titled {name!r} under {' > '.join(path[:depth]) or 'the menu bar'}",
+            )
+        node = hits[0]
+    if _attr(node, "AXEnabled") is False:
+        raise AXError("menu_disabled", f"{' > '.join(path)} is disabled")
+    err = AXUIElementPerformAction(node, "AXPress")
+    if err != 0:
+        raise AXError("press_refused", f"AXPress on {' > '.join(path)} refused ({err})")

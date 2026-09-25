@@ -502,6 +502,14 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
     )
 
 
+_MENU_NOT_PRESSED = frozenset({"not_key", "menu_missing", "menu_ambiguous", "menu_disabled"})
+#: what a menu press through AX returns: delivered, no readback (the receipt's reobservation decides)
+_PRESSED = type(
+    "Pressed",
+    (),
+    {"action": None, "text": "menu item pressed through AX", "is_error": False, "error_code": None},
+)()
+
 #: the Driver's refusal when a process owns several eligible windows and a process-scoped key event
 #: cannot be proven to reach the bound one (measured 2026-09-25: an element token does not lift it)
 AMBIGUITY = "same_pid_keyboard_ambiguity"
@@ -656,7 +664,9 @@ class NativeBridge:
 
     def _effect(self, operation: str, target: int, label: str, outcome: Any, delivery: str) -> NativeEffect:
         if isinstance(outcome, BaseException):
-            code = getattr(outcome, "code", None) or type(outcome).__name__
+            code = (
+                getattr(outcome, "code", None) or getattr(outcome, "reason", None) or type(outcome).__name__
+            )
             return NativeEffect(
                 operation,
                 target,
@@ -995,33 +1005,53 @@ class NativeBridge:
         )
 
     async def menu(self, nm: NativeMenu, path: list[str]) -> NativeEffect:
-        """Invoke an application menu item by path (``["File", "Save"]``) through ``invoke_menu``, which
-        needs the window key and frontmost, so the window is brought to the front first. Asked of the
-        posture first."""
-        from cua_driver import InvokeMenuInput
-
+        """Invoke an application menu item by path (``["File", "Save"]``). A menu action goes to the app's
+        key window and only while the app is active, so this is a foreground step, asked of the posture:
+        the bound window is brought to the front, and once it is the app's key window and the person has
+        not moved away, the item is pressed through AX, which never re-activates the app (the Driver's
+        invoke_menu did, 846 ms after the person had left, Q15 smoke). The front is then handed back.
+        invoke_menu remains the route only in exclusive_desktop, for a path AX cannot resolve."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
         self.last = None
         self.dispatches += 1
         label = " > ".join(path)
+        ax = self.ax
 
         async def call() -> Any:
             await self._front()
-            # invoke_menu checks key/frontmost: wait for the activation, not a fixed 0.4 s, so the
-            # interval in which the person's keystrokes would land in this window stays short
+            act = self.policy._activity()
+            ready = False
             for _ in range(30):
-                if self.policy._activity().frontmost_pid() == self.pid:
+                if act.frontmost_pid() == self.pid and ax.focused_window_id(self.pid) == self.window_id:
+                    ready = True
                     break
                 await asyncio.sleep(0.02)
-            return await self.driver.invoke_menu(
-                InvokeMenuInput(pid=self.pid, window_id=self.window_id, path=list(path), session=self.session)
-            )
+            if not ready:
+                raise NativeBridgeError(
+                    "not_key", "the bound window did not become the key window; not pressed"
+                )
+            try:
+                ax.press_menu(self.pid, list(path))
+            except ax.AXError as exc:
+                if exc.reason == "menu_missing" and self.policy.mode == "exclusive_desktop":
+                    from cua_driver import InvokeMenuInput
+
+                    return await self.driver.invoke_menu(
+                        InvokeMenuInput(
+                            pid=self.pid, window_id=self.window_id, path=list(path), session=self.session
+                        )
+                    )
+                raise
+            return _PRESSED
 
         eff = await self._foreground(
-            "menu", -1, label, call, why=f"menu {label} (invoke_menu needs the window key)"
+            "menu", -1, label, call, why=f"menu {label} (a menu acts on the key window)"
         )
-        return dataclasses.replace(eff, route=eff.route or ("foreground" if eff.dispatched else None))
+        if eff.error_code in _MENU_NOT_PRESSED:
+            # the window took the front but nothing was pressed: say so
+            eff = dataclasses.replace(eff, dispatched=False)
+        return dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of
