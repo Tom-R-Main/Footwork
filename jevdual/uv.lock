@@ -1195,7 +1195,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "browser-use", specifier = "==0.13.10" },
-    { name = "cua-driver", specifier = ">=0.28.2" },
+    { name = "cua-driver", specifier = "==0.28.2" },
     { name = "orjson", specifier = ">=3.10" },
     { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'", specifier = ">=12" },
     { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=12" },

@@ -1,6 +1,6 @@
 # What we take from trycua/cua
 
-Survey date 2026-09-24. Checkout: `external/cua` (git-ignored; MIT except where noted below).
+Survey date 2026-09-24. Checkout: `external/cua` (git-ignored; MIT except where noted below), trycua/cua at `605d358a48ad938a41b384a8f23909153eb73f78` (2026-09-24). The Python SDK jevdual runs against is the `cua-driver==0.28.2` wheel, pinned in `pyproject.toml` with its seams in `tests/contract/test_cua_driver_seams.py`.
 Surveyed: `libs/cua-driver`, `libs/cua-s1`, `libs/cua-bench-s1`, `libs/cua-bench`,
 `libs/python/*`, `rfcs/3931`, `rfcs/2512`, `rfcs/2549`, `rfcs/3007`, `skills/jev-use`.
 
