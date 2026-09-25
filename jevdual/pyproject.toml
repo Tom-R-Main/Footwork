@@ -39,6 +39,9 @@ module-name = "jevdual._core"
 manifest-path = "crates/jevdual-core/Cargo.toml"
 features = ["pyo3/extension-module"]
 
+[project.scripts]
+footwork = "jevdual.cli:main"
+
 [tool.uv]
 cache-keys = [
     { file = "pyproject.toml" },

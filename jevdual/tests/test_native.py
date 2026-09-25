@@ -296,3 +296,41 @@ def test_bridge_menu_and_hotkey_go_foreground_and_record_it(snapshot, monkeypatc
     nm = asyncio.run(bridge.observe())
     eff = asyncio.run(bridge.hotkey(nm, ["cmd", "s"]))
     assert eff.effect == "unverifiable" and eff.label == "cmd+s" and "foreground" in eff.summary
+
+
+def test_page_text_reads_chrome_static_text_with_trailing_attribute_blocks():
+    """P0 (2026-09-25): Chrome's markdown lines end in ``[actions=[...]]``; the old end-anchored regex
+    captured no web text, so the verifier was blind on every web page."""
+    from jevdual.native import _page_text
+
+    md = (
+        '- [1] AXWindow "Account - Apple Developer"\n'
+        '    - [56] AXStaticText = "Team ID" [actions=[press,showmenu,scrolltovisible]]\n'
+        '    - [57] AXStaticText = "2U5KQ6F79H"\n'
+        "    - [66] AXStaticText [actions=[press]]\n"
+        '    - [67] AXStaticText = "He said \\"yes\\"" [actions=[press]]\n'
+    )
+    text = _page_text(md, [], 6000)
+    assert text.splitlines() == ["Team ID", "2U5KQ6F79H", 'He said "yes"']
+
+
+def test_prune_drops_unnamed_and_duplicate_controls_and_caps():
+    from jevdual.menu import Candidate, MenuBudget
+    from jevdual.native import NATIVE_MENU_CAP, _prune
+
+    def c(i, role, label, section=None):
+        return Candidate(id=i, label=label, role=role, operations=("click",), section=section)
+
+    cands = [c(1, "button", "button"), c(2, "button", "More actions"), c(3, "button", "More actions")]
+    cands += [c(4, "button", "More actions", "Row 2"), c(5, "textbox", "textbox")]
+    cands += [c(100 + i, "link", f"link {i}") for i in range(NATIVE_MENU_CAP + 5)]
+    tokens = {x.id: f"t{x.id}" for x in cands}
+    frames = {x.id: (0.0, 0.0, 1.0, 1.0) for x in cands}
+    om: dict[str, int] = {}
+    kept, tok, fr = _prune(cands, tokens, frames, om, MenuBudget())
+    ids = [x.id for x in kept]
+    assert 1 not in ids and om["unnamed"] == 1  # a button called 'button' offers nothing to choose on
+    assert 2 in ids and 3 not in ids and 4 in ids and om["duplicate"] == 1  # same section repeats drop
+    assert 5 in ids  # a text field keeps its role-name label (the value is the content)
+    assert len(kept) == NATIVE_MENU_CAP and om["cap"] == 8  # 168 kept before the cap
+    assert set(tok) == set(ids) and set(fr) == set(ids)

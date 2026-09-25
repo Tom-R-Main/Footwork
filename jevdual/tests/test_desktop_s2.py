@@ -248,3 +248,38 @@ def test_s2_transport_failure_is_a_step_error_not_a_crash(snapshot, stub_sdk):
     chat = ScriptedChat(RuntimeError("503"), {"note": "nothing to do", "action": {"name": "blocked"}})
     run = asyncio.run(_agent(FakeDriver(snapshot), policy, NativeS2(chat)).run())
     assert run.status == "blocked" and run.steps[0].error.startswith("s2 call failed")
+
+
+def test_refused_done_keeps_its_text_for_the_operator(snapshot, monkeypatch):
+    """P0: a run that ends with System 2's done refused twice still reports what System 2 found,
+    marked unverified with the verifier's reason, and the trace carries the text as a proposal."""
+    from tests.test_desktop import SeqPolicy, _decision
+
+    ids = _ids(snapshot)
+    chat = ScriptedChat(
+        {"note": "a", "action": {"name": "done", "answer": "The display shows 1,248"}},
+        {"note": "b", "action": {"name": "done", "answer": "The display shows 1,248"}},
+    )
+
+    class RefusingHook:
+        verifier = None
+
+        async def judge_done(self, agent, menu, answer=None):
+            return "reject", "Display shows 42 unmet with p=0.9"
+
+    policy = SeqPolicy(_decision("click", ids["6"], tconf=0.1), _decision("click", ids["6"], tconf=0.1))
+    agent = NativeAgent(
+        NativeBridge(FakeDriver(snapshot), pid=1, window_id=2),
+        policy,
+        task="t",
+        text_source=lambda t, c, m: None,
+        arbiter=Arbiter.from_toml(),
+        verifier=RefusingHook(),
+        s2=NativeS2(chat),
+    )
+    run = asyncio.run(agent.run())
+    assert run.status == "error" and "done refused" in run.reason
+    assert run.answer == "The display shows 1,248" and run.answer_verified is False
+    assert "unmet" in run.answer_reason
+    refused = [o for o in run.steps if o.proposed and o.proposed[0].name == "done"]
+    assert refused and refused[0].proposed[0].params == {"text": "The display shows 1,248", "success": False}

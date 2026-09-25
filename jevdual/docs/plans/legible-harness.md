@@ -69,6 +69,42 @@ half of the Legible Loop's rule, applied to the person or agent holding the harn
 the operator infer what the harness could declare. P0 is scheduled before P3 so that Q11b and Q13
 run through the same entry point an operator would use.
 
+### Driving it myself (2026-09-25, the same job, timed)
+
+The operator's agent experience was measured by driving the Apple portal job by hand, one command at
+a time, fixing each piece of friction as it came. What the harness hid before, in the order it was
+found (each fix is in the commit that adds this section):
+
+| what happened | seconds lost | fix |
+|---|---|---|
+| the verifier refused a correct done on the App ID page: `page_text` held 128 chars of a page showing the Team ID | two refusals, the run ended "s2 fatal" with the answer discarded | Chrome's markdown lines end in `[actions=[...]]`; the end-anchored static-text regex captured nothing on any web page. Fixed; the same page now yields 6,000 chars with the Team ID in it |
+| the answer System 2 found was never printed: the run reported "done refused 2 times" and nothing else | the whole run | a refused done keeps its text (`NativeRun.answer`, marked unverified with the verifier's reason) and the trace carries it as a proposal |
+| Chrome offered 296 candidates including 27 identical "More actions" and `button 'button'`; Jev refused the request twice per step as too large | about 1 s per step | dedupe by (role, label, value, section), drop unnamed non-text controls, cap at 160 |
+| no way to open a URL: the address bar had to be found and driven by hand | 4 s by AppleScript, which then hit the wrong process (below) | `navigate_in_window` through the bound window; `--url` on `start` |
+| AppleScript's `tell application "Google Chrome"` addressed a second Chrome process (pid 10143) whose windows the Driver never lists; the Driver lists one pid per bundle (18365) | two runs of 109 s and 183 s against the wrong window, with System 2 hunting for a tab it could not reach | bind by the Driver's own window list; refuse to run when the bound window's address bar does not show the URL's host |
+| the Driver's window titles lag Chrome's tab switches (a window listed under its YouTube title while showing the Apple portal) | mis-binding by title | never bind by title; confirm from the snapshot |
+| a scroll on a list with no frame was "refused" and cost a 6.7 s System 2 call | 7 s | Page Down fallback |
+| no screenshots, so what the models saw at each step could not be checked | the diagnosis above took the screenshots to make | one PNG per observation beside the trace |
+| a background key press is refused when the process owns other windows (`same_pid_keyboard_ambiguity`) and the driver's message says so; System 2 was left to discover the foreground route | one wasted step per key | key and enter fall back to the foreground route on that refusal |
+| the session drove the person's active window; the active tab changed twice between two commands | a lost run | `start --url` opens the session its own window (Command-N through the bound window) and warns when the window changed since the last look |
+| Muse as System 2 took 4 to 25 s per step and chose Down-arrow four times against an unverifiable effect | 60 s of a 109 s run | System 2 is whoever drives: `footwork start / look / s1 / do / done`, each action through the boundary with a receipt (the effect diff) printed next to the fresh observation |
+
+**The limit reached.** With the person active in the same Chrome process, the Driver refuses
+background keyboard input (it cannot prove which window a process-scoped key event reaches) and
+the foreground route fails because the session window cannot become key ("exact target window did
+not become focused"). Clicks by element token still work in the background, so a page can be driven
+by clicks, but a URL cannot be typed and submitted. The Driver's browser mode (`browser_prepare`,
+`get_browser_state`, `browser_navigate`, `browser_click`, `browser_type` over a DevTools endpoint)
+exists for this and is P6's subject: a browser the Driver launches with a profile the person signs
+into once, or the person's Chrome started with the existing-profile grant. Until then, browser jobs
+through the accessibility route run in a window the person is not using and navigate by clicks, or
+run when the person is away from the keyboard.
+
+**What a command costs now.** `start` 10 to 13 s (driver, new window, navigate, first observation
+with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s, reobserve); `s1`
+about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per
+command at no visible cost.
+
 ## Phases
 
 **P1. Q12, receipts.** Build: `jevdual.receipts` with one frozen `Receipt(action, label, route,

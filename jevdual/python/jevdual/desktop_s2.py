@@ -288,6 +288,11 @@ class NativeS2:
                 agent.memory.append(f"step {out.step}: done ({note[:80]})")
                 return
             self.done_refusals += 1
+            # the answer the operator would otherwise never see: kept as the step's proposal and on
+            # the agent, so a run that ends in refusal still reports what System 2 found
+            out.proposed = [ActionRecord(name="done", params={"text": answer or "", "success": False})]
+            agent.last_answer = answer
+            agent.last_answer_reason = why
             out.verdict = Verdict("escalate", f"System 2 done refused, verification {band}: {why}")
             agent.memory.append(f"step {out.step}: done refused, {why[:100]}")
             if self.done_refusals >= MAX_DONE_REFUSALS:

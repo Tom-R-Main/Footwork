@@ -74,7 +74,10 @@ _LABEL_CAP = 80
 _VALUE_CAP = 120
 _INVISIBLE = re.compile("[" + "\u200e\u200f\u202a-\u202e\u2066-\u2069" + "]")
 _WS = re.compile(r"\s+")
-_STATIC_LINE = re.compile(r'AXStaticText = "(.*)"$')
+#: ``AXStaticText = "..."`` optionally followed by ``[actions=[...]]`` or other bracketed attributes
+#: (Chrome renders those on web content; Calculator and TextEdit do not). The old end-anchored form
+#: captured no web text at all, which blinded the verifier on every page (P0, 2026-09-25).
+_STATIC_LINE = re.compile(r'AXStaticText = "(.*)"(?:\s+\[.*\])?\s*$')
 
 
 def _clean(text: Any, cap: int | None = None) -> str:
@@ -206,6 +209,40 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
     return out[:cap]
 
 
+#: candidates a native menu offers Jev at most; beyond this the tail is dropped (``omitted["cap"]``).
+#: A Chrome window offered 296 and Jev refused the request as too large twice per step.
+NATIVE_MENU_CAP = 160
+
+
+def _prune(
+    candidates: list[Candidate],
+    tokens: dict[int, str],
+    frames: dict[int, tuple[float, float, float, float]],
+    omitted: dict[str, int],
+    budget: MenuBudget,
+) -> tuple[list[Candidate], dict[int, str], dict[int, tuple[float, float, float, float]]]:
+    """Drop what System 1 cannot choose between: a control whose label is only its role (``button
+    'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
+    the first (a page with 27 identical "More actions" buttons offers one). Then cap the count."""
+    kept: list[Candidate] = []
+    seen: set[tuple[str, str, str | None, str | None]] = set()
+    for c in candidates:
+        if c.label == c.role and c.role not in _TEXT_ROLES:
+            omitted["unnamed"] = omitted.get("unnamed", 0) + 1
+            continue
+        key = (c.role, c.label, c.value, c.section)
+        if key in seen:
+            omitted["duplicate"] = omitted.get("duplicate", 0) + 1
+            continue
+        seen.add(key)
+        kept.append(c)
+    if len(kept) > NATIVE_MENU_CAP:
+        omitted["cap"] = len(kept) - NATIVE_MENU_CAP
+        kept = kept[:NATIVE_MENU_CAP]
+    ids = {c.id for c in kept}
+    return kept, {i: t for i, t in tokens.items() if i in ids}, {i: f for i, f in frames.items() if i in ids}
+
+
 def menu_from_snapshot(
     snapshot: Any,
     *,
@@ -289,6 +326,7 @@ def menu_from_snapshot(
             if None not in (fx, fy, fw, fh):
                 frames[cand.id] = (float(fx), float(fy), float(fw), float(fh))
 
+    candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
     app_name = str(_get(snapshot, "app_name") or "")
     title = _clean(_get(snapshot, "window_title"), 120)
     page_text = _page_text(_get(snapshot, "tree_markdown"), elements, b.max_page_text_chars)
@@ -409,6 +447,7 @@ class NativeBridge:
         max_elements: int | None = None,
         include_menu_bar: bool = False,
         budget: MenuBudget | None = None,
+        screenshot_path: str | None = None,
     ) -> NativeMenu:
         from cua_driver import GetWindowStateInput
 
@@ -419,8 +458,8 @@ class NativeBridge:
                 session=self.session,
                 query=query,
                 include_accessibility_tree=True,
-                include_screenshot=False,
-                screenshot_out_file=None,
+                include_screenshot=screenshot_path is not None,
+                screenshot_out_file=screenshot_path,
                 max_elements=max_elements,
                 max_depth=None,
                 max_dimension=None,
@@ -486,15 +525,38 @@ class NativeBridge:
                 from cua_driver import PressKeyInput
 
                 await self._click_token(token)  # focus the field; the Driver reads back focus
+                try:
+                    result = await self.driver.press_key(
+                        PressKeyInput(
+                            key="Return",
+                            target=self._target(),
+                            scope=None,
+                            session=self.session,
+                            modifiers=None,
+                        )
+                    )
+                except Exception as exc:  # one refusal has a known honest route
+                    if "same_pid_keyboard_ambiguity" not in str(exc):
+                        raise
+                    self.last = nm
+                    eff = await self.hotkey(nm, ["Return"])
+                    return dataclasses.replace(eff, operation="enter", target=id, label=cand.label)
+            elif operation == "scroll" and id not in nm.frames:
+                # no frame for the target: scroll the window with Page Down instead of a point the
+                # Driver refuses (a Chrome list at step 4 on 2026-09-25 came back "refused")
                 result = await self.driver.press_key(
                     PressKeyInput(
-                        key="Return", target=self._target(), scope=None, session=self.session, modifiers=None
+                        key="PageDown",
+                        target=self._target(),
+                        scope=None,
+                        session=self.session,
+                        modifiers=None,
                     )
                 )
             elif operation == "scroll":
                 from cua_driver import ScrollDirection, ScrollInput
 
-                fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
+                fx, fy, fw, fh = nm.frames[id]
                 result = await self.driver.scroll(
                     ScrollInput(
                         x=fx + fw / 2,
@@ -555,6 +617,13 @@ class NativeBridge:
                 )
             )
         except Exception as exc:  # noqa: BLE001 - refusal is evidence
+            if "same_pid_keyboard_ambiguity" in str(exc):
+                # the harness knows the honest route when the process owns several windows: take it
+                self.last = nm
+                eff = await self.hotkey(nm, [*mods, key])
+                return dataclasses.replace(
+                    eff, operation="key", summary=f"background refused; {eff.summary}"[:200]
+                )
             self.last = None
             return NativeEffect(
                 "key",
@@ -700,3 +769,113 @@ async def find_window_for_pid(driver: Any, pid: int, *, title_contains: str = ""
         )
     w = max(titled, key=lambda w: w.bounds.width * w.bounds.height)
     return w.window_id, w.title
+
+
+BROWSER_APPS = {
+    "Google Chrome": "Google Chrome",
+    "Safari": "Safari",
+    "Chromium": "Chromium",
+    "Brave Browser": "Brave Browser",
+}
+
+
+async def open_url(app_name: str, url: str, *, settle_s: float = 3.0) -> str:
+    """Open ``url`` in a **new window** of ``app_name`` (AppleScript; Chrome and Safari expose this and
+    the Driver has no navigate), wait ``settle_s``, and return the tab's title. A new window lands on
+    the current Space in front, so the Driver's on-screen window list gains exactly one id; a new tab
+    would go to the app's front window, which can sit on another Space (2026-09-25: the Driver then
+    bound the visible window and the run never saw the page)."""
+    import asyncio
+    import subprocess
+
+    if app_name not in BROWSER_APPS:
+        raise ValueError(f"open_url knows Chrome, Safari, Chromium and Brave, not {app_name!r}")
+    esc = url.replace("\\", "\\\\").replace('"', '\\"')
+    if app_name == "Safari":
+        script = (
+            f'tell application "Safari"\nactivate\nmake new document with properties {{URL:"{esc}"}}\n'
+            f"delay {settle_s}\nget name of current tab of front window\nend tell"
+        )
+    else:
+        script = (
+            f'tell application "{app_name}"\nactivate\nset w to make new window\n'
+            f'set URL of active tab of w to "{esc}"\ndelay {settle_s}\n'
+            f"get title of active tab of w\nend tell"
+        )
+    proc = await asyncio.create_subprocess_exec(
+        "osascript", "-e", script, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    out, err = await proc.communicate()
+    if proc.returncode != 0:
+        raise RuntimeError(f"open_url failed: {err.decode(errors='replace').strip()[:200]}")
+    return out.decode(errors="replace").strip()
+
+
+async def app_windows(driver: Any, app_name: str) -> tuple[int, list[tuple[int, str, float]]]:
+    """``(pid, [(window_id, title, area)])`` of an app's on-screen windows, as the Driver lists them."""
+    from cua_driver import ListAppsInput, ListWindowsInput
+
+    apps = await driver.list_apps(ListAppsInput())
+    match = [a for a in apps.apps if a.name == app_name]
+    if not match:
+        raise LookupError(f"{app_name!r} is not running (Driver list_apps)")
+    pid = match[0].pid
+    wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+    return pid, [(w.window_id, w.title or "", float(w.bounds.width * w.bounds.height)) for w in wins.windows]
+
+
+ADDRESS_BAR_HINTS = ("address", "search or", "url", "location")
+
+
+def address_bar(nm: NativeMenu) -> Candidate | None:
+    """The browser window's address bar on the menu, by label."""
+    for c in nm.menu.candidates:
+        if c.role in ("textbox", "searchbox") and any(h in c.label.casefold() for h in ADDRESS_BAR_HINTS):
+            return c
+    return None
+
+
+async def navigate_in_window(bridge: NativeBridge, url: str, *, settle_s: float = 3.0) -> NativeMenu:
+    """Open ``url`` in a new tab of the window the bridge is bound to, through the window itself:
+    Command-T, type the URL into the address bar, Return. AppleScript cannot be used for this: with
+    two Chrome processes running it addresses one of them and the Driver lists the other
+    (2026-09-25, pids 10143 and 18365), and a new tab in the wrong process is a window the Driver
+    never sees. Returns the observation after the page had ``settle_s`` to load."""
+    import asyncio
+
+    nm = await bridge.observe()
+    if address_bar(nm) is None:
+        raise LookupError(f"no address bar on {nm.app_name!r}'s window; --url needs a browser window")
+    await bridge.hotkey(nm, ["cmd", "t"])
+    await asyncio.sleep(0.8)
+    nm = await bridge.observe()
+    bar = address_bar(nm)
+    if bar is None:
+        raise LookupError("no address bar after Command-T")
+    await bridge.act(nm, "type", bar.id, text=url)
+    nm = await bridge.observe()
+    bar = address_bar(nm) or bar
+    await bridge.act(nm, "enter", bar.id)
+    await asyncio.sleep(settle_s)
+    return await bridge.observe()
+
+
+async def new_window(bridge: NativeBridge, app_name: str, *, settle_s: float = 1.5) -> tuple[int, str]:
+    """Open a new window of the bound app through the window itself (Command-N by the foreground route)
+    and return ``(window_id, title)`` of the window that appeared in the Driver's on-screen list. A
+    session that drives a person's active window fights the person for the tab bar (2026-09-25: the
+    active tab changed twice between two commands); its own window keeps the two apart."""
+    import asyncio
+
+    _, before = await app_windows(bridge.driver, app_name)
+    nm = await bridge.observe()
+    eff = await bridge.hotkey(nm, ["cmd", "n"])
+    if eff.effect == "refused":
+        raise RuntimeError(f"Command-N refused: {eff.summary[:120]}")
+    await asyncio.sleep(settle_s)
+    _, after = await app_windows(bridge.driver, app_name)
+    fresh = [w for w in after if w[0] not in {b[0] for b in before}]
+    if not fresh:
+        raise LookupError("no new window appeared after Command-N")
+    wid, title, _ = fresh[0]
+    return wid, title

@@ -22,6 +22,7 @@ import logging
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Literal
 
 from jevdual.authorize import Authorizer, action_for
@@ -81,6 +82,10 @@ class NativeRun:
     steps: list[StepOutcome]
     answer: str | None = None
     final_menu: NativeMenu | None = None
+    #: True when ``answer`` is a verifier-accepted done; False when it is the last refused done's
+    #: text (reported so the operator sees what System 2 found), with the verifier's reason
+    answer_verified: bool = True
+    answer_reason: str = ""
 
     @property
     def s1_steps(self) -> int:
@@ -164,10 +169,19 @@ class NativeAgent:
 
     # ---- observation -------------------------------------------------------------------
 
+    #: set by the operator surface (jevdual.cli): a PNG per observation lands here
+    screenshot_dir: Path | None = None
+
+    def _screenshot_path(self) -> str | None:
+        if self.screenshot_dir is None:
+            return None
+        self.screenshot_dir.mkdir(parents=True, exist_ok=True)
+        return str(self.screenshot_dir / f"step-{len(self.steps) + 1:02d}.png")
+
     async def observe(self) -> tuple[NativeMenu, float]:
         """Observe; a truncated or degraded snapshot is taken again up to ``REOBSERVE_MAX`` times."""
         t0 = time.perf_counter()
-        nm = await self.bridge.observe()
+        nm = await self.bridge.observe(screenshot_path=self._screenshot_path())
         tries = 0
         while (nm.truncated or nm.degraded) and tries < REOBSERVE_MAX:
             tries += 1
@@ -476,8 +490,19 @@ class NativeAgent:
                     "blocked", out.verdict.reason if out.verdict else out.error, self.steps, None, nm
                 )
             if out.error and out.error.startswith("s2 fatal"):
-                return NativeRun("error", out.error, self.steps, None, nm)
-        return NativeRun("budget_exhausted", f"{self.max_steps} steps", self.steps, None, final)
+                return self._unverified(NativeRun("error", out.error, self.steps, None, nm))
+        return self._unverified(
+            NativeRun("budget_exhausted", f"{self.max_steps} steps", self.steps, None, final)
+        )
+
+    def _unverified(self, run: NativeRun) -> NativeRun:
+        """Attach the last refused done's text, marked unverified, to a run that ends without one."""
+        last = getattr(self, "last_answer", None)
+        if last:
+            run.answer = last
+            run.answer_verified = False
+            run.answer_reason = str(getattr(self, "last_answer_reason", "") or "")
+        return run
 
     def _write(self, out: StepOutcome, nm: NativeMenu) -> None:
         if self.trace is None:
