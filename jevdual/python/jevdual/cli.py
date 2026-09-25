@@ -117,8 +117,10 @@ async def cmd_run(args: argparse.Namespace) -> int:
     mark("driver up")
     try:
         pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
-        bridge = NativeBridge(driver, pid, wid)
-        mark(f"bound to {args.app} window {wid} {title[:40]!r}")
+        from jevdual.posture import ExecutionPolicy
+
+        bridge = NativeBridge(driver, pid, wid, policy=ExecutionPolicy(args.mode), live_check=True)
+        mark(f"bound to {args.app} window {wid} {title[:40]!r} ({args.mode})")
         if args.url:
             from urllib.parse import urlsplit
 
@@ -263,6 +265,13 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--answer", action="store_true", help="the task asks for a reported value")
     r.add_argument("--no-s2", action="store_true", help="System 1 only")
     r.add_argument("--out", help="run directory (default runs/<timestamp>)")
+    r.add_argument(
+        "--mode",
+        default="background_only",
+        choices=("background_only", "foreground_permitted", "exclusive_desktop"),
+        help="execution posture: background_only never takes the foreground (default); foreground_permitted "
+        "takes it only after 3 s without your input; exclusive_desktop assumes nobody is using this desktop",
+    )
     r.set_defaults(fn=cmd_run)
     m = sub.add_parser("menu", help="print the menu System 1 would see")
     m.add_argument("--app", required=True)
@@ -289,6 +298,13 @@ def build_parser() -> argparse.ArgumentParser:
     st.add_argument("--require", default="")
     st.add_argument("--authorize", default="")
     st.add_argument("--answer", action="store_true")
+    st.add_argument(
+        "--mode",
+        default="background_only",
+        choices=("background_only", "foreground_permitted", "exclusive_desktop"),
+        help="execution posture: background_only never takes the foreground (default); foreground_permitted "
+        "takes it only after 3 s without your input; exclusive_desktop assumes nobody is using this desktop",
+    )
     common(st)
     st.set_defaults(fn=S.cmd_start)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")

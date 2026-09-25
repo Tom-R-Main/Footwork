@@ -282,6 +282,9 @@ def menu_from_snapshot(
             continue
         actions = {str(a) for a in (_get(el, "actions") or ())}
         mapped = ROLE_MAP.get(ax_role)
+        if mapped is None and ax_role == "AXImage" and "AXOpen" in actions:
+            # a Finder icon-view item: an image that opens (P0 breadth, 2026-09-25); clicking selects it
+            mapped = ("file", ("click",))
         if mapped is None:
             if "AXPress" not in actions:
                 omitted["unmapped_role"] = omitted.get("unmapped_role", 0) + 1
@@ -1073,7 +1076,10 @@ async def navigate_in_window(bridge: NativeBridge, url: str, *, settle_s: float 
     nm = await bridge.observe()
     if address_bar(nm) is None:
         raise LookupError(f"no address bar on {nm.app_name!r}'s window; --url needs a browser window")
-    await bridge.hotkey(nm, ["cmd", "t"])
+    eff = await bridge.hotkey(nm, ["cmd", "t"])
+    if not eff.dispatched or eff.effect == "refused":
+        # never type the URL into whatever tab is current: that is the person's tab
+        raise RuntimeError(f"Command-T not sent ({eff.error_code}): {eff.summary[:120]}")
     await asyncio.sleep(0.8)
     nm = await bridge.observe()
     bar = address_bar(nm)
@@ -1098,7 +1104,7 @@ async def new_window(bridge: NativeBridge, app_name: str, *, settle_s: float = 1
     nm = await bridge.observe()
     eff = await bridge.hotkey(nm, ["cmd", "n"])
     if eff.effect == "refused":
-        raise RuntimeError(f"Command-N refused: {eff.summary[:120]}")
+        raise RuntimeError(f"Command-N refused ({eff.error_code}): {eff.summary[:120]}")
     await asyncio.sleep(settle_s)
     _, after = await app_windows(bridge.driver, app_name)
     fresh = [w for w in after if w[0] not in {b[0] for b in before}]

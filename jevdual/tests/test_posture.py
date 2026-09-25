@@ -480,3 +480,33 @@ def test_menu_hands_the_front_back_but_never_fights_the_person():
     eff = run(b.menu(nm, ["Edit", "Select All"]))
     assert [a for n, a in d.calls if n == "bring_to_front"] == [{"pid": 1, "window_id": 2}]
     assert eff.foreground["front_after"] == 99 and "handed_back" not in eff.foreground
+
+
+def test_navigate_never_types_into_the_current_tab_when_new_tab_is_not_sent(monkeypatch):
+    """Promise: when Command-T is not sent (background_only), the URL is not typed into the current tab
+    (the person's), and the reason reaches the operator."""
+    from jevdual.native import navigate_in_window, new_window
+
+    extra = [
+        {
+            "element_index": 6,
+            "role": "AXTextField",
+            "label": "Address and search bar",
+            "value": "https://example.com/the-persons-tab",
+            "element_token": "s00000001:6",
+        }
+    ]
+    d = FakeDriver(doc_snapshot("", extra=extra))
+    b = bridge_for(d)
+    with pytest.raises(RuntimeError) as e:
+        run(navigate_in_window(b, "https://example.org"))
+    assert "requires_foreground" in str(e.value)
+    assert d.names() == []  # no set_value into the address bar, no Return
+
+    async def windows(driver, app):
+        return 1, [(2, "doc.txt", 1.0)]
+
+    monkeypatch.setattr("jevdual.native.app_windows", windows)
+    with pytest.raises(RuntimeError) as e:
+        run(new_window(b, "TextEdit"))
+    assert "requires_foreground" in str(e.value)

@@ -58,6 +58,8 @@ class SessionState:
     pending: dict[str, Any] | None = None  # the action dispatched by the last `do`, awaiting its receipt
     #: "native" (accessibility route) or "browser" (the Driver's DevTools route on footwork's Chrome)
     mode: str = "native"
+    #: the execution posture (jevdual.posture): background_only unless the operator granted more at start
+    posture: str = "background_only"
 
     @property
     def path(self) -> Path:
@@ -165,8 +167,17 @@ async def bind(state: SessionState):
         return driver, bridge
     from cua_driver import CuaDriver
 
+
     driver = CuaDriver.create()
-    return driver, NativeBridge(driver, state.pid, state.window_id)
+    return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
+
+
+def _native_bridge(driver: Any, pid: int, wid: int, posture: str) -> NativeBridge:
+    """The operator's bridge: the session's posture, and a live identity check before every element
+    action (the person may have changed the window since the operator looked)."""
+    from jevdual.posture import ExecutionPolicy
+
+    return NativeBridge(driver, pid, wid, policy=ExecutionPolicy(posture), live_check=True)  # type: ignore[arg-type]
 
 
 async def observe(state: SessionState, bridge: NativeBridge) -> tuple[NativeMenu, dict[str, Any] | None]:
@@ -211,16 +222,28 @@ async def cmd_start(args: Any) -> int:
             requirements=_split(args.require, ";"),
             authorized=_split(args.authorize, ","),
             answer_expected=args.answer,
+            posture=getattr(args, "mode", None) or "background_only",
         )
-        bridge = NativeBridge(driver, pid, wid)
-        print(f"bound {args.app} window {wid} {title[:60]!r}")
+        bridge = _native_bridge(driver, pid, wid, state.posture)
+        print(f"bound {args.app} window {wid} {title[:60]!r} ({state.posture})")
         if args.url:
             from urllib.parse import urlsplit
 
             # the session gets a window of its own; the person keeps theirs
-            wid, title = await new_window(bridge, args.app)
+            try:
+                wid, title = await new_window(bridge, args.app)
+            except RuntimeError as exc:
+                if "requires_foreground" in str(exc) or "human_active" in str(exc):
+                    print(
+                        f"not starting: opening a session window takes the foreground (Command-N) and this "
+                        f"session is {state.posture}. Use --browser for a web page, bind a window you opened "
+                        "with --window, or grant --mode foreground_permitted.",
+                        file=sys.stderr,
+                    )
+                    return 2
+                raise
             state.window_id = wid
-            bridge = NativeBridge(driver, pid, wid)
+            bridge = _native_bridge(driver, pid, wid, state.posture)
             print(f"opened a new window {wid} for the session")
             nm = await navigate_in_window(bridge, args.url)
             bar = address_bar(nm)
@@ -471,7 +494,11 @@ async def cmd_do(args: Any) -> int:
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
             driver_effect = eff.effect
-            if eff.effect == "refused":
+            if not getattr(eff, "dispatched", True):
+                # the posture refused it: nothing reached any window
+                driver_effect = "not sent"
+                error = f"{eff.error_code}: {eff.summary[:140]}"
+            elif eff.effect == "refused":
                 error = f"driver refused: {eff.error_code or ''} {eff.summary[:100]}".strip()
         except (NativeBridgeError, RuntimeError) as exc:
             driver_effect = "not dispatched"
@@ -617,7 +644,10 @@ async def cmd_done(args: Any) -> int:
 
 async def cmd_status(args: Any) -> int:
     state = SessionState.load(session_dir(args.session))
-    print(f"{state.status}: {state.app} window {state.window_id}, step {state.step}, task {state.task!r}")
+    print(
+        f"{state.status}: {state.app} window {state.window_id} ({state.posture}), step {state.step}, "
+        f"task {state.task!r}"
+    )
     print("requirements:", "; ".join(state.requirements) or "(none)")
     for m in state.memory[-12:]:
         print(" ", m)
