@@ -1,0 +1,173 @@
+{
+  "all": {
+    "n": 255,
+    "labels": {
+      "right": 185,
+      "wrong": 70
+    },
+    "target_n": 184,
+    "target_auc": 0.8987438725490197,
+    "operation_auc": 0.8753281853281853
+  },
+  "clicks": {
+    "n": 171,
+    "labels": {
+      "right": 123,
+      "wrong": 48
+    },
+    "target_n": 171,
+    "target_auc": 0.8880420054200542,
+    "operation_auc": 0.933519647696477
+  },
+  "without_percent": {
+    "n": 194,
+    "labels": {
+      "right": 167,
+      "wrong": 27
+    },
+    "target_n": 125,
+    "target_auc": 0.9527845036319612,
+    "operation_auc": 0.9581947216677755
+  },
+  "percent_only": {
+    "n": 61,
+    "labels": {
+      "right": 18,
+      "wrong": 43
+    },
+    "target_n": 59,
+    "target_auc": 0.6626016260162602,
+    "operation_auc": 0.8074935400516796
+  },
+  "task_cluster_bootstrap": {
+    "draws": 4000,
+    "valid_draws": 3611,
+    "ci95": [
+      0.7970102281667978,
+      0.9833110814419226
+    ],
+    "warning": "Seven task types only; pooled AUC remains composition-sensitive; labels not independently validated."
+  },
+  "wrong_by_task": {
+    "calc-percent": 43,
+    "calc-read-result": 3,
+    "textedit-append-and-save": 24
+  },
+  "disagreements_by_task": {
+    "calc-percent": 31
+  },
+  "legacy_agreement_key_collisions": 176,
+  "arms": {
+    "s1_only": {
+      "n": 21,
+      "passed": 11,
+      "verified": 6,
+      "estimated_cost": 0.021023604,
+      "cost_per_verified": 0.003503934,
+      "per_task": {
+        "calc-multiply": {
+          "passed": 3,
+          "verified": 3
+        },
+        "calc-percent": {
+          "passed": 0,
+          "verified": 0
+        },
+        "calc-read-result": {
+          "passed": 0,
+          "verified": 0
+        },
+        "calc-subtract": {
+          "passed": 2,
+          "verified": 0
+        },
+        "textedit-append-and-save": {
+          "passed": 3,
+          "verified": 0
+        },
+        "textedit-read-word-count": {
+          "passed": 0,
+          "verified": 0
+        },
+        "textedit-type-sentence": {
+          "passed": 3,
+          "verified": 3
+        }
+      }
+    },
+    "dual": {
+      "n": 21,
+      "passed": 12,
+      "verified": 6,
+      "estimated_cost": 0.06475949,
+      "cost_per_verified": 0.010793248333333333,
+      "per_task": {
+        "calc-multiply": {
+          "passed": 3,
+          "verified": 3
+        },
+        "calc-percent": {
+          "passed": 0,
+          "verified": 0
+        },
+        "calc-read-result": {
+          "passed": 0,
+          "verified": 0
+        },
+        "calc-subtract": {
+          "passed": 3,
+          "verified": 0
+        },
+        "textedit-append-and-save": {
+          "passed": 3,
+          "verified": 0
+        },
+        "textedit-read-word-count": {
+          "passed": 0,
+          "verified": 0
+        },
+        "textedit-type-sentence": {
+          "passed": 3,
+          "verified": 3
+        }
+      }
+    },
+    "guarded": {
+      "n": 21,
+      "passed": 17,
+      "verified": 11,
+      "estimated_cost": 0.052121100000000004,
+      "cost_per_verified": 0.004738281818181819,
+      "per_task": {
+        "calc-multiply": {
+          "passed": 3,
+          "verified": 3
+        },
+        "calc-percent": {
+          "passed": 3,
+          "verified": 2
+        },
+        "calc-read-result": {
+          "passed": 3,
+          "verified": 3
+        },
+        "calc-subtract": {
+          "passed": 3,
+          "verified": 0
+        },
+        "textedit-append-and-save": {
+          "passed": 2,
+          "verified": 0
+        },
+        "textedit-read-word-count": {
+          "passed": 0,
+          "verified": 0
+        },
+        "textedit-type-sentence": {
+          "passed": 3,
+          "verified": 3
+        }
+      }
+    }
+  }
+}

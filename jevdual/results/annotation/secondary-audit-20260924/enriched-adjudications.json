@@ -1,0 +1,34 @@
+[
+  {
+    "run_id": "textedit-append-and-save-dual-0d073fda",
+    "step": "3",
+    "packet_label": "unclear",
+    "enriched_label": "wrong",
+    "reason": "Same-run step 1 shows First line. replaced with Second line.; subsequent menus still lack First line. The requested append is not satisfied, regardless of saving.",
+    "evidence": "results/q10-native-dev-20260924/traces/textedit-append-and-save-dual-0d073fda.jsonl; step 1 and current menu"
+  },
+  {
+    "run_id": "textedit-append-and-save-dual-0d073fda",
+    "step": "11",
+    "packet_label": "unclear",
+    "enriched_label": "wrong",
+    "reason": "Same-run step 1 shows First line. replaced with Second line.; subsequent menus still lack First line. The requested append is not satisfied, regardless of saving.",
+    "evidence": "results/q10-native-dev-20260924/traces/textedit-append-and-save-dual-0d073fda.jsonl; step 1 and current menu"
+  },
+  {
+    "run_id": "textedit-append-and-save-dual-0d073fda",
+    "step": "18",
+    "packet_label": "unclear",
+    "enriched_label": "wrong",
+    "reason": "Same-run step 1 shows First line. replaced with Second line.; subsequent menus still lack First line. The requested append is not satisfied, regardless of saving.",
+    "evidence": "results/q10-native-dev-20260924/traces/textedit-append-and-save-dual-0d073fda.jsonl; step 1 and current menu"
+  },
+  {
+    "run_id": "textedit-append-and-save-dual-0d073fda",
+    "step": "6",
+    "packet_label": "unclear",
+    "enriched_label": "wrong",
+    "reason": "Same-run step 1 shows First line. replaced with Second line.; subsequent menus still lack First line. The requested append is not satisfied, regardless of saving.",
+    "evidence": "results/q10-native-dev-20260924/traces/textedit-append-and-save-dual-0d073fda.jsonl; step 1 and current menu"
+  }
+]

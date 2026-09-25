@@ -17,3 +17,6 @@ results/**/traces/
 results/**/contracts/
 results/**/run.log
 results/annotation/packets/
+
+# local smoke runs (e.g. scripts/q15_coexistence.py); results that back a claim go under results/
+runs/

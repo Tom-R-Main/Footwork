@@ -1,0 +1,12 @@
+{
+  "reviewer": "Codex AI",
+  "human_review": false,
+  "fully_blinded": false,
+  "protocol": "Packet-only first pass; prior handoff and aggregate claims already seen; individual model label files not opened before freezing these labels. Missing evidence is unclear. Done means plausible stopping under supplied rubric, not certified answer delivery.",
+  "sources": {
+    "audit-sheet.csv": "af37679a1b396e6c7f5d418d99c25f52724fafef2a831a40436975b706af07b8",
+    "q10/audit-sheet.csv": "544daf58b2788ed43c846c21c010ea724fba1d7138afcda241395705eb7c09f7"
+  },
+  "web_audit_sha256": "10d9de4c8ab2978b61223a32c2e31b85c6610118b1811e84b35dbc19f49fd2b7",
+  "native_audit_sha256": "f6fb83cacb9038d6893b7824eb5771379330adfaa9b06fdcbc6a902f1909b4b2"
+}

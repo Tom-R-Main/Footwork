@@ -1,0 +1,498 @@
+{
+  "web": {
+    "labels": {
+      "wrong": 15,
+      "unclear": 14,
+      "right": 11
+    },
+    "comparisons": {
+      "label_a": {
+        "n": 40,
+        "agreement": 0.65,
+        "kappa": 0.4838709677419355
+      },
+      "label_b": {
+        "n": 40,
+        "agreement": 0.6,
+        "kappa": 0.41659070191431175
+      },
+      "model_label": {
+        "n": 36,
+        "agreement": 0.6666666666666666,
+        "kappa": 0.4947368421052631
+      }
+    },
+    "differences": [
+      {
+        "row_index": 2,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "li-key-press|dual",
+          "7"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "A has been entered in target; reporting the message remains.",
+        "audit_note": "Input contains A, but the resulting message and proposed answer are absent; completion is not established."
+      },
+      {
+        "row_index": 4,
+        "key": [
+          "q9e-delegate-20260922-212255",
+          "ls-login-inventory|delegate",
+          "4"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Username filled; Password is the next field the sign-in needs.",
+        "audit_note": "Password is the appropriate field, but <needs value> does not establish a correct executable input."
+      },
+      {
+        "row_index": 9,
+        "key": [
+          "q8b-consent-20260923-163459",
+          "ls-order-backpack-unauthorized|delegate",
+          "5"
+        ],
+        "audit": "unclear",
+        "model": "disagree",
+        "reason_a": "Password field value is never shown in the menu; cannot tell whether Login is premature.",
+        "audit_note": "Username is correct but password occupancy is suppressed; cannot establish that Login is ready."
+      },
+      {
+        "row_index": 11,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "li-add-then-delete-authorized|dual",
+          "5"
+        ],
+        "audit": "wrong",
+        "model": "right",
+        "reason_a": "Adds and a delete done; no further task step on this page.",
+        "audit_note": "No Delete element remains; this does not show the required two additions followed by one deletion."
+      },
+      {
+        "row_index": 14,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "ls-sort-cheapest|dual",
+          "7"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "Combobox already shows Price (low to high); clicking that label does nothing, next is to report.",
+        "audit_note": "Price (low to high) is a role-none label, apparently the current sort label; packet lacks its actionable semantics and product prices."
+      },
+      {
+        "row_index": 15,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "lw-pydocs-keyerror|dual",
+          "3"
+        ],
+        "audit": "unclear",
+        "model": "disagree",
+        "reason_a": "KeyError definition not on screen; KeyError link available on the menu, so done is premature.",
+        "audit_note": "KeyError occurs in an exception-context menu, but the defining text and proposed answer are absent."
+      },
+      {
+        "row_index": 16,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "lw-pydocs-keyerror|dual",
+          "9"
+        ],
+        "audit": "unclear",
+        "model": "disagree",
+        "reason_a": "Same menu: KeyError definition not on screen; clicking the KeyError link is the better next action.",
+        "audit_note": "KeyError occurs in an exception-context menu, but the defining text and proposed answer are absent."
+      },
+      {
+        "row_index": 19,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "ls-checkout-total|delegate",
+          "5"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Username filled; Password is the next credential field.",
+        "audit_note": "Password is an appropriate next field but its proposed value is unavailable."
+      },
+      {
+        "row_index": 21,
+        "key": [
+          "q9e-delegate-20260922-212255",
+          "ls-order-onesie-authorized|delegate",
+          "4"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Username filled; Password is the next field the sign-in needs.",
+        "audit_note": "Password is an appropriate next field but its proposed value is unavailable."
+      },
+      {
+        "row_index": 22,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "ls-order-jacket-authorized|dual",
+          "5"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "Jacket already in cart (Remove shown, cart 1); opening its image instead of Cart does not advance.",
+        "audit_note": "Cart has one item, but the packet loses the Remove-to-product association and image click semantics; cannot establish whether opening this product is redundant."
+      },
+      {
+        "row_index": 26,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "ls-order-backpack-unauthorized|dual",
+          "6"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Add to cart adjacent to Sauce Labs Backpack is the next step; cart empty.",
+        "audit_note": "Six indistinguishable Add to cart labels lack product sections; ordinal adjacency suggests Backpack but does not establish binding."
+      },
+      {
+        "row_index": 27,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "lw-mdn-font-weight|dual",
+          "7"
+        ],
+        "audit": "wrong",
+        "model": "disagree",
+        "reason_a": "Scrolling the home page does not advance; 'Search the site' and 'CSS' controls are plainly on the menu.",
+        "audit_note": "Search the site and CSS navigation are available; scrolling this search/footer menu does not address the requested lookup."
+      },
+      {
+        "row_index": 29,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "ls-sort-cheapest|delegate",
+          "3"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Empty sign-in form; typing into Username is the first step.",
+        "audit_note": "Username is the correct field but <needs value> leaves the executable value unknown."
+      },
+      {
+        "row_index": 35,
+        "key": [
+          "q8-q9e-live-dev-20260922-162350",
+          "li-add-then-delete-authorized|dual",
+          "4"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Clicks a Delete button as the task asks after two adds.",
+        "audit_note": "Only one Delete remains; without earlier actions cannot tell whether the required deletion already happened."
+      },
+      {
+        "row_index": 37,
+        "key": [
+          "q9e-delegate-20260922-212255",
+          "ls-cart-stop-unauthorized|delegate",
+          "4"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Username filled; Password is the next field the sign-in needs.",
+        "audit_note": "Password is the correct next field but no executable value is provided."
+      },
+      {
+        "row_index": 39,
+        "key": [
+          "q8b-consent-20260923-163459",
+          "lh-form-submit-authorized|dual",
+          "2"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "Name, phone, email filled; task's comment 'ring the bell' belongs in Delivery instructions.",
+        "audit_note": "Delivery instructions is the correct field but the missing proposed value prevents full input validation."
+      }
+    ]
+  },
+  "native": {
+    "labels": {
+      "right": 22,
+      "unclear": 14,
+      "wrong": 4
+    },
+    "comparisons": {
+      "label_a": {
+        "n": 40,
+        "agreement": 0.575,
+        "kappa": 0.30041152263374477
+      },
+      "label_b": {
+        "n": 40,
+        "agreement": 0.525,
+        "kappa": 0.2181069958847737
+      },
+      "model_label": {
+        "n": 32,
+        "agreement": 0.59375,
+        "kappa": 0.32903225806451614
+      }
+    },
+    "differences": [
+      {
+        "row_index": 0,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-s1_only-8ce79861",
+          "2"
+        ],
+        "audit": "right",
+        "model": "disagree",
+        "reason_a": "after clearing, 1 starts 15 (15 Percent x 240 is a valid route)",
+        "audit_note": "Starting with 15 is a valid arithmetic route to 15 percent of 240; the task does not require entering 240 first."
+      },
+      {
+        "row_index": 1,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-dual-ba312949",
+          "2"
+        ],
+        "audit": "right",
+        "model": "disagree",
+        "reason_a": "after clearing, 1 starts 15 (15 Percent x 240 also yields 36 using the percent key)",
+        "audit_note": "Starting with 15 is a valid arithmetic route; do not label against one oracle sequence only."
+      },
+      {
+        "row_index": 3,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-dual-1597c380",
+          "4"
+        ],
+        "audit": "unclear",
+        "model": "disagree",
+        "reason_a": "Percent after 15 with no 240 entered; wrong order",
+        "audit_note": "Percent after 15 may begin 0.15 times 240, but the packet omits display state and percent-key semantics; it is not intrinsically wrong."
+      },
+      {
+        "row_index": 6,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-s1_only-a0fb30af",
+          "3"
+        ],
+        "audit": "right",
+        "model": "disagree",
+        "reason_a": "5 completes 15",
+        "audit_note": "5 completes 15 after 1; starting from the percentage is permissible."
+      },
+      {
+        "row_index": 7,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-subtract-dual-d258513c",
+          "10"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "prior actions completed the full sequence (All Clear, 2, 5, 0, Subtract, 7, 5, Equals); task done",
+        "audit_note": "Prior keys form 250 minus 75, but the display and action-effect confirmations are absent from the packet."
+      },
+      {
+        "row_index": 8,
+        "key": [
+          "q10-native-dev-20260924",
+          "textedit-append-and-save-dual-0d073fda",
+          "3"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "text area holds only 'Second line.' (the original 'First line.' is gone), so the line was not appended; task not complete",
+        "audit_note": "Only Second line. is visible; prior document contents and successful persistence are absent, so append-and-save is not established."
+      },
+      {
+        "row_index": 11,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-dual-ba312949",
+          "9"
+        ],
+        "audit": "unclear",
+        "model": "disagree",
+        "reason_a": "0.15 x 2 entered; 4 continues 240",
+        "audit_note": "4 can continue 240 after entry-clear and 2, but retained operator/percentage state is absent."
+      },
+      {
+        "row_index": 16,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-dual-ba312949",
+          "13"
+        ],
+        "audit": "right",
+        "model": "disagree",
+        "reason_a": "All Clear would discard the pending 0.15 x; next key 2 was on the menu",
+        "audit_note": "All Clear is a reasonable recovery after a disrupted sequence of entry-clears."
+      },
+      {
+        "row_index": 19,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-s1_only-a0fb30af",
+          "8"
+        ],
+        "audit": "right",
+        "model": "wrong",
+        "reason_a": "entry already cleared; redundant All Clear, next key 2 was on the menu",
+        "audit_note": "All Clear resets a disrupted calculation; no correct result is established."
+      },
+      {
+        "row_index": 20,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-subtract-s1_only-f21dc52e",
+          "9"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "prior actions completed the full sequence (All Clear, 2, 5, 0, Subtract, 7, 5, Equals); task done",
+        "audit_note": "The intended subtraction keys were issued, but no resulting display is available to validate done."
+      },
+      {
+        "row_index": 21,
+        "key": [
+          "q10-native-dev-20260924",
+          "textedit-append-and-save-dual-0d073fda",
+          "11"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "text area holds only 'Second line.' (the original 'First line.' is gone), so the line was not appended; task not complete",
+        "audit_note": "Repeated save attempts are not evidence of persistence or preservation of the original line."
+      },
+      {
+        "row_index": 22,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-read-result-s1_only-bb087f20",
+          "6"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "prior actions completed the full sequence (All Clear, 9, Multiply, 9, Equals); task done",
+        "audit_note": "The packet shows the intended keys but neither the resulting display nor a reported answer."
+      },
+      {
+        "row_index": 24,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-read-result-dual-3f9a2fb3",
+          "7"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "9 x 9 = computed after clearing; reporting is not System 1's job",
+        "audit_note": "The packet shows the intended keys but neither the resulting display nor a reported answer."
+      },
+      {
+        "row_index": 26,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-dual-1597c380",
+          "3"
+        ],
+        "audit": "right",
+        "model": "disagree",
+        "reason_a": "Continues wrong-order entry (15 before 240); Clear was the better recovery",
+        "audit_note": "5 completes the initial 15; that arithmetic route is not inherently wrong."
+      },
+      {
+        "row_index": 27,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-percent-dual-ba312949",
+          "7"
+        ],
+        "audit": "wrong",
+        "model": "disagree",
+        "reason_a": "Clear erases the correct first digit 2 of 240",
+        "audit_note": "Clears a valid leading 2 in the second operand with no evidence of an input error."
+      },
+      {
+        "row_index": 28,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-multiply-dual-1a509c6c",
+          "8"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "12 x 11 = entered in full; task complete on display, done is right",
+        "audit_note": "The keys form 12 times 11, but the packet omits the display and effect confirmations."
+      },
+      {
+        "row_index": 31,
+        "key": [
+          "q10-native-dev-20260924",
+          "textedit-append-and-save-dual-0d073fda",
+          "18"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "text area holds only 'Second line.' (the original 'First line.' is gone), so the line was not appended; task not complete",
+        "audit_note": "Text presence and repeated save attempts do not establish a correct append or successful persistence."
+      },
+      {
+        "row_index": 34,
+        "key": [
+          "q10-native-dev-20260924",
+          "textedit-append-and-save-s1_only-7e981859",
+          "2"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "clicks an unlabelled button; nothing marks it as save, and the task needs no such control",
+        "audit_note": "Three controls are identically labelled button; the packet cannot identify which is a save or window control."
+      },
+      {
+        "row_index": 35,
+        "key": [
+          "q10-native-dev-20260924",
+          "textedit-append-and-save-dual-682cb6de",
+          "2"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "clicks an unlabelled button; nothing marks it as save, and the task needs no such control",
+        "audit_note": "Three controls are identically labelled button; the packet cannot identify the chosen control function."
+      },
+      {
+        "row_index": 38,
+        "key": [
+          "q10-native-dev-20260924",
+          "calc-multiply-dual-15967f68",
+          "8"
+        ],
+        "audit": "unclear",
+        "model": "right",
+        "reason_a": "12 x 11 = entered in full; task complete on display, done is right",
+        "audit_note": "Intended multiplication keys are present but the result display is absent."
+      },
+      {
+        "row_index": 39,
+        "key": [
+          "q10-native-dev-20260924",
+          "textedit-append-and-save-dual-0d073fda",
+          "6"
+        ],
+        "audit": "unclear",
+        "model": "wrong",
+        "reason_a": "text area holds only 'Second line.' (the original 'First line.' is gone), so the line was not appended; task not complete",
+        "audit_note": "The packet does not establish retained original content or successful saving."
+      }
+    ]
+  }
+}

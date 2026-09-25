@@ -1,0 +1,29 @@
+{
+  "key": {
+    "fake_dispatch": [
+      [
+        "key",
+        "Delete",
+        [
+          "cmd"
+        ]
+      ]
+    ],
+    "gate_calls": 0,
+    "verdict": "act"
+  },
+  "hotkey": {
+    "fake_dispatch": [
+      [
+        "hotkey",
+        [
+          "cmd",
+          "delete"
+        ]
+      ]
+    ],
+    "gate_calls": 0,
+    "verdict": "act"
+  },
+  "classifier_exception_returns": null
+}
