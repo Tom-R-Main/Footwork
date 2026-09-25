@@ -222,3 +222,36 @@ Threshold sweep, s1_target_conf (escalate when below t):
 
 Operating point (false escalation ≤ 20%): t = 0.60, catches 55% of wrong steps, escalates 15% of right ones.
 
+
+
+## Human audit (2026-09-25, twelve rows on the audit page)
+
+Grader: the repo's owner, blind to labels and selection. Rows: the three pass disagreements, five
+agreed-wrong, four agreed-right (`audit-page.json`); decisions in `human-decisions.jsonl`, read from
+the page's store (`https://claude.ai/artifact/HLmJP8GC5pTLVi3GKy3fUw`).
+
+Agreement with pass a 9 of 12, with pass b 8 of 12, with both 7 of 12.
+
+| key | kind | pass a | pass b | human | reason |
+|---|---|---|---|---|---|
+| calc-multiply-dual-3349d1f2|2 | right | right | right | right |  |
+| calc-percent-dual-707b415c|14 | wrong | wrong | wrong | wrong |  |
+| calc-percent-dual-707b415c|16 | disagreement | right | wrong | right | given the ambiguity, probably right to click all clear |
+| calc-percent-dual-707b415c|5 | wrong | wrong | wrong | wrong | needs to be an operator between 15% and the 2 |
+| calc-percent-dual-7ee994b5|4 | wrong | wrong | wrong | wrong | 15 is an integer and pressing 2 would just make it 152, rather than cl |
+| calc-percent-dual-7ee994b5|6 | disagreement | right | wrong | right | AC after C is a safe full reset; nothing better was lost. |
+| calc-percent-dual-92e983cb|7 | disagreement | right | wrong | wrong |  |
+| calc-percent-s1_only-79705101|1 | right | right | right | right | the correct conservative approach |
+| calc-read-result-s1_only-fd920e39|5 | right | right | right | right |  |
+| calc-subtract-dual-b7a60279|7 | right | right | right | right |  |
+| textedit-append-line-s1_only-624ef358|2 | wrong | wrong | wrong | unclear |  |
+| textedit-append-line-s1_only-80fa6ec1|2 | wrong | wrong | wrong | unclear | Probably right, though technically unclear |
+
+Reading: on the nine rows the two passes agreed on, the human agreed with the label on seven; the
+two exceptions are the TextEdit unnamed-button rows, which both passes called `wrong` and the human
+called `unclear` ("technically unclear"), the rubric's own answer when the needed control is not on
+the menu. On the three disagreement rows (an All Clear after a Clear) the human split them by state:
+`right` when the display read 0 (a safe full reset), `wrong` when it read 15% (a valid partial
+expression discarded with Multiply on the menu). That state rule is now the rubric's line on the
+matter. The calibration claim in this file rests on labels a human has checked on the rows most
+likely to be wrong; it is still twelve rows.
