@@ -37,11 +37,35 @@ from evals.predicates import EndState, checkpoints_missed, evaluate
 from evals.report import TaskResult, write_results
 from evals.tasks.schema import Task, load_tasks
 
-Arm = Literal["stock", "s1_only", "dual", "guarded", "delegate", "delegate_evidence", "scripted"]
+Arm = Literal[
+    "stock",
+    "s1_only",
+    "dual",
+    "guarded",
+    "guarded_declared",
+    "guarded_legible",
+    "delegate",
+    "delegate_evidence",
+    "scripted",
+]
 JEV_TOKENS_PER_CALL = 2400  # observed mean request size on the local site
 JEV_USD_PER_MTOK = 0.042
-ARMS: tuple[Arm, ...] = ("stock", "s1_only", "dual", "guarded", "delegate", "delegate_evidence", "scripted")
-S2_ARMS = ("dual", "guarded", "delegate", "delegate_evidence")
+ARMS: tuple[Arm, ...] = (
+    "stock",
+    "s1_only",
+    "dual",
+    "guarded",
+    "guarded_declared",
+    "guarded_legible",
+    "delegate",
+    "delegate_evidence",
+    "scripted",
+)
+S2_ARMS = ("dual", "guarded", "guarded_declared", "guarded_legible", "delegate", "delegate_evidence")
+#: Q11: the guarded arm and its declaration ablations. Enforcement is identical across the three; only
+#: what System 2 is told changes (jevdual.contract).
+GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible")
+DECLARED_ARMS = ("guarded_declared", "guarded_legible")
 DELEGATE_ARMS = (
     "delegate",
     "delegate_evidence",
@@ -84,8 +108,9 @@ def default_policy_factory() -> PolicyFactory:
         if arm == "s1_only":
             # S1's own done stands, so false completions are measured, not hidden.
             s1 = JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
-        elif arm == "guarded":
+        elif arm in GUARDED_ARMS:
             # System 2 alone behind the same gate and done verification: the fair baseline (Q9).
+            # Q11 arms share this guard exactly; their difference is in the agent's messages.
             from jevdual.s1 import GuardOnly
             from jevdual.verify import ArbiterHook, Verifier
 
@@ -114,6 +139,28 @@ def default_policy_factory() -> PolicyFactory:
         return s1
 
     return factory
+
+
+def declaration_for(task: Task, arm: str, s1_policy: Any) -> tuple[str, Any]:
+    """Q11: the system-message contract for a declared arm, and the typed rejection feedback for
+    ``guarded_legible`` (None on ``guarded_declared``). The guard itself is untouched."""
+    from jevdual.contract import TaskContract, declare, rejection_feedback_for
+
+    text = declare(
+        TaskContract.from_task(
+            requirements=tuple(task.requirements),
+            answer_expected=task.answer_expected,
+            authorized_destructive=task.authorize,
+            authorized_actions=tuple(task.authorized_actions),
+        )
+    )
+    feedback = None
+    if arm == "guarded_legible":
+        hook = getattr(s1_policy, "verifier", None)
+        if hook is None:
+            raise ValueError("guarded_legible needs the guard's verifier for its bands")
+        feedback = rejection_feedback_for(hook.verifier.policy)
+    return text, feedback
 
 
 def _dual_arbiter():
@@ -428,6 +475,9 @@ async def _run_task_once(
             from jevdual.tools import DELEGATION_GUIDANCE, EVIDENCE_GUIDANCE
 
             extend = DELEGATION_GUIDANCE + ("\n\n" + EVIDENCE_GUIDANCE if arm == "delegate_evidence" else "")
+        feedback = None
+        if arm in DECLARED_ARMS:
+            extend, feedback = declaration_for(task, arm, s1_policy)
         agent = DualProcessAgent(
             task=task.task,
             llm=llm if (arm in S2_ARMS and llm is not None) else RefusingLLM(),
@@ -437,6 +487,7 @@ async def _run_task_once(
             sensitive_data=sensitive,
             authorized_destructive=task.authorize,
             authorized_actions=task.authorized_actions,
+            rejection_feedback=feedback,
             # the upstream judge runs on the System 2 model after the run; nothing to judge with on S1-only
             use_judge=llm is not None and arm in S2_ARMS,
             ground_truth=task.judge_ground_truth,
@@ -517,6 +568,12 @@ async def _run_task_once(
         is_done=end.is_done,
         success=end.success,
         paused=paused,
+        done_rejections=getattr(agent, "s2_done_rejections", 0),
+        done_rejection_reasons=tuple(
+            f"({v.get('band')}) {v.get('reason', '')}"
+            for v in getattr(agent, "s2_verifications", [])
+            if v.get("band") != "accept"
+        ),
         final_url=end.final_url,
         answer=end.answer,
         error=error,
@@ -612,6 +669,7 @@ def load_partial(out_dir: Path) -> list[TaskResult]:
     out = []
     for r in rows:
         r["tags"] = tuple(r.get("tags") or ())
+        r["done_rejection_reasons"] = tuple(r.get("done_rejection_reasons") or ())
         out.append(TaskResult(**r))
     return out
 

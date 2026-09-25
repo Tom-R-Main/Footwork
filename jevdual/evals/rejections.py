@@ -1,9 +1,10 @@
 """Categorise done rejections in a run: what the verifier refused, and whether the predicate later passed.
 
-    uv run python -m evals.rejections results/<run>
+    uv run python -m evals.rejections results/<run> [--arm guarded_legible]
 
-Sources: System 2 rejections are logged by the agent (``System 2 done rejected by verification``) and
-attributed to the task by the preceding ``running <task> on dual`` line; System 1 done vetoes are in
+Sources: System 2 rejections come from each result row's ``done_rejection_reasons`` (Q11 onwards) or,
+for older runs, from the agent's log line (``System 2 done rejected by verification``) attributed to the
+task by the preceding ``running <task> on <arm>`` line; System 1 done vetoes are in
 the trace as ``arbiter_reason`` starting with ``verification``. Categories:
 
 - ``process_unmet``: a per-requirement ``unmet`` verdict on a requirement that names an action
@@ -71,26 +72,35 @@ def categorise(reason: str) -> tuple[str, str | None]:
     return "other", None
 
 
-def load(run_dir: Path) -> list[Rejection]:
-    results = {(r["task_id"], r["arm"]): r for r in json.loads((run_dir / "results.json").read_text())}
+def load(run_dir: Path, arm: str = "dual") -> list[Rejection]:
+    rows = json.loads((run_dir / "results.json").read_text())
+    results = {(r["task_id"], r["arm"]): r for r in rows}
     out: list[Rejection] = []
-    # System 2 rejections from the log, attributed by the last "running X on dual" line
+    # Q11 onwards: each result row carries System 2's refused-done reasons (no step, no log needed)
+    carried = [r for r in rows if r["arm"] == arm and "done_rejection_reasons" in r]
+    for r in carried:
+        for entry in r["done_rejection_reasons"]:
+            m = re.match(r"\((\w+)\) (.*)$", entry, re.DOTALL)
+            band, reason = (m.group(1), m.group(2)) if m else ("verify", entry)
+            cat, req = categorise(reason)
+            out.append(Rejection(r["task_id"], "s2", None, band, reason.strip(), cat, req))
+    # older runs: System 2 rejections from the log, attributed by the last "running X on <arm>" line
     cur: tuple[str, str] | None = None
     log_path = run_dir / "run.log"
-    if log_path.is_file():
+    if not carried and log_path.is_file():
         for line in log_path.read_text(errors="replace").splitlines():
-            m = re.search(r"running (\S+) on (s1_only|stock|dual)", line)
+            m = re.search(r"running (\S+) on (\S+)", line)
             if m:
                 cur = (m.group(1), m.group(2))
                 continue
             m = re.search(
                 r"step (\d+): System 2 done rejected by verification \((verify|reject)\): (.*)$", line
             )
-            if m and cur and cur[1] == "dual":
+            if m and cur and cur[1] == arm:
                 cat, req = categorise(m.group(3))
                 out.append(Rejection(cur[0], "s2", int(m.group(1)), m.group(2), m.group(3).strip(), cat, req))
     # System 1 done vetoes from the traces
-    for f in sorted((run_dir / "traces").glob("*-dual-*.jsonl")):
+    for f in sorted((run_dir / "traces").glob(f"*-{arm}-*.jsonl")):
         task_id = None
         for line in f.read_text().splitlines():
             r = json.loads(line)
@@ -105,7 +115,7 @@ def load(run_dir: Path) -> list[Rejection]:
                 out.append(Rejection(task_id or f.stem, "s1", r["step"], band, reason, cat, req))
     # outcome and final-URL context
     urls: dict[str, dict[int, str]] = defaultdict(dict)
-    for f in sorted((run_dir / "traces").glob("*-dual-*.jsonl")):
+    for f in sorted((run_dir / "traces").glob(f"*-{arm}-*.jsonl")):
         task_id = None
         for line in f.read_text().splitlines():
             r = json.loads(line)
@@ -114,7 +124,7 @@ def load(run_dir: Path) -> list[Rejection]:
                 continue
             urls[task_id or f.stem][r["step"]] = r.get("url_after") or ""
     for rej in out:
-        res = results.get((rej.task_id, "dual"))
+        res = results.get((rej.task_id, arm))
         if res is None:
             continue
         rej.passed = bool(res["passed"])
@@ -165,10 +175,12 @@ def render(run_dir: Path, rejections: list[Rejection]) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("run_dir")
+    ap.add_argument("--arm", default="dual")
     args = ap.parse_args()
     run_dir = Path(args.run_dir)
-    text = render(run_dir, load(run_dir))
-    (run_dir / "rejections.md").write_text(text)
+    text = render(run_dir, load(run_dir, args.arm))
+    name = "rejections.md" if args.arm == "dual" else f"rejections-{args.arm}.md"
+    (run_dir / name).write_text(text)
     print(text)
 
 

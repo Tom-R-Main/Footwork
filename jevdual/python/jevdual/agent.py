@@ -47,6 +47,7 @@ class DualProcessAgent(Agent):
         destructive_keywords: tuple[str, ...] | None = None,
         authorized_destructive: bool = False,
         authorized_actions: tuple[str, ...] = (),
+        rejection_feedback: Any = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -79,6 +80,9 @@ class DualProcessAgent(Agent):
         self.s2_verifications: list[dict[str, Any]] = []
         self.s2_done_rejections = 0
         self.max_done_rejections = 2
+        #: Q11: ``(verdict, refusals_left) -> str`` naming what a refused done is missing
+        #: (jevdual.contract.typed_rejection). None keeps the generic band-and-reason message.
+        self.rejection_feedback = rejection_feedback
         self.s1_steps = 0
         self.s2_steps = 0
         #: step number -> "s1" | "s2", read by the eval rig when it builds the trace.
@@ -323,12 +327,14 @@ class DualProcessAgent(Agent):
                 "step %s: System 2 done rejected by verification (%s): %s", self.state.n_steps, band, reason
             )
             out.action = [self.ActionModel(wait={"seconds": 1})]
-            self._message_manager._add_context_message(
-                UserMessage(
-                    content=f"Your done was not accepted by verification ({band}): {reason}. Continue the task. "
+            if self.rejection_feedback is not None and last is not None and hasattr(last, "unmet_effective"):
+                content = self.rejection_feedback(last, self.max_done_rejections - self.s2_done_rejections)
+            else:
+                content = (
+                    f"Your done was not accepted by verification ({band}): {reason}. Continue the task. "
                     "If it asks for an answer, the answer must quote what the page shows."
                 )
-            )
+            self._message_manager._add_context_message(UserMessage(content=content))
         else:
             params["success"] = False
             params["text"] = "UNVERIFIED: " + str(params.get("text", ""))

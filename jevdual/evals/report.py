@@ -50,6 +50,9 @@ class TaskResult:
     #: Q8: recoverable evaluate refusals in this run (the terminal pause is counted under paused)
     evaluate_refusals: int = 0
     gate_judgments: int = 0
+    #: Q11: System 2 dones the verifier refused in this run, and the verifier's reason for each
+    done_rejections: int = 0
+    done_rejection_reasons: tuple[str, ...] = ()
 
     @property
     def cost_usd(self) -> float:

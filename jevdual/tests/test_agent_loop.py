@@ -36,7 +36,7 @@ class EscalatingPolicy:
         return None
 
 
-async def _run(httpserver, llm, *, policy=None, authorized=False, max_steps=6, use_judge=False):
+async def _run(httpserver, llm, *, policy=None, authorized=False, max_steps=6, use_judge=False, **agent_kw):
     httpserver.expect_request("/").respond_with_data(PAGE, content_type="text/html")
     httpserver.expect_request("/delete-account").respond_with_data(
         "<html><body>Deleted</body></html>", content_type="text/html"
@@ -49,6 +49,7 @@ async def _run(httpserver, llm, *, policy=None, authorized=False, max_steps=6, u
         authorized_destructive=authorized,
         use_judge=use_judge,
         calculate_cost=False,
+        **agent_kw,
     )
     try:
         await agent.browser_session.start()
@@ -90,6 +91,25 @@ async def test_s2_done_is_rejected_twice_then_marked_unverified(httpserver):
     assert history.is_successful() is False
     # the two rejected dones became one-second waits, so the run took three steps
     assert len(history.history) == 3
+
+
+async def test_s2_done_rejection_uses_typed_feedback_when_given(httpserver):
+    """Q11 guarded_legible: the refused done's message comes from the verdict, with the refusals left."""
+    from jevdual.verify import Verdict
+
+    verdict = Verdict(band="reject", complete=0.2, unmet={"Balance reported": 0.9}, claims=[], reason="x")
+    policy = EscalatingPolicy("reject")
+    policy.verifier.last = verdict
+    calls: list[tuple[object, int]] = []
+
+    def feedback(v, left):
+        calls.append((v, left))
+        return "Missing: Balance reported"
+
+    llm = create_mock_llm([done("Balance is $99.00"), done("Balance is $99.00"), done("Balance is $99.00")])
+    _agent, history, _ = await _run(httpserver, llm, policy=policy, rejection_feedback=feedback)
+    assert calls == [(verdict, 1), (verdict, 0)]
+    assert (history.final_result() or "").startswith("UNVERIFIED")
 
 
 async def test_s2_done_accepted_by_the_verifier_stands(httpserver):

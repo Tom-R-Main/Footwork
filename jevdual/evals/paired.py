@@ -17,7 +17,21 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-FIELDS = ("passed", "steps", "llm_calls", "jev_calls", "cost", "wall_s", "unverified")
+#: ``verified``: passed and claimed (report.py's verified pass). ``llm_requests`` and ``done_rejections``
+#: are Q11's burden measures; older results.json files without them read as 0.
+FIELDS = (
+    "passed",
+    "verified",
+    "steps",
+    "llm_calls",
+    "llm_requests",
+    "done_rejections",
+    "jev_calls",
+    "cost",
+    "wall_s",
+    "unverified",
+)
+HIGHER_IS_BETTER = ("passed", "verified")
 
 
 def _rows(run_dir: Path, arm: str) -> dict[str, dict[str, Any]]:
@@ -29,6 +43,7 @@ def _rows(run_dir: Path, arm: str) -> dict[str, dict[str, Any]]:
         r = dict(r)
         r["cost"] = float(r.get("llm_cost_usd", 0.0)) + float(r.get("jev_cost_usd", 0.0))
         r["unverified"] = 1 if str(r.get("answer") or "").startswith("UNVERIFIED") else 0
+        r["verified"] = 1 if (r["passed"] and r.get("success") is True) else 0
         r["passed"] = 1 if r["passed"] else 0
         groups.setdefault(r["task_id"], []).append(r)
     out = {}
@@ -60,6 +75,8 @@ def compare(a: dict[str, dict], b: dict[str, dict]) -> dict[str, Any]:
         "fields": {},
     }
     for f in FIELDS:
+        if not all(f in a[t] and f in b[t] for t in common):
+            continue  # rows built without this field (not from results.json): no difference to report
         diffs = [float(b[t][f]) - float(a[t][f]) for t in common]
         if not diffs:
             continue
@@ -69,8 +86,8 @@ def compare(a: dict[str, dict], b: dict[str, dict]) -> dict[str, Any]:
             "b_total": sum(float(b[t][f]) for t in common),
             "mean_diff": statistics.mean(diffs),
             "ci95": (lo, hi),
-            "b_better": sum(1 for d in diffs if (d > 0 if f == "passed" else d < 0)),
-            "a_better": sum(1 for d in diffs if (d < 0 if f == "passed" else d > 0)),
+            "b_better": sum(1 for d in diffs if (d > 0 if f in HIGHER_IS_BETTER else d < 0)),
+            "a_better": sum(1 for d in diffs if (d < 0 if f in HIGHER_IS_BETTER else d > 0)),
         }
     return out
 
