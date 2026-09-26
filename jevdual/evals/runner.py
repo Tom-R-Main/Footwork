@@ -45,6 +45,7 @@ Arm = Literal[
     "guarded_declared",
     "guarded_legible",
     "guarded_receipts",
+    "guarded_evidence",
     "delegate",
     "delegate_evidence",
     "scripted",
@@ -59,6 +60,7 @@ ARMS: tuple[Arm, ...] = (
     "guarded_declared",
     "guarded_legible",
     "guarded_receipts",
+    "guarded_evidence",
     "delegate",
     "delegate_evidence",
     "scripted",
@@ -69,12 +71,15 @@ S2_ARMS = (
     "guarded_declared",
     "guarded_legible",
     "guarded_receipts",
+    "guarded_evidence",
     "delegate",
     "delegate_evidence",
 )
 #: Q11: the guarded arm and its declaration ablations. Enforcement is identical across the three; only
 #: what System 2 is told changes (jevdual.contract).
-GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible", "guarded_receipts")
+GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible", "guarded_receipts", "guarded_evidence")
+#: Q16 (package E): the guarded arm with the strict claim check (VerifyPolicy.claim_evidence)
+EVIDENCE_ARMS = ("guarded_evidence",)
 #: Q12: the receipt arm delivers each step's receipt to the driver and the verifier; the silent
 #: guarded arm records receipts in the trace only (jevdual.receipts).
 RECEIPT_ARMS = ("guarded_receipts",)
@@ -127,10 +132,13 @@ def default_policy_factory() -> PolicyFactory:
             # System 2 alone behind the same gate and done verification: the fair baseline (Q9).
             # Q11 arms share this guard exactly; their difference is in the agent's messages.
             from jevdual.s1 import GuardOnly
-            from jevdual.verify import ArbiterHook, Verifier
+            from jevdual.verify import ArbiterHook, Verifier, VerifyPolicy
 
+            vpolicy = VerifyPolicy(claim_evidence="page_and_fields") if arm in EVIDENCE_ARMS else None
             hook = ArbiterHook(
-                Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected
+                Verifier(client, policy=vpolicy),
+                requirements=tuple(task.requirements),
+                answer_expected=task.answer_expected,
             )
             guard = GuardOnly(verifier=hook, secrets=store)
             guard.jev_counter = client  # type: ignore[attr-defined]
@@ -263,6 +271,23 @@ def _terminal_mode(end: EndState, paused: bool, error: str | None) -> str:
     if end.is_done:
         return "done_stopped"
     return "cap"
+
+
+def _unverified_reason(end: EndState, verifications: list[dict[str, Any]]) -> str | None:
+    """Package E: why a run ended UNVERIFIED, from the last refused verification. ``no_evidence``: the
+    verifier's scores would accept, but the answer carries no fact found on the page, or the task asks
+    for an answer and none is given; ``unmet``: a requirement judged unmet or complete judged low;
+    ``uncertain``: the scores sit between the bands."""
+    if not (end.is_done and str(end.answer or "").startswith("UNVERIFIED")):
+        return None
+    refused = [v for v in verifications if v.get("band") != "accept"]
+    if not refused:
+        return "uncertain"
+    last = refused[-1]
+    reason = str(last.get("reason") or "")
+    if "no fact found" in reason or "asks for an answer" in reason:
+        return "no_evidence"
+    return "unmet" if last.get("band") == "reject" else "uncertain"
 
 
 class _EndStateCapture:
@@ -610,6 +635,7 @@ async def _run_task_once(
         success=end.success,
         paused=paused,
         terminal_mode=_terminal_mode(end, paused, error),
+        unverified_reason=_unverified_reason(end, getattr(agent, "s2_verifications", [])),
         checkpoints_reached=len(task.checkpoints) - len(checkpoints_missed(task, end)),
         checkpoints_declared=len(task.checkpoints),
         receipts=tuple(r.effect for _, r in sorted(getattr(agent, "receipts", {}).items())),

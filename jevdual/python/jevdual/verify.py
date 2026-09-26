@@ -67,14 +67,21 @@ class VerifyPolicy:
     answer_required: float = 0.60
     reject_unmet: float = 0.70
     reject_complete: float = 0.30
+    #: Package E (Q16): "page" is the claim check as Q12 ran it; "page_and_fields" strips a leading
+    #: status label ("UNVERIFIED:") and parenthetical asides before taking atoms, treats a clause of
+    #: more than six words after a colon as narrative, and also looks for atoms in the values of
+    #: the page's non-secret form fields, which innerText leaves out.
+    claim_evidence: str = "page"
 
 
 @dataclass(frozen=True)
 class ClaimCheck:
     claim: str
-    grade: str  # exact | normalized | none
+    grade: str  # exact | normalized | none | narrative
     start: int
     end: int
+    #: where the evidence was found: "page" (visible text) or "field" (a form field's value)
+    source: str = "page"
 
     @property
     def supported(self) -> bool:
@@ -106,8 +113,11 @@ class Verdict:
             "complete": round(self.complete, 3),
             "unmet_effective": {k: round(v, 3) for k, v in self.unmet_effective.items()},
             "unmet": {k: round(v, 3) for k, v in self.unmet.items()},
-            "claims": [c.grade for c in self.claims],
+            "claims": [c.grade if c.source == "page" else f"{c.grade}:{c.source}" for c in self.claims],
             "unsupported": len(self.unsupported_claims),
+            # package E: which claims failed, so a rejection can be audited from the trace (redacted by
+            # the trace writer)
+            "unsupported_claims": [c[:160] for c in self.unsupported_claims],
             "reason": self.reason,
         }
 
@@ -130,16 +140,31 @@ _NUMBER_RE = re.compile(
 _AFTER_COLON_RE = re.compile(r":\s*([^:;]{2,160})$")
 
 
-def extract_atoms(sentence: str) -> list[str]:
+_STATUS_LABEL_RE = re.compile(r"^\s*(?:[-*•]\s*)?[A-Z][A-Z _-]{2,}:\s*")
+_ASIDE_RE = re.compile(r"\s*\([^()]*\)")
+#: package E: a value after a colon is a value only up to this many words; longer is a clause
+MAX_VALUE_WORDS = 6
+
+
+def clean_claim(sentence: str) -> str:
+    """Package E: drop a leading status label ("UNVERIFIED:", "RESULT:") and parenthetical asides,
+    which are about the claim, not facts in it."""
+    return _ASIDE_RE.sub("", _STATUS_LABEL_RE.sub("", sentence)).strip()
+
+
+def extract_atoms(sentence: str, *, strict: bool = False) -> list[str]:
     """The evidence-bearing pieces of a sentence: quoted spans, numbers with units or currency,
     and the value after a trailing colon. Narrative words are not evidence and are not atoms.
-    URLs are stripped first; page innerText never contains them."""
-    text = _URL_RE.sub(" ", sentence)
+    URLs are stripped first; page innerText never contains them. ``strict`` (package E) cleans the
+    sentence first and keeps a value after a colon only when it has at most ``MAX_VALUE_WORDS`` words."""
+    text = _URL_RE.sub(" ", clean_claim(sentence) if strict else sentence)
     atoms: list[str] = [m.group(1).strip() for m in _QUOTED_RE.finditer(text)]
     atoms += [m.group(0).strip() for m in _NUMBER_RE.finditer(text)]
     tail = _AFTER_COLON_RE.search(text)
     if tail:
-        atoms.append(tail.group(1).strip().rstrip("."))
+        value = tail.group(1).strip().rstrip(".")
+        if not strict or len(value.split()) <= MAX_VALUE_WORDS:
+            atoms.append(value)
     seen: set[str] = set()
     out = []
     for a in atoms:
@@ -150,35 +175,61 @@ def extract_atoms(sentence: str) -> list[str]:
     return out
 
 
-def check_claims(answer: str | None, page_text: str) -> list[ClaimCheck]:
+def check_claims(
+    answer: str | None, page_text: str, *, field_text: str = "", strict: bool = False
+) -> list[ClaimCheck]:
     """Grade each sentence by its atoms.
 
     A sentence with no atoms is narrative (grade ``narrative``): kept, never counted as
     evidence. A sentence with atoms is supported only if every atom is found in the page
-    text (exact or normalized); the sentence's grade is its worst atom's grade.
+    text (exact or normalized); the sentence's grade is its worst atom's grade. ``field_text``
+    (package E) is the page's form field values: an atom not in the visible text but in a field is
+    found there, and the sentence's source says so. ``strict`` is :func:`extract_atoms`'s.
     """
     if not answer:
         return []
     sentences = split_claims(answer)
     if not sentences:
         return []
-    per_sentence = [extract_atoms(sn) for sn in sentences]
+    per_sentence = [extract_atoms(sn, strict=strict) for sn in sentences]
     flat = [a for atoms in per_sentence for a in atoms]
-    results = {}
+    results: dict[str, dict[str, Any]] = {}
+    field_results: dict[str, dict[str, Any]] = {}
     if flat:
         matcher = native_or_pure("evidence_match")
         for r in matcher(flat, page_text):
             results.setdefault(r["claim"], r)
+        missing = [a for a in flat if results.get(a, {}).get("grade", "none") == "none"]
+        if field_text and missing:
+            for r in matcher(missing, field_text):
+                field_results.setdefault(r["claim"], r)
     out: list[ClaimCheck] = []
     order = {"exact": 0, "normalized": 1, "none": 2}
     for sn, atoms in zip(sentences, per_sentence, strict=True):
         if not atoms:
             out.append(ClaimCheck(sn, "narrative", -1, -1))
             continue
-        graded = [results.get(a, {"grade": "none", "start": -1, "end": -1}) for a in atoms]
+        graded = []
+        from_field = False
+        for a in atoms:
+            g = results.get(a, {"grade": "none", "start": -1, "end": -1})
+            if g["grade"] == "none" and field_results.get(a, {}).get("grade", "none") != "none":
+                g = {**field_results[a], "start": -1, "end": -1}
+                from_field = True
+            graded.append(g)
         worst = max(graded, key=lambda g: order.get(g["grade"], 2))
-        out.append(ClaimCheck(sn, worst["grade"], worst.get("start", -1), worst.get("end", -1)))
+        source = "field" if from_field and worst["grade"] != "none" else "page"
+        out.append(ClaimCheck(sn, worst["grade"], worst.get("start", -1), worst.get("end", -1), source))
     return out
+
+
+def field_values(menu: Menu) -> str:
+    """Package E: the values of the page's non-secret form fields, one per line, as ``label: value``."""
+    lines = []
+    for c in menu.candidates:
+        if c.value and (c.input_type or "").lower() != "password":
+            lines.append(f"{c.label}: {c.value}")
+    return "\n".join(lines)
 
 
 _IDENTIFIER = re.compile(r"\b(?:[A-Za-z]+[A-Z][A-Za-z0-9]*|[A-Za-z]+_[A-Za-z0-9_]+|[A-Z][a-z]{3,})\b")
@@ -434,7 +485,13 @@ class Verifier:
         if answer_expected:
             answer_required = max(answer_required, 1.0)
 
-        claims = check_claims(answer, menu.full_text or menu.page_text)
+        strict = self.policy.claim_evidence == "page_and_fields"
+        claims = check_claims(
+            answer,
+            menu.full_text or menu.page_text,
+            field_text=field_values(menu) if strict else "",
+            strict=strict,
+        )
         unsupported = tuple(c.claim for c in claims if not c.supported)
         supported_answer: str | None = None
         if claims:
