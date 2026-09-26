@@ -78,3 +78,20 @@ Test: `scripts/diag_add_to_cart.py --launches 10`: login by browser-use actions,
 Predicts: at least one of ten launches fails to add; in each failure a trusted mousedown arrives with a target other than the button, or coordinates outside its rectangle.
 Against: 10 of 10 add (a); or failures show no mousedown at all (b).
 Refs: scripts/diag_add_to_cart.py; results/q11-live-dev.md (saucedemo mechanism)
+
+## U12 · update · 2026-09-26 12:49
+Observed: E2, the soak (`soak.jsonl`), 30 launches from 12:43 to 12:47: a raw click arrived exactly once before the login and after it, through the chosen session and through each of the two sessions, in 30 of 30. The first loss run (3 of 6) was about 12:30; nothing lost since, in 48 consecutive launches across three probes.
+Inferred: whatever caused the early losses did not recur in this window; the soak cannot say what it was.
+Next: C4.
+
+## U13 · update · 2026-09-26 12:49
+Resolves: C4 = failed
+Observed: `add-to-cart.jsonl`, ten launches: browser-use's own click on the backpack's "Add to cart" added it in 10 of 10 (badge "1"); each time one trusted mousedown reached the button itself, at (616, 356), inside its rectangle (536, 339, 160 by 34).
+Inferred: today, in isolation, neither lost input nor a misplaced click reproduces at the task level. Q11 and Q12's saucedemo failures (09-25 and 09-26) happened inside the full agent loop, which the probes leave out: the browser-use Agent's watchdogs, screenshots, and the guard's extra DOM reads between steps, over longer runs. The 3-of-6 loss this morning shows the fault still exists somewhere; I have not reproduced it on demand and do not know its trigger.
+Changes: package C cannot finish as planned. Its acceptance ("a fixture proves exactly-once across fresh sessions") holds for the fixture and for 48 live launches, but that proves nothing about a fault the fixture never showed.
+
+## S3 · summary · 2026-09-26 12:49
+Established: a click that navigates, same-site or cross-site, keeps trusted input in a local fixture (20 of 20); after the saucedemo login, input arrives exactly once through either of browser-use's two sessions for the page (36 of 36 across E1 and E2); browser-use's own add-to-cart click works in isolation (10 of 10). The 09-23 "duplicated events" were the probe counting twice, because the login page's listeners survive client-side routing. Four predictions about the mechanism failed or could not run (C1 failed, C2 inconclusive, C3 failed on its threshold, C4 failed).
+Uncertain: what caused the three lost launches at about 12:30 today, and the saucedemo failures in Q11 and Q12. herokuapp does not load under browser-use from this machine today, for an unknown reason.
+Decision: pause C without a fix. The next evidence needs the agent loop itself: the saucedemo tasks (`ls-add-backpack-cart` and the order tasks) run once each on the guarded arm with the probes' listener in the page, which is a paid run (about $0.03 at Q12's rates) and needs the owner's go-ahead under the plan's no-paid-runs rule. Packages D (Q12b) and F (Q11b) keep their dependency on C.
+Refs: results/c-nav-input-20260926/; scripts/diag_nav_input.py, diag_input_sessions.py, diag_add_to_cart.py
