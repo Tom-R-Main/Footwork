@@ -18,3 +18,9 @@ Observed: Q16 smoke (`results/q16-smoke-20260926`, three tasks, both arms, once)
 Inferred: a fourth mechanism, not in V1: prices split across text nodes. Every saucedemo price answer fails the exact check.
 Changes: the strict check closes a space between a currency sign and a digit in the page and field text before matching (Python, before the matcher; the Rust matcher and its twin are unchanged). Amendment appended to Q16.md before run 1.
 Next: Q16 runs 1 to 3 once Q12b's runs finish.
+
+## U29 · update · 2026-09-26 17:51
+Resolves: V1 = held
+Observed: Q16 (`results/q16-live-dev.md`): no-fact refusals 62 on `guarded`, 20 on `guarded_evidence`; verified passes on V1's four tasks 4 of 12 against 12 of 12; no false completion on either arm.
+Inferred: the no-fact refusals came from the check, as V1 said: most of them go when it reads labels, asides, form fields and split prices correctly. The all-task verified gain (+11 pooled) is short of its interval, because the rescued tasks are few among 59.
+Next: Q16b on the heldout.
