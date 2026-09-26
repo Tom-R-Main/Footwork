@@ -70,7 +70,8 @@ class VerifyPolicy:
     #: Package E (Q16): "page" is the claim check as Q12 ran it; "page_and_fields" strips a leading
     #: status label ("UNVERIFIED:") and parenthetical asides before taking atoms, treats a clause of
     #: more than six words after a colon as narrative, and also looks for atoms in the values of
-    #: the page's non-secret form fields, which innerText leaves out.
+    #: the page's non-secret form fields, which innerText leaves out; a space between a currency sign
+    #: and its digits in the page text is closed ("$ 9.99" reads "$9.99").
     claim_evidence: str = "page"
 
 
@@ -140,6 +141,14 @@ _NUMBER_RE = re.compile(
 _AFTER_COLON_RE = re.compile(r":\s*([^:;]{2,160})$")
 
 
+#: package E: saucedemo renders "$<!-- -->9.99" and the serializer reads "$ 9.99"
+_CURRENCY_GAP_RE = re.compile(r"([$€£¥])\s+(?=\d)")
+
+
+def close_currency_gaps(text: str) -> str:
+    return _CURRENCY_GAP_RE.sub(r"\1", text)
+
+
 _STATUS_LABEL_RE = re.compile(r"^\s*(?:[-*•]\s*)?[A-Z][A-Z _-]{2,}:\s*")
 _ASIDE_RE = re.compile(r"\s*\([^()]*\)")
 #: package E: a value after a colon is a value only up to this many words; longer is a clause
@@ -192,6 +201,8 @@ def check_claims(
     if not sentences:
         return []
     per_sentence = [extract_atoms(sn, strict=strict) for sn in sentences]
+    if strict:
+        page_text, field_text = close_currency_gaps(page_text), close_currency_gaps(field_text)
     flat = [a for atoms in per_sentence for a in atoms]
     results: dict[str, dict[str, Any]] = {}
     field_results: dict[str, dict[str, Any]] = {}

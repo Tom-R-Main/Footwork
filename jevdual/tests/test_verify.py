@@ -288,3 +288,10 @@ def test_a_value_in_a_form_field_is_found_there_and_says_so():
 def test_a_fact_on_neither_page_nor_field_stays_unsupported():
     [c] = check_claims("Total: $32.39", "Total: $29.99", field_text="Name: Alan", strict=True)
     assert c.grade == "none"
+
+
+def test_a_price_split_across_text_nodes_matches_in_strict_mode():
+    page = "Sauce Labs Bike Light A red light ... $ 9.99 Add to cart"
+    claim = 'The price of "Sauce Labs Bike Light" is $9.99.'
+    assert check_claims(claim, page)[0].grade == "none"  # Q12's check
+    assert check_claims(claim, page, strict=True)[0].grade in ("exact", "normalized")
