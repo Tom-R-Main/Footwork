@@ -86,3 +86,11 @@ Observed: `results/g5-native-append` on 6918473, screen unlocked: 6 of 6 verifie
 Inferred: the readback is the evidence the verifier lacked. Whether those first Command-S saves failed or the readback at 0.5 s read the disk before TextEdit's write is not separable from these traces; if the latter, the `partial` was false and cost a step each time.
 Changes: the bridge polls the file for up to 3 s before calling a save `partial`.
 Next: none for G; a later native run shows whether first saves still read partial.
+
+## G6 · prediction · 2026-09-26 16:49
+Question: were G5's first-Command-S `partial` receipts failed saves or early reads?
+Hypothesis: early reads: TextEdit finishes writing after 0.5 s, so polling for up to 3 s turns them into `confirmed`.
+Alternatives: the first Command-S genuinely does not save (the chord reaches TextEdit before it is key), so polling changes nothing.
+Test: the same six runs on 1a31586.
+Predicts: the first Command-S receipt `confirmed` in at least 5 of 6 runs, and no File > Save step after it.
+Against: `partial` on the first Command-S in 3 or more of 6 (failed saves, not early reads).
