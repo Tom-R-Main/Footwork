@@ -249,7 +249,9 @@ class DualProcessAgent(Agent):
 
         The keyword list missed "Submit order" and "Finish" on every arm (results/q8-consent.md) while
         System 1's own noul judged "Submit order" at 0.80 inside a delegation. A judgment at or above
-        ``destructive_confirm`` pauses like a keyword hit; a failed call falls back to the keyword gate.
+        ``destructive_confirm`` pauses like a keyword hit. A judgment that cannot answer (the call fails,
+        or returns anything but one probability per target) pauses on the first target: until
+        2026-09-26 it fell back to the keyword gate and let the step through (package B1).
         """
         verifier = getattr(getattr(self.s1_policy, "verifier", None), "verifier", None)
         judge = getattr(verifier, "judge_destructive", None)
@@ -259,18 +261,35 @@ class DualProcessAgent(Agent):
         cached = getattr(self.browser_session, "_cached_browser_state_summary", None)
         store = getattr(self.s1_policy, "secrets", None)
         red = store.redactor() if store is not None else (lambda s: s)
+        from jevdual.authorize import checked_probabilities
+
         try:
-            probs = await judge(
-                red(self.task),
-                [{"label": red(label), "context": red(ctx)} for _, label, ctx in targets],
-                url=red(str(getattr(cached, "url", "") or "")),
-                title=red(str(getattr(cached, "title", "") or "")),
+            probs = checked_probabilities(
+                await judge(
+                    red(self.task),
+                    [{"label": red(label), "context": red(ctx)} for _, label, ctx in targets],
+                    url=red(str(getattr(cached, "url", "") or "")),
+                    title=red(str(getattr(cached, "title", "") or "")),
+                ),
+                len(targets),
             )
-        except Exception as exc:  # noqa: BLE001 - the keyword gate already ran; a failed judgment must not block the step
+        except Exception as exc:  # noqa: BLE001 - a judgment that cannot answer withholds the step
+            idx, label, _ = targets[0]
             log.warning(
-                "step %s: destructive judgment failed (%s); keyword gate only", self.state.n_steps, exc
+                "step %s: destructive judgment unavailable (%s); pausing before %r",
+                self.state.n_steps,
+                exc,
+                label,
             )
-            return None
+            getattr(self, "gate_judgments", []).append(
+                {
+                    "step": self.state.n_steps,
+                    "targets": [(lab, None) for _, lab, _ in targets],
+                    "hit": label,
+                    "error": f"{type(exc).__name__}: {str(exc)[:120]}",
+                }
+            )
+            return (label, f"judgment unavailable ({type(exc).__name__})", idx)
         floor = self.gate_policy.destructive_confirm
         record = {
             "step": self.state.n_steps,
