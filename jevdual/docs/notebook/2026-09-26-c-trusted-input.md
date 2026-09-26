@@ -48,3 +48,24 @@ Test: `diag_trusted_input.py --sites sauce --launches 6`.
 Predicts: the login-page probe receives `mousemove:true, mousedown:true` in every launch; the after-login probe receives nothing in at least 4 of 6.
 Against: the after-login probe receives events in 5 or 6 of 6.
 Refs: scripts/diag_trusted_input.py; results/q8b-consent.md
+
+## U10 · update · 2026-09-26 12:39
+Resolves: C3 = failed
+Observed: six launches, saucedemo only (`results/c-nav-input-20260926/live-diag-sauce.txt`). The login-page probe got one mousemove and one mousedown in 6 of 6. After login: nothing in 3 launches (0, 1, 2), and two of each event in the other 3. Exactly once: 0 of 6. In the launches that lost input it stayed lost after a later `navigate_to` to the inventory page; in the others that probe got exactly one of each.
+Inferred: the defect reproduces today, but as a per-launch, per-session state, not per page: once lost, a fresh navigation does not restore it. The doubled counts are probably the probe's own artifact: `trusted_alive` adds window listeners each call, and if the login does not replace the window (saucedemo routes client-side) the login page's listeners are still attached. Not yet checked. A lead dropped before testing: browser-use's default extensions never loaded here (`~/.config/browseruse/extensions` is empty; the downloads fail certificate verification), so they cannot explain the difference from the local fixture.
+Next: E1.
+
+## E1 · exploratory · 2026-09-26 12:39
+Question: in a launch that loses input, where does `Input.dispatchMouseEvent` go? Record, before and after the login, the target and session `get_or_create_cdp_session` returns, the page targets from `Target.getTargets`, whether the document was replaced (`performance.getEntriesByType("navigation")` time origin), and whether a raw click through a session freshly attached to the visible page target arrives.
+Test: extend the saucedemo probe to print those per launch, six launches.
+Refs: scripts/diag_trusted_input.py
+
+## U11 · update · 2026-09-26 12:43
+Observed: E1, six launches (`sessions-run1.jsonl`): the saucedemo login never replaces the document (same `performance.timeOrigin`, client-side routing); the focused page target has two CDP sessions in browser-use's pool in every launch, and a raw click through either arrives exactly once, 6 of 6. The original probe rerun right after (`live-diag-sauce-run2.txt`): after login two of each event in 6 of 6, and exactly one on the inventory page via `navigate_to` in 6 of 6; no loss. In the first run the losses were launches 0 to 2 and none after, in time order. Six idle headless Chromium processes about 21 hours old were running during both runs.
+Inferred: the doubled counts are the probe's artifact (the login page's listeners survive client-side routing), not duplicated input; input delivery through browser-use's sessions works when measured once per document. The loss is real but intermittent and time-clustered, and I cannot produce it on demand now. The two-sessions-per-target pool is a plausible hazard (the pool picks from a set) but both sessions delivered in every launch measured. Session bookkeeping is not shown to be the cause.
+Next: E2, a timestamped soak, before any fix; there is nothing to fix until a loss can be caught with its session state recorded.
+Refs: scripts/diag_input_sessions.py; results/c-nav-input-20260926/
+
+## E2 · exploratory · 2026-09-26 12:43
+Question: when does the loss happen? Thirty launches of `diag_input_sessions.py` with a wall-clock time per launch, run in the background; any launch with a lost click keeps its full session record.
+Test: `for i in 1..30`, one launch each, timestamped, appended to `results/c-nav-input-20260926/soak.jsonl`.
