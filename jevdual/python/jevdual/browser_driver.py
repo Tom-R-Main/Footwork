@@ -274,7 +274,9 @@ class BrowserBridge:
         out.setdefault("_is_error", bool(getattr(r, "is_error", False)))
         return out
 
-    async def attach(self) -> dict[str, Any]:
+    async def attach(self, *, tab_id: str | None = None) -> dict[str, Any]:
+        """Bind the window's browser target. With ``tab_id`` (a session's bound tab) the bridge stays on
+        that tab and refuses when it is gone; without it, it takes the active tab (a new session)."""
         prep = await self._tool(
             "browser_prepare",
             {"pid": self.pid, "window_id": self.window_id, "strategy": {"kind": "existing_profile"}},
@@ -290,6 +292,14 @@ class BrowserBridge:
             )
         self.target_id = bound["target_id"]
         tabs = bound.get("tabs") or []
+        if tab_id is not None:
+            if not any(t.get("tab_id") == tab_id for t in tabs):
+                raise RuntimeError(
+                    f"the session's tab {tab_id} is no longer in this window; nothing dispatched. "
+                    "Start a new session on the tab you want."
+                )
+            self.tab_id = tab_id
+            return bound
         active = next((t for t in tabs if t.get("active")), tabs[0] if tabs else None)
         if active is None:
             raise RuntimeError("bound target has no tab")

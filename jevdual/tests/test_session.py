@@ -61,7 +61,8 @@ def test_secret_and_password_receipts_never_show_the_value(tmp_path):
     }
     st = _state(tmp_path, before, pend)
     r = receipt_for(st, _nm([_field(1, "Password", input_type="password", has_value=True)]))
-    assert r["effect"] == "confirmed" and "hunter" not in r["text"] and "a value" in r["evidence"]
+    # a password field says only that it holds something: unverifiable, not confirmed (package A2)
+    assert r["effect"] == "unverifiable" and "hunter" not in r["text"] and "a value" in r["evidence"]
     r = receipt_for(st, _nm([_field(1, "Password", input_type="password", has_value=False)]))
     assert r["effect"] == "suspected_noop" and "{secret}" in r["evidence"]
 

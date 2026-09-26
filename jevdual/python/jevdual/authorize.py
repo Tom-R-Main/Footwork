@@ -51,7 +51,6 @@ CHORD_MEANING = {
     "return": "confirm the default button",
     "enter": "confirm the default button",
 }
-REPLACE_MIN_CHARS = 20
 
 
 @dataclass(frozen=True)
@@ -76,7 +75,9 @@ class NativeAction:
         cur = self.current if self.current is not None else (self.target.value or "")
         return (
             self.target.input_type == "textarea"
-            and len(cur) >= REPLACE_MIN_CHARS
+            # any existing content: a length floor (20 characters until 2026-09-26) let a short document
+            # be replaced unpaused (status audit, probe short_document_replacement)
+            and bool(cur.strip())
             and (self.text or "") != cur
             and not (self.text or "").startswith(cur)
         )

@@ -19,6 +19,7 @@ task, the last observation, the memory lines and a JSONL log.
 from __future__ import annotations
 
 import asyncio
+import copy
 import dataclasses
 import json
 import os
@@ -60,6 +61,12 @@ class SessionState:
     mode: str = "native"
     #: the execution posture (jevdual.posture): background_only unless the operator granted more at start
     posture: str = "background_only"
+    #: browser mode: the tab this session bound at start; later commands refuse rather than follow the
+    #: active tab (status audit 2026-09-26, probe browser_session_rebind_after_active_tab_switch)
+    browser_tab: str = ""
+    #: names of the secrets typed in this session (``{NAME}``); their values are scrubbed from every
+    #: observation before it is rendered, persisted or shown to a model. Names only, never values.
+    secret_names: list[str] = field(default_factory=list)
 
     @property
     def path(self) -> Path:
@@ -106,9 +113,13 @@ def session_dir(arg: str | None) -> Path:
 # ---- observation and receipts --------------------------------------------------------------
 
 
-def receipt_for(state: SessionState, nm: NativeMenu) -> dict[str, Any] | None:
+def receipt_for(
+    state: SessionState, nm: NativeMenu, *, secret_value: str | None = None
+) -> dict[str, Any] | None:
     """The receipt for the pending action: the effect diff between the observation it was taken on and
-    this one, in the driver's words."""
+    this one, in the driver's words. ``nm`` is the raw observation; the diff is taken on its scrubbed
+    form (the remembered one is scrubbed), and ``secret_value`` is the secret the command just typed,
+    held in memory for the comparison and never written."""
     from jevdual.effects import diff
     from jevdual.receipts import receipt_from_effect, receipt_text
 
@@ -117,7 +128,7 @@ def receipt_for(state: SessionState, nm: NativeMenu) -> dict[str, Any] | None:
     prev = state.last_menu()
     if prev is None:
         return None
-    eff = diff(prev, nm.menu)
+    eff = diff(prev, scrub(state, nm, secret_value).menu)
     r = receipt_from_effect(
         state.step,
         (state.pending.get("line", "action"),),
@@ -125,43 +136,141 @@ def receipt_for(state: SessionState, nm: NativeMenu) -> dict[str, Any] | None:
         url_after=nm.menu.url,
         error=state.pending.get("error"),
     )
-    r = _field_receipt(r, state.pending, nm)
+    r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     if r.effect == "suspected_noop" and state.pending.get("driver_effect") == "confirmed":
         # the driver confirmed the press but nothing on the menu changed: say both
         text = receipt_text(r) + " The driver reported the press as delivered."
     else:
         text = receipt_text(r)
-    return {"effect": r.effect, "evidence": r.evidence, "text": text}
+    out = {"effect": r.effect, "evidence": r.evidence, "text": text}
+    for v in _secret_values(state, secret_value):
+        out = {k: w.replace(v, "{secret}") for k, w in out.items()}
+    return out
 
 
-def _field_receipt(r: Any, pending: dict[str, Any], nm: Any) -> Any:
-    """A receipt for ``type`` or ``append`` names what the field holds now, and its verdict follows
-    the field, not the element count: on 2026-09-25 typing into Wikipedia's search box added 49
-    elements (the suggestion list), the receipt said confirmed, and the query went out empty."""
+def _secret_values(state: SessionState, extra: str | None = None) -> list[str]:
+    """The values to scrub: every secret named in this session, from the environment, plus the one in
+    hand. Values under three characters are not scrubbed (they would erase ordinary text)."""
+    vals = [os.environ.get(f"FOOTWORK_SECRET_{n}") or "" for n in state.secret_names]
+    if extra:
+        vals.append(extra)
+    return sorted({v for v in vals if len(v) >= 3}, key=len, reverse=True)
+
+
+def scrub(state: SessionState, nm: Any, extra: str | None = None) -> Any:
+    """``nm`` with every secret value replaced by ``{secret}`` in the page text, title, URL and each
+    element's label and value: what is rendered, persisted, diffed and shown to a model."""
+    vals = _secret_values(state, extra)
+    if not vals:
+        return nm
+
+    def s(x: Any) -> Any:
+        if not isinstance(x, str):
+            return x
+        for v in vals:
+            x = x.replace(v, "{secret}")
+        return x
+
+    m = nm.menu
+    menu = dataclasses.replace(
+        m,
+        url=s(m.url),
+        title=s(m.title),
+        page_text=s(m.page_text),
+        candidates=tuple(dataclasses.replace(c, label=s(c.label), value=s(c.value)) for c in m.candidates),
+    )
+    if dataclasses.is_dataclass(nm):
+        out = dataclasses.replace(nm, menu=menu)
+    else:
+        out = copy.copy(nm)
+        out.menu = menu
+    if isinstance(getattr(out, "values", None), dict):
+        out.values = {k: s(v) for k, v in out.values.items()}
+    return out
+
+
+def _bound_field(menu: Menu | None, pending: dict[str, Any]) -> Candidate | None:
+    """The field the action was aimed at: the one text element with its label, or, when several share
+    the label, the one with the chosen id. Never the first of several."""
+    if menu is None:
+        return None
+    low = pending["target_label"].casefold()
+    same = [c for c in menu.candidates if c.label.casefold() == low and "type" in c.operations]
+    if len(same) == 1:
+        return same[0]
+    if len(same) > 1:
+        return next((c for c in same if c.id == pending.get("target_id")), None)
+    return menu.candidate(pending.get("target_id", -1))
+
+
+def _field_receipt(
+    r: Any, pending: dict[str, Any], nm: Any, *, prev: Menu | None = None, secret_value: str | None = None
+) -> Any:
+    """A receipt for ``type`` or ``append`` states the field's postcondition, not the element count: on
+    2026-09-25 typing into Wikipedia's search box added 49 elements (the suggestion list), the receipt
+    said confirmed, and the query went out empty. ``type`` is confirmed when the field holds exactly
+    the intended text, ``append`` when it holds its earlier value plus the insertion; trailing
+    whitespace is not compared, because the Cua Driver strips it from values. A step that was not
+    dispatched stays ``refused`` whatever the field holds, and a secret's value is never quoted."""
     if pending.get("op") not in ("type", "append") or not pending.get("target_label"):
         return r
     label = pending["target_label"]
-    low = label.casefold()
-    fields = [c for c in nm.menu.candidates if c.label.casefold() == low and "type" in c.operations]
-    field = fields[0] if fields else nm.menu.candidate(pending.get("target_id", -1))
+    error = pending.get("error") or getattr(r, "error", None)
+    if (
+        r.effect == "refused"
+        or error
+        or pending.get("driver_effect") in ("not sent", "not dispatched", "refused")
+    ):
+        return dataclasses.replace(
+            r, effect="refused", evidence=f"not applied: {str(error or pending.get('driver_effect'))[:120]}"
+        )
+    field = _bound_field(nm.menu, pending)
     if field is None:
         return dataclasses.replace(
-            r, effect="unverifiable", evidence=f"{label!r} is not on the fresh observation"
+            r, effect="unverifiable", evidence=f"{label!r} is not on the fresh observation as one field"
         )
+    secret = bool(pending.get("secret"))
     if field.input_type == "password":
+        # a password field exposes whether it holds something, never what: that is not a confirmation
         ok = bool(field.has_value)
-        shown, holds = "{secret}", "a value" if ok else "nothing"
+        return dataclasses.replace(
+            r,
+            effect="unverifiable" if ok else "suspected_noop",
+            evidence=f"{label!r} holds {'a value' if ok else 'nothing'}; the {{secret}} typed into a "
+            "password field cannot be read back",
+        )
+    holds = field.value or ""
+    was = _bound_field(prev, pending)
+    before = (was.value or "") if was is not None else None
+    if secret and secret_value is None:
+        changed = before is not None and holds != before
+        return dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence=f"{label!r} {'changed' if changed else 'did not change'}; a secret is compared only during the command that typed it",
+        )
+    intended = (secret_value if secret else pending.get("intended")) or ""
+    if pending["op"] == "type":
+        expected: str | None = intended
     else:
-        holds = field.value or ""
-        if pending.get("secret"):
-            ok, shown = bool(holds), "{secret}"
-        else:
-            intended = pending.get("intended") or ""
-            ok, shown = bool(intended) and intended in holds, intended
-    if ok:
-        return dataclasses.replace(r, effect="confirmed", evidence=f"{label!r} now holds {str(holds)[:80]!r}")
+        expected = None if before is None else before + intended
+
+    def show(x: str) -> str:
+        return "{secret}" if secret else repr(x[:80])
+
+    if expected is None:
+        return dataclasses.replace(
+            r, effect="unverifiable", evidence=f"{label!r} holds {show(holds)}; no earlier value to compare"
+        )
+    if holds.rstrip() == expected.rstrip():
+        return dataclasses.replace(r, effect="confirmed", evidence=f"{label!r} now holds {show(holds)}")
+    if before is not None and holds == before:
+        return dataclasses.replace(
+            r, effect="suspected_noop", evidence=f"{label!r} still holds {show(holds)}, not {show(expected)}"
+        )
+    what = "the text typed" if pending["op"] == "type" else "its earlier value plus the insertion"
     return dataclasses.replace(
-        r, effect="suspected_noop", evidence=f"{label!r} holds {str(holds)[:80]!r}, not {str(shown)[:60]!r}"
+        r, effect="partial", evidence=f"{label!r} changed and holds {show(holds)}, not {what}"
     )
 
 
@@ -197,7 +306,8 @@ async def bind(state: SessionState):
         from jevdual.posture import ExecutionPolicy
 
         bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
-        await bridge.attach()
+        await bridge.attach(tab_id=state.browser_tab or None)
+        state.browser_tab = bridge.tab_id or ""
         return driver, bridge
     from cua_driver import CuaDriver
 
@@ -213,11 +323,14 @@ def _native_bridge(driver: Any, pid: int, wid: int, posture: str) -> NativeBridg
     return NativeBridge(driver, pid, wid, policy=ExecutionPolicy(posture), live_check=True)  # type: ignore[arg-type]
 
 
-async def observe(state: SessionState, bridge: NativeBridge) -> tuple[NativeMenu, dict[str, Any] | None]:
+async def observe(
+    state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None
+) -> tuple[NativeMenu, dict[str, Any] | None]:
     shots = state.path / "screenshots"
     shots.mkdir(exist_ok=True)
     nm = await bridge.observe(screenshot_path=str(shots / f"obs-{state.step:03d}-{int(time.time())}.png"))
-    receipt = receipt_for(state, nm)
+    receipt = receipt_for(state, nm, secret_value=secret_value)
+    nm = scrub(state, nm, secret_value)
     if receipt is not None and state.pending is not None:
         word = receipt["effect"]
         line = state.pending.get("line", "action")
@@ -429,6 +542,10 @@ async def cmd_do(args: Any) -> int:
     op, cid, raw_text, keys, path = parse_do(args.words)
     text, secret_used = resolve_secrets(raw_text)
     shown_text = raw_text if not secret_used else re.sub(r"\{[^}]+\}", "{secret}", raw_text or "")
+    if secret_used:
+        for name in re.findall(r"\{([A-Za-z_][A-Za-z0-9_]*)\}", raw_text or ""):
+            if name not in state.secret_names:
+                state.secret_names.append(name)
     driver, bridge = await bind(state)
     try:
         before = state.last_menu()
@@ -562,7 +679,7 @@ async def cmd_do(args: Any) -> int:
             f"dispatched {line}: driver says {driver_effect}{(' (' + error + ')') if error else ''} in {exec_ms / 1000:.1f}s"
         )
         await asyncio.sleep(args.settle)
-        nm, receipt = await observe(state, bridge)
+        nm, receipt = await observe(state, bridge, secret_value=text if secret_used else None)
     finally:
         await driver.shutdown()
     print(render_observation(nm, text_chars=args.text, receipt=receipt))
