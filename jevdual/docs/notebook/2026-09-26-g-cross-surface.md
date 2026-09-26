@@ -94,3 +94,10 @@ Alternatives: the first Command-S genuinely does not save (the chord reaches Tex
 Test: the same six runs on 1a31586.
 Predicts: the first Command-S receipt `confirmed` in at least 5 of 6 runs, and no File > Save step after it.
 Against: `partial` on the first Command-S in 3 or more of 6 (failed saves, not early reads).
+
+## U28 · update · 2026-09-26 16:53
+Resolves: G6 = failed
+Observed: `results/g6-native-append` on 809e346 (polling up to 3 s): 6 of 6 verified again; the first Command-S read `partial` in 4 of 6 runs even after polling, and each time the File > Save that followed read `confirmed`.
+Inferred: not early reads: those Command-S presses did not save (alternative: the chord arrives before TextEdit's window is key), and the `partial` receipts were true. The receipt is what sent the driver to File > Save; without it, Q17's drivers pressed Command-S again and again against a verifier that could not tell.
+Changes: none to the receipt. The unreliable chord is the Driver's foreground hotkey route; routing a save chord through the menu is a candidate, not done.
+Next: none.
