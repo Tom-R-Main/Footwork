@@ -29,3 +29,17 @@ Test: `scripts/pilot_cross_surface.sh` once more, on the fix.
 Predicts: the append receipt `confirmed`; the Command-S receipt `confirmed` with "saved: ~/footwork-pilot/transfer.txt holds the window's text exactly"; check-file confirmed on line 2.
 Against: either receipt other than confirmed on a file whose bytes are right, or a confirmed save receipt when check-file fails.
 Refs: python/jevdual/session.py (save_readback); tests/test_session.py
+
+## U23 · update · 2026-09-26 14:43
+Resolves: G2 = inconclusive
+Observed: the rerun on 46dad49 exited 6. TextEdit still had the G1 document open, and the script had rewritten the file under it, so the window held G1's text; the append added a second '£51.77' and its receipt read `confirmed` (the window's field did hold earlier text, a line break and the value). Command-S did not save; the save receipt read `partial (save not confirmed: .../transfer.txt differs from the window's text at character 32)`, and check-file failed ("no line ... holds '£51.77'"). No dialog was left open; the document was closed without saving.
+Inferred: the test did not run under its own conditions (a stale open document), so G2's confirmations are untested. What it did show is the property that matters more: when the save failed, the save receipt and the oracle both said so, and neither receipt overstated. Before the fix, the same save was reported "suspected no-op" whether or not the file was written.
+Changes: the pilot writes a fresh file per run.
+Next: G3.
+
+## G3 · prediction · 2026-09-26 14:43
+Revises: G2
+Hypothesis: on a fresh file, every receipt in the transfer is true and confirmed.
+Test: `scripts/pilot_cross_surface.sh` (fresh file per run), once.
+Predicts: append `confirmed`; Command-S `confirmed` ("saved: ... holds the window's text exactly"); check-file confirmed on line 2; exit 0.
+Against: any receipt other than confirmed while the file's bytes are right; or a confirmed save while check-file fails.

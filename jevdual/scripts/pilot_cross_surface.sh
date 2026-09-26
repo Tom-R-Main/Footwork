@@ -5,7 +5,9 @@
 # desktop may be used. Everything it writes is under ~/footwork-pilot and runs/g-*.
 set -eu
 cd "$(dirname "$0")/.."
-DIR="$HOME/footwork-pilot"; FILE="$DIR/transfer.txt"
+DIR="$HOME/footwork-pilot"; NAME="transfer-$(date +%H%M%S).txt"; FILE="$DIR/$NAME"
+# a fresh file per run: rewriting a file TextEdit still has open leaves its old text in the window
+# and the save fails (G2, 2026-09-26)
 B=runs/g-browser; T=runs/g-textedit
 mkdir -p "$DIR"; printf 'Price carried from the browser:\n' > "$FILE"
 rm -rf "$B" "$T"
@@ -15,7 +17,7 @@ fw start "Read the price of the first book" --browser --url https://books.toscra
 fw read --match '(£[0-9]+\.[0-9]{2})' --as price --session "$B"
 
 open -a TextEdit "$FILE"; sleep 3
-fw start "Append the carried price and save" --app TextEdit --window transfer.txt \
+fw start "Append the carried price and save" --app TextEdit --window "$NAME" \
   --mode foreground_permitted --authorize Save --session "$T"
 fw do append "text area" @price --from "$B" --session "$T"
 fw do hotkey cmd s --no-judge --session "$T"
