@@ -18,6 +18,8 @@ It sits between two records that already exist:
 
 - **Before** a substantive test or harness change: a `prediction`, or `exploratory` when there is no
   hypothesis yet.
+  A prediction is for an unknown: a cause, a mechanism, an effect size. Conformance work whose tests
+  already state the expected behaviour needs no prediction, only its summary (N1, U21).
 - **When evidence changes** the diagnosis, the confidence or the next action: an `update`. A failed
   prediction, a surprise, a regression, or finding that the test cannot tell the explanations apart
   all qualify.
