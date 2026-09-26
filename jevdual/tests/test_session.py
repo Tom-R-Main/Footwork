@@ -187,19 +187,27 @@ def test_a_save_is_confirmed_only_by_the_file_on_disk(tmp_path):
         assert r is not None and r["effect"] == effect and rb["detail"] in r["evidence"], r
 
 
-def test_save_readback_compares_the_disk_with_the_window(tmp_path, monkeypatch):
-    from jevdual import ax
-    from jevdual.session import is_save, save_readback
+def test_save_readback_compares_the_disk_with_the_window(tmp_path):
+    from types import SimpleNamespace
+
+    from jevdual.native import NativeEffect, is_save, save_readback, with_save_readback
 
     f = tmp_path / "t.txt"
     f.write_text("a\nb")
-    monkeypatch.setattr(ax, "document_path", lambda pid, wid: str(f))
-    monkeypatch.setattr(ax, "text_area_values", lambda pid, wid: ["a\nb"])
-    assert save_readback(1, 2)["ok"] is True
-    monkeypatch.setattr(ax, "text_area_values", lambda pid, wid: ["a\nc"])
-    rb = save_readback(1, 2)
+    ax = SimpleNamespace(document_path=lambda pid, wid: str(f), text_area_values=lambda pid, wid: ["a\nb"])
+    rb = save_readback(ax, 1, 2)
+    assert rb["ok"] is True
+    eff = with_save_readback(NativeEffect("hotkey", -1, "cmd+s", "unverifiable"), rb)
+    assert eff.effect == "confirmed" and "saved: " in eff.summary and eff.readback == rb
+    ax.text_area_values = lambda pid, wid: ["a\nc"]
+    rb = save_readback(ax, 1, 2)
     assert rb["ok"] is False and "character 2" in rb["detail"]
-    monkeypatch.setattr(ax, "document_path", lambda pid, wid: None)
-    assert save_readback(1, 2)["ok"] is None
-    assert is_save("hotkey", ("cmd", "s"), ()) and is_save("menu", (), ("File", "Save"))
-    assert not is_save("hotkey", ("cmd", "shift", "s"), ())
+    assert with_save_readback(NativeEffect("menu", -1, "File > Save", "unverifiable"), rb).effect == "partial"
+    ax.document_path = lambda pid, wid: None
+    rb = save_readback(ax, 1, 2)
+    assert (
+        rb["ok"] is None
+        and with_save_readback(NativeEffect("m", -1, "x", "confirmed"), rb).effect == "unverifiable"
+    )
+    assert is_save(keys=["cmd", "s"]) and is_save(path=["File", "Save"])
+    assert not is_save(keys=["cmd", "shift", "s"]) and not is_save(path=["File", "Save As…"])

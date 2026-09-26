@@ -55,3 +55,12 @@ Established: a value read in one session carries its source (surface, app, URL, 
 Uncertain: Q13's five tasks have no oracles yet; only one transfer shape (browser to TextEdit, plain text) was driven, once confirmed; a rich-text document, a second app, and the reverse direction are untested.
 Decision: G's pilot closes; Q13 is pre-registered only once five oracles pass, per the plan. A single session holding both bridges (`switch_surface`) is not built: two sessions and a carry kept each session's identity guarantee from package A intact, and the pilot did not need more.
 Refs: python/jevdual/carry.py; python/jevdual/session.py (save_readback); scripts/pilot_cross_surface.sh
+
+## G4 · prediction · 2026-09-26 14:47
+Question: does the save readback, moved into the native bridge, let the verifier accept the saved append Q17 refused six times?
+Hypothesis: the verifier held "The document was saved" at 0.42 to 0.55 unmet because the save's receipt was `unverifiable` (a chord changes nothing a window diff sees); with the bridge reading the file against the window after Command-S or File > Save, the trajectory line reads `confirmed` with "saved: ... holds the window's text exactly", and the requirement is met.
+Alternatives: the verifier judges "saved" from the window title or the page, not the trajectory line, so it stays uncertain.
+Test: `evals.native.runner --task textedit-append-line --arm dual --arm guarded --repeats 3` on this build (Q17's task, same arms).
+Predicts: 6 of 6 verified (predicate passed, done accepted), each with one save step; Q17 had 0 of 6 with two to four save attempts each.
+Against: fewer than 5 of 6 verified, or a save receipt `confirmed` on a run whose predicate fails.
+Refs: python/jevdual/native.py (save_readback); results/q17-native-dev.md

@@ -153,44 +153,6 @@ def receipt_for(
     return out
 
 
-def is_save(op: str, keys: tuple[str, ...], path: tuple[str, ...]) -> bool:
-    if op == "hotkey":
-        return {k.casefold() for k in keys} == {"cmd", "s"}
-    return op == "menu" and bool(path) and path[-1].casefold() == "save"
-
-
-def save_readback(pid: int, window_id: int) -> dict[str, Any]:
-    """Package G: after a save, the file the window names against the window's own text. TextEdit's
-    title mark is not readable reliably (G1: the Command-S receipt read "no change" on a saved file), so
-    the receipt reads the disk."""
-    from jevdual import ax
-
-    try:
-        path = ax.document_path(pid, window_id)
-        values = ax.text_area_values(pid, window_id)
-    except Exception as exc:  # noqa: BLE001 - no readback is an honest "unverifiable"
-        return {"ok": None, "detail": f"could not read the window: {exc}"[:160]}
-    if not path:
-        return {"ok": None, "detail": "the window names no file (unsaved document)"}
-    if len(values) != 1:
-        return {"ok": None, "path": path, "detail": f"the window has {len(values)} text areas"}
-    try:
-        disk = Path(path).read_text()
-    except (OSError, UnicodeDecodeError) as exc:
-        return {"ok": None, "path": path, "detail": f"{path} is not readable as text: {exc}"[:160]}
-    shown = values[0]
-    if disk == shown:
-        return {
-            "ok": True,
-            "path": path,
-            "detail": f"{path} holds the window's text exactly ({len(disk)} characters)",
-        }
-    at = next(
-        (i for i, (a, b) in enumerate(zip(disk, shown, strict=False)) if a != b), min(len(disk), len(shown))
-    )
-    return {"ok": False, "path": path, "detail": f"{path} differs from the window's text at character {at}"}
-
-
 def _save_receipt(r: Any, pending: dict[str, Any]) -> Any:
     rb = pending.get("save_readback")
     if not rb:
@@ -749,9 +711,8 @@ async def cmd_do(args: Any) -> int:
             "mode": state.mode,
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
         }
-        if state.mode == "native" and is_save(op, keys, path) and not error:
-            await asyncio.sleep(args.settle)
-            state.pending["save_readback"] = save_readback(state.pid, state.window_id)
+        if getattr(eff, "readback", None) is not None:
+            state.pending["save_readback"] = eff.readback
         state.log({"kind": "do", **state.pending})
         state.save()
         print(
