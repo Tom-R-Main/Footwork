@@ -71,16 +71,23 @@ def test_a_noop_whose_input_arrived_says_that_too():
     assert r.effect == "suspected_noop" and "the page received the input" in receipt_text(r)
 
 
-def test_a_scroll_or_focus_change_is_a_confirmed_effect_not_a_noop():
-    d = delivery_between(probe(), probe(trusted=1, focus="input#q"), True)
-    r = receipt_from_effect(3, ("click(textbox 'Search')",), noop(), url_after="https://s/", delivery=d)
-    assert r.effect == "confirmed" and "focus moved to input#q" in r.evidence
+def test_a_click_that_only_focused_its_target_is_still_a_noop():
+    d = delivery_between(probe(), probe(trusted=1, focus="button#add"), True)
+    r = receipt_from_effect(3, ("click(button 'Add')",), noop(), url_after="https://s/", delivery=d)
+    assert r.effect == "suspected_noop" and "also focus moved to button#add" in r.evidence
+
+
+def test_a_scroll_action_that_scrolled_is_confirmed():
+    d = delivery_between(probe(), probe(y=600), False)
+    r = receipt_from_effect(3, ("scroll(down)",), noop(), url_after="https://s/", delivery=d)
+    assert r.effect == "confirmed" and "scrolled down 600px" in r.evidence
     assert "received" not in receipt_text(r)  # a confirmed receipt states the change only
 
 
-def test_a_delayed_navigation_is_reported_on_the_next_receipt():
-    r = receipt_from_effect(4, ("scroll()",), noop(), between="https://s/checkout-complete.html")
-    assert r.effect == "confirmed" and "moved to /checkout-complete.html on its own" in r.evidence
+def test_a_delayed_navigation_is_reported_not_credited_to_this_step():
+    r = receipt_from_effect(4, ("click(x)",), noop(), between="https://s/checkout-complete.html")
+    assert r.effect == "suspected_noop"
+    assert "before this step the page moved to /checkout-complete.html on its own" in r.evidence
 
 
 def test_words_are_closed():

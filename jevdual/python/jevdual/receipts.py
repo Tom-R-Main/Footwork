@@ -16,7 +16,8 @@ effect in the driver's five words:
 Package D adds a second, separate field: ``delivery`` (``jevdual.delivery``) says whether the page
 received the step's input, independent of whether anything visibly changed, and ``observed`` names
 changes the element diff cannot see (scrolling, a focus move, a navigation that landed between steps).
-A step whose only change is one of those is ``confirmed``, not a no-op.
+They are reported as facts; only a step of scroll actions that scrolled is ``confirmed`` by them,
+because a click focuses its target and browser-use scrolls a target into view before clicking.
 
 Three deliveries, all made by the runtime and none by the model: the driver's action result text
 (:func:`receipt_text`), the verifier's trajectory line (``jevdual.ledger.trajectory_from_agent``)
@@ -82,7 +83,13 @@ def receipt_from_effect(
     if between:
         observed = (f"before this step the page moved to {_path(between)} on its own",) + observed
     delivered = delivery.word if delivery else "unknown"
-    if effect.no_effect and observed and not error:
+    # A click focuses its target and browser-use scrolls a target into view before clicking, so a
+    # focus move or a scroll is not by itself evidence that a click did anything (D1: the no-handler
+    # button read "confirmed" on its own focus). They are reported, and they confirm only a step whose
+    # every action was a scroll.
+    scrolled = [o for o in observed if o.startswith(("scrolled", "an inner region scrolled"))]
+    only_scrolls = bool(actions) and all(a.startswith("scroll(") for a in actions)
+    if effect.no_effect and not error and only_scrolls and scrolled:
         return Receipt(
             step=step,
             actions=tuple(actions),
@@ -116,6 +123,8 @@ def receipt_from_effect(
             parts.append(f"text changed ({effect.text_ratio:.2f} unchanged)")
         word = "partial" if error else "confirmed"
         evidence = "; ".join(parts) + (f"; one action failed: {error[:120]}" if error else "")
+    if observed:
+        evidence = f"{evidence}; also {', '.join(observed)}"
     return Receipt(
         step=step,
         actions=tuple(actions),
