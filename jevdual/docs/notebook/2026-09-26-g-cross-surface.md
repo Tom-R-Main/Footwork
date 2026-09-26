@@ -71,3 +71,11 @@ Observed: `results/g4-native-append` (6 runs, dual and guarded): every run hit t
 Inferred: the test never ran under its conditions (accessibility cannot reach windows on a locked screen), so the save readback is untested on the native agent path. The harness failed its own milestone here: it kept deciding and pressing keys for 25 steps against a screen nobody could see, instead of stopping and saying why.
 Changes: `jevdual.posture.screen_locked`; the posture refuses every delivery with `screen_locked` and the native bridge refuses to observe on a locked screen (a typed `NativeBridgeError`), so a run ends at its first observation with the reason. The suite pins the screen unlocked (`tests/conftest.py`); with the real screen locked, 35 tests had failed, which is how the dependence was found.
 Next: G4 again once the screen is unlocked.
+
+## G5 · prediction · 2026-09-26 16:45
+Revises: G4
+Hypothesis: as G4, on an unlocked screen: with the bridge's save readback on the trajectory line, the verifier accepts the saved append Q17 refused six times.
+Test: `evals.native.runner --task textedit-append-line --arm dual --arm guarded --repeats 3` on main (0d3907a), screen unlocked, owner at the Mac.
+Predicts: at least 5 of 6 verified (predicate passed, done accepted), each run with one save step whose receipt is `confirmed`.
+Against: fewer than 5 of 6 verified with the save receipt confirmed (the verifier ignores the readback), or a confirmed save receipt on a run whose predicate fails.
+Refs: results/q17-native-dev.md; python/jevdual/native.py (save_readback)
