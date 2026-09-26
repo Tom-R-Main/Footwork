@@ -1014,8 +1014,16 @@ class NativeBridge:
     async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
         if not is_save(keys, path) or not eff.dispatched or eff.effect == "refused":
             return eff
-        await asyncio.sleep(0.5)  # the app writes the file after the menu action returns
-        return with_save_readback(eff, save_readback(self.ax, self.pid, self.window_id))
+        # the app writes the file after the menu action returns; in G5 four of six first Command-S
+        # readbacks at 0.5 s read "differs" and the File > Save right after read "saved", so the disk is
+        # polled for up to 3 s before a save is called partial
+        rb: dict[str, Any] = {}
+        for _ in range(6):
+            await asyncio.sleep(0.5)
+            rb = save_readback(self.ax, self.pid, self.window_id)
+            if rb.get("ok") is not False:
+                break
+        return with_save_readback(eff, rb)
 
     async def menu(self, nm: NativeMenu, path: list[str]) -> NativeEffect:
         """Invoke an application menu item by path (``["File", "Save"]``). A menu action goes to the app's

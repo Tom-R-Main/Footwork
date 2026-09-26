@@ -79,3 +79,10 @@ Test: `evals.native.runner --task textedit-append-line --arm dual --arm guarded 
 Predicts: at least 5 of 6 verified (predicate passed, done accepted), each run with one save step whose receipt is `confirmed`.
 Against: fewer than 5 of 6 verified with the save receipt confirmed (the verifier ignores the readback), or a confirmed save receipt on a run whose predicate fails.
 Refs: results/q17-native-dev.md; python/jevdual/native.py (save_readback)
+
+## U27 · update · 2026-09-26 16:49
+Resolves: G5 = held
+Observed: `results/g5-native-append` on 6918473, screen unlocked: 6 of 6 verified and accepted (dual 3, guarded 3), 3 to 7 steps; Q17 had 0 of 6 on the same task and arms. Every accepted done follows a save receipt `confirmed` ("saved: ... holds the window's text exactly"), with "was saved" unmet at 0.09 to 0.26 when accepted. In 4 of 6 runs the first Command-S read `partial` (the file differed from the window) and a File > Save one step later read `confirmed`; one dual run's verifier rejected (saved unmet 0.90) one step after a confirmed save and accepted the next done.
+Inferred: the readback is the evidence the verifier lacked. Whether those first Command-S saves failed or the readback at 0.5 s read the disk before TextEdit's write is not separable from these traces; if the latter, the `partial` was false and cost a step each time.
+Changes: the bridge polls the file for up to 3 s before calling a save `partial`.
+Next: none for G; a later native run shows whether first saves still read partial.
