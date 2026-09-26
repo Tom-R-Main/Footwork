@@ -13,6 +13,11 @@ effect in the driver's five words:
                     text unchanged, no dialog or tab change
 ``refused``         the harness did not dispatch the action (a gate pause, a refused input)
 
+Package D adds a second, separate field: ``delivery`` (``jevdual.delivery``) says whether the page
+received the step's input, independent of whether anything visibly changed, and ``observed`` names
+changes the element diff cannot see (scrolling, a focus move, a navigation that landed between steps).
+A step whose only change is one of those is ``confirmed``, not a no-op.
+
 Three deliveries, all made by the runtime and none by the model: the driver's action result text
 (:func:`receipt_text`), the verifier's trajectory line (``jevdual.ledger.trajectory_from_agent``)
 and the trace (``StepRecord.effect``). The receipt states what was observed; it does not advise.
@@ -23,6 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from jevdual.delivery import Delivery
 from jevdual.effects import Effect
 
 EFFECT_WORDS = ("confirmed", "partial", "unverifiable", "suspected_noop", "refused")
@@ -43,6 +49,10 @@ class Receipt:
     changed: int = 0
     text_ratio: float = 1.0
     error: str | None = None
+    #: package D: did the page receive the input (jevdual.delivery.DELIVERY_WORDS)
+    delivery: str = "unknown"
+    #: package D: scrolling, focus, a navigation between steps
+    observed: tuple[str, ...] = ()
 
     @property
     def no_effect(self) -> bool:
@@ -62,8 +72,26 @@ def receipt_from_effect(
     *,
     url_after: str = "",
     error: str | None = None,
+    delivery: Delivery | None = None,
+    between: str | None = None,
 ) -> Receipt:
-    """Read an :class:`Effect` (the diff between the menu before the step and the state after it)."""
+    """Read an :class:`Effect` (the diff between the menu before the step and the state after it),
+    with the page probe's :class:`Delivery` when there is one and ``between``, the URL the page moved
+    to after the previous step's read and before this step began."""
+    observed = tuple(delivery.observed) if delivery else ()
+    if between:
+        observed = (f"before this step the page moved to {_path(between)} on its own",) + observed
+    delivered = delivery.word if delivery else "unknown"
+    if effect.no_effect and observed and not error:
+        return Receipt(
+            step=step,
+            actions=tuple(actions),
+            effect="confirmed",
+            evidence="; ".join(observed) + f"; same URL {_path(url_after)}, elements and text unchanged",
+            text_ratio=effect.text_ratio,
+            delivery=delivered,
+            observed=observed,
+        )
     if effect.no_effect:
         word = "suspected_noop"
         evidence = (
@@ -99,6 +127,8 @@ def receipt_from_effect(
         changed=effect.changed,
         text_ratio=effect.text_ratio,
         error=error,
+        delivery=delivered,
+        observed=observed,
     )
 
 
@@ -115,15 +145,26 @@ def receipt_from_native(step: int, native: Any) -> Receipt:
     )
 
 
+#: how each delivery word reads inside a receipt; "unknown" and "not_applicable" add nothing
+DELIVERY_TEXT = {
+    "delivered": "the page received the input",
+    "not_delivered": "input dispatched, the page received none of it",
+    "by_script": "only a script click reached the page",
+    "new_document": "the page loaded a new document",
+}
+
+
 def receipt_text(r: Receipt) -> str:
     """The receipt as the driver reads it in its action result. Facts only."""
     what = ", ".join(r.actions) if r.actions else "the step"
+    said = DELIVERY_TEXT.get(r.delivery)
+    evidence = f"{said}; {r.evidence}" if said and r.effect in ("suspected_noop", "partial") else r.evidence
     if r.effect == "suspected_noop":
-        return f"Receipt for {what}: suspected no-op ({r.evidence})."
+        return f"Receipt for {what}: suspected no-op ({evidence})."
     if r.effect == "refused":
         return f"Receipt for {what}: refused ({r.evidence})."
     if r.effect == "partial":
-        return f"Receipt for {what}: partial ({r.evidence})."
+        return f"Receipt for {what}: partial ({evidence})."
     if r.effect == "unverifiable":
         return f"Receipt for {what}: unverifiable ({r.evidence})."
     return f"Receipt for {what}: confirmed ({r.evidence})."

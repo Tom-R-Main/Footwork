@@ -61,6 +61,8 @@ class TaskResult:
     checkpoints_declared: int = 0
     receipts: tuple[str, ...] = ()
     noop_receipts: int = 0
+    #: package D: steps whose input was dispatched and never reached the page
+    undelivered_inputs: int = 0
 
     @property
     def cost_usd(self) -> float:

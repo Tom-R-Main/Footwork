@@ -61,6 +61,9 @@ class DualProcessAgent(Agent):
         self.receipts: dict[int, Any] = {}
         self._pre_step_menu: Any = None
         self._pre_step_state: Any = None
+        #: package D: page probes around each step (jevdual.delivery)
+        self._pre_probe: Any = None
+        self._last_post_probe: Any = None
         self.s1_policy = s1_policy
         #: Pre-dispatch gate for BOTH systems: an index-bearing action whose target label matches a
         #: destructive keyword is replaced by a failed done asking for confirmation, unless the task
@@ -412,6 +415,7 @@ class DualProcessAgent(Agent):
     async def _issue_receipt(self) -> None:
         """Q12: one Receipt for the step just executed, from the state after it. One extra DOM read
         per step (no screenshot); the next step's own read is unchanged."""
+        from jevdual.delivery import delivery_between, expects_input, navigated_between_steps, read_probe
         from jevdual.effects import diff
         from jevdual.menu import build_menu
         from jevdual.receipts import action_lines, receipt_from_effect, receipt_text
@@ -429,15 +433,23 @@ class DualProcessAgent(Agent):
             return
         effect = diff(self._pre_step_menu, menu)
         error = next((r.error for r in results if r.error), None)
+        post = await read_probe(self.browser_session)
+        names = [next(iter(a.model_dump(exclude_unset=True)), "") for a in out.action]
+        executed = names[: len(results)]
         receipt = receipt_from_effect(
             step,
             action_lines(list(out.action), self._pre_step_state),
             effect,
             url_after=getattr(after, "url", "") or "",
             error=error,
+            delivery=delivery_between(self._pre_probe, post, expects_input(executed)),
+            between=navigated_between_steps(self._last_post_probe, self._pre_probe),
         )
+        self._last_post_probe = post
         self.receipts[step] = receipt
-        log.info("step %s: receipt %s: %s", step, receipt.effect, receipt.evidence)
+        log.info(
+            "step %s: receipt %s (input %s): %s", step, receipt.effect, receipt.delivery, receipt.evidence
+        )
         if self.receipts_mode == "deliver":
             last = results[-1]
             text = receipt_text(receipt)
@@ -448,8 +460,10 @@ class DualProcessAgent(Agent):
 
     async def _get_next_action(self, browser_state_summary: BrowserStateSummary) -> None:
         if getattr(self, "receipts_mode", "off") != "off":
+            from jevdual.delivery import read_probe
             from jevdual.menu import build_menu
 
+            self._pre_probe = await read_probe(self.browser_session)
             try:
                 self._pre_step_menu = build_menu(browser_state_summary)
                 self._pre_step_state = browser_state_summary

@@ -358,6 +358,7 @@ def _write_trace(
                     is_done=any(r.is_done for r in h.result),
                     effect=(f"{receipts[i].effect}: {receipts[i].evidence}" if i in receipts else None),
                     no_effect=bool(i in receipts and receipts[i].no_effect),
+                    delivery=(receipts[i].delivery if i in receipts else None),
                     memory_line=h.model_output.memory if h.model_output else None,
                     menu=menu,
                     verify=verify,
@@ -613,6 +614,9 @@ async def _run_task_once(
         checkpoints_declared=len(task.checkpoints),
         receipts=tuple(r.effect for _, r in sorted(getattr(agent, "receipts", {}).items())),
         noop_receipts=sum(1 for r in getattr(agent, "receipts", {}).values() if r.no_effect),
+        undelivered_inputs=sum(
+            1 for r in getattr(agent, "receipts", {}).values() if r.delivery == "not_delivered"
+        ),
         done_rejections=getattr(agent, "s2_done_rejections", 0),
         done_rejection_reasons=tuple(
             f"({v.get('band')}) {v.get('reason', '')}"

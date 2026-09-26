@@ -91,6 +91,8 @@ class StepRecord(BaseModel):
     is_done: bool = False
     effect: str | None = None
     no_effect: bool = False
+    #: package D: did the page receive the step's input (jevdual.delivery.DELIVERY_WORDS)
+    delivery: str | None = None
     memory_line: str | None = None
     #: the candidates S1 chose among (empty when S1 was not consulted), and the verification scores of
     #: any done judged on this step (S1's own or System 2's): complete, unmet per requirement, band
