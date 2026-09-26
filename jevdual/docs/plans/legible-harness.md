@@ -175,6 +175,15 @@ writes work in the background on native controls; keys need the foreground when 
 more than one window; web content inside Safari takes clicks but not values; the Driver's browser
 mode is the route for the web.
 
+**Foreground rows (2026-09-26, `foreground_permitted`, the person away from the keyboard).**
+
+| task | what happened |
+|---|---|
+| Finder rename | Return on the selected icon entered rename mode (a textbox with the old name appeared, `confirmed`); `type` into it was refused `element_outside_target_window`, and the second Return came back `delivery_failed` because the Finder window did not become key even with the idle gate satisfied. Folder unchanged; verifier rejected at p=0.96 unmet. Finder rename is not reachable by this bridge in either posture; reported to its owner |
+| Finder Move to Trash | keyword pause before dispatch, one `--authorize`, the menu route `confirmed` (3 elements removed), the file left the folder and is in the Trash. The retained-decision path works end to end in the foreground posture. The verifier stayed at 0.70 on the negative requirement, its usual blind spot on absence |
+
+The front was restored after each foreground step and nothing of the person's was touched.
+
 **What a command costs now.** `start` 10 to 13 s (driver, new window, navigate, first observation
 with screenshot); `look` 1 s; `do` 4 to 6 s (observe, dispatch, settle 1 to 3 s, reobserve); `s1`
 about 2 s (one Jev call); `done` about 2 s (one verifier call). The Driver process starts fresh per
