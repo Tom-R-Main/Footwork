@@ -69,3 +69,12 @@ Refs: scripts/diag_input_sessions.py; results/c-nav-input-20260926/
 ## E2 · exploratory · 2026-09-26 12:43
 Question: when does the loss happen? Thirty launches of `diag_input_sessions.py` with a wall-clock time per launch, run in the background; any launch with a lost click keeps its full session record.
 Test: `for i in 1..30`, one launch each, timestamped, appended to `results/c-nav-input-20260926/soak.jsonl`.
+
+## C4 · prediction · 2026-09-26 12:44
+Question: after the saucedemo login, does browser-use's own "Add to cart" click add the item? This is the symptom Q11 and Q12 measured, which the raw-CDP probes do not exercise.
+Hypothesis: it fails intermittently, and when it fails the click is delivered but lands off the button (browser-use computes coordinates from a layout captured before client-side routing settled), not that input is lost.
+Alternatives: (a) it succeeds every time today, so the loss is the intermittent state E2 is looking for and the task-level symptom follows it; (b) when it fails no trusted mousedown arrives at all (input loss, as the 09-23 reading had it).
+Test: `scripts/diag_add_to_cart.py --launches 10`: login by browser-use actions, fresh selector map, click the backpack's "Add to cart" by index, read the cart badge, the mousedowns the page saw (target id and coordinates) and the button's rectangle.
+Predicts: at least one of ten launches fails to add; in each failure a trusted mousedown arrives with a target other than the button, or coordinates outside its rectangle.
+Against: 10 of 10 add (a); or failures show no mousedown at all (b).
+Refs: scripts/diag_add_to_cart.py; results/q11-live-dev.md (saucedemo mechanism)
