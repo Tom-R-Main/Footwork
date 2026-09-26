@@ -94,6 +94,11 @@ The execution blocker behind Q11's and Q12's saucedemo losses. Start from
 Done when: the fixture shows input arriving exactly once after navigation in repeated fresh sessions,
 with no duplicated events.
 
+Amended 2026-09-26 (notebook U14): the fixture never showed the fault, so passing it proves nothing.
+Done when instead: the saucedemo tasks pass inside the full agent loop with every click delivered
+exactly once, or the loss is caught there with its dispatch and session state recorded, fixed, and
+turned into a test that fails without the fix.
+
 ## D. Receipts that name the effect, then Q12b
 
 - Click receipts on a page that did not navigate name what changed: scroll position, focus, an

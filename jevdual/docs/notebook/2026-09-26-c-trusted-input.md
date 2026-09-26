@@ -96,3 +96,18 @@ Established: a click that navigates, same-site or cross-site, keeps trusted inpu
 Uncertain: what caused the three lost launches at about 12:30 today, and the saucedemo failures in Q11 and Q12. herokuapp does not load under browser-use from this machine today, for an unknown reason.
 Decision: pause C without a fix. The next evidence needs the agent loop itself: the saucedemo tasks (`ls-add-backpack-cart` and the order tasks) run once each on the guarded arm with the probes' listener in the page, which is a paid run (about $0.03 at Q12's rates) and needs the owner's go-ahead under the plan's no-paid-runs rule. Packages D (Q12b) and F (Q11b) keep their dependency on C.
 Refs: results/c-nav-input-20260926/; scripts/diag_nav_input.py, diag_input_sessions.py, diag_add_to_cart.py
+
+## U14 · update · 2026-09-26 13:12
+Observed: the owner approved paid runs to finish the plan (2026-09-26). Q12's traces for `ls-add-backpack-cart` (`results/q12-live-dev-r1` and `-r3`, guarded): the failing and passing runs executed the same indices, click 165 ("Add to cart") then 130 (the cart link) in one step; in the failure neither the badge nor the URL changed, so the cart link's click was lost too, not only "Add to cart". In Q12 the saucedemo add-and-order tasks paused in 32 of 36 rows.
+Inferred: a whole-step loss, not a misplaced click: C4's alternative (b) is the live candidate inside the agent loop.
+Changes: package C's done test moves from the local fixture to the agent loop (plan amended): the saucedemo tasks pass inside the full loop with every click delivered exactly once, or the loss is caught with its dispatch and session state recorded, fixed, and turned into a test that fails without the fix.
+Next: C5.
+
+## C5 · prediction · 2026-09-26 13:12
+Question: inside the full agent loop, when a saucedemo click changes nothing, does the click reach the page?
+Hypothesis: browser-use dispatches the mouse events (mousePressed and mouseReleased at the button's centre, through a CDP session for the page) and the page receives no trusted mousedown: input is lost after dispatch, per launch.
+Alternatives: (a) the click never goes out as mouse input (occlusion or missing geometry sends it down the `this.click()` fallback, or an exception ends the step early); (b) the page receives the mousedown and click on the button and the app does not act on them; (c) no failure in eight launches, so the loop's failure rate has fallen since Q12 and something about 09-25/26 morning conditions (the stale headless Chromium processes E1 saw) mattered.
+Test: `scripts/diag_agent_loop.py --task ls-add-backpack-cart --launches 8` on the guarded arm: per click, what was sent (`Input.dispatchMouseEvent`, JS fallback, target element, session) beside what the page's listener received and the cart badge per step.
+Predicts: at least 3 of 8 launches fail to add; in each failure, mousePressed/mouseReleased pairs are sent for the add-to-cart click and the page log for that step has no trusted mousedown.
+Against: failures where the page log shows a trusted mousedown on `add-to-cart-sauce-labs-backpack` (b), or a JS fallback or no dispatch (a); or no failure at all (c).
+Refs: scripts/diag_agent_loop.py; results/q12-live-dev-r1/; docs/plans/next-work.md (C)
