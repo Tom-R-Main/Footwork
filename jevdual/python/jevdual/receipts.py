@@ -89,7 +89,12 @@ def receipt_from_effect(
     # every action was a scroll.
     scrolled = [o for o in observed if o.startswith(("scrolled", "an inner region scrolled"))]
     only_scrolls = bool(actions) and all(a.startswith("scroll(") for a in actions)
-    if effect.no_effect and not error and only_scrolls and scrolled:
+    # a control's own change event is the page reporting a new value, not a side effect of dispatch
+    # (a dropdown on a page that does not otherwise react read "suspected no-op", Q12b follow-up)
+    changed_value = "a form control's value changed" in observed and all(
+        a.startswith(("select_dropdown(", "input(", "select_dropdown_option(")) for a in actions
+    )
+    if effect.no_effect and not error and ((only_scrolls and scrolled) or changed_value):
         return Receipt(
             step=step,
             actions=tuple(actions),

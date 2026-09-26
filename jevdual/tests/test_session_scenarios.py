@@ -199,3 +199,43 @@ def test_a_driver_refusal_is_reported_and_the_receipt_follows_the_window(world, 
     assert code == 0 and "driver says refused" in out and world.presses == []
     assert "receipt: Receipt for click(8): refused" in out
     assert _state(fw)["memory"] == ["step 1: click(8) -> refused"]
+
+
+# ---- package G: a carried value, its provenance and the exact saved-file oracle ----
+
+
+def _compute_624(fw) -> None:
+    code, out, _ = fw("start", "Compute 48 times 13", "--app", "Calculator")
+    for label in ("All Clear", "4", "8", "Multiply", "1", "3", "Equals"):
+        target = str(_id(out, label)) if label.isdigit() else label
+        code, out, err = fw("do", "click", target, "--no-judge")
+        assert code == 0, err
+
+
+def test_a_read_value_carries_where_it_came_from_and_the_file_oracle_is_exact(world, fw, tmp_path):
+    _compute_624(fw)
+    code, out, err = fw("read", "--match", r"(?m)^\s*‎?(\d[\d,]*)\s*$", "--as", "result")
+    assert code == 0, err
+    assert "@result = '624'" in out and "native Calculator" in out and "step 7" in out
+    saved = tmp_path / "note.txt"
+    saved.write_text("Result\n624\n")
+    code, out, _ = fw("check-file", str(saved), "@result")
+    assert code == 0 and out.startswith("confirmed: line 2 of") and "@result = '624'" in out
+    # a line that only contains the value is not the value: the oracle is exact
+    saved.write_text("Result: 624\n")
+    code, out, _ = fw("check-file", str(saved), "@result")
+    assert code == 6 and "contains the text but is not equal to it" in out
+    st = _state(fw)
+    assert any("check-file" in m and m.endswith("-> failed") for m in st["memory"])
+
+
+def test_an_unknown_carry_and_a_missing_match_dispatch_nothing(world, fw, tmp_path):
+    _compute_624(fw)
+    presses = len(world.presses)
+    code, _, err = fw("read", "--match", "no such text", "--as", "x")
+    assert code == 4 and "does not occur" in err
+    code, _, err = fw("do", "append", "Equals", "@missing")
+    assert code == 4 and "@missing was not read in session" in err
+    assert len(world.presses) == presses
+    code, _, err = fw("check-file", str(tmp_path / "absent.txt"), "@missing")
+    assert code == 4

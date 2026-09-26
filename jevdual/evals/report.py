@@ -61,6 +61,8 @@ class TaskResult:
     checkpoints_declared: int = 0
     receipts: tuple[str, ...] = ()
     noop_receipts: int = 0
+    #: package E: no_evidence | unmet | uncertain when the run ended UNVERIFIED
+    unverified_reason: str | None = None
     #: package D: steps whose input was dispatched and never reached the page
     undelivered_inputs: int = 0
 

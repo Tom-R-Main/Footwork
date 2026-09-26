@@ -98,3 +98,14 @@ def test_a_delayed_navigation_is_reported_not_credited_to_this_step():
 
 def test_words_are_closed():
     assert set(DELIVERY_WORDS) >= {"delivered", "not_delivered", "by_script", "new_document", "unknown"}
+
+
+def test_a_change_event_confirms_a_dropdown_step_only():
+    d = delivery_between(probe(), probe(untrusted=2, changes=1), True)
+    assert d.word == "by_script" and d.observed == ("a form control's value changed",)
+    r = receipt_from_effect(
+        2, ("select_dropdown(select 'Sort')",), noop(), url_after="https://s/", delivery=d
+    )
+    assert r.effect == "confirmed"
+    click = receipt_from_effect(2, ("click(button 'Go')",), noop(), url_after="https://s/", delivery=d)
+    assert click.effect == "suspected_noop"

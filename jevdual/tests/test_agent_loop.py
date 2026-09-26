@@ -235,3 +235,39 @@ async def test_receipt_says_when_the_page_never_received_the_click(httpserver):
     from jevdual.ledger import trajectory_from_agent
 
     assert trajectory_from_agent(agent)[0]["input"] == "not_delivered"
+
+
+SELECT_PAGE = (
+    "<html><body><h1>Shop</h1><select id='sort'><option>Name (A to Z)</option>"
+    "<option>Price (low to high)</option></select></body></html>"
+)
+
+
+async def test_a_dropdown_set_by_script_is_not_called_undelivered(httpserver):
+    """Q12b: browser-use's select_dropdown sets the value and fires input and change by script; the
+    probe counted only untrusted clicks, so every working sort read "not_delivered"."""
+    from browser_use import BrowserSession
+
+    httpserver.expect_request("/shop").respond_with_data(SELECT_PAGE, content_type="text/html")
+    session = BrowserSession(browser_profile=BrowserProfile(headless=True))
+    await session.start()
+    await session.navigate_to(httpserver.url_for("/shop"))
+    sm = (await session.get_browser_state_summary()).dom_state.selector_map
+    index = next(i for i, n in sm.items() if (n.attributes or {}).get("id") == "sort")
+    llm = create_mock_llm(
+        [
+            step({"select_dropdown": {"index": index, "text": "Price (low to high)"}}),
+            done("sorted", success=False),
+        ]
+    )
+    agent = DualProcessAgent(
+        task="Sort by price.", llm=llm, browser_session=session, calculate_cost=False, receipts="record"
+    )
+    try:
+        await agent.run(max_steps=3)
+    finally:
+        await agent.close()
+        await session.kill()
+    receipt = agent.receipts[1]
+    assert receipt.delivery in ("by_script", "delivered"), receipt
+    assert receipt.effect == "confirmed" and "value changed" in receipt.evidence, receipt

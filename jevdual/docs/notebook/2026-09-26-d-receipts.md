@@ -26,3 +26,15 @@ Observed: Q12b smoke (`results/q12b-smoke-20260926`, two tasks, both arms): on s
 Inferred: delivery separates lost from ignored input in the agent loop as in the controlled tests. A "no change" receipt on a step that dispatches nothing is true and says nothing; it inflated Q12's no-op counts on docs pages as well.
 Changes: steps made only of read-only actions (`jevdual.delivery.READ_ONLY_ACTIONS`) get no receipt. Applied before Q12b run 1; amendment appended to Q12b.md.
 Next: Q12b runs 1 to 3.
+
+## U26 · update · 2026-09-26 15:48
+Observed: Q12b (`results/q12b-live-dev.md`): H0(c) by the rule. The delivery guardrail was not zero: every `ls-sort-cheapest` run on both arms had one `not_delivered` receipt on `select_dropdown`, a step that changed the page. A browser test with a dropdown on a page that does not otherwise react read `not_delivered` and `suspected_noop` on the old probe.
+Inferred: two false receipts, both from the probe's model of input: browser-use sets a dropdown by script (untrusted `input` and `change`), which the probe did not count, and a selected value is invisible to the element diff.
+Changes: every untrusted event counts as `by_script`; a `change` event is recorded ("a form control's value changed") and confirms a step made of dropdown or input actions, never a click. Browser test `test_a_dropdown_set_by_script_is_not_called_undelivered` fails on the old probe and passes on the new.
+Next: D closes; receipts on the driver's side wait for Q16's claim check.
+
+## S6 · summary · 2026-09-26 15:48
+Established: receipts now say whether the page received the input (delivered, not delivered, by script, new document) separately from what changed, and report scroll, focus, value changes and navigation between steps; that field found the one false `not_delivered` pattern in 354 rows, and it is fixed. Q12b: on the repaired input path, delivering receipts lowered requests per unit of progress (−0.28 [−0.69, −0.01]) and cost 4 verified passes pooled with no-fact refusals up (H0(c)); the input fix itself moved verified passes 121 to 137 on `guarded`.
+Uncertain: why no-fact refusals rise on the receipt arm (refused done texts were not recorded in this build; narrated process claims are the visible candidate).
+Decision: receipts stay recorded on every arm and are not delivered to the driver by default. Re-measure delivery only on the claim check Q16 settles.
+Refs: results/q12b-live-dev.md; python/jevdual/delivery.py

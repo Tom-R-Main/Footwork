@@ -374,6 +374,10 @@ async def run_task(
         jev_cost_usd=jev_cost,
         wall_s=wall,
         is_done=is_done,
+        # the claimed completion the report's verified pass reads: a done the verifier accepted (an
+        # accepted native done ends the run without an error); unset, every native report printed 0
+        # verified passes (Q17)
+        success=bool(is_done and not error and not paused),
         final_url=f"app://{task.app}",
         answer=answer,
         error=error,

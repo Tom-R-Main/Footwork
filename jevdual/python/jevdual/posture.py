@@ -112,6 +112,22 @@ class MacActivity:
     def watch(self) -> FrontWatch:
         return FrontWatch()
 
+    def screen_locked(self) -> bool:
+        return screen_locked()
+
+
+def screen_locked() -> bool:
+    """True while the login session's screen is locked. Accessibility cannot reach windows then: the
+    G4 run kept deciding and pressing keys for 25 steps against a locked screen, every step answered
+    "no AX window" (2026-09-26)."""
+    try:
+        import Quartz
+
+        d = Quartz.CGSessionCopyCurrentDictionary() or {}
+        return bool(d.get("CGSSessionScreenIsLocked"))
+    except Exception:  # noqa: BLE001 - unknown is not locked; the Driver's own errors still apply
+        return False
+
 
 def activate(pid: int) -> bool:
     import time
@@ -147,8 +163,8 @@ def frontmost_pid() -> int | None:
 
 @dataclass(frozen=True)
 class Refusal:
-    """A step the posture will not take. ``code`` is ``requires_foreground``, ``requires_desktop`` or
-    ``human_active``; nothing was sent to any target."""
+    """A step the posture will not take. ``code`` is ``requires_foreground``, ``requires_desktop``,
+    ``human_active`` or ``screen_locked``; nothing was sent to any target."""
 
     code: str
     reason: str
@@ -173,6 +189,8 @@ class ExecutionPolicy:
 
     def permits(self, delivery: Delivery, *, why: str = "") -> Refusal | None:
         """None when this session may deliver this way now; otherwise the typed refusal."""
+        if self.locked():
+            return Refusal("screen_locked", f"{why or 'this step'}: the screen is locked; nothing is sent")
         if delivery not in _ALLOWED[self.mode]:
             code = "requires_desktop" if delivery == "desktop" else "requires_foreground"
             return Refusal(
@@ -187,6 +205,11 @@ class ExecutionPolicy:
                     f"(needs {self.idle_s:.0f}s idle); yielding",
                 )
         return None
+
+    def locked(self) -> bool:
+        """The screen is locked (activities that cannot tell answer False)."""
+        check = getattr(self._activity(), "screen_locked", None)
+        return bool(check()) if callable(check) else False
 
     def before_foreground(self) -> dict[str, object]:
         """What the receipt records about a foreground step, read just before it; the front app is sampled

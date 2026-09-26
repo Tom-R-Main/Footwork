@@ -12,7 +12,9 @@ Delivery words:
 
 ``delivered``      the page received trusted input during the step
 ``not_delivered``  input was dispatched and the page received none (same document, top frame)
-``by_script``      only untrusted clicks arrived (browser-use's ``this.click()`` fallback)
+``by_script``      only untrusted events arrived: browser-use's ``this.click()`` fallback, or
+                   ``select_dropdown``, which sets the value and fires ``input`` and ``change`` by script
+                   (Q12b: counting untrusted clicks only read every working sort as not delivered)
 ``new_document``   the document was replaced, so the old listener cannot count; the navigation is the
                    evidence
 ``unknown``        no probe, or focus sits in a frame the top document's listener cannot see
@@ -45,15 +47,15 @@ def read_only(action_names: list[str] | tuple[str, ...]) -> bool:
 
 #: Installed once per document (guarded by a flag), then read. Counts trusted and untrusted input in
 #: the capture phase on window, so a handler that stops propagation cannot hide it.
-PROBE_JS = """(()=>{const w=window;if(!w.__fwp){const c={t:0,u:0,s:0};w.__fwp=c;
-const f=e=>{if(e.isTrusted)c.t++;else if(e.type==='click')c.u++;};
-for(const k of ['mousedown','keydown','input','click'])w.addEventListener(k,f,true);
+PROBE_JS = """(()=>{const w=window;if(!w.__fwp){const c={t:0,u:0,s:0,ch:0};w.__fwp=c;
+const f=e=>{if(e.type==='change')c.ch++;if(e.isTrusted)c.t++;else c.u++;};
+for(const k of ['mousedown','keydown','input','change','click'])w.addEventListener(k,f,true);
 w.addEventListener('scroll',()=>{c.s++},true);}
 const a=document.activeElement,c=w.__fwp;
 const sig=a&&a!==document.body?(a.tagName.toLowerCase()+(a.id?'#'+a.id:'')+
 (a.getAttribute('aria-label')?' '+a.getAttribute('aria-label'):a.name?' '+a.name:'')).slice(0,80):'';
 return JSON.stringify({origin:performance.timeOrigin,url:location.href,trusted:c.t,untrusted:c.u,
-scrolls:c.s,y:Math.round(w.scrollY),x:Math.round(w.scrollX),focus:sig,
+scrolls:c.s,changes:c.ch,y:Math.round(w.scrollY),x:Math.round(w.scrollX),focus:sig,
 frame_focus:!!(a&&(a.tagName==='IFRAME'||a.tagName==='FRAME'))});})()"""
 
 
@@ -68,6 +70,8 @@ class PageProbe:
     y: int
     focus: str
     frame_focus: bool = False
+    #: ``change`` events: a form control reporting that its value changed
+    changes: int = 0
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> PageProbe:
@@ -81,6 +85,7 @@ class PageProbe:
             y=int(data.get("y") or 0),
             focus=str(data.get("focus") or ""),
             frame_focus=bool(data.get("frame_focus")),
+            changes=int(data.get("changes") or 0),
         )
 
 
@@ -109,6 +114,8 @@ def delivery_between(before: PageProbe | None, after: PageProbe | None, dispatch
         )
     elif after.scrolls > before.scrolls:
         observed.append("an inner region scrolled")
+    if after.changes > before.changes:
+        observed.append("a form control's value changed")
     if after.focus != before.focus:
         observed.append(f"focus moved to {after.focus}" if after.focus else "focus left the element")
     if not dispatched_input:

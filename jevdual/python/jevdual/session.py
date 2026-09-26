@@ -13,6 +13,9 @@ task, the last observation, the memory lines and a JSONL log.
     footwork do type 5 "text"         {NAME} in text is read from $FOOTWORK_SECRET_NAME, never printed
     footwork do key Down | hotkey cmd t | menu "File > Save" | enter 5 | scroll 39 | append 12 "line"
     footwork done "answer"            the verifier judges the done against the page and the trail
+    footwork read 12 --as price       carry an element's value (or label) with where it came from
+    footwork do append 5 @price --from DIR   write a carried value (package G); receipt names its source
+    footwork check-file PATH @price   the exact saved-file oracle: a line equals the carried text
     footwork status
 """
 
@@ -30,6 +33,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+from jevdual import carry
 from jevdual.menu import Candidate, Menu
 from jevdual.native import NativeBridge, NativeMenu
 
@@ -137,6 +141,7 @@ def receipt_for(
         error=state.pending.get("error"),
     )
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
+    r = _save_receipt(r, state.pending)
     if r.effect == "suspected_noop" and state.pending.get("driver_effect") == "confirmed":
         # the driver confirmed the press but nothing on the menu changed: say both
         text = receipt_text(r) + " The driver reported the press as delivered."
@@ -146,6 +151,17 @@ def receipt_for(
     for v in _secret_values(state, secret_value):
         out = {k: w.replace(v, "{secret}") for k, w in out.items()}
     return out
+
+
+def _save_receipt(r: Any, pending: dict[str, Any]) -> Any:
+    rb = pending.get("save_readback")
+    if not rb:
+        return r
+    if rb.get("ok") is True:
+        return dataclasses.replace(r, effect="confirmed", evidence=f"saved: {rb['detail']}")
+    if rb.get("ok") is False:
+        return dataclasses.replace(r, effect="partial", evidence=f"save not confirmed: {rb['detail']}")
+    return dataclasses.replace(r, effect="unverifiable", evidence=f"save unverifiable: {rb['detail']}")
 
 
 def _secret_values(state: SessionState, extra: str | None = None) -> list[str]:
@@ -250,10 +266,16 @@ def _field_receipt(
             evidence=f"{label!r} {'changed' if changed else 'did not change'}; a secret is compared only during the command that typed it",
         )
     intended = (secret_value if secret else pending.get("intended")) or ""
+    alternates: tuple[str, ...] = ()
     if pending["op"] == "type":
         expected: str | None = intended
     else:
         expected = None if before is None else before + intended
+        if before and pending.get("mode", "native") == "native":
+            # the native bridge appends on a new line unless the exact value already ends with one;
+            # the Driver strips that trailing newline from ``before``, so either way the field ends
+            # up as the earlier text, one line break, and the insertion (G1 pilot, 2026-09-26)
+            alternates = (before + "\n" + intended,)
 
     def show(x: str) -> str:
         return "{secret}" if secret else repr(x[:80])
@@ -262,7 +284,7 @@ def _field_receipt(
         return dataclasses.replace(
             r, effect="unverifiable", evidence=f"{label!r} holds {show(holds)}; no earlier value to compare"
         )
-    if holds.rstrip() == expected.rstrip():
+    if any(holds.rstrip() == e.rstrip() for e in (expected, *alternates)):
         return dataclasses.replace(r, effect="confirmed", evidence=f"{label!r} now holds {show(holds)}")
     if before is not None and holds == before:
         return dataclasses.replace(
@@ -540,6 +562,18 @@ async def cmd_do(args: Any) -> int:
 
     state = SessionState.load(session_dir(args.session))
     op, cid, raw_text, keys, path = parse_do(args.words)
+    carried = None
+    ref = carry.is_ref(raw_text) if op in ("type", "append") else None
+    if ref is not None:
+        # package G: a carried value, from this session or the one named by --from
+        src = Path(getattr(args, "from_session", None) or state.dir)
+        try:
+            carried = carry.load(src, ref)
+        except carry.CarryError as exc:
+            print(str(exc), file=sys.stderr)
+            return 4
+        raw_text = carried.text
+        print(f"carrying {carried.provenance()}")
     text, secret_used = resolve_secrets(raw_text)
     shown_text = raw_text if not secret_used else re.sub(r"\{[^}]+\}", "{secret}", raw_text or "")
     if secret_used:
@@ -610,7 +644,9 @@ async def cmd_do(args: Any) -> int:
         if op == "navigate":
             action = dataclasses.replace(action, label=f"navigate to {text}", route="click")
         line = f"{op}({target.label if target else (text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
-        if shown_text:
+        if carried is not None:
+            line += f" text=@{carried.name} (from {carried.surface} {carried.location or carried.title})"
+        elif shown_text:
             line += f" text={shown_text[:60]!r}"
         hit = await authorizer.check(nm, action, task=state.task)
         if client is not None:
@@ -672,7 +708,11 @@ async def cmd_do(args: Any) -> int:
             "target_label": target.label if target is not None else None,
             "intended": None if secret_used else text,
             "secret": secret_used,
+            "mode": state.mode,
+            **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
         }
+        if getattr(eff, "readback", None) is not None:
+            state.pending["save_readback"] = eff.readback
         state.log({"kind": "do", **state.pending})
         state.save()
         print(
@@ -822,6 +862,110 @@ async def cmd_status(args: Any) -> int:
     if state.pending:
         print("pending receipt for:", state.pending["line"])
     return 0
+
+
+async def cmd_read(args: Any) -> int:
+    """Package G: carry one element's value (or label) out of the current observation, with its source."""
+    state = SessionState.load(session_dir(args.session))
+    driver, bridge = await bind(state)
+    try:
+        nm, receipt = await observe(state, bridge)
+    finally:
+        await driver.shutdown()
+    if receipt:
+        print(f"receipt (previous action): {receipt['text']}")
+    target = args.target
+    if getattr(args, "match", None):
+        try:
+            c = carry.take_match(
+                args.name,
+                args.match,
+                nm.menu.page_text,
+                surface=state.mode,
+                app=state.app,
+                location=nm.menu.url,
+                title=nm.menu.title,
+                step=state.step,
+                session=str(state.path),
+            )
+        except carry.CarryError as exc:
+            print(f"not carried: {exc}", file=sys.stderr)
+            return 4
+        return _keep_carry(state, c)
+    if not target:
+        print("read needs an element id or label, or --match REGEX", file=sys.stderr)
+        return 2
+    if target.lstrip("-").isdigit():
+        cand = nm.menu.candidate(int(target))
+        if cand is None:
+            print(f"id {target} is not on the current observation; run `footwork look`", file=sys.stderr)
+            return 4
+    else:
+        rid, why = resolve_label(nm, target)
+        if rid is None:
+            print(why, file=sys.stderr)
+            return 4
+        cand = nm.menu.candidate(rid)
+    try:
+        c = carry.take(
+            args.name,
+            cand,
+            surface=state.mode,
+            app=state.app,
+            location=nm.menu.url,
+            title=nm.menu.title,
+            step=state.step,
+            session=str(state.path),
+            part=args.part,
+        )
+    except carry.CarryError as exc:
+        print(f"not carried: {exc}", file=sys.stderr)
+        return 4
+    return _keep_carry(state, c)
+
+
+def _keep_carry(state: SessionState, c: carry.Carry) -> int:
+    carry.store(state.path, c)
+    state.memory.append(f"step {state.step}: read [{c.element_id}] {c.element_label!r} as @{c.name}")
+    state.log({"kind": "read", "carry": dataclasses.asdict(c)})
+    state.save()
+    print(f"carried {c.provenance()}")
+    return 0
+
+
+async def cmd_check_file(args: Any) -> int:
+    """Package G: the exact saved-file oracle for a carried value; exit 0 when a line equals it, 6 when not."""
+    name = carry.is_ref(args.ref)
+    if name is None:
+        print("check-file takes a carried value as @NAME", file=sys.stderr)
+        return 2
+    src = Path(args.from_session or session_dir(args.session))
+    try:
+        c = carry.load(src, name)
+    except carry.CarryError as exc:
+        print(str(exc), file=sys.stderr)
+        return 4
+    result = carry.check_file(Path(args.path).expanduser(), c)
+    text = result.receipt(c)
+    print(text)
+    own = session_dir(args.session)
+    if (own / "session.json").exists():
+        state = SessionState.load(own)
+        state.memory.append(
+            f"step {state.step}: check-file {args.path} @{name} -> {'confirmed' if result.ok else 'failed'}"
+        )
+        state.log(
+            {
+                "kind": "check_file",
+                "ok": result.ok,
+                "path": result.path,
+                "line": result.line,
+                "detail": result.detail,
+                "carry": dataclasses.asdict(c),
+            }
+        )
+        state.save()
+    return 0 if result.ok else 6
 
 
 def _split(s: str | None, sep: str) -> tuple[str, ...]:

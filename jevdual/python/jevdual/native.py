@@ -452,6 +452,8 @@ class NativeEffect:
     driver_delivery: str | None = None
     dispatched: bool = True
     foreground: dict[str, Any] | None = None
+    #: package G: after a save, the file the window names read against its text (``save_readback``)
+    readback: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -579,6 +581,9 @@ class NativeBridge:
     ) -> NativeMenu:
         from cua_driver import GetWindowStateInput
 
+        if self.policy.locked():
+            # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
+            raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
         snap = await self.driver.get_window_state(
             GetWindowStateInput(
                 pid=self.pid,
@@ -997,13 +1002,20 @@ class NativeBridge:
         }
         if self.session:
             args["session"] = self.session
-        return await self._foreground(
+        eff = await self._foreground(
             "hotkey",
             -1,
             label,
             lambda: self.driver.call_tool("hotkey", json.dumps(args)),
             why=f"hotkey {label} (a menu key-equivalent)",
         )
+        return await self._after_save(eff, keys=keys)
+
+    async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
+        if not is_save(keys, path) or not eff.dispatched or eff.effect == "refused":
+            return eff
+        await asyncio.sleep(0.5)  # the app writes the file after the menu action returns
+        return with_save_readback(eff, save_readback(self.ax, self.pid, self.window_id))
 
     async def menu(self, nm: NativeMenu, path: list[str]) -> NativeEffect:
         """Invoke an application menu item by path (``["File", "Save"]``). A menu action goes to the app's
@@ -1052,7 +1064,8 @@ class NativeBridge:
         if eff.error_code in _MENU_NOT_PRESSED:
             # the window took the front but nothing was pressed: say so
             eff = dataclasses.replace(eff, dispatched=False)
-        return dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
+        eff = dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
+        return await self._after_save(eff, path=path)
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of
@@ -1073,6 +1086,61 @@ class NativeBridge:
         ver = getattr(res, "verification", None)
         status = _enum_name(getattr(ver, "status", None)) or "unknown"
         return status, str(getattr(res, "text", "") or "")
+
+
+def is_save(keys: list[str] | tuple[str, ...] = (), path: list[str] | tuple[str, ...] = ()) -> bool:
+    """Command-S, or a menu path ending in Save."""
+    if keys:
+        return {k.casefold() for k in keys} in ({"cmd", "s"}, {"command", "s"})
+    return bool(path) and path[-1].strip().casefold() == "save"
+
+
+def save_readback(ax: Any, pid: int, window_id: int) -> dict[str, Any]:
+    """After a save: the file the window names (AXDocument) against the window's exact text. A save
+    changes nothing a window diff sees, and the Driver reports a chord as ``unverifiable``, so without
+    this the verifier cannot tell a saved document from an unsaved one (Q17: every failure on dual and
+    guarded was a saved append the verifier would not accept). ``ok`` is True, False or None (no file,
+    not one text area, unreadable)."""
+    from pathlib import Path
+
+    try:
+        path = ax.document_path(pid, window_id)
+        values = ax.text_area_values(pid, window_id)
+    except Exception as exc:  # noqa: BLE001 - no readback is an honest "unverifiable"
+        return {"ok": None, "detail": f"could not read the window: {exc}"[:160]}
+    if not path:
+        return {"ok": None, "detail": "the window names no file (unsaved document)"}
+    if len(values) != 1:
+        return {"ok": None, "path": path, "detail": f"the window has {len(values)} text areas"}
+    try:
+        disk = Path(path).read_text()
+    except (OSError, UnicodeDecodeError) as exc:
+        return {"ok": None, "path": path, "detail": f"{path} is not readable as text: {exc}"[:160]}
+    shown = values[0]
+    if disk == shown:
+        return {
+            "ok": True,
+            "path": path,
+            "detail": f"{path} holds the window's text exactly ({len(disk)} characters)",
+        }
+    at = next(
+        (i for i, (a, b) in enumerate(zip(disk, shown, strict=False)) if a != b), min(len(disk), len(shown))
+    )
+    return {"ok": False, "path": path, "detail": f"{path} differs from the window's text at character {at}"}
+
+
+def with_save_readback(eff: NativeEffect, rb: dict[str, Any]) -> NativeEffect:
+    """The save's effect read from the disk: confirmed, partial, or unverifiable, with the reason."""
+    word = {True: "confirmed", False: "partial"}.get(rb.get("ok"), "unverifiable")
+    prefix = {True: "saved", False: "save not confirmed"}.get(rb.get("ok"), "save unverifiable")
+    return dataclasses.replace(
+        eff,
+        effect=word,
+        evidence=(*eff.evidence, f"save_readback: {rb['detail']}"),
+        # the foreground report stays first: a save does not erase "front app not restored"
+        summary=f"{eff.summary}; {prefix}: {rb['detail']}" if eff.summary else f"{prefix}: {rb['detail']}",
+        readback=rb,
+    )
 
 
 async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -> tuple[int, int, str]:

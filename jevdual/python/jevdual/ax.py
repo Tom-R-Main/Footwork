@@ -127,6 +127,28 @@ def value(el: Any) -> str:
     return str(v)
 
 
+def document_path(pid: int, window_id: int) -> str | None:
+    """The file a document window shows (its AXDocument URL as a path), or None when it names none."""
+    from urllib.parse import unquote, urlsplit
+
+    doc = _attr(window_element(pid, window_id), "AXDocument")
+    if not doc:
+        return None
+    parts = urlsplit(str(doc))
+    return unquote(parts.path) if parts.scheme == "file" else None
+
+
+def text_area_values(pid: int, window_id: int) -> list[str]:
+    """The exact values of the window's text areas, in tree order."""
+    out = []
+    for el in elements_by_role(window_element(pid, window_id), "AXTextArea"):
+        try:
+            out.append(value(el))
+        except AXError:
+            continue
+    return out
+
+
 def utf16_len(s: str) -> int:
     return len(s.encode("utf-16-le")) // 2
 
