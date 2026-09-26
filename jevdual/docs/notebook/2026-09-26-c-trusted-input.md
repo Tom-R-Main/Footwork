@@ -31,3 +31,20 @@ Test: `scripts/diag_trusted_input.py` as committed, unchanged: two launches (its
 Predicts: at least one after-login probe returns an empty list (no trusted event) across the two launches, while the login-page probes before navigation receive events.
 Against: every probe receives `mousemove:true, mousedown:true` in both launches.
 Refs: scripts/diag_trusted_input.py
+
+## U9 · update · 2026-09-26 12:37
+Resolves: C2 = inconclusive
+Observed: both launches of the unchanged diagnostic errored on the first `navigate_to` (herokuapp). A separate check in one browser-use session: example.com and saucedemo load; the-internet.herokuapp.com/login times out after 30 s. `curl` fetches it in 0.3 s, and running outside the shell sandbox changed nothing. The instrument, not the hypothesis, failed.
+Inferred: herokuapp is unusable as a probe from this browser today, for a reason not established (the page's readiness never fires under browser-use; the extension downloads also fail on certificate verification, which may or may not be related). saucedemo alone can still answer C2's question.
+Changes: `diag_trusted_input.py` takes `--sites` and `--launches`; the saucedemo block is unchanged.
+Next: C3.
+
+## C3 · prediction · 2026-09-26 12:37
+Revises: C2
+Question: does trusted input still vanish after the saucedemo login today?
+Hypothesis: yes, in most launches, as on 2026-09-23 (1 of 4 launches kept it on the inventory page).
+Alternatives: the loss is gone, so Q11 and Q12's saucedemo grind has another cause (for example the "Add to cart" handler itself, not input delivery).
+Test: `diag_trusted_input.py --sites sauce --launches 6`.
+Predicts: the login-page probe receives `mousemove:true, mousedown:true` in every launch; the after-login probe receives nothing in at least 4 of 6.
+Against: the after-login probe receives events in 5 or 6 of 6.
+Refs: scripts/diag_trusted_input.py; results/q8b-consent.md

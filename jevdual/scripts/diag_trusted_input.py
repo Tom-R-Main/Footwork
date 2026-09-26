@@ -3,7 +3,7 @@ navigated? Found 2026-09-23 while every practice-shop consent task paused on `ev
 reports "Clicked" but no mousedown reaches the window after the login click, in most launches, on
 the-internet.herokuapp.com and saucedemo.com; a page-script click works. Run:
 
-    uv run python scripts/diag_trusted_input.py
+    uv run python scripts/diag_trusted_input.py [--launches 2] [--sites heroku,sauce]
 
 Prints one PROBE line per launch: an empty list after a login means trusted input is dead for that page.
 """
@@ -44,7 +44,7 @@ async def trusted_alive(session):
     return await ev(session, "JSON.stringify(window.__t)")
 
 
-async def one(k):
+async def one(k, sites=("heroku", "sauce")):
     session = BrowserSession(browser_profile=BrowserProfile(headless=True))
     await session.start()
     try:
@@ -58,23 +58,24 @@ async def one(k):
 
         out = []
         # A: herokuapp form login (real POST navigation)
-        await session.navigate_to("https://the-internet.herokuapp.com/login")
-        await asyncio.sleep(1.5)
-        out.append(("heroku login page", await trusted_alive(session)))
-        sm = (await session.get_browser_state_summary()).dom_state.selector_map
-        f = lambda id_: next(i for i, n in sm.items() if (n.attributes or {}).get("id") == id_)
-        await act("input", index=f("username"), text="tomsmith", clear=True)
-        await act("input", index=f("password"), text="SuperSecretPassword!", clear=True)
-        sm2 = (await session.get_browser_state_summary()).dom_state.selector_map
-        btn = next(i for i, n in sm2.items() if (n.attributes or {}).get("type") == "submit")
-        await act("click", index=btn)
-        await asyncio.sleep(2)
-        out.append(
-            (
-                "heroku after login " + str("secure" in (await ev(session, "location.href") or "")),
-                await trusted_alive(session),
+        if "heroku" in sites:
+            await session.navigate_to("https://the-internet.herokuapp.com/login")
+            await asyncio.sleep(1.5)
+            out.append(("heroku login page", await trusted_alive(session)))
+            sm = (await session.get_browser_state_summary()).dom_state.selector_map
+            f = lambda id_: next(i for i, n in sm.items() if (n.attributes or {}).get("id") == id_)
+            await act("input", index=f("username"), text="tomsmith", clear=True)
+            await act("input", index=f("password"), text="SuperSecretPassword!", clear=True)
+            sm2 = (await session.get_browser_state_summary()).dom_state.selector_map
+            btn = next(i for i, n in sm2.items() if (n.attributes or {}).get("type") == "submit")
+            await act("click", index=btn)
+            await asyncio.sleep(2)
+            out.append(
+                (
+                    "heroku after login " + str("secure" in (await ev(session, "location.href") or "")),
+                    await trusted_alive(session),
+                )
             )
-        )
         # B: saucedemo login
         await session.navigate_to("https://www.saucedemo.com/")
         await asyncio.sleep(1.5)
@@ -100,12 +101,19 @@ async def one(k):
         await session.kill()
 
 
-async def main():
-    for k in range(2):
+async def main(launches=2, sites=("heroku", "sauce")):
+    for k in range(launches):
         try:
-            await one(k)
+            await one(k, sites)
         except Exception as e:  # noqa: BLE001 - a diagnostic reports and moves on
             print("PROBE launch", k, "error", str(e)[:120])
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--launches", type=int, default=2)
+    ap.add_argument("--sites", default="heroku,sauce")
+    a = ap.parse_args()
+    asyncio.run(main(a.launches, tuple(a.sites.split(","))))
