@@ -66,6 +66,9 @@ Next: A2.
   inconclusive`. A changed prediction is a new entry with `Revises: <ID>`. Earlier text is not edited.
 - **Observed apart from inferred.** `Observed` is what a trace, receipt, test or screenshot shows;
   `Inferred` is what it is taken to mean. Passing a task, or a test, does not prove the mechanism.
+- **Time from the clock, order from git.** Write a heading's time from `date`, never from memory.
+  When a prediction was written is settled by the commit that holds it; the heading time is a
+  convenience.
 - **Refer, do not copy.** Cite run directories, commits, test names and trace paths. Traces and
   `run.log` stay out of the repo, and no secret or page content from a trace enters the notebook.
 - **Freeze what is measured.** Patch freely while exploring. A measured comparison runs on a named
