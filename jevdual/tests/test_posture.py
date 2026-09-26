@@ -644,3 +644,22 @@ def test_web_field_with_text_is_selected_first_under_the_posture():
     nm = run(b.observe())
     eff = run(b.act(nm, "type", 7, "Ada"))
     assert eff.error_code == "requires_foreground" and not eff.dispatched and "type_text" not in d.names()
+
+
+def test_a_locked_screen_refuses_every_delivery_and_observation(monkeypatch):
+    """G4 (2026-09-26): a run kept deciding and pressing keys for 25 steps against a locked screen."""
+    import asyncio
+
+    from jevdual import posture
+    from jevdual.native import NativeBridge, NativeBridgeError
+    from jevdual.posture import ExecutionPolicy
+
+    monkeypatch.setattr(posture, "screen_locked", lambda: True)
+    policy = ExecutionPolicy("exclusive_desktop")
+    for delivery in ("background", "foreground", "desktop"):
+        r = policy.permits(delivery)  # type: ignore[arg-type]
+        assert r is not None and r.code == "screen_locked"
+    bridge = NativeBridge(FakeDriver(), pid=1, window_id=2, policy=policy)
+    with pytest.raises(NativeBridgeError) as exc:
+        asyncio.run(bridge.observe())
+    assert exc.value.reason == "screen_locked"

@@ -64,3 +64,10 @@ Test: `evals.native.runner --task textedit-append-line --arm dual --arm guarded 
 Predicts: 6 of 6 verified (predicate passed, done accepted), each with one save step; Q17 had 0 of 6 with two to four save attempts each.
 Against: fewer than 5 of 6 verified, or a save receipt `confirmed` on a run whose predicate fails.
 Refs: python/jevdual/native.py (save_readback); results/q17-native-dev.md
+
+## U25 · update · 2026-09-26 15:32
+Resolves: G4 = inconclusive
+Observed: `results/g4-native-append` (6 runs, dual and guarded): every run hit the 25-step budget with no append; from step 3 on, actions were answered "pid ... has no AX window" or "not in the process's current AXWindows". `CGSSessionCopyCurrentDictionary` reports the screen locked since 1790448343, about 20 minutes into the run; Q17, an hour earlier on the same task, reached the append in every run.
+Inferred: the test never ran under its conditions (accessibility cannot reach windows on a locked screen), so the save readback is untested on the native agent path. The harness failed its own milestone here: it kept deciding and pressing keys for 25 steps against a screen nobody could see, instead of stopping and saying why.
+Changes: `jevdual.posture.screen_locked`; the posture refuses every delivery with `screen_locked` and the native bridge refuses to observe on a locked screen (a typed `NativeBridgeError`), so a run ends at its first observation with the reason. The suite pins the screen unlocked (`tests/conftest.py`); with the real screen locked, 35 tests had failed, which is how the dependence was found.
+Next: G4 again once the screen is unlocked.

@@ -581,6 +581,9 @@ class NativeBridge:
     ) -> NativeMenu:
         from cua_driver import GetWindowStateInput
 
+        if self.policy.locked():
+            # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
+            raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
         snap = await self.driver.get_window_state(
             GetWindowStateInput(
                 pid=self.pid,
