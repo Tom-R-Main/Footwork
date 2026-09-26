@@ -31,6 +31,18 @@ INPUT_ACTIONS = frozenset(
     {"click", "input", "send_keys", "select_dropdown", "select_dropdown_option", "upload_file", "input_text"}
 )
 
+#: actions that read the page or the agent's files and dispatch nothing to the page; a step made of
+#: these has no page effect to report (its own result says what it read)
+READ_ONLY_ACTIONS = frozenset(
+    {"wait", "extract", "search_page", "find_text", "find_elements", "dropdown_options", "screenshot"}
+    | {"read_file", "write_file", "replace_file", "save_as_pdf", "done"}
+)
+
+
+def read_only(action_names: list[str] | tuple[str, ...]) -> bool:
+    return bool(action_names) and all(n in READ_ONLY_ACTIONS for n in action_names)
+
+
 #: Installed once per document (guarded by a flag), then read. Counts trusted and untrusted input in
 #: the capture phase on window, so a handler that stops propagation cannot hide it.
 PROBE_JS = """(()=>{const w=window;if(!w.__fwp){const c={t:0,u:0,s:0};w.__fwp=c;

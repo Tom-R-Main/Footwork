@@ -9,6 +9,7 @@ from jevdual.delivery import (
     delivery_between,
     expects_input,
     navigated_between_steps,
+    read_only,
 )
 from jevdual.effects import Effect
 from jevdual.receipts import receipt_from_effect, receipt_text
@@ -50,6 +51,11 @@ def test_scroll_and_focus_are_observed():
 def test_navigation_between_steps():
     assert navigated_between_steps(probe(), probe(url="https://s/cart.html")) == "https://s/cart.html"
     assert navigated_between_steps(probe(), probe()) is None
+
+
+def test_read_only_steps():
+    assert read_only(["wait"]) and read_only(["search_page", "extract"])
+    assert not read_only(["extract", "click"]) and not read_only(["scroll"]) and not read_only([])
 
 
 def test_expects_input():

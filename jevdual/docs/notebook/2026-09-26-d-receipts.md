@@ -19,3 +19,10 @@ Observed: the Q12 receipt browser test was already failing before D (`interacted
 Inferred: the delivery split works on both sides of D1 in a controlled page. Alternative (a) was half right: the browser's own consequences of dispatch (focus on the clicked target, scrollIntoView before a click) do move focus and scroll, so neither can confirm a click. Only the saucedemo part of D1 is open; the C7 run started before D, so it lands with Q12b's smoke.
 Changes: scroll and focus are reported as "also ..." facts and confirm only a step made entirely of scroll actions that scrolled; a navigation between steps is reported on the next receipt and never credited to it. The receipt tests read the button's index from a live selector map.
 Next: C7's outcome, then pre-register Q12b.
+
+## U19 · update · 2026-09-26 13:46
+Resolves: D1 = held
+Observed: Q12b smoke (`results/q12b-smoke-20260926`, two tasks, both arms): on saucedemo every input step's receipt reads `delivered` (the login and the add-to-cart plus cart-link step) and no receipt reads `not_delivered`; both arms pass both tasks. The docs task's receipt arm got four `suspected_noop` receipts on `search_page`, `extract` and `wait` steps, and the saucedemo receipt arm two on `wait` steps.
+Inferred: delivery separates lost from ignored input in the agent loop as in the controlled tests. A "no change" receipt on a step that dispatches nothing is true and says nothing; it inflated Q12's no-op counts on docs pages as well.
+Changes: steps made only of read-only actions (`jevdual.delivery.READ_ONLY_ACTIONS`) get no receipt. Applied before Q12b run 1; amendment appended to Q12b.md.
+Next: Q12b runs 1 to 3.

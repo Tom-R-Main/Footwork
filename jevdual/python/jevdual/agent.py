@@ -415,7 +415,13 @@ class DualProcessAgent(Agent):
     async def _issue_receipt(self) -> None:
         """Q12: one Receipt for the step just executed, from the state after it. One extra DOM read
         per step (no screenshot); the next step's own read is unchanged."""
-        from jevdual.delivery import delivery_between, expects_input, navigated_between_steps, read_probe
+        from jevdual.delivery import (
+            delivery_between,
+            expects_input,
+            navigated_between_steps,
+            read_only,
+            read_probe,
+        )
         from jevdual.effects import diff
         from jevdual.menu import build_menu
         from jevdual.receipts import action_lines, receipt_from_effect, receipt_text
@@ -424,6 +430,10 @@ class DualProcessAgent(Agent):
         results = list(self.state.last_result or [])
         out = self.state.last_model_output
         if self._pre_step_menu is None or not results or out is None or any(r.is_done for r in results):
+            return
+        # package D: a wait, an extract or a page search dispatches nothing, so "no change" says
+        # nothing about it (the Q12b smoke's docs run got five such no-op receipts)
+        if read_only([next(iter(a.model_dump(exclude_unset=True)), "") for a in out.action]):
             return
         try:
             after = await self.browser_session.get_browser_state_summary(include_screenshot=False)
