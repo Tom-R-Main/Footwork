@@ -141,3 +141,65 @@ def test_browser_replace_typing_asks_the_posture_and_never_keystrokes():
     assert (
         eff.effect != "refused" and calls[-1][1]["replace"] is True and calls[-1][1]["mode"] == "insert_text"
     )
+
+
+def _append_pending(**kw):
+    return {
+        "line": "append(text area)",
+        "driver_effect": "confirmed",
+        "op": "append",
+        "target_id": 1,
+        "target_label": "text area",
+        "intended": "£51.77",
+        "secret": False,
+    } | kw
+
+
+def test_native_append_after_a_stripped_trailing_newline_is_confirmed(tmp_path):
+    """G1 pilot: the file ended with a newline the Driver strips, the bridge appended no separator, and
+    the receipt said partial on a correct append."""
+    st = _state(tmp_path, [_field(1, "text area", value="Price:")], _append_pending())
+    r = receipt_for(st, _nm([_field(1, "text area", value="Price:\n£51.77")]))
+    assert r is not None and r["effect"] == "confirmed", r
+
+
+def test_browser_append_keeps_the_exact_rule(tmp_path):
+    st = _state(tmp_path, [_field(1, "text area", value="Price:")], _append_pending(mode="browser"))
+    r = receipt_for(st, _nm([_field(1, "text area", value="Price:\n£51.77")]))
+    assert r is not None and r["effect"] == "partial", r
+
+
+def test_a_save_is_confirmed_only_by_the_file_on_disk(tmp_path):
+    cands = [_field(1, "text area", value="x")]
+    for rb, effect in (
+        (
+            {"ok": True, "path": "/f", "detail": "/f holds the window's text exactly (5 characters)"},
+            "confirmed",
+        ),
+        (
+            {"ok": False, "path": "/f", "detail": "/f differs from the window's text at character 3"},
+            "partial",
+        ),
+        ({"ok": None, "detail": "the window names no file (unsaved document)"}, "unverifiable"),
+    ):
+        pend = {"line": "hotkey(cmd+s)", "driver_effect": "unverifiable", "op": "hotkey", "save_readback": rb}
+        r = receipt_for(_state(tmp_path, cands, pend), _nm(cands))
+        assert r is not None and r["effect"] == effect and rb["detail"] in r["evidence"], r
+
+
+def test_save_readback_compares_the_disk_with_the_window(tmp_path, monkeypatch):
+    from jevdual import ax
+    from jevdual.session import is_save, save_readback
+
+    f = tmp_path / "t.txt"
+    f.write_text("a\nb")
+    monkeypatch.setattr(ax, "document_path", lambda pid, wid: str(f))
+    monkeypatch.setattr(ax, "text_area_values", lambda pid, wid: ["a\nb"])
+    assert save_readback(1, 2)["ok"] is True
+    monkeypatch.setattr(ax, "text_area_values", lambda pid, wid: ["a\nc"])
+    rb = save_readback(1, 2)
+    assert rb["ok"] is False and "character 2" in rb["detail"]
+    monkeypatch.setattr(ax, "document_path", lambda pid, wid: None)
+    assert save_readback(1, 2)["ok"] is None
+    assert is_save("hotkey", ("cmd", "s"), ()) and is_save("menu", (), ("File", "Save"))
+    assert not is_save("hotkey", ("cmd", "shift", "s"), ())
