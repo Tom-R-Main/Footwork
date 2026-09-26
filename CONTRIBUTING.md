@@ -18,6 +18,9 @@ Footwork is research code with an evaluation discipline. The discipline is the p
 - **Secrets never appear in the repo.** Task secrets are fixture demo logins scoped to their origin;
   `scripts/redact_results.py` runs on every run directory before it is committed; traces and `run.log`
   are git-ignored.
+- **Engineering keeps a notebook.** Debugging and harness changes between experiments record a
+  prediction before the test and an update when the evidence changes it, in
+  `jevdual/docs/notebook/` (format in its README; `tests/test_notebook.py` checks it).
 - **A bug found by driving becomes a scenario first.** `jevdual/tests/test_session_scenarios.py` runs the
   real `footwork` commands against a simulated Mac (`tests/fixtures/native_world.py`); reproduce the bug
   there, see it fail, then fix the harness, not the scenario.
