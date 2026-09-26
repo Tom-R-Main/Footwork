@@ -43,3 +43,15 @@ Hypothesis: on a fresh file, every receipt in the transfer is true and confirmed
 Test: `scripts/pilot_cross_surface.sh` (fresh file per run), once.
 Predicts: append `confirmed`; Command-S `confirmed` ("saved: ... holds the window's text exactly"); check-file confirmed on line 2; exit 0.
 Against: any receipt other than confirmed while the file's bytes are right; or a confirmed save while check-file fails.
+
+## U24 · update · 2026-09-26 14:44
+Resolves: G3 = held
+Observed: the pilot on a fresh file exited 0: the read carried '£51.77' from books.toscrape.com; the append's receipt read `confirmed` ("now holds 'Price carried from the browser:\n£51.77'"); Command-S's read `confirmed (saved: ~/footwork-pilot/transfer-144337.txt holds the window's text exactly (38 characters))`; check-file confirmed line 2 with the chain back to the page.
+Inferred: one browser-to-TextEdit transfer runs with provenance and an exact oracle, and across G1 to G3 no receipt overstated: two understated (fixed), and when the save failed the receipt and the oracle both said so.
+Next: summary.
+
+## S5 · summary · 2026-09-26 14:44
+Established: a value read in one session carries its source (surface, app, URL, element or matched line, step) to another session's `do append`, and `check-file` proves the saved line byte for byte. A native save is now confirmed only by reading the file the window names against the window's text; a native append follows the bridge's line-break rule instead of the Driver's stripped value. The browser observation's title can lag a navigation (the Driver's `get_browser_state`, upstream).
+Uncertain: Q13's five tasks have no oracles yet; only one transfer shape (browser to TextEdit, plain text) was driven, once confirmed; a rich-text document, a second app, and the reverse direction are untested.
+Decision: G's pilot closes; Q13 is pre-registered only once five oracles pass, per the plan. A single session holding both bridges (`switch_surface`) is not built: two sessions and a carry kept each session's identity guarantee from package A intact, and the pilot did not need more.
+Refs: python/jevdual/carry.py; python/jevdual/session.py (save_readback); scripts/pilot_cross_surface.sh
