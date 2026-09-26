@@ -119,6 +119,7 @@ class RunHeader(BaseModel):
         "guarded_legible",
         "guarded_receipts",
         "guarded_evidence",
+        "guarded_narrow",
         "delegate",
         "delegate_evidence",
     ]

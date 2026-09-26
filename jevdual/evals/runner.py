@@ -46,6 +46,7 @@ Arm = Literal[
     "guarded_legible",
     "guarded_receipts",
     "guarded_evidence",
+    "guarded_narrow",
     "delegate",
     "delegate_evidence",
     "scripted",
@@ -61,6 +62,7 @@ ARMS: tuple[Arm, ...] = (
     "guarded_legible",
     "guarded_receipts",
     "guarded_evidence",
+    "guarded_narrow",
     "delegate",
     "delegate_evidence",
     "scripted",
@@ -72,18 +74,26 @@ S2_ARMS = (
     "guarded_legible",
     "guarded_receipts",
     "guarded_evidence",
+    "guarded_narrow",
     "delegate",
     "delegate_evidence",
 )
 #: Q11: the guarded arm and its declaration ablations. Enforcement is identical across the three; only
 #: what System 2 is told changes (jevdual.contract).
-GUARDED_ARMS = ("guarded", "guarded_declared", "guarded_legible", "guarded_receipts", "guarded_evidence")
+GUARDED_ARMS = (
+    "guarded",
+    "guarded_declared",
+    "guarded_legible",
+    "guarded_receipts",
+    "guarded_evidence",
+    "guarded_narrow",
+)
 #: Q16 (package E): the guarded arm with the strict claim check (VerifyPolicy.claim_evidence)
 EVIDENCE_ARMS = ("guarded_evidence",)
 #: Q12: the receipt arm delivers each step's receipt to the driver and the verifier; the silent
 #: guarded arm records receipts in the trace only (jevdual.receipts).
 RECEIPT_ARMS = ("guarded_receipts",)
-DECLARED_ARMS = ("guarded_declared", "guarded_legible")
+DECLARED_ARMS = ("guarded_declared", "guarded_legible", "guarded_narrow")
 #: arms the CLI builds the default policy factory for: every arm with a System 1 policy behind it
 POLICY_ARMS = ("s1_only", *S2_ARMS)
 DELEGATE_ARMS = (
@@ -167,16 +177,16 @@ def default_policy_factory() -> PolicyFactory:
 def declaration_for(task: Task, arm: str, s1_policy: Any) -> tuple[str, Any]:
     """Q11: the system-message contract for a declared arm, and the typed rejection feedback for
     ``guarded_legible`` (None on ``guarded_declared``). The guard itself is untouched."""
-    from jevdual.contract import TaskContract, declare, rejection_feedback_for
+    from jevdual.contract import TaskContract, declare, declare_narrow, rejection_feedback_for
 
-    text = declare(
-        TaskContract.from_task(
-            requirements=tuple(task.requirements),
-            answer_expected=task.answer_expected,
-            authorized_destructive=task.authorize,
-            authorized_actions=tuple(task.authorized_actions),
-        )
+    contract = TaskContract.from_task(
+        requirements=tuple(task.requirements),
+        answer_expected=task.answer_expected,
+        authorized_destructive=task.authorize,
+        authorized_actions=tuple(task.authorized_actions),
     )
+    # Q11b: the narrow declaration, requirements and the done-text sentence only
+    text = declare_narrow(contract) if arm == "guarded_narrow" else declare(contract)
     feedback = None
     if arm == "guarded_legible":
         hook = getattr(s1_policy, "verifier", None)
