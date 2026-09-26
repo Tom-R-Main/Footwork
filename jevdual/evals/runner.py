@@ -610,6 +610,7 @@ async def _run_task_once(
         paused=paused,
         terminal_mode=_terminal_mode(end, paused, error),
         checkpoints_reached=len(task.checkpoints) - len(checkpoints_missed(task, end)),
+        checkpoints_declared=len(task.checkpoints),
         receipts=tuple(r.effect for _, r in sorted(getattr(agent, "receipts", {}).items())),
         noop_receipts=sum(1 for r in getattr(agent, "receipts", {}).values() if r.no_effect),
         done_rejections=getattr(agent, "s2_done_rejections", 0),

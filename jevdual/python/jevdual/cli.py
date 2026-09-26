@@ -7,8 +7,11 @@
     footwork menu --app "Google Chrome"          # what System 1 would see, and how long it took
     footwork apps                                 # running apps the Driver can bind to
 
-Defaults are the guarded configuration the experiments adopted: Jev as System 1 with the arbiter's
-floors, Muse as System 2 on escalation, the verifier on every done, the one authorization boundary
+``--arm`` names the configuration in the experiments' terms. The default is ``guarded``, the one
+the native and browser measurements favour (Q10b: 15 of 18 verified against dual's 13, at lower
+cost): Muse as System 2 decides every step behind the gate. ``dual`` adds Jev as System 1 with the
+arbiter's floors, escalating to System 2; ``s1_only`` runs Jev alone. Every arm has the verifier on
+every done, the one authorization boundary
 on every route, a trace and a screenshot per step under ``--out``. Nothing is typed from chat: text
 comes from the task sentence or ``--secret NAME=VALUE`` placeholders. ``--authorize`` names the
 labels the boundary stands down for (the one change the operator approved), and a paused run prints
@@ -24,6 +27,13 @@ import sys
 import time
 from pathlib import Path
 from typing import Any
+
+RUN_ARMS = ("guarded", "dual", "s1_only")
+
+
+def run_arm(args: argparse.Namespace) -> str:
+    """The configuration ``footwork run`` uses; ``--no-s2`` is the older spelling of ``s1_only``."""
+    return "s1_only" if getattr(args, "no_s2", False) else getattr(args, "arm", "guarded")
 
 
 def _split(s: str, sep: str) -> tuple[str, ...]:
@@ -99,6 +109,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
     from jevdual.trace import TraceWriter
     from jevdual.verify import ArbiterHook, Verifier
 
+    arm = run_arm(args)
     keys = load_keys()
     if not keys.get("TYPESAFE_API_KEY"):
         print("TYPESAFE_API_KEY missing (0400 file under ~/.config/jevdual)", file=sys.stderr)
@@ -148,8 +159,14 @@ async def cmd_run(args: argparse.Namespace) -> int:
             verifier = Verifier(client)
             hook = ArbiterHook(verifier, requirements, use_trajectory=True)
             s2 = None
-            if not args.no_s2:
+            if arm != "s1_only":
                 chat = meta_chat_from_env()
+                if chat is None and arm == "guarded":
+                    print(
+                        "MODEL_API_KEY missing: the guarded arm needs System 2 (or pass --arm s1_only)",
+                        file=sys.stderr,
+                    )
+                    return 2
                 if chat is None:
                     print(
                         "MODEL_API_KEY missing: running System 1 only (escalations end the run)",
@@ -173,6 +190,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
                 run_id=out.name,
                 max_steps=args.steps,
                 s2=s2,
+                s1_enabled=arm != "guarded",
                 answer_expected=args.answer,
                 secrets=_secrets(args.secret, args.app),
                 authorizer=Authorizer(
@@ -263,7 +281,14 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--secret", action="append", help="NAME=VALUE the task refers to as {NAME}; never printed")
     r.add_argument("--steps", type=int, default=20)
     r.add_argument("--answer", action="store_true", help="the task asks for a reported value")
-    r.add_argument("--no-s2", action="store_true", help="System 1 only")
+    r.add_argument(
+        "--arm",
+        default="guarded",
+        choices=RUN_ARMS,
+        help="guarded: System 2 decides every step behind the gate (default, the measured baseline); "
+        "dual: Jev as System 1, System 2 on escalation; s1_only: Jev alone",
+    )
+    r.add_argument("--no-s2", action="store_true", help="same as --arm s1_only")
     r.add_argument("--out", help="run directory (default runs/<timestamp>)")
     r.add_argument(
         "--mode",

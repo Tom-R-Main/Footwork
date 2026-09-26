@@ -57,6 +57,8 @@ class TaskResult:
     #: effect word per step with the count of suspected no-ops
     terminal_mode: str = ""
     checkpoints_reached: int = 0
+    #: how many checkpoints the task declares (0 for a single-page task); rows before 2026-09-26 lack it
+    checkpoints_declared: int = 0
     receipts: tuple[str, ...] = ()
     noop_receipts: int = 0
 

@@ -18,7 +18,7 @@ Paired against `guarded`, per task, 95% bootstrap intervals:
 
 | Δ per task | guarded_receipts |
 |---|---|
-| requests per unit of progress (primary, 53 tasks with checkpoints) | −0.02 [−0.14, +0.10] |
+| requests per unit of progress (primary, 53 tasks with some progress in both arms) | −0.02 [−0.14, +0.10] |
 | driver requests | −0.21 [−0.42, −0.02] |
 | steps | −0.25 [−0.51, +0.01] |
 | no-op receipts | −0.19 [−0.37, −0.02] |
@@ -61,3 +61,12 @@ before that: a click receipt on a page that did not navigate names what did chan
 focus, an expanded section) instead of "no change", and the type receipt already names the field's
 value (6d71222). The measurement correction from Q11 held up: raw requests moved, requests per
 progress did not, and the terminal-mode table is what showed why.
+
+## Correction (2026-09-26)
+
+The primary's population was mislabelled "53 tasks with checkpoints". It is the 53 of 59 tasks with
+some progress (checkpoints reached plus a passed predicate) in both arms; only 19 of the 59 declare
+checkpoints, so for the rest progress is the predicate alone, and six tasks are excluded for zero
+progress in at least one arm. The number is unchanged; the label and the reading are
+(`results/status-audit-20260926/README.md`). `evals.burden` now prints the population and all-task
+verified passes beside the ratio.

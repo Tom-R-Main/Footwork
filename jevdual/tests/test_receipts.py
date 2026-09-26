@@ -168,3 +168,8 @@ def test_burden_views(tmp_path):
     assert p["tasks"] == 2 and abs(p["mean_diff"] - (-0.75)) < 1e-9
     out = render(rows, "guarded")
     assert "paused" in out and "requests per progress" in out
+    assert "population: 2 of 2 tasks" in out and "checkpoint count not recorded" in out
+    assert "verified passes, all tasks: guarded 1/2, guarded_receipts 1/2" in out
+    for r in rows:
+        r["checkpoints_declared"] = 2 if r["task_id"] == "t1" else 0
+    assert "(1 declare checkpoints)" in render(rows, "guarded")

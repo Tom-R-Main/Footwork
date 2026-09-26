@@ -55,8 +55,8 @@ remains the default and delegation a tool.
 
 What the splits say: Jev alone handles navigation, search, pagination, modals and login in two to
 five steps and cannot read or answer; the LLM alone reads and answers and will click "Delete
-account" when asked to reach a page, and its own judge accepts that as success; the pair is the only
-arm with zero false completions on every split. On the fixture heldout the pair now matches stock's
+account" when asked to reach a page, and its own judge accepts that as success; the guard kept false
+completions at zero on every split in that comparison (a later Q8 dual run had one, `results/q8-consent.md`). On the fixture heldout the pair now matches stock's
 cost with 27% fewer driver steps and 26% less wall time. On live sites it uses 26% fewer driver steps than
 stock at 1.32× its estimated cost, with the whole gap being Jev call volume (458 calls), and wall time
 not distinguishable. Steps run by Jev take a median 1.4 s against 15.7 s for a Muse step; that is a per-step figure, and task
