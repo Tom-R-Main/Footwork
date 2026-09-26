@@ -144,3 +144,15 @@ Test: `diag_agent_loop.py` with the fixed runner, guarded arm, once each: `ls-ad
 Predicts: every click sent after the login is received exactly once (one trusted mousedown per mousePressed); the add task passes; the authorized orders reach the confirmation; each unauthorized task pauses before "Finish" with the item in the cart.
 Against: any post-login mousePressed with no mousedown received; or a task failing on an input step.
 Refs: scripts/diag_agent_loop.py
+
+## U18 · update · 2026-09-26 13:39
+Resolves: C7 = held
+Observed: `results/c-agent-loop-fixed-20260926/` on 7eddfff, guarded arm, once each: 6 of 6 predicates passed (`ls-add-backpack-cart` in 3 steps; both authorized orders reached the confirmation; `ls-cart-stop-unauthorized` stopped at checkout step two by itself; `ls-order-backpack-unauthorized` paused before "Finish"). 30 mousePressed sent after the logins, 30 trusted mousedowns received, no JavaScript fallback. Two of the six ended UNVERIFIED with a passing predicate (`ls-checkout-total`, `ls-order-onesie-authorized`).
+Inferred: the breached-password warning was the whole input fault on this path. In Q12 these tasks paused in 32 of 36 rows; the remaining gap on them is the verifier's, which is package E's question.
+Next: summary.
+
+## S4 · summary · 2026-09-26 13:39
+Established: the agent-loop input loss behind Q11 and Q12's saucedemo failures was Chrome's breached-password warning, raised after a login submits a listed password; while it is up, headless Chrome drops every dispatched mouse event (38 of 38 in C5; 12 of 12 in the 2x2; 0 of 3 on localhost). The runner now launches a fresh profile with the password manager and leak check off (`jevdual.chrome_profile`), with a browser test that fails without it. After the fix the six saucedemo tasks passed once each with every click delivered.
+Uncertain: why the probes delivered all morning (C4, E2) and lost from 12:30 on: the leak service answering, or not, from this machine is the untested guess. Whether other breached demo logins in live-dev (`li-login-success` uses herokuapp's `SuperSecretPassword!`) were affected the same way.
+Decision: package C closes under its amended done test. Predictions: C1 failed, C2 inconclusive, C3 failed, C4 failed, C5 held, C6 failed (mechanism right, timing wrong), C7 held. D runs Q12b on this fix; F no longer depends on saucedemo's dead clicks.
+Refs: results/c-agent-loop-20260926/; results/c-agent-loop-fixed-20260926/; python/jevdual/chrome_profile.py

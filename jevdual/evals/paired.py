@@ -27,6 +27,7 @@ FIELDS = (
     "llm_requests",
     "done_rejections",
     "noop_receipts",
+    "undelivered_inputs",
     "checkpoints_reached",
     "jev_calls",
     "cost",
