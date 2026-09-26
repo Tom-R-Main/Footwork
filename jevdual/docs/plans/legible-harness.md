@@ -237,7 +237,9 @@ above stands, with the limits stated in `docs/experiments/Q15.md`.
 
 ## Phases
 
-**P1. Q12, receipts.** Build: `jevdual.receipts` with one frozen `Receipt(action, label, route,
+**P1, done (Q12, `results/q12-live-dev.md`): H0(b).** Receipts are true and cheap and shorten the way to the same failure; the burden per unit of progress did not move because no other route exists past the dead click. P2 next.
+
+**P1 as planned. Q12, receipts.** Build: `jevdual.receipts` with one frozen `Receipt(action, label, route,
 effect, evidence)` whose `effect` is the native driver's five words; the browser side is built from
 `effects.diff` on the post-step state, computed on every System 2 step including the guarded arm.
 Three deliveries: the driver's action result text ("Clicked 'Add to cart': no change, same URL, 0
