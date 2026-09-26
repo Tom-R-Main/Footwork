@@ -111,3 +111,12 @@ Test: `scripts/diag_agent_loop.py --task ls-add-backpack-cart --launches 8` on t
 Predicts: at least 3 of 8 launches fail to add; in each failure, mousePressed/mouseReleased pairs are sent for the add-to-cart click and the page log for that step has no trusted mousedown.
 Against: failures where the page log shows a trusted mousedown on `add-to-cart-sauce-labs-backpack` (b), or a JS fallback or no dispatch (a); or no failure at all (c).
 Refs: scripts/diag_agent_loop.py; results/q12-live-dev-r1/; docs/plans/next-work.md (C)
+
+## C6 · prediction · 2026-09-26 13:15
+Question: what swallows the input the agent loop dispatches after the saucedemo login?
+Hypothesis: Chrome's breached-password check. `secret_sauce` is in public breach lists; after a login form submits it, Chrome asks its leak-detection service and, some seconds later, raises a "Change your password" warning over the tab. While the warning is up, mouse input dispatched to the page never reaches it. C4 and E2 clicked about 2 s after the login, before the warning arrived; the agent clicks after a model call (about 8 s in the first C5 launch). The service's latency and rate limits would explain the intermittency (the 12:30 cluster).
+Alternatives: (a) timing alone: something else in the page or browser-use goes deaf a few seconds after the login regardless of the password manager; (b) the agent loop's own work (the receipts' extra DOM read, screenshots, watchdogs) causes it, so a bare probe with a long wait still delivers.
+Test: `scripts/diag_add_to_cart.py` in four cells of six launches: wait 2 s or 10 s between login and add-to-cart, with Chrome's defaults or with a profile whose preferences turn off the password manager and leak detection. Then the agent-loop probe with leak detection off.
+Predicts: 2 s, defaults: at most 1 of 6 lost; 10 s, defaults: at least 4 of 6 lost, each with the mousedown sent and none received; 10 s, leak check off: 0 of 6 lost; 2 s, leak check off: 0 of 6.
+Against: 10 s with leak check off loses input like 10 s with defaults (a); or 10 s with defaults delivers (b).
+Refs: scripts/diag_add_to_cart.py; results/c-agent-loop-20260926/

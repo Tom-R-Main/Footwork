@@ -6,7 +6,11 @@ state, click the backpack's "Add to cart" by its index, then read the cart badge
 click's trusted mousedown actually landed on. Q11 and Q12 recorded these clicks reported as done and
 changing nothing.
 
-    uv run python scripts/diag_add_to_cart.py [--launches 10]
+    uv run python scripts/diag_add_to_cart.py [--launches 10] [--wait 2] [--leak-check on|off]
+
+``--wait`` is the pause between the login click and the add-to-cart click (the agent loop takes about
+8 s to decide; C4 waited 2 s). ``--leak-check off`` starts Chrome with a profile whose preferences
+turn off the password manager and its breached-password check (prediction C6).
 """
 
 from __future__ import annotations
@@ -31,11 +35,28 @@ async def ev(s, expr):
     return r.get("result", {}).get("value")
 
 
-async def one(k: int) -> dict:
+NO_LEAK_CHECK = {
+    "credentials_enable_service": False,
+    "profile": {"password_manager_enabled": False, "password_manager_leak_detection": False},
+}
+
+
+def quiet_profile() -> str:
+    import tempfile
+    from pathlib import Path
+
+    d = Path(tempfile.mkdtemp(prefix="browser-use-user-data-dir-"))
+    (d / "Default").mkdir()
+    (d / "Default" / "Preferences").write_text(json.dumps(NO_LEAK_CHECK))
+    return str(d)
+
+
+async def one(k: int, wait: float = 2.0, leak_check: bool = True) -> dict:
     from browser_use import BrowserProfile, BrowserSession
     from browser_use.tools.service import Tools
 
-    s = BrowserSession(browser_profile=BrowserProfile(headless=True))
+    profile = BrowserProfile(headless=True, **({} if leak_check else {"user_data_dir": quiet_profile()}))
+    s = BrowserSession(browser_profile=profile)
     await s.start()
     try:
         tools = Tools()
@@ -55,7 +76,7 @@ async def one(k: int) -> dict:
             "input", index=by_id(sm, "password"), text=os.environ.get("SAUCE", "secret_sauce"), clear=True
         )
         await act("click", index=by_id(sm, "login-button"))
-        await asyncio.sleep(2)
+        await asyncio.sleep(wait)
         await ev(s, TRACK)
         sm = (await s.get_browser_state_summary()).dom_state.selector_map
         idx = by_id(sm, "add-to-cart-sauce-labs-backpack")
@@ -74,6 +95,8 @@ async def one(k: int) -> dict:
         )
         return {
             "launch": k,
+            "wait": wait,
+            "leak_check": leak_check,
             "added": badge == "1",
             "badge": badge,
             "reported": (getattr(result, "extracted_content", "") or "")[:60],
@@ -85,10 +108,10 @@ async def one(k: int) -> dict:
         await s.kill()
 
 
-async def main(n: int) -> None:
+async def main(n: int, wait: float, leak_check: bool) -> None:
     for k in range(n):
         try:
-            print(json.dumps(await one(k)), flush=True)
+            print(json.dumps(await one(k, wait, leak_check)), flush=True)
         except Exception as exc:  # noqa: BLE001
             print(json.dumps({"launch": k, "error": f"{type(exc).__name__}: {str(exc)[:120]}"}), flush=True)
 
@@ -96,4 +119,7 @@ async def main(n: int) -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--launches", type=int, default=10)
-    asyncio.run(main(ap.parse_args().launches))
+    ap.add_argument("--wait", type=float, default=2.0)
+    ap.add_argument("--leak-check", choices=("on", "off"), default="on")
+    a = ap.parse_args()
+    asyncio.run(main(a.launches, a.wait, a.leak_check == "on"))
