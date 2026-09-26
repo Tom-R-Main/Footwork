@@ -120,3 +120,27 @@ Test: `scripts/diag_add_to_cart.py` in four cells of six launches: wait 2 s or 1
 Predicts: 2 s, defaults: at most 1 of 6 lost; 10 s, defaults: at least 4 of 6 lost, each with the mousedown sent and none received; 10 s, leak check off: 0 of 6 lost; 2 s, leak check off: 0 of 6.
 Against: 10 s with leak check off loses input like 10 s with defaults (a); or 10 s with defaults delivers (b).
 Refs: scripts/diag_add_to_cart.py; results/c-agent-loop-20260926/
+
+## U15 · update · 2026-09-26 13:23
+Resolves: C5 = held
+Observed: `results/c-agent-loop-20260926/` (`input-log.jsonl`, launches 0 to 7, guarded arm): 8 of 8 failed to add (paused on `evaluate`). In every launch the login click was sent and received (one trusted mousedown on `login-button`); after it, 38 add-to-cart and cart-link clicks were sent as mousePressed/mouseReleased at the button's centre through the same CDP session and target, none fell back to `this.click()`, and the page received none of them, over spans of up to 80 s. The document never changed (one `timeOrigin` per launch). The first post-login click went out 6 to 21 s after the login.
+Inferred: in the agent loop the loss is total and immediate, not intermittent: 8 of 8 against 0 of 10 in C4, whose click went out 2 s after the login. Dispatch is correct; something between the CDP input domain and the page's document takes the input. Timing is the leading difference, which C6 tests.
+Next: C6.
+Refs: scripts/diag_agent_loop.py
+
+## U16 · update · 2026-09-26 13:31
+Resolves: C6 = failed
+Observed: `results/c-agent-loop-20260926/leak-2x2.jsonl`, `diag_add_to_cart.py`, six launches per cell: Chrome's defaults lost the add-to-cart click in 6 of 6 at 2 s and 6 of 6 at 10 s (no mousedown received); with the password manager and leak check off, 6 of 6 added at 2 s and 6 of 6 at 10 s, each with exactly one trusted mousedown on the button. On a local login page (a form posting `secret_sauce`, then a counting button) the default profile received 0 of 3 clicks and the quiet profile 3 of 3; `tests/test_chrome_profile.py` fails with a plain `BrowserProfile` (0 == 1) and passes with `automation_profile`.
+Inferred: the cause is Chrome's breached-password check: after a form submits a listed password, input to the tab is dropped, on saucedemo and on localhost alike. The timing account in C6 was wrong: at 2 s the click was lost too, so this morning's C4 (10 of 10 delivered at 2 s) and E2 were not early; the leak service was not answering then (the 12:30 cluster and the herokuapp timeouts point to this machine's network to Google's services that morning, not checked). The prediction as written fails on its 2 s cell; the mechanism holds.
+Changes: `jevdual.chrome_profile.automation_profile`, a fresh temp profile with `credentials_enable_service`, `password_manager_enabled` and `password_manager_leak_detection` off, is the runner's browser profile. The operator's own Chrome is unchanged: its warning is visible to a person and to the accessibility tree.
+Next: C7.
+Refs: python/jevdual/chrome_profile.py; tests/test_chrome_profile.py
+
+## C7 · prediction · 2026-09-26 13:31
+Question: on the fixed profile, do the saucedemo tasks that paused in Q12 now make progress inside the agent loop?
+Hypothesis: the breached-password warning was the whole input fault; with it gone every post-login click reaches the page.
+Alternatives: a second fault behind the first (a misplaced click, the receipts' DOM read) now shows.
+Test: `diag_agent_loop.py` with the fixed runner, guarded arm, once each: `ls-add-backpack-cart`, `ls-checkout-total`, `ls-order-backpack-authorized`, `ls-order-onesie-authorized`, `ls-cart-stop-unauthorized`, `ls-order-backpack-unauthorized`. A check, not a measurement.
+Predicts: every click sent after the login is received exactly once (one trusted mousedown per mousePressed); the add task passes; the authorized orders reach the confirmation; each unauthorized task pauses before "Finish" with the item in the cart.
+Against: any post-login mousePressed with no mousedown received; or a task failing on an input step.
+Refs: scripts/diag_agent_loop.py

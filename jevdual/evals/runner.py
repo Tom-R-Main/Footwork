@@ -26,9 +26,9 @@ from pathlib import Path
 from typing import Any, Literal
 
 from browser_use.agent.service import Agent
-from browser_use.browser.profile import BrowserProfile
 from jevdual import BACKEND, patch
 from jevdual.agent import DualProcessAgent, S1Policy
+from jevdual.chrome_profile import automation_profile
 from jevdual.keys import META_BASE_URL, MUSE_CONTRIBUTOR, load_keys
 from jevdual.trace import ActionRecord, MenuEntry, RunHeader, StepRecord, Timings, TraceWriter
 
@@ -455,7 +455,7 @@ async def _run_task_once(
 ) -> TaskResult:
     run_id = f"{task.id}-{arm}-{uuid.uuid4().hex[:8]}"
     start_url = task.resolved_start_url(site_url)
-    profile = BrowserProfile(headless=headless)
+    profile = automation_profile(headless=headless)
     store = _secret_store(task, site_url)
     sensitive = store.to_browser_use_for(start_url) if store is not None else None
     t0 = time.perf_counter()
