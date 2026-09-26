@@ -342,6 +342,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     do.add_argument("--settle", type=float, default=S.SETTLE_S)
     do.add_argument("--no-judge", action="store_true", help="skip the Jev destructive judgment on clicks")
+    do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
     do.add_argument(
         "--route",
         choices=("trusted", "dom"),
@@ -359,6 +360,19 @@ def build_parser() -> argparse.ArgumentParser:
     dn.add_argument("answer", nargs="?", default="")
     common(dn)
     dn.set_defaults(fn=S.cmd_done)
+    rd = sub.add_parser("read", help="carry an element's value or label, with where it came from")
+    rd.add_argument("target", nargs="?", default="", help="element id or label")
+    rd.add_argument("--match", help="carry the first match of this regular expression in the text instead")
+    rd.add_argument("--as", dest="name", required=True, help="the carried value's name, used as @NAME")
+    rd.add_argument("--part", choices=("auto", "value", "label"), default="auto")
+    common(rd)
+    rd.set_defaults(fn=S.cmd_read)
+    cf = sub.add_parser("check-file", help="exact oracle: a line of the file equals a carried value")
+    cf.add_argument("path")
+    cf.add_argument("ref", help="@NAME")
+    cf.add_argument("--from", dest="from_session", help="the session the value was read in")
+    common(cf)
+    cf.set_defaults(fn=S.cmd_check_file)
     stt = sub.add_parser("status")
     common(stt)
     stt.set_defaults(fn=S.cmd_status)
