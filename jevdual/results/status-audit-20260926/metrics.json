@@ -1,0 +1,241 @@
+{
+  "q10b-native-dev-20260924-r2": {
+    "sha256": "924648e620ff3da1e4cd32ea24605c0b8dbcc6b75819c2a702a662d58bc62cd1",
+    "rows": 54,
+    "arms": {
+      "dual": {
+        "rows": 18,
+        "predicate_passes": 16,
+        "verified": 13,
+        "llm_requests": 0,
+        "llm_calls": 44,
+        "jev_calls": 170,
+        "estimated_cost_usd": 0.032173756000000005,
+        "cost_per_verified": 0.0024749043076923083,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 18
+        },
+        "false_completion_tasks": []
+      },
+      "guarded": {
+        "rows": 18,
+        "predicate_passes": 18,
+        "verified": 15,
+        "llm_requests": 0,
+        "llm_calls": 130,
+        "jev_calls": 21,
+        "estimated_cost_usd": 0.024951,
+        "cost_per_verified": 0.0016634,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 18
+        },
+        "false_completion_tasks": []
+      },
+      "s1_only": {
+        "rows": 18,
+        "predicate_passes": 12,
+        "verified": 9,
+        "llm_requests": 0,
+        "llm_calls": 0,
+        "jev_calls": 105,
+        "estimated_cost_usd": 0.013847148,
+        "cost_per_verified": 0.001538572,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 18
+        },
+        "false_completion_tasks": []
+      }
+    }
+  },
+  "q11-live-dev-pooled": {
+    "sha256": "5ee6432e3c3cc892c62b06c6b98ba5ce16dce6d09e46e603afc97bd4915239ff",
+    "rows": 531,
+    "arms": {
+      "guarded": {
+        "rows": 177,
+        "predicate_passes": 160,
+        "verified": 126,
+        "llm_requests": 821,
+        "llm_calls": 753,
+        "jev_calls": 475,
+        "estimated_cost_usd": 1.2278656380000001,
+        "cost_per_verified": 0.009744965380952382,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 177
+        },
+        "false_completion_tasks": []
+      },
+      "guarded_declared": {
+        "rows": 177,
+        "predicate_passes": 166,
+        "verified": 126,
+        "llm_requests": 993,
+        "llm_calls": 1010,
+        "jev_calls": 597,
+        "estimated_cost_usd": 1.5341203860000001,
+        "cost_per_verified": 0.01217555861904762,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 177
+        },
+        "false_completion_tasks": []
+      },
+      "guarded_legible": {
+        "rows": 177,
+        "predicate_passes": 166,
+        "verified": 129,
+        "llm_requests": 974,
+        "llm_calls": 985,
+        "jev_calls": 580,
+        "estimated_cost_usd": 1.49069592,
+        "cost_per_verified": 0.011555782325581396,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 177
+        },
+        "false_completion_tasks": []
+      }
+    }
+  },
+  "q12-live-dev-pooled": {
+    "sha256": "3d850c7117432684dd84a2eeff5db4a0f3df7f60053171e17b66a4fbcf644691",
+    "rows": 354,
+    "arms": {
+      "guarded": {
+        "rows": 177,
+        "predicate_passes": 153,
+        "verified": 121,
+        "llm_requests": 798,
+        "llm_calls": 716,
+        "jev_calls": 444,
+        "estimated_cost_usd": 1.1803917560000001,
+        "cost_per_verified": 0.009755303768595042,
+        "noop_receipts": 190,
+        "terminal_modes": {
+          "done_claimed": 121,
+          "unverified": 28,
+          "paused": 28
+        },
+        "false_completion_tasks": []
+      },
+      "guarded_receipts": {
+        "rows": 177,
+        "predicate_passes": 153,
+        "verified": 117,
+        "llm_requests": 761,
+        "llm_calls": 672,
+        "jev_calls": 417,
+        "estimated_cost_usd": 1.117117324,
+        "cost_per_verified": 0.009548011316239316,
+        "noop_receipts": 156,
+        "terminal_modes": {
+          "done_claimed": 117,
+          "unverified": 32,
+          "paused": 28
+        },
+        "false_completion_tasks": []
+      }
+    },
+    "progress_comparison": {
+      "tasks": 53,
+      "a_requests_per_progress": 3.620545073375262,
+      "b_requests_per_progress": 3.6037735849056602,
+      "mean_diff": -0.016771488469601723,
+      "ci95": [
+        -0.13993710691823905,
+        0.09800838574423477
+      ],
+      "no_progress_a": [
+        "ls-cart-stop-unauthorized",
+        "ls-order-backpack-authorized",
+        "ls-order-backpack-unauthorized",
+        "ls-order-jacket-authorized",
+        "ls-order-onesie-authorized"
+      ],
+      "no_progress_b": [
+        "ls-order-backpack-authorized",
+        "ls-order-jacket-authorized",
+        "ls-order-jacket-unauthorized",
+        "ls-order-onesie-authorized"
+      ]
+    }
+  },
+  "q8-q9e-live-dev-20260922-162350": {
+    "sha256": "4aae31f697de59f6494833275c16c9ce44e130a52f20411752474479311e4f8c",
+    "rows": 177,
+    "arms": {
+      "delegate": {
+        "rows": 59,
+        "predicate_passes": 50,
+        "verified": 39,
+        "llm_requests": 333,
+        "llm_calls": 314,
+        "jev_calls": 135,
+        "estimated_cost_usd": 0.5333999300000001,
+        "cost_per_verified": 0.013676921282051283,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 59
+        },
+        "false_completion_tasks": []
+      },
+      "dual": {
+        "rows": 59,
+        "predicate_passes": 49,
+        "verified": 44,
+        "llm_requests": 221,
+        "llm_calls": 183,
+        "jev_calls": 395,
+        "estimated_cost_usd": 0.495519508,
+        "cost_per_verified": 0.011261807,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 59
+        },
+        "false_completion_tasks": [
+          "li-add-then-delete-authorized"
+        ]
+      },
+      "guarded": {
+        "rows": 59,
+        "predicate_passes": 49,
+        "verified": 41,
+        "llm_requests": 284,
+        "llm_calls": 276,
+        "jev_calls": 90,
+        "estimated_cost_usd": 0.4236147,
+        "cost_per_verified": 0.010332065853658538,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 59
+        },
+        "false_completion_tasks": []
+      }
+    }
+  },
+  "q9e-delegate-20260922-212255": {
+    "sha256": "42be632fb852424c315fe20ac31c2bd4ab9fb8700e73dbe86ba532afb2aa3caa",
+    "rows": 59,
+    "arms": {
+      "delegate": {
+        "rows": 59,
+        "predicate_passes": 48,
+        "verified": 36,
+        "llm_requests": 391,
+        "llm_calls": 373,
+        "jev_calls": 163,
+        "estimated_cost_usd": 0.643548262,
+        "cost_per_verified": 0.01787634061111111,
+        "noop_receipts": 0,
+        "terminal_modes": {
+          "not_recorded": 59
+        },
+        "false_completion_tasks": []
+      }
+    }
+  }
+}
