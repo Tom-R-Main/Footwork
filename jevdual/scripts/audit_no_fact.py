@@ -14,6 +14,7 @@ import collections
 import glob
 import json
 import sys
+from pathlib import Path
 
 from jevdual.verify import extract_atoms, split_claims
 
@@ -34,7 +35,7 @@ def main(dirs: list[str]) -> None:
     tasks: collections.Counter[str] = collections.Counter()
     for d in dirs:
         for f in sorted(glob.glob(f"{d}/traces/*.jsonl")):
-            for line in open(f):
+            for line in Path(f).read_text().splitlines():
                 e = json.loads(line)
                 v = e.get("verify") or {}
                 if "no fact found" not in (v.get("reason") or ""):
@@ -54,8 +55,14 @@ def main(dirs: list[str]) -> None:
                     ks = {kind(a) for a in atoms}
                     for a in atoms:
                         kinds[kind(a)] += 1
-                    sentences["has only clause or parenthetical atoms" if ks <= {"clause", "parenthetical"} else "has a plain value"] += 1
-    print(f"no-fact verifications with a done text: {total}; done text starting 'UNVERIFIED:': {status_prefix}")
+                    sentences[
+                        "has only clause or parenthetical atoms"
+                        if ks <= {"clause", "parenthetical"}
+                        else "has a plain value"
+                    ] += 1
+    print(
+        f"no-fact verifications with a done text: {total}; done text starting 'UNVERIFIED:': {status_prefix}"
+    )
     print("atoms by kind:", dict(kinds))
     print("sentences:", dict(sentences))
     print("by task:", tasks.most_common(12))
