@@ -26,13 +26,14 @@ below, not rerun since):
 | stock browser-use (Muse Spark 1.3 Contributor) | 21/23 | 2 | 65 | 0 | 0.098 | 1,578 |
 | dual (Jev + Muse) | 23/23 | 0 (2 paused) | 55 | 189 | 0.122 | 1,412 |
 
-Heldout split, 10 local tasks, settings frozen, rerun once on adoption of the verification changes
-(`results/heldout-adopt.md`):
+Heldout split, 10 local tasks, settings frozen, rerun once on each adoption; the latest is the strict
+verifier's (`results/heldout-adopt-20260927.md`; the previous, `results/heldout-adopt.md`):
 
 | arm | pass | false done | LLM calls | Jev calls | est. cost USD | wall s |
 |---|---|---|---|---|---|---|
-| stock | 9/10 | 1 | 33 | 0 | 0.049 | 708 |
-| dual | 10/10 | 0 (1 paused) | 24 | 76 | 0.049 | 522 |
+| stock | 9/10 | 1 | 38 | 0 | 0.055 | 489 |
+| dual | 10/10 | 0 (1 paused) | 21 | 61 | 0.045 | 380 |
+| guarded | 10/10 | 0 (1 paused) | 37 | 28 | 0.055 | 476 |
 
 Live split, 55 tasks on public and practice sites, three arms after the verification changes
 (`results/q6-live-paired.md`):
