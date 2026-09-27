@@ -1,0 +1,9 @@
+# Secondary review through c2de17e
+
+Read-only source/results audit plus existing offline conformance checks. No new hypothesis experiment or harness change; this summary records the handoff.
+
+## S7 · summary · 2026-09-27 15:32
+Established: raw result recomputation agrees with the Q12b, Q16, Q16b, Q11b and save follow-up completion counts; Q17 has six distinct tasks despite its seven-task wording. Newly committed non-pooled run estimates total $7.715330. Existing offline checks pass (551 tests, 21 skipped, 17 deselected; ruff and notebook check pass). Source review finds missing CLI judge wiring for key/enter, an unbound effect on handled dispatch exceptions, screenshot persistence before secret scrubbing, and strict claim normalization that removes factual parentheticals while retaining the original sentence as supported. Wikipedia currently reports Rust first appeared in 2012, matching both stored answers rather than the frozen 2015 predicate.
+Uncertain: these new source findings have not been reproduced through live routes; the generic page receipt is not a per-action postcondition, Q17 did not test persistent System 2 recovery ownership, and the one transfer pilot does not establish Q13. Remote state was not refreshed; cost totals are recorded estimates, not billing reconciliation.
+Decision: retain original experimental decisions and data. Prioritize real-command contract scenarios and repairs, then a versioned oracle erratum and adversarial completion-evidence audit, then one exact cross-surface workflow before broader orchestration or prompting experiments. No implementation or default-setting change made in this review.
+Refs: results/status-audit-20260927/README.md; results/q12b-live-dev-pooled/; results/q16-live-dev-pooled/; results/q16b-live-heldout/; results/q11b-live-dev-pooled/; results/q17-native-dev/; results/g5-native-append/; results/g6-native-append/
