@@ -147,3 +147,13 @@ lost.
 After C closes, score N1 (`docs/notebook/2026-09-26-notebook-practice.md`): did each package produce
 a failed or revised prediction that changed the work, and was every prediction committed before its
 test? Keep, change or drop the notebook on that answer.
+
+## Status, 2026-09-26 (end of day)
+
+| # | Package | State | Evidence |
+|---|---|---|---|
+| C | Trusted input | closed | Chrome's breached-password warning dropped every post-login click; quiet profile; S4 |
+| D | Receipts, Q12b | closed | delivery field; Q12b H0(c), receipts not delivered by default; S6 |
+| E | Verifier evidence, recovery | measured | Q16 (no-fact refusals 62 to 20, primary interval includes 0), Q16b (not adopted by its rule; stale heldout oracle, owner's call), Q17 H0(b) |
+| F | Q11b | closed | H0(b), not adopted |
+| G | Cross-surface pilot | pilot closed | G3 held (transfer with provenance, exact saved line); G5 held (native save readback: 12 of 12 accepted, Q17 0 of 6); Q13 needs five oracles first |

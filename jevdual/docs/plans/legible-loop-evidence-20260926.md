@@ -61,3 +61,16 @@ change a v6 rule can cite, with its source. Nothing here is a new rule.
   on cost and time per verified task, never on call counts.
 - **The notebook (N1)** failed as written: conformance predictions (package B) all held. Kept, with
   predictions required for unknowns only.
+
+## Added after Q16b and Q11b
+
+- **L1 (declare):** Q11b, the narrow declaration (requirements plus "state only what the page shows"),
+  cost 10 verified passes pooled through no-fact refusals (91 against 68) with the work itself done
+  (predicate passes +2): H0(b), not adopted (`results/q11b-live-dev.md`). With Q11 this is two
+  declarations that raised refusals; what the driver is told about the done text interacts with the
+  claim check, so L1 is not separable from L6 on the browser path.
+- **L6 (completion):** the strict claim check held on the live heldout on verified passes (21 against
+  19) and no-fact refusals (3 against 7); its one false completion is shared with the default check and
+  is a stale oracle (`lhw-rust-year`: the predicate says 2015, Wikipedia's infobox, quoted by both arms,
+  says 2012). Not adopted by the pre-registered rule; the oracle is the owner's call
+  (`results/q16b-live-heldout.md`).
