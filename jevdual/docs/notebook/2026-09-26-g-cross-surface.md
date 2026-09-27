@@ -107,3 +107,11 @@ Observed: the secondary audit: `check-file` proved only that some line equals th
 Inferred: a transfer that duplicated the value on a retry, or replaced the document's first line, would have read confirmed; a stale carried value could be used as if read in the new session.
 Changes: `footwork snapshot-file PATH` records the destination before the work; `check-file ... --appended` requires the file to be the snapshot, one line break, and the value once at the end, and names the failure otherwise (content not preserved, inserted N times, not the value's own line, other text added). `start` clears carries and snapshots. The pilot uses both. Tests: `test_the_append_oracle_names_what_went_wrong`, `test_the_workflow_oracle_through_the_real_commands`, `test_a_new_session_does_not_inherit_an_old_sessions_carries`.
 Next: the pilot on the new oracle when the desktop is available; then Q13's other four oracles.
+
+## G7 · prediction · 2026-09-27 15:58
+Question: does the whole browser → TextEdit → saved-file path satisfy the workflow oracle, and does it report a duplicate as a failure?
+Hypothesis: the clean run passes every criterion: the source value is the first book's price read from books.toscrape.com; the destination is the fresh file; its earlier line is kept; the value is appended exactly once; `check-file --appended` confirms. The duplicate run's receipts confirm both appends (each did what it said) and the oracle fails with "inserted 2 times".
+Alternatives: the save needs File > Save (recorded as recovery, not success on the first try); the Driver's AX value around the stripped trailing newline makes the second append land on the same line, so the duplicate reads "not the value's own line" instead.
+Test: `scripts/pilot_cross_surface.sh clean`, then `duplicate`, once each, on this commit; evidence under results/g-pilot-*.
+Predicts: clean: oracle exit 0, "confirmed: line 2"; duplicate: oracle exit 6, "inserted 2 times"; every append receipt confirmed.
+Against: the clean run's oracle fails while its receipts said confirmed, or the duplicate run's oracle confirms.
