@@ -1,0 +1,182 @@
+[
+ {
+  "id": "A1-split-price",
+  "expect": "accept",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.98, max unmet p=0.03",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": true,
+  "why_page_and_fields": "accept: complete p=0.98, max unmet p=0.03"
+ },
+ {
+  "id": "A2-status-label",
+  "expect": "accept",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.96, max unmet p=0.05",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": true,
+  "why_page_and_fields": "accept: complete p=0.96, max unmet p=0.05"
+ },
+ {
+  "id": "A3-commentary-aside",
+  "expect": "accept",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.98, max unmet p=0.04",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": true,
+  "why_page_and_fields": "accept: complete p=0.98, max unmet p=0.04"
+ },
+ {
+  "id": "A4-field-value",
+  "expect": "accept",
+  "claims_page": true,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; complete p=0.21",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "verify: uncertain: complete p=0.42, max unmet p=0.67"
+ },
+ {
+  "id": "A5-year",
+  "expect": "accept",
+  "claims_page": true,
+  "verifier_page": true,
+  "why_page": "accept: complete p=0.81, max unmet p=0.28",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": true,
+  "why_page_and_fields": "accept: complete p=0.80, max unmet p=0.28"
+ },
+ {
+  "id": "A6-quote",
+  "expect": "accept",
+  "claims_page": true,
+  "verifier_page": true,
+  "why_page": "accept: complete p=0.88, max unmet p=0.05",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": true,
+  "why_page_and_fields": "accept: complete p=0.88, max unmet p=0.05"
+ },
+ {
+  "id": "A7-cheapest",
+  "expect": "accept",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: 1 unsupported claim(s) dropped; uncertain: complete p=0.89, max unmet p=0.52",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "verify: uncertain: complete p=0.86, max unmet p=0.46"
+ },
+ {
+  "id": "A8-navigation",
+  "expect": "accept",
+  "claims_page": true,
+  "verifier_page": false,
+  "why_page": "verify: answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.96, max unmet p=0.04",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": true,
+  "why_page_and_fields": "accept: complete p=0.96, max unmet p=0.03"
+ },
+ {
+  "id": "R1-wrong-product-price",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: 1 unsupported claim(s) dropped; uncertain: complete p=0.36, max unmet p=0.59",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "verify: uncertain: complete p=0.42, max unmet p=0.59"
+ },
+ {
+  "id": "R2-wrong-field",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; Telephone number reported unmet with p=0.95",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "reject: Telephone number reported unmet with p=0.73"
+ },
+ {
+  "id": "R3-unsupported-qualification",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; Bike Light price with tax and shipping reported unmet with p=0.95",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "reject: Bike Light price with tax and shipping reported unmet with p=0.95"
+ },
+ {
+  "id": "R4-true-fact-wrong-task",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: 1 unsupported claim(s) dropped; uncertain: complete p=0.45, max unmet p=0.57",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "verify: uncertain: complete p=0.50, max unmet p=0.68"
+ },
+ {
+  "id": "R5-fact-in-aside",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; Bike Light price with shipping reported unmet with p=0.92",
+  "claims_page_and_fields": false,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "reject: 1 unsupported claim(s) dropped; Bike Light price with shipping reported unmet with p=0.93"
+ },
+ {
+  "id": "R6-fabricated-number",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "verify: 1 unsupported claim(s) dropped; uncertain: complete p=0.40, max unmet p=0.57",
+  "claims_page_and_fields": false,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "verify: 1 unsupported claim(s) dropped; uncertain: complete p=0.39, max unmet p=0.62"
+ },
+ {
+  "id": "R7-wrong-year-on-page",
+  "expect": "reject",
+  "claims_page": true,
+  "verifier_page": false,
+  "why_page": "reject: Year reported unmet with p=0.74",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "verify: uncertain: complete p=0.51, max unmet p=0.63"
+ },
+ {
+  "id": "R8-order-not-placed",
+  "expect": "reject",
+  "claims_page": true,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; Order confirmation shown unmet with p=0.93",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "reject: Order confirmation shown unmet with p=0.93"
+ },
+ {
+  "id": "R9-stale-total",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; Total with tax reported unmet with p=0.85",
+  "claims_page_and_fields": false,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "reject: 1 unsupported claim(s) dropped; Total with tax reported unmet with p=0.87"
+ },
+ {
+  "id": "R10-wrong-cheapest",
+  "expect": "reject",
+  "claims_page": false,
+  "verifier_page": false,
+  "why_page": "reject: 1 unsupported claim(s) dropped; Cheapest product reported unmet with p=0.82",
+  "claims_page_and_fields": true,
+  "verifier_page_and_fields": false,
+  "why_page_and_fields": "reject: Cheapest product reported unmet with p=0.87"
+ }
+]

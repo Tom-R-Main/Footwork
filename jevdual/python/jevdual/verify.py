@@ -71,7 +71,8 @@ class VerifyPolicy:
     #: status label ("UNVERIFIED:") and parenthetical asides before taking atoms, treats a clause of
     #: more than six words after a colon as narrative, and also looks for atoms in the values of
     #: the page's non-secret form fields, which innerText leaves out; a space between a currency sign
-    #: and its digits in the page text is closed ("$ 9.99" reads "$9.99").
+    #: and its digits in the page text is closed ("$ 9.99" reads "$9.99"). Since 2026-09-27 it also shows
+    #: Jev the field values and applies the no-fact rule only to tasks that ask for an answer.
     claim_evidence: str = "page"
 
 
@@ -463,6 +464,11 @@ class Verifier:
         ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
         questions = self.build_questions(requirements, ask_kinds=ask_kinds)
         state = self.build_state(task, requirements, menu, answer, trajectory)
+        strict = self.policy.claim_evidence == "page_and_fields"
+        if strict and (fields := field_values(menu)):
+            # the form's values are part of what the page shows; innerText leaves them out, so Jev judged
+            # a filled form unfilled (claims audit A4, 2026-09-27)
+            state["page"]["fields"] = fields
         started = time.perf_counter()
         response = await _call_client(self.client, state, questions, model=self.model, retry=self.retry)
         latency = (time.perf_counter() - started) * 1000
@@ -502,7 +508,6 @@ class Verifier:
         if answer_expected:
             answer_required = max(answer_required, 1.0)
 
-        strict = self.policy.claim_evidence == "page_and_fields"
         claims = check_claims(
             answer,
             menu.full_text or menu.page_text,
@@ -515,7 +520,10 @@ class Verifier:
             kept = [c.claim for c in claims if c.supported]
             evidence = [c for c in claims if c.is_evidence]
             supported_answer = " ".join(kept) if evidence else None
-            if not evidence and band == "accept":
+            # strict: a done that reports no fact is demoted only when the task asks for an answer; on a
+            # task that asks none, the page and the requirements decide (claims audit A8)
+            needs_fact = not strict or answer_required >= self.policy.answer_required
+            if not evidence and band == "accept" and needs_fact:
                 band = "verify"
                 reason = f"answer carries no fact found on the page ({len(unsupported)} unsupported, rest narrative); {reason}"
             elif unsupported:

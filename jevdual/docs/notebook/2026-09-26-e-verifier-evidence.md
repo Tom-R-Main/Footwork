@@ -47,3 +47,10 @@ Alternatives: field values in Jev's view make it accept R2 (a value in the wrong
 Test: the same audit after the change.
 Predicts: strict full verifier: false rejection at most 1/8 (A7 may remain), false acceptance 0/10.
 Against: any incorrect done accepted by the strict verifier.
+
+## U32 · update · 2026-09-27 15:46
+Resolves: V3 = failed
+Observed: `results/claims-audit-20260927b`, strict full verifier after the two changes: false acceptance 0/10, false rejection 2/8 (A4, A7); A8 now accepted; A4 moved from reject (complete 0.20) to uncertain (complete 0.42, max unmet 0.67). `page` mode unchanged (0/10, 6/8).
+Inferred: the field values reached Jev, but A4's second requirement, "Form not submitted", is an absence the page alone cannot show and this synthetic case has no trajectory to show it; that is the verifier's known absence blind spot, not the field defect. The prediction's threshold failed (2 against at most 1); its safety half held (no incorrect done accepted).
+Changes: kept both strict-mode changes (field values in Jev's view; the no-fact rule only when the task asks for an answer).
+Next: adoption needs a fresh live measurement of the current strict check; the audit set is the offline gate any claim-check change runs first.
