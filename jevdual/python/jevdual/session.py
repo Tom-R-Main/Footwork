@@ -22,6 +22,7 @@ task, the last observation, the memory lines and a JSONL log.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import copy
 import dataclasses
 import json
@@ -33,7 +34,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from jevdual import carry
+from jevdual import carry, grants
 from jevdual.menu import Candidate, Menu
 from jevdual.native import NativeBridge, NativeMenu
 
@@ -384,7 +385,7 @@ async def cmd_start(args: Any) -> int:
     d.mkdir(parents=True, exist_ok=True)
     # a new session inherits nothing: no carried value or destination snapshot from an older one in
     # the same directory can be used as if it were read in this one (secondary audit: stale carries)
-    for old in ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS):
+    for old in ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
         (d / old).unlink(missing_ok=True)
     if getattr(args, "browser", False):
         return await _start_browser(args, d)
@@ -673,12 +674,26 @@ async def cmd_do(args: Any) -> int:
                 else f"judgment failed: {j.get('error')}"
             )
         if hit:
+            # package H: a grant for exactly this effect on exactly this resource clears the pause once
+            proposal = _proposal(state, nm, op, target, text, keys, path)
+            granted, why = grants.consume(state.path, proposal)
+            if granted is not None:
+                print(f"cleared by grant {granted.id}: {granted.describe()}")
+                state.log({"kind": "grant_used", "grant": granted.id, "reason": hit})
+                hit = None
+            else:
+                for w in why:
+                    print(f"  not cleared by {w}")
+        if hit:
             state.memory.append(f"step {state.step + 1}: {line} -> paused before dispatch ({hit[:80]})")
             state.log({"kind": "paused", "line": line, "reason": hit})
             state.save()
             label = action.label
             print(f"paused before dispatch: {hit}")
-            print(f"to allow it once: footwork do ... --authorize {label!r}   (or --authorize at start)")
+            print(
+                f"to allow exactly this, once: footwork grant {' '.join(args.words)}   "
+                f"(broad: --authorize {label!r}, any {label!r} anywhere)"
+            )
             return 3
         state.step += 1
         t0 = time.perf_counter()
@@ -1003,6 +1018,85 @@ async def cmd_snapshot_file(args: Any) -> int:
         else "does not exist yet"
     )
     print(f"snapshot of {rec['path']}: {what}")
+    return 0
+
+
+def _location(state: SessionState, nm: Any) -> str:
+    """Where a grant binds: the page URL, or the native window's document (its file) or else its title."""
+    if state.mode == "browser":
+        return nm.menu.url
+    doc = None
+    with contextlib.suppress(Exception):  # no document: the window's own identity is the resource
+        from jevdual import ax
+
+        doc = ax.document_path(state.pid, state.window_id)
+    if doc:
+        return f"file://{doc}"
+    return f"{nm.menu.url} window {nm.menu.title!r}"
+
+
+def _proposal(
+    state: SessionState,
+    nm: Any,
+    op: str,
+    target: Any,
+    text: str | None,
+    keys: tuple[str, ...],
+    path: tuple[str, ...],
+) -> grants.Proposal:
+    arguments = (
+        text
+        if op in ("type", "append", "navigate")
+        else ("+".join(keys) if keys else " > ".join(path) or None)
+    )
+    return grants.Proposal(
+        op=op,
+        location=_location(state, nm),
+        element_role=target.role if target is not None else None,
+        element_label=target.label if target is not None else None,
+        arguments=arguments,
+        value=target.value if target is not None else None,
+    )
+
+
+async def cmd_grant(args: Any) -> int:
+    """Package H: allow one exact effect on one resource, issued against the current observation."""
+    state = SessionState.load(session_dir(args.session))
+    op, cid, raw_text, keys, path = parse_do(args.words)
+    ref = carry.is_ref(raw_text) if op in ("type", "append") else None
+    if ref is not None:
+        try:
+            raw_text = carry.load(Path(getattr(args, "from_session", None) or state.dir), ref).text
+        except carry.CarryError as exc:
+            print(str(exc), file=sys.stderr)
+            return 4
+    if raw_text and re.search(r"\{[A-Za-z_][A-Za-z0-9_]*\}", raw_text):
+        print("a grant never binds a secret's value; grant the field without it", file=sys.stderr)
+        return 2
+    driver, bridge = await bind(state)
+    try:
+        nm, _ = await observe(state, bridge)
+        target = None
+        if isinstance(cid, str):
+            rid, why = resolve_label(nm, cid)
+            if rid is None:
+                print(why, file=sys.stderr)
+                return 4
+            cid = rid
+        if cid is not None:
+            target = nm.menu.candidate(cid)
+            if target is None:
+                print(f"id {cid} is not on the current observation", file=sys.stderr)
+                return 4
+        g = grants.issue(
+            _proposal(state, nm, op, target, raw_text, keys, path), uses=args.uses, step=state.step
+        )
+    finally:
+        await driver.shutdown()
+    grants.record(state.path, g)
+    state.log({"kind": "grant", "grant": grants.as_dict(g)})
+    state.save()
+    print(f"granted {g.id}: {g.describe()}")
     return 0
 
 
