@@ -7,7 +7,9 @@ tasks:
     tags: [live, search, read]
     requirements: [Relevant Wikipedia article opened, Year reported]
     answer_expected: true
-    predicate: {kind: answer_contains, value: '2015'}
+    # Erratum 2026-09-27 (results/q16b-live-heldout-erratum.md): the task asks for the year per Wikipedia,
+    # whose infobox reads "First appeared: January 20, 2012"; 2015 is Rust 1.0. Was value: '2015'.
+    predicate: {kind: answer_contains, value: '2012'}
 
   - id: lhw-mona-lisa
     task: Using Wikipedia, find who painted the Mona Lisa.

@@ -12,7 +12,7 @@ set; that column is wrong and is not used here.
 | dual | 15 of 18 | 0.0284 | 0.00189 | 37.2 | 36 | 181 |
 | guarded | 15 of 18 | 0.0264 | 0.00176 | 53.9 | 137 | 21 |
 
-Paired by task (7 tasks, repeats averaged), Δ(guarded − dual) with 95% bootstrap intervals: cost per
+Paired by task (6 tasks, repeats averaged), Δ(guarded − dual) with 95% bootstrap intervals: cost per
 task −$0.0001 [−0.0005, +0.0002]; wall per task +13.9 s [+8.6, +19.1].
 
 ## Against the pre-registration
