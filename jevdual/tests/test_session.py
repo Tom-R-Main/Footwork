@@ -239,3 +239,26 @@ def test_no_screenshot_is_written_while_the_session_holds_a_secret(tmp_path, mon
     assert asked[-1] is None
     assert "s3cr3t-value" not in json.dumps(dataclasses.asdict(nm.menu), default=str)
     assert "screenshot withheld" in (tmp_path / "session.jsonl").read_text()
+
+
+def test_screenshots_stay_off_after_a_secret_even_when_its_value_is_gone(tmp_path, monkeypatch):
+    """The first fix keyed on the value being scrubbable: a short secret, or one no longer exported,
+    re-enabled capture while the session still remembered handling it."""
+    import asyncio
+
+    from jevdual.session import observe
+
+    asked: list[object] = []
+
+    class Bridge:
+        async def observe(self, *, screenshot_path=None):
+            asked.append(screenshot_path)
+            return _nm([_field(1, "PIN", value="42")])
+
+    st = SessionState(dir=str(tmp_path), app="X", pid=1, window_id=2, task="t")
+    st.secret_names.append("PIN")
+    monkeypatch.delenv("FOOTWORK_SECRET_PIN", raising=False)
+    asyncio.run(observe(st, Bridge()))
+    monkeypatch.setenv("FOOTWORK_SECRET_PIN", "42")  # shorter than the scrub minimum
+    asyncio.run(observe(st, Bridge()))
+    assert asked == [None, None]

@@ -349,9 +349,10 @@ async def observe(
     state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None
 ) -> tuple[NativeMenu, dict[str, Any] | None]:
     shot: str | None = None
-    if _secret_values(state, secret_value):
-        # the observation is scrubbed below, but pixels cannot be: once the session holds a secret, no
-        # screenshot is written (secondary audit 2026-09-27: the image was saved before the scrub)
+    if state.secret_names or secret_value:
+        # the observation is scrubbed below, but pixels cannot be: once the session has handled a secret,
+        # no screenshot is written. Keyed on the session's own record, not on whether the value is still
+        # in the environment or long enough to scrub (secondary audit 2026-09-27, both rounds)
         state.log({"kind": "screenshot withheld", "reason": "the session holds a secret"})
     else:
         shots = state.path / "screenshots"
