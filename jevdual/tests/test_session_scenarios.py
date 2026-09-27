@@ -304,3 +304,16 @@ def test_a_new_session_does_not_inherit_an_old_sessions_carries(world, fw):
     fw("start", "Another job", "--app", "Calculator")
     code, _, err = fw("do", "append", "Equals", "@result")
     assert code == 4 and "@result was not read in session" in err
+
+
+def test_a_driver_error_at_start_stops_with_its_reason_not_a_traceback(world, fw, monkeypatch):
+    """G7 pilot: TextEdit's accessibility walk timed out in `footwork start`, which printed a DriverError
+    traceback and left no session behind."""
+
+    async def timeout(inp):
+        raise RuntimeError("AX tree walk for pid=77 timed out after 20 s")
+
+    monkeypatch.setattr(world, "get_window_state", timeout)
+    code, _, err = fw("start", "Compute", "--app", "Calculator")
+    assert code == 7 and "stopped: RuntimeError: AX tree walk for pid=77 timed out" in err
+    assert "Traceback" not in err

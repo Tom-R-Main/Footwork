@@ -395,7 +395,40 @@ def main(argv: list[str] | None = None) -> int:
 
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
-    return asyncio.run(args.fn(args))
+    try:
+        return asyncio.run(args.fn(args))
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except Exception as exc:  # noqa: BLE001 - every stop names its reason (G7 pilot, 2026-09-27)
+        return _stopped(args, exc)
+
+
+#: exit code for a command stopped by an error it could not handle
+EXIT_STOPPED = 7
+
+
+def _stopped(args: argparse.Namespace, exc: BaseException) -> int:
+    """A command that fails outside its own handling stops with a named reason, logged to the session
+    when there is one, instead of a traceback: `footwork start` on a TextEdit whose accessibility walk
+    timed out printed a Rust-side DriverError trace and left no session behind."""
+    reason = getattr(exc, "reason", None) or type(exc).__name__
+    message = " ".join(str(exc).split())[:300]
+    print(f"stopped: {reason}: {message}", file=sys.stderr)
+    session = getattr(args, "session", None)
+    if session:
+        from pathlib import Path
+
+        d = Path(session)
+        if d.is_dir():
+            import json
+            import time
+
+            with (d / "session.jsonl").open("a") as fh:
+                fh.write(
+                    json.dumps({"t": time.time(), "kind": "stopped", "reason": reason, "message": message})
+                    + "\n"
+                )
+    return EXIT_STOPPED
 
 
 if __name__ == "__main__":

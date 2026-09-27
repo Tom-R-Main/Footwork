@@ -115,3 +115,9 @@ Alternatives: the save needs File > Save (recorded as recovery, not success on t
 Test: `scripts/pilot_cross_surface.sh clean`, then `duplicate`, once each, on this commit; evidence under results/g-pilot-*.
 Predicts: clean: oracle exit 0, "confirmed: line 2"; duplicate: oracle exit 6, "inserted 2 times"; every append receipt confirmed.
 Against: the clean run's oracle fails while its receipts said confirmed, or the duplicate run's oracle confirms.
+
+## U34 · update · 2026-09-27 16:00
+Observed: the first G7 clean run (`results/g-pilot-20260927-155808-clean`): `footwork start` on TextEdit failed with the Driver's "AX tree walk for pid=38619 timed out after 20 s" (TextEdit also had long.txt and note.txt open), printed as a Python traceback, and left no session; the pilot carried on, the append failed on the missing session, and the oracle's "failed: ... does not hold the value as a line" was reported with exit 0 (tee's code).
+Inferred: not a test of the workflow. Two defects: an unhandled Driver error in a session command is a traceback, not a named stop (the milestone breached on another path), and the pilot script did not stop at a failed step or report its real exit code.
+Changes: every footwork command that raises outside its own handling stops with "stopped: <reason>: <message>", exit 7, logged to the session (`test_a_driver_error_at_start_stops_with_its_reason_not_a_traceback`); the pilot runs under pipefail and stops at the first failed step, writing outcome.txt.
+Next: G7 again.
