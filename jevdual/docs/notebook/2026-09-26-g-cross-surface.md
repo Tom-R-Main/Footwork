@@ -101,3 +101,9 @@ Observed: `results/g6-native-append` on 809e346 (polling up to 3 s): 6 of 6 veri
 Inferred: not early reads: those Command-S presses did not save (alternative: the chord arrives before TextEdit's window is key), and the `partial` receipts were true. The receipt is what sent the driver to File > Save; without it, Q17's drivers pressed Command-S again and again against a verifier that could not tell.
 Changes: none to the receipt. The unreliable chord is the Driver's foreground hotkey route; routing a save chord through the menu is a candidate, not done.
 Next: none.
+
+## U33 · update · 2026-09-27 15:48
+Observed: the secondary audit: `check-file` proved only that some line equals the carried value, not the location, the earlier content, or a single insertion; and `start` kept an older session's `carries.json` in the same directory.
+Inferred: a transfer that duplicated the value on a retry, or replaced the document's first line, would have read confirmed; a stale carried value could be used as if read in the new session.
+Changes: `footwork snapshot-file PATH` records the destination before the work; `check-file ... --appended` requires the file to be the snapshot, one line break, and the value once at the end, and names the failure otherwise (content not preserved, inserted N times, not the value's own line, other text added). `start` clears carries and snapshots. The pilot uses both. Tests: `test_the_append_oracle_names_what_went_wrong`, `test_the_workflow_oracle_through_the_real_commands`, `test_a_new_session_does_not_inherit_an_old_sessions_carries`.
+Next: the pilot on the new oracle when the desktop is available; then Q13's other four oracles.

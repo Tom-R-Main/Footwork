@@ -371,8 +371,19 @@ def build_parser() -> argparse.ArgumentParser:
     cf.add_argument("path")
     cf.add_argument("ref", help="@NAME")
     cf.add_argument("--from", dest="from_session", help="the session the value was read in")
+    cf.add_argument(
+        "--appended",
+        action="store_true",
+        help="require the file to be its snapshot plus the value, once, at the end (see snapshot-file)",
+    )
     common(cf)
     cf.set_defaults(fn=S.cmd_check_file)
+    sf = sub.add_parser(
+        "snapshot-file", help="record a destination file before the work (check-file --appended)"
+    )
+    sf.add_argument("path")
+    common(sf)
+    sf.set_defaults(fn=S.cmd_snapshot_file)
     stt = sub.add_parser("status")
     common(stt)
     stt.set_defaults(fn=S.cmd_status)

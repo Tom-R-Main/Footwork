@@ -279,3 +279,28 @@ def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, 
     assert code == 0, err
     assert "not dispatched" in out and "element_missing" in out
     assert "refused (not applied: element_missing" in out  # the receipt, printed with the fresh observation
+
+
+def test_the_workflow_oracle_through_the_real_commands(world, fw, tmp_path):
+    _compute_624(fw)
+    code, _, err = fw("read", "--match", r"(?m)^\s*‎?(\d[\d,]*)\s*$", "--as", "result")
+    assert code == 0, err
+    doc = tmp_path / "doc.txt"
+    doc.write_text("Result:\n")
+    code, out, _ = fw("snapshot-file", str(doc))
+    assert code == 0 and "8 characters" in out
+    doc.write_text("Result:\n624\n624\n")
+    code, out, _ = fw("check-file", str(doc), "@result", "--appended")
+    assert code == 6 and "inserted 2 times" in out
+    doc.write_text("Result:\n624")
+    code, out, _ = fw("check-file", str(doc), "@result", "--appended")
+    assert code == 0 and out.startswith("confirmed: line 2")
+
+
+def test_a_new_session_does_not_inherit_an_old_sessions_carries(world, fw):
+    _compute_624(fw)
+    code, _, _ = fw("read", "--match", r"(?m)^\s*‎?(\d[\d,]*)\s*$", "--as", "result")
+    assert code == 0
+    fw("start", "Another job", "--app", "Calculator")
+    code, _, err = fw("do", "append", "Equals", "@result")
+    assert code == 4 and "@result was not read in session" in err

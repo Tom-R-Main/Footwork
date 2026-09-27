@@ -67,3 +67,23 @@ def test_the_file_oracle_is_byte_exact(tmp_path):
     r = carry.check_file(f, c)
     assert not r.ok and "not equal" in r.detail
     assert not carry.check_file(tmp_path / "none.txt", c).ok
+
+
+def test_the_append_oracle_names_what_went_wrong(tmp_path):
+    c = carry.take("price", cand(value="£51.77"), **META)
+    f = tmp_path / "doc.txt"
+    f.write_text("Price carried:\n")
+    before = carry.snapshot(tmp_path, f)
+    assert carry.load_snapshot(tmp_path, f)["sha256"] == before["sha256"]
+    f.write_text("Price carried:\n£51.77")
+    r = carry.check_append(f, c, before)
+    assert r.ok and r.line == 2
+    f.write_text("Price carried:\n£51.77\n£51.77\n")  # a retry that inserted twice
+    assert "inserted 2 times" in carry.check_append(f, c, before).detail
+    f.write_text("£51.77\n")  # the earlier line was replaced
+    assert "not preserved" in carry.check_append(f, c, before).detail
+    f.write_text("Price carried:\nTotal £51.77\n")  # in the file, not as the value's own line
+    assert "does not hold the value as a line" in carry.check_append(f, c, before).detail
+    g = tmp_path / "other.txt"
+    with pytest.raises(carry.CarryError, match="no snapshot"):
+        carry.load_snapshot(tmp_path, g)

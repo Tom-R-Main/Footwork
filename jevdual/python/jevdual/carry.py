@@ -203,3 +203,69 @@ def check_file(path: Path, carry: Carry) -> FileCheck:
             f"line {near} contains the text but is not equal to it: {lines[near - 1][:120]!r}",
         )
     return FileCheck(False, str(path), None, f"no line of {path} holds {carry.text[:80]!r}")
+
+
+# ---- the workflow oracle: where the value went, what it kept, how many times -------------------
+
+SNAPSHOTS = "destinations.json"
+
+
+def snapshot(session_dir: Path, path: Path) -> dict[str, Any]:
+    """Record a destination file before the work, so the oracle can say what changed."""
+    import hashlib
+
+    text = path.read_text() if path.exists() else None
+    rec = {
+        "path": str(path),
+        "exists": text is not None,
+        "text": text,
+        "sha256": hashlib.sha256(text.encode()).hexdigest() if text is not None else None,
+        "taken_at": time.time(),
+    }
+    store_path = session_dir / SNAPSHOTS
+    data = json.loads(store_path.read_text()) if store_path.exists() else {}
+    data[str(path)] = rec
+    store_path.write_text(json.dumps(data, indent=1))
+    return rec
+
+
+def load_snapshot(session_dir: Path, path: Path) -> dict[str, Any]:
+    store_path = session_dir / SNAPSHOTS
+    data = json.loads(store_path.read_text()) if store_path.exists() else {}
+    if str(path) not in data:
+        raise CarryError(
+            f"no snapshot of {path} in session {session_dir}: run `footwork snapshot-file` first"
+        )
+    return data[str(path)]
+
+
+def check_append(path: Path, carry: Carry, before: dict[str, Any]) -> FileCheck:
+    """The exact append oracle: the file is its earlier text, one line break when that text did not end
+    with one, and the carried text, once, at the end (a trailing line break allowed). Anything else fails
+    and says which: earlier content not preserved, the value duplicated, or the value somewhere else."""
+    if not path.exists():
+        return FileCheck(False, str(path), None, f"{path} does not exist")
+    after = path.read_text()
+    was = before.get("text") or ""
+    sep = "" if was == "" or was.endswith("\n") else "\n"
+    expected = was + sep + carry.text
+    if after in (expected, expected + "\n"):
+        line = expected.count("\n") + 1
+        return FileCheck(True, str(path), line, "")
+    if not after.startswith(was):
+        at = next(
+            (i for i, (a, b) in enumerate(zip(after, was, strict=False)) if a != b), min(len(after), len(was))
+        )
+        return FileCheck(
+            False, str(path), None, f"the earlier content was not preserved (it differs at character {at})"
+        )
+    added = after[len(was) :]
+    lines = [ln.rstrip("\r") for ln in added.split("\n") if ln.strip()]
+    n = sum(1 for ln in lines if ln == carry.text)
+    if n > 1:
+        return FileCheck(False, str(path), None, f"the value was inserted {n} times")
+    if n == 0:
+        return FileCheck(
+            False, str(path), None, f"the added text {added[:80]!r} does not hold the value as a line"
+        )
+    return FileCheck(False, str(path), None, f"the value is there, but with other text added: {added[:80]!r}")

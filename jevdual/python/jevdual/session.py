@@ -381,7 +381,9 @@ async def cmd_start(args: Any) -> int:
 
     d = session_dir(args.session)
     d.mkdir(parents=True, exist_ok=True)
-    for old in ("session.json", "session.jsonl"):
+    # a new session inherits nothing: no carried value or destination snapshot from an older one in
+    # the same directory can be used as if it were read in this one (secondary audit: stale carries)
+    for old in ("session.json", "session.jsonl", carry.CARRIES, carry.SNAPSHOTS):
         (d / old).unlink(missing_ok=True)
     if getattr(args, "browser", False):
         return await _start_browser(args, d)
@@ -957,7 +959,16 @@ async def cmd_check_file(args: Any) -> int:
     except carry.CarryError as exc:
         print(str(exc), file=sys.stderr)
         return 4
-    result = carry.check_file(Path(args.path).expanduser(), c)
+    target = Path(args.path).expanduser()
+    if getattr(args, "appended", False):
+        try:
+            before = carry.load_snapshot(session_dir(args.session), target)
+        except carry.CarryError as exc:
+            print(str(exc), file=sys.stderr)
+            return 4
+        result = carry.check_append(target, c, before)
+    else:
+        result = carry.check_file(target, c)
     text = result.receipt(c)
     print(text)
     own = session_dir(args.session)
@@ -978,6 +989,20 @@ async def cmd_check_file(args: Any) -> int:
         )
         state.save()
     return 0 if result.ok else 6
+
+
+async def cmd_snapshot_file(args: Any) -> int:
+    """Package G: record a destination file before the work, for ``check-file --appended``."""
+    d = session_dir(args.session)
+    d.mkdir(parents=True, exist_ok=True)
+    rec = carry.snapshot(d, Path(args.path).expanduser())
+    what = (
+        f"{len(rec['text'])} characters, sha256 {rec['sha256'][:12]}"
+        if rec["exists"]
+        else "does not exist yet"
+    )
+    print(f"snapshot of {rec['path']}: {what}")
+    return 0
 
 
 def _split(s: str | None, sep: str) -> tuple[str, ...]:

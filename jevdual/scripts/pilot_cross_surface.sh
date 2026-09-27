@@ -19,7 +19,8 @@ fw read --match '(£[0-9]+\.[0-9]{2})' --as price --session "$B"
 open -a TextEdit "$FILE"; sleep 3
 fw start "Append the carried price and save" --app TextEdit --window "$NAME" \
   --mode foreground_permitted --authorize Save --session "$T"
+fw snapshot-file "$FILE" --session "$T"
 fw do append "text area" @price --from "$B" --session "$T"
 fw do hotkey cmd s --no-judge --session "$T"
 fw look --session "$T" --text 400
-fw check-file "$FILE" @price --from "$B" --session "$T"
+fw check-file "$FILE" @price --from "$B" --session "$T" --appended
