@@ -24,3 +24,12 @@ Resolves: V1 = held
 Observed: Q16 (`results/q16-live-dev.md`): no-fact refusals 62 on `guarded`, 20 on `guarded_evidence`; verified passes on V1's four tasks 4 of 12 against 12 of 12; no false completion on either arm.
 Inferred: the no-fact refusals came from the check, as V1 said: most of them go when it reads labels, asides, form fields and split prices correctly. The all-task verified gain (+11 pooled) is short of its interval, because the rescued tasks are few among 59.
 Next: Q16b on the heldout.
+
+## V2 · prediction · 2026-09-27 15:42
+Question: how often does the verifier accept a done that is false, and refuse one that is true, on claims built to separate them?
+Hypothesis: the deterministic claim check binds no fact to its subject, so it accepts the adversarial cases whose facts are all somewhere on the page (a real price on the wrong product, a real value in the wrong field, a true fact for a different task, an unsupported qualification in narrative words); the Jev judgment catches some of them through the requirements; the strict check lowers false rejections without raising false acceptances.
+Alternatives: the Jev judgment already rejects nearly all the adversarial cases, so the claim check's weakness is covered in practice; or the strict check accepts more false claims than it rescues true ones.
+Test: `evals/claims_audit.py` over `evals/fixtures/claims_audit.yaml` (a fixed set of correct and incorrect dones on synthetic pages, labelled before scoring): the claim check alone in both modes, then the full `Verifier.verify` (Jev) in both modes.
+Predicts: claim check alone: false acceptance at least half of the adversarial cases in both modes; strict false rejection below page's. Full verifier: false acceptance above zero; strict does not accept any case page rejects.
+Against: full-verifier false acceptance zero in both modes (the Jev judgment covers the gap), or strict accepting an adversarial case that page rejects.
+Refs: results/status-audit-20260927/README.md (step 2)
