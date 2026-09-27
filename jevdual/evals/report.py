@@ -63,6 +63,8 @@ class TaskResult:
     noop_receipts: int = 0
     #: package E: no_evidence | unmet | uncertain when the run ended UNVERIFIED
     unverified_reason: str | None = None
+    #: package I, bounded arm: how many times control passed between System 1 and System 2
+    handovers: int = 0
     #: package D: steps whose input was dispatched and never reached the page
     undelivered_inputs: int = 0
 
