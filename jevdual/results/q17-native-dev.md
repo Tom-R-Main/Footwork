@@ -1,7 +1,7 @@
 # Q17 result: native recovery ownership is money against time, not calls (2026-09-26)
 
 Pre-registration: `docs/experiments/Q17.md` (4c17b45). Run: `results/q17-native-dev` on 4c17b45, native
-dev split (7 tasks), three arms, three repeats, the desktop cleared by the owner. Verified completion
+dev split (six tasks; the pre-registration said seven), three arms, three repeats, the desktop cleared by the owner. Verified completion
 is the pre-registered one: predicate passed and done accepted (no error row). The runner's own
 `report.md` prints 0 verified passes on every arm because it reads a `success` field native rows do not
 set; that column is wrong and is not used here.
