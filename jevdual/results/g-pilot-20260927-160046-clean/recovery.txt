@@ -1,0 +1,1 @@
+save: first Command-S not confirmed; File > Save used: receipt: Receipt for hotkey(cmd+s): refused (not applied: human_active: hotkey cmd+s (a menu key-equivalent) needs the foreground and the person gave input 1.1s ago (needs 3s idl; page unchanged).

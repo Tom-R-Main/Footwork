@@ -1,0 +1,10 @@
+carrying @price = '£51.77', read from browser Google Chrome (footwork) at https://books.toscrape.com/ (text '£51.77', its match) at step 0 of session results/g-pilot-20260927-160046-clean/browser
+dispatched append(text area) text=@price (from browser https://books.toscrape.com/): driver says confirmed in 0.2s
+receipt: Receipt for append(text area) text=@price (from browser https://books.toscrape.com/): confirmed ('text area' now holds 'Price carried from the browser:\n£51.77').
+TextEdit: 'transfer-20260927-160046.txt'  [elements_incomplete 1]
+1 elements:
+  [   1] textbox    'text area' = 'Price carried from the browser:\n£51.77'
+page text (67 chars):
+transfer-20260927-160046.txt
+Price carried from the browser:
+£51.77

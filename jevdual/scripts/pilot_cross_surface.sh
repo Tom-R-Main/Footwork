@@ -43,7 +43,13 @@ if [ "$VARIANT" = duplicate ]; then
 fi
 
 step "save"
-must fw do hotkey cmd s --no-judge --session "$T" > "$OUT/save-1.txt"; SAVE="$(grep -E "^receipt" "$OUT/save-1.txt")"; echo "$SAVE"
+# the posture yields a foreground step while the person is typing (human_active); wait for a pause of
+# at least 3 s, retrying for up to 60 s, and record every yield (G7 duplicate run, 2026-09-27)
+for i in $(seq 1 20); do
+  must fw do hotkey cmd s --no-judge --session "$T" > "$OUT/save-1.txt"; SAVE="$(grep -E "^receipt" "$OUT/save-1.txt")"
+  case "$SAVE" in *human_active*) echo "save yielded to the person (try $i)" >> "$OUT/recovery.txt"; sleep 3 ;; *) break ;; esac
+done
+echo "$SAVE"
 case "$SAVE" in
   *confirmed*) echo "save: confirmed on the first Command-S" >> "$OUT/recovery.txt" ;;
   *) step "save not confirmed: recovering through File > Save"
