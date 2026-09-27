@@ -167,6 +167,20 @@ class DualProcessAgent(Agent):
             hops += 1
         return " ".join(parts)
 
+    async def _enter_targets(self, actions: list[Any]) -> list[tuple[int, str, str]]:
+        """``(-1, label, context)`` for each Enter System 2 proposes: the focused element and the submit
+        control of its form, as ``_active_element_label`` reads them."""
+        out: list[tuple[int, str, str]] = []
+        for action in actions:
+            data = action.model_dump(exclude_unset=True)
+            name, params = next(iter(data.items()))
+            if name == "send_keys" and "enter" in str((params or {}).get("keys", "")).casefold():
+                label = await self._active_element_label()
+                out.append(
+                    (-1, f"Enter in {label[:120]}" if label else "Enter with unknown focused element", label)
+                )
+        return out
+
     async def _active_element_label(self) -> str:
         """Label of the focused element and its form's submit control, for gating Enter."""
         js = (
@@ -258,8 +272,15 @@ class DualProcessAgent(Agent):
         """
         verifier = getattr(getattr(self.s1_policy, "verifier", None), "verifier", None)
         judge = getattr(verifier, "judge_destructive", None)
-        targets = self._click_targets(actions)
-        if judge is None or not targets:
+        if judge is None:
+            return None
+        targets = list(self._click_targets(actions))
+        enter = getattr(self, "_enter_targets", None)
+        if enter is not None:
+            # Enter submits the focused form: the same effect as clicking its submit control, so it gets
+            # the same judgment, not the keyword list alone (secondary audit 2026-09-27)
+            targets += await enter(actions)
+        if not targets:
             return None
         cached = getattr(self.browser_session, "_cached_browser_state_summary", None)
         store = getattr(self.s1_policy, "secrets", None)

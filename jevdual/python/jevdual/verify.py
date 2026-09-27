@@ -169,6 +169,12 @@ def extract_atoms(sentence: str, *, strict: bool = False) -> list[str]:
     text = _URL_RE.sub(" ", clean_claim(sentence) if strict else sentence)
     atoms: list[str] = [m.group(1).strip() for m in _QUOTED_RE.finditer(text)]
     atoms += [m.group(0).strip() for m in _NUMBER_RE.finditer(text)]
+    if strict:
+        # an aside is dropped from the value it follows, not from the check: quoted text and numbers
+        # inside it are claims too ("Price: $9.99 (shipping $50)"; secondary audit 2026-09-27)
+        for aside in _ASIDE_RE.findall(_URL_RE.sub(" ", sentence)):
+            atoms += [m.group(1).strip() for m in _QUOTED_RE.finditer(aside)]
+            atoms += [m.group(0).strip() for m in _NUMBER_RE.finditer(aside)]
     tail = _AFTER_COLON_RE.search(text)
     if tail:
         value = tail.group(1).strip().rstrip(".")

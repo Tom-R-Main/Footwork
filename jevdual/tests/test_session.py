@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import dataclasses
+import json
 from types import SimpleNamespace
 
 from jevdual.menu import Candidate, Menu
@@ -211,3 +213,29 @@ def test_save_readback_compares_the_disk_with_the_window(tmp_path):
     )
     assert is_save(keys=["cmd", "s"]) and is_save(path=["File", "Save"])
     assert not is_save(keys=["cmd", "shift", "s"]) and not is_save(path=["File", "Save As…"])
+
+
+def test_no_screenshot_is_written_while_the_session_holds_a_secret(tmp_path, monkeypatch):
+    """Secondary audit 2026-09-27: the screenshot was written before the observation was scrubbed, so a
+    named secret shown in an ordinary field could persist in the image. Pixels cannot be scrubbed, so
+    no screenshot is captured once the session holds a secret."""
+    import asyncio
+
+    from jevdual.session import observe
+
+    asked: list[object] = []
+
+    class Bridge:
+        async def observe(self, *, screenshot_path=None):
+            asked.append(screenshot_path)
+            return _nm([_field(1, "API key", value="s3cr3t-value")])
+
+    st = SessionState(dir=str(tmp_path), app="X", pid=1, window_id=2, task="t")
+    asyncio.run(observe(st, Bridge()))
+    assert asked[-1] is not None  # no secret yet: the audit screenshot is kept
+    monkeypatch.setenv("FOOTWORK_SECRET_KEY", "s3cr3t-value")
+    st.secret_names.append("KEY")
+    nm, _ = asyncio.run(observe(st, Bridge()))
+    assert asked[-1] is None
+    assert "s3cr3t-value" not in json.dumps(dataclasses.asdict(nm.menu), default=str)
+    assert "screenshot withheld" in (tmp_path / "session.jsonl").read_text()

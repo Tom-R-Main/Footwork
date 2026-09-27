@@ -38,8 +38,13 @@ class _Verifier:
     def __init__(self, client):
         pass
 
+    #: every judgment asked for, and the probability a scenario wants back (secondary audit 2026-09-27)
+    judged: ClassVar[list[list[str]]] = []
+    p: ClassVar[float] = 0.05
+
     async def judge_destructive(self, task, targets, *, url, title):
-        return [0.05 for _ in targets]
+        _Verifier.judged.append([t["label"] for t in targets])
+        return [_Verifier.p for _ in targets]
 
     async def verify(self, task, requirements, menu, answer, *, answer_expected, trajectory):
         unmet = {r: (0.05 if r.split()[-1] in menu.page_text else 0.95) for r in requirements}
@@ -239,3 +244,38 @@ def test_an_unknown_carry_and_a_missing_match_dispatch_nothing(world, fw, tmp_pa
     assert len(world.presses) == presses
     code, _, err = fw("check-file", str(tmp_path / "absent.txt"), "@missing")
     assert code == 4
+
+
+
+# ---- secondary audit (2026-09-27): real-command gaps ----
+
+
+def test_a_key_and_a_return_go_to_the_judge_through_the_real_command(world, fw):
+    """authorize.py judged key and Enter since package B, but the CLI built the judge only for click,
+    menu, hotkey and navigate, so a Return reached no judgment through `footwork do`."""
+    _Verifier.judged.clear()
+    _Verifier.p = 0.95
+    try:
+        # "Delete" granted, so the keyword rule stands aside and the judgment itself is what pauses
+        fw("start", "Compute", "--app", "Calculator", "--authorize", "Delete")
+        code, out, err = fw("do", "key", "Return")
+        assert _Verifier.judged, f"the judge was never asked: {code} {out[:300]} {err[:300]}"
+        assert code == 3 and "paused before dispatch" in out and "judgment p=0.95" in out
+        assert world.presses == []
+    finally:
+        _Verifier.p = 0.05
+
+
+def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, monkeypatch):
+    """cmd_do caught a bridge exception, then read ``eff.readback`` with ``eff`` unassigned."""
+    from jevdual.native import NativeBridge, NativeBridgeError
+
+    async def boom(self, *a, **k):
+        raise NativeBridgeError("element_missing", "the element went away")
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(NativeBridge, "act", boom)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code == 0, err
+    assert "not dispatched" in out and "element_missing" in out
+    assert "refused (not applied: element_missing" in out  # the receipt, printed with the fresh observation

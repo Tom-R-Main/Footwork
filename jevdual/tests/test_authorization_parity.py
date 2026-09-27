@@ -64,6 +64,22 @@ def test_browser_judgment_below_the_floor_still_allows():
     assert asyncio.run(DualProcessAgent._destructive_judgment(agent, [])) is None
 
 
+def test_browser_enter_gets_the_same_judgment_as_a_click():
+    """Secondary audit 2026-09-27: Enter was keyword-gated only; an innocuous submit label ("Continue")
+    reached by Enter skipped the judgment a click on it gets."""
+    from jevdual.agent import DualProcessAgent as A
+
+    agent = _browser_agent(_judge(lambda targets: [0.95] * len(targets)), targets=())
+    agent._active_element_label = lambda: asyncio.sleep(0, result="Card number | Continue")
+    agent._enter_targets = lambda actions: A._enter_targets(agent, actions)
+    enter = NS(model_dump=lambda exclude_unset=True: {"send_keys": {"keys": "Enter"}})
+    hit = asyncio.run(DualProcessAgent._destructive_judgment(agent, [enter]))
+    assert hit is not None and hit[0] == "Enter in Card number | Continue" and "p=0.95" in hit[1]
+    # below the floor, Enter passes like a click would
+    agent.s1_policy.verifier.verifier.judge_destructive = _judge(lambda targets: [0.05] * len(targets))
+    assert asyncio.run(DualProcessAgent._destructive_judgment(agent, [enter])) is None
+
+
 # ---- B1, native Authorizer
 
 

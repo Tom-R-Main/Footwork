@@ -348,9 +348,16 @@ def _native_bridge(driver: Any, pid: int, wid: int, posture: str) -> NativeBridg
 async def observe(
     state: SessionState, bridge: NativeBridge, *, secret_value: str | None = None
 ) -> tuple[NativeMenu, dict[str, Any] | None]:
-    shots = state.path / "screenshots"
-    shots.mkdir(exist_ok=True)
-    nm = await bridge.observe(screenshot_path=str(shots / f"obs-{state.step:03d}-{int(time.time())}.png"))
+    shot: str | None = None
+    if _secret_values(state, secret_value):
+        # the observation is scrubbed below, but pixels cannot be: once the session holds a secret, no
+        # screenshot is written (secondary audit 2026-09-27: the image was saved before the scrub)
+        state.log({"kind": "screenshot withheld", "reason": "the session holds a secret"})
+    else:
+        shots = state.path / "screenshots"
+        shots.mkdir(exist_ok=True)
+        shot = str(shots / f"obs-{state.step:03d}-{int(time.time())}.png")
+    nm = await bridge.observe(screenshot_path=shot)
     receipt = receipt_for(state, nm, secret_value=secret_value)
     nm = scrub(state, nm, secret_value)
     if receipt is not None and state.pending is not None:
@@ -621,7 +628,11 @@ async def cmd_do(args: Any) -> int:
                 return 4
         judge = None
         client = None
-        if not getattr(args, "no_judge", False) and op in ("click", "menu", "hotkey", "navigate"):
+        # every route the authorizer judges (authorize.JUDGED_ROUTES), plus navigation: a key or Return
+        # can press the same button a click can (secondary audit 2026-09-27: key and enter were missing)
+        from jevdual.authorize import JUDGED_ROUTES
+
+        if not getattr(args, "no_judge", False) and op in (*JUDGED_ROUTES, "navigate"):
             from jevdual.keys import load_keys
 
             if load_keys().get("TYPESAFE_API_KEY"):
@@ -669,6 +680,7 @@ async def cmd_do(args: Any) -> int:
         state.step += 1
         t0 = time.perf_counter()
         error = None
+        eff = None  # a raised dispatch leaves no effect; the refusal below is still recorded
         try:
             if op == "navigate":
                 eff = await bridge.navigate(text or "")

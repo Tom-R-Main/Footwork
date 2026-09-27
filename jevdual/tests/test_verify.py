@@ -295,3 +295,20 @@ def test_a_price_split_across_text_nodes_matches_in_strict_mode():
     claim = 'The price of "Sauce Labs Bike Light" is $9.99.'
     assert check_claims(claim, page)[0].grade == "none"  # Q12's check
     assert check_claims(claim, page, strict=True)[0].grade in ("exact", "normalized")
+
+
+def test_a_fact_inside_an_aside_is_still_checked_in_strict_mode():
+    """Secondary audit 2026-09-27: the strict check removed every parenthetical before taking atoms and
+    kept the whole sentence as supported, so "(shipping $50)" went unchecked."""
+    s = "Price: $9.99 (shipping $50)"
+    assert set(extract_atoms(s, strict=True)) == {"$9.99", "$50"}
+    [c] = check_claims(s, "Bike Light $9.99 Add to cart", strict=True)
+    assert c.grade == "none"  # $50 is not on the page, so the sentence is not supported
+    [ok] = check_claims(s, "Bike Light $9.99 Shipping: $50", strict=True)
+    assert ok.grade in ("exact", "normalized")
+    # an aside with no facts in it is still only commentary
+    assert extract_atoms("Customer name: Alan Turing (verified in the field)", strict=True) == ["Alan Turing"]
+    assert set(extract_atoms('Status: sent (the page said "Order received")', strict=True)) == {
+        "sent",
+        "Order received",
+    }
