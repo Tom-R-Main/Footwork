@@ -1,0 +1,53 @@
+{
+ "claims_page": {
+  "false_acceptance": "2/10",
+  "false_rejection": "4/8",
+  "falsely_accepted": [
+   "R7-wrong-year-on-page",
+   "R8-order-not-placed"
+  ],
+  "falsely_rejected": [
+   "A1-split-price",
+   "A2-status-label",
+   "A3-commentary-aside",
+   "A7-cheapest"
+  ]
+ },
+ "claims_page_and_fields": {
+  "false_acceptance": "7/10",
+  "false_rejection": "0/8",
+  "falsely_accepted": [
+   "R1-wrong-product-price",
+   "R2-wrong-field",
+   "R3-unsupported-qualification",
+   "R4-true-fact-wrong-task",
+   "R7-wrong-year-on-page",
+   "R8-order-not-placed",
+   "R10-wrong-cheapest"
+  ],
+  "falsely_rejected": []
+ },
+ "verifier_page": {
+  "false_acceptance": "0/10",
+  "false_rejection": "6/8",
+  "falsely_accepted": [],
+  "falsely_rejected": [
+   "A1-split-price",
+   "A2-status-label",
+   "A3-commentary-aside",
+   "A4-field-value",
+   "A7-cheapest",
+   "A8-navigation"
+  ]
+ },
+ "verifier_page_and_fields": {
+  "false_acceptance": "0/10",
+  "false_rejection": "3/8",
+  "falsely_accepted": [],
+  "falsely_rejected": [
+   "A4-field-value",
+   "A7-cheapest",
+   "A8-navigation"
+  ]
+ }
+}

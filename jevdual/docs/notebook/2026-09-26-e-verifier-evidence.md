@@ -33,3 +33,17 @@ Test: `evals/claims_audit.py` over `evals/fixtures/claims_audit.yaml` (a fixed s
 Predicts: claim check alone: false acceptance at least half of the adversarial cases in both modes; strict false rejection below page's. Full verifier: false acceptance above zero; strict does not accept any case page rejects.
 Against: full-verifier false acceptance zero in both modes (the Jev judgment covers the gap), or strict accepting an adversarial case that page rejects.
 Refs: results/status-audit-20260927/README.md (step 2)
+
+## U31 · update · 2026-09-27 15:44
+Resolves: V2 = failed
+Observed: `results/claims-audit-20260927` (18 labelled dones, 10 incorrect): claim check alone, `page`: false acceptance 2/10, false rejection 4/8; `page_and_fields`: 7/10 and 0/8. Full verifier (Jev plus claim check): false acceptance 0/10 in both modes; false rejection 6/8 (`page`) and 3/8 (strict). The strict verifier still refuses A4 (a filled form field: complete p=0.20), A7 (cheapest after sorting: uncertain, unmet 0.46) and A8 (a navigation task that asks no answer: "no fact found" with complete 0.96, unmet 0.04).
+Inferred: the claim check binds no fact to its subject (the strict one alone accepts a real price on the wrong product, a value in the wrong field, a true fact for another task), as predicted; but the Jev judgment rejected every incorrect done here, so V2's Against held: in this set the requirement judgments carry the safety and the claim check mostly adds false rejections. `page` mode's apparent 2/10 is low for the wrong reason (it cannot find split prices, so it rejects correct and incorrect price answers alike). Two strict-mode refusals are verifier defects: the no-fact rule demotes a done on a task that asks for no answer (A8), and Jev's page text has no field values, so it cannot see a filled form (A4).
+Next: V3.
+
+## V3 · prediction · 2026-09-27 15:44
+Question: do the two defects account for A4 and A8 without admitting any incorrect done?
+Hypothesis: in strict mode, (1) apply the no-fact demotion only when the task asks for an answer, and (2) give Jev the non-secret field values beside the page text; A4 and A8 are then accepted and the ten incorrect dones stay rejected.
+Alternatives: field values in Jev's view make it accept R2 (a value in the wrong field), or dropping the no-fact demotion lets R8 (the order not placed, a non-answer task) through.
+Test: the same audit after the change.
+Predicts: strict full verifier: false rejection at most 1/8 (A7 may remain), false acceptance 0/10.
+Against: any incorrect done accepted by the strict verifier.
