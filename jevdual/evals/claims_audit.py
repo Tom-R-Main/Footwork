@@ -27,8 +27,8 @@ FIXTURE = Path(__file__).parent / "fixtures" / "claims_audit.yaml"
 MODES = ("page", "page_and_fields")
 
 
-def load() -> tuple[dict[str, Menu], list[dict[str, Any]]]:
-    raw = yaml.safe_load(FIXTURE.read_text())
+def load(fixture: Path = FIXTURE) -> tuple[dict[str, Menu], list[dict[str, Any]]]:
+    raw = yaml.safe_load(fixture.read_text())
     menus = {}
     for name, p in raw["pages"].items():
         cands = tuple(
@@ -39,7 +39,12 @@ def load() -> tuple[dict[str, Menu], list[dict[str, Any]]]:
         menus[name] = Menu(
             url=p["url"], title=p["title"], page_text=text, candidates=cands, by_operation={}, full_text=text
         )
-    return menus, raw["cases"]
+    cases = raw["cases"]
+    for c in cases:
+        # Q16c's three labels: only "supported" should be accepted
+        if "label" in c and "expect" not in c:
+            c["expect"] = "accept" if c["label"] == "supported" else "reject"
+    return menus, cases
 
 
 def claim_check_accepts(case: dict[str, Any], menu: Menu, mode: str) -> bool:
@@ -68,7 +73,12 @@ async def verifier_accepts(client: Any, case: dict[str, Any], menu: Menu, mode: 
 def score(rows: list[dict[str, Any]], key: str) -> dict[str, Any]:
     acc = [r for r in rows if r["expect"] == "accept"]
     rej = [r for r in rows if r["expect"] == "reject"]
-    return {
+    by_label = {}
+    for lab in ("contradicted", "insufficient"):
+        rs = [r for r in rows if r.get("label") == lab]
+        if rs:
+            by_label[f"accepted_{lab}"] = f"{sum(r[key] for r in rs)}/{len(rs)}"
+    return by_label | {
         "false_acceptance": f"{sum(r[key] for r in rej)}/{len(rej)}",
         "false_rejection": f"{sum(not r[key] for r in acc)}/{len(acc)}",
         "falsely_accepted": [r["id"] for r in rej if r[key]],
@@ -76,8 +86,8 @@ def score(rows: list[dict[str, Any]], key: str) -> dict[str, Any]:
     }
 
 
-async def main(jev: bool, out: Path | None) -> None:
-    menus, cases = load()
+async def main(jev: bool, out: Path | None, fixture: Path = FIXTURE) -> None:
+    menus, cases = load(fixture)
     rows: list[dict[str, Any]] = []
     client = None
     if jev:
@@ -90,7 +100,7 @@ async def main(jev: bool, out: Path | None) -> None:
     try:
         for case in cases:
             menu = menus[case["page"]]
-            row: dict[str, Any] = {"id": case["id"], "expect": case["expect"]}
+            row: dict[str, Any] = {"id": case["id"], "expect": case["expect"], "label": case.get("label")}
             for mode in MODES:
                 row[f"claims_{mode}"] = claim_check_accepts(case, menu, mode)
                 if client is not None:
@@ -115,5 +125,11 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--jev", action="store_true", help="also score the full verifier (TypeSafe API calls)")
     ap.add_argument("--out", type=Path)
+    ap.add_argument(
+        "--fixture",
+        type=Path,
+        default=FIXTURE,
+        help="claims_audit.yaml (development) or claims_eval_fresh.yaml",
+    )
     a = ap.parse_args()
-    asyncio.run(main(a.jev, a.out))
+    asyncio.run(main(a.jev, a.out, a.fixture))
