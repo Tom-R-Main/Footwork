@@ -378,6 +378,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     common(cf)
     cf.set_defaults(fn=S.cmd_check_file)
+    gr = sub.add_parser("grant", help="allow one exact effect on one resource (the words `do` takes)")
+    gr.add_argument("words", nargs="+")
+    gr.add_argument("--uses", type=int, default=1)
+    gr.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
+    common(gr)
+    gr.set_defaults(fn=S.cmd_grant)
     sf = sub.add_parser(
         "snapshot-file", help="record a destination file before the work (check-file --appended)"
     )

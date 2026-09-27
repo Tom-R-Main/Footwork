@@ -317,3 +317,33 @@ def test_a_driver_error_at_start_stops_with_its_reason_not_a_traceback(world, fw
     code, _, err = fw("start", "Compute", "--app", "Calculator")
     assert code == 7 and "stopped: RuntimeError: AX tree walk for pid=77 timed out" in err
     assert "Traceback" not in err
+
+
+# ---- package H: grants bound to a resource and an effect ----
+
+
+def test_a_grant_clears_one_exact_click_once(world, fw):
+    fw("start", "Clear the entry", "--app", "Calculator")
+    code, out, _ = fw("do", "click", "Delete", "--no-judge")
+    assert code == 3 and "footwork grant click Delete" in out  # the pause names the exact grant
+    code, out, _ = fw("grant", "click", "Delete")
+    assert code == 0 and "granted" in out and "click on button 'Delete'" in out
+    code, out, _ = fw("do", "click", "Delete", "--no-judge")
+    assert code == 0 and "cleared by grant" in out and world.presses == ["Delete"]
+    # an unexpected retry: the one use is spent
+    code, out, _ = fw("do", "click", "Delete", "--no-judge")
+    assert code == 3 and "no uses left" in out and world.presses == ["Delete"]
+
+
+def test_a_grant_does_not_follow_its_label_to_another_element(world, fw):
+    fw("start", "Clear the entry", "--app", "Calculator")
+    fw("grant", "click", "Delete")
+    # the person relabels another button "Delete all": a different element, the grant must not apply
+    code, _, _ = fw("look")
+    world.relabels[_id_of_label(world, "All Clear")] = "Delete all"
+    code, out, _ = fw("do", "click", "Delete all", "--no-judge")
+    assert code == 3 and "and this is button 'Delete all'" in out
+
+
+def _id_of_label(world, label):
+    return next(e["element_index"] for e in world.base["elements"] if e.get("label") == label)

@@ -120,6 +120,7 @@ class RunHeader(BaseModel):
         "guarded_receipts",
         "guarded_evidence",
         "guarded_narrow",
+        "bounded",
         "delegate",
         "delegate_evidence",
     ]
