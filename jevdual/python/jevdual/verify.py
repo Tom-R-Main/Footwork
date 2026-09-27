@@ -73,7 +73,8 @@ class VerifyPolicy:
     #: the page's non-secret form fields, which innerText leaves out; a space between a currency sign
     #: and its digits in the page text is closed ("$ 9.99" reads "$9.99"). Since 2026-09-27 it also shows
     #: Jev the field values and applies the no-fact rule only to tasks that ask for an answer.
-    claim_evidence: str = "page"
+    #: Default since 2026-09-27 (Q16c, results/q16c.md); "page" is Q12 to Q16's check, kept to reproduce them.
+    claim_evidence: str = "page_and_fields"
 
 
 @dataclass(frozen=True)
@@ -520,9 +521,12 @@ class Verifier:
             kept = [c.claim for c in claims if c.supported]
             evidence = [c for c in claims if c.is_evidence]
             supported_answer = " ".join(kept) if evidence else None
-            # strict: a done that reports no fact is demoted only when the task asks for an answer; on a
-            # task that asks none, the page and the requirements decide (claims audit A8)
-            needs_fact = not strict or answer_required >= self.policy.answer_required
+            # strict: a done that states no fact at all ("Opened the cart.") needs none on a task that asks
+            # no answer (claims audit A8); a done that states a fact the page lacks is demoted whatever
+            # the task (test_confidently_wrong_done_cannot_accept_without_evidence caught the looser
+            # rule at adoption: "45 metres" passed when Jev judged the task not to ask for an answer)
+            states_facts = any(c.grade != "narrative" for c in claims)
+            needs_fact = not strict or states_facts or answer_required >= self.policy.answer_required
             if not evidence and band == "accept" and needs_fact:
                 band = "verify"
                 reason = f"answer carries no fact found on the page ({len(unsupported)} unsupported, rest narrative); {reason}"

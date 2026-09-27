@@ -144,6 +144,8 @@ def default_policy_factory() -> PolicyFactory:
             from jevdual.s1 import GuardOnly
             from jevdual.verify import ArbiterHook, Verifier, VerifyPolicy
 
+            # since Q16c the strict check is the default for every arm; `guarded_evidence` names it
+            # explicitly and `guarded` gets the default, so the two are now the same arm
             vpolicy = VerifyPolicy(claim_evidence="page_and_fields") if arm in EVIDENCE_ARMS else None
             hook = ArbiterHook(
                 Verifier(client, policy=vpolicy),

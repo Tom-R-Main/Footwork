@@ -37,3 +37,12 @@ VerifyPolicy accept band widened from complete ≥ 0.85 and unmet ≤ 0.20 to co
 unmet ≤ 0.30 (commit noted in git log; rationale in the class docstring). This is a settings change
 after the freeze, so the fixture heldout number in the README is stale until the one rerun the
 experiment program requires on adoption; the live paired rerun measures it first.
+
+## Addendum 3 (2026-09-27, Q16c)
+
+`VerifyPolicy.claim_evidence` default changed from `page` to `page_and_fields` (Q16c,
+`results/q16c.md`): status labels and asides removed from values while facts inside asides are still
+checked, a clause of more than six words after a colon is narrative, form field values are searched and
+shown to Jev, a price split across text nodes matches, and the no-fact rule applies only to tasks that
+ask for an answer. Thresholds unchanged. The fixture heldout and the live heldout each run once on this
+adoption (`results/heldout-adopt-20260927.md`).
