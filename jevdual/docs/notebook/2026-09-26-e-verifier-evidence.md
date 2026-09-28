@@ -76,3 +76,18 @@ Alternatives: Jev still does not weigh a trajectory line against the current win
 Test: `scripts/v4_offline.py` extended with the check line in each case (the correct case gets "holds", the tampered "does not hold"), then Q13 task 1 three times and tasks 2 and 3 once.
 Predicts: offline: correct with the check accepted; tampered with its check not accepted; live: task 1 accepted in at least 2 of 3; tasks 2 and 3 still accepted.
 Against: the tampered case accepted, or the correct case still not accepted offline.
+
+## U42 · update · 2026-09-28 02:21
+Resolves: V5 = failed
+Observed: `results/v5-offline-20260928.json`: with the harness check, the tampered destination is rejected ("The document's last line is the first book's price" unmet 0.93, the check reading "does NOT hold ... its last line is '£52.00'"); the correct one stays verify (that requirement unmet 0.40, "saved" 0.08). Without the check, correct and tampered scored alike (0.47 and 0.45).
+Inferred: the harness check gives the verifier what it cannot compute (safety half held: a mismatch is now refused outright, where context alone moved it toward acceptance). What remains unestablished is the source half of the requirement: that the carried value is the first book's price. The carry records only the matched text; nothing shows where on the page it sat.
+Changes: the carried-value check stays on every done's trajectory.
+Next: V6.
+
+## V6 · prediction · 2026-09-28 02:21
+Question: does recording the lines around a matched value in the carry let the verifier establish which value was read?
+Hypothesis: with the match's surrounding lines in the carry ("A Light in the Attic / £51.77 / In stock / Add to basket", first under the product list) on the trajectory, the verifier can judge "the first book's price" met; the tampered case stays rejected by the check.
+Alternatives: Jev does not treat trajectory context as evidence for a "first" ordinal on a page it cannot see.
+Test: offline, the V5 script with the carry's context line built by `take_match` from a books.toscrape page excerpt.
+Predicts: correct with context, check and surroundings: accept; tampered: reject.
+Against: correct still not accepted.
