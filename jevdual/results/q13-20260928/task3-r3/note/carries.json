@@ -1,0 +1,17 @@
+{
+ "QUERY": {
+  "name": "QUERY",
+  "text": "quarterly report",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "notes-3-3-015831.txt",
+  "element_id": -1,
+  "element_label": "Next search: quarterly report",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q13-20260928/task3-r3/note",
+  "taken_at": 1790575120.042858
+ }
+}

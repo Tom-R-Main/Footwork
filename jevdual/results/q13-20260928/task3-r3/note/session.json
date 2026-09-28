@@ -1,0 +1,42 @@
+{
+ "dir": "results/q13-20260928/task3-r3/note",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 1677,
+ "task": "Search the shop for the text after 'Next search:' in the TextEdit note notes-3-3-015831.txt.",
+ "requirements": [
+  "The shop's search results page is shown for the note's query"
+ ],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'Next search: quarterly report' as @QUERY"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "notes-3-3-015831.txt",
+ "last_page_text": "notes-3-3-015831.txt\nNext search: quarterly report",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Next search: quarterly report",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

@@ -1,0 +1,1 @@
+{"t": 1790574676.6893618, "step": 0, "kind": "start", "task": "Download the shop's quarterly report (quarterly-report.txt) and open it in TextEdit.", "requirements": ["The quarterly report was downloaded", "The report is open in TextEdit"], "app": "Finder"}
