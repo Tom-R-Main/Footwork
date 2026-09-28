@@ -28,6 +28,22 @@ from evals.fixtures.server import SITE, serve
 
 SCRATCH = Path.home() / "footwork-pilot" / "q13"
 DOWNLOADS = Path.home() / "Downloads"
+#: V7: requirements split by the surface where each is observable (--per-surface); tasks 1 to 3
+PER_SURFACE = {
+    1: {
+        "web": ("The value read is the price of the first book listed",),
+        "doc": ("The document's last line is the carried price", "The document was saved"),
+    },
+    2: {
+        "calc": ("The display shows the product of 48 and 13",),
+        "web": ("The contact form was sent with the carried result as its message",),
+    },
+    3: {
+        "note": ("The value read is the text after 'Next search:'",),
+        "web": ("The shop's search results page is shown for the carried query",),
+    },
+}
+USE_PER_SURFACE = False
 MUSE_IN, MUSE_OUT = 0.10, 0.20  # USD per million tokens, Muse Spark contributor rates
 
 
@@ -165,6 +181,9 @@ async def main(tasks: list[int], repeats: int, out: Path) -> None:
         for rep in range(1, repeats + 1):
             for n in tasks:
                 text, surfaces, reqs, oracle, cleanup = task(n, rep, base)
+                if USE_PER_SURFACE and n in PER_SURFACE:
+                    for s in surfaces:
+                        s.requirements = PER_SURFACE[n].get(s.name, ())
                 run_dir = out / f"task{n}-r{rep}"
                 before_gets = {k: len(v) for k, v in stop.recorder.gets().items()}
                 t0 = time.perf_counter()
@@ -203,6 +222,10 @@ if __name__ == "__main__":
     ap.add_argument("--task", type=int, action="append")
     ap.add_argument("--repeats", type=int, default=3)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument(
+        "--per-surface", action="store_true", help="V7: judge each requirement on its own surface"
+    )
     a = ap.parse_args()
+    USE_PER_SURFACE = a.per_surface
     a.out.mkdir(parents=True, exist_ok=True)
     asyncio.run(main(a.task or [1, 2, 3, 4, 5], a.repeats, a.out))

@@ -58,6 +58,8 @@ class Surface:
     url: str = ""
     authorize: tuple[str, ...] = ()
     mode: str = "foreground_permitted"
+    #: V7: the requirements observable on this surface, judged here; empty uses the task's
+    requirements: tuple[str, ...] = ()
 
 
 @dataclass
@@ -131,8 +133,9 @@ class CrossLoop:
             argv += ["--mode", s.mode]
             if s.authorize:
                 argv += ["--authorize", ",".join(s.authorize)]
-            if self.requirements:
-                argv += ["--require", "; ".join(self.requirements)]
+            reqs = s.requirements or self.requirements
+            if reqs:
+                argv += ["--require", "; ".join(reqs)]
             code, out = footwork(self.session(s.name), *argv)
             if code != 0:
                 return f"surface {s.name} did not start: {out[-300:]}"
@@ -213,12 +216,29 @@ class CrossLoop:
                 lambda m: carried[m.group(1)][0] if m.group(1) in carried else m.group(0),
                 str(action.get("answer") or ""),
             )
-            others: list[str] = []
-            for other in self.surfaces:
-                if other != surface:
-                    others += ["--context-from", str(self.session(other))]
-            return surface, ["done", answer, *others]
+            return surface, ["done", answer, *self._context_args(surface)]
         return f"unknown action {name!r}"
+
+    def _context_args(self, surface: str) -> list[str]:
+        out: list[str] = []
+        for other in self.surfaces:
+            if other != surface:
+                out += ["--context-from", str(self.session(other))]
+        return out
+
+    def _done_everywhere(self, answer: str) -> tuple[int, str]:
+        """V7: with per-surface requirements, a done is judged on every surface that has some, each where
+        its requirements are observable; it is accepted only if every surface accepts."""
+        codes, outs = [], []
+        for name, s in self.surfaces.items():
+            if not s.requirements:
+                continue
+            code, out = footwork(self.session(name), "done", answer, *self._context_args(name))
+            codes.append(code)
+            verdict = next((ln for ln in out.splitlines() if ln.startswith("verifier")), out[-200:])
+            outs.append(f"[{name}] exit {code}: {verdict}")
+        worst = next((c for c in codes if c != 0), 0)
+        return worst, "\n".join(outs)
 
     async def run(self) -> CrossRun:
         from jevdual.desktop_s2 import parse_reply
@@ -266,7 +286,10 @@ class CrossLoop:
                 )
                 continue
             surface, argv = cmd
-            code, out = footwork(self.session(surface), *argv)
+            if action["name"] == "done" and any(s.requirements for s in self.surfaces.values()):
+                code, out = self._done_everywhere(argv[1])
+            else:
+                code, out = footwork(self.session(surface), *argv)
             ms = (time.perf_counter() - t0) * 1000
             run.steps.append(
                 Step(i, note, action, code, out[-1500:], ms, reply.input_tokens, reply.output_tokens)
@@ -278,7 +301,16 @@ class CrossLoop:
                     ln
                     for ln in out.splitlines()
                     if ln.startswith(
-                        ("receipt", "carried", "not carried", "paused", "stopped", "verifier", "accepted")
+                        (
+                            "receipt",
+                            "carried",
+                            "not carried",
+                            "paused",
+                            "stopped",
+                            "verifier",
+                            "accepted",
+                            "[",
+                        )
                     )
                 ),
                 out[:160],

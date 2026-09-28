@@ -104,3 +104,29 @@ def test_a_carried_reference_in_a_done_answer_is_its_value(tmp_path, monkeypatch
     assert done[:2] == ("done", "sent 624")
     # the verifier gets the other surface's receipts and carries (V4)
     assert done[2] == "--context-from" and done[3].endswith("/calc")
+
+
+def test_per_surface_requirements_are_judged_where_they_are_observable(tmp_path, monkeypatch):
+    verdicts = {"calc": (0, "verifier: accept"), "web": (5, "verifier: reject (Message sent unmet)")}
+    calls = []
+
+    def fw(session, *argv):
+        calls.append((session.name, argv))
+        if argv[0] == "done":
+            return verdicts[session.name]
+        return (0, "receipt: confirmed")
+
+    monkeypatch.setattr(crossloop, "footwork", fw)
+    surfaces = [
+        Surface("calc", "app", app="Calculator", requirements=("The product is shown",)),
+        Surface("web", "browser", url="http://x", requirements=("The message was sent",)),
+    ]
+    chat = _chat(*[act("done", surface="web", answer="sent 624")] * 3)
+    run = asyncio.run(CrossLoop("t", surfaces, chat, tmp_path, max_done_refusals=2).run())
+    judged = [s for s, argv in calls if argv[0] == "done"]
+    assert judged[:2] == ["calc", "web"] and run.status == "done_unverified"
+    starts = {s: argv for s, argv in calls if argv[0] == "start"}
+    assert starts["calc"][starts["calc"].index("--require") + 1] == "The product is shown"
+    verdicts["web"] = (0, "verifier: accept")
+    run = asyncio.run(CrossLoop("t", surfaces, _chat(act("done", surface="web", answer="x")), tmp_path).run())
+    assert run.status == "done"
