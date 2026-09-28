@@ -858,6 +858,40 @@ async def cmd_s1(args: Any) -> int:
     return 0
 
 
+def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
+    """Trajectory entries from another surface's session: each receipt with its evidence, and each value
+    carried there with its source, labelled with the surface."""
+    if not (d / "session.json").exists():
+        return []
+    other = SessionState.load(d)
+    where = f"{other.app} {other.last_url or other.last_title}".strip()
+    out: list[dict[str, Any]] = []
+    log_path = d / "session.jsonl"
+    if log_path.exists():
+        for line in log_path.read_text().splitlines():
+            rec = json.loads(line)
+            if rec.get("kind") == "receipt":
+                act = (rec.get("action") or {}).get("line", "action")
+                out.append(
+                    {
+                        "surface": where,
+                        "actions": [f"{act} -> {rec.get('effect')}: {str(rec.get('evidence'))[:160]}"],
+                    }
+                )
+    for name, c in (
+        json.loads((d / carry.CARRIES).read_text()) if (d / carry.CARRIES).exists() else {}
+    ).items():
+        out.append(
+            {
+                "surface": where,
+                "actions": [
+                    f"read @{name} = {c['text']!r} at {c['location'] or c['title']} from {c['element_role']} {c['element_label']!r}"
+                ],
+            }
+        )
+    return out[-last:]
+
+
 async def cmd_done(args: Any) -> int:
     from typesafe_sdk import AsyncTypeSafeClient
 
@@ -877,6 +911,11 @@ async def cmd_done(args: Any) -> int:
             {"step": i + 1, "url": state.last_url, "actions": [m.split(": ", 1)[-1]]}
             for i, m in enumerate(state.memory[-12:])
         ]
+        # V4: the other surfaces' receipts and the carried values' sources, so a done that moved a value
+        # across surfaces can be judged with where the value came from in view
+        context = [e for d in (getattr(args, "context_from", None) or []) for e in cross_context(Path(d))]
+        if context:
+            trajectory = context + trajectory
         async with AsyncTypeSafeClient() as client:
             t0 = time.perf_counter()
             v = await Verifier(client).verify(

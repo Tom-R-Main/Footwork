@@ -213,7 +213,11 @@ class CrossLoop:
                 lambda m: carried[m.group(1)][0] if m.group(1) in carried else m.group(0),
                 str(action.get("answer") or ""),
             )
-            return surface, ["done", answer]
+            others: list[str] = []
+            for other in self.surfaces:
+                if other != surface:
+                    others += ["--context-from", str(self.session(other))]
+            return surface, ["done", answer, *others]
         return f"unknown action {name!r}"
 
     async def run(self) -> CrossRun:

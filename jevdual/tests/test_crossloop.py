@@ -101,4 +101,6 @@ def test_a_carried_reference_in_a_done_answer_is_its_value(tmp_path, monkeypatch
     )
     asyncio.run(_loop(tmp_path, chat).run())
     done = next(argv for _, argv in fw.calls if argv[0] == "done")
-    assert done == ("done", "sent 624")
+    assert done[:2] == ("done", "sent 624")
+    # the verifier gets the other surface's receipts and carries (V4)
+    assert done[2] == "--context-from" and done[3].endswith("/calc")

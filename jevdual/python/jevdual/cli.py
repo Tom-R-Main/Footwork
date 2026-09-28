@@ -358,6 +358,11 @@ def build_parser() -> argparse.ArgumentParser:
     s1.set_defaults(fn=S.cmd_s1)
     dn = sub.add_parser("done", help="ask the verifier to accept the task as done")
     dn.add_argument("answer", nargs="?", default="")
+    dn.add_argument(
+        "--context-from",
+        action="append",
+        help="another surface's session directory: its receipts and carried values go on the verifier's trajectory",
+    )
     common(dn)
     dn.set_defaults(fn=S.cmd_done)
     rd = sub.add_parser("read", help="carry an element's value or label, with where it came from")

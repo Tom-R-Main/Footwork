@@ -283,3 +283,43 @@ def test_a_navigation_that_became_a_download_is_not_called_not_applied(tmp_path)
     }
     r = receipt_for(_state(tmp_path, cands, pend), _nm(cands))
     assert r is not None and r["effect"] == "unverifiable" and "download" in r["evidence"], r
+
+
+def test_cross_context_labels_receipts_and_carries_with_their_surface(tmp_path):
+    import json as _json
+
+    from jevdual.session import cross_context
+
+    st = SessionState(
+        dir=str(tmp_path), app="Google Chrome (footwork)", pid=1, window_id=2, task="t", mode="browser"
+    )
+    st.last_url = "https://books.toscrape.com/"
+    st.save()
+    (tmp_path / "session.jsonl").write_text(
+        _json.dumps(
+            {
+                "kind": "receipt",
+                "action": {"line": "click(Books)"},
+                "effect": "confirmed",
+                "evidence": "navigated to /",
+            }
+        )
+        + "\n"
+    )
+    (tmp_path / "carries.json").write_text(
+        _json.dumps(
+            {
+                "price": {
+                    "text": "£51.77",
+                    "location": "https://books.toscrape.com/",
+                    "title": "",
+                    "element_role": "text",
+                    "element_label": "£51.77",
+                }
+            }
+        )
+    )
+    ctx = cross_context(tmp_path)
+    assert ctx[0]["surface"] == "Google Chrome (footwork) https://books.toscrape.com/"
+    assert ctx[0]["actions"] == ["click(Books) -> confirmed: navigated to /"]
+    assert "read @price = '£51.77' at https://books.toscrape.com/" in ctx[1]["actions"][0]
