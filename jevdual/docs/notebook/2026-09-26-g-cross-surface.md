@@ -140,3 +140,9 @@ Alternatives: Chrome encodes the query differently from the carried text (e.g. "
 Test: `scripts/q13_oracle_stage.py`, once; reads through footwork sessions (carried values), effects through footwork where it has a route (typing, clicking, navigating) and by script where it has none (opening a file in TextEdit, a Finder rename, which the plan found unreachable).
 Predicts: 4 of 4 correct solves confirmed and 4 of 4 wrong solves failed with the named fault.
 Against: any correct solve failed by its oracle, or any wrong solve confirmed.
+
+## U38 · update · 2026-09-28 01:00
+Observed: the second oracle-stage run (`results/q13-oracle-stage-20260928-005624`): download and rename oracles 4 of 4 as expected; both form tasks stopped at the first `do` after `start` with "the session's tab ... is no longer in this window". A live repro on httpbin: `start` saved an empty `browser_tab`; two Driver connections in a row report the same tab under different ids (`tab-10d0...` then `tab-cf5b...`).
+Inferred: the Driver's tab ids are handles for one connection; every footwork command opens a new one, so package A's "a session keeps its tab" never worked live. Its tests used a fake whose ids were stable. The pilots so far never ran a second browser command.
+Changes: a browser session binds the one tab showing the page it last observed (URL without fragment or trailing slash), and refuses, dispatching nothing, when none or several do; `start` records its tab. The fake route now hands out new ids per connection; the tab tests fail on the old binding (3 of 3) and pass on the new; the httpbin repro types into two fields across commands.
+Next: the oracle stage again.

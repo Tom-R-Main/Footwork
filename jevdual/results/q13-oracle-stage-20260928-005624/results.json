@@ -1,0 +1,38 @@
+[
+ {
+  "task": "task2_calculator_to_form",
+  "error": "RuntimeError: footwork do type Email ada@example.com exited 7: FO     [jevdual.browser] driver authorization allowed: Attach Cua Driver to GoogleChrome window 977 using its logged-in profile\nstopped: RuntimeError: the session's tab tab-70701e5c-c134-47e4-83e0-0d6bbe114a02 is no longer in this window"
+ },
+ {
+  "task": "task3_textedit_to_search",
+  "error": "RuntimeError: footwork do click button:Search --no-judge exited 7: FO     [jevdual.browser] driver authorization allowed: Attach Cua Driver to GoogleChrome window 977 using its logged-in profile\nstopped: RuntimeError: the session's tab tab-77e870fa-87d5-45da-83ce-92b4afa7fade is no longer in this wi"
+ },
+ {
+  "task": "4 download->open",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "/Users/thomasmain/Downloads/quarterly-report.txt is the served file byte for byte and is the open document",
+  "as_expected": true
+ },
+ {
+  "task": "4 download->open",
+  "solve": "duplicate",
+  "oracle_ok": false,
+  "detail": "2 identical copies downloaded: quarterly-report (1).txt, quarterly-report.txt",
+  "as_expected": true
+ },
+ {
+  "task": "5 order->rename",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "draft.txt is now B-20260921.txt, contents unchanged",
+  "as_expected": true
+ },
+ {
+  "task": "5 order->rename",
+  "solve": "truncated",
+  "oracle_ok": false,
+  "detail": "no file named 'B-20260921.txt' (the folder has ['B-2026092.txt'])",
+  "as_expected": true
+ }
+]

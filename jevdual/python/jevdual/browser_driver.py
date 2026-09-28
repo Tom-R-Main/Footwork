@@ -43,6 +43,12 @@ SESSION_LABEL = "footwork"
 _TEXT_ROLES = {"textbox", "searchbox", "inputtime", "inputdate", "combobox", "spinbutton"}
 
 
+def _page_key(url: str) -> str:
+    """A page's identity for binding: the URL without its fragment or a trailing slash."""
+    base = url.split("#", 1)[0]
+    return base.removesuffix("/")
+
+
 def chrome_pid() -> int | None:
     """The pid of the Chrome footwork launched (by its profile directory), or None."""
     out = subprocess.run(
@@ -274,9 +280,12 @@ class BrowserBridge:
         out.setdefault("_is_error", bool(getattr(r, "is_error", False)))
         return out
 
-    async def attach(self, *, tab_id: str | None = None) -> dict[str, Any]:
-        """Bind the window's browser target. With ``tab_id`` (a session's bound tab) the bridge stays on
-        that tab and refuses when it is gone; without it, it takes the active tab (a new session)."""
+    async def attach(self, *, tab_id: str | None = None, expect_url: str | None = None) -> dict[str, Any]:
+        """Bind the window's browser target. With ``expect_url`` (the page a session last observed) the
+        bridge binds the one tab showing that page, and refuses when none or several do. The Driver's tab
+        ids are handles for one connection, new on every command (the Q13 oracle stage, 2026-09-28), so a
+        session cannot carry them across commands. ``tab_id`` binds a handle within one connection.
+        Without either, it takes the active tab (a new session)."""
         prep = await self._tool(
             "browser_prepare",
             {"pid": self.pid, "window_id": self.window_id, "strategy": {"kind": "existing_profile"}},
@@ -292,6 +301,21 @@ class BrowserBridge:
             )
         self.target_id = bound["target_id"]
         tabs = bound.get("tabs") or []
+        if expect_url:
+            want = _page_key(expect_url)
+            same = [t for t in tabs if _page_key(str(t.get("url") or "")) == want]
+            if not same:
+                raise RuntimeError(
+                    f"the session's page {expect_url} is no longer open in this window; nothing dispatched. "
+                    "Start a new session on the tab you want."
+                )
+            if len(same) > 1:
+                raise RuntimeError(
+                    f"{len(same)} tabs show the session's page {expect_url}; cannot tell which is the session's; "
+                    "nothing dispatched. Close the others or start a new session."
+                )
+            self.tab_id = same[0]["tab_id"]
+            return bound
         if tab_id is not None:
             if not any(t.get("tab_id") == tab_id for t in tabs):
                 raise RuntimeError(

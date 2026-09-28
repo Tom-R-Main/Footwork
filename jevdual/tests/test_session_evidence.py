@@ -181,12 +181,23 @@ def test_typing_into_an_empty_document_or_extending_it_does_not_pause():
 
 
 class _Chrome:
-    """A DevTools-route double with two tabs; ``active`` is the tab the person has in front."""
+    """A DevTools-route double with two tabs on two pages; ``active`` is the tab the person has in front.
+    Like the real Driver, its tab ids are handles for one connection: every ``configured_driver`` call
+    (one per footwork command) hands out new ones (the Q13 oracle stage, 2026-09-28)."""
 
     def __init__(self) -> None:
-        self.active = "tab-A"
-        self.tabs = ["tab-A", "tab-B"]
+        self.active = "A"
+        self.pages = {"A": "https://example.invalid/a", "B": "https://example.invalid/b"}
+        self.conn = 0
         self.dispatches: list[tuple[str, str | None]] = []
+
+    def connect(self):
+        self.conn += 1
+        return self
+
+    def _key(self, handle: str) -> str | None:
+        key, _, conn = handle.partition("@")
+        return key if conn == str(self.conn) and key in self.pages else None
 
     async def call_tool(self, name, args):
         a = json.loads(args)
@@ -196,27 +207,26 @@ class _Chrome:
             p = {
                 "status": "ok",
                 "target_id": "target-1",
-                "tabs": [{"tab_id": t, "active": t == self.active} for t in self.tabs],
+                "tabs": [
+                    {"tab_id": f"{k}@{self.conn}", "active": k == self.active, "url": u}
+                    for k, u in self.pages.items()
+                ],
             }
         elif name == "get_browser_state":
-            if a["tab_id"] not in self.tabs:
+            key = self._key(a["tab_id"])
+            if key is None:
                 p = {"status": "refused", "refusal": {"message": f"no tab {a['tab_id']}"}}
             else:
                 p = {
                     "status": "ok",
-                    "page": {"url": f"https://example.invalid/{a['tab_id']}"},
-                    "snapshot": {"id": f"snap-{a['tab_id']}"},
+                    "page": {"url": self.pages[key]},
+                    "snapshot": {"id": f"snap-{key}"},
                     "refs": [
-                        {
-                            "ref": f"snap-{a['tab_id']}:1",
-                            "role": "button",
-                            "name": "Continue",
-                            "actions": ["click"],
-                        }
+                        {"ref": f"snap-{key}:1", "role": "button", "name": "Continue", "actions": ["click"]}
                     ],
                 }
         else:
-            self.dispatches.append((name, a.get("tab_id")))
+            self.dispatches.append((name, self._key(a.get("tab_id") or "")))
             p = {"status": "ok"}
         return NS(structured_json=json.dumps(p), text="", is_error=False)
 
@@ -224,7 +234,7 @@ class _Chrome:
 @pytest.fixture
 def chrome(monkeypatch):
     c = _Chrome()
-    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: c)
+    monkeypatch.setattr(browser_driver, "configured_driver", lambda pid: c.connect())
     return c
 
 
@@ -232,31 +242,36 @@ def _browser_state(tmp_path) -> session.SessionState:
     return session.SessionState(dir=str(tmp_path), app="Chrome", pid=1, window_id=2, task="t", mode="browser")
 
 
+async def _command(st):
+    """One footwork command: a fresh connection, bind, observe (remembering the page), click."""
+    _, bridge = await session.bind(st)
+    nm, _ = await session.observe(st, bridge)
+    await bridge.act(nm, "click", 1)
+
+
 def test_a_later_command_stays_on_the_bound_tab(tmp_path, chrome):
     st = _browser_state(tmp_path)
-
-    async def command():
-        _, bridge = await session.bind(st)
-        nm = await bridge.observe()
-        await bridge.act(nm, "click", 1)
-
-    asyncio.run(command())
-    chrome.active = "tab-B"  # the person switched tabs between commands
-    asyncio.run(command())
-    assert [t for _, t in chrome.dispatches] == ["tab-A", "tab-A"]
+    asyncio.run(_command(st))
+    chrome.active = "B"  # the person switched tabs between commands
+    asyncio.run(_command(st))
+    # new handles on every connection, and still the same page's tab both times
+    assert [t for _, t in chrome.dispatches] == ["A", "A"] and chrome.conn == 2
 
 
 def test_a_closed_bound_tab_refuses_and_dispatches_nothing(tmp_path, chrome):
     st = _browser_state(tmp_path)
+    asyncio.run(_command(st))
+    del chrome.pages["A"]
+    chrome.active = "B"
+    with pytest.raises(RuntimeError, match="no longer open"):
+        asyncio.run(_command(st))
+    assert len(chrome.dispatches) == 1
 
-    async def bind_and_click():
-        _, bridge = await session.bind(st)
-        nm = await bridge.observe()
-        await bridge.act(nm, "click", 1)
 
-    asyncio.run(bind_and_click())
-    chrome.tabs.remove("tab-A")
-    chrome.active = "tab-B"
-    with pytest.raises(RuntimeError, match="tab-A"):
-        asyncio.run(bind_and_click())
+def test_two_tabs_on_the_sessions_page_refuse(tmp_path, chrome):
+    st = _browser_state(tmp_path)
+    asyncio.run(_command(st))
+    chrome.pages["C"] = chrome.pages["A"]  # the person opened the same page in another tab
+    with pytest.raises(RuntimeError, match="2 tabs show the session's page"):
+        asyncio.run(_command(st))
     assert len(chrome.dispatches) == 1

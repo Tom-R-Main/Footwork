@@ -329,7 +329,9 @@ async def bind(state: SessionState):
         from jevdual.posture import ExecutionPolicy
 
         bridge = BrowserBridge(driver, state.pid, state.window_id, policy=ExecutionPolicy(state.posture))  # type: ignore[arg-type]
-        await bridge.attach(tab_id=state.browser_tab or None)
+        # the tab is the one showing the page this session last observed: the Driver's tab ids are new on
+        # every connection, so the page is the identity that survives between commands
+        await bridge.attach(expect_url=state.last_url or None)
         state.browser_tab = bridge.tab_id or ""
         return driver, bridge
     from cua_driver import CuaDriver
@@ -465,6 +467,7 @@ async def _start_browser(args: Any, d: Path) -> int:
             answer_expected=args.answer,
             mode="browser",
             posture=posture,
+            browser_tab=bridge.tab_id or "",
         )
         print(f"bound footwork's Chrome (pid {bridge.pid}) window {bridge.window_id}, tab {bridge.tab_id}")
         if args.url:
