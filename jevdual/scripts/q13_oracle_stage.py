@@ -70,6 +70,8 @@ def osa(script: str) -> str:
 
 
 def task2_calculator_to_form(base: str, gets) -> None:
+    subprocess.run(["open", "-a", "Calculator"], check=False)
+    time.sleep(3)
     fw("calc", "start", "Compute 48 times 13", "--app", "Calculator", "--mode", "foreground_permitted")
     fw("calc", "do", "click", "All Clear", "--no-judge")
     for label in ("4", "8", "Multiply", "1", "3", "Equals"):
@@ -104,11 +106,11 @@ def task3_textedit_to_search(base: str, gets) -> None:
     fw("notes", "read", "--match", r"Next search: (.+)", "--as", "query")
     carried = json.loads((OUT / "notes" / "carries.json").read_text())["query"]["text"]
     fw("search", "start", "Search for the carried query", "--browser", "--url", f"{base}/search.html")
-    fw("search", "do", "type", "q", "@query", "--from", str(OUT / "notes"))
-    fw("search", "do", "click", "Search", "--no-judge")
+    fw("search", "do", "type", "Search products", "@query", "--from", str(OUT / "notes"))
+    fw("search", "do", "click", "button:Search", "--no-judge")
     time.sleep(1)
     record("3 textedit->search", "correct", one_submission(gets(), "/search.html", "q", carried), True)
-    fw("search", "do", "click", "Search", "--no-judge")  # the wrong solve: searched twice
+    fw("search", "do", "click", "button:Search", "--no-judge")  # the wrong solve: searched twice
     time.sleep(1)
     record("3 textedit->search", "duplicate", one_submission(gets(), "/search.html", "q", carried), False)
     osa('tell application "TextEdit" to close (every document whose name is "notes.txt") saving no')
@@ -129,8 +131,10 @@ def task4_download_and_open(base: str) -> None:
     time.sleep(3)
     opened = osa('tell application "TextEdit" to get path of front document') or None
     record("4 download->open", "correct", downloaded_and_opened(DOWNLOADS, served, name, opened), True)
-    fw("dl", "do", "navigate", f"{base}/{name}", check=False)  # the wrong solve: downloaded again
-    time.sleep(3)
+    # the wrong solve: a second copy, as Chrome names it. Chrome itself did not download the file again
+    # (the first stage run: a repeated automatic download from one site is held back), so the state a
+    # duplicate download leaves is made by script
+    shutil.copy(DOWNLOADS / name, DOWNLOADS / "quarterly-report (1).txt")
     record("4 download->open", "duplicate", downloaded_and_opened(DOWNLOADS, served, name, opened), False)
     osa(f'tell application "TextEdit" to close (every document whose name is "{name}") saving no')
 

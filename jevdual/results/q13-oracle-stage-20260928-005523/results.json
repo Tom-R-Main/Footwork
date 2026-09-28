@@ -1,0 +1,38 @@
+[
+ {
+  "task": "task2_calculator_to_form",
+  "error": "RuntimeError: footwork start Compute 48 times 13 --app Calculator --mode foreground_permitted exited 2: not starting: 'Calculator' is installed but not running; open it first\n"
+ },
+ {
+  "task": "task3_textedit_to_search",
+  "error": "RuntimeError: footwork do type q @query --from results/q13-oracle-stage-20260928-005523/notes exited 4: INFO     [jevdual.browser] driver authorization allowed: Attach Cua Driver to GoogleChrome window 977 using its logged-in profile\nno element labelled 'q' on the current observation\n"
+ },
+ {
+  "task": "4 download->open",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "/Users/thomasmain/Downloads/quarterly-report.txt is the served file byte for byte and is the open document",
+  "as_expected": true
+ },
+ {
+  "task": "4 download->open",
+  "solve": "duplicate",
+  "oracle_ok": true,
+  "detail": "/Users/thomasmain/Downloads/quarterly-report.txt is the served file byte for byte and is the open document",
+  "as_expected": false
+ },
+ {
+  "task": "5 order->rename",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "draft.txt is now B-20260921.txt, contents unchanged",
+  "as_expected": true
+ },
+ {
+  "task": "5 order->rename",
+  "solve": "truncated",
+  "oracle_ok": false,
+  "detail": "no file named 'B-20260921.txt' (the folder has ['B-2026092.txt'])",
+  "as_expected": true
+ }
+]
