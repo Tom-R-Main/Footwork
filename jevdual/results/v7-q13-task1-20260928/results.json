@@ -1,0 +1,44 @@
+[
+ {
+  "task": 1,
+  "repeat": 1,
+  "status": "done_unverified",
+  "reason": "[web] exit 5: verifier: verify (complete p=0.79) [272 ms]: uncertain: complete p=0.79, max unmet p=0.08",
+  "answer": "@PRICE",
+  "oracle_ok": true,
+  "oracle": "",
+  "steps": 10,
+  "input_tokens": 17432,
+  "output_tokens": 4051,
+  "cost_usd": 0.0025534,
+  "wall_s": 75.52392687500105
+ },
+ {
+  "task": 1,
+  "repeat": 2,
+  "status": "done_unverified",
+  "reason": "[web] exit 5: verifier: verify (complete p=0.76) [328 ms]: uncertain: complete p=0.76, max unmet p=0.07",
+  "answer": "@PRICE",
+  "oracle_ok": true,
+  "oracle": "",
+  "steps": 11,
+  "input_tokens": 19456,
+  "output_tokens": 4637,
+  "cost_usd": 0.002873,
+  "wall_s": 84.64931366599922
+ },
+ {
+  "task": 1,
+  "repeat": 3,
+  "status": "done_unverified",
+  "reason": "[web] exit 5: verifier: verify (complete p=0.72) [183 ms]: uncertain: complete p=0.72, max unmet p=0.11",
+  "answer": "@PRICE",
+  "oracle_ok": true,
+  "oracle": "",
+  "steps": 12,
+  "input_tokens": 21558,
+  "output_tokens": 5241,
+  "cost_usd": 0.0032040000000000003,
+  "wall_s": 99.5434916660015
+ }
+]

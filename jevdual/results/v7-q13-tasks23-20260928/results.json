@@ -1,0 +1,30 @@
+[
+ {
+  "task": 2,
+  "repeat": 1,
+  "status": "done",
+  "reason": "[calc] exit 0: verifier: accept (complete p=0.94) [197 ms]: complete p=0.94, max unmet p=0.03",
+  "answer": "@RESULT",
+  "oracle_ok": true,
+  "oracle": "one submission to /confirm.html with message='624'",
+  "steps": 6,
+  "input_tokens": 8311,
+  "output_tokens": 983,
+  "cost_usd": 0.0010277,
+  "wall_s": 24.85606454200024
+ },
+ {
+  "task": 3,
+  "repeat": 1,
+  "status": "done_unverified",
+  "reason": "[note] exit 5: verifier: verify (complete p=0.54) [343 ms]: 1 unsupported claim(s) dropped; uncertain: complete p=0.54, max unmet p=0.49",
+  "answer": "@RESULT",
+  "oracle_ok": true,
+  "oracle": "one submission to /search.html with q='quarterly report'",
+  "steps": 9,
+  "input_tokens": 10183,
+  "output_tokens": 2682,
+  "cost_usd": 0.0015547,
+  "wall_s": 43.7151970829982
+ }
+]

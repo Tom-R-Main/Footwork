@@ -105,3 +105,15 @@ Alternatives: the source-surface judgment is uncertain because the done answer n
 Test: Q13 task 1 three times with per-surface requirements; tasks 2 and 3 once each (their requirements also split: 2's product on Calculator, the send on the form; 3's query on the note, the results on the shop).
 Predicts: task 1 accepted in at least 2 of 3 with the oracle confirming; tasks 2 and 3 accepted; any destination whose harness check reads "does NOT hold" not accepted.
 Against: task 1 accepted in fewer than 2 of 3, or an accepted done whose oracle fails.
+
+## U44 · update · 2026-09-28 02:31
+Resolves: V7 = failed
+Observed: `results/v7-q13-task1-20260928` (task 1, three repeats, per-surface requirements): the oracle confirmed 3 of 3, accepted 0 of 3. In r1's first done the books page accepted its half ("the value read is the price of the first book listed", complete 0.81) while the TextEdit half stayed verify (complete 0.59, max unmet 0.51); later dones in each run were refused on the books page (verify, 0.72 to 0.79). `results/v7-q13-tasks23-20260928`: task 2 accepted on both surfaces; task 3 (correct by its oracle) refused on both surfaces with "answer carries no fact found on the page (0 unsupported, rest narrative)" for the answer "quarterly report" (the carried value, bare).
+Inferred: judging the source on its own surface can work (r1's first done), but neither half is stable across repeats, and the split exposed a claim-check gap: a bare value with no quotes, number or "label: value" has no atom, so it counts as narrative and an answer task demotes it. Four predictions (V4 to V7) have not made a correct cross-surface done accepted; each moved understanding: context alone is unsafe, the harness check makes the verifier refuse a mismatch (kept), and per-surface judging is available behind a flag.
+Next: summary.
+
+## S9 · summary · 2026-09-28 02:31
+Established: the verifier cannot compare a value on the trajectory with a line in the window, so cross-surface context alone moved a correct and a tampered destination alike toward acceptance (V4); a harness-computed check of each carried value in its field makes it refuse a mismatch outright (V5, kept on every done); recorded surroundings and per-surface requirements did not make the correct case reliably accepted (V6, V7). Q13's correct task-1 runs remain proven by the oracle and unclaimed by the verifier, which errs toward refusal, not acceptance.
+Uncertain: whether any trajectory evidence lets Jev accept a claim about a page it cannot see; how bare-value answers should count in the claim check (an atom when the value was carried, say).
+Decision: keep the harness check and per-surface requirements (flag), change no default. For cross-surface tasks the oracle (`check-file --appended`, `one_submission`) is the evidence of completion; the verifier's refusal there is a known limit, stated rather than tuned. The bare-value gap goes to the claim-check work, with the larger fresh set.
+Refs: results/v4-offline-20260928.json; results/v5-offline-20260928.json; results/v6-offline-20260928.json; results/v7-q13-task1-20260928; results/v7-q13-tasks23-20260928
