@@ -22,6 +22,16 @@ class Recorder:
     def __init__(self) -> None:
         self._lock = threading.Lock()
         self._posts: dict[str, list[dict[str, str]]] = {}
+        #: Q13: every GET with a query string, so a form that submits by GET is an observable effect
+        self._gets: dict[str, list[dict[str, str]]] = {}
+
+    def add_get(self, path: str, fields: dict[str, str]) -> None:
+        with self._lock:
+            self._gets.setdefault(path, []).append(fields)
+
+    def gets(self) -> dict[str, list[dict[str, str]]]:
+        with self._lock:
+            return {path: list(q) for path, q in self._gets.items()}
 
     def add(self, path: str, fields: dict[str, str]) -> None:
         with self._lock:
@@ -42,10 +52,19 @@ def _handler(recorder: Recorder) -> type[BaseHTTPRequestHandler]:
             pass
 
         def do_GET(self) -> None:
-            rel = self.path.split("?", 1)[0].lstrip("/") or "index.html"
+            rel, _, query = self.path.partition("?")
+            rel = rel.lstrip("/") or "index.html"
+            if query:
+                recorder.add_get("/" + rel, dict(parse_qsl(query)))
             target = (SITE / rel).resolve()
             if not target.is_file() or target.parent != SITE.resolve():
                 self.send_error(404)
+                return
+            if target.suffix == ".txt":
+                # Q13: a plain-text file the browser downloads rather than shows
+                self._send(
+                    200, target.read_bytes(), content_type="text/plain; charset=utf-8", attachment=target.name
+                )
                 return
             self._send(200, target.read_bytes())
 
@@ -66,9 +85,18 @@ def _handler(recorder: Recorder) -> type[BaseHTTPRequestHandler]:
                 return
             self._send(200, b"<!doctype html><title>Thanks</title><h1>Thanks, we received it.</h1>")
 
-        def _send(self, status: int, body: bytes) -> None:
+        def _send(
+            self,
+            status: int,
+            body: bytes,
+            *,
+            content_type: str = "text/html; charset=utf-8",
+            attachment: str = "",
+        ) -> None:
             self.send_response(status)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Type", content_type)
+            if attachment:
+                self.send_header("Content-Disposition", f'attachment; filename="{attachment}"')
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
