@@ -85,6 +85,8 @@ def task2_calculator_to_form(base: str, gets) -> None:
         fw("form", "do", "type", "Name", "Ada")
         fw("form", "do", "type", "Email", "ada@example.com")
         fw("form", "do", "type", "Message", "@result", "--from", str(OUT / "calc"))
+        # "Send" is a gated effect: one grant for exactly this click on this page, used once
+        fw("form", "grant", "click", "Send message")
         fw("form", "do", "click", "Send message", "--no-judge")
         time.sleep(1)
 

@@ -1,0 +1,48 @@
+[
+ {
+  "task": "task2_calculator_to_form",
+  "error": "RuntimeError: footwork do click Send message --no-judge exited 3: INFO     [jevdual.browser] driver authorization allowed: Attach Cua Driver to GoogleChrome window 977 using its logged-in profile\n"
+ },
+ {
+  "task": "3 textedit->search",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "one submission to /search.html with q='quarterly report'",
+  "as_expected": true
+ },
+ {
+  "task": "3 textedit->search",
+  "solve": "duplicate",
+  "oracle_ok": false,
+  "detail": "2 submissions to /search.html, not one",
+  "as_expected": true
+ },
+ {
+  "task": "4 download->open",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "/Users/thomasmain/Downloads/quarterly-report.txt is the served file byte for byte and is the open document",
+  "as_expected": true
+ },
+ {
+  "task": "4 download->open",
+  "solve": "duplicate",
+  "oracle_ok": false,
+  "detail": "2 identical copies downloaded: quarterly-report (1).txt, quarterly-report.txt",
+  "as_expected": true
+ },
+ {
+  "task": "5 order->rename",
+  "solve": "correct",
+  "oracle_ok": true,
+  "detail": "draft.txt is now B-20260921.txt, contents unchanged",
+  "as_expected": true
+ },
+ {
+  "task": "5 order->rename",
+  "solve": "truncated",
+  "oracle_ok": false,
+  "detail": "no file named 'B-20260921.txt' (the folder has ['B-2026092.txt'])",
+  "as_expected": true
+ }
+]
