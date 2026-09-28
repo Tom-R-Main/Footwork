@@ -70,7 +70,7 @@ def cmd_check(out: Path) -> None:
             "quarterly-report.txt",
             report,
         ),
-        "5": renamed(SCRATCH / "rename", "draft.txt", "B-20260921.txt", sha256(b"order notes\n")),
+        "5": renamed(SCRATCH / "rename", "draft.txt", "KB-20260921.txt", sha256(b"order notes\n")),
     }
     res = {k: {"ok": v.ok, "detail": v.detail} for k, v in oracles.items()}
     (out / "oracles.json").write_text(json.dumps(res, indent=1))
