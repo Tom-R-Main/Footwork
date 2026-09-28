@@ -37,7 +37,7 @@ nothing without trying something else.
 
 Move a value between surfaces by reading it first ("read" with a regular expression "match" whose first
 group is the value, or a "target" element, "as" a NAME), then use it as "@NAME" in a "do" type or append.
-Never retype a value by hand. Some effects pause for a person's permission: if a command prints "paused",
+Never retype a value by hand; "@NAME" in a done answer is replaced by the carried value. Some effects pause for a person's permission: if a command prints "paused",
 the run ends there; you cannot grant permission yourself. Finish with "done" on the surface that shows the
 result (the harness verifies it), or "stop" with the reason if no available action can make progress.
 
@@ -205,7 +205,15 @@ class CrossLoop:
                 argv += ["--from", str(self.session(holder[1]))]
             return surface, argv
         if name == "done":
-            return surface, ["done", str(action.get("answer") or "")]
+            # a carried reference in the answer is the carried value (Q13 smoke: "@RESULT" reached the
+            # verifier as literal text)
+            carried = self.carried()
+            answer = re.sub(
+                r"@([A-Za-z_][A-Za-z0-9_]*)",
+                lambda m: carried[m.group(1)][0] if m.group(1) in carried else m.group(0),
+                str(action.get("answer") or ""),
+            )
+            return surface, ["done", answer]
         return f"unknown action {name!r}"
 
     async def run(self) -> CrossRun:

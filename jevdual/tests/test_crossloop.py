@@ -90,3 +90,15 @@ def test_refused_dones_end_unverified_after_the_budget(tmp_path, monkeypatch):
     chat = _chat(*[act("done", surface="web", answer="x")] * 3)
     run = asyncio.run(_loop(tmp_path, chat, max_done_refusals=2).run())
     assert run.status == "done_unverified"
+
+
+def test_a_carried_reference_in_a_done_answer_is_its_value(tmp_path, monkeypatch):
+    fw = _fake_footwork(tmp_path, {"done": (0, "accepted. session closed.")})
+    monkeypatch.setattr(crossloop, "footwork", fw)
+    chat = _chat(
+        act("read", surface="calc", match=r"(\d+)", **{"as": "result"}),
+        act("done", surface="web", answer="sent @result"),
+    )
+    asyncio.run(_loop(tmp_path, chat).run())
+    done = next(argv for _, argv in fw.calls if argv[0] == "done")
+    assert done == ("done", "sent 624")

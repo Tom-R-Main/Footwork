@@ -1,0 +1,16 @@
+[
+ {
+  "task": 3,
+  "repeat": 1,
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.34) [200 ms]: uncertain: complete p=0.34, max unmet p=0.00",
+  "answer": "@RESULT",
+  "oracle_ok": true,
+  "oracle": "one submission to /search.html with q='quarterly report'",
+  "steps": 14,
+  "input_tokens": 16896,
+  "output_tokens": 8365,
+  "cost_usd": 0.0033626000000000003,
+  "wall_s": 112.57514458300102
+ }
+]

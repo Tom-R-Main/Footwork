@@ -37,8 +37,8 @@ def osa(script: str) -> str:
     ).stdout.strip()
 
 
-def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
-    """``(task text, surfaces, oracle, cleanup)`` for task ``n`` repeat ``rep``; makes its start state."""
+def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], tuple[str, ...], Any, Any]:
+    """``(task text, surfaces, requirements, oracle, cleanup)`` for task ``n`` repeat ``rep``; makes its start state."""
     tag = f"{n}-{rep}-{time.strftime('%H%M%S')}"
     if n == 1:
         doc = SCRATCH / f"prices-{tag}.txt"
@@ -54,9 +54,11 @@ def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
             Surface("web", "browser", url="https://books.toscrape.com/"),
             Surface("doc", "app", app="TextEdit", window=doc.name, authorize=("Save",)),
         ]
+        reqs = ("The document's last line is the first book's price", "The document was saved")
         return (
             text,
             surfaces,
+            reqs,
             lambda gets: check_append(doc, SimpleNamespace(text="£51.77"), before),
             lambda: osa(
                 f'tell application "TextEdit" to close (every document whose name is "{doc.name}") saving no'
@@ -73,9 +75,11 @@ def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
             Surface("calc", "app", app="Calculator"),
             Surface("web", "browser", url=f"{base}/form.html", authorize=("Send message",)),
         ]
+        reqs = ("The contact form was sent", "The message sent is the product of 48 and 13")
         return (
             text,
             surfaces,
+            reqs,
             lambda gets: one_submission(gets, "/confirm.html", "message", "624"),
             lambda: None,
         )
@@ -89,9 +93,11 @@ def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
             Surface("note", "app", app="TextEdit", window=doc.name),
             Surface("web", "browser", url=f"{base}/search.html"),
         ]
+        reqs = ("The shop's search results page is shown for the note's query",)
         return (
             text,
             surfaces,
+            reqs,
             lambda gets: one_submission(gets, "/search.html", "q", "quarterly report"),
             lambda: osa(
                 f'tell application "TextEdit" to close (every document whose name is "{doc.name}") saving no'
@@ -107,6 +113,7 @@ def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
             Surface("web", "browser", url=f"{base}/index.html"),
             Surface("finder", "app", app="Finder", window="Downloads"),
         ]
+        reqs = ("The quarterly report was downloaded", "The report is open in TextEdit")
 
         def oracle4(gets):
             names = osa('tell application "TextEdit" to get path of every document')
@@ -120,6 +127,7 @@ def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
         return (
             text,
             surfaces,
+            reqs,
             oracle4,
             lambda: osa(
                 'tell application "TextEdit" to close (every document whose name is "quarterly-report.txt") saving no'
@@ -135,9 +143,11 @@ def task(n: int, rep: int, base: str) -> tuple[str, list[Surface], Any, Any]:
         Surface("web", "browser", url=f"{base}/order-confirmed.html"),
         Surface("finder", "app", app="Finder", window=folder.name),
     ]
+    reqs = ("draft.txt is renamed to the order number with .txt",)
     return (
         text,
         surfaces,
+        reqs,
         lambda gets: renamed(folder, "draft.txt", "KB-20260921.txt", sha256(b"order notes\n")),
         lambda: osa(f'tell application "Finder" to close (every window whose name is "{folder.name}")'),
     )
@@ -154,11 +164,11 @@ async def main(tasks: list[int], repeats: int, out: Path) -> None:
     try:
         for rep in range(1, repeats + 1):
             for n in tasks:
-                text, surfaces, oracle, cleanup = task(n, rep, base)
+                text, surfaces, reqs, oracle, cleanup = task(n, rep, base)
                 run_dir = out / f"task{n}-r{rep}"
                 before_gets = {k: len(v) for k, v in stop.recorder.gets().items()}
                 t0 = time.perf_counter()
-                run = await CrossLoop(text, surfaces, chat, run_dir).run()
+                run = await CrossLoop(text, surfaces, chat, run_dir, requirements=reqs).run()
                 wall = time.perf_counter() - t0
                 gets = {k: v[before_gets.get(k, 0) :] for k, v in stop.recorder.gets().items()}
                 check = oracle(gets)
