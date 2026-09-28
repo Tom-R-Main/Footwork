@@ -54,3 +54,11 @@ Observed: `results/claims-audit-20260927b`, strict full verifier after the two c
 Inferred: the field values reached Jev, but A4's second requirement, "Form not submitted", is an absence the page alone cannot show and this synthetic case has no trajectory to show it; that is the verifier's known absence blind spot, not the field defect. The prediction's threshold failed (2 against at most 1); its safety half held (no incorrect done accepted).
 Changes: kept both strict-mode changes (field values in Jev's view; the no-fact rule only when the task asks for an answer).
 Next: adoption needs a fresh live measurement of the current strict check; the audit set is the offline gate any claim-check change runs first.
+
+## V4 · prediction · 2026-09-28 02:18
+Question: can the verifier accept a correct cross-surface done (Q13 task 1: 3 of 3 correct, 0 accepted) once it sees where the value came from, without accepting a tampered one?
+Hypothesis: task 1 was refused because the verifier read the destination window alone ("The document's last line is the first book's price" unmet); with the other surfaces' step lines and the carries' sources on its trajectory (`footwork done --context-from`), it can see that the appended line is the value read from the first book.
+Alternatives: (a) Jev ignores trajectory lines for a requirement about the current window, so nothing changes; (b) the extra context makes it accept a destination line that differs from the carried value.
+Test: offline first, four verifier calls on synthetic windows: the correct destination with and without the cross-surface context, and a tampered destination (its last line £52.00, the carry £51.77) with the context; then Q13 task 1, three repeats, and tasks 2 and 3 once each as a check.
+Predicts: offline: correct with context accepted, without context not accepted, tampered with context not accepted; live: task 1 accepted in at least 2 of 3, tasks 2 and 3 still accepted.
+Against: the tampered case accepted, or task 1 still unaccepted in all three.
