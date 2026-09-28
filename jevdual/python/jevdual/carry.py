@@ -45,6 +45,9 @@ class Carry:
     step: int
     session: str
     taken_at: float
+    #: V6: for a match, the lines around it and which occurrence it is ("match 1 of 20 on the page")
+    surroundings: str = ""
+    occurrence: str = ""
 
     def provenance(self) -> str:
         return (
@@ -134,6 +137,10 @@ def take_match(
     start = page_text.rfind("\n", 0, m.start()) + 1
     end = page_text.find("\n", m.end())
     context = page_text[start : end if end >= 0 else len(page_text)].strip()[:120]
+    lines = page_text.split("\n")
+    at = page_text.count("\n", 0, m.start())
+    near = [ln.strip() for ln in lines[max(0, at - 3) : at + 3] if ln.strip()]
+    total = sum(1 for _ in re.finditer(pattern, page_text))
     return Carry(
         name=name,
         text=text,
@@ -148,6 +155,8 @@ def take_match(
         step=step,
         session=session,
         taken_at=time.time(),
+        surroundings=" / ".join(near)[:240],
+        occurrence=f"match 1 of {total} on the page",
     )
 
 

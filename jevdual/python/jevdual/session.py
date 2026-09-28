@@ -890,6 +890,17 @@ def carried_checks(records: list[dict[str, Any]], menu: Menu) -> list[dict[str, 
     return out
 
 
+def carry_line(name: str, c: dict[str, Any]) -> str:
+    """How a carried value reads on the verifier's trajectory: the value, where it was read, and for a
+    match which occurrence it was and the lines around it (V6)."""
+    line = f"read @{name} = {c['text']!r} at {c['location'] or c['title']} from {c['element_role']} {c['element_label']!r}"
+    if c.get("occurrence"):
+        line += f"; {c['occurrence']}"
+    if c.get("surroundings"):
+        line += f"; around it: {c['surroundings']}"
+    return line
+
+
 def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
     """Trajectory entries from another surface's session: each receipt with its evidence, and each value
     carried there with its source, labelled with the surface."""
@@ -913,14 +924,7 @@ def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
     for name, c in (
         json.loads((d / carry.CARRIES).read_text()) if (d / carry.CARRIES).exists() else {}
     ).items():
-        out.append(
-            {
-                "surface": where,
-                "actions": [
-                    f"read @{name} = {c['text']!r} at {c['location'] or c['title']} from {c['element_role']} {c['element_label']!r}"
-                ],
-            }
-        )
+        out.append({"surface": where, "actions": [carry_line(name, c)]})
     return out[-last:]
 
 
