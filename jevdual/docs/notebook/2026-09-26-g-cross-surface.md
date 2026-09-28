@@ -157,3 +157,7 @@ Next: pre-register Q13.
 Observed: Q13a (`results/q13a.md`) found that the oracle stage's task 5 used a wrong expected value: the fixture's reference is KB-20260921 and the pattern `(B-\d+)` matched a fragment of it, both in the stage's solve and in its expected name.
 Inferred: G8's task-5 result shows the `renamed` oracle compares names exactly, but not against the true reference; the stage's ground truth for task 5 was the author's error, not the oracle's. The other three oracles are unaffected.
 Next: none; Q13a carried the correct reference.
+
+## E3 · exploratory · 2026-09-28 02:31
+Question: is there a footwork route to rename a file in Finder, and to select a list row (Q13's tasks 5 and 4)? In list view the name cell appears as an editable textbox (Q13a: `[61] textbox = 'quarterly-report.txt'`).
+Test: a scratch folder with draft.txt in list view; `do type` the new name into the name cell; if refused, select the row and try Return then type, and File > Rename…; record each receipt and the folder on disk.
