@@ -161,3 +161,9 @@ Next: none; Q13a carried the correct reference.
 ## E3 · exploratory · 2026-09-28 02:31
 Question: is there a footwork route to rename a file in Finder, and to select a list row (Q13's tasks 5 and 4)? In list view the name cell appears as an editable textbox (Q13a: `[61] textbox = 'quarterly-report.txt'`).
 Test: a scratch folder with draft.txt in list view; `do type` the new name into the name cell; if refused, select the row and try Return then type, and File > Rename…; record each receipt and the folder on disk.
+
+## U45 · update · 2026-09-28 02:33
+Observed: `results/e3-finder-probe`: in list view the name cell is a textbox; `do type 61 "KB-20260921.txt"` read `confirmed ('textbox' now holds 'KB-20260921.txt')` while the folder on disk still held draft.txt; `do enter 61` read suspected no-op and the file kept its name. Closing the window left draft.txt as it was.
+Inferred: writing the cell's accessibility value changes what the cell shows without entering Finder's editing mode, so no rename happens; the confirmed receipt was true about the field and misleading about the file, the same class as Q13a's File > Open. No rename route exists yet; a real one needs Finder's own edit mode (a foreground Return on the selected row with the row actually selected), which the probes have not reached.
+Changes: typing into a Finder name field reads unverifiable, naming that a written name field is not a committed rename (`test_writing_a_finder_name_field_is_not_a_confirmed_rename`, failing before the change).
+Next: a Finder route stays open work; Q13's tasks 4 and 5 remain truthful stops until one exists.

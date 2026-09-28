@@ -170,6 +170,15 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
             evidence="the navigation ended with ERR_ABORTED, as one that becomes a download does; the page did "
             "not change, and a file may have been saved (check the downloads folder)",
         )
+    if str(pending.get("app") or "").startswith("Finder") and pending.get("op") in ("type", "append"):
+        # E3: writing a Finder name cell shows the new name without renaming the file; Finder renames
+        # only when its own edit commits, which this observation does not show
+        return dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence=f"Finder's name field shows the text ({r.evidence}); whether the file itself was renamed "
+            "is not observable here (a written name field is not a committed rename)",
+        )
     if pending.get("op") == "menu" and r.effect == "confirmed":
         return dataclasses.replace(
             r,
@@ -768,6 +777,7 @@ async def cmd_do(args: Any) -> int:
             "intended": None if secret_used else text,
             "secret": secret_used,
             "mode": state.mode,
+            "app": state.app,
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
         }
         if getattr(eff, "readback", None) is not None:

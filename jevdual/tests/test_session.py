@@ -339,3 +339,20 @@ def test_carried_checks_say_whether_the_field_holds_the_carried_value():
         "holds @price = '624'"
         in carried_checks([typed], _nm([_field(2, "Message", value="624")]).menu)[0]["actions"][0]
     )
+
+
+def test_writing_a_finder_name_field_is_not_a_confirmed_rename(tmp_path):
+    """E3: typing into Finder's list-view name cell read "confirmed" while the file on disk kept its name."""
+    before = [_field(61, "textbox", value="draft.txt")]
+    pend = {
+        "line": "type(textbox)",
+        "driver_effect": "confirmed",
+        "op": "type",
+        "target_id": 61,
+        "target_label": "textbox",
+        "intended": "KB-20260921.txt",
+        "secret": False,
+        "app": "Finder",
+    }
+    r = receipt_for(_state(tmp_path, before, pend), _nm([_field(61, "textbox", value="KB-20260921.txt")]))
+    assert r is not None and r["effect"] == "unverifiable" and "not a committed rename" in r["evidence"], r
