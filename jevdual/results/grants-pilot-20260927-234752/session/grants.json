@@ -1,0 +1,18 @@
+[
+ {
+  "id": "5b989539",
+  "op": "menu",
+  "location": "app://Finder window 'grants-20260927-234752'",
+  "element_role": null,
+  "element_label": null,
+  "arguments_sha": "05695a56f2e4dd9f9ac2ad838451cca546ea5d563b049d9b7553fcb4819dba5d",
+  "value_sha": null,
+  "uses_left": 0,
+  "issued_step": 1,
+  "issued_at": 1790567284.263245,
+  "selection": [
+   "a.txt",
+   "icon view"
+  ]
+ }
+]
