@@ -33,6 +33,8 @@ class Proposal:
     element_label: str | None
     arguments: str | None
     value: str | None
+    #: what a target-less action (a menu item, a chord) acts on: the selected elements' labels
+    selection: tuple[str, ...] = ()
 
 
 @dataclass
@@ -47,6 +49,7 @@ class Grant:
     uses_left: int
     issued_step: int
     issued_at: float
+    selection: tuple[str, ...] = ()
 
     def describe(self) -> str:
         on = f"{self.element_role} {self.element_label!r}" if self.element_label else "the window"
@@ -67,6 +70,7 @@ def issue(p: Proposal, *, uses: int = 1, step: int = 0) -> Grant:
         uses_left=uses,
         issued_step=step,
         issued_at=time.time(),
+        selection=tuple(p.selection),
     )
 
 
@@ -84,12 +88,18 @@ def why_not(g: Grant, p: Proposal) -> str | None:
         return "the arguments differ from the granted ones"
     if g.value_sha != sha(p.value):
         return "the element's value changed since the grant"
+    if tuple(g.selection) != tuple(p.selection):
+        return f"it grants the selection {list(g.selection)}, and the selection is {list(p.selection)}"
     return None
 
 
 def load(session_dir: Path) -> list[Grant]:
     path = session_dir / GRANTS
-    return [Grant(**g) for g in json.loads(path.read_text())] if path.exists() else []
+    return (
+        [Grant(**(g | {"selection": tuple(g.get("selection") or ())})) for g in json.loads(path.read_text())]
+        if path.exists()
+        else []
+    )
 
 
 def save(session_dir: Path, grants: list[Grant]) -> None:

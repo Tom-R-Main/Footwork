@@ -1056,6 +1056,9 @@ def _proposal(
         element_label=target.label if target is not None else None,
         arguments=arguments,
         value=target.value if target is not None else None,
+        # a menu item or chord acts on the selection: bind it, so a grant for trashing a.txt does not
+        # trash b.txt (the audit's "different selected item")
+        selection=tuple(sorted(c.label for c in nm.menu.candidates if c.selected)) if target is None else (),
     )
 
 

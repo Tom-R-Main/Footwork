@@ -41,3 +41,19 @@ def test_a_one_use_grant_does_not_clear_a_retry(tmp_path):
     assert first is not None
     again, why = grants.consume(tmp_path, BASE)
     assert again is None and "no uses left" in why[0]
+
+
+def test_a_menu_grant_binds_the_selection():
+    trash = Proposal(
+        op="menu",
+        location="file:///Users/x/scratch/",
+        element_role=None,
+        element_label=None,
+        arguments="File > Move to Trash",
+        value=None,
+        selection=("a.txt",),
+    )
+    g = issue(trash)
+    assert why_not(g, trash) is None
+    other = Proposal(**({**trash.__dict__} | {"selection": ("b.txt",)}))
+    assert "the selection is ['b.txt']" in why_not(g, other)
