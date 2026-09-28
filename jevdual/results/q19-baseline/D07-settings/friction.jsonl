@@ -1,0 +1,2 @@
+{"t": 1790631617.1424341, "kind": "dead_end", "text": "setting a <select>: type refused (requires_foreground in a background_only session), clicking the option a no-op; nothing in the observation says which route a select takes"}
+{"t": 1790631640.243665, "kind": "dead_end", "text": "no browser-mode route sets a <select>: type (foreground) left 'Weekly', option clicks (trusted and dom) no-ops; stopped without saving rather than submit the wrong frequency"}

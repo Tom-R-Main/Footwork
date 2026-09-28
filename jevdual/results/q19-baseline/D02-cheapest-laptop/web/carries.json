@@ -1,0 +1,19 @@
+{
+ "name": {
+  "name": "name",
+  "text": "Asus VivoBook...",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops",
+  "title": "Allinone | Web Scraper Test Sites",
+  "element_id": -1,
+  "element_label": "$295.99\nAsus VivoBook...",
+  "element_role": "text",
+  "part": "match",
+  "step": 2,
+  "session": "results/q19-baseline/D02-cheapest-laptop/web",
+  "taken_at": 1790631476.1922061,
+  "surroundings": "Test Sites / Computers / Laptops / 117 items / $295.99 / Asus VivoBook... / Asus VivoBook X441NA-GA190 Chocolate Black, 14\", Celeron N3450, 4GB, 128GB SSD, Endless OS, ENG kbd",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

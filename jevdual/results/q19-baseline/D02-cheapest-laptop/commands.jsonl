@@ -1,0 +1,8 @@
+{"t": 1790631433.745476, "surface": "web", "args": ["start", "Find the cheapest laptop", "--browser", "--url", "https://webscraper.io/test-sites/e-commerce/allinone"], "exit": 0, "s": 2.86}
+{"t": 1790631447.277654, "surface": "web", "args": ["do", "navigate", "https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops"], "exit": 0, "s": 2.47}
+{"t": 1790631448.066284, "surface": "web", "args": ["look", "--text", "20000"], "exit": 0, "s": 0.7}
+{"t": 1790631459.762045, "surface": "web", "args": ["look"], "exit": 0, "s": 0.67}
+{"t": 1790631461.860437, "surface": "web", "args": ["do", "scroll", "1"], "exit": 0, "s": 2.01}
+{"t": 1790631462.6168761, "surface": "web", "args": ["look", "--text", "20000"], "exit": 0, "s": 0.67}
+{"t": 1790631476.223238, "surface": "web", "args": ["read", "--match", "(?m)^\\$295\\.99\\n(.+)$", "--as", "name"], "exit": 0, "s": 0.78}
+{"t": 1790631477.306307, "surface": "web", "args": ["done", "Among the 10 laptops footwork can observe on the page (the list is longer and cannot be scrolled here), the cheapest is \"Asus VivoBook X441NA-GA190\" at $295.99."], "exit": 0, "s": 0.99}

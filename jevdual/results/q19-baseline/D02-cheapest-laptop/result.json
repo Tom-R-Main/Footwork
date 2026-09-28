@@ -1,0 +1,16 @@
+{
+ "task": "D02-cheapest-laptop",
+ "oracle_ok": true,
+ "oracle": "answer contains 'Asus VivoBook X441NA-GA190'",
+ "answer": "Among the 10 laptops footwork can observe on the page (the list is longer and cannot be scrolled here), the cheapest is \"Asus VivoBook X441NA-GA190\" at $295.99.",
+ "commands": 8,
+ "wall_s": 46.5,
+ "friction": 2,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 1,
+  "contradicted": 0,
+  "vague_stop": 1
+ }
+}

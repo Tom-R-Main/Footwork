@@ -1,0 +1,7 @@
+{"t": 1790631367.585382, "surface": "web", "args": ["start", "Find the author of the first quote tagged love", "--browser", "--url", "https://quotes.toscrape.com/"], "exit": 7, "s": 0.44}
+{"t": 1790631394.017422, "surface": "web", "args": ["start", "Find the author of the first quote tagged love", "--browser", "--url", "https://quotes.toscrape.com/"], "exit": 0, "s": 3.19}
+{"t": 1790631404.580566, "surface": "web", "args": ["do", "click", "66"], "exit": 0, "s": 2.12}
+{"t": 1790631405.1276002, "surface": "web", "args": ["read", "--match", "(?s)by\\s+([^\\n(]+?)\\s*\\(about\\)", "--as", "author"], "exit": 4, "s": 0.45}
+{"t": 1790631412.450253, "surface": "web", "args": ["look", "--text", "700"], "exit": 0, "s": 0.59}
+{"t": 1790631419.284805, "surface": "web", "args": ["read", "--match", "(?m)^by\\n(.+)$", "--as", "author"], "exit": 0, "s": 0.55}
+{"t": 1790631420.194314, "surface": "web", "args": ["done", "The first quote tagged love is by Andr\u00e9 Gide."], "exit": 5, "s": 0.81}

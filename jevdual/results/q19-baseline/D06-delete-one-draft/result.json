@@ -1,0 +1,16 @@
+{
+ "task": "D06-delete-one-draft",
+ "oracle_ok": true,
+ "oracle": "one submission to /q19-deleted.html with {'id': '2'}",
+ "answer": null,
+ "commands": 4,
+ "wall_s": 19.6,
+ "friction": 2,
+ "friction_by_kind": {
+  "misread": 1,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 1,
+  "vague_stop": 0
+ }
+}

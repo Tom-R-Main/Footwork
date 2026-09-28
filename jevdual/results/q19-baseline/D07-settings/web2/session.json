@@ -1,0 +1,104 @@
+{
+ "dir": "results/q19-baseline/D07-settings/web2",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Set the frequency to Monthly and save",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: type(Frequency) text='Monthly' -> suspected_noop"
+ ],
+ "last_url": "http://127.0.0.1:8767/q19-settings.html",
+ "last_title": "Notification settings",
+ "last_page_text": "Notification settings\nFrequency\nWeekly",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Weekly digest",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Frequency",
+   "role": "combobox",
+   "operations": [
+    "type"
+   ],
+   "value": "Weekly",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Save settings",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Daily",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "Weekly",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 10,
+   "label": "Monthly",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-e6d484e4-c5d0-497f-8d9c-93b21cba4d36",
+ "secret_names": []
+}

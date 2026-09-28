@@ -1,0 +1,19 @@
+{"t": 1790631644.230953, "surface": "calc", "args": ["start", "Compute 2 to the 10th", "--app", "Calculator", "--mode", "foreground_permitted"], "exit": 0, "s": 2.07}
+{"t": 1790631654.2665422, "surface": "calc", "args": ["do", "menu", "View > Scientific"], "exit": 0, "s": 2.54}
+{"t": 1790631655.1436422, "surface": "calc", "args": ["look"], "exit": 0, "s": 0.78}
+{"t": 1790631666.2057889, "surface": "calc", "args": ["do", "menu", "View > Scientific"], "exit": 0, "s": 2.51}
+{"t": 1790631666.977131, "surface": "calc", "args": ["look"], "exit": 0, "s": 0.68}
+{"t": 1790631678.741398, "surface": "calc", "args": ["do", "click", "All Clear", "--no-judge"], "exit": 7, "s": 0.75}
+{"t": 1790631679.203512, "surface": "calc", "args": ["do", "click", "15", "--no-judge"], "exit": 7, "s": 0.37}
+{"t": 1790631679.655172, "surface": "calc", "args": ["do", "click", "Multiply", "--no-judge"], "exit": 7, "s": 0.36}
+{"t": 1790631680.135766, "surface": "calc", "args": ["do", "click", "15", "--no-judge"], "exit": 7, "s": 0.38}
+{"t": 1790631680.6326349, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.39}
+{"t": 1790631681.086213, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.37}
+{"t": 1790631681.5613508, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.39}
+{"t": 1790631682.244883, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.38}
+{"t": 1790631682.730816, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.4}
+{"t": 1790631683.252974, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.43}
+{"t": 1790631683.722656, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.38}
+{"t": 1790631684.192449, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.38}
+{"t": 1790631684.652941, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.37}
+{"t": 1790631685.067368, "surface": "calc", "args": ["look"], "exit": 7, "s": 0.32}

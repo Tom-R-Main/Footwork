@@ -1,0 +1,15 @@
+[
+ {
+  "id": "6739a7a6",
+  "op": "click",
+  "location": "http://127.0.0.1:8767/q19-drafts.html",
+  "element_role": "link",
+  "element_label": "Delete draft",
+  "arguments_sha": null,
+  "value_sha": null,
+  "uses_left": 0,
+  "issued_step": 0,
+  "issued_at": 1790631572.68194,
+  "selection": []
+ }
+]

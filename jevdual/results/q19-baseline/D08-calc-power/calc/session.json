@@ -1,0 +1,313 @@
+{
+ "dir": "results/q19-baseline/D08-calc-power/calc",
+ "app": "Calculator",
+ "pid": 4980,
+ "window_id": 996,
+ "task": "Compute 2 to the 10th",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 2,
+ "status": "open",
+ "memory": [
+  "step 1: menu(View > Scientific) -> refused",
+  "step 2: menu(View > Scientific) -> refused"
+ ],
+ "last_url": "app://Calculator",
+ "last_title": "Calculator",
+ "last_page_text": "48\u00d713\n624",
+ "last_candidates": [
+  {
+   "id": 2,
+   "label": "Delete",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "All Clear",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Percent",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Divide",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "7",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "8",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "9",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "Multiply",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 10,
+   "label": "4",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 11,
+   "label": "5",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 12,
+   "label": "6",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "Subtract",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 14,
+   "label": "1",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "2",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 16,
+   "label": "3",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 17,
+   "label": "Add",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 18,
+   "label": "Change Sign",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 19,
+   "label": "0",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 20,
+   "label": "Point",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 21,
+   "label": "Equals",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 23,
+   "label": "Show Sidebar",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 24,
+   "label": "Mode",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

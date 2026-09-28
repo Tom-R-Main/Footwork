@@ -1,0 +1,10 @@
+{"t": 1790631586.8743072, "surface": "web", "args": ["start", "Weekly digest on, monthly, save", "--browser", "--url", "http://127.0.0.1:8767/q19-settings.html"], "exit": 0, "s": 2.79}
+{"t": 1790631589.0035682, "surface": "web", "args": ["do", "click", "Weekly digest"], "exit": 0, "s": 2.02}
+{"t": 1790631590.98626, "surface": "web", "args": ["do", "type", "Frequency", "Monthly"], "exit": 0, "s": 1.89}
+{"t": 1790631608.023617, "surface": "web", "args": ["do", "click", "Monthly"], "exit": 0, "s": 2.0}
+{"t": 1790631608.5719051, "surface": "web", "args": ["look"], "exit": 0, "s": 0.46}
+{"t": 1790631619.203739, "surface": "web", "args": ["do", "click", "Monthly", "--route", "dom"], "exit": 0, "s": 1.97}
+{"t": 1790631619.698699, "surface": "web", "args": ["look"], "exit": 0, "s": 0.4}
+{"t": 1790631627.868623, "surface": "web2", "args": ["start", "Set the frequency to Monthly and save", "--browser", "--mode", "foreground_permitted"], "exit": 0, "s": 0.45}
+{"t": 1790631629.832486, "surface": "web2", "args": ["do", "type", "Frequency", "Monthly"], "exit": 0, "s": 1.87}
+{"t": 1790631630.33882, "surface": "web2", "args": ["look"], "exit": 0, "s": 0.42}

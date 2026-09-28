@@ -1,0 +1,2 @@
+{"t": 1790631677.880915, "kind": "dead_end", "text": "View > Scientific refused twice (AXRaise on the window refused); computed 2^10 as 2 x 2 then repeated Equals"}
+{"t": 1790631696.533432, "kind": "dead_end", "text": "screen locked mid-task; paused (the harness stopped each command with screen_locked)"}
