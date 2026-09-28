@@ -323,3 +323,19 @@ def test_cross_context_labels_receipts_and_carries_with_their_surface(tmp_path):
     assert ctx[0]["surface"] == "Google Chrome (footwork) https://books.toscrape.com/"
     assert ctx[0]["actions"] == ["click(Books) -> confirmed: navigated to /"]
     assert "read @price = '£51.77' at https://books.toscrape.com/" in ctx[1]["actions"][0]
+
+
+def test_carried_checks_say_whether_the_field_holds_the_carried_value():
+    from jevdual.session import carried_checks
+
+    carry = {"name": "price", "text": "£51.77", "location": "https://books.toscrape.com/", "title": ""}
+    rec = {"kind": "do", "op": "append", "target_label": "text area", "carry": carry}
+    ok = carried_checks([rec], _nm([_field(1, "text area", value="Price:\n£51.77")]).menu)
+    assert ok[0]["actions"][0].startswith("harness check: 'text area' holds @price = '£51.77'")
+    bad = carried_checks([rec], _nm([_field(1, "text area", value="Price:\n£52.00")]).menu)
+    assert "does NOT hold" in bad[0]["actions"][0] and "'£52.00'" in bad[0]["actions"][0]
+    typed = {"kind": "do", "op": "type", "target_label": "Message", "carry": {**carry, "text": "624"}}
+    assert (
+        "holds @price = '624'"
+        in carried_checks([typed], _nm([_field(2, "Message", value="624")]).menu)[0]["actions"][0]
+    )

@@ -858,6 +858,38 @@ async def cmd_s1(args: Any) -> int:
     return 0
 
 
+def carried_checks(records: list[dict[str, Any]], menu: Menu) -> list[dict[str, Any]]:
+    """V5: for each carried value this session typed or appended, whether the field holds it now, checked
+    by the harness: a typed field must equal the value, an appended one must end with it as its own line.
+    The verifier reads a verdict instead of comparing a trajectory line with the window itself (V4)."""
+    out = []
+    seen = set()
+    for rec in records:
+        c = rec.get("carry")
+        label = rec.get("target_label")
+        if rec.get("kind") != "do" or not c or not label or (label, c["name"]) in seen:
+            continue
+        seen.add((label, c["name"]))
+        field = next((x for x in menu.candidates if x.label == label), None)
+        src = f"read at {c['location'] or c['title']}"
+        if field is None:
+            verdict = (
+                f"harness check: {label!r} is not on the current window, so @{c['name']} cannot be checked"
+            )
+        else:
+            value = field.value or ""
+            last = value.rstrip("\n").split("\n")[-1]
+            ok = value == c["text"] if rec.get("op") == "type" else last == c["text"]
+            where = "its value" if rec.get("op") == "type" else "its last line"
+            verdict = (
+                f"harness check: {label!r} holds @{c['name']} = {c['text']!r} ({src}) as {where}"
+                if ok
+                else f"harness check: {label!r} does NOT hold @{c['name']} = {c['text']!r} ({src}) as {where}; {where} is {last if rec.get('op') != 'type' else value!r}"
+            )
+        out.append({"step": "check", "actions": [verdict]})
+    return out
+
+
 def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
     """Trajectory entries from another surface's session: each receipt with its evidence, and each value
     carried there with its source, labelled with the surface."""
@@ -916,6 +948,9 @@ async def cmd_done(args: Any) -> int:
         context = [e for d in (getattr(args, "context_from", None) or []) for e in cross_context(Path(d))]
         if context:
             trajectory = context + trajectory
+        log_path = state.path / "session.jsonl"
+        records = [json.loads(ln) for ln in log_path.read_text().splitlines()] if log_path.exists() else []
+        trajectory += carried_checks(records, nm.menu)
         async with AsyncTypeSafeClient() as client:
             t0 = time.perf_counter()
             v = await Verifier(client).verify(

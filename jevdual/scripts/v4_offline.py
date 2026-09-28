@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from jevdual.keys import load_keys
 from jevdual.menu import Candidate, Menu
+from jevdual.session import carried_checks
 from jevdual.verify import Verifier
 
 TASK = (
@@ -63,10 +64,28 @@ async def main() -> None:
 
     async with AsyncTypeSafeClient() as client:
         v = Verifier(client)
+        rec = {
+            "kind": "do",
+            "op": "append",
+            "target_label": "text area",
+            "carry": {
+                "name": "price",
+                "text": "£51.77",
+                "location": "https://books.toscrape.com/",
+                "title": "",
+            },
+        }
+
+        def check(menu):  # V5: the harness's own verdict on the carried value
+            return carried_checks([rec], menu)
+
+        good, bad = window("£51.77"), window("£52.00")
         cases = {
-            "correct, with context": (window("£51.77"), CONTEXT + OWN),
-            "correct, without context": (window("£51.77"), OWN),
-            "tampered (£52.00), with context": (window("£52.00"), CONTEXT + OWN),
+            "correct, with context": (good, CONTEXT + OWN),
+            "correct, without context": (good, OWN),
+            "tampered (£52.00), with context": (bad, CONTEXT + OWN),
+            "correct, with context and check (V5)": (good, CONTEXT + OWN + check(good)),
+            "tampered, with context and check (V5)": (bad, CONTEXT + OWN + check(bad)),
         }
         out = {}
         for name, (menu, traj) in cases.items():
@@ -79,7 +98,7 @@ async def main() -> None:
                 "unmet": {k: round(x, 2) for k, x in r.unmet.items()},
             }
             print(f"{name}: {r.band} ({r.reason[:140]})")
-    Path("results/v4-offline-20260928.json").write_text(json.dumps(out, indent=1))
+    Path("results/v5-offline-20260928.json").write_text(json.dumps(out, indent=1))
 
 
 asyncio.run(main())
