@@ -262,3 +262,24 @@ def test_screenshots_stay_off_after_a_secret_even_when_its_value_is_gone(tmp_pat
     monkeypatch.setenv("FOOTWORK_SECRET_PIN", "42")  # shorter than the scrub minimum
     asyncio.run(observe(st, Bridge()))
     assert asked == [None, None]
+
+
+def test_a_menu_items_effect_is_not_confirmed_by_the_windows_change(tmp_path):
+    """Q13a task 4: File > Open in Finder read "confirmed (1 elements removed)" and opened nothing."""
+    before = [_field(1, "a", value="x"), _field(2, "b", value="y")]
+    pend = {"line": "menu(File > Open)", "driver_effect": "unverifiable", "op": "menu"}
+    r = receipt_for(_state(tmp_path, before, pend), _nm(before[:1]))
+    assert r is not None and r["effect"] == "unverifiable" and "another window or app" in r["evidence"], r
+
+
+def test_a_navigation_that_became_a_download_is_not_called_not_applied(tmp_path):
+    """Q13a task 4: navigating to a .txt read "refused (not applied ...)" while the file was downloaded."""
+    cands = [_field(1, "a", value="x")]
+    pend = {
+        "line": "navigate(http://x/report.txt)",
+        "driver_effect": "refused",
+        "op": "navigate",
+        "error": "driver refused:  navigation failed: net::ERR_ABORTED",
+    }
+    r = receipt_for(_state(tmp_path, cands, pend), _nm(cands))
+    assert r is not None and r["effect"] == "unverifiable" and "download" in r["evidence"], r

@@ -1,0 +1,18 @@
+{
+ "2": {
+  "ok": true,
+  "detail": "one submission to /confirm.html with message='624'"
+ },
+ "3": {
+  "ok": true,
+  "detail": "one submission to /search.html with q='quarterly report'"
+ },
+ "4": {
+  "ok": false,
+  "detail": "quarterly-report.txt was downloaded but no document is open"
+ },
+ "5": {
+  "ok": false,
+  "detail": "draft.txt still exists"
+ }
+}

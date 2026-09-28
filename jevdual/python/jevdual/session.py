@@ -143,6 +143,7 @@ def receipt_for(
     )
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     r = _save_receipt(r, state.pending)
+    r = _outside_receipt(r, state.pending)
     if r.effect == "suspected_noop" and state.pending.get("driver_effect") == "confirmed":
         # the driver confirmed the press but nothing on the menu changed: say both
         text = receipt_text(r) + " The driver reported the press as delivered."
@@ -152,6 +153,31 @@ def receipt_for(
     for v in _secret_values(state, secret_value):
         out = {k: w.replace(v, "{secret}") for k, w in out.items()}
     return out
+
+
+def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
+    """Q13a: two effects that happen outside the observed window. A menu item's effect (File > Open) may
+    land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
+    by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
+    download looks like, so it is not "not applied": what it did is outside the page."""
+    if pending.get("save_readback"):
+        return r
+    error = str(pending.get("error") or "")
+    if pending.get("op") == "navigate" and "ERR_ABORTED" in error:
+        return dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence="the navigation ended with ERR_ABORTED, as one that becomes a download does; the page did "
+            "not change, and a file may have been saved (check the downloads folder)",
+        )
+    if pending.get("op") == "menu" and r.effect == "confirmed":
+        return dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence=f"the window changed ({r.evidence}); a menu item's effect may be in another window or app, "
+            "which this observation does not show",
+        )
+    return r
 
 
 def _save_receipt(r: Any, pending: dict[str, Any]) -> Any:

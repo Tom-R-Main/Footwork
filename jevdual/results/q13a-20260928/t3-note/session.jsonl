@@ -1,0 +1,2 @@
+{"t": 1790573018.372532, "step": 0, "kind": "start", "task": "Read the next search from the note", "requirements": [], "app": "TextEdit"}
+{"t": 1790573019.54598, "step": 0, "kind": "read", "carry": {"name": "query", "text": "quarterly report", "surface": "native", "app": "TextEdit", "location": "app://TextEdit", "title": "notes.txt", "element_id": -1, "element_label": "Next search: quarterly report", "element_role": "text", "part": "match", "step": 0, "session": "results/q13a-20260928/t3-note", "taken_at": 1790573019.545804}}
