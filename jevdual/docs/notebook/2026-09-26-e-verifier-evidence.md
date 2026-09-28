@@ -62,3 +62,17 @@ Alternatives: (a) Jev ignores trajectory lines for a requirement about the curre
 Test: offline first, four verifier calls on synthetic windows: the correct destination with and without the cross-surface context, and a tampered destination (its last line £52.00, the carry £51.77) with the context; then Q13 task 1, three repeats, and tasks 2 and 3 once each as a check.
 Predicts: offline: correct with context accepted, without context not accepted, tampered with context not accepted; live: task 1 accepted in at least 2 of 3, tasks 2 and 3 still accepted.
 Against: the tampered case accepted, or task 1 still unaccepted in all three.
+
+## U41 · update · 2026-09-28 02:20
+Resolves: V4 = failed
+Observed: `results/v4-offline-20260928.json`: correct destination without the other surface's context: verify (complete 0.53, max unmet 0.60); with it: verify (0.74, 0.46); tampered destination (last line £52.00, carried £51.77) with the same context: verify (0.78, 0.46).
+Inferred: the context moves Jev's scores toward acceptance but not across, and it moves the tampered case exactly as far: Jev does not compare the carried value in the trajectory with the window's line. Context that could have made the correct case pass would have made the tampered one pass too; V4's alternative (b) is the real risk even though it did not fire. Loose context is the wrong evidence for this requirement.
+Next: V5, a deterministic check the harness makes itself.
+
+## V5 · prediction · 2026-09-28 02:20
+Question: does a harness-computed check (the field that received a carried value holds it exactly as its last line) let the verifier accept the correct destination and refuse the tampered one?
+Hypothesis: at `done`, for each carried value this session typed or appended, the harness compares the field's current value with the carried text and puts a typed line on the trajectory: "harness check: 'text area' holds @price = '£51.77' (read at books.toscrape.com) as its last line", or "does not hold ... its last line is '£52.00'". Jev reads a harness verdict, not a comparison it has to make.
+Alternatives: Jev still does not weigh a trajectory line against the current window for "last line" requirements (a), or it accepts even with a "does not hold" line (b).
+Test: `scripts/v4_offline.py` extended with the check line in each case (the correct case gets "holds", the tampered "does not hold"), then Q13 task 1 three times and tasks 2 and 3 once.
+Predicts: offline: correct with the check accepted; tampered with its check not accepted; live: task 1 accepted in at least 2 of 3; tasks 2 and 3 still accepted.
+Against: the tampered case accepted, or the correct case still not accepted offline.
