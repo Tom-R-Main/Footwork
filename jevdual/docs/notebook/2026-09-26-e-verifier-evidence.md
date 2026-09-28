@@ -91,3 +91,17 @@ Alternatives: Jev does not treat trajectory context as evidence for a "first" or
 Test: offline, the V5 script with the carry's context line built by `take_match` from a books.toscrape page excerpt.
 Predicts: correct with context, check and surroundings: accept; tampered: reject.
 Against: correct still not accepted.
+
+## U43 · update · 2026-09-28 02:23
+Resolves: V6 = failed
+Observed: `results/v6-offline-20260928.json`: with the carry's occurrence ("match 1 of 3 on the page") and surroundings on the trajectory plus the harness check, the correct destination stays verify ("first book's price" unmet 0.47); the tampered one is rejected (0.94). The carry line is now built by `take_match`, not the hand-written hint V4's script carried.
+Inferred: Jev does not credit trajectory evidence for a claim about a page it cannot see ("the first book"). Three predictions (V4 to V6) tried to make the destination's verifier judge the source; the requirement mixes two surfaces. The occurrence and surroundings stay (true, cheap); the evidence belongs on the surface that shows it.
+Next: V7.
+
+## V7 · prediction · 2026-09-28 02:23
+Question: does judging each requirement on the surface where it is observable let a correct cross-surface done be accepted, and a tampered one refused?
+Hypothesis: split task 1's requirements by surface: on the books page, "the value read is the first book's price" (the verifier sees the list and the answer's value); on the TextEdit window, "the document's last line is the carried price" and "the document was saved" (with the harness check). The loop's done runs `footwork done` on every surface that has requirements and accepts only if all do.
+Alternatives: the source-surface judgment is uncertain because the done answer names the value but the page's first price is not obviously "first" to Jev; or the per-surface split accepts a tampered destination because the source half passes on its own.
+Test: Q13 task 1 three times with per-surface requirements; tasks 2 and 3 once each (their requirements also split: 2's product on Calculator, the send on the form; 3's query on the note, the results on the shop).
+Predicts: task 1 accepted in at least 2 of 3 with the oracle confirming; tasks 2 and 3 accepted; any destination whose harness check reads "does NOT hold" not accepted.
+Against: task 1 accepted in fewer than 2 of 3, or an accepted done whose oracle fails.
