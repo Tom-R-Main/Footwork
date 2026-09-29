@@ -24,7 +24,7 @@ from jevdual.keys import load_keys
 
 from evals import q19
 from evals.fixtures.server import serve
-from evals.m_sealed import check, frozen_runtime, grade, manifest
+from evals.m_sealed import backend_metadata, check, frozen_runtime, grade, manifest, verify_seal
 
 PORT = 0  # its own fixture server, beside the operator's on 8767; tasks name {base}
 MUSE_IN, MUSE_OUT = 0.10, 0.20  # USD per million tokens, Muse Spark contributor rates
@@ -155,18 +155,34 @@ if __name__ == "__main__":
     ap.add_argument("--task", action="append")
     ap.add_argument("--candidate", required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--max-steps", type=int, default=20)
+    ap.add_argument("--max-steps", type=int, default=30)
     ap.add_argument("--recovery", action="store_true", help="M3: bounded recovery in the loop")
     ap.add_argument("--completion", choices=["default", "effect_evidence"], default="default")
     a = ap.parse_args()
+    a.tasks = a.tasks.resolve()
+    a.out = a.out.resolve()
     if a.out.exists():
         ap.error("output must not exist; interrupted measurements must not be retried")
+    seal = verify_seal(ROOT, a.tasks.stem)
     sha = frozen_runtime(ROOT, a.candidate)
+    if seal["purpose"] == "challenge" and sha != seal["challenge_candidate"]:
+        ap.error("the first challenge measurement must use its frozen candidate")
+    if a.task and seal["purpose"] == "adoption":
+        ap.error("adoption runs the full set, never selected debug tasks")
     os.environ["FOOTWORK_COMPLETION"] = a.completion
     a.out.mkdir(parents=True)
     payload = [a.tasks, *sorted((ROOT / "evals" / "fixtures" / "site").glob("msealed-*.html"))]
     (a.out / "started.json").write_text(
-        json.dumps({"candidate": sha, "payload": manifest(ROOT, payload)}, indent=2)
+        json.dumps(
+            {
+                "candidate": sha,
+                "payload": manifest(ROOT, payload),
+                "runtime": backend_metadata(),
+                "arm": {"completion": a.completion, "recovery": a.recovery},
+                "max_steps": a.max_steps,
+            },
+            indent=2,
+        )
     )
     asyncio.run(main(a.tasks, a.task, a.out, a.max_steps, a.recovery))
     (a.out / "closed").write_text("One measurement. Stops require reason adjudication.\n")

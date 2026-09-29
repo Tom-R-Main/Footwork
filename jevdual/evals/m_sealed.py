@@ -44,16 +44,50 @@ def manifest(root: Path, paths: list[Path]) -> dict[str, str]:
     return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
 
 
+def verify_seal(root: Path, set_name: str) -> dict:
+    seal = json.loads((root / "docs" / "experiments" / (set_name + "-seal.json")).read_text())
+    paths = [root / p for p in seal["payload"]]
+    if manifest(root, paths) != seal["payload"]:
+        raise ValueError("sealed payload changed")
+    actual = {str(p.relative_to(root)) for p in (root / "evals" / "challenge" / set_name).glob("*.json")}
+    declared = {p for p in seal["payload"] if p.startswith(f"evals/challenge/{set_name}/")}
+    if actual != declared:
+        raise ValueError("sealed case membership changed")
+    return seal
+
+
 def frozen_runtime(root: Path, ref: str) -> str:
     """Require the tracked and on-disk runtime to equal the measured commit; no git fetch."""
     sha = subprocess.check_output(["git", "rev-parse", f"{ref}^{{commit}}"], cwd=root, text=True).strip()
-    subprocess.run(["git", "diff", "--exit-code", sha, "--", "python/jevdual"], cwd=root, check=True)
+    runtime_paths = [
+        "python/jevdual",
+        "crates",
+        "Cargo.toml",
+        "Cargo.lock",
+        "rust-toolchain.toml",
+        "pyproject.toml",
+        "uv.lock",
+    ]
+    subprocess.run(["git", "diff", "--exit-code", sha, "--", *runtime_paths], cwd=root, check=True)
     extra = subprocess.check_output(
-        ["git", "ls-files", "--others", "--exclude-standard", "python/jevdual"], cwd=root, text=True
+        ["git", "ls-files", "--others", "--exclude-standard", *runtime_paths], cwd=root, text=True
     )
     if extra.strip():
         raise ValueError("untracked runtime files")
     return sha
+
+
+def backend_metadata() -> dict:
+    from importlib.metadata import version
+
+    from jevdual import _native
+
+    extension = Path(_native.core.__file__) if _native.core is not None else None
+    return {
+        "backend": _native.backend_report(),
+        "extension_sha256": hashlib.sha256(extension.read_bytes()).hexdigest() if extension else None,
+        "dependencies": {name: version(name) for name in ("browser-use", "typesafe-sdk")},
+    }
 
 
 def check(task: dict, *, answer: str | None, gets: dict, posts: dict, scratch: Path, before: dict) -> Check:
@@ -87,6 +121,10 @@ def check(task: dict, *, answer: str | None, gets: dict, posts: dict, scratch: P
                     image.verify()
                 with Image.open(p) as image:
                     image.load()
+                    if o.get("source"):
+                        with Image.open(scratch / o["source"]) as source:
+                            if image.convert("RGBA").tobytes() != source.convert("RGBA").tobytes():
+                                return False
                 return True
             except (OSError, ValueError, UnidentifiedImageError):
                 return False
