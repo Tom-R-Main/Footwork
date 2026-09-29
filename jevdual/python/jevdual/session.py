@@ -1176,7 +1176,17 @@ def _proposal(
         # a menu item or chord acts on the selection: bind it, so a grant for trashing a.txt does not
         # trash b.txt (the audit's "different selected item")
         selection=tuple(sorted(c.label for c in nm.menu.candidates if c.selected)) if target is None else (),
+        element_ref=_element_ref(nm, target),
     )
+
+
+def _element_ref(nm: Any, target: Any) -> str:
+    """Q19 R2: "2 of 3" when other elements share the target's role and label (three "Delete draft" links),
+    so a grant for one row does not clear another; empty when the element is unique."""
+    if target is None:
+        return ""
+    same = [c.id for c in nm.menu.candidates if c.role == target.role and c.label == target.label]
+    return f"{same.index(target.id) + 1} of {len(same)}" if len(same) > 1 else ""
 
 
 async def cmd_grant(args: Any) -> int:

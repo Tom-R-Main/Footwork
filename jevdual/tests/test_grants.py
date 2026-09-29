@@ -57,3 +57,29 @@ def test_a_menu_grant_binds_the_selection():
     assert why_not(g, trash) is None
     other = Proposal(**({**trash.__dict__} | {"selection": ("b.txt",)}))
     assert "the selection is ['b.txt']" in why_not(g, other)
+
+
+def test_a_grant_for_one_of_several_identical_rows_does_not_clear_another():
+    """Q19 R2: three identical "Delete draft" links; a grant for the second must not clear the first."""
+    second = Proposal(
+        **({**BASE.__dict__} | {"op": "click", "arguments": None, "value": None, "element_ref": "2 of 3"})
+    )
+    g = issue(second)
+    assert why_not(g, second) is None
+    first = Proposal(**({**second.__dict__} | {"element_ref": "1 of 3"}))
+    assert "2 of 3, and this is 1 of 3" in why_not(g, first)
+
+
+def test_element_ref_counts_look_alikes():
+    from types import SimpleNamespace
+
+    from jevdual.menu import Candidate
+    from jevdual.session import _element_ref
+
+    links = [Candidate(id=i, label="Delete draft", role="link", operations=("click",)) for i in (0, 1, 2)]
+    nm = SimpleNamespace(
+        menu=SimpleNamespace(
+            candidates=[*links, Candidate(id=5, label="Save", role="button", operations=("click",))]
+        )
+    )
+    assert _element_ref(nm, links[1]) == "2 of 3" and _element_ref(nm, nm.menu.candidates[3]) == ""

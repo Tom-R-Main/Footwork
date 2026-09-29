@@ -35,6 +35,8 @@ class Proposal:
     value: str | None
     #: what a target-less action (a menu item, a chord) acts on: the selected elements' labels
     selection: tuple[str, ...] = ()
+    #: Q19 R2: which of several look-alikes (same role and label) the element is, "2 of 3"; empty when unique
+    element_ref: str = ""
 
 
 @dataclass
@@ -50,6 +52,7 @@ class Grant:
     issued_step: int
     issued_at: float
     selection: tuple[str, ...] = ()
+    element_ref: str = ""
 
     def describe(self) -> str:
         on = f"{self.element_role} {self.element_label!r}" if self.element_label else "the window"
@@ -71,6 +74,7 @@ def issue(p: Proposal, *, uses: int = 1, step: int = 0) -> Grant:
         issued_step=step,
         issued_at=time.time(),
         selection=tuple(p.selection),
+        element_ref=p.element_ref,
     )
 
 
@@ -82,7 +86,9 @@ def why_not(g: Grant, p: Proposal) -> str | None:
         return f"it grants {g.op}, not {p.op}"
     if g.location != p.location:
         return f"it grants {g.location}, and this is {p.location}"
-    if (g.element_role, g.element_label) != (p.element_role, p.element_label):
+    if (g.element_role, g.element_label, g.element_ref) != (p.element_role, p.element_label, p.element_ref):
+        if (g.element_role, g.element_label) == (p.element_role, p.element_label):
+            return f"it grants the {g.element_label!r} {g.element_role} {g.element_ref}, and this is {p.element_ref}"
         return f"it grants {g.element_role} {g.element_label!r}, and this is {p.element_role} {p.element_label!r}"
     if g.arguments_sha != sha(p.arguments):
         return "the arguments differ from the granted ones"
