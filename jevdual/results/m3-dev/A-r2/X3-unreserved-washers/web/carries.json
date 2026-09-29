@@ -1,0 +1,19 @@
+{
+ "WASHERS": {
+  "name": "WASHERS",
+  "text": "60",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-parts.html",
+  "title": "Parts stock",
+  "element_id": -1,
+  "element_label": "Bin C2 \u2014 washers: 60",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/m3-dev/A-r2/X3-unreserved-washers/web",
+  "taken_at": 1790673114.6925051,
+  "surroundings": "Parts stock / Bin A3 \u2014 gaskets: 140 / Bin B7 \u2014 washers: 95 (reserved for the pump overhaul) / Bin C2 \u2014 washers: 60 / Bin D1 \u2014 bolts: 210",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

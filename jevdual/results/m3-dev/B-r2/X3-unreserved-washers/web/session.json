@@ -1,0 +1,28 @@
+{
+ "dir": "results/m3-dev/B-r2/X3-unreserved-washers/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "On the parts stock page, report how many washers are in stock that are not reserved.",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'Bin C2 \u2014 washers: 60' as @WASHERS",
+  "step 1: done refused (uncertain: complete p=0.63, max unmet p=0.00)",
+  "step 1: done refused (uncertain: complete p=0.54, max unmet p=0.00)",
+  "step 1: done refused (uncertain: complete p=0.50, max unmet p=0.00)"
+ ],
+ "last_url": "http://127.0.0.1:8768/m3-parts.html",
+ "last_title": "Parts stock",
+ "last_page_text": "Parts stock\nBin A3 \u2014 gaskets: 140\nBin B7 \u2014 washers: 95 (reserved for the pump overhaul)\nBin C2 \u2014 washers: 60\nBin D1 \u2014 bolts: 210",
+ "last_candidates": [],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-2c4bf1c7-daee-44b5-90d3-ca2e778f1ccd",
+ "secret_names": []
+}

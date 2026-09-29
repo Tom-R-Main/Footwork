@@ -1,0 +1,49 @@
+{
+ "dir": "results/m3-dev/B-r2/X1-withdrawn-archive/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Download the field survey archive as survey.zip into the scratch folder. (The scratch folder is /Users/thomasmain/footwork-pilot/q19/B-r2/X1-withdrawn-archive.)",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 11,
+ "status": "open",
+ "memory": [
+  "step 1: click(Home) -> confirmed",
+  "step 2: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 3: navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html' -> confirmed",
+  "step 4: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 5: navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/' -> confirmed",
+  "step 6: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 7: navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/' -> confirmed",
+  "step 8: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 9: click(Help) -> confirmed",
+  "step 10: click(Field survey archive) -> confirmed",
+  "step 11: navigate(http://127.0.0.1:8768/m3-help.html) text='http://127.0.0.1:8768/m3-help.html' -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8768/m3-help.html",
+ "last_title": "Field survey archive",
+ "last_page_text": "Archive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Field survey archive",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-81b125af-bc89-4317-8138-fda1b0e4e7e1",
+ "secret_names": []
+}

@@ -1,0 +1,19 @@
+{
+ "CONF": {
+  "name": "CONF",
+  "text": "Sign-up recorded",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue",
+  "title": "Sign-up recorded",
+  "element_id": -1,
+  "element_label": "Sign-up recorded",
+  "element_role": "text",
+  "part": "match",
+  "step": 5,
+  "session": "results/m3-dev/A-r3/X2-one-signup/web",
+  "taken_at": 1790674130.823071,
+  "surroundings": "Sign-up recorded / Thank you. The rota has your sign-up.",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

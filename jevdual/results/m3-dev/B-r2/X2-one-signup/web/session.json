@@ -1,0 +1,132 @@
+{
+ "dir": "results/m3-dev/B-r2/X2-one-signup/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Sign up once for the volunteer rota with name \"Ada Byron\" and team \"Blue\". This sign-up is authorized.",
+ "requirements": [],
+ "authorized": [
+  "Sign up"
+ ],
+ "answer_expected": false,
+ "step": 8,
+ "status": "open",
+ "memory": [
+  "step 1: type(Name) text='Ada Byron' -> confirmed",
+  "step 2: type(Team) text='Blue' -> confirmed",
+  "step 3: click(Sign up) -> confirmed",
+  "step 4: done refused (answer carries no fact found on the page (0 unsupported, rest narrative); comple)",
+  "step 4: click(Back to the rota) -> confirmed",
+  "step 5: key(alt+Left) -> refused",
+  "step 5: read [-1] 'Volunteer rota sign-up' as @ROTA",
+  "step 5: read [0] 'Name' as @NAMEFIELD",
+  "step 6: done refused (uncertain: complete p=0.69, max unmet p=0.00)",
+  "step 5: read [-1] 'Volunteer rota sign-up\\nLocal simulation: no real sign-up.\\nName\\nTeam' as @PAGETEXT",
+  "step 6: scroll(Sign up) -> refused",
+  "step 6: read [0] 'Name' as @NAMEVAL",
+  "step 7: type(Name) text='Ada Byron' -> confirmed",
+  "step 8: append(Team) text='Blue' -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8768/m3-signup.html",
+ "last_title": "Volunteer rota",
+ "last_page_text": "Volunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam\nBlue\nAda Byron",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "Team",
+   "role": "textbox",
+   "operations": [
+    "type"
+   ],
+   "value": "Blue",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Name",
+   "role": "textbox",
+   "operations": [
+    "type"
+   ],
+   "value": "Ada Byron",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Sign up",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 12,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 14,
+   "label": "Ada Byron",
+   "role": "statictext",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "Blue",
+   "role": "statictext",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-04f4bfe9-4b32-4b62-b81d-f17ac808b353",
+ "secret_names": []
+}

@@ -1,0 +1,79 @@
+{
+ "status": "done_unverified",
+ "reason": "verifier: verify (complete p=0.49) [212 ms]: uncertain: complete p=0.49, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read unreserved washer count",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "C2 \\u2014 washers: (\\d+)",
+    "as": "COUNT"
+   },
+   "exit": 0,
+   "output": "carried @COUNT = '60', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/m3-parts.html (text 'Bin C2 \u2014 washers: 60', its match) at step 0 of session results/m3-dev/B-r3/X3-unreserved-washers/web",
+   "ms": 4962.195000000065,
+   "input_tokens": 798,
+   "output_tokens": 335
+  },
+  {
+   "step": 2,
+   "note": "Need to see page to report count",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Parts stock'\n0 elements:\npage text (128 chars):\nParts stock\nBin A3 \u2014 gaskets: 140\nBin B7 \u2014 washers: 95 (reserved for the pump overhaul)\nBin C2 \u2014 washers: 60\nBin D1 \u2014 bolts: 210",
+   "ms": 3113.224333006656,
+   "input_tokens": 915,
+   "output_tokens": 173
+  },
+  {
+   "step": 3,
+   "note": "Report unreserved washer count",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@COUNT"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.69) [200 ms]: uncertain: complete p=0.69, max unmet p=0.00",
+   "ms": 4049.7629580058856,
+   "input_tokens": 829,
+   "output_tokens": 216
+  },
+  {
+   "step": 4,
+   "note": "Report carried count using variable reference",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@COUNT"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.57) [264 ms]: uncertain: complete p=0.57, max unmet p=0.00",
+   "ms": 4671.510999993188,
+   "input_tokens": 876,
+   "output_tokens": 209
+  },
+  {
+   "step": 5,
+   "note": "Report carried count using variable reference",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@COUNT"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.49) [212 ms]: uncertain: complete p=0.49, max unmet p=0.00",
+   "ms": 12425.529957996332,
+   "input_tokens": 923,
+   "output_tokens": 202
+  }
+ ],
+ "answer": "60",
+ "input_tokens": 4341,
+ "output_tokens": 1135
+}

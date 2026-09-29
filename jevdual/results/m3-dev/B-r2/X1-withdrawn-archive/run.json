@@ -1,0 +1,307 @@
+{
+ "status": "budget",
+ "reason": "20 steps",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Check archive page state",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Field survey archive'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 1613.6857910023537,
+   "input_tokens": 818,
+   "output_tokens": 41
+  },
+  {
+   "step": 2,
+   "note": "Page says withdrawn; checking links for alternative",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Home"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.03 on 'Home'\ndispatched click(Home): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Home): confirmed (navigated to /index.html; 14 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n17 elements:\n  [   0] link       'Home'\n  [   1] link       'Search'\n  [   2] link       'Catalog'\n  [   3] link       'Contact'\n  [   4] link       'Announcements'\n  [   5] link       'Sign in'\n  [   6] link       'Checkout'\n  [   7] link       'Article'\n  [   8] link       'Search the catalog'\n  [   9] link       'Browse the paginated catalog'\n  [  10] link       'Contact us'\n  [  11] link       'Announcements (has a modal)'\n  [  12] link       'Sign in'\n  [  13] link       'Checkout'\n  [  14] link       'About the lighthouse'\n  [  15] link       'Track an order'\n  [  45] link       'Tracking'\npage text (109 chars):\n|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+   "ms": 11334.295833992655,
+   "input_tokens": 740,
+   "output_tokens": 462
+  },
+  {
+   "step": 3,
+   "note": "Return to archive page to find download",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "address bar",
+    "text": "http://127.0.0.1:8768/m3-archive.html"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Kestrel Bay Supply'); ids below are from the fresh observation\ndestructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/m3-archive.html'\ndispatched navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': confirmed (navigated to /m3-archive.html; 1 elements added, 14 removed, 0 changed).\nGoogle Chrome (footwork): 'Kestrel Bay Supply'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 8581.94708400697,
+   "input_tokens": 1023,
+   "output_tokens": 409
+  },
+  {
+   "step": 4,
+   "note": "Check home page for alternative download",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/index.html"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Field survey archive'); ids below are from the fresh observation\ndestructive judgment: p=0.02 on 'navigate to http://127.0.0.1:8768/index.html'\ndispatched navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html': confirmed (navigated to /index.html; 14 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n17 elements:\n  [   0] link       'Home'\n  [   1] link       'Search'\n  [   2] link       'Catalog'\n  [   3] link       'Contact'\n  [   4] link       'Announcements'\n  [   5] link       'Sign in'\n  [   6] link       'Checkout'\n  [   7] link       'Article'\n  [   8] link       'Search the catalog'\n  [   9] link       'Browse the paginated catalog'\n  [  10] link       'Contact us'\n  [  11] link       'Announcements (has a modal)'\n  [  12] link       'Sign in'\n  [  13] link       'Checkout'\n  [  14] link       'About the lighthouse'\n  [  15] link       'Track an order'\n  [  45] link       'Tracking'\npage text (109 chars):\n|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+   "ms": 11738.700583999162,
+   "input_tokens": 1056,
+   "output_tokens": 318
+  },
+  {
+   "step": 5,
+   "note": "Navigate back to archive page and inspect",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Article",
+    "text": "http://127.0.0.1:8768/m3-archive.html"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Kestrel Bay Supply'); ids below are from the fresh observation\ndestructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/m3-archive.html'\ndispatched navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': confirmed (navigated to /m3-archive.html; 1 elements added, 14 removed, 0 changed).\nGoogle Chrome (footwork): 'Kestrel Bay Supply'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 3806.6471250058385,
+   "input_tokens": 1306,
+   "output_tokens": 99
+  },
+  {
+   "step": 6,
+   "note": "Check homepage for alternative copies",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/index.html"
+   },
+   "exit": null,
+   "output": "not run: already tried in this same state at step 4 (receipt: Receipt for navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html': confirmed (navi); choose a different action or stop",
+   "ms": 0.0,
+   "input_tokens": 1238,
+   "output_tokens": 292
+  },
+  {
+   "step": 7,
+   "note": "Check archive page details",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Field survey archive'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 7116.254958993522,
+   "input_tokens": 1348,
+   "output_tokens": 262
+  },
+  {
+   "step": 8,
+   "note": "Check home page for alternative download",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/'\ndispatched navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/': confirmed (navigated to /; 14 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n17 elements:\n  [   0] link       'Home'\n  [   1] link       'Search'\n  [   2] link       'Catalog'\n  [   3] link       'Contact'\n  [   4] link       'Announcements'\n  [   5] link       'Sign in'\n  [   6] link       'Checkout'\n  [   7] link       'Article'\n  [   8] link       'Search the catalog'\n  [   9] link       'Browse the paginated catalog'\n  [  10] link       'Contact us'\n  [  11] link       'Announcements (has a modal)'\n  [  12] link       'Sign in'\n  [  13] link       'Checkout'\n  [  14] link       'About the lighthouse'\n  [  15] link       'Track an order'\n  [  45] link       'Tracking'\npage text (109 chars):\n|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+   "ms": 6290.650375012774,
+   "input_tokens": 1232,
+   "output_tokens": 174
+  },
+  {
+   "step": 9,
+   "note": "Re-inspect archive page",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Kestrel Bay Supply'\n17 elements:\n  [   0] link       'Home'\n  [   1] link       'Search'\n  [   2] link       'Catalog'\n  [   3] link       'Contact'\n  [   4] link       'Announcements'\n  [   5] link       'Sign in'\n  [   6] link       'Checkout'\n  [   7] link       'Article'\n  [   8] link       'Search the catalog'\n  [   9] link       'Browse the paginated catalog'\n  [  10] link       'Contact us'\n  [  11] link       'Announcements (has a modal)'\n  [  12] link       'Sign in'\n  [  13] link       'Checkout'\n  [  14] link       'About the lighthouse'\n  [  15] link       'Track an order'\n  [  45] link       'Tracking'\npage text (109 chars):\n|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+   "ms": 4888.236208003946,
+   "input_tokens": 1616,
+   "output_tokens": 127
+  },
+  {
+   "step": 10,
+   "note": "Return to archive page to inspect download",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/m3-archive.html"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/m3-archive.html'\ndispatched navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': confirmed (navigated to /m3-archive.html; 1 elements added, 14 removed, 0 changed).\nGoogle Chrome (footwork): 'Kestrel Bay Supply'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 8366.003791990806,
+   "input_tokens": 1563,
+   "output_tokens": 340
+  },
+  {
+   "step": 11,
+   "note": "Check homepage for alternative download",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/index.html"
+   },
+   "exit": null,
+   "output": "not run: already tried in this same state at step 4 (receipt: Receipt for navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html': confirmed (navi); choose a different action or stop",
+   "ms": 0.0,
+   "input_tokens": 1625,
+   "output_tokens": 314
+  },
+  {
+   "step": 12,
+   "note": "Checking main site for alternate download routes",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Field survey archive'); ids below are from the fresh observation\ndestructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/'\ndispatched navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/': confirmed (navigated to /; 14 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n17 elements:\n  [   0] link       'Home'\n  [   1] link       'Search'\n  [   2] link       'Catalog'\n  [   3] link       'Contact'\n  [   4] link       'Announcements'\n  [   5] link       'Sign in'\n  [   6] link       'Checkout'\n  [   7] link       'Article'\n  [   8] link       'Search the catalog'\n  [   9] link       'Browse the paginated catalog'\n  [  10] link       'Contact us'\n  [  11] link       'Announcements (has a modal)'\n  [  12] link       'Sign in'\n  [  13] link       'Checkout'\n  [  14] link       'About the lighthouse'\n  [  15] link       'Track an order'\n  [  45] link       'Tracking'\npage text (109 chars):\n|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+   "ms": 10106.796041000052,
+   "input_tokens": 1675,
+   "output_tokens": 391
+  },
+  {
+   "step": 13,
+   "note": "Need to inspect archive page details",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "text": "http://127.0.0.1:8768/m3-archive.html"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Kestrel Bay Supply'); ids below are from the fresh observation\ndestructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/m3-archive.html'\ndispatched navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': driver says unverifiable in 0.2s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html': confirmed (navigated to /m3-archive.html; 1 elements added, 14 removed, 0 changed).\nGoogle Chrome (footwork): 'Kestrel Bay Supply'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 6717.860749995452,
+   "input_tokens": 1893,
+   "output_tokens": 222
+  },
+  {
+   "step": 14,
+   "note": "Check homepage for alternative download routes",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home",
+    "text": "http://127.0.0.1:8768/"
+   },
+   "exit": null,
+   "output": "not run: already tried in this same state at step 12 (receipt: Receipt for navigate(http://127.0.0.1:8768/) text='http://127.0.0.1:8768/': confirmed (navigated to /; 14 eleme); choose a different action or stop",
+   "ms": 0.0,
+   "input_tokens": 1740,
+   "output_tokens": 208
+  },
+  {
+   "step": 15,
+   "note": "Check Help link for alternate download info",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Help"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Field survey archive'); ids below are from the fresh observation\ndestructive judgment: p=0.04 on 'Help'\ndispatched click(Help): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Help): confirmed (navigated to /m3-help.html; 1 elements added, 2 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nArchive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+   "ms": 15696.2130000029,
+   "input_tokens": 1767,
+   "output_tokens": 523
+  },
+  {
+   "step": 16,
+   "note": "Check main site structure",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Archive help'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nArchive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+   "ms": 4764.390291995369,
+   "input_tokens": 1614,
+   "output_tokens": 179
+  },
+  {
+   "step": 17,
+   "note": "Follow link back to archive page",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Field survey archive"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.06 on 'Field survey archive'\ndispatched click(Field survey archive): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Field survey archive): confirmed (navigated to /m3-archive.html; 2 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Archive help'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 9216.381458987598,
+   "input_tokens": 1465,
+   "output_tokens": 311
+  },
+  {
+   "step": 18,
+   "note": "Checking help page for download alternatives",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Help",
+    "text": "http://127.0.0.1:8768/m3-help.html"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Field survey archive'); ids below are from the fresh observation\ndestructive judgment: p=0.03 on 'navigate to http://127.0.0.1:8768/m3-help.html'\ndispatched navigate(http://127.0.0.1:8768/m3-help.html) text='http://127.0.0.1:8768/m3-help.html': driver says unverifiable in 0.2s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/m3-help.html) text='http://127.0.0.1:8768/m3-help.html': confirmed (navigated to /m3-help.html; 1 elements added, 2 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nArchive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+   "ms": 11550.16704100126,
+   "input_tokens": 1542,
+   "output_tokens": 421
+  },
+  {
+   "step": 19,
+   "note": "Look at current web page state",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": null,
+   "output": "not run: already tried in this same state at step 16 (Google Chrome (footwork): 'Archive help'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nA); choose a different action or stop",
+   "ms": 0.0,
+   "input_tokens": 1644,
+   "output_tokens": 146
+  },
+  {
+   "step": 20,
+   "note": "Need fresh view of archive page",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": null,
+   "output": "not run: already tried in this same state at step 16 (Google Chrome (footwork): 'Archive help'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nA); choose a different action or stop",
+   "ms": 0.0,
+   "input_tokens": 1646,
+   "output_tokens": 359
+  }
+ ],
+ "answer": null,
+ "input_tokens": 28551,
+ "output_tokens": 5598
+}

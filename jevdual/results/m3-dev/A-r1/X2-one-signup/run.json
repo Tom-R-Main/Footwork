@@ -1,0 +1,155 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.93) [296 ms]: complete p=0.93, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Enter name Ada Byron",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "type",
+    "target": "Name",
+    "text": "Ada Byron"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Volunteer rota'); ids below are from the fresh observation\ndispatched type(Name) text='Ada Byron': driver says unverifiable in 0.1s\nreceipt: Receipt for type(Name) text='Ada Byron': confirmed ('Name' now holds 'Ada Byron').\nGoogle Chrome (footwork): 'Volunteer rota'\n6 elements:\n  [   1] textbox    'Name' = 'Ada Byron'\n  [   2] textbox    'Team'\n  [   3] button     'Sign up'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\n  [  14] statictext 'Ada Byron'\npage text (77 chars):\nVolunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam\nAda Byron",
+   "ms": 5054.939416993875,
+   "input_tokens": 700,
+   "output_tokens": 120
+  },
+  {
+   "step": 2,
+   "note": "Enter team Blue",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "type",
+    "target": "Team",
+    "text": "Blue"
+   },
+   "exit": 0,
+   "output": "dispatched type(Team) text='Blue': driver says unverifiable in 0.1s\nreceipt: Receipt for type(Team) text='Blue': confirmed ('Team' now holds 'Blue').\nGoogle Chrome (footwork): 'Volunteer rota'\n7 elements:\n  [   1] textbox    'Team' = 'Blue'\n  [   2] textbox    'Name' = 'Ada Byron'\n  [   3] button     'Sign up'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\n  [  14] statictext 'Ada Byron'\n  [  15] statictext 'Blue'\npage text (82 chars):\nVolunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam\nBlue\nAda Byron",
+   "ms": 27809.222166994005,
+   "input_tokens": 688,
+   "output_tokens": 825
+  },
+  {
+   "step": 3,
+   "note": "Click Sign up to complete registration",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Sign up"
+   },
+   "exit": 0,
+   "output": "dispatched click(Sign up): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Sign up): confirmed (navigated to /m3-signup-done.html?name=Ada+Byron&team=Blue; 1 elements added, 6 removed, 0 changed).\nGoogle Chrome (footwork): 'Volunteer rota'\n1 elements:\n  [   0] link       'Back to the rota'\npage text (54 chars):\nSign-up recorded\nThank you. The rota has your sign-up.",
+   "ms": 7029.271749997861,
+   "input_tokens": 713,
+   "output_tokens": 146
+  },
+  {
+   "step": 4,
+   "note": "Sign-up confirmed, finishing task",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "Sign-up recorded for Ada Byron Blue"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.94) [258 ms]: answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.94, max unmet p=0.00",
+   "ms": 9797.02208400704,
+   "input_tokens": 715,
+   "output_tokens": 347
+  },
+  {
+   "step": 5,
+   "note": "Need to read confirmation before finishing",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Sign-up recorded'\n1 elements:\n  [   0] link       'Back to the rota'\npage text (54 chars):\nSign-up recorded\nThank you. The rota has your sign-up.",
+   "ms": 10827.06841599429,
+   "input_tokens": 779,
+   "output_tokens": 277
+  },
+  {
+   "step": 6,
+   "note": "Return to rota to read recorded values",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Back to the rota"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'Back to the rota'\ndispatched click(Back to the rota): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Back to the rota): confirmed (navigated to /m3-signup.html; 4 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Sign-up recorded'\n5 elements:\n  [   0] textbox    'Name'\n  [   1] textbox    'Team'\n  [   2] button     'Sign up'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\npage text (67 chars):\nVolunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam",
+   "ms": 10947.29462498799,
+   "input_tokens": 772,
+   "output_tokens": 392
+  },
+  {
+   "step": 7,
+   "note": "Return to confirmation page to capture result",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "text": "http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Volunteer rota'); ids below are from the fresh observation\ndestructive judgment: p=0.09 on 'navigate to http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue'\ndispatched navigate(http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue) text='http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&tea': driver says unverifiable in 0.1s\nreceipt: Receipt for navigate(http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue) text='http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&tea': confirmed (navigated to /m3-signup-done.html?name=Ada+Byron&team=Blue; 1 elements added, 4 removed, 0 changed).\nGoogle Chrome (footwork): 'Volunteer rota'\n1 elements:\n  [   0] link       'Back to the rota'\npage text (54 chars):\nSign-up recorded\nThank you. The rota has your sign-up.",
+   "ms": 27632.07633300044,
+   "input_tokens": 946,
+   "output_tokens": 745
+  },
+  {
+   "step": 8,
+   "note": "Check rota state after sign-up",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Sign-up recorded'\n1 elements:\n  [   0] link       'Back to the rota'\npage text (54 chars):\nSign-up recorded\nThank you. The rota has your sign-up.",
+   "ms": 19226.91554199264,
+   "input_tokens": 1197,
+   "output_tokens": 690
+  },
+  {
+   "step": 9,
+   "note": "Read confirmation text to carry into done",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "(has your sign-up)",
+    "as": "CONFIRM"
+   },
+   "exit": 0,
+   "output": "carried @CONFIRM = 'has your sign-up', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue (text 'Thank you. The rota has your sign-up.', its match) at step 5 of session results/m3-dev/A-r1/X2-one-signup/web",
+   "ms": 27039.430207994883,
+   "input_tokens": 1009,
+   "output_tokens": 633
+  },
+  {
+   "step": 10,
+   "note": "Submit verified result using carried confirmation phrase",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "Sign-up recorded Thank you. The rota @CONFIRM"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.93) [296 ms]: complete p=0.93, max unmet p=0.00\naccepted. session closed.",
+   "ms": 10761.372374996427,
+   "input_tokens": 1120,
+   "output_tokens": 437
+  }
+ ],
+ "answer": "Sign-up recorded Thank you. The rota has your sign-up",
+ "input_tokens": 8639,
+ "output_tokens": 4612
+}
