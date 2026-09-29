@@ -103,6 +103,13 @@ def check(task: dict, *, answer: str | None, gets: dict, posts: dict, scratch: P
             seen = (posts if o["method"] == "POST" else gets).get(o["path"], [])
             canonical = lambda fields: tuple(sorted(fields.items()))
             return Counter(map(canonical, seen)) == Counter(map(canonical, o["fields"]))
+        if kind == "unchanged_tree":
+            current = {
+                str(p.relative_to(scratch)): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in scratch.rglob("*")
+                if p.is_file()
+            }
+            return current == before
         p = scratch / o["path"]
         if kind == "absent":
             return not p.exists()
