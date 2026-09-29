@@ -134,3 +134,33 @@ def test_setup_writes_start_states(tmp_path):
     assert (tmp_path / "d.txt").read_text() == "a\nb\n" and (tmp_path / "archive").is_dir()
     head = (tmp_path / "i.png").read_bytes()[:24]
     assert head[:8] == b"\x89PNG\r\n\x1a\n" and int.from_bytes(head[16:20], "big") == 64
+
+
+class _Probe:
+    def __init__(self, windows=None, sheets=0, display=("0",)):
+        self.windows, self.sheets, self.display = windows or {}, sheets, list(display)
+
+    def window_names(self, app):
+        return self.windows.get(app, [])
+
+    def sheet_count(self, app):
+        return self.sheets
+
+    def calculator_display(self):
+        return self.display
+
+
+def test_a_start_state_is_checked_not_assumed():
+    """Review of 2026-09-29: opening an app is not resetting it (H09's Calculator showed the operator's
+    8×7 = 56). Setup names what is wrong: a leftover display, a missing or foreign document, a sheet."""
+    calc = {"setup": ["open_app Calculator"]}
+    assert q19.start_problems(calc, probe=_Probe()) == []
+    assert "not a cleared 0" in q19.start_problems(calc, probe=_Probe(display=("8×7", "56")))[0]
+    docs = {"setup": ["open_in TextEdit a.txt", "open_in TextEdit b.txt"]}
+    assert q19.start_problems(docs, probe=_Probe({"TextEdit": ["a.txt", "b.txt"]})) == []
+    bad = q19.start_problems(docs, probe=_Probe({"TextEdit": ["a.txt", "other.txt"]}, sheets=1))
+    assert bad == [
+        "TextEdit: b.txt is not open",
+        "TextEdit: other.txt is open from outside this trial",
+        "TextEdit: a sheet is open",
+    ]

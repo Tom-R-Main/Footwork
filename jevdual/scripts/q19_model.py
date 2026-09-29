@@ -75,7 +75,14 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
         for tid in ids or list(tasks):
             t = tasks[tid]
             scratch = Path.home() / "footwork-pilot" / "q19" / out.name / tid
-            q19.setup(t, scratch)
+            try:
+                q19.setup(t, scratch)
+            except q19.SetupError as e:
+                # a trial never starts from a start state it could not establish (review of 2026-09-29)
+                rows.append({"task": tid, "status": "setup_failed", "reason": str(e), "oracle_ok": None})
+                (out / "results.json").write_text(json.dumps(rows, indent=1))
+                print(f"{tid}: not started: {e}", flush=True)
+                continue
             text = fill(t["task"], base, scratch)
             if "scratch" in text and str(scratch) not in text:
                 text += f" (The scratch folder is {scratch}.)"

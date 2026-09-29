@@ -45,7 +45,94 @@ def png(path: Path, width: int, height: int) -> None:
     )
 
 
+class SetupError(RuntimeError):
+    """A start state that setup could not establish; the trial must not begin."""
+
+
+def _osa(*lines: str) -> str:
+    args = [a for ln in lines for a in ("-e", ln)]
+    return subprocess.run(["osascript", *args], capture_output=True, text=True, check=False).stdout.strip()
+
+
+def window_names(app: str) -> list[str]:
+    out = _osa(f'tell application "System Events" to get name of every window of process "{app}"')
+    return [w.strip() for w in out.split(",") if w.strip()]
+
+
+def sheet_count(app: str) -> int:
+    out = _osa(f'tell application "System Events" to get count of sheets of every window of process "{app}"')
+    return sum(int(x) for x in out.replace(" ", "").split(",") if x.isdigit())
+
+
+def calculator_display() -> list[str]:
+    """The texts of Calculator's front window (its display; the history too when shown)."""
+    from ApplicationServices import AXUIElementCreateApplication
+    from jevdual import ax
+
+    pids = subprocess.run(
+        ["pgrep", "-x", "Calculator"], capture_output=True, text=True, check=False
+    ).stdout.split()
+    if not pids:
+        return []
+    wins = ax._attr(AXUIElementCreateApplication(int(pids[0])), "AXWindows") or []
+    return [
+        str(ax._attr(e, "AXValue") or ax._attr(e, "AXDescription") or "").replace("\u200e", "").strip()
+        for w in wins[:1]
+        for e in ax.elements_by_role(w, "AXStaticText")
+    ]
+
+
+def reset_calculator() -> None:
+    """Opening Calculator restores its last expression and result (Q19 H09 read the operator's 8×7 = 56):
+    clear it with Escape twice and hide the history, so the display holds only 0."""
+    subprocess.run(["open", "-a", "Calculator"], check=False)
+    time.sleep(1.5)
+    _osa(
+        'tell application "Calculator" to activate',
+        "delay 0.3",
+        'tell application "System Events" to key code 53',
+        "delay 0.2",
+        'tell application "System Events" to key code 53',
+    )
+    _osa(
+        'tell application "System Events" to tell process "Calculator"',
+        'if exists menu item "Hide History" of menu "View" of menu bar 1 then click menu item "Hide History" of menu "View" of menu bar 1',
+        "end tell",
+    )
+    time.sleep(0.5)
+
+
+def start_problems(task: dict[str, Any], *, probe: Any = None) -> list[str]:
+    """What is wrong with the start state setup was meant to establish: an intended document not open,
+    another document of the same app open (a previous trial's), a sheet left open, a Calculator display
+    that is not a cleared 0. ``probe`` supplies the readers (tests pass fakes)."""
+    p = probe or __import__(__name__, fromlist=["window_names"])
+    wanted: dict[str, set[str]] = {}
+    apps: set[str] = set()
+    for step in task.get("setup") or []:
+        words = shlex.split(step)
+        if words[0] == "open_in":
+            wanted.setdefault(words[1], set()).add(words[2])
+            apps.add(words[1])
+        elif words[0] == "open_app":
+            apps.add(words[1])
+    out = []
+    for app, files in wanted.items():
+        names = set(p.window_names(app))
+        out += [f"{app}: {f} is not open" for f in sorted(files - names)]
+        out += [f"{app}: {n} is open from outside this trial" for n in sorted(names - files)]
+    for app in sorted(apps):
+        if p.sheet_count(app):
+            out.append(f"{app}: a sheet is open")
+    if "Calculator" in apps:
+        shown = p.calculator_display()
+        if shown != ["0"]:
+            out.append(f"Calculator: the display shows {shown!r}, not a cleared 0")
+    return out
+
+
 def setup(task: dict[str, Any], scratch: Path) -> None:
+    """Make the task's start state, then check it (``SetupError`` when it does not hold)."""
     scratch.mkdir(parents=True, exist_ok=True)
     for step in task.get("setup") or []:
         words = shlex.split(step)
@@ -57,7 +144,10 @@ def setup(task: dict[str, Any], scratch: Path) -> None:
         elif op == "mkdir":
             (scratch / args[0]).mkdir(exist_ok=True)
         elif op == "open_app":
-            subprocess.run(["open", "-a", args[0]], check=False)
+            if args[0] == "Calculator":
+                reset_calculator()
+            else:
+                subprocess.run(["open", "-a", args[0]], check=False)
         elif op == "open_in":
             subprocess.run(["open", "-a", args[0], str(scratch / args[1])], check=False)
         elif op == "open_folder":
@@ -65,6 +155,9 @@ def setup(task: dict[str, Any], scratch: Path) -> None:
         else:
             raise ValueError(f"unknown setup step {step!r}")
         time.sleep(1.5)
+    bad = start_problems(task)
+    if bad:
+        raise SetupError("start state not established: " + "; ".join(bad))
 
 
 def check(
