@@ -677,3 +677,17 @@ def test_a_chord_is_not_sent_when_the_bound_window_is_not_key():
     eff = run(b.hotkey(nm, ["cmd", "s"]))
     assert eff.dispatched is False and eff.error_code == "not_key"
     assert "hotkey" not in d.names()
+
+
+def test_the_bound_window_is_raised_after_the_app_is_activated():
+    """Q19: raising first and activating after let the app re-key its previous window, so the bound
+    TextEdit document never became key and every save was refused not_key."""
+    order: list[str] = []
+    ax = FakeAX("hello")
+    ax.raise_window = lambda pid, wid: order.append("raise")
+    d = FakeDriver(doc_snapshot("hello"))
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    act = b.policy._activity()
+    act.activate = lambda pid: (order.append("activate"), True)[1]
+    run(b._front())
+    assert order == ["activate", "raise"]

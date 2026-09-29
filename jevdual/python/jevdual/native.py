@@ -982,8 +982,10 @@ class NativeBridge:
         """Explicit foreground escalation: the bound window made its app's key window through AX, then the
         app activated by exact pid (the Driver's bring_to_front took 1.2 s to return while the front was
         already ours, and resolves apps by bundle)."""
-        self.ax.raise_window(self.pid, self.window_id)
+        # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
+        # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)
         await asyncio.to_thread(self.policy._activity().activate, self.pid)
+        self.ax.raise_window(self.pid, self.window_id)
 
     async def _front_and_key(self) -> None:
         """Front the bound window and wait until it is its app's key window, or refuse: a menu item or a chord
