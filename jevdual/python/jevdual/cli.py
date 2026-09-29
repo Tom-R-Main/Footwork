@@ -333,6 +333,7 @@ def build_parser() -> argparse.ArgumentParser:
     common(st)
     st.set_defaults(fn=S.cmd_start)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")
+    lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
     common(lk)
     lk.set_defaults(fn=S.cmd_look)
     do = sub.add_parser("do", help="dispatch one action through the boundary and get its receipt")

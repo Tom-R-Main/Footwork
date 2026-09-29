@@ -312,3 +312,14 @@ def test_a_fact_inside_an_aside_is_still_checked_in_strict_mode():
         "sent",
         "Order received",
     }
+
+
+def test_a_carried_value_is_a_fact_even_unquoted():
+    """Q19 R4: "The first quote tagged love is by André Gide." had no atom and read as no fact."""
+    page = "Viewing tag: love\nby\nAndré Gide\nTags:"
+    sentence = "The first quote tagged love is by André Gide."
+    assert check_claims(sentence, page, strict=True)[0].grade == "narrative"
+    [c] = check_claims(sentence, page, strict=True, carried=("André Gide",))
+    assert c.grade in ("exact", "normalized")
+    [bad] = check_claims("It is by Albert Einstein.", page, strict=True, carried=("Albert Einstein",))
+    assert bad.grade == "none"  # a carried value still has to be on the page

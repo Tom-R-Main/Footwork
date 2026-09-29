@@ -408,7 +408,15 @@ class BrowserBridge:
                 {**base, "ref": ref, "text": text or "", "mode": "insert_text", "replace": needs_replace},
             )
         else:
-            raise RuntimeError(f"browser mode has no {operation!r} operation (click, type, append, navigate)")
+            hint = (
+                "; content beyond this observation cannot be scrolled into view here, so an answer from "
+                "it covers only what the observation shows"
+                if operation == "scroll"
+                else ""
+            )
+            raise RuntimeError(
+                f"browser mode has no {operation!r} operation (click, type, append, navigate){hint}"
+            )
         self.last = None
         return self._effect(out, operation, id, c.label)
 
@@ -443,7 +451,27 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
     driver = configured_driver(pid)
     wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
     if not wins.windows:
-        raise RuntimeError("footwork's Chrome has no on-screen window")
+        # Q19 R4: Chrome running with every window closed; open one in footwork's profile rather than stop
+        await asyncio.to_thread(
+            subprocess.run,
+            [
+                "open",
+                "-na",
+                "Google Chrome",
+                "--args",
+                f"--user-data-dir={PROFILE_DIR}",
+                "--new-window",
+                url or "about:blank",
+            ],
+            check=False,
+        )
+        for _ in range(20):
+            await asyncio.sleep(0.5)
+            wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+            if wins.windows:
+                break
+    if not wins.windows:
+        raise RuntimeError("footwork's Chrome has no on-screen window, and opening one did not show one")
     w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
     bridge = BrowserBridge(driver, pid, w.window_id, policy=policy)
     await bridge.attach()

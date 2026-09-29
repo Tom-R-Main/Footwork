@@ -46,7 +46,7 @@ class _Verifier:
         _Verifier.judged.append([t["label"] for t in targets])
         return [_Verifier.p for _ in targets]
 
-    async def verify(self, task, requirements, menu, answer, *, answer_expected, trajectory):
+    async def verify(self, task, requirements, menu, answer, *, answer_expected, trajectory, **_):
         unmet = {r: (0.05 if r.split()[-1] in menu.page_text else 0.95) for r in requirements}
         ok = all(p < 0.5 for p in unmet.values())
         return SimpleNamespace(

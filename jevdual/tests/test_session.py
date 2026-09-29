@@ -380,3 +380,25 @@ def test_a_secret_typed_into_a_masked_field_is_unverifiable_not_partial(tmp_path
         and r["effect"] == "unverifiable"
         and "11 characters, the length of the {secret}" in r["evidence"]
     ), r
+
+
+def test_a_numeric_label_is_addressable_and_an_incomplete_view_says_so():
+    """Q19 R4: digit buttons could not be addressed by label (D08); a partial page read as whole (D02)."""
+    from jevdual.session import render_observation, resolve_label
+
+    nm = _nm(
+        [
+            Candidate(id=14, label="2", role="button", operations=("click",)),
+            Candidate(id=2, label="All Clear", role="button", operations=("click",)),
+        ]
+    )
+    assert resolve_label(nm, "label:2") == (14, "")
+    nm.menu = Menu(
+        url="u",
+        title="t",
+        page_text="",
+        candidates=nm.menu.candidates,
+        by_operation={},
+        omitted={"elements_incomplete": 1},
+    )
+    assert "this observation is incomplete" in render_observation(nm, receipt=None)

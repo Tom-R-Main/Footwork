@@ -355,6 +355,12 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
         f"{k} {v}" for k, v in m.omitted.items() if k in ("elements_incomplete", "truncated", "cap")
     )
     lines.append(f"{nm.app_name}: {m.title!r}{'  [' + flags + ']' if flags else ''}")
+    if m.omitted.get("elements_incomplete"):
+        # Q19 R4: a partial view read as the whole page (D02: 10 of ~117 products)
+        lines.append(
+            "note: this observation is incomplete; the page holds more than is shown here, and an answer "
+            "drawn from it covers only what is shown"
+        )
     lines.append(f"{len(m.candidates)} elements:")
     for c in m.candidates:
         extra = f" = {c.value!r}" if c.value else ""
@@ -537,9 +543,23 @@ async def cmd_look(args: Any) -> int:
     driver, bridge = await bind(state)
     try:
         nm, receipt = await observe(state, bridge)
+        menus = None
+        if getattr(args, "menu_bar", False) and state.mode == "native":
+            # Q19 R4: the app's menu items, so a menu path is chosen from what exists (D09 guessed one)
+            full = await bridge.observe(include_menu_bar=True)
+            own = {c.id for c in nm.menu.candidates}
+            menus = [
+                c
+                for c in full.menu.candidates
+                if c.id not in own and c.role in ("menuitem", "menubar", "menu")
+            ]
     finally:
         await driver.shutdown()
     print(render_observation(nm, text_chars=args.text, receipt=receipt))
+    if menus is not None:
+        print(f"menu bar ({len(menus)} items):")
+        for c in menus:
+            print(f"  {c.label}" + (f"  [{c.section}]" if c.section else ""))
     return 0
 
 
@@ -584,7 +604,9 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
 def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
     """The one candidate whose label contains ``label`` (case-insensitive); an exact match wins."""
     role = None
-    if ":" in label and label.split(":", 1)[0].isalpha():
+    if label.startswith("label:"):
+        label = label[len("label:") :]  # label:2 addresses a label that is a number (Q19 R4)
+    elif ":" in label and label.split(":", 1)[0].isalpha():
         role, label = label.split(":", 1)  # button:Search narrows by role
     low = label.casefold()
     pool = [c for c in nm.menu.candidates if role is None or c.role == role.casefold()]
@@ -672,7 +694,11 @@ async def cmd_do(args: Any) -> int:
             target = nm.menu.candidate(cid)
             known = chosen_from.get(cid)
             if target is None:
-                print(f"id {cid} is not on the current observation; run `footwork look`", file=sys.stderr)
+                named = [c for c in nm.menu.candidates if c.label == str(cid)]
+                hint = f" (an element is labelled {str(cid)!r}: address it as label:{cid})" if named else ""
+                print(
+                    f"id {cid} is not on the current observation{hint}; run `footwork look`", file=sys.stderr
+                )
                 return 4
             if known is not None and known != target.label:
                 print(
@@ -925,6 +951,16 @@ def carry_line(name: str, c: dict[str, Any]) -> str:
     return line
 
 
+def _carried_values(own: Path, others: list[str]) -> tuple[str, ...]:
+    """The values carried in this session and the sessions it names: facts with a recorded source."""
+    out = []
+    for d in (own, *[Path(o) for o in others]):
+        p = d / carry.CARRIES
+        if p.exists():
+            out += [c["text"] for c in json.loads(p.read_text()).values()]
+    return tuple(out)
+
+
 def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
     """Trajectory entries from another surface's session: each receipt with its evidence, and each value
     carried there with its source, labelled with the surface."""
@@ -988,6 +1024,7 @@ async def cmd_done(args: Any) -> int:
                 args.answer or None,
                 answer_expected=state.answer_expected or bool(args.answer),
                 trajectory=trajectory or None,
+                carried=_carried_values(state.path, getattr(args, "context_from", None) or []),
             )
             ms = (time.perf_counter() - t0) * 1000
     finally:

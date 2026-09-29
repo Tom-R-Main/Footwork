@@ -193,7 +193,12 @@ def extract_atoms(sentence: str, *, strict: bool = False) -> list[str]:
 
 
 def check_claims(
-    answer: str | None, page_text: str, *, field_text: str = "", strict: bool = False
+    answer: str | None,
+    page_text: str,
+    *,
+    field_text: str = "",
+    strict: bool = False,
+    carried: tuple[str, ...] = (),
 ) -> list[ClaimCheck]:
     """Grade each sentence by its atoms.
 
@@ -209,6 +214,11 @@ def check_claims(
     if not sentences:
         return []
     per_sentence = [extract_atoms(sn, strict=strict) for sn in sentences]
+    # Q19 R4: a value the harness carried is a fact with a recorded source, quoted or not ("by André Gide")
+    per_sentence = [
+        atoms + [v for v in carried if v and v in sn and v not in atoms]
+        for sn, atoms in zip(sentences, per_sentence, strict=True)
+    ]
     if strict:
         page_text, field_text = close_currency_gaps(page_text), close_currency_gaps(field_text)
     flat = [a for atoms in per_sentence for a in atoms]
@@ -461,6 +471,7 @@ class Verifier:
         trajectory: list[dict[str, Any]] | None = None,
         ledger: Ledger | None = None,
         answer_matters: bool = True,
+        carried: tuple[str, ...] = (),
     ) -> Verdict:
         ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
         questions = self.build_questions(requirements, ask_kinds=ask_kinds)
@@ -514,6 +525,7 @@ class Verifier:
             menu.full_text or menu.page_text,
             field_text=field_values(menu) if strict else "",
             strict=strict,
+            carried=carried,
         )
         unsupported = tuple(c.claim for c in claims if not c.supported)
         supported_answer: str | None = None
