@@ -985,6 +985,18 @@ class NativeBridge:
         self.ax.raise_window(self.pid, self.window_id)
         await asyncio.to_thread(self.policy._activity().activate, self.pid)
 
+    async def _front_and_key(self) -> None:
+        """Front the bound window and wait until it is its app's key window, or refuse: a menu item or a chord
+        acts on the key window, so if that is another window nothing is sent (Q19: a Command-S dispatched to
+        one TextEdit document saved another)."""
+        await self._front()
+        act = self.policy._activity()
+        for _ in range(30):
+            if act.frontmost_pid() == self.pid and self.ax.focused_window_id(self.pid) == self.window_id:
+                return
+            await asyncio.sleep(0.02)
+        raise NativeBridgeError("not_key", "the bound window did not become the key window; not pressed")
+
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
         """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and
         restores the previous frontmost app): the route for native menu key-equivalents, which ignore a
@@ -1002,13 +1014,14 @@ class NativeBridge:
         }
         if self.session:
             args["session"] = self.session
-        eff = await self._foreground(
-            "hotkey",
-            -1,
-            label,
-            lambda: self.driver.call_tool("hotkey", json.dumps(args)),
-            why=f"hotkey {label} (a menu key-equivalent)",
-        )
+
+        async def call() -> Any:
+            await self._front_and_key()
+            return await self.driver.call_tool("hotkey", json.dumps(args))
+
+        eff = await self._foreground("hotkey", -1, label, call, why=f"hotkey {label} (a menu key-equivalent)")
+        if eff.error_code in _MENU_NOT_PRESSED:
+            eff = dataclasses.replace(eff, dispatched=False)
         return await self._after_save(eff, keys=keys)
 
     async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
@@ -1040,18 +1053,7 @@ class NativeBridge:
         ax = self.ax
 
         async def call() -> Any:
-            await self._front()
-            act = self.policy._activity()
-            ready = False
-            for _ in range(30):
-                if act.frontmost_pid() == self.pid and ax.focused_window_id(self.pid) == self.window_id:
-                    ready = True
-                    break
-                await asyncio.sleep(0.02)
-            if not ready:
-                raise NativeBridgeError(
-                    "not_key", "the bound window did not become the key window; not pressed"
-                )
+            await self._front_and_key()
             try:
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:

@@ -300,7 +300,10 @@ def test_bridge_hotkey_goes_foreground_and_records_it(snapshot, monkeypatch):
             return SimpleNamespace(fronts=[], stop=list)
 
     policy = ExecutionPolicy("foreground_permitted", activity=Idle())
-    bridge = NativeBridge(D(snapshot), pid=1, window_id=2, policy=policy)
+    # the bound window (pid 1, window 2) is fronted and becomes key before the chord (Q19 R1)
+    ax = SimpleNamespace(raise_window=lambda pid, wid: None, focused_window_id=lambda pid: 2)
+    Idle.frontmost_pid = lambda self: 1
+    bridge = NativeBridge(D(snapshot), pid=1, window_id=2, policy=policy, ax=ax)
     nm = asyncio.run(bridge.observe())
     eff = asyncio.run(bridge.hotkey(nm, ["cmd", "s"]))
     assert eff.effect == "unverifiable" and eff.label == "cmd+s" and "foreground" in eff.summary

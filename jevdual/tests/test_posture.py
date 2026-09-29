@@ -312,7 +312,8 @@ def test_foreground_receipt_reports_front_app_not_restored():
     """Promise: a foreground step records the front app before and after; a change is reported, never
     hidden and never fought (the bridge does not re-activate anything)."""
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 88))
+    # 77 in front before, the bound app (pid 1) while the chord is sent, 88 after
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 88), ax=FakeAX("hello"))
     nm = run(b.observe())
     eff = run(b.hotkey(nm, ["cmd", "s"]))
     assert eff.foreground["front_before"] == 77 and eff.foreground["front_after"] == 88
@@ -663,3 +664,16 @@ def test_a_locked_screen_refuses_every_delivery_and_observation(monkeypatch):
     with pytest.raises(NativeBridgeError) as exc:
         asyncio.run(bridge.observe())
     assert exc.value.reason == "screen_locked"
+
+
+def test_a_chord_is_not_sent_when_the_bound_window_is_not_key():
+    """Q19 R1: a Command-S dispatched to one TextEdit document saved another, the app's key window. A chord
+    now goes out only once the bound window is key; otherwise nothing is sent and the reason is named."""
+    d = FakeDriver(doc_snapshot("hello"))
+    ax = FakeAX("hello")
+    ax.focused = 9  # another document is the key window and stays so
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    nm = run(b.observe())
+    eff = run(b.hotkey(nm, ["cmd", "s"]))
+    assert eff.dispatched is False and eff.error_code == "not_key"
+    assert "hotkey" not in d.names()
