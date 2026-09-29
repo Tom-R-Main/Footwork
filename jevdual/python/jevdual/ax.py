@@ -185,6 +185,52 @@ def focused_window_id(pid: int) -> int | None:
     return wid.value if _hi()(objc.pyobjc_id(w), ctypes.byref(wid)) == 0 else None
 
 
+def title_bar_point(pid: int, window_id: int) -> tuple[float, float] | None:
+    """A point on the bound window's title bar, left of the title (clicking a document's title can open
+    its rename popover) and right of the window buttons, or None when a hit test there does not land on
+    that window (another window covers it, or it has no frame)."""
+    import objc
+    from ApplicationServices import AXUIElementCopyElementAtPosition, AXUIElementCreateSystemWide
+
+    f = frame_of(window_element(pid, window_id))
+    if f is None or f.w < 120:
+        return None
+    x, y = f.x + min(90.0, f.w / 4), f.y + 12
+    err, hit = AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), x, y, None)
+    win = _attr(hit, "AXWindow") if err == 0 and hit is not None else None
+    if win is None and err == 0 and _attr(hit, "AXRole") == "AXWindow":
+        win = hit
+    wid = ctypes.c_uint32(0)
+    if win is None or _hi()(objc.pyobjc_id(win), ctypes.byref(wid)) != 0 or wid.value != window_id:
+        return None
+    return x, y
+
+
+def click_at(x: float, y: float) -> None:
+    """One real left click at a screen point, the cursor put back where it was: the one input TextEdit
+    takes to change its key window (Q19 U48: AX raises, the Window menu and AppleScript reorder its
+    windows but leave the previous one key)."""
+    import time
+
+    from Quartz import (
+        CGEventCreate,
+        CGEventCreateMouseEvent,
+        CGEventGetLocation,
+        CGEventPost,
+        CGWarpMouseCursorPosition,
+        kCGEventLeftMouseDown,
+        kCGEventLeftMouseUp,
+        kCGHIDEventTap,
+        kCGMouseButtonLeft,
+    )
+
+    back = CGEventGetLocation(CGEventCreate(None))
+    for kind in (kCGEventLeftMouseDown, kCGEventLeftMouseUp):
+        CGEventPost(kCGHIDEventTap, CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft))
+        time.sleep(0.03)
+    CGWarpMouseCursorPosition(back)
+
+
 def _title(el: Any) -> str:
     t = str(_attr(el, "AXTitle") or "").strip()
     return t.removesuffix("…").removesuffix("...").strip().casefold()

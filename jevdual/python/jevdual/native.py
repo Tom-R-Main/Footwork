@@ -993,10 +993,28 @@ class NativeBridge:
         one TextEdit document saved another)."""
         await self._front()
         act = self.policy._activity()
-        for _ in range(30):
-            if act.frontmost_pid() == self.pid and self.ax.focused_window_id(self.pid) == self.window_id:
-                return
-            await asyncio.sleep(0.02)
+
+        async def keyed() -> bool:
+            for _ in range(30):
+                if act.frontmost_pid() == self.pid and self.ax.focused_window_id(self.pid) == self.window_id:
+                    return True
+                await asyncio.sleep(0.02)
+            return False
+
+        if await keyed():
+            return
+        # some apps (TextEdit) reorder their windows on a programmatic raise but change the key window only
+        # on real input: one click on the bound window's own title bar, where a hit test says it is ours
+        # (Q19 U48, R6); this step already has the posture's foreground permission
+        point = await asyncio.to_thread(self.ax.title_bar_point, self.pid, self.window_id)
+        if point is None:
+            raise NativeBridgeError(
+                "not_key",
+                "the bound window did not become the key window and its title bar is covered; not pressed",
+            )
+        await asyncio.to_thread(self.ax.click_at, *point)
+        if await keyed():
+            return
         raise NativeBridgeError("not_key", "the bound window did not become the key window; not pressed")
 
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
