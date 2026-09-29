@@ -356,3 +356,27 @@ def test_writing_a_finder_name_field_is_not_a_confirmed_rename(tmp_path):
     }
     r = receipt_for(_state(tmp_path, before, pend), _nm([_field(61, "textbox", value="KB-20260921.txt")]))
     assert r is not None and r["effect"] == "unverifiable" and "not a committed rename" in r["evidence"], r
+
+
+def test_a_secret_typed_into_a_masked_field_is_unverifiable_not_partial(tmp_path, monkeypatch):
+    """Q19 R3: a correct password read "partial (holds {secret}, not the text typed)" because the browser
+    reads the field back as bullets and does not mark it as a password."""
+    monkeypatch.setenv("FOOTWORK_SECRET_PTA", "Password123")
+    before = [_field(34, "Password")]
+    pend = {
+        "line": "type(Password)",
+        "driver_effect": "confirmed",
+        "op": "type",
+        "target_id": 34,
+        "target_label": "Password",
+        "intended": None,
+        "secret": True,
+    }
+    st = _state(tmp_path, before, pend)
+    st.secret_names.append("PTA")
+    r = receipt_for(st, _nm([_field(34, "Password", value="•" * 11)]), secret_value="Password123")
+    assert (
+        r is not None
+        and r["effect"] == "unverifiable"
+        and "11 characters, the length of the {secret}" in r["evidence"]
+    ), r

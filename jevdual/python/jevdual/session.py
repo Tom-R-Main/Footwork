@@ -255,6 +255,10 @@ def _bound_field(menu: Menu | None, pending: dict[str, Any]) -> Candidate | None
     return menu.candidate(pending.get("target_id", -1))
 
 
+#: characters a password field shows in place of what it holds
+_MASK_CHARS = frozenset("•●*·∙")
+
+
 def _field_receipt(
     r: Any, pending: dict[str, Any], nm: Any, *, prev: Menu | None = None, secret_value: str | None = None
 ) -> Any:
@@ -292,6 +296,16 @@ def _field_receipt(
             "password field cannot be read back",
         )
     holds = field.value or ""
+    if secret and holds and set(holds) <= _MASK_CHARS:
+        # Q19 R3: a browser password field reads back as bullets and is not marked as a password; it
+        # cannot confirm what was typed, only how many characters it holds
+        n = len(secret_value) if secret_value else None
+        same = ", the length of the {secret}" if n == len(holds) else (f", not the {n} typed" if n else "")
+        return dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence=f"{label!r} is masked and holds {len(holds)} characters{same}; its content cannot be read back",
+        )
     was = _bound_field(prev, pending)
     before = (was.value or "") if was is not None else None
     if secret and secret_value is None:
