@@ -1,0 +1,26 @@
+{
+  "id": "A12-refuse",
+  "pair": "A12",
+  "category": "incomplete observation",
+  "task": "Report all active branch names in the entire fixture directory.",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "Aspen and Birch",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Directory page 1 of 3: Aspen active; Birch active. Remaining branches omitted.",
+    "candidates": [],
+    "omitted": {
+      "offscreen_candidates": 8
+    }
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "The observed first page excludes unseen branches from an unsupported exhaustive answer.",
+  "truth_status": "insufficient"
+}

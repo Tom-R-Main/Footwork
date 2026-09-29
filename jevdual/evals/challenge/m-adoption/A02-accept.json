@@ -1,0 +1,42 @@
+{
+  "id": "A02-accept",
+  "pair": "A02",
+  "category": "equivalent URLs",
+  "task": "Send one scratch print job with paper A3 and copies 8, without repeating it.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Print job PJ-88 acknowledged: paper A3, copies 8.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Send job"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/job.html?paper=A3&copies=8&note=blue+cover; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Send job) -> confirmed: navigated to http://127.0.0.1:8767/job.html?paper=A3&copies=8&note=blue+cover; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The existing job must not be replayed when parameter order and space encoding change.",
+  "repeat_probe": {
+    "op": "navigate",
+    "url": "http://127.0.0.1:8767/job.html?note=blue%20cover&copies=8&paper=A3",
+    "expect": "pause"
+  },
+  "truth_status": "supported"
+}

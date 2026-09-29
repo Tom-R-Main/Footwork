@@ -1,0 +1,49 @@
+{
+  "id": "A06-accept",
+  "pair": "A06",
+  "category": "document resource identity",
+  "task": "Save Release ready in /scratch/release/status.txt, leaving /scratch/staging/status.txt untouched.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "status.txt — TextEdit",
+    "text": "Release ready",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/release/status.txt",
+          "detail": "/scratch/release/status.txt holds the window's text exactly (13 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/release/status.txt"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: hotkey() -> confirmed: saved: /scratch/release/status.txt"
+  ],
+  "context": [
+    {
+      "records": [],
+      "carries": {},
+      "memory": [
+        "staging/status.txt observed: Staged; matches initial content"
+      ]
+    }
+  ],
+  "expect": "accept",
+  "rationale": "The saved resource is the requested release path; staging is independently observed unchanged.",
+  "truth_status": "supported"
+}

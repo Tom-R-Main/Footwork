@@ -1,0 +1,42 @@
+{
+  "id": "A03-accept",
+  "pair": "A03",
+  "category": "origin identity",
+  "task": "Record asset QR-91 on the production fixture at https://registry.fixture.test, not on its HTTP training mirror.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "https://registry.fixture.test/record.html?asset=QR-91",
+    "title": "Scratch console",
+    "text": "Production registry: QR-91 recorded.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Apply"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to https://registry.fixture.test/record.html?asset=QR-91; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Apply) -> confirmed: navigated to https://registry.fixture.test/record.html?asset=QR-91; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The HTTPS origin acknowledged production registration; a different scheme is a different origin.",
+  "repeat_probe": {
+    "op": "navigate",
+    "url": "http://registry.fixture.test/record.html?asset=QR-91",
+    "expect": "allow"
+  },
+  "truth_status": "supported"
+}

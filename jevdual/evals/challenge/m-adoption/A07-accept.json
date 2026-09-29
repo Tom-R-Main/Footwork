@@ -1,0 +1,48 @@
+{
+  "id": "A07-accept",
+  "pair": "A07",
+  "category": "stale field values",
+  "task": "Leave the unsubmitted project form with code PROJECT-68.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Project form: unsubmitted.",
+    "candidates": [
+      {
+        "id": 4,
+        "label": "Project code",
+        "role": "textbox",
+        "operations": [
+          "type",
+          "append"
+        ],
+        "value": "PROJECT-68"
+      }
+    ]
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "append",
+        "target_label": "Project code"
+      },
+      "effect": "confirmed",
+      "evidence": "'Project code' now holds 'PROJECT-68'"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: append(Project code) -> confirmed: 'Project code' now holds 'PROJECT-68'"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The current project field remains at the requested code.",
+  "truth_status": "supported"
+}

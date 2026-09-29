@@ -1,0 +1,23 @@
+{
+  "id": "A14-refuse",
+  "pair": "A14",
+  "category": "answer calibration calculation",
+  "task": "There are 7 packets with 13 clips each. How many clips in total?",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "20 clips",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Packets: 7. Clips per packet: 13.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "20 adds unlike quantities instead of calculating total clips.",
+  "truth_status": "contradicted"
+}

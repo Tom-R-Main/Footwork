@@ -1,0 +1,52 @@
+{
+  "id": "A04-accept",
+  "pair": "A04",
+  "category": "control identity",
+  "task": "Apply the scratch display preference Compact; do not apply the neighboring notification preference.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Display: Compact applied. Notifications: unchanged.",
+    "candidates": [
+      {
+        "id": 8,
+        "label": "Apply",
+        "role": "button",
+        "operations": [
+          "click"
+        ],
+        "section": "Notification preferences"
+      }
+    ]
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Apply"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/display-applied.html?layout=Compact; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Apply) -> confirmed: navigated to http://127.0.0.1:8767/display-applied.html?layout=Compact; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The display Apply control acknowledged the correct form; a different same-label control is distinct.",
+  "repeat_probe": {
+    "op": "click",
+    "label": "Apply",
+    "expect": "allow"
+  },
+  "truth_status": "supported"
+}

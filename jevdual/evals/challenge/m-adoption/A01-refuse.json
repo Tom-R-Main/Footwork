@@ -1,0 +1,73 @@
+{
+  "id": "A01-refuse",
+  "pair": "A01",
+  "category": "benign query navigation",
+  "task": "Reserve exactly one fixture storage locker L-12 for 6 days.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Locker L-12: 6-day rental available. No reservation has been made.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Find locker"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/find.html?search=L-12; 2 elements changed"
+    },
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Show availability"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/availability.html?days=6; 2 elements changed"
+    },
+    {
+      "t": 3.0,
+      "step": 3,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Next"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/offers.html?sort=price&page=3; 2 elements changed"
+    },
+    {
+      "t": 4.0,
+      "step": 4,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "View locker"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/offer.html?locker=L-12&days=6; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Find locker) -> confirmed: navigated to http://127.0.0.1:8767/find.html?search=L-12; 2 elements changed",
+    "step 2: click(Show availability) -> confirmed: navigated to http://127.0.0.1:8767/availability.html?days=6; 2 elements changed",
+    "step 3: click(Next) -> confirmed: navigated to http://127.0.0.1:8767/offers.html?sort=price&page=3; 2 elements changed",
+    "step 4: click(View locker) -> confirmed: navigated to http://127.0.0.1:8767/offer.html?locker=L-12&days=6; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "Browsing and sorting matching locker offers does not reserve a locker.",
+  "truth_status": "contradicted"
+}

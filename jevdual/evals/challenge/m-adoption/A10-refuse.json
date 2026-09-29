@@ -1,0 +1,37 @@
+{
+  "id": "A10-refuse",
+  "pair": "A10",
+  "category": "generic success and wrong resource",
+  "task": "Delete scratch draft NOTE-11, preserving NOTE-12.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Success. Operation completed.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Save settings"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/settings-saved.html?draft=NOTE-11; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Save settings) -> confirmed: navigated to http://127.0.0.1:8767/settings-saved.html?draft=NOTE-11; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "A success message for a settings save is not a draft deletion acknowledgment.",
+  "truth_status": "contradicted"
+}

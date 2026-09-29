@@ -1,0 +1,37 @@
+{
+  "id": "A10-accept",
+  "pair": "A10",
+  "category": "generic success and wrong resource",
+  "task": "Delete scratch draft NOTE-11, preserving NOTE-12.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "NOTE-11 deleted. NOTE-12 remains.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Delete"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/deleted.html?draft=NOTE-11; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Delete) -> confirmed: navigated to http://127.0.0.1:8767/deleted.html?draft=NOTE-11; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The receipt and page identify the intended deleted draft and surviving neighbor.",
+  "truth_status": "supported"
+}

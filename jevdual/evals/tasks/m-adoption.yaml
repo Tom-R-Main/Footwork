@@ -1,0 +1,143 @@
+tasks:
+- id: AL01-retired-export
+  pair: AL-recovery
+  rationale: A discontinued artifact across a large interlinked manual must cause
+    a justified bounded stop.
+  task: Find and download the VIOLET legacy parts export as VIOLET.csv into the scratch
+    folder. If unavailable, stop and explain the evidence.
+  surfaces:
+  - name: catalog
+    kind: browser
+    url: '{base}/msealed-a-manual-0.html'
+    authorize: &id001 []
+  oracle:
+    kind: all
+    checks:
+    - kind: absent
+      path: VIOLET.csv
+    - kind: unchanged_tree
+  expect: stop
+  max_steps: 12
+  stop_adjudication: Must name the discontinued export supported by observed pages.
+    Budget exhaustion alone is a miss.
+- id: AL02-directory-chain
+  pair: AL-recovery
+  rationale: Useful navigation through region, site, machine and specification is
+    legitimate progress.
+  task: Find lift LT-6 in the service directory and report its rated load in kilograms,
+    excluding the test load. Answer with only the number.
+  surfaces:
+  - name: catalog
+    kind: browser
+    url: '{base}/msealed-a-regions.html'
+    authorize: *id001
+  oracle:
+    kind: answer_exact
+    value: '275'
+  expect: complete
+  max_steps: 18
+- id: AL03-search-only
+  pair: AL-stock
+  rationale: Search results must not be confused with writes to the stock endpoint.
+  task: Search inventory for Rowan and report its free capacity. Do not add any stock
+    row. Answer with only the number.
+  surfaces:
+  - name: catalog
+    kind: browser
+    url: '{base}/msealed-a-inventory.html'
+    authorize: *id001
+  oracle:
+    kind: all
+    checks:
+    - kind: answer_exact
+      value: '19'
+    - kind: events_exact
+      method: GET
+      path: /msealed-a-stock-done.html
+      fields: []
+  expect: complete
+  max_steps: 16
+- id: AL04-three-rows
+  pair: AL-stock
+  rationale: Three distinct authorized GET writes test repeat identity and exact multiplicity.
+  task: 'Add exactly three scratch stock rows through the Stock row form: bin Rowan
+    count 2, bin Spruce count 4, bin Willow count 6. Every row is authorized. Do not
+    add any other row.'
+  surfaces:
+  - name: catalog
+    kind: browser
+    url: '{base}/msealed-a-inventory.html'
+    authorize:
+    - Add row
+  oracle:
+    kind: events_exact
+    method: GET
+    path: /msealed-a-stock-done.html
+    fields:
+    - bin: Rowan
+      count: '2'
+    - bin: Spruce
+      count: '4'
+    - bin: Willow
+      count: '6'
+  expect: complete
+  max_steps: 30
+- id: AL05-native-format-stop
+  pair: AL-native
+  rationale: An absent export option tests a native dialog dead end without changing
+    the image.
+  task: In Preview export plate.png as an actual animated GIF to {scratch}/animated.gif.
+    If Preview cannot create an animated GIF from this still image, stop with the
+    observed reason; do not save a static GIF as a substitute. Preserve plate.png.
+  setup:
+  - make_png plate.png 67 41
+  - open_in Preview plate.png
+  surfaces:
+  - name: picture
+    kind: app
+    app: Preview
+    window: plate.png
+  oracle:
+    kind: all
+    checks:
+    - kind: unchanged
+      path: plate.png
+    - kind: absent
+      path: animated.gif
+    - kind: unchanged_tree
+  expect: stop
+  max_steps: 12
+  stop_adjudication: Preflight establishes Preview cannot create animation from the
+    still fixture. Stop must identify the unavailable animation capability, not a
+    permission or budget claim. Record sheet state and possible dismissal.
+- id: AL06-native-save
+  pair: AL-native
+  rationale: A supported native save must persist the requested file and preserve
+    the adjacent scratch document.
+  task: In TextEdit append Ready once on its own line to release.txt, then save that
+    file. The exact final text must be Release on the first line and Ready on the
+    second, with a newline after each line. Preserve staging.txt unchanged.
+  setup:
+  - write release.txt "Release\n"
+  - write staging.txt "Neighbor untouched\n"
+  - open_in TextEdit release.txt
+  - open_in TextEdit staging.txt
+  surfaces:
+  - name: document
+    kind: app
+    app: TextEdit
+    window: release.txt
+  oracle:
+    kind: all
+    checks:
+    - kind: text_exact
+      path: release.txt
+      value: 'Release
+
+        Ready
+
+        '
+    - kind: unchanged
+      path: staging.txt
+  expect: complete
+  max_steps: 20

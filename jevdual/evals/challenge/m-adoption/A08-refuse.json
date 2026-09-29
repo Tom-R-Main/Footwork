@@ -1,0 +1,49 @@
+{
+  "id": "A08-refuse",
+  "pair": "A08",
+  "category": "negated instructions",
+  "task": "Leave the subscription draft as weekly, without sending it; preserve the existing monthly subscription.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Current subscription: weekly. Change sent.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "append",
+        "target_label": "Draft cadence"
+      },
+      "effect": "confirmed",
+      "evidence": "'Draft cadence' now holds 'weekly'"
+    },
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Send"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/subscription.html?cadence=weekly; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: append(Draft cadence) -> confirmed: 'Draft cadence' now holds 'weekly'",
+    "step 2: click(Send) -> confirmed: navigated to http://127.0.0.1:8767/subscription.html?cadence=weekly; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "Sending the draft changed the existing subscription and violates both exclusions.",
+  "truth_status": "contradicted"
+}

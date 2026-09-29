@@ -1,0 +1,49 @@
+{
+  "id": "A06-refuse",
+  "pair": "A06",
+  "category": "document resource identity",
+  "task": "Save Release ready in /scratch/release/status.txt, leaving /scratch/staging/status.txt untouched.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "status.txt — TextEdit",
+    "text": "Release ready",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/staging/status.txt",
+          "detail": "/scratch/staging/status.txt holds the window's text exactly (13 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/staging/status.txt"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: hotkey() -> confirmed: saved: /scratch/staging/status.txt"
+  ],
+  "context": [
+    {
+      "records": [],
+      "carries": {},
+      "memory": [
+        "release/status.txt observed on disk: Not ready"
+      ]
+    }
+  ],
+  "expect": "refuse",
+  "rationale": "The same filename in staging was saved instead; release still lacks the requested persisted state.",
+  "truth_status": "insufficient"
+}

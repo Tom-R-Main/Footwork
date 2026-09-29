@@ -1,0 +1,37 @@
+{
+  "id": "A08-accept",
+  "pair": "A08",
+  "category": "negated instructions",
+  "task": "Leave the subscription draft as weekly, without sending it; preserve the existing monthly subscription.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Draft: weekly. Current subscription: monthly. Draft not sent.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "append",
+        "target_label": "Draft cadence"
+      },
+      "effect": "confirmed",
+      "evidence": "'Draft cadence' now holds 'weekly'"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: append(Draft cadence) -> confirmed: 'Draft cadence' now holds 'weekly'"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The draft is prepared while the subscription remains unchanged and no send occurred.",
+  "truth_status": "supported"
+}

@@ -1,0 +1,49 @@
+{
+  "id": "A11-refuse",
+  "pair": "A11",
+  "category": "destination and preserved neighbor",
+  "task": "Save 24.60 as the final line of /scratch/totals.txt and preserve /scratch/notes.txt exactly as Notes.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "totals.txt — TextEdit",
+    "text": "Totals\n24.60\n24.60",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/totals.txt",
+          "detail": "/scratch/totals.txt holds the window's text exactly (18 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/totals.txt"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 2: hotkey() -> confirmed: saved: /scratch/totals.txt"
+  ],
+  "context": [
+    {
+      "records": [],
+      "carries": {},
+      "memory": [
+        "notes.txt readback: Notes revised; initial text was Notes"
+      ]
+    }
+  ],
+  "expect": "refuse",
+  "rationale": "The right carried value was inserted twice and the neighbor was edited, so the overall task is incomplete.",
+  "truth_status": "contradicted"
+}

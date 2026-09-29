@@ -1,0 +1,23 @@
+{
+  "id": "A16-refuse",
+  "pair": "A16",
+  "category": "answer calibration exclusion",
+  "task": "Which listed station is available for ordinary work, excluding maintenance-only stations?",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "Station Larch",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Station Juniper: ordinary work, available. Station Larch: maintenance-only, available. Station Maple: ordinary work, occupied.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "Availability alone does not make the maintenance-only station eligible.",
+  "truth_status": "contradicted"
+}

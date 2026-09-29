@@ -1,0 +1,37 @@
+{
+  "id": "A01-accept",
+  "pair": "A01",
+  "category": "benign query navigation",
+  "task": "Reserve exactly one fixture storage locker L-12 for 6 days.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Reservation RV-62: locker L-12, duration 6 days, confirmed.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Reserve locker"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/locker-reserved.html?locker=L-12&days=6; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Reserve locker) -> confirmed: navigated to http://127.0.0.1:8767/locker-reserved.html?locker=L-12&days=6; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "A reservation acknowledgment binds the locker and duration to one event.",
+  "truth_status": "supported"
+}

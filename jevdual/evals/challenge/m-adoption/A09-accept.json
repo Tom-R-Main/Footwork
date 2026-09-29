@@ -1,0 +1,61 @@
+{
+  "id": "A09-accept",
+  "pair": "A09",
+  "category": "legitimate repeats",
+  "task": "Record exactly three fixture pack counts: box Cedar 2, box Elm 5, and box Pine 9.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Pack counts: Cedar 2; Elm 5; Pine 9. Exactly three rows.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Apply"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/pack-count.html?box=Cedar&count=2; 2 elements changed"
+    },
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Apply"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/pack-count.html?box=Elm&count=5; 2 elements changed"
+    },
+    {
+      "t": 3.0,
+      "step": 3,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Apply"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/pack-count.html?box=Pine&count=9; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Apply) -> confirmed: navigated to http://127.0.0.1:8767/pack-count.html?box=Cedar&count=2; 2 elements changed",
+    "step 2: click(Apply) -> confirmed: navigated to http://127.0.0.1:8767/pack-count.html?box=Elm&count=5; 2 elements changed",
+    "step 3: click(Apply) -> confirmed: navigated to http://127.0.0.1:8767/pack-count.html?box=Pine&count=9; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "Three different payloads fulfill three requested rows at a shared endpoint.",
+  "truth_status": "supported"
+}

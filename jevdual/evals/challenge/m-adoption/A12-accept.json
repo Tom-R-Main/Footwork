@@ -1,0 +1,23 @@
+{
+  "id": "A12-accept",
+  "pair": "A12",
+  "category": "incomplete observation",
+  "task": "Report all active branch names in the entire fixture directory.",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "Aspen and Birch",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Complete directory: 3 of 3 branches. Aspen active; Birch active; Cypress inactive.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The exhaustive list distinguishes active from inactive and supports the full answer.",
+  "truth_status": "supported"
+}

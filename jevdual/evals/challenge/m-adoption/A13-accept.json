@@ -1,0 +1,23 @@
+{
+  "id": "A13-accept",
+  "pair": "A13",
+  "category": "answer calibration lookup",
+  "task": "What is the torque limit for fixture coupling CP-20?",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "44 Nm",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "CP-20 torque limit 44 Nm. CP-30 torque limit 58 Nm.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The source explicitly attributes the stated limit to the requested coupling.",
+  "truth_status": "supported"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "A15-accept",
+  "pair": "A15",
+  "category": "answer calibration source",
+  "task": "From the carried sensor reading, give sensor S-2 temperature, not its alarm threshold.",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "31.5 C",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Overview: no sensor readings.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [
+    {
+      "records": [],
+      "memory": [
+        "Read sensor S-2 measurement panel."
+      ],
+      "carries": {
+        "TEMP": {
+          "text": "31.5 C",
+          "location": "http://127.0.0.1:8767/s2.html",
+          "step": 2,
+          "taken_at": 2.0,
+          "occurrence": "Sensor S-2 measured temperature 31.5 C"
+        }
+      }
+    }
+  ],
+  "expect": "accept",
+  "rationale": "The source context binds the carried value to a measured temperature.",
+  "truth_status": "supported"
+}

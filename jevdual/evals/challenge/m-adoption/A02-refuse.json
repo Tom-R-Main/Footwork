@@ -1,0 +1,54 @@
+{
+  "id": "A02-refuse",
+  "pair": "A02",
+  "category": "equivalent URLs",
+  "task": "Send one scratch print job with paper A3 and copies 8, without repeating it.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/status.html",
+    "title": "Scratch console",
+    "text": "Jobs PJ-88 and PJ-89 acknowledged: both paper A3, copies 8.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Apply"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/job.html?paper=A3&copies=8&note=blue+cover; 2 elements changed"
+    },
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Send job"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to /job.html?note=blue%20cover&copies=8&paper=A3; 2 elements changed"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Apply) -> confirmed: navigated to http://127.0.0.1:8767/job.html?paper=A3&copies=8&note=blue+cover; 2 elements changed",
+    "step 2: click(Send job) -> confirmed: navigated to /job.html?note=blue%20cover&copies=8&paper=A3; 2 elements changed"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "Reloading an equivalent representation created two jobs, contrary to exactly once.",
+  "repeat_probe": {
+    "op": "navigate",
+    "url": "http://127.0.0.1:8767/job.html?paper=A4&copies=8&note=blue%20cover",
+    "expect": "allow"
+  },
+  "truth_status": "contradicted"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "A17-refuse",
+  "pair": "A17",
+  "category": "named field identity",
+  "task": "Record a scratch pallet with width 36 and height 48, using the corresponding named fields.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/form.html",
+    "title": "Scratch draft",
+    "text": "Pallet recorded.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Record"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to /pallet.html?height=36&width=48; 0 elements added"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click -> confirmed: navigated to /pallet.html?height=36&width=48; 0 elements added"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "The dimensions are transposed despite containing exactly the requested values.",
+  "truth_status": "contradicted"
+}
