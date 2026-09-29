@@ -62,7 +62,7 @@ def outcome(status: str, oracle_ok: bool) -> str:
     return "stopped_effect_present" if oracle_ok else "stopped"
 
 
-async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> None:
+async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int, recovery: bool = False) -> None:
     load_keys()
     chat = meta_chat_from_env()
     if chat is None:
@@ -92,7 +92,9 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
             run_dir = out / tid
             before = {k: len(v) for k, v in stop.recorder.gets().items()}
             t0 = time.perf_counter()
-            run = await CrossLoop(text, surfaces(t, base, scratch), chat, run_dir, max_steps=max_steps).run()
+            run = await CrossLoop(
+                text, surfaces(t, base, scratch), chat, run_dir, max_steps=max_steps, recovery=recovery
+            ).run()
             wall = time.perf_counter() - t0
             gets = {k: v[before.get(k, 0) :] for k, v in stop.recorder.gets().items()}
             c = q19.check(t, answer=run.answer, gets=gets, scratch=scratch)
@@ -112,6 +114,7 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
                 "cost_usd": run.input_tokens / 1e6 * MUSE_IN + run.output_tokens / 1e6 * MUSE_OUT,
                 "wall_s": round(wall, 1),
                 "t_oracle": t_oracle,
+                "arm": {"recovery": recovery, "completion": os.environ.get("FOOTWORK_COMPLETION", "default")},
                 "files": files,
                 "gets": gets,
             }
@@ -134,6 +137,10 @@ if __name__ == "__main__":
     ap.add_argument("--task", action="append")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--max-steps", type=int, default=20)
+    ap.add_argument("--recovery", action="store_true", help="M3: bounded recovery in the loop")
+    ap.add_argument("--completion", choices=["default", "effect_evidence"], default="default")
     a = ap.parse_args()
+    if a.completion == "effect_evidence":
+        os.environ["FOOTWORK_COMPLETION"] = "effect_evidence"  # footwork done inherits it (M1/M2)
     a.out.mkdir(parents=True, exist_ok=True)
-    asyncio.run(main(a.tasks, a.task, a.out, a.max_steps))
+    asyncio.run(main(a.tasks, a.task, a.out, a.max_steps, a.recovery))

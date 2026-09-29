@@ -164,3 +164,24 @@ def test_a_start_state_is_checked_not_assumed():
         "TextEdit: other.txt is open from outside this trial",
         "TextEdit: a sheet is open",
     ]
+
+
+def test_m3_development_oracles(tmp_path):
+    from pathlib import Path
+
+    t = q19.load(Path(__file__).resolve().parents[1] / "evals" / "tasks" / "m3-dev.yaml")
+    assert not q19.check(t["X1-withdrawn-archive"], answer=None, gets={}, scratch=tmp_path).ok
+    x3 = t["X3-unreserved-washers"]
+    assert q19.check(x3, answer="60 washers", gets={}, scratch=tmp_path).ok
+    assert not q19.check(x3, answer="155", gets={}, scratch=tmp_path).ok
+    x2 = t["X2-one-signup"]
+    for fields, expect in (
+        ({"name": "Ada Byron", "team": "Blue"}, True),
+        ({"name": "Ada Byron", "team": "Red"}, False),
+    ):
+        url, stop = serve()
+        try:
+            urllib.request.urlopen(f"{url}/m3-signup-done.html?{urllib.parse.urlencode(fields)}").read()
+            assert q19.check(x2, answer=None, gets=stop.recorder.gets(), scratch=tmp_path).ok is expect
+        finally:
+            stop()

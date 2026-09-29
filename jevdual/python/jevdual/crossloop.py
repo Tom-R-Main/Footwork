@@ -49,6 +49,47 @@ Reply with one JSON object only: {"note": "<one short sentence>", "action": {...
 {"name": "stop", "reason": "TEXT"}"""
 
 
+#: M3: what the recovery arm adds to the instructions (the loop's own checks do the rest)
+SYSTEM_RECOVERY = """
+
+Also available: {"name": "look", "surface": S, "menu_bar": true} lists a native app's menu items. A stop
+names its kind: {"name": "stop", "kind": "unavailable|unsupported_route|ambiguous_target|missing_evidence|other",
+"reason": "TEXT"}; when a page or window says the task cannot be done, stop with kind unavailable and quote it.
+The harness refuses an action already tried in the same state and an effect already recorded; after several
+steps without progress it says RECOVERY, and then ends the run if nothing changes."""
+
+_STOP_KINDS = ("unavailable", "unsupported_route", "ambiguous_target", "missing_evidence", "other")
+
+
+def compact(out: str, budget: int = 2500) -> str:
+    """M3: an observation for the model that keeps its head (identity, notes, the receipt) whole and trims
+    the element list and page text, instead of keeping only the last characters."""
+    lines = out.splitlines()
+    ei = next((i for i, ln in enumerate(lines) if re.match(r"^\d+ elements:", ln)), None)
+    pi = next((i for i, ln in enumerate(lines) if ln.startswith("page text")), None)
+    if ei is None and pi is None:
+        return (
+            out if len(out) <= budget else out[: budget - 40] + f"\n… ({len(out) - budget + 40} chars more)"
+        )
+    head_end = min(i for i in (ei, pi) if i is not None)
+    head = lines[:head_end]
+    elements = lines[ei : pi if pi is not None and pi > ei else len(lines)] if ei is not None else []
+    page = lines[pi:] if pi is not None else []
+    used = sum(len(x) + 1 for x in head)
+    kept_el = []
+    for ln in elements:
+        if used + len(ln) + 1 > budget * 0.6:
+            kept_el.append(f"  … {len(elements) - len(kept_el)} more elements (look again, or read a target)")
+            break
+        kept_el.append(ln)
+        used += len(ln) + 1
+    text = "\n".join(page)
+    room = max(200, budget - used)
+    if len(text) > room:
+        text = text[:room] + f"\n… ({len(text) - room} chars more; read --match searches all of it)"
+    return "\n".join([*head, *kept_el, text]).strip()
+
+
 @dataclass
 class Surface:
     name: str
@@ -108,6 +149,8 @@ class CrossLoop:
         requirements: tuple[str, ...] = (),
         max_steps: int = 20,
         max_done_refusals: int = 2,
+        recovery: bool = False,
+        max_seconds: float | None = None,
     ):
         self.task = task
         self.surfaces = {s.name: s for s in surfaces}
@@ -118,6 +161,12 @@ class CrossLoop:
         self.max_done_refusals = max_done_refusals
         self.observations: dict[str, str] = {}
         self.history: list[str] = []
+        #: M3: state signatures, tried actions, bounded recovery and effect reconciliation
+        self.recovery = recovery
+        self.max_seconds = max_seconds
+        from jevdual.progress import Progress
+
+        self.progress = Progress()
 
     def session(self, name: str) -> Path:
         return self.run_dir / name
@@ -155,10 +204,58 @@ class CrossLoop:
         for name, obs in self.observations.items():
             s = self.surfaces[name]
             where = s.url or f"{s.app} {s.window}".strip()
-            parts.append(f"SURFACE {name} ({s.kind}: {where}), latest observation:\n{obs[-OBS_CHARS:]}")
+            shown = compact(obs, OBS_CHARS) if self.recovery else obs[-OBS_CHARS:]
+            parts.append(f"SURFACE {name} ({s.kind}: {where}), latest observation:\n{shown}")
         if self.history:
             parts.append("RECENT STEPS:\n" + "\n".join(self.history[-10:]))
-        return [{"role": "system", "content": SYSTEM}, {"role": "user", "content": "\n\n".join(parts)}]
+        note = self.progress.note() if self.recovery else None
+        if note:
+            parts.append(note)
+        system = SYSTEM + SYSTEM_RECOVERY if self.recovery else SYSTEM
+        return [{"role": "system", "content": system}, {"role": "user", "content": "\n\n".join(parts)}]
+
+    def state_sig(self, name: str) -> str:
+        from jevdual.progress import signature
+
+        p = self.session(name) / "session.json"
+        return signature(json.loads(p.read_text())) if p.exists() else ""
+
+    def recorded_submissions(self) -> list[tuple[str, Any]]:
+        """Every submission this run's receipts establish, with its surface (M3 reconciliation)."""
+        from jevdual.completion import _records, effects
+
+        out = []
+        for name in self.surfaces:
+            recs = _records(self.session(name))
+            for e in effects(recs):
+                if e.effect == "submitted":
+                    label = next(
+                        (
+                            (r.get("action") or {}).get("target_label")
+                            for r in recs
+                            if r.get("kind") == "receipt" and float(r.get("t") or 0) == e.t
+                        ),
+                        None,
+                    )
+                    out.append((name, e, label))
+        return out
+
+    def repeats_effect(self, surface: str, action: dict[str, Any]) -> str | None:
+        """Why a do would repeat an effect this run already recorded, or None: loading a submission's
+        result address again, or clicking the control that submitted it (Q19 H02's model tried both)."""
+        from urllib.parse import urlsplit
+
+        if action.get("name") != "do":
+            return None
+        op = str(action.get("op") or "")
+        for name, e, label in self.recorded_submissions():
+            if op == "navigate":
+                u = urlsplit(str(action.get("text") or action.get("target") or ""))
+                if u.path == e.resource and u.query and u.query == e.detail.removeprefix("submitted "):
+                    return f"that address is the result of the submission recorded at step {e.step} ({e.detail}); loading it would submit again"
+            if op == "click" and name == surface and label and str(action.get("target") or "") == label:
+                return f"'{label}' already submitted at step {e.step} ({e.detail}); clicking it again would submit again"
+        return None
 
     def carried(self) -> dict[str, tuple[str, str]]:
         out = {}
@@ -176,7 +273,7 @@ class CrossLoop:
         if name in ("look", "read", "do", "done") and surface not in self.surfaces:
             return f"no surface named {surface!r}; surfaces: {', '.join(self.surfaces)}"
         if name == "look":
-            return surface, ["look"]
+            return surface, ["look", "--menu-bar"] if action.get("menu_bar") and self.recovery else ["look"]
         if name == "read":
             argv = ["read"]
             if action.get("match"):
@@ -255,8 +352,15 @@ class CrossLoop:
             return CrossRun("error", why)
         run = CrossRun("budget", f"{self.max_steps} steps")
         refusals = 0
+        began = time.perf_counter()
+        if self.recovery:
+            for name in self.surfaces:
+                self.progress.enter(name, self.state_sig(name))
         for i in range(1, self.max_steps + 1):
             t0 = time.perf_counter()
+            if self.max_seconds is not None and t0 - began > self.max_seconds:
+                run.status, run.reason = "time", f"{self.max_seconds:.0f} s"
+                return run
             reply = await self.chat(self.messages())
             run.input_tokens += reply.input_tokens
             run.output_tokens += reply.output_tokens
@@ -284,8 +388,34 @@ class CrossLoop:
                     Step(i, note, action, None, "", 0.0, reply.input_tokens, reply.output_tokens)
                 )
                 run.status, run.reason = "stopped", str(action.get("reason") or "")
+                if self.recovery:
+                    kind = str(action.get("kind") or "other")
+                    run.reason = f"[{kind if kind in _STOP_KINDS else 'other'}] {run.reason}"
                 return run
             cmd = self.command(action)
+            if self.recovery and not isinstance(cmd, str) and action.get("name") in ("look", "read", "do"):
+                why_not = self.repeats_effect(cmd[0], action) or self.progress.already(
+                    cmd[0], self.state_sig(cmd[0]), action
+                )
+                if why_not:
+                    self.history.append(f"step {i}: {json.dumps(action)} -> not run: {why_not}")
+                    run.steps.append(
+                        Step(
+                            i,
+                            note,
+                            action,
+                            None,
+                            f"not run: {why_not}",
+                            0.0,
+                            reply.input_tokens,
+                            reply.output_tokens,
+                        )
+                    )
+                    self.progress.refused_or_idle(i, action, f"not run: {why_not[:60]}")
+                    if self.progress.exhausted:
+                        run.status, run.reason = "no_progress", self.progress.reason()
+                        return run
+                    continue
             if isinstance(cmd, str):
                 self.history.append(f"step {i}: {json.dumps(action)} -> not run: {cmd}")
                 run.steps.append(
@@ -293,6 +423,7 @@ class CrossLoop:
                 )
                 continue
             surface, argv = cmd
+            sig_before = self.state_sig(surface) if self.recovery else ""
             if action["name"] == "done" and any(s.requirements for s in self.surfaces.values()):
                 code, out = self._done_everywhere(argv[1])
             else:
@@ -323,6 +454,25 @@ class CrossLoop:
                 out[:160],
             )
             self.history.append(f"step {i} [{surface}] {' '.join(argv[:3])}: exit {code}: {summary[:220]}")
+            if self.recovery:
+                if action["name"] in ("look", "read", "do"):
+                    self.progress.after(
+                        i,
+                        surface,
+                        sig_before,
+                        action,
+                        self.state_sig(surface),
+                        summary,
+                        confirmed_effect=action["name"] == "do" and ": confirmed" in summary,
+                        new_values=tuple(v for v, _ in self.carried().values()),
+                    )
+                else:
+                    self.progress.refused_or_idle(i, action, summary, progressed=code == 0)
+                # an accepted done, a pause or an error keeps its own, more specific ending
+                done_ok = action["name"] == "done" and code == 0
+                if self.progress.exhausted and not done_ok and code not in (3, 7):
+                    run.status, run.reason = "no_progress", self.progress.reason()
+                    return run
             if code == 3:
                 run.status, run.reason = "paused", summary
                 return run
