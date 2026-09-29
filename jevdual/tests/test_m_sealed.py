@@ -89,6 +89,13 @@ def test_stop_preservation_is_never_sufficient_for_a_pass():
     assert grade(task, "done", False, 8) == "false_completion"
 
 
+def test_stop_oracle_rejects_unrequested_substitute_outputs(tmp_path):
+    o = {"kind": "unchanged_tree"}
+    assert judge(o, tmp_path, before={})
+    (tmp_path / "substitute.png").write_bytes(b"wrong format output")
+    assert not judge(o, tmp_path, before={})
+
+
 def test_schema_requires_balanced_pairs(tmp_path):
     c = {
         "id": "one",
