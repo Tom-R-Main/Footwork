@@ -1,0 +1,16 @@
+{
+ "task": "D11-replace-word",
+ "oracle_ok": false,
+ "oracle": "d11.txt differs from the expected text: 'The colour of the sky.\\nA colour chart.\\n'",
+ "answer": null,
+ "commands": 7,
+ "wall_s": 44.6,
+ "friction": 1,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 1,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

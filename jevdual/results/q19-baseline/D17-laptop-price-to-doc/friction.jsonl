@@ -1,0 +1,3 @@
+{"t": 1790640241.078207, "kind": "dead_end", "text": "again only 10 of ~117 laptops observable; carried the first price, which is the minimum of those visible, not provably of all"}
+{"t": 1790640258.973736, "kind": "retry", "text": "Command-S did not save d17.txt while d15.txt was open in TextEdit (the same wrong-window delivery; d15 was already saved, so no harm this time); closed d15 and retried"}
+{"t": 1790640277.048644, "kind": "dead_end", "text": "second Command-S also failed (partial, true) with no other TextEdit document open; the operator's own command then closed d17.txt unsaved, ending the attempt (operator error)"}

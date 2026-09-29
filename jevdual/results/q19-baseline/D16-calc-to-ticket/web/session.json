@@ -1,0 +1,27 @@
+{
+ "dir": "results/q19-baseline/D16-calc-to-ticket/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Open the ticket",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 3,
+ "status": "open",
+ "memory": [
+  "step 1: type(Subject) text='Calc' -> confirmed",
+  "step 2: type(Amount) text=@product (from native app://Calculator) -> confirmed",
+  "step 3: click(Open ticket) -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8767/q19-ticket-done.html?subject=Calc&amount=391",
+ "last_title": "Support ticket",
+ "last_page_text": "Ticket opened\nYour ticket is open.",
+ "last_candidates": [],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-163df6bf-9e7b-419a-80d1-decbfd943d04",
+ "secret_names": []
+}

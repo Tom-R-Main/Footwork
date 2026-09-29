@@ -1,0 +1,11 @@
+{"t": 1790640019.4083872, "surface": "set", "args": ["start", "Find the computer name", "--app", "System Settings", "--mode", "foreground_permitted"], "exit": 0, "s": 1.98}
+{"t": 1790640028.225973, "surface": "set", "args": ["do", "click", "General"], "exit": 0, "s": 4.01}
+{"t": 1790640029.25004, "surface": "set", "args": ["look"], "exit": 0, "s": 0.91}
+{"t": 1790640036.7675688, "surface": "set", "args": ["look", "--text", "300"], "exit": 0, "s": 0.89}
+{"t": 1790640037.706229, "surface": "set", "args": ["look"], "exit": 0, "s": 0.84}
+{"t": 1790640047.419871, "surface": "set", "args": ["do", "click", "Back", "--no-judge"], "exit": 0, "s": 3.75}
+{"t": 1790640048.426042, "surface": "set", "args": ["look"], "exit": 0, "s": 0.88}
+{"t": 1790640057.0643258, "surface": "set", "args": ["do", "click", "About", "--no-judge"], "exit": 0, "s": 3.55}
+{"t": 1790640057.9543161, "surface": "set", "args": ["look", "--text", "600"], "exit": 0, "s": 0.8}
+{"t": 1790640064.922623, "surface": "set", "args": ["read", "77", "--as", "name"], "exit": 0, "s": 0.8}
+{"t": 1790640066.089707, "surface": "set", "args": ["done", "This Mac is named \"MacBook Pro (2)\"."], "exit": 0, "s": 1.08}

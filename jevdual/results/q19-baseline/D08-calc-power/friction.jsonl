@@ -1,2 +1,4 @@
 {"t": 1790631677.880915, "kind": "dead_end", "text": "View > Scientific refused twice (AXRaise on the window refused); computed 2^10 as 2 x 2 then repeated Equals"}
 {"t": 1790631696.533432, "kind": "dead_end", "text": "screen locked mid-task; paused (the harness stopped each command with screen_locked)"}
+{"t": 1790639743.4897122, "kind": "misread", "text": "reused digit ids from a look taken before the screen lock; the display ended at '216,513\u00d73 = 649,539'; the staleness guard did not fire"}
+{"t": 1790639755.5097542, "kind": "retry", "text": "digit buttons cannot be addressed by label ('2' parses as an id); button:2 works but nothing says so"}

@@ -1,0 +1,6 @@
+{"t": 1790640280.740879, "surface": "iana", "args": ["start", "Read the first example domain", "--browser", "--url", "https://www.iana.org/domains/reserved"], "exit": 0, "s": 3.5}
+{"t": 1790640281.3642292, "surface": "iana", "args": ["read", "--match", "(example\\.[a-z]+)", "--as", "domain"], "exit": 0, "s": 0.52}
+{"t": 1790640284.89773, "surface": "web", "args": ["start", "Open the ticket", "--browser", "--url", "http://127.0.0.1:8767/q19-ticket.html"], "exit": 0, "s": 3.43}
+{"t": 1790640287.119945, "surface": "web", "args": ["do", "type", "Subject", "@domain", "--from", "results/q19-baseline/D18-domain-to-ticket/iana"], "exit": 0, "s": 2.01}
+{"t": 1790640289.280693, "surface": "web", "args": ["do", "type", "Amount", "1"], "exit": 0, "s": 2.06}
+{"t": 1790640291.785335, "surface": "web", "args": ["do", "click", "Open ticket"], "exit": 0, "s": 2.3}

@@ -1,0 +1,19 @@
+{
+ "name": {
+  "name": "name",
+  "text": "MacBook Pro (2)",
+  "surface": "native",
+  "app": "System Settings",
+  "location": "app://System Settings",
+  "title": "About",
+  "element_id": 77,
+  "element_label": "textbox",
+  "element_role": "textbox",
+  "part": "value",
+  "step": 3,
+  "session": "results/q19-baseline/D13-computer-name/set",
+  "taken_at": 1790640064.891856,
+  "surroundings": "",
+  "occurrence": ""
+ }
+}

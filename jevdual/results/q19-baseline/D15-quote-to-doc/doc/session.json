@@ -1,0 +1,45 @@
+{
+ "dir": "results/q19-baseline/D15-quote-to-doc/doc",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 3210,
+ "task": "Append the author and save",
+ "requirements": [],
+ "authorized": [
+  "Save"
+ ],
+ "answer_expected": false,
+ "step": 4,
+ "status": "open",
+ "memory": [
+  "step 1: append(text area) text=@author (from browser https://quotes.toscrape.com/) -> confirmed",
+  "step 2: hotkey(cmd+s) -> partial",
+  "step 3: hotkey(cmd+s) -> partial",
+  "step 4: hotkey(cmd+s) -> confirmed"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "d15.txt",
+ "last_page_text": "\u2014\nd15.txt\nAuthors:\nAlbert Einstein",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Authors:\nAlbert Einstein",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

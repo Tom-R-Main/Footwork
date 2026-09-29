@@ -1,0 +1,3 @@
+{"t": 1790640342.729174, "surface": "f", "args": ["start", "Move d20.txt into archive", "--app", "Finder", "--window", "D20-move-file", "--mode", "foreground_permitted"], "exit": 0, "s": 1.78}
+{"t": 1790640343.798218, "surface": "f", "args": ["do", "click", "d20.txt", "--no-judge"], "exit": 4, "s": 0.98}
+{"t": 1790640347.7043672, "surface": "f", "args": ["do", "menu", "Edit > Copy \u201cd20.txt\u201d"], "exit": 0, "s": 3.82}

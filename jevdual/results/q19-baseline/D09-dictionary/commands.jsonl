@@ -1,0 +1,7 @@
+{"t": 1790639827.794753, "surface": "dict", "args": ["start", "Look up serendipity", "--app", "Dictionary", "--mode", "foreground_permitted"], "exit": 0, "s": 1.59}
+{"t": 1790639836.722517, "surface": "dict", "args": ["do", "type", "7", "serendipity"], "exit": 0, "s": 3.53}
+{"t": 1790639837.936117, "surface": "dict", "args": ["do", "enter", "7", "--no-judge"], "exit": 4, "s": 1.12}
+{"t": 1790639839.0787048, "surface": "dict", "args": ["look", "--text", "500"], "exit": 0, "s": 1.05}
+{"t": 1790639847.479054, "surface": "dict", "args": ["look", "--text", "6000"], "exit": 0, "s": 1.12}
+{"t": 1790639870.2108428, "surface": "dict", "args": ["do", "menu", "Go > New Oxford American Dictionary"], "exit": 0, "s": 4.4}
+{"t": 1790639871.468936, "surface": "dict", "args": ["look", "--text", "800"], "exit": 0, "s": 1.15}

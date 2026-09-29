@@ -7,18 +7,46 @@
  "requirements": [],
  "authorized": [],
  "answer_expected": false,
- "step": 2,
- "status": "open",
+ "step": 28,
+ "status": "done",
  "memory": [
   "step 1: menu(View > Scientific) -> refused",
-  "step 2: menu(View > Scientific) -> refused"
+  "step 2: menu(View > Scientific) -> refused",
+  "step 3: click(All Clear) -> confirmed",
+  "step 4: click(3) -> confirmed",
+  "step 5: click(Multiply) -> confirmed",
+  "step 6: click(3) -> confirmed",
+  "step 7: click(Equals) -> confirmed",
+  "step 8: click(Equals) -> confirmed",
+  "step 9: click(Equals) -> confirmed",
+  "step 10: click(Equals) -> confirmed",
+  "step 11: click(Equals) -> confirmed",
+  "step 12: click(Equals) -> confirmed",
+  "step 13: click(Equals) -> confirmed",
+  "step 14: click(Equals) -> confirmed",
+  "step 15: click(Equals) -> confirmed",
+  "step 16: click(All Clear) -> confirmed",
+  "step 17: click(2) -> confirmed",
+  "step 18: click(Multiply) -> confirmed",
+  "step 19: click(2) -> confirmed",
+  "step 20: click(Equals) -> confirmed",
+  "step 21: click(Equals) -> confirmed",
+  "step 22: click(Equals) -> confirmed",
+  "step 23: click(Equals) -> confirmed",
+  "step 24: click(Equals) -> confirmed",
+  "step 25: click(Equals) -> confirmed",
+  "step 26: click(Equals) -> confirmed",
+  "step 27: click(Equals) -> confirmed",
+  "step 28: click(Equals) -> confirmed",
+  "step 28: read [-1] '1,024' as @result",
+  "step 29: done accepted"
  ],
  "last_url": "app://Calculator",
  "last_title": "Calculator",
- "last_page_text": "48\u00d713\n624",
+ "last_page_text": "512\u00d72\n1,024",
  "last_candidates": [
   {
-   "id": 2,
+   "id": 1,
    "label": "Delete",
    "role": "button",
    "operations": [
@@ -31,7 +59,7 @@
    "section": null
   },
   {
-   "id": 3,
+   "id": 2,
    "label": "All Clear",
    "role": "button",
    "operations": [
@@ -44,7 +72,7 @@
    "section": null
   },
   {
-   "id": 4,
+   "id": 3,
    "label": "Percent",
    "role": "button",
    "operations": [
@@ -57,7 +85,7 @@
    "section": null
   },
   {
-   "id": 5,
+   "id": 4,
    "label": "Divide",
    "role": "button",
    "operations": [
@@ -70,7 +98,7 @@
    "section": null
   },
   {
-   "id": 6,
+   "id": 5,
    "label": "7",
    "role": "button",
    "operations": [
@@ -83,7 +111,7 @@
    "section": null
   },
   {
-   "id": 7,
+   "id": 6,
    "label": "8",
    "role": "button",
    "operations": [
@@ -96,7 +124,7 @@
    "section": null
   },
   {
-   "id": 8,
+   "id": 7,
    "label": "9",
    "role": "button",
    "operations": [
@@ -109,7 +137,7 @@
    "section": null
   },
   {
-   "id": 9,
+   "id": 8,
    "label": "Multiply",
    "role": "button",
    "operations": [
@@ -122,7 +150,7 @@
    "section": null
   },
   {
-   "id": 10,
+   "id": 9,
    "label": "4",
    "role": "button",
    "operations": [
@@ -135,7 +163,7 @@
    "section": null
   },
   {
-   "id": 11,
+   "id": 10,
    "label": "5",
    "role": "button",
    "operations": [
@@ -148,7 +176,7 @@
    "section": null
   },
   {
-   "id": 12,
+   "id": 11,
    "label": "6",
    "role": "button",
    "operations": [
@@ -161,7 +189,7 @@
    "section": null
   },
   {
-   "id": 13,
+   "id": 12,
    "label": "Subtract",
    "role": "button",
    "operations": [
@@ -174,7 +202,7 @@
    "section": null
   },
   {
-   "id": 14,
+   "id": 13,
    "label": "1",
    "role": "button",
    "operations": [
@@ -187,7 +215,7 @@
    "section": null
   },
   {
-   "id": 15,
+   "id": 14,
    "label": "2",
    "role": "button",
    "operations": [
@@ -200,7 +228,7 @@
    "section": null
   },
   {
-   "id": 16,
+   "id": 15,
    "label": "3",
    "role": "button",
    "operations": [
@@ -213,7 +241,7 @@
    "section": null
   },
   {
-   "id": 17,
+   "id": 16,
    "label": "Add",
    "role": "button",
    "operations": [
@@ -226,7 +254,7 @@
    "section": null
   },
   {
-   "id": 18,
+   "id": 17,
    "label": "Change Sign",
    "role": "button",
    "operations": [
@@ -239,7 +267,7 @@
    "section": null
   },
   {
-   "id": 19,
+   "id": 18,
    "label": "0",
    "role": "button",
    "operations": [
@@ -252,7 +280,7 @@
    "section": null
   },
   {
-   "id": 20,
+   "id": 19,
    "label": "Point",
    "role": "button",
    "operations": [
@@ -265,7 +293,7 @@
    "section": null
   },
   {
-   "id": 21,
+   "id": 20,
    "label": "Equals",
    "role": "button",
    "operations": [
@@ -278,7 +306,7 @@
    "section": null
   },
   {
-   "id": 23,
+   "id": 22,
    "label": "Show Sidebar",
    "role": "button",
    "operations": [
@@ -291,7 +319,7 @@
    "section": null
   },
   {
-   "id": 24,
+   "id": 23,
    "label": "Mode",
    "role": "button",
    "operations": [

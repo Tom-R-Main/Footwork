@@ -1,0 +1,16 @@
+{
+ "task": "D09-dictionary",
+ "oracle_ok": false,
+ "oracle": "answer lacks 'noun'",
+ "answer": null,
+ "commands": 7,
+ "wall_s": 45.4,
+ "friction": 2,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 2,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

@@ -17,3 +17,34 @@
 {"t": 1790631684.192449, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.38}
 {"t": 1790631684.652941, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 7, "s": 0.37}
 {"t": 1790631685.067368, "surface": "calc", "args": ["look"], "exit": 7, "s": 0.32}
+{"t": 1790639671.397749, "surface": "calc", "args": ["do", "click", "All Clear", "--no-judge"], "exit": 0, "s": 13.9}
+{"t": 1790639682.0029829, "surface": "calc", "args": ["do", "click", "15", "--no-judge"], "exit": 0, "s": 10.29}
+{"t": 1790639687.46068, "surface": "calc", "args": ["do", "click", "Multiply", "--no-judge"], "exit": 0, "s": 5.33}
+{"t": 1790639691.580689, "surface": "calc", "args": ["do", "click", "15", "--no-judge"], "exit": 0, "s": 4.01}
+{"t": 1790639696.640762, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.97}
+{"t": 1790639700.843862, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.09}
+{"t": 1790639705.03566, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.08}
+{"t": 1790639709.136663, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.01}
+{"t": 1790639713.3265321, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.07}
+{"t": 1790639717.461857, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.02}
+{"t": 1790639721.551384, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.98}
+{"t": 1790639725.530389, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.86}
+{"t": 1790639729.559029, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.91}
+{"t": 1790639732.23611, "surface": "calc", "args": ["look"], "exit": 0, "s": 2.53}
+{"t": 1790639744.673179, "surface": "calc", "args": ["look"], "exit": 0, "s": 1.1}
+{"t": 1790639759.44737, "surface": "calc", "args": ["do", "click", "All Clear", "--no-judge"], "exit": 0, "s": 3.85}
+{"t": 1790639763.451466, "surface": "calc", "args": ["do", "click", "button:2", "--no-judge"], "exit": 0, "s": 3.88}
+{"t": 1790639767.457332, "surface": "calc", "args": ["do", "click", "Multiply", "--no-judge"], "exit": 0, "s": 3.89}
+{"t": 1790639771.3230982, "surface": "calc", "args": ["do", "click", "button:2", "--no-judge"], "exit": 0, "s": 3.75}
+{"t": 1790639775.307793, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.87}
+{"t": 1790639779.623093, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.2}
+{"t": 1790639783.476901, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.74}
+{"t": 1790639787.562695, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.99}
+{"t": 1790639791.4922712, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.81}
+{"t": 1790639798.0628202, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 6.45}
+{"t": 1790639805.739289, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 7.56}
+{"t": 1790639810.068523, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 4.21}
+{"t": 1790639814.187422, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.99}
+{"t": 1790639815.298451, "surface": "calc", "args": ["look"], "exit": 0, "s": 1.01}
+{"t": 1790639822.8691359, "surface": "calc", "args": ["read", "--match", "(?m)^\\W*([\\d,]+)\\W*$", "--as", "result"], "exit": 0, "s": 1.08}
+{"t": 1790639824.347643, "surface": "calc", "args": ["done", "2 to the power of 10 is 1024 (Calculator shows \"1,024\")."], "exit": 0, "s": 1.38}

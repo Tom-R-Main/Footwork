@@ -1,0 +1,1 @@
+stopped: no route selects a file in a Finder list view

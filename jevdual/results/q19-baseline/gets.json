@@ -3,11 +3,24 @@
   {
    "subject": "Printer jam",
    "amount": "2"
+  },
+  {
+   "subject": "Calc",
+   "amount": "391"
+  },
+  {
+   "subject": "example.com",
+   "amount": "1"
   }
  ],
  "/q19-deleted.html": [
   {
    "id": "2"
+  }
+ ],
+ "/search.html": [
+  {
+   "q": "800"
   }
  ]
 }

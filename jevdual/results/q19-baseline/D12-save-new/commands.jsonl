@@ -1,0 +1,6 @@
+{"t": 1790639983.866091, "surface": "te", "args": ["start", "New document saved as d12.txt", "--app", "TextEdit", "--mode", "foreground_permitted"], "exit": 0, "s": 1.77}
+{"t": 1790639986.286437, "surface": "te", "args": ["do", "hotkey", "cmd", "n", "--no-judge"], "exit": 0, "s": 2.32}
+{"t": 1790639995.539201, "surface": "new", "args": ["start", "Type Draft D12 and save as d12.txt", "--app", "TextEdit", "--window", "Untitled", "--mode", "foreground_permitted"], "exit": 0, "s": 1.64}
+{"t": 1790639996.434618, "surface": "new", "args": ["do", "type", "text area", "Draft D12"], "exit": 4, "s": 0.8}
+{"t": 1790640000.21414, "surface": "new", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 3.69}
+{"t": 1790640001.103661, "surface": "new", "args": ["look"], "exit": 0, "s": 0.78}

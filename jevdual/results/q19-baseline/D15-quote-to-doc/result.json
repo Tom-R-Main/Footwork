@@ -1,0 +1,16 @@
+{
+ "task": "D15-quote-to-doc",
+ "oracle_ok": true,
+ "oracle": "last line 'Albert Einstein'; the value appears 1 time(s)",
+ "answer": null,
+ "commands": 7,
+ "wall_s": 61.3,
+ "friction": 1,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 1,
+  "vague_stop": 0
+ }
+}
