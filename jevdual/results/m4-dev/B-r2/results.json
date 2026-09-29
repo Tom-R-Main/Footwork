@@ -1,0 +1,53 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 29708,
+  "output_tokens": 6921,
+  "cost_usd": 0.004355,
+  "wall_s": 521.5,
+  "t_oracle": 1790675903.874924,
+  "arm": {
+   "recovery": true,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.95) [404 ms]: complete p=0.95, max unmet p=0.00",
+  "answer": "Sign-up recorded",
+  "oracle_ok": true,
+  "oracle": "one submission to /m3-signup-done.html with {'name': 'Ada Byron', 'team': 'Blue'}",
+  "outcome": "proven",
+  "steps": 5,
+  "input_tokens": 4251,
+  "output_tokens": 1597,
+  "cost_usd": 0.0007444999999999999,
+  "wall_s": 163.3,
+  "t_oracle": 1790676067.200917,
+  "arm": {
+   "recovery": true,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ }
+]

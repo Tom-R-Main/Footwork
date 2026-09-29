@@ -49,3 +49,9 @@ Hypothesis: with progress counted only from a state not seen before, a newly car
 Test: the fix with a unit test (alternating confirmed navigations end as no_progress); then X1 and X2 on arms B and C, 3 repeats each (12 runs), fresh output directories.
 Predicts: X1 ends before the budget in 6/6 (a stop naming the withdrawal, or no_progress), at least 4/6 as the model's own stop naming it; X2: no duplicate submission in 6/6, C's done accepted in at least 2/3, and no no_progress stop.
 Against: an X1 run reaching the budget; a no_progress stop on X2; a duplicate.
+
+## U53 · update · 2026-09-29 15:05
+Resolves: M4 = failed
+Observed: `results/m4-dev/` on 861249a (`scripts/m3_summary.py results/m4-dev`). X1 ended before the budget in 5 of 6 (M3: 3 of 6), 4 of them the model's own stop quoting the withdrawal (C: 3/3 within 7 steps; B: once at step 19), one `no_progress` at step 12 naming the recent steps, and one run (B-r2) reached the budget. X2: no duplicate in 6/6, C accepted 3/3, B 2/3 (once unaccepted at p 0.65 with the effect right), no `no_progress`. Deviation: B-r1's first attempt crashed on a Muse 503 before acting (kept as `crashed-B-r1-muse503`) and was rerun once.
+Inferred: the budget run did not loop between two pages: it wandered, reloading the archive as `localhost` instead of `127.0.0.1` and following the fixture site's home page to its catalog and list pages, and every state not seen before counted as progress. Novelty is gameable when the surroundings are large. Progress toward this task needs more than a new state.
+Next: bound exploration: after a number of new states with no new value or effect record, novelty stops counting as progress. Pre-register before building. Fix the frozen loop's ungated repeat of a GET submission first (an untruthful outcome, U52).

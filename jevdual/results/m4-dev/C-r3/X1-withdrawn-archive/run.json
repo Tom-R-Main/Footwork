@@ -1,0 +1,36 @@
+{
+ "status": "stopped",
+ "reason": "[unavailable] Page says: 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.' so survey.zip cannot be downloaded.",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Check archive page state",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Field survey archive'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 33267.33112499642,
+   "input_tokens": 829,
+   "output_tokens": 64
+  },
+  {
+   "step": 2,
+   "note": "Archive page states withdrawn with no download available",
+   "action": {
+    "name": "stop",
+    "kind": "unavailable",
+    "reason": "Page says: 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.' so survey.zip cannot be downloaded."
+   },
+   "exit": null,
+   "output": "",
+   "ms": 0.0,
+   "input_tokens": 740,
+   "output_tokens": 484
+  }
+ ],
+ "answer": null,
+ "input_tokens": 1569,
+ "output_tokens": 548
+}

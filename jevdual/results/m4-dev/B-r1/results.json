@@ -1,0 +1,53 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "stopped",
+  "reason": "[unavailable] Field survey archive page states: 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.' so survey.zip cannot be downloaded.",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 19,
+  "input_tokens": 28792,
+  "output_tokens": 7134,
+  "cost_usd": 0.004306,
+  "wall_s": 190.9,
+  "t_oracle": 1790676946.937631,
+  "arm": {
+   "recovery": true,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.65) [186 ms]: uncertain: complete p=0.65, max unmet p=0.00",
+  "answer": "Ada Byron",
+  "oracle_ok": true,
+  "oracle": "one submission to /m3-signup-done.html with {'name': 'Ada Byron', 'team': 'Blue'}",
+  "outcome": "unaccepted_effect_present",
+  "steps": 18,
+  "input_tokens": 20911,
+  "output_tokens": 13645,
+  "cost_usd": 0.0048201,
+  "wall_s": 346.1,
+  "t_oracle": 1790677293.0486221,
+  "arm": {
+   "recovery": true,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ }
+]

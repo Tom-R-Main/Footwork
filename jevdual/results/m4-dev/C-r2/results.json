@@ -1,0 +1,53 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "stopped",
+  "reason": "[unavailable] Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 3,
+  "input_tokens": 2424,
+  "output_tokens": 1126,
+  "cost_usd": 0.00046760000000000004,
+  "wall_s": 58.1,
+  "t_oracle": 1790676126.020389,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.94) [266 ms]: complete p=0.94, max unmet p=0.00",
+  "answer": "Sign-up recorded for Ada Byron Blue",
+  "oracle_ok": true,
+  "oracle": "one submission to /m3-signup-done.html with {'name': 'Ada Byron', 'team': 'Blue'}",
+  "outcome": "proven",
+  "steps": 4,
+  "input_tokens": 3320,
+  "output_tokens": 1438,
+  "cost_usd": 0.0006196000000000001,
+  "wall_s": 84.1,
+  "t_oracle": 1790676210.084621,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ }
+]

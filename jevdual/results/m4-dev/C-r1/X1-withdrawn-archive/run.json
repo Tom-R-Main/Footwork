@@ -1,0 +1,109 @@
+{
+ "status": "stopped",
+ "reason": "[unavailable] Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.",
+ "steps": [
+  {
+   "step": 1,
+   "note": "inspect archive page",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Field survey archive'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 21388.247333990876,
+   "input_tokens": 823,
+   "output_tokens": 60
+  },
+  {
+   "step": 2,
+   "note": "Check Help link for alternate download route",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Help"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'Help'\ndispatched click(Help): driver says unverifiable in 0.2s\nreceipt: Receipt for click(Help): confirmed (navigated to /m3-help.html; 1 elements added, 2 removed, 0 changed).\nGoogle Chrome (footwork): 'Field survey archive'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nArchive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+   "ms": 17844.882499994128,
+   "input_tokens": 740,
+   "output_tokens": 485
+  },
+  {
+   "step": 3,
+   "note": "Check archive page again",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "navigate",
+    "target": "Home"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Archive help'); ids below are from the fresh observation\ndestructive judgment: p=0.02 on 'navigate to Home'\ndispatched navigate(Home) text='Home': driver says refused (driver refused: protected_resource_scope_invalid the destination URL is invalid) in 0.1s\nreceipt: Receipt for navigate(Home) text='Home': refused (not applied: driver refused: protected_resource_scope_invalid the destination URL is invalid; page unchanged).\nGoogle Chrome (footwork): 'Archive help'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nArchive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+   "ms": 19947.574040998006,
+   "input_tokens": 832,
+   "output_tokens": 214
+  },
+  {
+   "step": 4,
+   "note": "Check archive page again",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Archive help'\n1 elements:\n  [   0] link       'Field survey archive'\npage text (118 chars):\nArchive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+   "ms": 23773.844249997637,
+   "input_tokens": 919,
+   "output_tokens": 498
+  },
+  {
+   "step": 5,
+   "note": "Return to archive page to inspect download options",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Field survey archive"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.06 on 'Field survey archive'\ndispatched click(Field survey archive): driver says unverifiable in 0.2s\nreceipt: Receipt for click(Field survey archive): confirmed (navigated to /m3-archive.html; 2 elements added, 1 removed, 0 changed).\nGoogle Chrome (footwork): 'Archive help'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 31543.24733398971,
+   "input_tokens": 866,
+   "output_tokens": 215
+  },
+  {
+   "step": 6,
+   "note": "Check archive page details",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "Status:.*",
+    "as": "STATUS"
+   },
+   "exit": 0,
+   "output": "carried @STATUS = 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/m3-archive.html (text 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is pu', its match) at step 3 of session results/m4-dev/C-r1/X1-withdrawn-archive/web",
+   "ms": 26062.67233401013,
+   "input_tokens": 1003,
+   "output_tokens": 286
+  },
+  {
+   "step": 7,
+   "note": "Archive page confirms withdrawal with no download available.",
+   "action": {
+    "name": "stop",
+    "kind": "unavailable",
+    "reason": "Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published."
+   },
+   "exit": null,
+   "output": "",
+   "ms": 0.0,
+   "input_tokens": 1115,
+   "output_tokens": 457
+  }
+ ],
+ "answer": null,
+ "input_tokens": 6298,
+ "output_tokens": 2215
+}

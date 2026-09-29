@@ -1,0 +1,51 @@
+{
+ "status": "stopped",
+ "reason": "[unavailable] Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Inspect archive page state",
+   "action": {
+    "name": "look",
+    "surface": "web"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Field survey archive'\n2 elements:\n  [   0] link       'Help'\n  [   1] link       'Home'\npage text (151 chars):\nField survey archive\nStatus: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+   "ms": 10547.214749996783,
+   "input_tokens": 825,
+   "output_tokens": 63
+  },
+  {
+   "step": 2,
+   "note": "Confirm withdrawal text before stopping",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "(withdrawn.*no longer offered for download.*)",
+    "as": "STATUS"
+   },
+   "exit": 0,
+   "output": "carried @STATUS = 'withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/m3-archive.html (text 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is pu', its match) at step 0 of session results/m4-dev/C-r2/X1-withdrawn-archive/web",
+   "ms": 29058.759499996086,
+   "input_tokens": 740,
+   "output_tokens": 682
+  },
+  {
+   "step": 3,
+   "note": "Archive is withdrawn with no download offered, task impossible",
+   "action": {
+    "name": "stop",
+    "kind": "unavailable",
+    "reason": "Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published."
+   },
+   "exit": null,
+   "output": "",
+   "ms": 0.0,
+   "input_tokens": 859,
+   "output_tokens": 381
+  }
+ ],
+ "answer": null,
+ "input_tokens": 2424,
+ "output_tokens": 1126
+}
