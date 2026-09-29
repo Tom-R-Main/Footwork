@@ -135,6 +135,17 @@ def check(
     raise ValueError(f"unknown oracle kind {kind!r}")
 
 
+def file_hashes(scratch: Path) -> dict[str, str]:
+    """sha256 of every file under a task's scratch folder, read with the oracle (the held-back protocol)."""
+    import hashlib
+
+    return {
+        str(p.relative_to(scratch)): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(scratch.rglob("*"))
+        if p.is_file()
+    }
+
+
 def submission_view(gets: dict[str, list[dict[str, str]]]) -> str:
     return json.dumps(gets)
 

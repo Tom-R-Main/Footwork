@@ -76,6 +76,8 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
             scratch = Path.home() / "footwork-pilot" / "q19" / out.name / tid
             q19.setup(t, scratch)
             text = fill(t["task"], base, scratch)
+            if "scratch" in text and str(scratch) not in text:
+                text += f" (The scratch folder is {scratch}.)"
             for name, value in (t.get("secrets") or {}).items():
                 os.environ[f"FOOTWORK_SECRET_{name}"] = str(value)
                 text += SECRET_NOTE.format(name=name)
@@ -86,6 +88,7 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
             wall = time.perf_counter() - t0
             gets = {k: v[before.get(k, 0) :] for k, v in stop.recorder.gets().items()}
             c = q19.check(t, answer=run.answer, gets=gets, scratch=scratch)
+            t_oracle, files = time.time(), q19.file_hashes(scratch)
             row = {
                 "task": tid,
                 "expect": t.get("expect"),
@@ -100,6 +103,9 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
                 "output_tokens": run.output_tokens,
                 "cost_usd": run.input_tokens / 1e6 * MUSE_IN + run.output_tokens / 1e6 * MUSE_OUT,
                 "wall_s": round(wall, 1),
+                "t_oracle": t_oracle,
+                "files": files,
+                "gets": gets,
             }
             rows.append(row)
             run_dir.mkdir(parents=True, exist_ok=True)

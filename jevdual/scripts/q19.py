@@ -98,6 +98,7 @@ def main(argv: list[str]) -> int:
     if cmd == "check":
         answer = rest[rest.index("--answer") + 1] if "--answer" in rest else None
         start = json.loads((tdir / "start.json").read_text())
+        time.sleep(1.0)  # the server writes gets.json every 0.5 s: let the terminal request reach it
         gets_all = json.loads((out / "gets.json").read_text()) if (out / "gets.json").exists() else {}
         gets = {k: v[start["gets"].get(k, 0) :] for k, v in gets_all.items()}
         c = q19.check(t, answer=answer, gets=gets, scratch=scratch(out, task))
@@ -113,6 +114,7 @@ def main(argv: list[str]) -> int:
         )
         res = {
             "task": task,
+            "t_oracle": time.time(),
             "oracle_ok": c.ok,
             "oracle": c.detail,
             "answer": answer,
@@ -120,8 +122,14 @@ def main(argv: list[str]) -> int:
             "wall_s": round((cmds[-1]["t"] if cmds else time.time()) - start["t"], 1),
             "friction": len(fr),
             "friction_by_kind": {k: sum(1 for f in fr if f["kind"] == k) for k in KINDS},
+            "files": q19.file_hashes(scratch(out, task)),
         }
-        (tdir / "result.json").write_text(json.dumps(res, indent=1))
+        # the first oracle read is the score; a later read is kept beside it, never over it
+        dest = tdir / "result.json"
+        n = 1
+        while dest.exists():
+            dest, n = tdir / f"result-later-{n}.json", n + 1
+        dest.write_text(json.dumps(res, indent=1))
         print(json.dumps(res))
         return 0
     raise SystemExit(f"unknown command {cmd}")
