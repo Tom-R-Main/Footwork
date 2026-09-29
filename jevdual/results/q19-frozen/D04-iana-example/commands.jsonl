@@ -1,0 +1,3 @@
+{"t": 1790641354.408629, "surface": "web", "args": ["start", "First example domain", "--browser", "--url", "https://www.iana.org/domains/reserved"], "exit": 0, "s": 2.56}
+{"t": 1790641354.919828, "surface": "web", "args": ["read", "--match", "(example\\.[a-z]+)", "--as", "domain"], "exit": 0, "s": 0.43}
+{"t": 1790641355.7456331, "surface": "web", "args": ["done", "The first example domain IANA names is example.com."], "exit": 0, "s": 0.74}

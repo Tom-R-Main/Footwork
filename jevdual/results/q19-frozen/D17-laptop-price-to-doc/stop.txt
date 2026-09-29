@@ -1,0 +1,1 @@
+stopped: save refused not_key; the price shown is the minimum of the incomplete observation

@@ -1,0 +1,16 @@
+{
+ "task": "D04-iana-example",
+ "oracle_ok": true,
+ "oracle": "answer contains 'example.com'",
+ "answer": "The first example domain IANA names is example.com.",
+ "commands": 3,
+ "wall_s": 4.0,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

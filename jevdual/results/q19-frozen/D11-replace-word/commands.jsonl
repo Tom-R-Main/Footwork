@@ -1,0 +1,4 @@
+{"t": 1790641578.4332612, "surface": "doc", "args": ["start", "Replace colour with color and save", "--app", "TextEdit", "--window", "d11.txt", "--mode", "foreground_permitted", "--authorize", "Save"], "exit": 0, "s": 2.12}
+{"t": 1790641579.312165, "surface": "doc", "args": ["grant", "type", "text area", "The color of the sky.\nA color chart.\n"], "exit": 0, "s": 0.78}
+{"t": 1790641582.6738482, "surface": "doc", "args": ["do", "type", "text area", "The color of the sky.\nA color chart.\n"], "exit": 0, "s": 3.27}
+{"t": 1790641586.973737, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 4.21}

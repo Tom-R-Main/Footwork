@@ -1,0 +1,1 @@
+stopped: no route to Dictionary's dictionary source (not in menus; toolbar control not observable)

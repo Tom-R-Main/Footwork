@@ -1,0 +1,16 @@
+{
+ "task": "D07-settings",
+ "oracle_ok": false,
+ "oracle": "nothing was submitted to /q19-saved.html",
+ "answer": null,
+ "commands": 3,
+ "wall_s": 7.3,
+ "friction": 1,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 1,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

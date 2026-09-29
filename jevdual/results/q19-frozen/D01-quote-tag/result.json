@@ -1,0 +1,16 @@
+{
+ "task": "D01-quote-tag",
+ "oracle_ok": true,
+ "oracle": "answer contains 'Andr\u00e9 Gide'",
+ "answer": "The first quote tagged love is by Andr\u00e9 Gide.",
+ "commands": 3,
+ "wall_s": 4.6,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

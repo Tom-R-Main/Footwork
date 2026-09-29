@@ -1,0 +1,27 @@
+{
+ "dir": "results/q19-frozen/D05-ticket/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Open a ticket",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 3,
+ "status": "open",
+ "memory": [
+  "step 1: type(Subject) text='Printer jam' -> confirmed",
+  "step 2: type(Amount) text='2' -> confirmed",
+  "step 3: click(Open ticket) -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8767/q19-ticket-done.html?subject=Printer+jam&amount=2",
+ "last_title": "Support ticket",
+ "last_page_text": "Ticket opened\nYour ticket is open.",
+ "last_candidates": [],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-81a59253-d5db-40dc-908b-e9c70270a218",
+ "secret_names": []
+}

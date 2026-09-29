@@ -1,0 +1,16 @@
+{
+ "task": "D05-ticket",
+ "oracle_ok": true,
+ "oracle": "one submission to /q19-ticket-done.html with {'subject': 'Printer jam', 'amount': '2'}",
+ "answer": null,
+ "commands": 4,
+ "wall_s": 8.1,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

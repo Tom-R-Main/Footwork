@@ -1,0 +1,1 @@
+stopped: no route sets the Frequency select; not saved

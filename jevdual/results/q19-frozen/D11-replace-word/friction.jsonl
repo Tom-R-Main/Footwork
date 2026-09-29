@@ -1,0 +1,1 @@
+{"t": 1790641602.377845, "kind": "dead_end", "text": "R1 held: Command-S refused not_key with other.txt open, nothing sent, other.txt unchanged; but the bound window never becomes key: _front raises the window, then activates the app, which re-keys the app's previous window (fix for the next round, not mid-run)"}

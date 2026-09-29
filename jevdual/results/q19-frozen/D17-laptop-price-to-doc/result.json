@@ -1,0 +1,16 @@
+{
+ "task": "D17-laptop-price-to-doc",
+ "oracle_ok": false,
+ "oracle": "last line 'Cheapest laptop price:'; the value appears 0 time(s)",
+ "answer": null,
+ "commands": 5,
+ "wall_s": 12.2,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "name": {
+  "name": "name",
+  "text": "MacBook Pro (2)",
+  "surface": "native",
+  "app": "System Settings",
+  "location": "app://System Settings",
+  "title": "About",
+  "element_id": -1,
+  "element_label": "MacBook Pro (2)",
+  "element_role": "text",
+  "part": "match",
+  "step": 2,
+  "session": "results/q19-frozen/D13-computer-name/set",
+  "taken_at": 1790641559.622933,
+  "surroundings": "\u2122 and \u00a9 1983-2026 Apple Inc. All Rights Reserved. / About / Search / MacBook Pro (2)",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

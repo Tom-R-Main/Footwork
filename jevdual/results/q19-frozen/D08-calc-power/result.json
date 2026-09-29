@@ -1,0 +1,16 @@
+{
+ "task": "D08-calc-power",
+ "oracle_ok": true,
+ "oracle": "answer contains '1024'",
+ "answer": "2 to the power of 10 is 1024 (Calculator shows 1,024).",
+ "commands": 16,
+ "wall_s": 44.9,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

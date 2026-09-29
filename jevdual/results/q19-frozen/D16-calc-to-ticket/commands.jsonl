@@ -1,0 +1,13 @@
+{"t": 1790641690.962622, "surface": "calc", "args": ["start", "17 times 23", "--app", "Calculator", "--mode", "foreground_permitted"], "exit": 0, "s": 1.65}
+{"t": 1790641694.1624691, "surface": "calc", "args": ["do", "click", "All Clear", "--no-judge"], "exit": 0, "s": 3.11}
+{"t": 1790641697.34588, "surface": "calc", "args": ["do", "click", "label:1", "--no-judge"], "exit": 0, "s": 3.09}
+{"t": 1790641700.592188, "surface": "calc", "args": ["do", "click", "label:7", "--no-judge"], "exit": 0, "s": 3.16}
+{"t": 1790641703.756753, "surface": "calc", "args": ["do", "click", "Multiply", "--no-judge"], "exit": 0, "s": 3.07}
+{"t": 1790641706.897951, "surface": "calc", "args": ["do", "click", "label:2", "--no-judge"], "exit": 0, "s": 3.05}
+{"t": 1790641710.1964958, "surface": "calc", "args": ["do", "click", "label:3", "--no-judge"], "exit": 0, "s": 3.21}
+{"t": 1790641713.41948, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.13}
+{"t": 1790641714.196851, "surface": "calc", "args": ["read", "--match", "(?m)^\\W*([\\d,]+)\\W*$", "--as", "product"], "exit": 0, "s": 0.69}
+{"t": 1790641716.871744, "surface": "web", "args": ["start", "Ticket", "--browser", "--url", "http://127.0.0.1:8767/q19-ticket.html"], "exit": 0, "s": 2.59}
+{"t": 1790641718.566676, "surface": "web", "args": ["do", "type", "Subject", "Calc"], "exit": 0, "s": 1.61}
+{"t": 1790641720.273463, "surface": "web", "args": ["do", "type", "Amount", "@product", "--from", "results/q19-frozen/D16-calc-to-ticket/calc"], "exit": 0, "s": 1.62}
+{"t": 1790641722.214915, "surface": "web", "args": ["do", "click", "Open ticket"], "exit": 0, "s": 1.86}

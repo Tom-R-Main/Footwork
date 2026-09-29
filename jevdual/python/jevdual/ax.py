@@ -199,6 +199,26 @@ def _menu_items(node: Any) -> list[Any]:
     return list(_attr(sub, "AXChildren") or ()) if sub is not None else []
 
 
+def menu_paths(pid: int, *, limit: int = 400) -> list[str]:
+    """Every menu item under the app's menu bar as a path ("File > Save"), two levels deep, read through AX
+    (the observation's element cap dropped them all on Dictionary, Q19 frozen re-drive)."""
+    from ApplicationServices import AXUIElementCreateApplication
+
+    bar = _attr(AXUIElementCreateApplication(pid), "AXMenuBar")
+    out: list[str] = []
+    for top in _menu_items(bar) if bar is not None else []:
+        head = str(_attr(top, "AXTitle") or "").strip()
+        if not head or head == "Apple":
+            continue
+        for item in _menu_items(top):
+            title = str(_attr(item, "AXTitle") or "").strip()
+            if title:
+                out.append(f"{head} > {title}")
+            if len(out) >= limit:
+                return out
+    return out
+
+
 def press_menu(pid: int, path: list[str]) -> None:
     """Press an application menu item by its path through AX. It acts on the app's key window and does
     nothing while the app is inactive (measured on TextEdit, 2026-09-25: the press returned success and

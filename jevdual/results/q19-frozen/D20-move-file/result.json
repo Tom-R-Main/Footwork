@@ -1,0 +1,16 @@
+{
+ "task": "D20-move-file",
+ "oracle_ok": false,
+ "oracle": "archive/d20.txt missing, d20.txt still there",
+ "answer": null,
+ "commands": 1,
+ "wall_s": 1.7,
+ "friction": 1,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 1,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

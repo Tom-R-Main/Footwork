@@ -1,0 +1,3 @@
+{"t": 1790641326.44408, "surface": "web", "args": ["start", "Find the cheapest laptop", "--browser", "--url", "https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops"], "exit": 0, "s": 3.09}
+{"t": 1790641327.1905222, "surface": "web", "args": ["read", "--match", "(?m)^\\$295\\.99\\n(.+)$", "--as", "name"], "exit": 0, "s": 0.66}
+{"t": 1790641328.33455, "surface": "web", "args": ["done", "Among the laptops shown (the observation is incomplete), the cheapest is \"Asus VivoBook...\" at $295.99; its full name is truncated on the page."], "exit": 0, "s": 1.06}

@@ -1,0 +1,2 @@
+{"t": 1790641508.928, "kind": "dead_end", "text": "look --menu-bar (round 1) listed 0 items live: the observation's element cap dropped the menu items; fixed during the re-drive by reading the menu bar through AX (a build change mid-run, recorded)"}
+{"t": 1790641521.704288, "kind": "dead_end", "text": "the menus (now listed) hold no source switch; the toolbar's source picker is likely among the 136 elements the cap drops; stopped"}

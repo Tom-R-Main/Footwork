@@ -545,21 +545,18 @@ async def cmd_look(args: Any) -> int:
         nm, receipt = await observe(state, bridge)
         menus = None
         if getattr(args, "menu_bar", False) and state.mode == "native":
-            # Q19 R4: the app's menu items, so a menu path is chosen from what exists (D09 guessed one)
-            full = await bridge.observe(include_menu_bar=True)
-            own = {c.id for c in nm.menu.candidates}
-            menus = [
-                c
-                for c in full.menu.candidates
-                if c.id not in own and c.role in ("menuitem", "menubar", "menu")
-            ]
+            # Q19 R4: the app's menu items, so a menu path is chosen from what exists (D09 guessed one); read
+            # through AX, since the observation's element cap drops them
+            from jevdual import ax
+
+            menus = ax.menu_paths(state.pid)
     finally:
         await driver.shutdown()
     print(render_observation(nm, text_chars=args.text, receipt=receipt))
     if menus is not None:
         print(f"menu bar ({len(menus)} items):")
-        for c in menus:
-            print(f"  {c.label}" + (f"  [{c.section}]" if c.section else ""))
+        for path in menus:
+            print(f"  {path}")
     return 0
 
 

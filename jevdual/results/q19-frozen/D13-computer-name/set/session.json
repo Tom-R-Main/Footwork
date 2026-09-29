@@ -1,0 +1,551 @@
+{
+ "dir": "results/q19-frozen/D13-computer-name/set",
+ "app": "System Settings",
+ "pid": 93232,
+ "window_id": 480,
+ "task": "Computer name",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 2,
+ "status": "done",
+ "memory": [
+  "step 1: click(General) -> confirmed",
+  "step 2: click(About) -> confirmed",
+  "step 2: read [-1] 'MacBook Pro (2)' as @name",
+  "step 3: done accepted"
+ ],
+ "last_url": "app://System Settings",
+ "last_title": "About",
+ "last_page_text": "Thomas Main, Apple Account\nWi\u2011Fi\nBluetooth\nNetwork\nVPN\nBattery\nGeneral\nAccessibility\nAppearance\nApple Intelligence & Siri\nDesktop & Dock\nDisplays\nMenu Bar\nSpotlight\nWallpaper\nNotifications\nSound\nFocus\nScreen Time\nLock Screen\nPrivacy & Security\nTouch ID & Password\nUsers & Groups\nInternet Accounts\nGame Center\niCloud\nWallet & Apple Pay\nKeyboard\nTrackpad\nPrinters & Scanners\nMacBook Pro\n14-inch, Nov 2024\nName\nChip\nApple M4 Pro\nMemory\n24 GB\nSerial number\n[REDACTED:secret_2]\nLimited Warranty\nExpires January 1, 2027\nmacOS Tahoe\nVersion 26.5.1\nBuilt-in Liquid Retina XDR Display\n14-inch (3024 \u00d7 1964)\nMacintosh HD\n23.45 GB available of 494.38 GB\nSoftware License Agreement\n-\nRegulatory Certification\nENERGY STAR\u00ae Compliance\n-\nLicense Agreement\n\u2122 and \u00a9 1983-2026 Apple Inc. All Rights Reserved.\nAbout\nSearch\nMacBook Pro (2)",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "Sidebar",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Thomas Main, Apple Account",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Wi\u2011Fi",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Bluetooth",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 10,
+   "label": "Network",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 12,
+   "label": "VPN",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 14,
+   "label": "Battery",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 17,
+   "label": "General",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": true,
+   "section": null
+  },
+  {
+   "id": 19,
+   "label": "Accessibility",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 21,
+   "label": "Appearance",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 23,
+   "label": "Apple Intelligence & Siri",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 25,
+   "label": "Desktop & Dock",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 27,
+   "label": "Displays",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 29,
+   "label": "Menu Bar",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 31,
+   "label": "Spotlight",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 33,
+   "label": "Wallpaper",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 36,
+   "label": "Notifications",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 38,
+   "label": "Sound",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 40,
+   "label": "Focus",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 42,
+   "label": "Screen Time",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 45,
+   "label": "Lock Screen",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 47,
+   "label": "Privacy & Security",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 49,
+   "label": "Touch ID & Password",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 51,
+   "label": "Users & Groups",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 54,
+   "label": "Internet Accounts",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 56,
+   "label": "Game Center",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 58,
+   "label": "iCloud",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 60,
+   "label": "Wallet & Apple Pay",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 63,
+   "label": "Keyboard",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 65,
+   "label": "Trackpad",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 67,
+   "label": "Printers & Scanners",
+   "role": "option",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 73,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Search",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 74,
+   "label": "Search",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 77,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "MacBook Pro (2)",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 82,
+   "label": "Details\u2026",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 84,
+   "label": "Display Settings\u2026",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 86,
+   "label": "Storage Settings\u2026",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 87,
+   "label": "System Report\u2026",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 93,
+   "label": "Back",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 97,
+   "label": "About",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}
