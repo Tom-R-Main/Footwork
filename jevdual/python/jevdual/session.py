@@ -1012,13 +1012,18 @@ async def cmd_done(args: Any) -> int:
         log_path = state.path / "session.jsonl"
         records = [json.loads(ln) for ln in log_path.read_text().splitlines()] if log_path.exists() else []
         trajectory += carried_checks(records, nm.menu)
-        # M1: evidence for the requested effect from this session's records and the other surfaces'
+        # M1/M2: evidence for the requested effect from this session's records and the other surfaces'.
+        # Opt-in (FOOTWORK_COMPLETION=effect_evidence) until independently authored cases validate it;
+        # the default keeps the decision Q16c adopted (done text is always answer-bearing)
         from jevdual.completion import session_effects
 
-        document = state.last_title.split(" — ")[0] if state.mode == "native" else ""
-        effects = session_effects(state.path, document=document)
-        for d in getattr(args, "context_from", None) or []:
-            effects += session_effects(Path(d))
+        by_evidence = os.environ.get("FOOTWORK_COMPLETION") == "effect_evidence"
+        effects = None
+        if by_evidence:
+            document = state.last_title.split(" — ")[0] if state.mode == "native" else ""
+            effects = session_effects(state.path, document=document)
+            for d in getattr(args, "context_from", None) or []:
+                effects += session_effects(Path(d))
         async with AsyncTypeSafeClient() as client:
             t0 = time.perf_counter()
             v = await Verifier(client).verify(
@@ -1026,12 +1031,12 @@ async def cmd_done(args: Any) -> int:
                 state.requirements,
                 nm.menu,
                 args.answer or None,
-                # M1: done text is an explanation unless the task asks for an answer (start --answer, or
-                # Jev's answer_required); a fact it states is still checked
-                answer_expected=state.answer_expected,
+                # M1: with effect evidence, done text is an explanation unless the task asks for an answer
+                # (start --answer, or Jev's answer_required); a fact it states is still checked
+                answer_expected=state.answer_expected or (bool(args.answer) and not by_evidence),
                 trajectory=trajectory or None,
                 carried=_carried_values(state.path, getattr(args, "context_from", None) or []),
-                effects=tuple(effects),
+                effects=tuple(effects) if effects is not None else None,
             )
             ms = (time.perf_counter() - t0) * 1000
     finally:
