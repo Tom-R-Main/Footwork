@@ -1,0 +1,52 @@
+{
+ "status": "error",
+ "reason": "stopped: screen_locked: the screen is locked; unlock it to continue",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Need full Finder view to locate file and folder",
+   "action": {
+    "name": "look",
+    "surface": "finder"
+   },
+   "exit": 0,
+   "output": "Finder: 'D20-move-file'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n21 elements:\n  [   1] tree       'sidebar'\n  [  28] button     'Eject'\n  [  58] tree       'list view'\n  [  61] textbox    'textbox' = 'archive'\n  [  62] button     'NSOutlineViewDisclosureButtonKey'\n  [  64] textbox    'textbox' = 'd20.txt'\n  [  65] button     'Name'\n  [  66] button     'Date Modified'\n  [  67] button     'Size'\n  [  68] button     'Kind'\n  [  70] radio      'icon view' checked=False\n  [  71] radio      'list view' checked=True\n  [  72] radio      'column view' checked=False\n  [  73] radio      'gallery view' checked=False\n  [  74] button     'Group'\n  [  75] button     'Action'\n  [  76] button     'Search'\n  [  80] statictext 'D20-move-file'\n  [ 323] file       'Crusader Kings II'\n  [ 324] file       'Documents'\n  [ 325] file       'External SSD'\npage text (380 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\nName\nDate Modified\nSize\nKind\nToday at 1:26 AM\n--\nFolder\nToday at 1:26 AM\n8 bytes\nPlain Text\n2 items, 12.21 GB available\nD20-move-file\narchive\nd20.txt",
+   "ms": 7770.296916991356,
+   "input_tokens": 946,
+   "output_tokens": 405
+  },
+  {
+   "step": 2,
+   "note": "Select d20.txt to begin move",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": 64
+   },
+   "exit": 0,
+   "output": "t: Receipt for click(textbox): refused (not applied: unknown_operation: 'click' is not offered on [64] 'textbox' (textbox); page unchanged).\nFinder: 'D20-move-file'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n21 elements:\n  [   1] tree       'sidebar'\n  [  28] button     'Eject'\n  [  58] tree       'list view'\n  [  61] textbox    'textbox' = 'archive'\n  [  62] button     'NSOutlineViewDisclosureButtonKey'\n  [  64] textbox    'textbox' = 'd20.txt'\n  [  65] button     'Name'\n  [  66] button     'Date Modified'\n  [  67] button     'Size'\n  [  68] button     'Kind'\n  [  70] radio      'icon view' checked=False\n  [  71] radio      'list view' checked=True\n  [  72] radio      'column view' checked=False\n  [  73] radio      'gallery view' checked=False\n  [  74] button     'Group'\n  [  75] button     'Action'\n  [  76] button     'Search'\n  [  80] statictext 'D20-move-file'\n  [ 323] file       'Crusader Kings II'\n  [ 324] file       'Documents'\n  [ 325] file       'External SSD'\npage text (379 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\nName\nDate Modified\nSize\nKind\nToday at 1:26 AM\n--\nFolder\nToday at 1:26 AM\n8 bytes\nPlain Text\n2 items, 12.2 GB available\nD20-move-file\narchive\nd20.txt",
+   "ms": 9362.221249990398,
+   "input_tokens": 946,
+   "output_tokens": 408
+  },
+  {
+   "step": 3,
+   "note": "Try selecting the file by its name label",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "d20.txt"
+   },
+   "exit": 7,
+   "output": "stopped: screen_locked: the screen is locked; unlock it to continue",
+   "ms": 11547.744374998729,
+   "input_tokens": 1082,
+   "output_tokens": 565
+  }
+ ],
+ "answer": null,
+ "input_tokens": 2974,
+ "output_tokens": 1378
+}

@@ -210,14 +210,21 @@ class CrossLoop:
         if name == "done":
             # a carried reference in the answer is the carried value (Q13 smoke: "@RESULT" reached the
             # verifier as literal text)
-            carried = self.carried()
-            answer = re.sub(
-                r"@([A-Za-z_][A-Za-z0-9_]*)",
-                lambda m: carried[m.group(1)][0] if m.group(1) in carried else m.group(0),
-                str(action.get("answer") or ""),
-            )
-            return surface, ["done", answer, *self._context_args(surface)]
+            return surface, [
+                "done",
+                self.resolve(str(action.get("answer") or "")),
+                *self._context_args(surface),
+            ]
         return f"unknown action {name!r}"
+
+    def resolve(self, text: str) -> str:
+        """``text`` with each carried ``@NAME`` replaced by its value."""
+        carried = self.carried()
+        return re.sub(
+            r"@([A-Za-z_][A-Za-z0-9_]*)",
+            lambda m: carried[m.group(1)][0] if m.group(1) in carried else m.group(0),
+            text,
+        )
 
     def _context_args(self, surface: str) -> list[str]:
         out: list[str] = []
@@ -324,14 +331,16 @@ class CrossLoop:
                 return run
             if action["name"] == "done":
                 if code == 0:
-                    run.status, run.reason, run.answer = "done", summary, str(action.get("answer") or "")
+                    run.status, run.reason = "done", summary
+                    # the answer the verifier judged, not the reference (Q19 smoke: "@HEADING" was scored)
+                    run.answer = self.resolve(str(action.get("answer") or ""))
                     return run
                 refusals += 1
                 if refusals > self.max_done_refusals:
                     run.status, run.reason, run.answer = (
                         "done_unverified",
                         summary,
-                        str(action.get("answer") or ""),
+                        self.resolve(str(action.get("answer") or "")),
                     )
                     return run
         return run

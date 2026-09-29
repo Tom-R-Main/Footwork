@@ -1,0 +1,47 @@
+[
+ {
+  "task": "D03-practice-login",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.81) [275 ms]: complete p=0.81, max unmet p=0.00",
+  "answer": "Logged In Successfully",
+  "oracle_ok": true,
+  "oracle": "answer contains 'Logged In Successfully'",
+  "outcome": "proven",
+  "steps": 5,
+  "input_tokens": 5283,
+  "output_tokens": 657,
+  "cost_usd": 0.0006597000000000002,
+  "wall_s": 23.8
+ },
+ {
+  "task": "D08-calc-power",
+  "expect": "complete",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "answer lacks '1024'",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 36016,
+  "output_tokens": 10474,
+  "cost_usd": 0.005696400000000001,
+  "wall_s": 321.2
+ },
+ {
+  "task": "D20-move-file",
+  "expect": "stop",
+  "status": "error",
+  "reason": "stopped: screen_locked: the screen is locked; unlock it to continue",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "archive/d20.txt missing, d20.txt still there",
+  "outcome": "stopped",
+  "steps": 3,
+  "input_tokens": 2974,
+  "output_tokens": 1378,
+  "cost_usd": 0.000573,
+  "wall_s": 30.7
+ }
+]

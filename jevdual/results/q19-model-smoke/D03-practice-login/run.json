@@ -1,0 +1,85 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.81) [275 ms]: complete p=0.81, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Enter username student",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "type",
+    "target": "Username",
+    "text": "student"
+   },
+   "exit": 0,
+   "output": "35] button     'Submit'\n  [  50] generic    'generic'\n  [  51] generic    'generic'\n  [  52] statictext 'student'\n  [  60] link       'Press \"Enter\" to skip to content'\n  [  61] link       'Practice Test Automation.'\n  [  62] link       'Privacy Policy'\npage text (1222 chars):\nTest login\nThis is a simple Login page. Students can use this page to practice writing simple positive and negative LogIn tests. Login functionality is something that most of the test automation engineers need to automate.\nUse next credentials to execute Login:\nUsername:\nstudent\nPassword:\n[REDACTED:secret_0]\nUsername\nPassword\nTest case 1: Positive LogIn test\nOpen page\nType username\nstudent\ninto Username field\nType password\n[REDACTED:secret_0]\ninto Password field\nPush\nSubmit\nbutton\nVerify new page URL contains\npracticetestautomation.com/logged-in-successfully/\nVerify new page contains expected text ('Congratulations' or 'successfully logged in')\nVerify button\nLog out\nis displayed on the new page\nTest case 2: Negative username test\nOpen page\nType username\nincorrectUser\ninto Username field\nType password\n[REDACTED:secret_0]\ninto Password field\nPush\nSubmit\nbutton\nVerify error message is displayed\nVerify error message text is\nYour username is invalid!\nTest case 3: Negative password test\nOpen page\nType username\nstudent\ninto Username field\nType password\nincorrectPassword\ninto Password field\nPush\nSubmit\nbutton\nVerify error message is displayed\nVerify error message text is\nYour password is invalid!\n\u00a9 Copyright 2020\nAll rights reserved |",
+   "ms": 5732.776582997758,
+   "input_tokens": 1110,
+   "output_tokens": 129
+  },
+  {
+   "step": 2,
+   "note": "Enter password placeholder",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "type",
+    "target": "Password",
+    "text": "{PTA}"
+   },
+   "exit": 0,
+   "output": "ric    'generic'\n  [  51] generic    'generic'\n  [  52] statictext 'student'\n  [  53] statictext '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'\n  [  61] link       'Press \"Enter\" to skip to content'\n  [  62] link       'Practice Test Automation.'\n  [  63] link       'Privacy Policy'\npage text (1225 chars):\nTest login\nThis is a simple Login page. Students can use this page to practice writing simple positive and negative LogIn tests. Login functionality is something that most of the test automation engineers need to automate.\nUse next credentials to execute Login:\nUsername:\nstudent\nPassword:\n{secret}\nUsername\nPassword\nTest case 1: Positive LogIn test\nOpen page\nType username\nstudent\ninto Username field\nType password\n{secret}\ninto Password field\nPush\nSubmit\nbutton\nVerify new page URL contains\npracticetestautomation.com/logged-in-successfully/\nVerify new page contains expected text ('Congratulations' or 'successfully logged in')\nVerify button\nLog out\nis displayed on the new page\nTest case 2: Negative username test\nOpen page\nType username\nincorrectUser\ninto Username field\nType password\n{secret}\ninto Password field\nPush\nSubmit\nbutton\nVerify error message is displayed\nVerify error message text is\nYour username is invalid!\nTest case 3: Negative password test\nOpen page\nType username\nstudent\ninto Username field\nType password\nincorrectPassword\ninto Password field\nPush\nSubmit\nbutton\nVerify error message is displayed\nVerify error message text is\nYour password is invalid!\n\u00a9 Copyright 2020\nAll rights reserved |\n\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+   "ms": 3661.3232499948936,
+   "input_tokens": 1107,
+   "output_tokens": 110
+  },
+  {
+   "step": 3,
+   "note": "Submit login form",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Submit"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.10 on 'Submit'\ndispatched click(Submit): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Submit): confirmed (navigated to /logged-in-successfully/; 1 elements added, 6 removed, 0 changed).\nGoogle Chrome (footwork): 'Test Login | Practice Test Automation'\n12 elements:\n  [   0] link       'Practice Test Automation'\n  [   1] image      'Practice Test Automation'\n  [   2] link       'HOME'\n  [   3] link       'PRACTICE'\n  [   4] link       'COURSES'\n  [   5] link       'AI WORKSHOP'\n  [   6] link       'Log out'\n  [  32] link       'BLOG'\n  [  33] link       'CONTACT'\n  [  34] link       'Practice Test Automation.'\n  [  35] link       'Privacy Policy'\n  [  46] link       'Press \"Enter\" to skip to content'\npage text (114 chars):\nLogged In Successfully\nCongratulations student. You successfully logged in!\n\u00a9 Copyright 2020\nAll rights reserved |",
+   "ms": 3780.0577919988427,
+   "input_tokens": 1178,
+   "output_tokens": 90
+  },
+  {
+   "step": 4,
+   "note": "Read success heading to report",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "(Logged In Successfully)",
+    "as": "HEADING"
+   },
+   "exit": 0,
+   "output": "carried @HEADING = 'Logged In Successfully', read from browser Google Chrome (footwork) at https://practicetestautomation.com/logged-in-successfully/ (text 'Logged In Successfully', its match) at step 3 of session results/q19-model-smoke/D03-practice-login/web",
+   "ms": 3772.0899999985704,
+   "input_tokens": 900,
+   "output_tokens": 165
+  },
+  {
+   "step": 5,
+   "note": "Login succeeded, reporting heading",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@HEADING"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.81) [275 ms]: complete p=0.81, max unmet p=0.00\naccepted. session closed.",
+   "ms": 3577.900125004817,
+   "input_tokens": 988,
+   "output_tokens": 163
+  }
+ ],
+ "answer": "Logged In Successfully",
+ "input_tokens": 5283,
+ "output_tokens": 657
+}
