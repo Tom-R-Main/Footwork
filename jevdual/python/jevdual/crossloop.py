@@ -231,41 +231,23 @@ class CrossLoop:
             if e.effect in ("saved", "submitted")
         )
 
-    def recorded_submissions(self) -> list[tuple[str, Any]]:
-        """Every submission this run's receipts establish, with its surface (M3 reconciliation)."""
-        from jevdual.completion import _records, effects
-
-        out = []
-        for name in self.surfaces:
-            recs = _records(self.session(name))
-            for e in effects(recs):
-                if e.effect == "submitted":
-                    label = next(
-                        (
-                            (r.get("action") or {}).get("target_label")
-                            for r in recs
-                            if r.get("kind") == "receipt" and float(r.get("t") or 0) == e.t
-                        ),
-                        None,
-                    )
-                    out.append((name, e, label))
-        return out
-
     def repeats_effect(self, surface: str, action: dict[str, Any]) -> str | None:
-        """Why a do would repeat an effect this run already recorded, or None: loading a submission's
-        result address again, or clicking the control that submitted it (Q19 H02's model tried both)."""
-        from urllib.parse import urlsplit
+        """Why a do would repeat an effect this run already recorded (jevdual.completion.repeat_of), or
+        None: a navigation is checked against every surface's submissions, a click against its own."""
+        from jevdual.completion import _records, repeat_of
 
         if action.get("name") != "do":
             return None
         op = str(action.get("op") or "")
-        for name, e, label in self.recorded_submissions():
-            if op == "navigate":
-                u = urlsplit(str(action.get("text") or action.get("target") or ""))
-                if u.path == e.resource and u.query and u.query == e.detail.removeprefix("submitted "):
-                    return f"that address is the result of the submission recorded at step {e.step} ({e.detail}); loading it would submit again"
-            if op == "click" and name == surface and label and str(action.get("target") or "") == label:
-                return f"'{label}' already submitted at step {e.step} ({e.detail}); clicking it again would submit again"
+        for name in self.surfaces:
+            why = repeat_of(
+                _records(self.session(name)),
+                op,
+                url=str(action.get("text") or action.get("target") or "") if op == "navigate" else "",
+                label=str(action.get("target") or "") if op == "click" and name == surface else "",
+            )
+            if why:
+                return why
         return None
 
     def carried(self) -> dict[str, tuple[str, str]]:

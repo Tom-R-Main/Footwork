@@ -739,6 +739,17 @@ async def cmd_do(args: Any) -> int:
         elif shown_text:
             line += f" text={shown_text[:60]!r}"
         hit = await authorizer.check(nm, action, task=state.task)
+        if not hit and op in ("navigate", "click"):
+            # U52: a repeat of a submission this session already recorded pauses like any gated effect,
+            # whatever the label authorization says; a grant for exactly this action clears it
+            from jevdual.completion import _records, repeat_of
+
+            hit = repeat_of(
+                _records(state.path),
+                op,
+                url=text or "" if op == "navigate" else "",
+                label=target.label if target else "",
+            )
         if client is not None:
             await client.__aexit__(None, None, None)
         if authorizer.judgments:

@@ -119,3 +119,17 @@ def test_a_field_readback_is_limited_once_the_page_navigated_away():
     typed = _receipt(2, "type", "'Quantity' now holds '27'", t=2)
     (holds, sub) = effects([typed, SUBMIT])
     assert holds.effect == "field_holds" and "navigated away" in holds.limits[0] and sub.usable
+
+
+def test_a_repeat_of_a_recorded_submission_is_named():
+    """U52: the frozen loop let a model load a sign-up's result address a second time (a GET form
+    submits on load); footwork now pauses it, like the loop's reconciliation."""
+    from jevdual.completion import repeat_of
+
+    recs = [{**SUBMIT, "action": {"op": "click", "target_label": "Submit cutting request"}}]
+    url = "http://127.0.0.1:8768/q19h-cutting-done.html?reference=QUIET-83&quantity=27"
+    assert "repeating the submission recorded at step 3" in repeat_of(recs, "navigate", url=url)
+    assert repeat_of(recs, "navigate", url=url.replace("27", "28")) is None
+    assert "already submitted" in repeat_of(recs, "click", label="Submit cutting request")
+    assert repeat_of(recs, "click", label="Cancel") is None
+    assert repeat_of([], "navigate", url=url) is None

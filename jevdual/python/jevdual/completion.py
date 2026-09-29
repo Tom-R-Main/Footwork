@@ -200,3 +200,31 @@ def floor(task: str, items: list[Effect] | tuple[Effect, ...], *, answer_bearing
     if not need and not usable:
         return "no evidence in this run for the requested effect (only what the page says)"
     return None
+
+
+def repeat_of(records: list[dict[str, Any]], op: str, *, url: str = "", label: str = "") -> str | None:
+    """Why an action would repeat a submission these records already hold, or None: loading the
+    submission's result address again (a GET form submits on load), or clicking the control that made
+    it. U52: in the loop as frozen for Q19, a model whose done was refused loaded the sign-up's result
+    address, submitting a second time, and its next done was accepted."""
+    from urllib.parse import urlsplit
+
+    for e in effects(records):
+        if e.effect != "submitted":
+            continue
+        query = e.detail.removeprefix("submitted ")
+        if op == "navigate" and url:
+            u = urlsplit(url)
+            if u.path == e.resource and u.query and u.query == query:
+                return f"loading {u.path}?{u.query} would submit again (repeating the submission recorded at step {e.step})"
+        if op == "click" and label:
+            made = [
+                r
+                for r in records
+                if r.get("kind") == "receipt"
+                and float(r.get("t") or 0) == e.t
+                and (r.get("action") or {}).get("target_label") == label
+            ]
+            if made:
+                return f"'{label}' already submitted at step {e.step} ({query}); pressing it again would submit again"
+    return None
