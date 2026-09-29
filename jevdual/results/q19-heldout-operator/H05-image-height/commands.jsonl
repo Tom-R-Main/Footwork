@@ -1,0 +1,4 @@
+{"t": 1790664985.6878788, "surface": "image", "args": ["start", "Report the pixel height of h05-panel.png", "--app", "Preview", "--window", "h05-panel.png", "--mode", "foreground_permitted"], "exit": 0, "s": 1.8}
+{"t": 1790664995.640491, "surface": "image", "args": ["do", "click", "Inspector"], "exit": 0, "s": 3.97}
+{"t": 1790665002.350663, "surface": "image", "args": ["read", "--match", "\\d+ \u00d7 (\\d+) pixels", "--as", "height"], "exit": 0, "s": 0.99}
+{"t": 1790665003.633909, "surface": "image", "args": ["done", "The image is 542 pixels high (Image Size '938 \u00d7 542 pixels'; 938 is the width)."], "exit": 0, "s": 1.19}

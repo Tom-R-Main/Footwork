@@ -1,0 +1,29 @@
+{
+ "dir": "results/q19-heldout-operator/H10-document-to-request/request",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Submit one cutting request",
+ "requirements": [],
+ "authorized": [
+  "Submit cutting request"
+ ],
+ "answer_expected": false,
+ "step": 3,
+ "status": "open",
+ "memory": [
+  "step 1: type(Reference) text=@ref (from native app://TextEdit) -> confirmed",
+  "step 2: type(Quantity) text=@qty (from native app://TextEdit) -> confirmed",
+  "step 3: click(Submit cutting request) -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8767/q19h-cutting-done.html?reference=QUIET-83&quantity=27",
+ "last_title": "Scratch cutting request",
+ "last_page_text": "Scratch request recorded\nThe local service has recorded your cutting request.",
+ "last_candidates": [],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-b9ca3b89-1d73-4607-a5c8-b02276efeff7",
+ "secret_names": []
+}

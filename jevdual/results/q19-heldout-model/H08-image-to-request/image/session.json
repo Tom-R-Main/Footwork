@@ -1,0 +1,404 @@
+{
+ "dir": "results/q19-heldout-model/H08-image-to-request/image",
+ "app": "Preview",
+ "pid": 64542,
+ "window_id": 4285,
+ "task": "Read the pixel height of h08-poster.png in Preview. Submit one scratch cutting request in the browser with reference \"Poster H08\" and that height as the quantity. This local request is authorized. (The scratch folder is /Users/thomasmain/footwork-pilot/q19/q19-heldout-model/H08-image-to-request.)",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 12,
+ "status": "open",
+ "memory": [
+  "step 1: click(Adjust Size) -> confirmed",
+  "step 2: click(combobox) -> suspected_noop",
+  "step 3: click(combobox) -> suspected_noop",
+  "step 4: click(combobox) -> suspected_noop",
+  "step 5: click(combobox) -> suspected_noop",
+  "step 6: key(Escape) -> suspected_noop",
+  "step 7: menu(Tools > Show Inspector) -> refused",
+  "step 8: click(combobox) -> suspected_noop",
+  "step 9: click(combobox) -> suspected_noop",
+  "step 10: click(textbox) -> refused",
+  "step 11: type(combobox) text='pixels' -> refused",
+  "step 12: click(_NS:365) -> confirmed"
+ ],
+ "last_url": "app://Preview",
+ "last_title": "h08-poster.png",
+ "last_page_text": "h08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n10.61 \u00d7 4.42 inches\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+ "last_candidates": [
+  {
+   "id": 2,
+   "label": "more toolbar items",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "menu button",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Instant Alpha",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Sketch",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Draw",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Shapes",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Text",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "Sign",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 10,
+   "label": "Adjust Color",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 11,
+   "label": "Adjust Size",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 12,
+   "label": "Shape Style",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "Border Color",
+   "role": "colorwell",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 14,
+   "label": "Fill Color",
+   "role": "colorwell",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "Text Style",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 16,
+   "label": "Image Description",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 19,
+   "label": "h08-poster.png",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 21,
+   "label": "OK",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 22,
+   "label": "Cancel",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 23,
+   "label": "Resample image",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "section": "_NS:198"
+  },
+  {
+   "id": 24,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "10.61",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 25,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "4.42",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 26,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "72",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 27,
+   "label": "lock",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "section": "_NS:198"
+  },
+  {
+   "id": 28,
+   "label": "combobox",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": "inches",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 29,
+   "label": "combobox",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": "pixels/inch",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 30,
+   "label": "Scale proportionally",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "section": "_NS:198"
+  },
+  {
+   "id": 31,
+   "label": "combobox",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": "Custom",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  },
+  {
+   "id": 32,
+   "label": "_NS:365",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": "_NS:198"
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

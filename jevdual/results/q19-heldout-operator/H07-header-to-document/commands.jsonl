@@ -1,0 +1,6 @@
+{"t": 1790665209.665819, "surface": "web", "args": ["start", "Find the magic header string", "--browser", "--url", "https://www.sqlite.org/fileformat.html#magic_header_string"], "exit": 0, "s": 3.03}
+{"t": 1790665215.145777, "surface": "web", "args": ["read", "--match", "header string: \"([^\"]+)", "--as", "hdr"], "exit": 0, "s": 0.52}
+{"t": 1790665222.160332, "surface": "web", "args": ["read", "--match", "header string: \"([^\"\\\\]+)", "--as", "hdr"], "exit": 0, "s": 0.52}
+{"t": 1790665223.724767, "surface": "doc", "args": ["start", "Append the header as a new line and save", "--app", "TextEdit", "--window", "h07-signature.txt", "--mode", "foreground_permitted", "--authorize", "Save"], "exit": 0, "s": 1.48}
+{"t": 1790665233.0298219, "surface": "doc", "args": ["do", "append", "text area", "@hdr", "--from", "results/q19-heldout-operator/H07-header-to-document/web"], "exit": 0, "s": 2.24}
+{"t": 1790665237.882825, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 4.76}

@@ -1,0 +1,38 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.87) [301 ms]: complete p=0.87, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read PNG full name from page",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "(Portable Network Graphics)",
+    "as": "PNGNAME"
+   },
+   "exit": 0,
+   "output": "carried @PNGNAME = 'Portable Network Graphics', read from browser Google Chrome (footwork) at https://www.libpng.org/pub/png/ (text 'Portable Network Graphics', its match) at step 0 of session results/q19-heldout-model/H01-png-name/web",
+   "ms": 6508.974666998256,
+   "input_tokens": 1055,
+   "output_tokens": 177
+  },
+  {
+   "step": 2,
+   "note": "Reporting carried PNG full name",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@PNGNAME"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.87) [301 ms]: complete p=0.87, max unmet p=0.00\naccepted. session closed.",
+   "ms": 7007.634084002348,
+   "input_tokens": 1153,
+   "output_tokens": 224
+  }
+ ],
+ "answer": "Portable Network Graphics",
+ "input_tokens": 2208,
+ "output_tokens": 401
+}

@@ -1,0 +1,21 @@
+{
+ "task": "H06-edit-one-document",
+ "t_oracle": 1790665080.989345,
+ "oracle_ok": true,
+ "oracle": "h06-labels.txt equals the expected text; h06-neighbor.txt equals the expected text",
+ "answer": null,
+ "commands": 3,
+ "wall_s": 29.5,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {
+  "h06-labels.txt": "0a34c97b246a26e4577bcc0c621839a35855d2ae955f6228a23ce16402c83046",
+  "h06-neighbor.txt": "7f416ef56c8ca51993da6a2effa02d50ccfd9199e072f7d2668c9adf205f34dc"
+ }
+}

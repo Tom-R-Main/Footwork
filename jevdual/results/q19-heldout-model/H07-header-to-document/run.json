@@ -1,0 +1,87 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.80) [242 ms]: complete p=0.80, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read magic header string from browser",
+   "action": {
+    "name": "read",
+    "surface": "browser",
+    "match": "header string: \"([^\\\\]+)",
+    "as": "SIG"
+   },
+   "exit": null,
+   "output": "no surface named 'browser'; surfaces: reference, doc",
+   "ms": 0.0,
+   "input_tokens": 1220,
+   "output_tokens": 400
+  },
+  {
+   "step": 2,
+   "note": "Read magic header from file-format page",
+   "action": {
+    "name": "read",
+    "surface": "reference",
+    "match": "header string: \"([^\\\\]+)",
+    "as": "SIG"
+   },
+   "exit": 0,
+   "output": "carried @SIG = 'SQLite format 3', read from browser Google Chrome (footwork) at https://www.sqlite.org/fileformat.html#magic_header_string (text 'The header string: \"SQLite format 3\\\\000\"', its match) at step 0 of session results/q19-heldout-model/H07-header-to-document/reference",
+   "ms": 6357.876041001873,
+   "input_tokens": 1274,
+   "output_tokens": 221
+  },
+  {
+   "step": 3,
+   "note": "Append carried signature as new line",
+   "action": {
+    "name": "do",
+    "surface": "doc",
+    "op": "append",
+    "target": "text area",
+    "text": "\n@SIG"
+   },
+   "exit": 0,
+   "output": "carrying @SIG = 'SQLite format 3', read from browser Google Chrome (footwork) at https://www.sqlite.org/fileformat.html#magic_header_string (text 'The header string: \"SQLite format 3\\\\000\"', its match) at step 0 of session results/q19-heldout-model/H07-header-to-document/reference\ndispatched append(text area) text=@SIG (from browser https://www.sqlite.org/fileformat.html#magic_header_string): driver says confirmed in 0.1s\nreceipt: Receipt for append(text area) text=@SIG (from browser https://www.sqlite.org/fileformat.html#magic_header_string): confirmed ('text area' now holds 'Database signature:\\nSQLite format 3').\nTextEdit: 'h07-signature.txt'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n1 elements:\n  [   1] textbox    'text area' = 'Database signature:\\nSQLite format 3'\npage text (53 chars):\nh07-signature.txt\nDatabase signature:\nSQLite format 3",
+   "ms": 10753.276250005001,
+   "input_tokens": 1372,
+   "output_tokens": 426
+  },
+  {
+   "step": 4,
+   "note": "Save TextEdit file",
+   "action": {
+    "name": "do",
+    "surface": "doc",
+    "op": "hotkey",
+    "keys": [
+     "cmd",
+     "s"
+    ]
+   },
+   "exit": 0,
+   "output": "dispatched hotkey(cmd+s): driver says confirmed in 2.7s\nreceipt: Receipt for hotkey(cmd+s): confirmed (saved: /Users/thomasmain/footwork-pilot/q19/q19-heldout-model/H07-header-to-document/h07-signature.txt holds the window's text exactly (35 characters)).\nTextEdit: 'h07-signature.txt'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n1 elements:\n  [   1] textbox    'text area' = 'Database signature:\\nSQLite format 3'\npage text (53 chars):\nh07-signature.txt\nDatabase signature:\nSQLite format 3",
+   "ms": 11312.696708002477,
+   "input_tokens": 1533,
+   "output_tokens": 340
+  },
+  {
+   "step": 5,
+   "note": "File already contains signature and is saved, finishing.",
+   "action": {
+    "name": "done",
+    "surface": "doc",
+    "answer": "@SIG"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.80) [242 ms]: complete p=0.80, max unmet p=0.00\naccepted. session closed.",
+   "ms": 12331.668708007783,
+   "input_tokens": 1514,
+   "output_tokens": 838
+  }
+ ],
+ "answer": "SQLite format 3",
+ "input_tokens": 6913,
+ "output_tokens": 2225
+}

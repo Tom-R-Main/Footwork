@@ -1,0 +1,3 @@
+{"t": 1790665900.637343, "kind": "misread", "text": "pressed Clear, which left a pending '2\u00d7' from an earlier session; the result read 112 (2\u00d78\u00d77). Receipts called Multiply and 7 suspected no-ops though both took effect"}
+{"t": 1790665981.5763059, "kind": "contradicted", "text": "Multiply and 7 receipts said suspected no-op; both took effect (the display text did not change until Equals)"}
+{"t": 1790665998.204109, "kind": "retry", "text": "done refused: the sentence read as one unsupported fact"}

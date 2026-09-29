@@ -1,0 +1,36 @@
+{
+ "ORIG": {
+  "name": "ORIG",
+  "text": "Batch amber: 4\nKeep this line.\nBatch amber: 9",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "h06-labels.txt",
+  "element_id": 1,
+  "element_label": "text area",
+  "element_role": "textbox",
+  "part": "value",
+  "step": 1,
+  "session": "results/q19-heldout-model/H06-edit-one-document/doc",
+  "taken_at": 1790665140.6380029,
+  "surroundings": "",
+  "occurrence": ""
+ },
+ "FINAL": {
+  "name": "FINAL",
+  "text": "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "h06-labels.txt",
+  "element_id": 1,
+  "element_label": "text area",
+  "element_role": "textbox",
+  "part": "value",
+  "step": 3,
+  "session": "results/q19-heldout-model/H06-edit-one-document/doc",
+  "taken_at": 1790665180.679595,
+  "surroundings": "",
+  "occurrence": ""
+ }
+}

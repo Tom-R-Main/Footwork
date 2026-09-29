@@ -1,0 +1,3 @@
+{"t": 1790665059.643235, "surface": "doc", "args": ["start", "Replace Batch amber with Batch cobalt and save", "--app", "TextEdit", "--window", "h06-labels.txt", "--mode", "foreground_permitted", "--authorize", "replace,Save"], "exit": 0, "s": 1.87}
+{"t": 1790665068.250139, "surface": "doc", "args": ["do", "type", "text area", "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9\n"], "exit": 0, "s": 3.48}
+{"t": 1790665079.888457, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 5.0}

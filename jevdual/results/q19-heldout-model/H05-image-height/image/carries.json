@@ -1,0 +1,19 @@
+{
+ "HEIGHT": {
+  "name": "HEIGHT",
+  "text": "542",
+  "surface": "native",
+  "app": "Preview",
+  "location": "app://Preview",
+  "title": "h05-panel.png",
+  "element_id": -1,
+  "element_label": "938 \u00d7 542 pixels",
+  "element_role": "text",
+  "part": "match",
+  "step": 1,
+  "session": "results/q19-heldout-model/H05-image-height/image",
+  "taken_at": 1790665031.282989,
+  "surroundings": "Modification Date / Sep 29, 2026 at 2:56 AM / Image Size / 938 \u00d7 542 pixels / Image DPI / 72 pixels/inch",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

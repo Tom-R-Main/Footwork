@@ -1,0 +1,20 @@
+{
+ "task": "H10-document-to-request",
+ "t_oracle": 1790666098.116097,
+ "oracle_ok": true,
+ "oracle": "one submission to /q19h-cutting-done.html with {'reference': 'QUIET-83', 'quantity': '27'}; h10-job.txt equals the expected text",
+ "answer": null,
+ "commands": 7,
+ "wall_s": 20.1,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {
+  "h10-job.txt": "89c43488f84192e94641cf4099d272701ce5be661b01b707de43e7734c821b28"
+ }
+}

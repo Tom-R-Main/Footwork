@@ -1,0 +1,19 @@
+{
+ "cores": {
+  "name": "cores",
+  "text": "12",
+  "surface": "native",
+  "app": "System Information",
+  "location": "app://System Information",
+  "title": "MacBook Pro",
+  "element_id": -1,
+  "element_label": "Total Number of Cores: 12 (8 Performance and 4 Efficiency)",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-operator/H04-hardware-cores/hw",
+  "taken_at": 1790664944.965229,
+  "surroundings": "Model Identifier: Mac16,8 / Model Number: MX2H3LL/A / Chip: Apple M4 Pro / Total Number of Cores: 12 (8 Performance and 4 Efficiency) / Memory: 24 GB / System Firmware Version: 18000.120.36",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

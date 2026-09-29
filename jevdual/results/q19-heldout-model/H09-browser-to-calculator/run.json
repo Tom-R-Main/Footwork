@@ -1,0 +1,68 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.87) [298 ms]: complete p=0.87, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read active Larch tray count from board",
+   "action": {
+    "name": "read",
+    "surface": "board",
+    "match": "Active batch \\u2014 Larch\\nTray count: ([0-9]+)",
+    "as": "TRAY"
+   },
+   "exit": 0,
+   "output": "carried @TRAY = '8', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/q19h-batches.html (text 'Active batch \u2014 Larch\\nTray count: 8', its match) at step 0 of session results/q19-heldout-model/H09-browser-to-calculator/board",
+   "ms": 12803.557417006232,
+   "input_tokens": 1059,
+   "output_tokens": 907
+  },
+  {
+   "step": 2,
+   "note": "Read pieces per tray for active Larch batch",
+   "action": {
+    "name": "read",
+    "surface": "board",
+    "match": "Active batch \u2014 Larch\\nTray count: 8\\nPieces per tray: ([0-9]+)",
+    "as": "PIECES"
+   },
+   "exit": 0,
+   "output": "carried @PIECES = '7', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/q19h-batches.html (text 'Active batch \u2014 Larch\\nTray count: 8\\nPieces per tray: 7', its match) at step 0 of session results/q19-heldout-model/H09-browser-to-calculator/board",
+   "ms": 4029.188583997893,
+   "input_tokens": 1182,
+   "output_tokens": 240
+  },
+  {
+   "step": 3,
+   "note": "Read calculator total for final report",
+   "action": {
+    "name": "read",
+    "surface": "calc",
+    "match": "\u00d77\\n([0-9]+)",
+    "as": "TOTAL"
+   },
+   "exit": 0,
+   "output": "carried @TOTAL = '56', read from native Calculator at app://Calculator (text '8\u00d77\\n56', its match) at step 0 of session results/q19-heldout-model/H09-browser-to-calculator/calc",
+   "ms": 8979.584749991773,
+   "input_tokens": 1303,
+   "output_tokens": 581
+  },
+  {
+   "step": 4,
+   "note": "Total computed as 56, reporting result",
+   "action": {
+    "name": "done",
+    "surface": "calc",
+    "answer": "@TOTAL"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.87) [298 ms]: complete p=0.87, max unmet p=0.00\naccepted. session closed.",
+   "ms": 5509.289999987232,
+   "input_tokens": 1384,
+   "output_tokens": 284
+  }
+ ],
+ "answer": "56",
+ "input_tokens": 4928,
+ "output_tokens": 2012
+}

@@ -1,0 +1,29 @@
+{
+ "dir": "results/q19-heldout-operator/H08-image-to-request/request",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Submit one cutting request",
+ "requirements": [],
+ "authorized": [
+  "Submit cutting request"
+ ],
+ "answer_expected": false,
+ "step": 3,
+ "status": "open",
+ "memory": [
+  "step 1: type(Reference) text='Poster H08' -> confirmed",
+  "step 2: type(Quantity) text=@height (from native app://Preview) -> confirmed",
+  "step 3: click(Submit cutting request) -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8767/q19h-cutting-done.html?reference=Poster+H08&quantity=318",
+ "last_title": "Scratch cutting request",
+ "last_page_text": "Scratch request recorded\nThe local service has recorded your cutting request.",
+ "last_candidates": [],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-74148a6f-3ad3-440b-b1e7-0f66e49dc0a7",
+ "secret_names": []
+}

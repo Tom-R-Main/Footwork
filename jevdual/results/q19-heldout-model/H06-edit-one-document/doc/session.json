@@ -1,0 +1,50 @@
+{
+ "dir": "results/q19-heldout-model/H06-edit-one-document/doc",
+ "app": "TextEdit",
+ "pid": 63305,
+ "window_id": 4219,
+ "task": "In h06-labels.txt, change both occurrences of \"Batch amber\" to \"Batch cobalt\" and save. Preserve the rest of its text and leave the other open document h06-neighbor.txt untouched. Replacement in h06-labels.txt and saving it are authorized.",
+ "requirements": [],
+ "authorized": [
+  "replace",
+  "Save"
+ ],
+ "answer_expected": false,
+ "step": 3,
+ "status": "open",
+ "memory": [
+  "step 1: click(text area) -> refused",
+  "step 1: read [1] 'text area' as @ORIG",
+  "step 2: type(text area) text='Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9' -> confirmed",
+  "step 3: hotkey(cmd+s) -> confirmed",
+  "step 3: read [1] 'text area' as @FINAL",
+  "step 4: done refused (uncertain: complete p=0.71, max unmet p=0.00)",
+  "step 4: done refused (uncertain: complete p=0.69, max unmet p=0.00)",
+  "step 4: done refused (uncertain: complete p=0.71, max unmet p=0.00)"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "h06-labels.txt",
+ "last_page_text": "h06-labels.txt\nBatch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

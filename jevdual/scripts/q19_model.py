@@ -25,7 +25,7 @@ from jevdual.keys import load_keys
 from evals import q19
 from evals.fixtures.server import serve
 
-PORT = 8767  # the operator's fixture port: task files name {base}
+PORT = 8768  # its own fixture server, beside the operator's on 8767; tasks name {base}
 MUSE_IN, MUSE_OUT = 0.10, 0.20  # USD per million tokens, Muse Spark contributor rates
 SECRET_NOTE = " Where the task names a secret in braces, such as {{{name}}}, type it exactly so; the harness fills it in."
 
@@ -69,7 +69,8 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int) -> 
         raise SystemExit("MODEL_API_KEY missing")
     tasks = q19.load(path)
     base, stop = serve(PORT)
-    rows = []
+    # runs go one task at a time (the operator's run of a task comes first): keep earlier rows
+    rows = json.loads((out / "results.json").read_text()) if (out / "results.json").exists() else []
     try:
         for tid in ids or list(tasks):
             t = tasks[tid]

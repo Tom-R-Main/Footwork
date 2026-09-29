@@ -1,0 +1,18 @@
+{
+ "task": "H04-hardware-cores",
+ "t_oracle": 1790664954.979618,
+ "oracle_ok": true,
+ "oracle": "answer contains '12' (from `sysctl -n hw.physicalcpu`)",
+ "answer": "The Mac has 12 CPU cores: 'Total Number of Cores: 12 (8 Performance and 4 Efficiency)'.",
+ "commands": 4,
+ "wall_s": 20.9,
+ "friction": 1,
+ "friction_by_kind": {
+  "misread": 1,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {}
+}

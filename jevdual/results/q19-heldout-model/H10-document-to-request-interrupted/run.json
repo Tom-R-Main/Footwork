@@ -1,0 +1,8 @@
+{
+ "status": "error",
+ "reason": "surface source did not start: bound TextEdit window 4400 'h10-job.txt' (foreground_permitted)\nstopped: screen_locked: the screen is locked; unlock it to continue",
+ "steps": [],
+ "answer": null,
+ "input_tokens": 0,
+ "output_tokens": 0
+}

@@ -1,0 +1,19 @@
+{
+ "height": {
+  "name": "height",
+  "text": "318",
+  "surface": "native",
+  "app": "Preview",
+  "location": "app://Preview",
+  "title": "h08-poster.png",
+  "element_id": -1,
+  "element_label": "764 \u00d7 318 pixels",
+  "element_role": "text",
+  "part": "match",
+  "step": 1,
+  "session": "results/q19-heldout-operator/H08-image-to-request/image",
+  "taken_at": 1790665340.98342,
+  "surroundings": "Modification Date / Sep 29, 2026 at 3:01 AM / Image Size / 764 \u00d7 318 pixels / Image DPI / 72 pixels/inch",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

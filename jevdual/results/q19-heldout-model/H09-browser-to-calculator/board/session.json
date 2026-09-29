@@ -1,0 +1,26 @@
+{
+ "dir": "results/q19-heldout-model/H09-browser-to-calculator/board",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Read the tray count and pieces per tray for the active Larch batch on the batch board. Use Calculator to compute its total pieces and report the result. Ignore the archived batch.",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'Active batch \u2014 Larch\\nTray count: 8' as @TRAY",
+  "step 0: read [-1] 'Active batch \u2014 Larch\\nTray count: 8\\nPieces per tray: 7' as @PIECES"
+ ],
+ "last_url": "http://127.0.0.1:8768/q19h-batches.html",
+ "last_title": "Scratch batch board",
+ "last_page_text": "Batch board\nArchived batch \u2014 Alder\nTray count: 9\nPieces per tray: 6\nActive batch \u2014 Larch\nTray count: 8\nPieces per tray: 7",
+ "last_candidates": [],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-8033391d-7adf-44c2-a23e-74d23f792648",
+ "secret_names": []
+}
