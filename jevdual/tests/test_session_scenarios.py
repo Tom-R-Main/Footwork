@@ -246,7 +246,6 @@ def test_an_unknown_carry_and_a_missing_match_dispatch_nothing(world, fw, tmp_pa
     assert code == 4
 
 
-
 # ---- secondary audit (2026-09-27): real-command gaps ----
 
 
