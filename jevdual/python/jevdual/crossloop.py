@@ -220,6 +220,17 @@ class CrossLoop:
         p = self.session(name) / "session.json"
         return signature(json.loads(p.read_text())) if p.exists() else ""
 
+    def effect_count(self) -> int:
+        """Saved and submitted records across this run's surfaces (jevdual.completion)."""
+        from jevdual.completion import _records, effects
+
+        return sum(
+            1
+            for n in self.surfaces
+            for e in effects(_records(self.session(n)))
+            if e.effect in ("saved", "submitted")
+        )
+
     def recorded_submissions(self) -> list[tuple[str, Any]]:
         """Every submission this run's receipts establish, with its surface (M3 reconciliation)."""
         from jevdual.completion import _records, effects
@@ -424,6 +435,7 @@ class CrossLoop:
                 continue
             surface, argv = cmd
             sig_before = self.state_sig(surface) if self.recovery else ""
+            effects_before = self.effect_count() if self.recovery else 0
             if action["name"] == "done" and any(s.requirements for s in self.surfaces.values()):
                 code, out = self._done_everywhere(argv[1])
             else:
@@ -463,7 +475,9 @@ class CrossLoop:
                         action,
                         self.state_sig(surface),
                         summary,
-                        confirmed_effect=action["name"] == "do" and ": confirmed" in summary,
+                        # M4: an effect is a new saved or submitted record, never a confirmed receipt alone
+                        # (every navigation's receipt is confirmed; M3's X1 loops reset on each one)
+                        confirmed_effect=self.effect_count() > effects_before,
                         new_values=tuple(v for v, _ in self.carried().values()),
                     )
                 else:

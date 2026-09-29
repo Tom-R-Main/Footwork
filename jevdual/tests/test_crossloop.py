@@ -233,3 +233,30 @@ def test_a_compact_observation_keeps_its_head_and_trims_the_body():
     body = "\n".join(f"  [{i:4}] button 'b{i}'" for i in range(400))
     out = compact(f"{head}\n400 elements:\n{body}\npage text (9000 chars):\n" + "x" * 9000, 2500)
     assert out.startswith(head) and "more elements" in out and "chars more" in out and len(out) < 2700
+
+
+def test_confirmed_navigations_between_known_pages_are_not_progress(tmp_path, monkeypatch):
+    """M3's X1: every navigation's receipt is confirmed, and counting that as an effect kept resetting the
+    no-progress streak. Only a new state, value or effect record is progress (M4)."""
+    pages = {"http://x/archive": "Status: withdrawn", "http://x/": "Home"}
+    fw = _stateful_footwork(pages)
+
+    def confirming(session, *argv):
+        code, out = fw(session, *argv)
+        return code, "receipt: Receipt for navigate: confirmed (navigated)\n" + out
+
+    monkeypatch.setattr(crossloop, "footwork", confirming)
+    # distinct wordings, so the tried-action refusal cannot be what ends it
+    moves = [
+        act("do", surface="web", op="navigate", text=u, target=f"t{i}")
+        for i, u in enumerate(["http://x/", "http://x/archive"] * 10)
+    ]
+    loop = CrossLoop(
+        "Download the archive",
+        [Surface("web", "browser", url="http://x/archive")],
+        _chat(*moves),
+        tmp_path,
+        recovery=True,
+    )
+    run = asyncio.run(loop.run())
+    assert run.status == "no_progress" and len(run.steps) <= 10
