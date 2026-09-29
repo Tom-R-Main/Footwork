@@ -93,3 +93,29 @@ def test_the_claim_check_counts_evidence_values_absent_from_the_final_page():
     # a value no evidence holds is still unsupported, beside one that is
     (c,) = check_claims("QUIET-84 27", page, strict=True, evidence=("QUIET-83", "27"))
     assert not c.supported
+
+
+def test_the_floor_needs_evidence_for_the_effect_the_task_names():
+    """M2: a page saying "recorded" is not evidence; the run's own records must hold the named effect."""
+    from jevdual.completion import floor
+
+    (sub,) = effects([SUBMIT])
+    assert floor("Submit one cutting request", [sub], answer_bearing=False) is None
+    assert (
+        floor("Submit one cutting request", [], answer_bearing=False)
+        == "no evidence in this run for: submitted"
+    )
+    (saved,) = effects([_save(2, "/s/a.txt")], document="a.txt")
+    assert "saved" in floor("Edit a.txt and save it", [sub], answer_bearing=False)
+    assert floor("Edit a.txt and save it", [saved], answer_bearing=False) is None
+    assert "only what the page says" in floor("Open the settings page", [], answer_bearing=False)
+    # an answer-bearing done is the claim check's; a duplicated event blocks it all the same
+    assert floor("Report the height", [], answer_bearing=True) is None
+    dup = effects([SUBMIT, {**SUBMIT, "step": 4, "t": 4.0}])
+    assert "more than once" in floor("Report the quantity sent", dup, answer_bearing=True)
+
+
+def test_a_field_readback_is_limited_once_the_page_navigated_away():
+    typed = _receipt(2, "type", "'Quantity' now holds '27'", t=2)
+    (holds, sub) = effects([typed, SUBMIT])
+    assert holds.effect == "field_holds" and "navigated away" in holds.limits[0] and sub.usable

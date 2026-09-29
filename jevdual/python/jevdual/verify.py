@@ -492,7 +492,7 @@ class Verifier:
         ledger: Ledger | None = None,
         answer_matters: bool = True,
         carried: tuple[str, ...] = (),
-        effects: tuple[Any, ...] = (),
+        effects: tuple[Any, ...] | None = None,
     ) -> Verdict:
         ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
         questions = self.build_questions(requirements, ask_kinds=ask_kinds)
@@ -551,7 +551,7 @@ class Verifier:
             field_text=field_values(menu) if strict else "",
             strict=strict,
             carried=carried,
-            evidence=tuple(v for e in effects if e.usable for v in e.values),
+            evidence=tuple(v for e in effects or () if e.usable for v in e.values),
         )
         unsupported = tuple(c.claim for c in claims if not c.supported)
         supported_answer: str | None = None
@@ -581,6 +581,15 @@ class Verifier:
             reason = (
                 f"task asks for an answer (answer_required={answer_required:.2f}) and none is given; {reason}"
             )
+
+        if effects is not None and band == "accept":
+            # M2: a deterministic floor under Jev's judgment, from this run's own records
+            from jevdual.completion import floor
+
+            why = floor(task, effects, answer_bearing=answer_required >= self.policy.answer_required)
+            if why:
+                band = "verify"
+                reason = f"{why}; {reason}"
 
         verdict = Verdict(
             band=band,

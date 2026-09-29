@@ -120,6 +120,28 @@ def cases() -> dict[str, dict[str, Any]]:
     out["neg success page with no record of the deletion (H02)"] = case(
         bare, "Scratch cancellation recorded", expect="refuse"
     )
+    # M2: cases not examined before M2 was written
+    h02m = load(MO / "H02-one-reservation" / "web")
+    out["new+ model/H02 real run (deleted once, went back, paused)"] = case(
+        h02m, "Scratch cancellation recorded", expect="accept"
+    )
+    h08 = load(OP / "H08-image-to-request" / "request")
+    h08img = load(OP / "H08-image-to-request" / "image")
+    out["new+ op/H08 heading"] = case(h08, "Scratch request recorded", context=[h08img], expect="accept")
+    h06op = load(OP / "H06-edit-one-document" / "doc")
+    out["new+ op/H06 'Saved.'"] = case(h06op, "Saved.", expect="accept")
+    h07 = load(MO / "H07-header-to-document" / "doc")
+    nosave = copy.deepcopy(h07)
+    nosave["records"] = [r for r in nosave["records"] if not (r.get("action") or {}).get("save_readback")]
+    nosave["state"]["memory"] = [m for m in nosave["state"]["memory"] if "cmd+s" not in m]
+    out["new- model/H07 without its save"] = case(nosave, "SQLite format 3", expect="refuse")
+    failed = copy.deepcopy(h06op)
+    for r in failed["records"]:
+        rb = (r.get("action") or {}).get("save_readback")
+        if rb:
+            rb["ok"] = False
+            rb["detail"] = "the file on disk differs from the window's text"
+    out["new- op/H06 save readback failed"] = case(failed, "Saved.", expect="refuse")
     return out
 
 
@@ -163,22 +185,22 @@ async def main(repeats: int, out: Path) -> None:
     async with AsyncTypeSafeClient() as client:
         v = Verifier(client)
         for name, c in cases().items():
-            for arm in ("before", "M1"):
+            for arm in ("before", "M2"):
                 for i in range(repeats):
-                    d = await decide(v, c, m1=arm == "M1")
+                    d = await decide(v, c, m1=arm == "M2")
                     rows.append({"case": name, "expect": c["expect"], "arm": arm, "repeat": i, **d})
                     print(f"{arm:6} {name}: {d['band']} ({d['reason'][:110]})", flush=True)
     out.write_text(json.dumps(rows, indent=1))
     print("\nsummary (accepts of repeats):")
     for name, c in cases().items():
         b = [r for r in rows if r["case"] == name]
-        acc = {arm: sum(r["band"] == "accept" for r in b if r["arm"] == arm) for arm in ("before", "M1")}
-        print(f"  [{c['expect']:6}] {name}: before {acc['before']}/{repeats}, M1 {acc['M1']}/{repeats}")
+        acc = {arm: sum(r["band"] == "accept" for r in b if r["arm"] == arm) for arm in ("before", "M2")}
+        print(f"  [{c['expect']:6}] {name}: before {acc['before']}/{repeats}, M2 {acc['M2']}/{repeats}")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--repeats", type=int, default=3)
-    ap.add_argument("--out", type=Path, default=ROOT / "results" / "m1-offline-20260929.json")
+    ap.add_argument("--out", type=Path, default=ROOT / "results" / "m2-offline-20260929.json")
     a = ap.parse_args()
     asyncio.run(main(a.repeats, a.out))

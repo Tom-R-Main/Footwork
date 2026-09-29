@@ -99,9 +99,21 @@ def effects(
         h = _HOLDS.search(ev)
         if op in ("type", "append") and h:
             value = h.group("value").encode().decode("unicode_escape")
+            # M2: once the page navigated away, the field it held is gone; its readback says nothing now
+            moved = [
+                x for x in receipts if float(x.get("t") or 0) > t and "navigated to" in str(x.get("evidence"))
+            ]
+            limits = (f"the page navigated away at step {moved[0].get('step')}",) if moved else ()
             out.append(
                 Effect(
-                    "field_holds", h.group("label"), "current_state", step, t, f"holds {value!r}", (value,)
+                    "field_holds",
+                    h.group("label"),
+                    "current_state",
+                    step,
+                    t,
+                    f"holds {value!r}",
+                    (value,),
+                    limits,
                 )
             )
     # a submission repeated to the same result is a duplicated effect, whatever its fields
@@ -155,3 +167,36 @@ def evidence_values(items: list[Effect]) -> tuple[str, ...]:
         if e.usable:
             seen += [v for v in e.values if v and v not in seen]
     return tuple(seen)
+
+
+#: M2: the effect a task names, and the evidence that effect needs
+_NAMED = (
+    ("saved", re.compile(r"\bsav(?:e|es|ed|ing)\b", re.IGNORECASE)),
+    (
+        "submitted",
+        re.compile(r"\b(?:submit|send|delete|cancel|request|order|book|reserve)\w*", re.IGNORECASE),
+    ),
+)
+
+
+def required_effects(task: str) -> tuple[str, ...]:
+    return tuple(kind for kind, rx in _NAMED if rx.search(task))
+
+
+def floor(task: str, items: list[Effect] | tuple[Effect, ...], *, answer_bearing: bool) -> str | None:
+    """Why a done cannot be accepted on this run's evidence, or None (M2). A duplicated event always
+    blocks; a done that is not answer-bearing needs usable evidence for the effect the task names (or,
+    naming none, any usable current-state or event record). The page saying "recorded" is not enough."""
+    dup = [e for e in items if e.kind == "event" and any("submissions to" in lim for lim in e.limits)]
+    if dup:
+        return f"the effect happened more than once ({dup[0].limits[-1]})"
+    if answer_bearing:
+        return None
+    usable = [e for e in items if e.usable and e.kind in ("current_state", "event")]
+    need = required_effects(task)
+    missing = [k for k in need if not any(e.effect == k for e in usable)]
+    if missing:
+        return "no evidence in this run for: " + ", ".join(missing)
+    if not need and not usable:
+        return "no evidence in this run for the requested effect (only what the page says)"
+    return None
