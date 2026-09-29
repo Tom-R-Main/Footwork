@@ -1,0 +1,19 @@
+{
+ "CURRENT": {
+  "name": "CURRENT",
+  "text": "Checklist",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "checklist.txt",
+  "element_id": 1,
+  "element_label": "text area",
+  "element_role": "textbox",
+  "part": "value",
+  "step": 1,
+  "session": "/Users/thomasmain/.codex/worktrees/m-independent-authoring/footwork/jevdual/results/m-independent-challenge-live/CL06-native-save/document",
+  "taken_at": 1790713350.0791092,
+  "surroundings": "",
+  "occurrence": ""
+ }
+}

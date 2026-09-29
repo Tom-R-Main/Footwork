@@ -1,0 +1,19 @@
+{
+ "COUNT": {
+  "name": "COUNT",
+  "text": "7",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:56665/msealed-c-filter.html?q=Delta",
+  "title": "Filter results",
+  "element_id": -1,
+  "element_label": "Bench Delta: open repair slots 7. Bench Echo: open repair slots 3.",
+  "element_role": "text",
+  "part": "match",
+  "step": 2,
+  "session": "/Users/thomasmain/.codex/worktrees/m-independent-authoring/footwork/jevdual/results/m-independent-challenge-live/CL03-read-only/web",
+  "taken_at": 1790712971.807621,
+  "surroundings": "Filter results / Bench Delta: open repair slots 7. Bench Echo: open repair slots 3.",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

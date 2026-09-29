@@ -1,0 +1,167 @@
+[
+ {
+  "task": "CL01-withdrawn",
+  "expect": "stop",
+  "status": "stopped",
+  "reason": "[unavailable] Exporting the ORCHID archive has been withdrawn. No ORCHID.zip artifact exists on this site.",
+  "answer": null,
+  "oracle_ok": true,
+  "oracle": "author end-state oracle confirmed",
+  "outcome": "needs_stop_adjudication",
+  "steps": 1,
+  "input_tokens": 1049,
+  "output_tokens": 301,
+  "cost_usd": 0.0001651,
+  "wall_s": 13.6,
+  "t_oracle": 1790712912.498684,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {},
+  "posts": {},
+  "before_files": {},
+  "author_grade": "needs_stop_adjudication",
+  "stop_adjudication": "Must identify the withdrawn/unavailable artifact from observed evidence; generic budget exhaustion is a miss."
+ },
+ {
+  "task": "CL02-multihop",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.92) [204 ms]: complete p=0.92, max unmet p=0.00",
+  "answer": "156",
+  "oracle_ok": true,
+  "oracle": "author end-state oracle confirmed",
+  "outcome": "pass",
+  "steps": 8,
+  "input_tokens": 7364,
+  "output_tokens": 896,
+  "cost_usd": 0.0009156,
+  "wall_s": 34.1,
+  "t_oracle": 1790712946.5833511,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {},
+  "posts": {},
+  "before_files": {},
+  "author_grade": "pass",
+  "stop_adjudication": null
+ },
+ {
+  "task": "CL03-read-only",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.57) [217 ms]: uncertain: complete p=0.57, max unmet p=0.00",
+  "answer": "7",
+  "oracle_ok": true,
+  "oracle": "author end-state oracle confirmed",
+  "outcome": "miss",
+  "steps": 8,
+  "input_tokens": 7803,
+  "output_tokens": 1132,
+  "cost_usd": 0.0010067000000000001,
+  "wall_s": 39.9,
+  "t_oracle": 1790712986.4862132,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/msealed-c-filter.html": [
+    {
+     "q": "Delta"
+    }
+   ]
+  },
+  "posts": {},
+  "before_files": {},
+  "author_grade": "miss",
+  "stop_adjudication": null
+ },
+ {
+  "task": "CL04-two-posts",
+  "expect": "complete",
+  "status": "budget",
+  "reason": "24 steps",
+  "answer": null,
+  "oracle_ok": true,
+  "oracle": "author end-state oracle confirmed",
+  "outcome": "miss",
+  "steps": 24,
+  "input_tokens": 32535,
+  "output_tokens": 14907,
+  "cost_usd": 0.006234900000000001,
+  "wall_s": 311.3,
+  "t_oracle": 1790713297.741641,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/msealed-c-filter.html": []
+  },
+  "posts": {
+   "/msealed-c-intake-done.html": [
+    {
+     "bench": "Delta",
+     "priority": "low"
+    },
+    {
+     "bench": "Echo",
+     "priority": "high"
+    }
+   ]
+  },
+  "before_files": {},
+  "author_grade": "miss",
+  "stop_adjudication": null
+ },
+ {
+  "task": "CL05-native-unavailable",
+  "status": "setup_failed",
+  "reason": "start state not established: Preview: h08-poster.png is open from outside this trial",
+  "oracle_ok": null
+ },
+ {
+  "task": "CL06-native-save",
+  "expect": "complete",
+  "status": "paused",
+  "reason": "paused before dispatch: replaces 9 characters of existing content in 'text area'",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "author end-state oracle failed",
+  "outcome": "miss",
+  "steps": 4,
+  "input_tokens": 3243,
+  "output_tokens": 2117,
+  "cost_usd": 0.0007477,
+  "wall_s": 56.2,
+  "t_oracle": 1790713364.489389,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {
+   "checklist.txt": "5952826f007213929584b82a382477016a92a4f7672d26a4f269bc146dd47172",
+   "neighbor.txt": "663776c91e45aa2d800ded6b0e1256fe42b12848d9b87d397b66965497917ccd"
+  },
+  "gets": {
+   "/msealed-c-filter.html": []
+  },
+  "posts": {
+   "/msealed-c-intake-done.html": []
+  },
+  "before_files": {
+   "checklist.txt": "5952826f007213929584b82a382477016a92a4f7672d26a4f269bc146dd47172",
+   "neighbor.txt": "663776c91e45aa2d800ded6b0e1256fe42b12848d9b87d397b66965497917ccd"
+  },
+  "author_grade": "miss",
+  "stop_adjudication": null
+ }
+]

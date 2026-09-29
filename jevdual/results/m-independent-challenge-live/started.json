@@ -1,0 +1,43 @@
+{
+  "candidate": "305b29bf1bf4ae12b52fb1bf6c047556817db659",
+  "payload": {
+    "evals/fixtures/site/msealed-c-archive-0.html": "2ff390c79fee4c21fb320d33366e21fa3f7b5829b9fd14d7b5e7fe3f6f157ba8",
+    "evals/fixtures/site/msealed-c-archive-1.html": "75ca41648a81aae4a9ab4b900055e35466cb1df2ce0b5ddaaf338874cbb5271b",
+    "evals/fixtures/site/msealed-c-archive-10.html": "610e9a03b20cf930b41fcdcab12c6d676570e064434f05d8ae781d5d05f971c4",
+    "evals/fixtures/site/msealed-c-archive-11.html": "d7e44d80e061a12430ffb6f0e0721c835b8c2b10d1e3312cf1835d6f45826e22",
+    "evals/fixtures/site/msealed-c-archive-2.html": "06d8c0147873725c9dddd93bc4b66e0d986b2544d2dc5c097e11e0276402f9bd",
+    "evals/fixtures/site/msealed-c-archive-3.html": "3c49e56a0a20d949c87295e3310becbfa6030e895525cde27a5a8a70b1e0f2a6",
+    "evals/fixtures/site/msealed-c-archive-4.html": "0173869aa59e5dd1fd469a86017070e54d8e9bbd06afcb80112a1b97c0f47a47",
+    "evals/fixtures/site/msealed-c-archive-5.html": "9597b7c0bf8ac6369481166eee37f5fd758122d3c6b6f842a0d20fd02e6ad83b",
+    "evals/fixtures/site/msealed-c-archive-6.html": "c45c10f6f9e4e52ab9b2bc15e724289b6bbaa441f4c34b05c4670966dfe188ea",
+    "evals/fixtures/site/msealed-c-archive-7.html": "b3d28bb17f86ad2345d38bd84d953a73e5bd1d9b415da24e30c29cbb3a4aaeda",
+    "evals/fixtures/site/msealed-c-archive-8.html": "46292e3ae3e3e33592d4bab0a5e7e7aa1e528be9d5e768d25715afa3c3ed6e53",
+    "evals/fixtures/site/msealed-c-archive-9.html": "d4a3c9ebedf7bc9670692ea1d1c9871623537b322da5692951d875160f46c33e",
+    "evals/fixtures/site/msealed-c-chain-0.html": "b716be4290b821f421f175122e478246e949df89b2b102eff73065ba4d064eee",
+    "evals/fixtures/site/msealed-c-chain-1.html": "6a4a816e5935abaffd7d5e2fbd7b91f515184459c5cc146279eab0ccb3ffac9f",
+    "evals/fixtures/site/msealed-c-chain-2.html": "5781bb585ee224cb94ee8b822c277680d9cbb95721dd0c2e262562d9127cd3c5",
+    "evals/fixtures/site/msealed-c-chain-3.html": "82b24aac3c46221a49860634518d351de7690b4d4e6d93b01fb4dfdc9ea79e8d",
+    "evals/fixtures/site/msealed-c-chain-4.html": "b837464dbc0d255612fa17d8b3e4020c00208fed6a799c3d327a8dfc96364af0",
+    "evals/fixtures/site/msealed-c-filter.html": "dc595dce1e1de50ba408c7f2292e8bb5019bfc203750ca8717e225235e5261f8",
+    "evals/fixtures/site/msealed-c-intake.html": "2de5dcd5b1f789373291bc98096a689001e1f3da79aecd84cd70b466007dea39",
+    "evals/tasks/m-challenge.yaml": "a8a6474d1e3d6c68d55df64c27384aa6d1aa869816d12ed76b9eadd33bd326ce"
+  },
+  "runtime": {
+    "backend": {
+      "paint_order": "native",
+      "snapshot_lookup": "pure",
+      "element_hashes": "native",
+      "evidence_match": "native"
+    },
+    "extension_sha256": "f492d95a2ebbf557c304b5af3e0516be5900e8ff7e7d22529ff3eb803902cafd",
+    "dependencies": {
+      "browser-use": "0.13.10",
+      "typesafe-sdk": "0.7.0"
+    }
+  },
+  "arm": {
+    "completion": "effect_evidence",
+    "recovery": true
+  },
+  "max_steps": 30
+}
