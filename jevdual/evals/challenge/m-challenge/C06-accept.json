@@ -1,0 +1,41 @@
+{
+  "id": "C06-accept",
+  "pair": "C06",
+  "category": "document resource identity",
+  "task": "Save Calibration complete in /scratch/current/report.txt; do not save the archived report.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "report.txt — Edited",
+    "text": "Calibration complete\n",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/current/report.txt",
+          "detail": "/scratch/current/report.txt holds the window's text exactly (21 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/current/report.txt"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: hotkey() -> confirmed: saved: /scratch/current/report.txt"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "Readback names the full intended path, not merely the report.txt basename.",
+  "truth_status": "supported"
+}

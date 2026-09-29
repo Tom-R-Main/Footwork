@@ -1,0 +1,23 @@
+{
+  "id": "C13-accept",
+  "pair": "C13",
+  "category": "answer calibration lookup",
+  "task": "What is the cargo capacity, in litres, of the fixture cart CART-5?",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "72 litres",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "CART-5 cargo capacity: 72 litres. CART-8 cargo capacity: 90 litres.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The requested cart attribute is directly stated.",
+  "truth_status": "supported"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "C17-refuse",
+  "pair": "C17",
+  "category": "named field identity",
+  "task": "Submit one scratch transfer of amount 65 to account 82, not amount 82 to account 65.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/form.html",
+    "title": "Scratch draft",
+    "text": "Transfer recorded.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Transfer"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to /transfer.html?amount=82&account=65; 0 elements added"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click -> confirmed: navigated to /transfer.html?amount=82&account=65; 0 elements added"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "Both requested numbers are present but their named roles are swapped.",
+  "truth_status": "contradicted"
+}

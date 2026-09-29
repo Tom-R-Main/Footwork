@@ -1,0 +1,23 @@
+{
+  "id": "C12-accept",
+  "pair": "C12",
+  "category": "incomplete observation",
+  "task": "Report the cheapest available lamp in the entire catalog, including its price.",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "Lantern Mini — $12.00",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Complete catalog, 3 of 3 items: Lantern Mini $12.00 available; Desk Arc $19.00 available; Beam Pro $24.00 available.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The complete three-item list establishes both the subject and minimum.",
+  "truth_status": "supported"
+}

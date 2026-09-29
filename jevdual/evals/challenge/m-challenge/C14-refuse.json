@@ -1,0 +1,23 @@
+{
+  "id": "C14-refuse",
+  "pair": "C14",
+  "category": "answer calibration calculation",
+  "task": "How many unallocated rods remain if there are 83 rods in total and 26 allocated?",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "26 rods",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Total rods: 83. Allocated rods: 26.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "The allocated quantity is not the remaining quantity.",
+  "truth_status": "contradicted"
+}

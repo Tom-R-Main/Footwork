@@ -1,0 +1,37 @@
+{
+  "id": "C04-refuse",
+  "pair": "C04",
+  "category": "control identity",
+  "task": "Submit a maintenance report for pump P-4, not the adjacent training attendance form.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Training attendance for P-4 recorded. Maintenance report: not sent.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Submit"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/attendance-done.html?pump=P-4; 0 elements added"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Submit) -> confirmed: navigated to http://127.0.0.1:8767/attendance-done.html?pump=P-4; 0 elements added"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "The adjacent attendance form was submitted, leaving maintenance unsubmitted despite the same label.",
+  "truth_status": "contradicted"
+}

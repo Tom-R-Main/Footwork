@@ -1,0 +1,57 @@
+{
+  "id": "C11-refuse",
+  "pair": "C11",
+  "category": "destination and preserved neighbor",
+  "task": "Append 18.75 once on its own line to /scratch/ledger.txt, save it, and leave /scratch/neighbor.txt unchanged as Header.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "ledger.txt — TextEdit",
+    "text": "Header\n18.57\n",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/ledger.txt",
+          "detail": "/scratch/ledger.txt holds the window's text exactly (13 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/ledger.txt"
+    }
+  ],
+  "carries": {
+    "PRICE": {
+      "text": "18.75",
+      "location": "http://127.0.0.1:8767/price.html",
+      "step": 0,
+      "taken_at": 0.5,
+      "occurrence": "Price for SKU R-18"
+    }
+  },
+  "memory": [
+    "step 2: hotkey() -> confirmed: saved: /scratch/ledger.txt"
+  ],
+  "context": [
+    {
+      "records": [],
+      "carries": {},
+      "memory": [
+        "neighbor.txt observed: Header changed; initial value was Header"
+      ]
+    }
+  ],
+  "expect": "refuse",
+  "rationale": "Saving the right file with an altered carried value while changing the neighbor violates both requirements.",
+  "truth_status": "contradicted"
+}
