@@ -196,5 +196,32 @@
   },
   "gets": {},
   "interrupted": "screen_locked at the first surface start; rerun once from a fresh start (pre-registered)"
+ },
+ {
+  "task": "H10-document-to-request",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.89) [279 ms]: answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.89, max unmet p=0.00",
+  "answer": "Scratch request recorded",
+  "oracle_ok": true,
+  "oracle": "one submission to /q19h-cutting-done.html with {'reference': 'QUIET-83', 'quantity': '27'}; h10-job.txt equals the expected text",
+  "outcome": "unaccepted_effect_present",
+  "steps": 9,
+  "input_tokens": 10398,
+  "output_tokens": 3436,
+  "cost_usd": 0.001727,
+  "wall_s": 282.8,
+  "t_oracle": 1790667284.587892,
+  "files": {
+   "h10-job.txt": "89c43488f84192e94641cf4099d272701ce5be661b01b707de43e7734c821b28"
+  },
+  "gets": {
+   "/q19h-cutting-done.html": [
+    {
+     "reference": "QUIET-83",
+     "quantity": "27"
+    }
+   ]
+  }
  }
 ]
