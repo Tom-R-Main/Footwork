@@ -29,6 +29,13 @@ def scratch(out: Path, task: str) -> Path:
 
 
 def main(argv: list[str]) -> int:
+    # Evaluation-only selection; the runtime and the default development set stay frozen.
+    task_path = q19.TASKS
+    if "--tasks" in argv:
+        argv = list(argv)
+        at = argv.index("--tasks")
+        task_path = Path(argv[at + 1])
+        del argv[at : at + 2]
     cmd, rest = argv[0], argv[1:]
     if cmd == "serve":
         out = Path(rest[0])
@@ -41,7 +48,7 @@ def main(argv: list[str]) -> int:
     task, out = rest[0], Path(rest[1])
     tdir = out / task
     tdir.mkdir(parents=True, exist_ok=True)
-    t = q19.load()[task]
+    t = q19.load(task_path)[task]
     if cmd == "setup":
         q19.setup(t, scratch(out, task))
         gets = json.loads((out / "gets.json").read_text()) if (out / "gets.json").exists() else {}
