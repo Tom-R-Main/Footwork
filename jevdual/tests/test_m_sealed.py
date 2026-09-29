@@ -58,6 +58,8 @@ def test_native_oracles_check_preservation_destination_and_format(tmp_path):
     assert not judge(o, tmp_path)
     q19.png(target, 47, 31)
     assert judge(o, tmp_path)
+    target.write_bytes(target.read_bytes()[:24])
+    assert not judge(o, tmp_path)
     q19.png(target, 47, 32)
     assert not judge(o, tmp_path)
     source.write_bytes(b"changed")
@@ -71,10 +73,11 @@ def test_native_oracles_check_preservation_destination_and_format(tmp_path):
 def test_stop_preservation_is_never_sufficient_for_a_pass():
     task = {"expect": "stop", "max_steps": 12}
     assert grade(task, "stopped", True, 8) == "needs_stop_adjudication"
-    for status in ("done", "done_unverified"):
+    for status in ("done_unverified", "budget", "error"):
         assert grade(task, status, True, 8) == "miss"
     assert grade(task, "budget", True, 13) == "miss"
     assert grade(task, "stopped", False, 8) == "miss"
+    assert grade(task, "done", True, 8) == "false_completion"
     assert grade(task, "done", False, 8) == "false_completion"
 
 
