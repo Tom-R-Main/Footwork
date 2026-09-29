@@ -1,0 +1,542 @@
+[
+ {
+  "case": "op/H02 heading",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.92,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.92, max unmet p=0.00"
+ },
+ {
+  "case": "op/H02 heading",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.93,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.93, max unmet p=0.00"
+ },
+ {
+  "case": "op/H02 heading",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.92,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.92, max unmet p=0.00"
+ },
+ {
+  "case": "op/H02 heading",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.93,
+  "reason": "complete p=0.93, max unmet p=0.00"
+ },
+ {
+  "case": "op/H02 heading",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.93,
+  "reason": "complete p=0.93, max unmet p=0.00"
+ },
+ {
+  "case": "op/H02 heading",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.92,
+  "reason": "complete p=0.92, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 values",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.89,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.89, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 values",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.89,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.89, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 values",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.88,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.88, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 values",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.9,
+  "reason": "complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 values",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.91,
+  "reason": "complete p=0.91, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 values",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.9,
+  "reason": "complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 heading",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.9,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 heading",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.88,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.88, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 heading",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.9,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 heading",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.91,
+  "reason": "complete p=0.91, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 heading",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.91,
+  "reason": "complete p=0.91, max unmet p=0.00"
+ },
+ {
+  "case": "model/H10 heading",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.91,
+  "reason": "complete p=0.91, max unmet p=0.00"
+ },
+ {
+  "case": "model/H06 text",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.68,
+  "reason": "uncertain: complete p=0.68, max unmet p=0.00"
+ },
+ {
+  "case": "model/H06 text",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.74,
+  "reason": "uncertain: complete p=0.74, max unmet p=0.00"
+ },
+ {
+  "case": "model/H06 text",
+  "expect": "accept",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.68,
+  "reason": "uncertain: complete p=0.68, max unmet p=0.00"
+ },
+ {
+  "case": "model/H06 text",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.82,
+  "reason": "complete p=0.82, max unmet p=0.00"
+ },
+ {
+  "case": "model/H06 text",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.82,
+  "reason": "complete p=0.82, max unmet p=0.00"
+ },
+ {
+  "case": "model/H06 text",
+  "expect": "accept",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.81,
+  "reason": "complete p=0.81, max unmet p=0.00"
+ },
+ {
+  "case": "neg wrong resource (H06 readback names the neighbour)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.73,
+  "reason": "uncertain: complete p=0.73, max unmet p=0.00"
+ },
+ {
+  "case": "neg wrong resource (H06 readback names the neighbour)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.71,
+  "reason": "uncertain: complete p=0.71, max unmet p=0.00"
+ },
+ {
+  "case": "neg wrong resource (H06 readback names the neighbour)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.71,
+  "reason": "uncertain: complete p=0.71, max unmet p=0.00"
+ },
+ {
+  "case": "neg wrong resource (H06 readback names the neighbour)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.71,
+  "reason": "uncertain: complete p=0.71, max unmet p=0.00"
+ },
+ {
+  "case": "neg wrong resource (H06 readback names the neighbour)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.71,
+  "reason": "uncertain: complete p=0.71, max unmet p=0.00"
+ },
+ {
+  "case": "neg wrong resource (H06 readback names the neighbour)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.69,
+  "reason": "uncertain: complete p=0.69, max unmet p=0.00"
+ },
+ {
+  "case": "neg stale (H06 edited after the save)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.69,
+  "reason": "uncertain: complete p=0.69, max unmet p=0.00"
+ },
+ {
+  "case": "neg stale (H06 edited after the save)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.65,
+  "reason": "uncertain: complete p=0.65, max unmet p=0.00"
+ },
+ {
+  "case": "neg stale (H06 edited after the save)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.68,
+  "reason": "uncertain: complete p=0.68, max unmet p=0.00"
+ },
+ {
+  "case": "neg stale (H06 edited after the save)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "reject",
+  "complete": 0.22,
+  "reason": "complete p=0.22"
+ },
+ {
+  "case": "neg stale (H06 edited after the save)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "reject",
+  "complete": 0.2,
+  "reason": "complete p=0.20"
+ },
+ {
+  "case": "neg stale (H06 edited after the save)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "reject",
+  "complete": 0.24,
+  "reason": "complete p=0.24"
+ },
+ {
+  "case": "neg duplicated submission (H10)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.82,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.82, max unmet p=0.00"
+ },
+ {
+  "case": "neg duplicated submission (H10)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.83,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.83, max unmet p=0.00"
+ },
+ {
+  "case": "neg duplicated submission (H10)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.83,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.83, max unmet p=0.00"
+ },
+ {
+  "case": "neg duplicated submission (H10)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.89,
+  "reason": "complete p=0.89, max unmet p=0.00"
+ },
+ {
+  "case": "neg duplicated submission (H10)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.88,
+  "reason": "complete p=0.88, max unmet p=0.00"
+ },
+ {
+  "case": "neg duplicated submission (H10)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.86,
+  "reason": "complete p=0.86, max unmet p=0.00"
+ },
+ {
+  "case": "neg generic page, no submitted fields, no source (H10)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.73,
+  "reason": "1 unsupported claim(s) dropped; uncertain: complete p=0.73, max unmet p=0.00"
+ },
+ {
+  "case": "neg generic page, no submitted fields, no source (H10)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.8,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.80, max unmet p=0.00"
+ },
+ {
+  "case": "neg generic page, no submitted fields, no source (H10)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.76,
+  "reason": "1 unsupported claim(s) dropped; uncertain: complete p=0.76, max unmet p=0.00"
+ },
+ {
+  "case": "neg generic page, no submitted fields, no source (H10)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.84,
+  "reason": "complete p=0.84, max unmet p=0.00"
+ },
+ {
+  "case": "neg generic page, no submitted fields, no source (H10)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.85,
+  "reason": "complete p=0.85, max unmet p=0.00"
+ },
+ {
+  "case": "neg generic page, no submitted fields, no source (H10)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.84,
+  "reason": "complete p=0.84, max unmet p=0.00"
+ },
+ {
+  "case": "neg unevidenced value (H10 'QUIET-84')",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.6,
+  "reason": "1 unsupported claim(s) dropped; uncertain: complete p=0.60, max unmet p=0.00"
+ },
+ {
+  "case": "neg unevidenced value (H10 'QUIET-84')",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.63,
+  "reason": "1 unsupported claim(s) dropped; uncertain: complete p=0.63, max unmet p=0.00"
+ },
+ {
+  "case": "neg unevidenced value (H10 'QUIET-84')",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.58,
+  "reason": "1 unsupported claim(s) dropped; uncertain: complete p=0.58, max unmet p=0.00"
+ },
+ {
+  "case": "neg unevidenced value (H10 'QUIET-84')",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.85,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.85, max unmet p=0.00"
+ },
+ {
+  "case": "neg unevidenced value (H10 'QUIET-84')",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.85,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.85, max unmet p=0.00"
+ },
+ {
+  "case": "neg unevidenced value (H10 'QUIET-84')",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.85,
+  "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.85, max unmet p=0.00"
+ },
+ {
+  "case": "neg success page with no record of the deletion (H02)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.9,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "neg success page with no record of the deletion (H02)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.89,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.89, max unmet p=0.00"
+ },
+ {
+  "case": "neg success page with no record of the deletion (H02)",
+  "expect": "refuse",
+  "arm": "before",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.9,
+  "reason": "answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "neg success page with no record of the deletion (H02)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 0,
+  "band": "accept",
+  "complete": 0.9,
+  "reason": "complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "neg success page with no record of the deletion (H02)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 1,
+  "band": "accept",
+  "complete": 0.9,
+  "reason": "complete p=0.90, max unmet p=0.00"
+ },
+ {
+  "case": "neg success page with no record of the deletion (H02)",
+  "expect": "refuse",
+  "arm": "M1",
+  "repeat": 2,
+  "band": "accept",
+  "complete": 0.91,
+  "reason": "complete p=0.91, max unmet p=0.00"
+ }
+]

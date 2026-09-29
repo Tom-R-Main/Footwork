@@ -83,7 +83,8 @@ class ClaimCheck:
     grade: str  # exact | normalized | none | narrative
     start: int
     end: int
-    #: where the evidence was found: "page" (visible text) or "field" (a form field's value)
+    #: where the evidence was found: "page" (visible text), "field" (a form field's value) or "evidence"
+    #: (a value the session's own effect evidence establishes, jevdual.completion)
     source: str = "page"
 
     @property
@@ -199,6 +200,7 @@ def check_claims(
     field_text: str = "",
     strict: bool = False,
     carried: tuple[str, ...] = (),
+    evidence: tuple[str, ...] = (),
 ) -> list[ClaimCheck]:
     """Grade each sentence by its atoms.
 
@@ -216,9 +218,12 @@ def check_claims(
     per_sentence = [extract_atoms(sn, strict=strict) for sn in sentences]
     # Q19 R4: a value the harness carried is a fact with a recorded source, quoted or not ("by André Gide")
     per_sentence = [
-        atoms + [v for v in carried if v and v in sn and v not in atoms]
+        atoms + [v for v in (*carried, *evidence) if v and v in sn and v not in atoms]
         for sn, atoms in zip(sentences, per_sentence, strict=True)
     ]
+    # M1: a value the session's own evidence establishes (a submitted field, a read-back field, a carried
+    # read) is supported by that evidence when the final page no longer shows it
+    held = {v.casefold() for v in evidence if v}
     if strict:
         page_text, field_text = close_currency_gaps(page_text), close_currency_gaps(field_text)
     flat = [a for atoms in per_sentence for a in atoms]
@@ -240,16 +245,31 @@ def check_claims(
             continue
         graded = []
         from_field = False
+        from_evidence = False
         for a in atoms:
             g = results.get(a, {"grade": "none", "start": -1, "end": -1})
             if g["grade"] == "none" and field_results.get(a, {}).get("grade", "none") != "none":
                 g = {**field_results[a], "start": -1, "end": -1}
                 from_field = True
+            if g["grade"] == "none" and _held(a, sn, held):
+                g = {"grade": "exact", "start": -1, "end": -1}
+                from_evidence = True
             graded.append(g)
         worst = max(graded, key=lambda g: order.get(g["grade"], 2))
-        source = "field" if from_field and worst["grade"] != "none" else "page"
+        source = "page"
+        if worst["grade"] != "none" and from_evidence:
+            source = "evidence"
+        elif worst["grade"] != "none" and from_field:
+            source = "field"
         out.append(ClaimCheck(sn, worst["grade"], worst.get("start", -1), worst.get("end", -1), source))
     return out
+
+
+def _held(atom: str, sentence: str, held: set[str]) -> bool:
+    """An atom is held by evidence when it is an evidence value, or part of one the sentence states
+    whole ("83" of "QUIET-83" in "QUIET-83 27")."""
+    a, sn = atom.strip(".,;:!?").casefold(), sentence.casefold()
+    return bool(a) and any(a == v or (a in v and v in sn) for v in held)
 
 
 def field_values(menu: Menu) -> str:
@@ -472,10 +492,15 @@ class Verifier:
         ledger: Ledger | None = None,
         answer_matters: bool = True,
         carried: tuple[str, ...] = (),
+        effects: tuple[Any, ...] = (),
     ) -> Verdict:
         ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
         questions = self.build_questions(requirements, ask_kinds=ask_kinds)
         state = self.build_state(task, requirements, menu, answer, trajectory)
+        if effects:
+            # M1: what this run's own records establish about the requested effect, each with its kind,
+            # step and limits, apart from the memory lines of the trajectory
+            state["evidence"] = [e.line() for e in effects]
         strict = self.policy.claim_evidence == "page_and_fields"
         if strict and (fields := field_values(menu)):
             # the form's values are part of what the page shows; innerText leaves them out, so Jev judged
@@ -526,6 +551,7 @@ class Verifier:
             field_text=field_values(menu) if strict else "",
             strict=strict,
             carried=carried,
+            evidence=tuple(v for e in effects if e.usable for v in e.values),
         )
         unsupported = tuple(c.claim for c in claims if not c.supported)
         supported_answer: str | None = None

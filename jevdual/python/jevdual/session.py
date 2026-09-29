@@ -1012,6 +1012,13 @@ async def cmd_done(args: Any) -> int:
         log_path = state.path / "session.jsonl"
         records = [json.loads(ln) for ln in log_path.read_text().splitlines()] if log_path.exists() else []
         trajectory += carried_checks(records, nm.menu)
+        # M1: evidence for the requested effect from this session's records and the other surfaces'
+        from jevdual.completion import session_effects
+
+        document = state.last_title.split(" — ")[0] if state.mode == "native" else ""
+        effects = session_effects(state.path, document=document)
+        for d in getattr(args, "context_from", None) or []:
+            effects += session_effects(Path(d))
         async with AsyncTypeSafeClient() as client:
             t0 = time.perf_counter()
             v = await Verifier(client).verify(
@@ -1019,9 +1026,12 @@ async def cmd_done(args: Any) -> int:
                 state.requirements,
                 nm.menu,
                 args.answer or None,
-                answer_expected=state.answer_expected or bool(args.answer),
+                # M1: done text is an explanation unless the task asks for an answer (start --answer, or
+                # Jev's answer_required); a fact it states is still checked
+                answer_expected=state.answer_expected,
                 trajectory=trajectory or None,
                 carried=_carried_values(state.path, getattr(args, "context_from", None) or []),
+                effects=tuple(effects),
             )
             ms = (time.perf_counter() - t0) * 1000
     finally:
