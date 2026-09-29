@@ -10,6 +10,12 @@ H02 and H09, were written before the task's last commands and notes).
 
 ## Outcomes
 
+The counts below are computed by `uv run python scripts/q19_summary.py` from
+`results/q19-heldout-adjudication.yaml` and the raw records; the model's `results.json` labels H09
+"proven" and holds the interrupted H10 attempt, so its raw `outcome` field is not a summary. Of the
+operator's 9 completions, 4 rest on an accepted done, 3 on a submission receipt naming the intended
+fields, and 2 on a save readback; no done was accepted on those 5.
+
 | Task | Operator | cmds | friction | Model | steps |
 |---|---|---|---|---|---|
 | H01 PNG name (browser) | proven | 4 | 1 | proven | 2 |
@@ -44,10 +50,13 @@ H02 and H09, were written before the task's last commands and notes).
 
 ## What the held-back run found (recorded, not fixed during the run)
 
-1. **The verifier cannot accept a done on a fact-less result page.** After a confirmed submit or delete, the
-   page says only "Scratch request recorded". Every done was refused, even the page's own heading and the
-   carried values (operator H02; model H10, and H06 with p ≈ 0.7). This was the largest cost: two of the
-   model's three right-but-unaccepted tasks, and 3 of the operator's 9 friction events.
+1. **The claim check cannot accept a done on a fact-less result page.** After a confirmed submit or delete,
+   the page says only "Scratch request recorded". Every done was refused there, even the page's own heading
+   and the carried values (operator H02, 3 of its 9 friction events; model H10). Two different problems
+   were first reported under this heading (corrected 2026-09-29 after review): the model's H06 was
+   refused by overall-judgment uncertainty (complete p 0.69 to 0.71, every requirement met), not by the
+   claim check; and the model's H02 never attempted a done: it tried the deletion a second time and was
+   paused.
 2. **Sentence answers read as one unsupported fact.** "The active Larch batch has 56 pieces: Calculator
    shows 8×7 = 56 …" was refused, and "56" accepted (operator H09; H02 similarly).
 3. **Calculator receipts under-report.** Clicks on Multiply and a digit read "suspected no-op" although
