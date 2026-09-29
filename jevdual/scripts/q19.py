@@ -39,6 +39,13 @@ def main(argv: list[str]) -> int:
     cmd, rest = argv[0], argv[1:]
     if cmd == "serve":
         out = Path(rest[0])
+        # an event log belongs to one run: a server started again, or left running into a later
+        # experiment, must not write into a closed or earlier run's record (review of 2026-09-29: an M3
+        # sign-up reached Q19's tracked gets.json through the operator server left on port 8767)
+        if (out / "CLOSED").exists():
+            raise SystemExit(f"{out} is a closed evaluation; serve into a new directory")
+        if (out / "gets.json").exists():
+            raise SystemExit(f"{out} already has an event log; serve into a new directory")
         out.mkdir(parents=True, exist_ok=True)
         base, stop = serve(PORT)
         print(f"serving {base}", flush=True)
