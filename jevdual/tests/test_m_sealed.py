@@ -2,11 +2,12 @@
 
 import hashlib
 import json
+import subprocess
 
 import pytest
 
 from evals import q19
-from evals.m_sealed import cases, check, grade
+from evals.m_sealed import cases, check, frozen_runtime, grade, manifest, verify_seal
 
 
 def judge(oracle, tmp_path, *, answer=None, gets=None, posts=None, before=None):
@@ -58,6 +59,13 @@ def test_native_oracles_check_preservation_destination_and_format(tmp_path):
     assert not judge(o, tmp_path)
     q19.png(target, 47, 31)
     assert judge(o, tmp_path)
+    from PIL import Image
+
+    o["source"] = "source.png"
+    assert judge(o, tmp_path)
+    Image.new("RGB", (47, 31), "red").save(target)
+    assert not judge(o, tmp_path)
+    q19.png(target, 47, 31)
     target.write_bytes(target.read_bytes()[:24])
     assert not judge(o, tmp_path)
     q19.png(target, 47, 32)
@@ -97,3 +105,52 @@ def test_schema_requires_balanced_pairs(tmp_path):
         cases(tmp_path)
     (tmp_path / "b.json").write_text(json.dumps({**c, "id": "two", "expect": "refuse"}))
     assert len(cases(tmp_path)) == 2
+
+
+def test_named_runtime_gate_rejects_modified_or_untracked_code(tmp_path):
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    runtime = tmp_path / "python" / "jevdual"
+    runtime.mkdir(parents=True)
+    source = runtime / "module.py"
+    source.write_text("value = 1\n")
+    subprocess.run(["git", "add", "python"], cwd=tmp_path, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Oracle Test",
+            "-c",
+            "user.email=oracle@example.test",
+            "commit",
+            "-qm",
+            "baseline",
+        ],
+        cwd=tmp_path,
+        check=True,
+    )
+    assert len(frozen_runtime(tmp_path, "HEAD")) == 40
+    source.write_text("value = 2\n")
+    with pytest.raises(subprocess.CalledProcessError):
+        frozen_runtime(tmp_path, "HEAD")
+    source.write_text("value = 1\n")
+    (runtime / "extra.py").write_text("value = 3\n")
+    with pytest.raises(ValueError, match="untracked"):
+        frozen_runtime(tmp_path, "HEAD")
+
+
+def test_seal_rejects_changed_content_and_added_cases(tmp_path):
+    folder = tmp_path / "evals" / "challenge" / "m-test"
+    folder.mkdir(parents=True)
+    case = folder / "one.json"
+    case.write_text("{}")
+    docs = tmp_path / "docs" / "experiments"
+    docs.mkdir(parents=True)
+    (docs / "m-test-seal.json").write_text(json.dumps({"payload": manifest(tmp_path, [case])}))
+    assert verify_seal(tmp_path, "m-test")
+    case.write_text('{"changed":true}')
+    with pytest.raises(ValueError, match="changed"):
+        verify_seal(tmp_path, "m-test")
+    case.write_text("{}")
+    (folder / "extra.json").write_text("{}")
+    with pytest.raises(ValueError, match="membership"):
+        verify_seal(tmp_path, "m-test")
