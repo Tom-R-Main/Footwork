@@ -72,6 +72,14 @@ def check(
 ) -> Check:
     o = task["oracle"]
     kind = o["kind"]
+    if kind == "all":
+        # Heldout authoring: the intended write and preservation of the other scratch files
+        # must both hold. No change to any existing oracle's meaning.
+        children = o.get("checks") or []
+        if not children:
+            raise ValueError("an all oracle needs at least one check")
+        checks = [check({"oracle": child}, answer=answer, gets=gets, scratch=scratch) for child in children]
+        return Check(all(c.ok for c in checks), "; ".join(c.detail for c in checks))
     if kind == "answer_contains":
         ok = o["value"].casefold() in (answer or "").casefold()
         return Check(ok, f"answer {'contains' if ok else 'lacks'} {o['value']!r}")
