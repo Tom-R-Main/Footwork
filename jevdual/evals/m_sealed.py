@@ -111,6 +111,8 @@ def check(task: dict, *, answer: str | None, gets: dict, posts: dict, scratch: P
             }
             return current == before
         p = scratch / o["path"]
+        if kind == "text_exact":
+            return p.is_file() and p.read_bytes() == o["value"].encode("utf-8")
         if kind == "absent":
             return not p.exists()
         if kind == "unchanged":
