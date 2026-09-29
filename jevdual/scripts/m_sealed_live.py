@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import sys
@@ -45,6 +46,7 @@ def surfaces(t: dict[str, Any], base: str, scratch: Path) -> list[Surface]:
                 window=fill(s.get("window", ""), base, scratch),
                 url=fill(s.get("url", ""), base, scratch),
                 authorize=tuple(s.get("authorize") or ()),
+                requirements=tuple(s.get("requirements") or ()),
             )
         )
     return out
@@ -74,7 +76,10 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int, rec
     try:
         for tid in ids or list(tasks):
             t = tasks[tid]
-            scratch = Path.home() / "footwork-pilot" / "m-independent" / out.name / tid
+            trial_id = out.name + "-" + hashlib.sha256(str(out.resolve()).encode()).hexdigest()[:10]
+            scratch = Path.home() / "footwork-pilot" / "m-independent" / trial_id / tid
+            if scratch.exists():
+                raise RuntimeError(f"refusing existing scratch state: {scratch}")
             try:
                 q19.setup(t, scratch)
             except q19.SetupError as e:
@@ -99,6 +104,7 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int, rec
                 surfaces(t, base, scratch),
                 chat,
                 run_dir,
+                requirements=tuple(t.get("requirements") or ()),
                 max_steps=min(max_steps, t["max_steps"]),
                 recovery=recovery,
             ).run()
@@ -115,7 +121,7 @@ async def main(path: Path, ids: list[str] | None, out: Path, max_steps: int, rec
                 "answer": run.answer,
                 "oracle_ok": c.ok,
                 "oracle": c.detail,
-                "outcome": outcome(run.status, c.ok),
+                "outcome": grade(t, run.status, c.ok, len(run.steps)),
                 "steps": len(run.steps),
                 "input_tokens": run.input_tokens,
                 "output_tokens": run.output_tokens,
