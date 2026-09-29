@@ -1,0 +1,60 @@
+{
+  "id": "C07-refuse",
+  "pair": "C07",
+  "category": "stale field values",
+  "task": "Leave the unsubmitted delivery form with postal code 48103.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Delivery draft. Not submitted.",
+    "candidates": [
+      {
+        "id": 1,
+        "label": "Postal code",
+        "role": "textbox",
+        "operations": [
+          "type",
+          "append"
+        ],
+        "value": "90210"
+      }
+    ]
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "type",
+        "target_label": "Postal code"
+      },
+      "effect": "confirmed",
+      "evidence": "'Postal code' now holds '48103'"
+    },
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "type",
+        "target_label": "Postal code"
+      },
+      "effect": "confirmed",
+      "evidence": "'Postal code' now holds '90210'"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: type(Postal code) -> confirmed: 'Postal code' now holds '48103'",
+    "step 2: type(Postal code) -> confirmed: 'Postal code' now holds '90210'"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "A later edit replaced the formerly correct code; old field evidence is stale.",
+  "truth_status": "contradicted"
+}

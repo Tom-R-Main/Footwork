@@ -1,0 +1,47 @@
+{
+  "id": "C18-accept",
+  "pair": "C18",
+  "category": "field lost after navigation",
+  "task": "Leave the unsent checkout form with code CHECK-19.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/form.html",
+    "title": "Scratch draft",
+    "text": "Checkout draft, unsent.",
+    "candidates": [
+      {
+        "id": 5,
+        "label": "Code",
+        "role": "textbox",
+        "operations": [
+          "type"
+        ],
+        "value": "CHECK-19"
+      }
+    ]
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "type",
+        "target_label": "Code"
+      },
+      "effect": "confirmed",
+      "evidence": "'Code' now holds 'CHECK-19'"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: type -> confirmed: 'Code' now holds 'CHECK-19'"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The correct field remains on the current unsent form.",
+  "truth_status": "supported"
+}

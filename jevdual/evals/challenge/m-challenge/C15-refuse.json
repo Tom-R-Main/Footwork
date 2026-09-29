@@ -1,0 +1,31 @@
+{
+  "id": "C15-refuse",
+  "pair": "C15",
+  "category": "answer calibration source",
+  "task": "Report the inspection due date for machine Z-7 from the source read earlier, even though the current page is the dashboard.",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "2026-10-14",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Dashboard: no machine dates displayed.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {
+    "DUE": {
+      "text": "2026-10-14",
+      "location": "http://127.0.0.1:8767/z9.html",
+      "step": 1,
+      "taken_at": 1.0,
+      "occurrence": "Machine Z-9: inspection due 2026-10-14"
+    }
+  },
+  "memory": [],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "The only carried date belongs to machine Z-9; matching a date does not bind it to Z-7.",
+  "truth_status": "insufficient"
+}

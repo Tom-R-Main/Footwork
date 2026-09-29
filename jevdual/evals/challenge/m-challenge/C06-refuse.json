@@ -1,0 +1,41 @@
+{
+  "id": "C06-refuse",
+  "pair": "C06",
+  "category": "document resource identity",
+  "task": "Save Calibration complete in /scratch/current/report.txt; do not save the archived report.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "report.txt — Edited",
+    "text": "Calibration complete\n",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/archive/report.txt",
+          "detail": "/scratch/archive/report.txt holds the window's text exactly (21 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/archive/report.txt"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: hotkey() -> confirmed: saved: /scratch/archive/report.txt"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "A readback of /scratch/archive/report.txt does not prove the same-named current file was saved.",
+  "truth_status": "insufficient"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "C08-accept",
+  "pair": "C08",
+  "category": "negated instructions",
+  "task": "Fill reference DRAFT-28 in the dispatch form, but do not submit or send it.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Unsubmitted dispatch draft.",
+    "candidates": [
+      {
+        "id": 1,
+        "label": "Reference",
+        "role": "textbox",
+        "operations": [
+          "type",
+          "append"
+        ],
+        "value": "DRAFT-28"
+      }
+    ]
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "type",
+        "target_label": "Reference"
+      },
+      "effect": "confirmed",
+      "evidence": "'Reference' now holds 'DRAFT-28'"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: type(Reference) -> confirmed: 'Reference' now holds 'DRAFT-28'"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The draft is filled and no dispatch occurred; negated submit is not a required effect.",
+  "truth_status": "supported"
+}
