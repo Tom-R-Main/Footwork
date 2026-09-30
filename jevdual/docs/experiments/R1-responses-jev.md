@@ -157,3 +157,16 @@ endpoint and guide indexes, and changelog did not identify Decisions API. The re
 URL/provider will determine the replacement protocol. Do not substitute Responses or manufacture a
 Decisions endpoint. Reuse the role-separated questions and development evidence only after a new
 pre-registration fixes the actual target, capability/score contracts and price schedule.
+
+## Amendment: deferred until Decisions release, 2026-09-30 17:17
+
+The supplied [OpenAI DevDay recap](https://openai.com/index/devday-2026-recap/) confirms Decisions API:
+Luna answers finite predefined options for user-defined questions over text or images. It is in
+limited preview, with broad release planned in the coming days. The user explicitly deferred the
+comparison until then. No paid request has run. The Responses prototype is preserved outside active
+runtime/test directories under `docs/prototypes/deferred-responses/` and is not a measured candidate.
+
+Resume only when actual Decisions documentation/access permits a comparison. Verify score/fan-out
+semantics and prices, then write a new pre-registration before implementation/measurement. The
+announcement makes System One a plausible role to evaluate directly, but provides no result against
+Jev and does not justify replacing any active backend or lowering existing thresholds.

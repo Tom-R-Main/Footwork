@@ -9,6 +9,12 @@ and experiment recommendations below are superseded; they are not findings about
 Its documentation/provider is being identified. No paid request has run. Provider-neutral contracts
 and the existing Jev evidence remain relevant, but do not establish a replacement backend's behavior.
 
+Deferral, 2026-09-30 17:17: the [DevDay recap](https://openai.com/index/devday-2026-recap/) confirms
+Decisions API in limited preview with broader release planned in the coming days. The user deferred
+work until then. Prototype files are preserved under `docs/prototypes/deferred-responses/`, outside
+active code and tests. Re-evaluate placement against actual Decisions contracts on resumption;
+the Responses-specific System Two recommendation below does not transfer automatically.
+
 ## Recommendation
 
 Make System One a replaceable **bounded decision role**. Keep Jev as one implementation and as
