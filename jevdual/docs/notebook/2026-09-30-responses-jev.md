@@ -13,3 +13,10 @@ Test: the committed R1 protocol, initially shadow only, using exposed developmen
 Predicts: at least one supported-case category improves all-three-replay acceptance over a fresh Jev baseline without any negative acceptance in any replay; known deterministic floor failures remain attributable to those floors when evidence is unchanged.
 Against: any negative accepted by the candidate judgment or the final guard; no supported category improves; or a claimed improvement comes only from richer candidate inputs, changed code floors, tuned thresholds or removed cases.
 Refs: docs/experiments/R1-responses-jev.md
+
+## U-RCORRECTION · update · 2026-09-30 16:26
+Resolves: RAPI1 = inconclusive
+Observed: The user corrected the intended target from Responses API to Decisions API before any paid request. Existing OpenAI and TypeSafe credentials are available through the project's already materialized vault files; no new key or secret write occurred. Optional Responses transport/contracts and development-labelled risk/action cases have offline checks, but the combined comparison is unfinished and unmeasured. Official OpenAI API overview, endpoint/guide indexes and changelog checked this turn did not identify a Decisions endpoint.
+Inferred: R1's Responses-specific target and placement recommendation are superseded. This is a scope correction, not evidence for or against either model. The provider-neutral role boundaries and evidence safeguards remain useful for the requested comparison once its API is identified.
+Next: Obtain the Decisions API documentation URL/provider, revise and commit the experiment before implementation or measurement, and preserve the existing-key authorization and total $5 ceiling. Stop Responses implementation and make no paid requests to a guessed endpoint.
+Refs: docs/experiments/R1-responses-jev.md; https://developers.openai.com/api/reference/overview; https://developers.openai.com/api/reference/llms.txt; https://developers.openai.com/api/docs/llms.txt; https://developers.openai.com/api/docs/changelog

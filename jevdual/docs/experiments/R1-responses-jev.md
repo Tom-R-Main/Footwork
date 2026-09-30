@@ -145,3 +145,15 @@ both oracle and terminal outcomes, and role-specific KEEP/REPLACE/OPTIONAL/REJEC
 
 Not run. Source-only placement recommendation is in `docs/responses-jev-evaluation.md`.
 Credential reuse/provisioning and the paid budget decision precede API implementation and calls.
+
+## Amendment: corrected API target, 2026-09-30 16:26
+
+The user corrected Responses API to **Decisions API** before any paid request. This protocol is
+superseded and must not be executed. Existing-key reuse and a total $5 pilot ceiling were authorized;
+credentials were confirmed available without disclosure or secret writes. No comparison result exists.
+
+The target endpoint/provider remains to be established: current official OpenAI API overview,
+endpoint and guide indexes, and changelog did not identify Decisions API. The requested documentation
+URL/provider will determine the replacement protocol. Do not substitute Responses or manufacture a
+Decisions endpoint. Reuse the role-separated questions and development evidence only after a new
+pre-registration fixes the actual target, capability/score contracts and price schedule.

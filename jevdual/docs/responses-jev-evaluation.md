@@ -4,6 +4,11 @@ Source review: 2026-09-30. Base: `3a3e24c`, on `codex/responses-jev-evaluation`.
 **No Responses comparison has run.** This document records an architectural recommendation,
 the evidence supporting it, and the experiment needed to change it. Runtime and settings are unchanged.
 
+Scope correction, 2026-09-30 16:26: the user intended **Decisions API**. Responses-specific placement
+and experiment recommendations below are superseded; they are not findings about Decisions API.
+Its documentation/provider is being identified. No paid request has run. Provider-neutral contracts
+and the existing Jev evidence remain relevant, but do not establish a replacement backend's behavior.
+
 ## Recommendation
 
 Make System One a replaceable **bounded decision role**. Keep Jev as one implementation and as
