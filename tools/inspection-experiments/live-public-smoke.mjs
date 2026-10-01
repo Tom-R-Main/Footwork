@@ -77,6 +77,16 @@ try {
     outcome.browserActions.push('named-query');
     outcome.responseObserved = result.status === 200 && result.hasCharacter && !result.hasErrors;
   } else if (site === 'leadgen') {
+    outcome.failureStage = 'recorded-reload';
+    outcome.coldInitialLoadCovered = false;
+    await capture.step({ workflowId: 'public-leadgen', stepId: 'recorded-reload', intent: 'Record the target document and served resources during a same-origin reload', action: async () => {
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.getByPlaceholder(scenario.requiredPlaceholder).waitFor({ state: 'visible' });
+      outcome.reloadSettled = await page.waitForLoadState('networkidle', { timeout: 5000 }).then(() => true, () => false);
+      outcome.recordedPageLoad = new URL(page.url()).pathname === new URL(scenario.url).pathname;
+      if (!outcome.recordedPageLoad) throw new Error('Reload left the configured route');
+    } });
+    outcome.browserActions.push('recorded-reload');
     outcome.failureStage = 'blank-demo-submit';
     await capture.step({ workflowId: 'public-leadgen', stepId: 'blank-demo-submit', intent: 'Check empty demo form validation without sending contact information', action: async () => {
       await page.getByRole('link', { name: scenario.submitLabel, exact: true }).click();

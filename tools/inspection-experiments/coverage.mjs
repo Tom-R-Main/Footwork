@@ -26,9 +26,19 @@ const BODY_STATUSES = new Set([
   'captured', 'omitted-content-policy', 'omitted-scope-or-mime', 'omitted-byte-cap',
   'unavailable', 'stream-fixture',
 ]);
+const HTTP_METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']);
 const hash = value => createHash('sha256').update(value).digest('hex').slice(0, 20);
 const count = (map, key) => map.set(key, (map.get(key) ?? 0) + 1);
 const sortedCounts = map => Object.fromEntries([...map].sort(([a], [b]) => a.localeCompare(b)));
+const methodClass = value => HTTP_METHODS.has(value) ? value : 'OTHER';
+const originClass = (value, allowedOrigin) => {
+  if (!allowedOrigin) return 'unknown';
+  try {
+    const parsed = new URL(value);
+    if (!['https:', 'http:'].includes(parsed.protocol)) return 'unknown';
+    return parsed.origin === allowedOrigin ? 'same-origin' : 'external-origin';
+  } catch { return 'unknown'; }
+};
 const sourceKey = (source = {}) => JSON.stringify([source.extensionId ?? null, source.tabId ?? null, source.sessionId ?? null, source.targetId ?? null]);
 const requestKey = (source, requestId) => JSON.stringify([sourceKey(source), requestId ?? null]);
 const finiteCursor = value => Number.isSafeInteger(value) && value >= 0;
@@ -39,6 +49,7 @@ export function auditCoverage({ events = [], actions = [], gaps = [], bodies = [
   let redirects = 0, orphanResponses = 0, orphanTerminals = 0, orphanDataEvents = 0, implicitReuses = 0;
   let outOfOrderSequences = 0, previousSequence = -1;
   const sources = new Set();
+  const allowedOrigin = actions.find(row => row.type === 'capture_started')?.origin;
   for (const row of events) {
     const event = row.event ?? row;
     if (!METHODS.includes(event.method)) continue;
@@ -60,7 +71,7 @@ export function auditCoverage({ events = [], actions = [], gaps = [], bodies = [
         prior.implicitReuse = true;
         implicitReuses++;
       }
-      const request = { key, start: event.sequence, response: false, terminal: false, failed: false, redirect: false, implicitReuse: false, cache: false };
+      const request = { key, start: event.sequence, method: methodClass(params.request?.method), origin: originClass(params.request?.url, allowedOrigin), response: false, terminal: false, failed: false, redirect: false, implicitReuse: false, cache: false };
       requests.push(request);
       active.set(key, request);
     } else if (event.method === 'Network.responseReceived') {
@@ -94,9 +105,17 @@ export function auditCoverage({ events = [], actions = [], gaps = [], bodies = [
     const startCursor = begin.cursorBefore, endCursor = end?.cursorAfter;
     const intervalKnown = finiteCursor(startCursor) && finiteCursor(endCursor) && endCursor >= startCursor;
     const gapsInInterval = intervalKnown ? gapCursors.filter(cursor => cursor >= startCursor && cursor <= endCursor).length : null;
+    const started = intervalKnown ? requests.filter(request => finiteCursor(request.start) && request.start >= startCursor && request.start <= endCursor) : [];
+    const byMethod = new Map(), byOrigin = new Map(), postsByOrigin = new Map();
+    for (const request of started) {
+      count(byMethod, request.method);
+      count(byOrigin, request.origin);
+      if (request.method === 'POST') count(postsByOrigin, request.origin);
+    }
     return { stepFingerprint: hash(id), intervalKnown, reportedGapsInInterval: gapsInInterval,
       status: end?.status === 'completed' ? 'action-callback-completed' : end?.status === 'failed' ? 'action-callback-failed' : 'incomplete',
-      coverage: !intervalKnown || unscopedGaps || gapsInInterval ? 'limited' : 'no-reported-interval-gaps' };
+      coverage: !intervalKnown || unscopedGaps || gapsInInterval ? 'limited' : 'no-reported-interval-gaps',
+      traffic: { requestsStarted: intervalKnown ? started.length : null, byMethod: sortedCounts(byMethod), byOrigin: sortedCounts(byOrigin), postsByOrigin: sortedCounts(postsByOrigin) } };
   });
   const byMethod = Object.fromEntries(METHODS.map(method => [method, {
     subscribed: Array.isArray(manifest.recording?.methods) && manifest.recording.methods.includes(method),
@@ -126,6 +145,7 @@ export function auditCoverage({ events = [], actions = [], gaps = [], bodies = [
       'ExtraInfo events are optional and unordered by CDP; their absence is not counted as lost traffic.',
       'Response body records reflect capture policy and availability, not all bytes delivered to the browser.',
       'Action callback completion does not prove a visible, persisted, or correct product effect.',
+      'Step traffic is coincident with an action interval, not proof that the action caused a request.',
     ],
   };
 }

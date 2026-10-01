@@ -73,6 +73,31 @@ test('protocol absence is unobserved, not unsupported', () => {
   assert.equal(report.assessment, 'no-reported-capture-gaps');
 });
 
+test('step traffic separates same-origin and external POSTs without retaining URLs', () => {
+  const rows = empty();
+  rows.actions.push(
+    { type: 'capture_started', origin: 'https://example.test' },
+    { type: 'step_begin', workflowId: 'public-flow', stepId: 'blank-submit', cursorBefore: 0 },
+    { type: 'step_end', workflowId: 'public-flow', stepId: 'blank-submit', cursorAfter: 5, status: 'completed' },
+  );
+  rows.events.push(
+    event('Network.requestWillBeSent', 1, { requestId: 'a', request: { method: 'GET', url: 'https://example.test/form?private=SECRET_FIRST' } }),
+    event('Network.requestWillBeSent', 2, { requestId: 'b', request: { method: 'POST', url: 'https://tracker.test/collect?private=SECRET_SECOND' } }),
+    event('Network.requestWillBeSent', 3, { requestId: 'c', request: { method: 'POST', url: 'https://example.test/api?private=SECRET_THIRD' } }),
+    event('Network.requestWillBeSent', 4, { requestId: 'd', request: { method: 'POST', url: '[NON_NETWORK_URL]' } }),
+    event('Network.requestWillBeSent', 6, { requestId: 'e', request: { method: 'POST', url: 'https://tracker.test/late' } }),
+  );
+  const report = auditCoverage(rows);
+  assert.deepEqual(report.steps[0].traffic, {
+    requestsStarted: 4,
+    byMethod: { GET: 1, POST: 3 },
+    byOrigin: { 'external-origin': 1, 'same-origin': 2, unknown: 1 },
+    postsByOrigin: { 'external-origin': 1, 'same-origin': 1, unknown: 1 },
+  });
+  assert(!JSON.stringify(report).includes('SECRET'));
+  assert(report.limitations.some(value => value.includes('coincident')));
+});
+
 test('sealed packet is verified before coverage and tampering is rejected', async () => {
   const root = await mkdtemp(join(tmpdir(), 'coverage-'));
   try {
