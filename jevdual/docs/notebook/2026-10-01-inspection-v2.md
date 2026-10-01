@@ -61,3 +61,23 @@ Refs: tools/inspection-experiments/publication-gate.test.mjs; private local poli
 Observed: `validateSealedFindings` accepted one local fixture claim after verifying manifest hashes, the readback step's exact cursor interval and a real Document request event inside it. The referenced packet reports zero capture gaps, but the event only establishes that a request occurred during the interval.
 Next: apply the same ledger to the reserved site run, with every backend hypothesis labeled observed, documented or inferred and a disproof test.
 Refs: output/inspection-public-smoke/local-cold-1790887858706/; tools/inspection-experiments/findings-ledger.mjs
+
+## U205 · update · 2026-10-01 17:05
+Resolves: XZ91 = inconclusive
+Observed: the isolated local HTTPS fixture captured its first document request before navigation. The supported Chrome browser capability, however, requires a fresh tab to navigate before its first CDP command, so the real authenticated run began with a warm reload. Its polling paused on three transient origin-check failures; two event-buffer truncations and one unavailable body made the broad packet limited. A second bounded-step packet sealed with 154 events and zero reported gaps. Neither run attached worker or out-of-process-frame targets.
+Inferred: the bridge's cold-entry mechanism is viable in disposable Playwright, but this Chrome connection cannot yet demonstrate true cold entry. A transient origin-check failure needs a safe recovery path that verifies the origin again before resuming writes.
+Next: coordinate the original recorder owner before changing its polling behavior; add a browser-surface-specific cold-entry plan and worker/frame coverage proof.
+Refs: output/inspection-private-site/db-evidence-20261001-1790888282863/; output/inspection-private-site/db-search-20261001-1790888525744/
+
+## U206 · update · 2026-10-01 17:05
+Resolves: F1 = held
+Observed: five private claims passed the sealed-ledger validator against a real authenticated capture. Two cite exact recorded GraphQL request sequences inside distinct search-step cursor intervals; documented and inferred claims remain separate. The validator rejected a forged packet and nonexistent event in synthetic tests. The shareable projection omits claim prose and source URLs.
+Inferred: the ledger makes provenance reviewable but cannot judge whether the prose correctly interprets a request or proves hidden server architecture.
+Next: extend the ledger to support verified UI-checkpoint artifact references, then compare findings across independent runs.
+Refs: output/inspection-private-site/db-search-20261001-1790888525744/; tools/inspection-experiments/findings-ledger.test.mjs
+
+## S220 · summary · 2026-10-01 17:05
+Established: the generic cold-entry bridge, workflow observer, findings ledger and publication gate have focused tests; the local fixture verifies recorded reload/readback, and the private live search packet hash-verifies without reported gaps. The current publication range is blocked by tracked and historical named material.
+Uncertain: first navigation in the user's Chrome, transient-origin polling recovery, worker/OOPIF traffic and semantic interpretation of server-side storage remain outside this package's proof.
+Decision: hand the browser lane and private run packets back to the original audit; keep publishing blocked; preserve open workflow and cold-entry questions for a scoped next iteration.
+Refs: tools/inspection-experiments/README.md; output/inspection-private-site/db-search-20261001-1790888525744/
