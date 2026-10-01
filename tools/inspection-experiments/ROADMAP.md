@@ -25,6 +25,12 @@ For each workflow, produce a route-and-state diagram: entry point, form requirem
 - **After one reopen/readback workflow:** add the effect overlay and deterministic promotion rules. Test negative cases: response without UI change, UI change without persistence, and a capture gap covering the write.
 - **After repeated multi-workflow use:** integrate the lab with Jevdual only through host-owned evidence references and typed effects. Keep model explanations advisory; deterministic code owns effect identity, authorization, verification and replay protection.
 
+## Transport boundary and background capture
+
+The Chrome plugin tab/CDP bridge can be sufficient for a calibrated, bounded active call. The parallel Symbolic audit reported one poll tick after a tool call and then a failed fresh tab-origin check; a subsequent active call could read events. Treat **unattended capture between calls as unproven**. The experiment lab must never equate `startPolling()` with a persistent background service.
+
+Keep transport as an injected interface with declared capabilities: selected tab identity, target/session scope, event cursor semantics, maximum event retention, response-body support, worker coverage, origin checks, domain ownership and guaranteed lifetime. A persistent transport, if later implemented and approved for the account, must independently hold a live connection, heartbeat it, fsync each event, record disconnections as gaps, and close or seal on loss of scope. It must not race the UI driver or silently attach a second controller to the same tab. A transport conformance suite should simulate disconnect during a write, target replacement, redirects, buffer eviction, duplicate events and origin departure. Only a live calibration spanning tool-call boundaries could establish background continuity.
+
 ## Collection boundary
 
 Default reports contain no request or response values, cookies, headers, storage or private DOM. Keep raw private captures out of Git and avoid sending them to a model by default. The comparator emits endpoint and structure hashes so two runs can be compared without publishing path values. A person reviewing the private packet can resolve a hash locally when an explanation requires it. Browser control and recorder instrumentation should remain visibly scoped to the declared origin and account session; optional deeper capture should be justified by a measured blind spot.
