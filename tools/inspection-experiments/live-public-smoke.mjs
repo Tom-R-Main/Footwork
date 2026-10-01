@@ -72,8 +72,12 @@ try {
     await capture.step({ workflowId: 'websocket-echo', stepId: 'echo-message', intent: 'Send an inert marker and verify its echo', action: async () => {
       await page.getByRole('textbox').fill(marker);
       await page.getByRole('button', { name: 'Send Message' }).click();
-      await page.waitForFunction(value => document.body.innerText.includes(`[recv] ${value}`), marker, { timeout: 10000 });
-      outcome.renderedReadback = true;
+      for (let attempt = 0; attempt < 40; attempt++) {
+        const snapshot = await page.locator('body').ariaSnapshot();
+        if (snapshot.includes(`[recv] ${marker}`)) { outcome.renderedReadback = true; break; }
+        await page.waitForTimeout(250);
+      }
+      if (!outcome.renderedReadback) throw new Error('Echo was not visible in the accessibility snapshot');
     } });
     outcome.browserActions.push('echo-message');
   }
