@@ -39,3 +39,18 @@ const metadata = inspectProtocolEnvelope(rawCdpEvent, {
 This module does **not** attach to a browser or modify the original recorder. It must run while raw CDP frames are transiently available in memory, before the original redaction step; previously sealed metadata-only packets cannot be enriched. The original browser driver owns any integration and must calibrate event loss, parser recognition, target identity and artifact sealing. Static Symbolic frontend code suggests Phoenix Channels on `/ws`, but the live audit has not yet verified specific channel event names in frames. The fetch stream sidecar above is generic and is unlikely to observe Symbolic's generation cadence if that code path uses WebSockets.
 
 Offline test: `node --test tools/inspection-transport/protocol-envelope.test.mjs`.
+
+## GraphQL operation envelopes
+
+`graphql-envelope.mjs` takes a transient CDP `Network.requestWillBeSent` event and an exact HTTPS origin/path fence. For a JSON GraphQL POST it keeps only explicitly allowed operation names, query/mutation/subscription kind, operation/batch counts and byte counts. It discards URL query parameters, query text, variables, extensions and unknown operation names. Missing post data, malformed JSON, oversized bodies and a truncated batch are explicit. The operation allowlist should come from a reviewed delivered-client catalog or fixture.
+
+```js
+const metadata = inspectGraphqlEnvelope(rawCdpEvent, {
+  allowedOrigin: 'https://studio.example.test',
+  allowedOperations: ['GuidedFactCheckPrepare', 'GuidedFactCheckSubmit'],
+});
+```
+
+Like the WebSocket parser, this is **not** connected to the current recorder and cannot enrich previously sealed packets. It identifies a request the client made, not successful server execution or persistence. A future integration should associate its fixed-schema output with the original request sequence, preserve capture gaps, and test against a private fixture before use on an account workflow.
+
+Offline test: `node --test tools/inspection-transport/graphql-envelope.test.mjs`.

@@ -30,3 +30,16 @@ Test: implement a separate capture-time helper and synthetic tests for allowed, 
 Predicts: named allowed operations survive with query/mutation kind and counts, while variables, query text, URLs and unknown operation names never appear; unavailable bodies remain explicit.
 Against: a sentinel appears in serialized metadata, cross-origin traffic is classified as a target operation, or missing post data is reported as an anonymous operation.
 Refs: tools/browser-inspection/redaction.mjs; Best-Edit output/symbolic-recon/static/STATIC-READ.md
+
+## PEU2 · update · 2026-10-01 15:39
+Resolves: PE2 = held
+Observed: four synthetic GraphQL tests passed for allowlisted, unlisted and anonymous operations, batching, missing/malformed/oversized bodies, and exact-origin/path/method fencing. Secret sentinels in variables, extensions, URL parameters, query text and unknown operation names did not enter serialized metadata.
+Inferred: the helper can link an observed GraphQL request to a reviewed static operation catalog when the operation name is present and allowed. It does not establish server completion or identify persisted/anonymous operations.
+Next: original browser driver may calibrate this parser alongside the WebSocket parser in one bounded run; compare request counts and capture gaps before attributing operations to UI steps.
+Refs: tools/inspection-transport/graphql-envelope.test.mjs; tools/inspection-experiments/SITE-INSPECTION.md
+
+## PES2 · summary · 2026-10-01 15:39
+Established: two independent capture-time parsers can retain only bounded protocol and operation identity metadata from tested synthetic CDP events.
+Uncertain: live integration, Symbolic operation-name presence, target/worker coverage, and causal workflow attribution remain open.
+Decision: retain these as opt-in, offline-tested adapters with the original browser lane responsible for any live calibration.
+Refs: tools/inspection-transport/protocol-envelope.mjs; tools/inspection-transport/graphql-envelope.mjs
