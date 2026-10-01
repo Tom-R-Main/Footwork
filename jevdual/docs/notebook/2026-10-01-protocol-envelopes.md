@@ -21,3 +21,12 @@ Established: an isolated, offline-tested parser can recognize selected realtime 
 Uncertain: live Symbolic protocol, worker/target coverage, parser recognition rate and integration with the original recorder remain unverified.
 Decision: leave browser driving and recorder integration with the original audit; use the generic evidence-led site-inspection guide for future sites.
 Refs: tools/inspection-transport/protocol-envelope.mjs; tools/inspection-experiments/SITE-INSPECTION.md
+
+## PE2 · prediction · 2026-10-01 15:38
+Question: can live GraphQL operation identity be linked to a delivered-client catalog without persisting request variables or queries?
+Hypothesis: a same-origin, exact-path parser can retain only explicitly allowed operation names, query kind and counts from a bounded JSON POST body.
+Alternatives: anonymous or batched operations prevent useful identity, or parser output leaks variable values through names, URLs or errors.
+Test: implement a separate capture-time helper and synthetic tests for allowed, unknown, batched, anonymous, oversized, missing and cross-origin requests with secret sentinels.
+Predicts: named allowed operations survive with query/mutation kind and counts, while variables, query text, URLs and unknown operation names never appear; unavailable bodies remain explicit.
+Against: a sentinel appears in serialized metadata, cross-origin traffic is classified as a target operation, or missing post data is reported as an anonymous operation.
+Refs: tools/browser-inspection/redaction.mjs; Best-Edit output/symbolic-recon/static/STATIC-READ.md
