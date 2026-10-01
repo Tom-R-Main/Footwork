@@ -81,3 +81,12 @@ Established: the generic cold-entry bridge, workflow observer, findings ledger a
 Uncertain: first navigation in the user's Chrome, transient-origin polling recovery, worker/OOPIF traffic and semantic interpretation of server-side storage remain outside this package's proof.
 Decision: hand the browser lane and private run packets back to the original audit; keep publishing blocked; preserve open workflow and cold-entry questions for a scoped next iteration.
 Refs: tools/inspection-experiments/README.md; output/inspection-private-site/db-search-20261001-1790888525744/
+
+## PS1 · prediction · 2026-10-01 17:07
+Question: can polling resume after a transient origin-check failure without weakening the recorder's origin fence?
+Hypothesis: an external supervisor can inspect only the recorder's safe status and a fresh tab URL, and call its existing `startPolling` only when the exact HTTPS origin is restored. It must never touch buffered events itself or resume after a foreign origin, explicit stop or sealed run.
+Alternatives: a paused recorder cannot restart reliably, or the supervisor can race an active drain and duplicate events.
+Test: implement a fork-owned supervisor around the existing capture public methods and test transient URL failure, same-origin recovery, foreign-origin refusal, explicit stop and sealed-run refusal with a synthetic capture. Keep the existing recorder unchanged.
+Predicts: a transient failure yields a bounded resume attempt and later polling with no unsanctioned event access; wrong-origin and stopped states never call `startPolling`.
+Against: any recovery attempt occurs before origin verification, duplicate starts occur, or supervisor output contains a URL value.
+Refs: tools/browser-inspection/capture.mjs; output/inspection-private-site/db-evidence-20261001-1790888282863/
