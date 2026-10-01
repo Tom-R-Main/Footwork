@@ -38,7 +38,8 @@ try {
     domainsToEnable: ['Network', 'Runtime'], maxDrainPages: 100 });
   await capture.start(); started = true;
   await capture.snapshotNow({ label: 'baseline' });
-  const outcome = { site, browserActions: [], renderedReadback: false, responseObserved: false };
+  const outcome = { site, browserActions: [], renderedReadback: false, responseObserved: false, actionFailed: false };
+  try {
   if (site === 'todo') {
     await capture.step({ workflowId: 'todo-local', stepId: 'add-item', intent: 'Add an inert calibration item', action: async () => {
       const input = page.getByPlaceholder('What needs to be done?');
@@ -71,11 +72,12 @@ try {
     await capture.step({ workflowId: 'websocket-echo', stepId: 'echo-message', intent: 'Send an inert marker and verify its echo', action: async () => {
       await page.getByRole('textbox').fill(marker);
       await page.getByRole('button', { name: 'Send Message' }).click();
-      await page.getByText(`[recv] ${marker}`, { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+      await page.waitForFunction(value => document.body.innerText.includes(`[recv] ${value}`), marker, { timeout: 10000 });
       outcome.renderedReadback = true;
     } });
     outcome.browserActions.push('echo-message');
   }
+  } catch { outcome.actionFailed = true; }
   await capture.snapshotNow({ label: 'settled' });
   const artifact = await writeEnvelopeArtifact({ runDirectory: capture.status().directory, bridge });
   const reportHandle = await open(path.join(capture.status().directory, 'artifacts', 'outcome.json'), 'wx', 0o600);
@@ -83,6 +85,7 @@ try {
   finally { await reportHandle.close(); }
   await capture.stop(); started = false;
   console.log(JSON.stringify({ runDirectory: capture.status().directory, capture: capture.status().counts, artifact: { count: artifact.count, coverage: artifact.coverage }, outcome }));
+  if (outcome.actionFailed) process.exitCode = 1;
 } finally {
   if (started) { try { await capture.stop(); } catch { /* Preserve original failure; capture already records cleanup. */ } }
   if (bridge) { try { await bridge.close(); } catch { /* Browser cleanup follows. */ } }
