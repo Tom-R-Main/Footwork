@@ -12,7 +12,7 @@ const ring = createEventRing({
 const batch = await ring.readEvents({ afterSequence: previousCursor, limit: 1000 });
 ```
 
-The buffer stores raw event params only in bounded process memory. A future adapter must pass them through `browser-inspection/redaction.mjs` before disk, preserve source/target identity, and record disconnect, session replacement and truncation as gaps in the sealed run. It must also prove target selection, worker attachment, domain ownership, a live origin fence, and uninterrupted process lifetime. No cross-tool-call or worker coverage is claimed here. Do not run a second controller on the shared Symbolic tab while the original audit owns it.
+The buffer stores raw event params only in bounded process memory. A future adapter must pass them through `browser-inspection/redaction.mjs` before disk, preserve source/target identity, and record disconnect, session replacement and truncation as gaps in the sealed run. It must also prove target selection, worker attachment, domain ownership, a live origin fence, and uninterrupted process lifetime. No cross-tool-call or worker coverage is claimed here. Do not run a second controller on a shared tab while another audit owns it.
 
 Offline test: `node --test tools/inspection-transport/event-ring.test.mjs`.
 
@@ -20,7 +20,7 @@ Offline test: `node --test tools/inspection-transport/event-ring.test.mjs`.
 
 `stream-probe.mjs` adapts the useful part of the separate in-page recon kit for Footwork: **first-chunk time, per-chunk byte counts and cadence**, with no chunk previews or response values. `buildStreamProbeSource({allowedOrigin})` returns a self-contained script for the existing permitted tab's page-evaluation API. It installs `window.__footworkStreamProbe`; the operator can call `stop()`, then `drain(1000)` and `stats()` within one actively awaited browser invocation. Full page reloads need a fresh installation. The probe touches same-origin `fetch` responses with SSE, NDJSON or text-stream content types; it does not see streams started before installation, worker fetches, XHR, or WebSocket frames.
 
-The Node-side `writeStreamArtifact({runDirectory,label,records,probeStatus})` strips unknown fields, writes a private `artifacts/<label>.stream.jsonl` file with `0600` permissions and syncs it. Call it **before** `capture.stop()` so the recorder hashes the artifact in its manifest. Include `probeStatus` so dropped in-page records and any still-active observation are visible. It refuses to modify a sealed run. The probe returns the page's original Response and clones only the selected stream, but cloning can still perturb buffering or timing; calibrate against a synthetic page and use it only for a bounded workflow. A cap or stop cancels the observer branch. A live Symbolic run has not used this sidecar yet.
+The Node-side `writeStreamArtifact({runDirectory,label,records,probeStatus})` strips unknown fields, writes a private `artifacts/<label>.stream.jsonl` file with `0600` permissions and syncs it. Call it **before** `capture.stop()` so the recorder hashes the artifact in its manifest. Include `probeStatus` so dropped in-page records and any still-active observation are visible. It refuses to modify a sealed run. The probe returns the page's original Response and clones only the selected stream, but cloning can still perturb buffering or timing; calibrate against a synthetic page and use it only for a bounded workflow. A cap or stop cancels the observer branch. This sidecar remains unverified on an authenticated site.
 
 Offline test: `node --test tools/inspection-transport/stream-probe.test.mjs`.
 
@@ -36,7 +36,7 @@ const metadata = inspectProtocolEnvelope(rawCdpEvent, {
 // Pass `metadata`, not `rawCdpEvent.params.response.payloadData`, to a private journal.
 ```
 
-This module does **not** attach to a browser or modify the original recorder. It must run while raw CDP frames are transiently available in memory, before the original redaction step; previously sealed metadata-only packets cannot be enriched. The original browser driver owns any integration and must calibrate event loss, parser recognition, target identity and artifact sealing. Static Symbolic frontend code suggests Phoenix Channels on `/ws`, but the live audit has not yet verified specific channel event names in frames. The fetch stream sidecar above is generic and is unlikely to observe Symbolic's generation cadence if that code path uses WebSockets.
+This module does **not** attach to a browser or modify the original recorder. It must run while raw CDP frames are transiently available in memory, before the original redaction step; previously sealed metadata-only packets cannot be enriched. The original browser driver owns any integration and must calibrate event loss, parser recognition, target identity and artifact sealing. A fetch stream sidecar cannot observe a workflow that uses WebSockets.
 
 Offline test: `node --test tools/inspection-transport/protocol-envelope.test.mjs`.
 
@@ -57,8 +57,16 @@ Offline test: `node --test tools/inspection-transport/graphql-envelope.test.mjs`
 
 ## Disposable Playwright CDP bridge
 
-`playwright-cdp-bridge.mjs` lets the existing recorder use a **caller-supplied, already navigated** Playwright page. It attaches one page CDP session, feeds a bounded `event-ring.mjs`, and exposes `tab`/`cdp` methods compatible with `createCapture`. It also extracts the two fixed-schema envelope types transiently; `writeEnvelopeArtifact` saves their bounded metadata before the capture manifest is sealed. No browser is launched or navigated by this bridge.
+`playwright-cdp-bridge.mjs` lets the existing recorder use a caller-supplied Playwright page, including `about:blank` before its first navigation when `preNavigation` is enabled. It attaches one page CDP session, feeds a bounded `event-ring.mjs`, and exposes `tab`/`cdp` methods compatible with `createCapture`. It also extracts the two fixed-schema envelope types transiently; `writeEnvelopeArtifact` saves their bounded metadata before the capture manifest is sealed. `writeColdEntryArtifact` saves sanitized first-navigation metadata only after verifying the main document and final page origin. No browser is launched or navigated by this bridge.
 
-The bridge labels its selected CDP session with a local logical ID, fences the page's current origin, and reports ring evictions, parser failures and envelope drops. It does not cover workers, service workers, out-of-process frames, or other tabs. The caller owns `capture.stop()`, `bridge.close()`, page/context/browser cleanup, and an independent readback of the visible result. It is intended for disposable public-site calibration, not for attaching a second controller to the shared Symbolic Chrome tab.
+The bridge labels its selected CDP session with a local logical ID, fences the page's current origin, and reports ring evictions, parser failures and envelope drops. It does not cover workers, service workers, out-of-process frames, or other tabs. The caller owns `capture.stop()`, `bridge.close()`, page/context/browser cleanup, and an independent readback of the visible result. It is intended for disposable public-site calibration, not for attaching a second controller to a shared tab.
 
 Offline test: `node --test tools/inspection-transport/playwright-cdp-bridge.test.mjs`.
+
+## Transient-origin polling recovery
+
+`polling-supervisor.mjs` wraps a running recorder without reading events. It checks `capture.status()` and a fresh `tab.url()` before calling the recorder's existing `startPolling`. Recovery is attempted only when polling previously started and paused specifically because the origin check was unavailable, and the tab has returned to the declared exact HTTPS origin. The recorder checks the origin again before its next write. A foreign origin, explicit stop, sealed run or other pause reason prevents recovery. Status exposes counters only; it contains no URL or page values.
+
+The caller starts and stops this optional supervisor in the same awaited session as the recorder. `supervisor.stop()` cancels retries but leaves recorder shutdown with the caller. This does not restore events lost during the pause or keep capture alive across a disconnected process. It has synthetic tests; authenticated-browser recovery remains unverified.
+
+Offline test: `node --test tools/inspection-transport/polling-supervisor.test.mjs`.

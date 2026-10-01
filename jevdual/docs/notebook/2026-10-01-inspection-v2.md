@@ -90,3 +90,16 @@ Test: implement a fork-owned supervisor around the existing capture public metho
 Predicts: a transient failure yields a bounded resume attempt and later polling with no unsanctioned event access; wrong-origin and stopped states never call `startPolling`.
 Against: any recovery attempt occurs before origin verification, duplicate starts occur, or supervisor output contains a URL value.
 Refs: tools/browser-inspection/capture.mjs; output/inspection-private-site/db-evidence-20261001-1790888282863/
+
+## U207 · update · 2026-10-01 17:12
+Resolves: PS1 = held
+Observed: five state/race tests and one actual-recorder fixture passed. The recorder paused on a synthetic transient origin failure, the supervisor verified the recovered exact HTTPS origin, and the recorder's own `startPolling` fence resumed polling. The sealed fixture logged two polling starts. A never-started recorder, foreign origin, other pause reason, stopped run, and stop during an in-flight URL check did not resume. Supervisor status contains counters rather than URL values.
+Inferred: this resolves the local recovery mechanism but does not establish lossless capture during a pause or prove recovery in an authenticated browser session.
+Next: have the original browser owner integrate and calibrate this optional supervisor within a bounded run; retain gap accounting and compare pre/post-pause event continuity.
+Refs: tools/inspection-transport/polling-supervisor.test.mjs; tools/browser-inspection/capture.mjs
+
+## S221 · summary · 2026-10-01 17:12
+Established: the optional, origin-fenced polling supervisor recovers a paused recorder through its existing public method in synthetic and actual-recorder fixture tests. It neither reads buffered events nor owns recorder shutdown.
+Uncertain: live browser recovery, event loss during the outage, and worker/frame coverage are unverified.
+Decision: hand this generic utility to the original audit owner for a bounded live calibration; keep the browser lane released and the publication gate closed.
+Refs: tools/inspection-transport/polling-supervisor.mjs; tools/inspection-transport/README.md
