@@ -31,6 +31,13 @@ test('redaction omits signed query values, credentials, JWT, PEM and dynamic JSO
   const shape = JSON.stringify(jsonShape({ email: 'PRIVATE_EMAIL', 'PRIVATE_EMAIL@example.com': 'body', accessToken: 'PRIVATE_TOKEN' }));
   assert.ok(!/PRIVATE/.test(shape));
   assert.ok(!JSON.stringify(fixtureValues({ authorization: 'abc', content: 'Bearer DEF', pem: '-----BEGIN KEY-----abc-----END KEY-----' })).includes('abc'));
+  assert.equal(safeUrl('data:text/plain,PRIVATE_DATA_URL_SENTINEL'), '[NON_NETWORK_URL]');
+  assert.equal(safeUrl('blob:https://example.test/PRIVATE_BLOB_SENTINEL'), '[NON_NETWORK_URL]');
+  const mixedToken = `0.032512336477671266:1790881533:${'Ab3_Cd4-Ef5.Gh6'.repeat(5)}`;
+  assert.equal(safeUrl(`https://example.test/cdn-cgi/challenge-platform/${mixedToken}`), 'https://example.test/cdn-cgi/challenge-platform/[OPAQUE]');
+  assert.equal(safeUrl('https://example.test/projects/alpha-1/assets/app.js'), 'https://example.test/projects/alpha-1/assets/app.js');
+  const event = eventMetadata({ method: 'Network.requestWillBeSent', params: { request: { url: 'data:text/plain,PRIVATE_DATA_URL_SENTINEL', method: 'GET' } } });
+  assert.doesNotMatch(JSON.stringify(event), /PRIVATE_DATA_URL_SENTINEL/);
 });
 
 test('start asserts fresh exact Symbolic origin, no navigation, and explicit domain ownership', async () => {

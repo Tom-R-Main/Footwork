@@ -18,11 +18,14 @@ export function safeText(value, max = 2000) {
 export function safeUrl(value) {
   try {
     const url = new URL(value);
+    // data:/blob:/javascript: pathnames can contain the entire document or a token.
+    if (!['http:', 'https:', 'ws:', 'wss:'].includes(url.protocol)) return '[NON_NETWORK_URL]';
     // No credentials, hash or query values, even when their parameter names look harmless.
     const pathname = url.pathname.split('/').map(segment => {
       let decoded;
       try { decoded = decodeURIComponent(segment); } catch { return '[INVALID]'; }
-      return /@|eyJ|[\w-]{48,}/.test(decoded) ? '[OPAQUE]' : segment;
+      // Challenge and signed-route tokens often combine punctuation with shorter opaque runs.
+      return /@|eyJ|[\w-]{48,}/.test(decoded) || (decoded.length >= 64 && /[A-Za-z0-9]{16,}/.test(decoded) && /[.:_-]/.test(decoded)) ? '[OPAQUE]' : segment;
     }).join('/');
     const keys = [...new Set([...url.searchParams.keys()].map(key => SECRET_KEY.test(key) ? '[SECRET]' : key.replace(/[^\w.-]/g, '_').slice(0, 60)))];
     return `${url.protocol}//${url.host}${pathname}${keys.length ? `?${keys.map(k => `${k}=[OMITTED]`).join('&')}` : ''}`;
