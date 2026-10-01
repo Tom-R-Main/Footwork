@@ -17,3 +17,12 @@ Test: add a minimal regression in the recorder redaction tests for `data:`, `blo
 Predicts: synthetic payload sentinels no longer appear in sanitized URLs, while normal `/projects/...` and static asset paths still classify as URLs.
 Against: a sentinel remains, common route paths are classified as non-network, or journal serialization bypasses `safeUrl` for the observed request events.
 Refs: output/inspection-public-smoke/todo-20261001195227-bb65428d; output/inspection-public-smoke/graphql-20261001195239-ff5bdaf8; tools/browser-inspection/redaction.mjs
+
+## LI3 · prediction · 2026-10-01 16:05
+Question: can the same isolated recorder explain a multi-page commercial site's public conversion flow without mistaking marketing copy for product behavior?
+Hypothesis: a public get-started page behaves as a demo-request form with required-field validation, while pricing and product navigation lead to public informational pages; the existing capture will preserve step-linked navigation and form-validation evidence without submitting contact data.
+Alternatives: the form is a self-service signup, navigation relies on a mechanism the recorder misses, or the page's background requests create enough gaps to make even public-flow ordering uncertain.
+Test: add a bounded, privately configured lead-generation scenario to the disposable Playwright runner, load and settle before capture, snapshot the blank form, press Submit without data, inspect focus or validation, follow pricing and product links, and record rendered route/readback and sealed coverage. Keep all site-specific configuration and artifacts private.
+Predicts: a sealed packet with step/action/navigation ordering, no form POST caused by the blank submission, and public route readbacks; the written product note separates these observations from documentation claims and ExecuFunction hypotheses.
+Against: a contact request is sent on blank submit, navigation/readback fails while the runner reports success, the packet has unreported gaps, or any shareable summary contains a dynamic URL/token.
+Refs: tools/inspection-experiments/live-public-smoke.mjs
