@@ -54,3 +54,11 @@ const metadata = inspectGraphqlEnvelope(rawCdpEvent, {
 Like the WebSocket parser, this is **not** connected to the current recorder and cannot enrich previously sealed packets. It identifies a request the client made, not successful server execution or persistence. A future integration should associate its fixed-schema output with the original request sequence, preserve capture gaps, and test against a private fixture before use on an account workflow.
 
 Offline test: `node --test tools/inspection-transport/graphql-envelope.test.mjs`.
+
+## Disposable Playwright CDP bridge
+
+`playwright-cdp-bridge.mjs` lets the existing recorder use a **caller-supplied, already navigated** Playwright page. It attaches one page CDP session, feeds a bounded `event-ring.mjs`, and exposes `tab`/`cdp` methods compatible with `createCapture`. It also extracts the two fixed-schema envelope types transiently; `writeEnvelopeArtifact` saves their bounded metadata before the capture manifest is sealed. No browser is launched or navigated by this bridge.
+
+The bridge labels its selected CDP session with a local logical ID, fences the page's current origin, and reports ring evictions, parser failures and envelope drops. It does not cover workers, service workers, out-of-process frames, or other tabs. The caller owns `capture.stop()`, `bridge.close()`, page/context/browser cleanup, and an independent readback of the visible result. It is intended for disposable public-site calibration, not for attaching a second controller to the shared Symbolic Chrome tab.
+
+Offline test: `node --test tools/inspection-transport/playwright-cdp-bridge.test.mjs`.
