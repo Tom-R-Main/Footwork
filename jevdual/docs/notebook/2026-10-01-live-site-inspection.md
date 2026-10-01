@@ -26,3 +26,30 @@ Test: add a bounded, privately configured lead-generation scenario to the dispos
 Predicts: a sealed packet with step/action/navigation ordering, no form POST caused by the blank submission, and public route readbacks; the written product note separates these observations from documentation claims and ExecuFunction hypotheses.
 Against: a contact request is sent on blank submit, navigation/readback fails while the runner reports success, the packet has unreported gaps, or any shareable summary contains a dynamic URL/token.
 Refs: tools/inspection-experiments/live-public-smoke.mjs
+
+## LI4 · update · 2026-10-01 16:14
+Resolves: LI1 = held
+Observed: three public trial types produced hash-verified sealed packets with step intervals. The client-local item survived reload without a corresponding server write. The named public GraphQL query returned HTTP 200 and an allowed operation envelope; that packet reports two body-unavailable gaps. The echo packet recorded four unnamed plain-text frames and accessibility-snapshot readback. The combined focused suite later passed 63/63.
+Inferred: the bridge can calibrate heterogeneous public flows, but a sealed packet alone does not prove full target or worker coverage, and unknown frame protocols remain unknown.
+Next: LI2 and LI3; keep private run artifacts out of Git.
+Refs: output/inspection-public-smoke/; tools/inspection-experiments/coverage.mjs
+
+## LI5 · update · 2026-10-01 16:14
+Resolves: LI2 = held
+Observed: the redaction regression rejects synthetic data/blob URLs and long mixed-token path segments while preserving ordinary routes. A later public lead-generation packet contains four non-network URL placeholders and no raw data-image URL. The combined focused suite passed 63/63.
+Inferred: the observed non-network leak path is closed. The exact earlier challenge response did not recur, so the mixed-token path repair has synthetic rather than repeated live confirmation.
+Next: retain the sanitizer regressions and inspect future private packet audits for new URL shapes.
+Refs: tools/browser-inspection/redaction.mjs; output/inspection-public-smoke/leadgen-20261001200952-d7a9c3e1/
+
+## LI6 · update · 2026-10-01 16:14
+Resolves: LI3 = held
+Observed: after correcting a hidden repeated-link locator and replacing an unreliable focus assumption with native required-field validity, the private-config public funnel trial completed blank form validation and two navigations with rendered readback. No contact-form POST appeared in the blank-submit interval; one third-party analytics POST did. The packet has 733 events, zero reported gaps, two orphan terminal events and twelve unclosed requests, so the coverage audit labels it limited.
+Inferred: action-linked public UX evidence is achievable without filling or submitting contact details; a POST count alone would have falsely implied form submission. The packet does not establish any authenticated product behavior.
+Next: keep site-specific configuration and evidence private; reuse only the generic runner and coverage lessons.
+Refs: tools/inspection-experiments/live-public-smoke.mjs; output/inspection-public-smoke/leadgen-20261001200952-d7a9c3e1/
+
+## LI7 · summary · 2026-10-01 16:14
+Established: isolated public-browser calibration exercised client-local persistence, named GraphQL, plain-text WebSocket echo, and a lead-generation form/navigation flow. The generic runner now takes a private site configuration for the last case. Hash-verified packets, action intervals, native validity checks, accessibility readback and lifecycle audits make the observations reviewable. The combined focused suite passed 63/63 and the notebook check passed.
+Uncertain: browser targets outside the selected page, workers, stream content, authenticated application behavior, and network requests outside the capture interval remain unmeasured. Two network lifecycle orphans limit the final public packet despite zero reported gaps.
+Decision: keep the generic Footwork instrumentation; store named-site findings in private research systems, not versioned GitHub-facing code or documentation.
+Refs: tools/inspection-experiments/live-public-smoke.mjs; tools/inspection-transport/playwright-cdp-bridge.mjs; output/inspection-public-smoke/
