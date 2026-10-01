@@ -4,19 +4,26 @@ import { EventEmitter } from 'node:events';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { createPlaywrightCdpBridge, writeEnvelopeArtifact } from './playwright-cdp-bridge.mjs';
+import { createPlaywrightCdpBridge, writeColdEntryArtifact, writeEnvelopeArtifact } from './playwright-cdp-bridge.mjs';
 
 const ORIGIN = 'https://example.test';
 function mockPage(url = `${ORIGIN}/app`) {
   const page = new EventEmitter();
   const session = new EventEmitter();
-  session.send = async () => ({});
+  session.send = async method => method === 'Page.getFrameTree' ? { frameTree: { frame: { id: 'main-frame' } } } : {};
   session.detach = async () => {};
-  page.context = () => ({ newCDPSession: async () => session });
-  page.url = () => url;
+  const context = new EventEmitter();
+  context.newCDPSession = async () => session;
+  context.serviceWorkers = () => [];
+  page.context = () => context;
+  let currentUrl = url;
+  page.url = () => currentUrl;
+  page.setUrl = value => { currentUrl = value; };
+  page.frames = () => [{}];
+  page.workers = () => [];
   page.locator = () => ({ ariaSnapshot: async () => '- heading "Demo"' });
   page.screenshot = async () => Buffer.from('pixels');
-  return { page, session };
+  return { page, session, context };
 }
 
 test('real-session bridge accepts one target and records only bounded operation/frame metadata', async () => {
@@ -51,4 +58,52 @@ test('bridge fences origin and artifact writer refuses sealed runs', async () =>
     await writeFile(path.join(runDirectory, 'manifest.json'), '{}');
     await assert.rejects(writeEnvelopeArtifact({ runDirectory, bridge, label: 'after-seal' }), /sealed/);
   } finally { await bridge.close(); await rm(runDirectory, { recursive: true, force: true }); }
+});
+
+test('cold entry writes sanitized first-document evidence only after origin verification', async () => {
+  const { page, session, context } = mockPage('about:blank');
+  const bridge = await createPlaywrightCdpBridge({ page, allowedOrigin: ORIGIN, preNavigation: true });
+  const runDirectory = await mkdtemp(path.join(os.tmpdir(), 'footwork-cold-entry-'));
+  try {
+    await mkdir(path.join(runDirectory, 'artifacts'));
+    await assert.rejects(writeColdEntryArtifact({ runDirectory, bridge }), /Verified cold entry unavailable/);
+    session.emit('Network.requestWillBeSent', { requestId: 'doc', frameId: 'main-frame', type: 'Document', timestamp: 1,
+      request: { method: 'GET', url: `${ORIGIN}/entry?private=SECRET_QUERY` } });
+    session.emit('Network.responseReceived', { requestId: 'doc', timestamp: 2, type: 'Document', response: { url: `${ORIGIN}/entry?private=SECRET_QUERY`, status: 200, mimeType: 'text/html' } });
+    session.emit('Network.requestWillBeSent', { requestId: 'external', timestamp: 3, type: 'Image',
+      request: { method: 'GET', url: 'https://other.test/SECRET_EXTERNAL' } });
+    page.emit('frameattached'); page.emit('worker'); context.emit('serviceworker');
+    page.setUrl(`${ORIGIN}/entry`);
+    assert.deepEqual(await bridge.verifyColdEntry(), { verified: true, mainDocumentRequests: 1, eventCount: 3 });
+    const result = await writeColdEntryArtifact({ runDirectory, bridge });
+    const saved = await readFile(result.path, 'utf8');
+    assert.equal(result.eventCount, 2);
+    assert.equal(JSON.parse(saved).coverage.observedTargets.dedicatedWorker, 1);
+    assert.equal(JSON.parse(saved).coverage.workerAndOutOfProcessFrameTraffic, 'unattached');
+    assert.equal(JSON.parse(saved).coverage.excludedEvents, 1);
+    assert(!saved.includes('SECRET_QUERY'));
+    assert(!saved.includes('SECRET_EXTERNAL'));
+    await writeFile(path.join(runDirectory, 'manifest.json'), '{}');
+    await assert.rejects(writeColdEntryArtifact({ runDirectory, bridge, label: 'late' }), /sealed/);
+  } finally { await bridge.close(); await rm(runDirectory, { recursive: true, force: true }); }
+});
+
+test('cold entry refuses a foreign main document or truncated buffer', async () => {
+  const foreign = mockPage('about:blank');
+  const bridge = await createPlaywrightCdpBridge({ page: foreign.page, allowedOrigin: ORIGIN, preNavigation: true });
+  try {
+    foreign.session.emit('Network.requestWillBeSent', { requestId: 'doc', frameId: 'main-frame', type: 'Document',
+      request: { method: 'GET', url: 'https://other.test/private' } });
+    foreign.page.setUrl(`${ORIGIN}/entry`);
+    await assert.rejects(bridge.verifyColdEntry(), /did not stay on the allowed origin/);
+  } finally { await bridge.close(); }
+  const truncated = mockPage('about:blank');
+  const shortBridge = await createPlaywrightCdpBridge({ page: truncated.page, allowedOrigin: ORIGIN, preNavigation: true, maxEvents: 1 });
+  try {
+    truncated.session.emit('Network.requestWillBeSent', { requestId: 'doc', frameId: 'main-frame', type: 'Document',
+      request: { method: 'GET', url: `${ORIGIN}/entry` } });
+    truncated.session.emit('Network.responseReceived', { requestId: 'doc', response: { url: `${ORIGIN}/entry`, status: 200 } });
+    truncated.page.setUrl(`${ORIGIN}/entry`);
+    await assert.rejects(shortBridge.verifyColdEntry(), /buffer is incomplete/);
+  } finally { await shortBridge.close(); }
 });

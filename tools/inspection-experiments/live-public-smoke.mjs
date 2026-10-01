@@ -6,7 +6,7 @@ import { open, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCapture } from '../browser-inspection/capture.mjs';
-import { createPlaywrightCdpBridge, writeEnvelopeArtifact } from '../inspection-transport/playwright-cdp-bridge.mjs';
+import { createPlaywrightCdpBridge, writeColdEntryArtifact, writeEnvelopeArtifact } from '../inspection-transport/playwright-cdp-bridge.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const site = process.argv[2];
@@ -43,16 +43,22 @@ let bridge, capture, started = false;
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
+  const coldEntry = site === 'leadgen';
+  if (coldEntry) bridge = await createPlaywrightCdpBridge({ page, allowedOrigin: scenario.origin, preNavigation: true,
+    graphqlPath: scenario.graphqlPath, allowedOperations: scenario.allowedOperations });
   await page.goto(scenario.url, { waitUntil: 'domcontentloaded', timeout: 20000 });
   const preCaptureSettled = await page.waitForLoadState('networkidle', { timeout: 5000 }).then(() => true, () => false);
-  bridge = await createPlaywrightCdpBridge({ page, allowedOrigin: scenario.origin, graphqlPath: scenario.graphqlPath, allowedOperations: scenario.allowedOperations });
+  const coldVerification = coldEntry ? await bridge.verifyColdEntry() : null;
+  if (!coldEntry) bridge = await createPlaywrightCdpBridge({ page, allowedOrigin: scenario.origin, graphqlPath: scenario.graphqlPath, allowedOperations: scenario.allowedOperations });
   capture = createCapture({ tab: bridge.tab, cdp: bridge.cdp, target: bridge.target, projectRoot,
     allowedOrigin: scenario.origin, outputName: 'inspection-public-smoke', runId,
-    privateDom: true, privateScreenshots: false, ownDomainLifecycle: true,
-    domainsToEnable: ['Network', 'Runtime'], maxDrainPages: 100 });
+    privateDom: true, privateScreenshots: false, ownDomainLifecycle: !coldEntry,
+    domainsToEnable: coldEntry ? [] : ['Network', 'Runtime'], maxDrainPages: 100 });
   await capture.start(); started = true;
+  const coldArtifact = coldEntry ? await writeColdEntryArtifact({ runDirectory: capture.status().directory, bridge }) : null;
   await capture.snapshotNow({ label: 'baseline' });
-  const outcome = { site, preCaptureSettled, browserActions: [], renderedReadback: false, responseObserved: false, actionFailed: false, failureStage: null };
+  const outcome = { site, preCaptureSettled, coldVerification, coldArtifactEvents: coldArtifact?.eventCount ?? null,
+    browserActions: [], renderedReadback: false, responseObserved: false, actionFailed: false, failureStage: null };
   try {
   if (site === 'todo') {
     await capture.step({ workflowId: 'todo-local', stepId: 'add-item', intent: 'Add an inert calibration item', action: async () => {
@@ -78,7 +84,7 @@ try {
     outcome.responseObserved = result.status === 200 && result.hasCharacter && !result.hasErrors;
   } else if (site === 'leadgen') {
     outcome.failureStage = 'recorded-reload';
-    outcome.coldInitialLoadCovered = false;
+    outcome.coldInitialLoadCovered = coldVerification?.verified === true && coldArtifact?.eventCount > 0;
     await capture.step({ workflowId: 'public-leadgen', stepId: 'recorded-reload', intent: 'Record the target document and served resources during a same-origin reload', action: async () => {
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.getByPlaceholder(scenario.requiredPlaceholder).waitFor({ state: 'visible' });

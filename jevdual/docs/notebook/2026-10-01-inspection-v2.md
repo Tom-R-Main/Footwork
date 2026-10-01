@@ -1,6 +1,6 @@
 # Inspection v2: cold entry, workflow proof, findings, publication
 
-## C1 · prediction · 2026-10-01 16:34
+## XZ91 · prediction · 2026-10-01 16:34
 Question: can a fresh disposable page's first navigation be captured without loosening the existing recorder's same-origin disk fence?
 Hypothesis: an in-memory CDP bridge can attach to `about:blank`, enable Network before navigation, then release a sanitized cold-entry artifact only after the final page and main-frame document request match the declared HTTPS origin. A rejected redirect or ring truncation must leave no cold-entry artifact.
 Alternatives: Playwright's page CDP session cannot observe the first document request, the main frame cannot be identified reliably, or third-party subframes make the origin check ambiguous.
@@ -32,3 +32,32 @@ Test: add a generic CLI and synthetic repository test with a private target toke
 Predicts: tracked-file and commit-history hits both fail, a clean synthetic range passes, and report output uses generic paths/commit IDs without echoing the target token.
 Against: history hits pass, the token appears in the gate's output, or a missing private policy is treated as success.
 Refs: tools/inspection-experiments/README.md
+
+## U200 · update · 2026-10-01 16:52
+Observed: the pre-navigation bridge observed the first main-frame Document request before recorder startup. A wrong-origin document and truncated ring are rejected in unit tests. The local packet `output/inspection-public-smoke/local-cold-1790887858706/` sealed a sanitized cold-entry artifact with five allowed network events and zero excluded events. Worker and out-of-process-frame traffic are explicitly unattached. An earlier fixture attempt stalled with an empty journal; a stage-logged rerun completed in under a second.
+Changes: the prediction ID was corrected from C1 to XZ91 because C1 and IC1 belonged to older packages; the committed prediction text is otherwise unchanged.
+Next: run an isolated live calibration only after the reserved next site session, and check redirects, workers and frames on that site.
+Refs: tools/inspection-transport/playwright-cdp-bridge.test.mjs; output/inspection-public-smoke/local-cold-1790887858706/
+
+## U201 · update · 2026-10-01 16:52
+Observed: the local fixture's save action had distinct precondition, immediate, settled and reload/readback checks, all passed; the reload was its own recorded step. The sealed packet has five recorded network events, one request hop, zero reported gaps and a bounded `workflow-checkpoints.json`. Unit tests show a failed precondition skips the action and an absent readback cannot verify a workflow.
+Inferred: the observer can represent a local persistence check but cannot establish causality from coincident traffic.
+Next: apply the observer to a safe live workflow during the reserved site session.
+Refs: tools/inspection-experiments/workflow-observer.test.mjs; output/inspection-public-smoke/local-cold-1790887858706/
+
+## U202 · update · 2026-10-01 16:52
+Observed: the ledger validator distinguishes observed, documented and inferred claims. An observed claim must cite a hash-verified packet, exact step cursors and an actual event sequence in the interval. Unit tests reject a forged packet and absent event, while the shareable projection omits claim prose, citations and falsifier text.
+Inferred: this validates evidence references, not whether a sentence correctly describes the event.
+Next: create a private ledger for the reserved site run and reconcile its strongest claims against the sealed packet.
+Refs: tools/inspection-experiments/findings-ledger.test.mjs
+
+## U203 · update · 2026-10-01 16:52
+Resolves: P1 = held
+Observed: synthetic Git repositories demonstrate that current tracked hits and deleted historical content both block, while a clean proposed range passes; output does not echo the private search term. The local scan against the current branch and its remote-main base found 13 tracked-file hits and 30 commits with hits across 189 proposed commits.
+Next: coordinate removal of older named material before any push; do not rewrite shared history unilaterally.
+Refs: tools/inspection-experiments/publication-gate.test.mjs; private local policy under output/
+
+## U204 · update · 2026-10-01 16:53
+Observed: `validateSealedFindings` accepted one local fixture claim after verifying manifest hashes, the readback step's exact cursor interval and a real Document request event inside it. The referenced packet reports zero capture gaps, but the event only establishes that a request occurred during the interval.
+Next: apply the same ledger to the reserved site run, with every backend hypothesis labeled observed, documented or inferred and a disproof test.
+Refs: output/inspection-public-smoke/local-cold-1790887858706/; tools/inspection-experiments/findings-ledger.mjs
