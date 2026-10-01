@@ -32,3 +32,18 @@ Test: mocked concurrent polling/mark/snapshot/stop and write barriers, followed 
 Predicts: mocks preserve exactly-once event sequences, stop terminates polling and waits for pending writes before hashing, and the live bridge can save a marked Home snapshot and cleanly report supported or rejected observation commands.
 Against: cursor regression, duplicate events, missing writes after stop, leaked credential sentinels, outside-origin body acquisition, or background operations continuing after stop. Live polling between tool invocations may be inconclusive even if the offline contract passes.
 Refs: tools/browser-inspection/capture.mjs; tools/browser-inspection/capture.test.mjs
+
+## BIU2 · update · 2026-10-01 14:43
+Resolves: BI2 = held
+Observed: Root rerun passed 28 offline cases; passive live capture within an actively awaited Chrome tool invocation remained active for two ticks, captured four WS metadata events and a marked snapshot, stopped/closed/disabled owned domains and verified six manifest files. Polling outside an active invocation paused on an unavailable-origin check. These results prove the predicted marked active-call calibration, not unattended collection.
+Inferred: serialized polling/writing and stop barriers satisfy the scoped contract; a persistent transport is separately required for between-call capture. First Projects route capture had event-buffer truncation and missing response metadata, so full-load network completeness is not established.
+Refs: tools/browser-inspection; Best-Edit docs/research/symbolic/preparation-verification.md
+
+## BI3 · prediction · 2026-10-01 14:43
+Question: can the revised default body policy plus faster polling preserve useful route evidence without unnecessary source retrieval?
+Hypothesis: skipping getResponseBody for non-JSON content whose values would be discarded, and polling at 100ms during the active browser invocation, reduces transport work while preserving API shape and UI outcome evidence.
+Alternatives: body retrieval was not the bottleneck, the bridge retains too few events during navigation, or origin checks/navigation latency still delay drains.
+Test: record Projects→Home→Projects with the revised capture/redaction modules from a versioned local source snapshot. Save that source provenance with the sealed packet. Check observed gaps, API shapes, actual HTTP body-call policy and resulting UI, without claiming direct performance causality from a changed/cached route.
+Predicts: default script/CSS bodies are policy omissions, JSON shapes remain eligible, owned domains/writers stop cleanly, and resulting Home/Projects snapshots are saved. Whether the route has zero retention gaps remains uncertain; a gap disproves full-trace completeness.
+Against: non-JSON bodies fetched only to discard values, JSON unnecessarily omitted, outside-origin data retained, or final state/manifest/cleanup missing.
+Refs: tools/browser-inspection/capture.mjs; tools/browser-inspection/capture.test.mjs
