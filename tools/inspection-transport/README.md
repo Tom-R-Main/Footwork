@@ -23,3 +23,19 @@ Offline test: `node --test tools/inspection-transport/event-ring.test.mjs`.
 The Node-side `writeStreamArtifact({runDirectory,label,records,probeStatus})` strips unknown fields, writes a private `artifacts/<label>.stream.jsonl` file with `0600` permissions and syncs it. Call it **before** `capture.stop()` so the recorder hashes the artifact in its manifest. Include `probeStatus` so dropped in-page records and any still-active observation are visible. It refuses to modify a sealed run. The probe returns the page's original Response and clones only the selected stream, but cloning can still perturb buffering or timing; calibrate against a synthetic page and use it only for a bounded workflow. A cap or stop cancels the observer branch. A live Symbolic run has not used this sidecar yet.
 
 Offline test: `node --test tools/inspection-transport/stream-probe.test.mjs`.
+
+## Realtime protocol envelopes
+
+`protocol-envelope.mjs` is a capture-time, pure parser for CDP `Network.webSocketFrameSent` and `Network.webSocketFrameReceived` events. It recognizes Phoenix JSON array/object envelopes, basic Socket.IO EVENT packets and standard GraphQL WebSocket message types. It returns only direction, CDP monotonic timestamp/sequence, frame byte count, protocol, recognition status, an **explicitly allowed** application event name, and an explicitly allowed Phoenix topic family. Dynamic topic suffixes, payloads, message IDs, socket URLs and unlisted names never enter its result. Binary, malformed and oversized frames remain unnamed.
+
+```js
+const metadata = inspectProtocolEnvelope(rawCdpEvent, {
+  allowedEvents: ['chat_stream_started', 'chat_stream_delta', 'chat_stream_finished'],
+  allowedTopicFamilies: ['chat'],
+});
+// Pass `metadata`, not `rawCdpEvent.params.response.payloadData`, to a private journal.
+```
+
+This module does **not** attach to a browser or modify the original recorder. It must run while raw CDP frames are transiently available in memory, before the original redaction step; previously sealed metadata-only packets cannot be enriched. The original browser driver owns any integration and must calibrate event loss, parser recognition, target identity and artifact sealing. Static Symbolic frontend code suggests Phoenix Channels on `/ws`, but the live audit has not yet verified specific channel event names in frames. The fetch stream sidecar above is generic and is unlikely to observe Symbolic's generation cadence if that code path uses WebSockets.
+
+Offline test: `node --test tools/inspection-transport/protocol-envelope.test.mjs`.
