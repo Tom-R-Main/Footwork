@@ -24,7 +24,8 @@ const scenarios = {
 const scenario = scenarios[site];
 const marker = `footwork-calibration-${randomUUID().slice(0, 8)}`;
 const runId = `${site}-${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}-${randomUUID().slice(0, 8)}`;
-const browser = await chromium.launch({ headless: true });
+const executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
+const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
 let bridge, capture, started = false;
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
