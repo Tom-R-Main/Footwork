@@ -37,6 +37,7 @@ Refs: tools/browser-inspection/capture.mjs; tools/browser-inspection/capture.tes
 Resolves: BI2 = held
 Observed: Root rerun passed 28 offline cases; passive live capture within an actively awaited Chrome tool invocation remained active for two ticks, captured four WS metadata events and a marked snapshot, stopped/closed/disabled owned domains and verified six manifest files. Polling outside an active invocation paused on an unavailable-origin check. These results prove the predicted marked active-call calibration, not unattended collection.
 Inferred: serialized polling/writing and stop barriers satisfy the scoped contract; a persistent transport is separately required for between-call capture. First Projects route capture had event-buffer truncation and missing response metadata, so full-load network completeness is not established.
+Next: calibrate the revised content policy on cached routes and keep between-call transport proof separate.
 Refs: tools/browser-inspection; Best-Edit docs/research/symbolic/preparation-verification.md
 
 ## BI3 · prediction · 2026-10-01 14:43
@@ -47,3 +48,16 @@ Test: record Projects→Home→Projects with the revised capture/redaction modul
 Predicts: default script/CSS bodies are policy omissions, JSON shapes remain eligible, owned domains/writers stop cleanly, and resulting Home/Projects snapshots are saved. Whether the route has zero retention gaps remains uncertain; a gap disproves full-trace completeness.
 Against: non-JSON bodies fetched only to discard values, JSON unnecessarily omitted, outside-origin data retained, or final state/manifest/cleanup missing.
 Refs: tools/browser-inspection/capture.mjs; tools/browser-inspection/capture.test.mjs
+
+## BIU3 · update · 2026-10-01 14:47
+Resolves: BI3 = held
+Observed: root rerun passed 29 package cases. Versioned-source cached Projects→Home→Projects capture recorded 334 events/50 request hops through eight 100ms ticks, zero reported gaps, three JSON bodies and forty-one default non-JSON policy omissions. Two steps and resulting snapshots saved; all eighteen manifest files verified; owned domains/writers/timers stopped.
+Inferred: revised policy preserves useful cached-route evidence without discarding-content retrieval. The absence of gaps in this different cached route cannot attribute causal speedup to polling or body policy and does not repair the earlier full-load gap.
+Next: continue captured surface discovery with rendered-control readiness and selective source inspection; cross-check packets with the fork coverage audit.
+Refs: Best-Edit output/symbolic-recon/cached-route-calibration-20261001; tools/browser-inspection/capture.test.mjs
+
+## BIS2 · summary · 2026-10-01 14:47
+Established: durable scoped session capture supports active-call polling, marks/snapshots, JSON shapes, opt-in bounded delivered JS, source provenance and verified packet digests. Useful cached-route UI/network observation is live-proven.
+Uncertain: uninterrupted between-call collection, heavy-load completeness, fetch streaming chunks and worker/OOPIF visibility. No complete Symbolic workflow audit or account write has occurred.
+Decision: continue bounded captured UX discovery while preserving transport/payload gaps; treat a persistent external transport as a separate design/verification boundary.
+Refs: Best-Edit docs/research/symbolic/preparation-verification.md; tools/browser-inspection/README.md

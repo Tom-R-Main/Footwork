@@ -17,6 +17,11 @@ The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the pro
 from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
 
+Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
+timestamped evidence through an existing tab/CDP adapter. They are dependency-free ESM helpers,
+separate from the Python driver and verification gates. Their contract is tested offline; live
+capture fidelity must be calibrated on the selected browser.
+
 ## Drive it
 
 ```sh
