@@ -15,4 +15,13 @@ The report deliberately uses `paired-intervals` rather than causal language. Bac
 
 Offline verification: `node --test tools/inspection-experiments/compare.test.mjs`.
 
+Before comparing runs, inspect each packet's capture coverage:
+
+```sh
+node tools/inspection-experiments/coverage.mjs output/browser-inspection/<run> \
+  > output/browser-inspection/<run>-coverage.json
+```
+
+The coverage report verifies the sealed manifest, then counts explicit gaps, request/response/terminal lifecycle evidence, body-policy outcomes, observed protocol events and step-interval limits. It emits no URL or body values. `no-reported-capture-gaps` means only that the journal has no explicit gap or unmatched lifecycle event; it does **not** prove the browser saw every request. A packet can start after page load or omit workers. See [reference findings](REFERENCE_FINDINGS.md) for the source-backed transport choices.
+
 Future Footwork integration can add operator checkpoints and post-reload readback to the sealed packet, then use deterministic evidence rules to promote `intended → request observed → response observed → visible state observed → persistence observed`. An AI analyst may propose explanations from those facts, while the packet and rules retain authority over what was actually observed.
