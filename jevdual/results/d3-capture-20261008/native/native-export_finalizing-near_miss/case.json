@@ -1,0 +1,78 @@
+{
+  "family": "export_finalizing",
+  "variant": "near_miss",
+  "expected": false,
+  "question": {
+    "instructions": "Does the current observed export state support reporting that export has completed and the output is available?"
+  },
+  "proposal": {
+    "action": "report_complete",
+    "target_label": "Finish export"
+  },
+  "oracle": {
+    "phase": "finalizing",
+    "positive_label": "Finish export",
+    "output_content": "D3 fixture exported content\n"
+  },
+  "id": "native-export_finalizing-near_miss",
+  "surface": "native_fixture",
+  "text": "[{\"AXRole\": \"AXWindow\", \"AXTitle\": \"D3 run-owned visual fixture\", \"bounds\": [50.0, 434.0, 660.0, 468.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"Export progress: 100%\", \"bounds\": [71.0, 473.0, 618.0, 42.0]}, {\"AXRole\": \"AXImage\", \"AXDescription\": \"Task canvas\", \"bounds\": [69.0, 523.0, 622.0, 318.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Finish export\", \"bounds\": [76.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [58.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [98.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [78.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"D3 run-owned visual fixture\", \"bounds\": [288.0, 439.0, 184.0, 16.0]}]\nmacOS Vision OCR (visible screenshot text, not hidden file contents):\n[{\"text\": \"D3 run-owned visual fixture\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.36363636708333325, 0.9572649574786325, 0.27575757575757576, 0.02564102564102566]}, {\"text\": \"Export progress: 100%\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.033333335454545414, 0.8803418805555555, 0.21212121212121213, 0.02991452991452992]}, {\"text\": \"Export\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.08181818106060608, 0.6965811970085469, 0.05151515151515153, 0.025641025641025772]}, {\"text\": \"100%\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.45151515237373735, 0.5555555558404559, 0.05151515151515146, 0.02564102564102555]}, {\"text\": \"Finalizing output...\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.09090909257575752, 0.42735042756410246, 0.13333333333333333, 0.02564102564102566]}, {\"text\": \"C\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.436363635993266, 0.2777777775878443, 0.06666666666666665, 0.09401709401709402]}, {\"text\": \"Finish export\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.11818182015151507, 0.055555555840455906, 0.1181818181818182, 0.02564102564102555]}]",
+  "images": [
+    "native-export_finalizing-near_miss/capture.png"
+  ],
+  "capture": {
+    "pid": 84961,
+    "window_id": 27485,
+    "timestamp": "2026-10-08T19:33:16.692523+00:00",
+    "revision": 1,
+    "sha256": "0f9afd84e499d34341a6f0a460433818a02831799e18806563bcd8dbbffd8116",
+    "raw_capture_sha256": "add07bec0dc5761bbbade9f4a36cfed87f606d1e4979f88cbac4a5bd45781f47",
+    "encoding": "256-color indexed PNG; exact Cua Driver raw PNG retained separately",
+    "dimensions": [
+      660,
+      468
+    ],
+    "images": [
+      {
+        "path": "native-export_finalizing-near_miss/capture.png",
+        "sha256": "0f9afd84e499d34341a6f0a460433818a02831799e18806563bcd8dbbffd8116",
+        "dimensions": [
+          660,
+          468
+        ]
+      }
+    ],
+    "capture_ms": 318.8195419497788,
+    "screenshot_ms": 198.91016697511077,
+    "phase_total_ms": 318.8195419497788,
+    "encoding_rmse": 0.19034699340584438,
+    "encoding_max_channel_delta": 22,
+    "extraction_ms": 13.701041927561164,
+    "encoding_ms": 13.783707981929183,
+    "ocr": "macOS Vision VNRecognizeTextRequest; all returned lines retained with confidence and normalized bounds",
+    "ocr_ms": 92.42462506517768,
+    "ax_nodes": 10,
+    "ax_truncated": false,
+    "text_sources": [
+      "native AX tree",
+      "macOS Vision OCR of bound-window screenshot"
+    ],
+    "source": "Cua Driver bound AppKit window + direct native AX tree",
+    "posture": "background_only"
+  },
+  "conformance": {
+    "scripted_proposal_choice": "skip_negative_or_ambiguous",
+    "negative_proposal_dispatched": false,
+    "effect_existed_before": false,
+    "positive_trajectory": {
+      "dispatched": true,
+      "route": "background_accessibility",
+      "error_code": 0,
+      "target_label": "Finish export"
+    },
+    "postcondition": true,
+    "dispatch_readback_ms": 107.88112506270409,
+    "fresh_readback_observed": true,
+    "scope": "scripted conformance; not provider-driven dispatch"
+  }
+}

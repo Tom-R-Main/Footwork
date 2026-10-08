@@ -1,0 +1,3823 @@
+[
+  {
+    "id": "B01",
+    "family": "toolbar_glyph",
+    "variant": "supported",
+    "surface": "browser_fixture",
+    "expected": true,
+    "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.374864+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+    "images": [
+      "case-00-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "tool-a",
+      "bounds": {
+        "x": 80,
+        "y": 100,
+        "width": 60,
+        "height": 60
+      },
+      "x": 110.0,
+      "y": 130.0,
+      "observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": true,
+      "intended_mode": "crop",
+      "target_modes": {
+        "tool-a": "crop",
+        "tool-b": "rotate"
+      },
+      "ambiguous_icon": false
+    },
+    "recipe": {
+      "family": "toolbar_glyph",
+      "variant": "supported",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-00-first.png",
+          "image_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.374864+00:00",
+          "revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 41.51908296626061,
+            "extraction": 2.5994579773396254,
+            "encode": 0.4611250478774309
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-00-first.png",
+          "sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "993cf453272c2cd3786dfb8dc5f76b7063ec8f111cf7fde62c0ba20b8079cf1a",
+      "phase_total_ms": 44.57966599147767,
+      "capture_ms": 41.51908296626061,
+      "extraction_ms": 2.5994579773396254,
+      "encode_ms": 0.4611250478774309,
+      "startup_ms": 594.1560419742018,
+      "navigation_ms": 78.59225000720471,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": true,
+      "guard_reason": "scope_and_binding_pass",
+      "passed": true,
+      "before": {
+        "mode": "none"
+      },
+      "after": {
+        "mode": "crop"
+      },
+      "phases_ms": {
+        "dispatch": 1.8745000706985593,
+        "readback": 0.14941697008907795,
+        "total": 7.372833089902997
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B02",
+    "family": "toolbar_glyph",
+    "variant": "near_miss",
+    "surface": "browser_fixture",
+    "expected": false,
+    "question": "Does the visible evidence support clicking supplied target tool-b to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.489015+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"target_id\": \"tool-b\", \"x\": 210.0, \"y\": 130.0}}",
+    "images": [
+      "case-01-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "tool-b",
+      "bounds": {
+        "x": 180,
+        "y": 100,
+        "width": 60,
+        "height": 60
+      },
+      "x": 210.0,
+      "y": 130.0,
+      "observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": false,
+      "intended_mode": "crop",
+      "target_modes": {
+        "tool-a": "crop",
+        "tool-b": "rotate"
+      },
+      "ambiguous_icon": false
+    },
+    "recipe": {
+      "family": "toolbar_glyph",
+      "variant": "near_miss",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-01-first.png",
+          "image_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.489015+00:00",
+          "revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 37.607916980050504,
+            "extraction": 1.1675829300656915,
+            "encode": 0.31708297319710255
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-01-first.png",
+          "sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "993cf453272c2cd3786dfb8dc5f76b7063ec8f111cf7fde62c0ba20b8079cf1a",
+      "phase_total_ms": 39.0925828833133,
+      "capture_ms": 37.607916980050504,
+      "extraction_ms": 1.1675829300656915,
+      "encode_ms": 0.31708297319710255,
+      "startup_ms": 0.0,
+      "navigation_ms": 61.901999986730516,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": false,
+      "guard_reason": "scripted_ground_truth_trajectory_abstains",
+      "passed": true,
+      "before": {
+        "mode": "none"
+      },
+      "after": {
+        "mode": "none"
+      },
+      "phases_ms": {
+        "dispatch": 0.0,
+        "readback": 0.20279199816286564,
+        "total": 0.48820802476257086
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B03",
+    "family": "toolbar_glyph",
+    "variant": "ambiguous",
+    "surface": "browser_fixture",
+    "expected": null,
+    "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.596224+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+    "images": [
+      "case-02-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "tool-a",
+      "bounds": {
+        "x": 80,
+        "y": 100,
+        "width": 60,
+        "height": 60
+      },
+      "x": 110.0,
+      "y": 130.0,
+      "observation_revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": null,
+      "intended_mode": "crop",
+      "target_modes": {
+        "tool-a": "crop",
+        "tool-b": "rotate"
+      },
+      "ambiguous_icon": true
+    },
+    "recipe": {
+      "family": "toolbar_glyph",
+      "variant": "ambiguous",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-02-first.png",
+          "image_sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.596224+00:00",
+          "revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 31.637958018109202,
+            "extraction": 1.1283750645816326,
+            "encode": 0.2937079407274723
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-02-first.png",
+          "sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "d0a7868709f0716675bba48024fa246454d61fec0aff06ca3ffe48bf0d4e2a9f",
+      "phase_total_ms": 33.06004102341831,
+      "capture_ms": 31.637958018109202,
+      "extraction_ms": 1.1283750645816326,
+      "encode_ms": 0.2937079407274723,
+      "startup_ms": 0.0,
+      "navigation_ms": 67.4065420171246,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": false,
+      "guard_reason": "scripted_ground_truth_trajectory_abstains",
+      "passed": true,
+      "before": {
+        "mode": "none"
+      },
+      "after": {
+        "mode": "none"
+      },
+      "phases_ms": {
+        "dispatch": 0.0,
+        "readback": 0.18654204905033112,
+        "total": 0.4164590500295162
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B04",
+    "family": "toolbar_glyph",
+    "variant": "text_control",
+    "surface": "browser_fixture",
+    "expected": true,
+    "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"52ac729a013935e2d5a2724e04f69123feee2898aae038f74e34d82850d56bf9\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Crop\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Rotate\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.696296+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"Crop\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"Rotate\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"52ac729a013935e2d5a2724e04f69123feee2898aae038f74e34d82850d56bf9\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"52ac729a013935e2d5a2724e04f69123feee2898aae038f74e34d82850d56bf9\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+    "images": [
+      "case-03-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "tool-a",
+      "bounds": {
+        "x": 80,
+        "y": 100,
+        "width": 60,
+        "height": 60
+      },
+      "x": 110.0,
+      "y": 130.0,
+      "observation_revision": "52ac729a013935e2d5a2724e04f69123feee2898aae038f74e34d82850d56bf9",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": true,
+      "intended_mode": "crop",
+      "target_modes": {
+        "tool-a": "crop",
+        "tool-b": "rotate"
+      },
+      "ambiguous_icon": false
+    },
+    "recipe": {
+      "family": "toolbar_glyph",
+      "variant": "text_control",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-03-first.png",
+          "image_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.696296+00:00",
+          "revision": "52ac729a013935e2d5a2724e04f69123feee2898aae038f74e34d82850d56bf9",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "Crop",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "Rotate",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Crop",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Rotate",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 30.81166697666049,
+            "extraction": 1.0512089356780052,
+            "encode": 0.27241697534918785
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-03-first.png",
+          "sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "9be8a3db1d19b32ad44820b1485d61737b23ea4941559d149d74613044c3bef9",
+      "phase_total_ms": 32.13529288768768,
+      "capture_ms": 30.81166697666049,
+      "extraction_ms": 1.0512089356780052,
+      "encode_ms": 0.27241697534918785,
+      "startup_ms": 0.0,
+      "navigation_ms": 66.28775002900511,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": true,
+      "guard_reason": "scope_and_binding_pass",
+      "passed": true,
+      "before": {
+        "mode": "none"
+      },
+      "after": {
+        "mode": "crop"
+      },
+      "phases_ms": {
+        "dispatch": 1.1245000641793013,
+        "readback": 0.19637506920844316,
+        "total": 1.5533330151811242
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B05",
+    "family": "map_containment",
+    "variant": "supported",
+    "surface": "browser_fixture",
+    "expected": true,
+    "question": "Does current visible evidence support clicking supplied target marker-a as a marker inside the shaded delivery zone? True only if its center is inside the visible zone or an explicit accessible zone description identifies it as inside. False if outside. If the zone cannot be determined, remain uncertain.",
+    "text": "{\"current_revision\": \"aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Delivery map\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"Canvas\", \"value\": null}, {\"name\": \"marker-a\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"marker-b\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.789474+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 220, \"width\": 640, \"x\": 0, \"y\": 70}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"canvas\", \"target_id\": \"map\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-a\", \"role\": \"button\", \"target_id\": \"marker-a\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 350, \"y\": 190}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-b\", \"role\": \"button\", \"target_id\": \"marker-b\"}], \"rendered_text\": \"Delivery map\\n\\nChoose a marker inside the shaded delivery zone.\\n\\nNo action yet\"}, \"revision\": \"aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142\"}], \"offered_proposal\": {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142\", \"target_id\": \"marker-a\", \"x\": 150.0, \"y\": 180.0}}",
+    "images": [
+      "case-04-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "marker-a",
+      "bounds": {
+        "x": 140,
+        "y": 170,
+        "width": 20,
+        "height": 20
+      },
+      "x": 150.0,
+      "y": 180.0,
+      "observation_revision": "aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": true,
+      "polygon": [
+        [
+          80,
+          40
+        ],
+        [
+          260,
+          40
+        ],
+        [
+          280,
+          190
+        ],
+        [
+          70,
+          190
+        ]
+      ],
+      "points_canvas": {
+        "marker-a": [
+          150,
+          110
+        ],
+        "marker-b": [
+          360,
+          130
+        ]
+      },
+      "canvas_offset": [
+        0,
+        70
+      ]
+    },
+    "recipe": {
+      "family": "map_containment",
+      "variant": "supported",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-04-first.png",
+          "image_sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.789474+00:00",
+          "revision": "aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Delivery map\n\nChoose a marker inside the shaded delivery zone.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "map",
+                "role": "canvas",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 0,
+                  "y": 70,
+                  "width": 640,
+                  "height": 220
+                }
+              },
+              {
+                "target_id": "marker-a",
+                "role": "button",
+                "name": "marker-a",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 140,
+                  "y": 170,
+                  "width": 20,
+                  "height": 20
+                }
+              },
+              {
+                "target_id": "marker-b",
+                "role": "button",
+                "name": "marker-b",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 350,
+                  "y": 190,
+                  "width": 20,
+                  "height": 20
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Delivery map",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "Canvas",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "marker-a",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "marker-b",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 38.36370899807662,
+            "extraction": 1.2687499402090907,
+            "encode": 0.2993340604007244
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-04-first.png",
+          "sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "a5f3d78ef37f8f5445a27b92351349aef701cde2dcb0d5257f891b0af0292bba",
+      "phase_total_ms": 39.93179299868643,
+      "capture_ms": 38.36370899807662,
+      "extraction_ms": 1.2687499402090907,
+      "encode_ms": 0.2993340604007244,
+      "startup_ms": 0.0,
+      "navigation_ms": 59.193666907958686,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": true,
+      "guard_reason": "scope_and_binding_pass",
+      "passed": true,
+      "before": {
+        "selected": null
+      },
+      "after": {
+        "selected": "marker-a"
+      },
+      "phases_ms": {
+        "dispatch": 1.0860840557143092,
+        "readback": 0.1991660101339221,
+        "total": 1.5517919091507792
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B06",
+    "family": "map_containment",
+    "variant": "near_miss",
+    "surface": "browser_fixture",
+    "expected": false,
+    "question": "Does current visible evidence support clicking supplied target marker-b as a marker inside the shaded delivery zone? True only if its center is inside the visible zone or an explicit accessible zone description identifies it as inside. False if outside. If the zone cannot be determined, remain uncertain.",
+    "text": "{\"current_revision\": \"aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Delivery map\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"Canvas\", \"value\": null}, {\"name\": \"marker-a\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"marker-b\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.892824+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 220, \"width\": 640, \"x\": 0, \"y\": 70}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"canvas\", \"target_id\": \"map\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-a\", \"role\": \"button\", \"target_id\": \"marker-a\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 350, \"y\": 190}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-b\", \"role\": \"button\", \"target_id\": \"marker-b\"}], \"rendered_text\": \"Delivery map\\n\\nChoose a marker inside the shaded delivery zone.\\n\\nNo action yet\"}, \"revision\": \"aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142\"}], \"offered_proposal\": {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 350, \"y\": 190}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142\", \"target_id\": \"marker-b\", \"x\": 360.0, \"y\": 200.0}}",
+    "images": [
+      "case-05-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "marker-b",
+      "bounds": {
+        "x": 350,
+        "y": 190,
+        "width": 20,
+        "height": 20
+      },
+      "x": 360.0,
+      "y": 200.0,
+      "observation_revision": "aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": false,
+      "polygon": [
+        [
+          80,
+          40
+        ],
+        [
+          260,
+          40
+        ],
+        [
+          280,
+          190
+        ],
+        [
+          70,
+          190
+        ]
+      ],
+      "points_canvas": {
+        "marker-a": [
+          150,
+          110
+        ],
+        "marker-b": [
+          360,
+          130
+        ]
+      },
+      "canvas_offset": [
+        0,
+        70
+      ]
+    },
+    "recipe": {
+      "family": "map_containment",
+      "variant": "near_miss",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-05-first.png",
+          "image_sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.892824+00:00",
+          "revision": "aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Delivery map\n\nChoose a marker inside the shaded delivery zone.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "map",
+                "role": "canvas",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 0,
+                  "y": 70,
+                  "width": 640,
+                  "height": 220
+                }
+              },
+              {
+                "target_id": "marker-a",
+                "role": "button",
+                "name": "marker-a",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 140,
+                  "y": 170,
+                  "width": 20,
+                  "height": 20
+                }
+              },
+              {
+                "target_id": "marker-b",
+                "role": "button",
+                "name": "marker-b",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 350,
+                  "y": 190,
+                  "width": 20,
+                  "height": 20
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Delivery map",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "Canvas",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "marker-a",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "marker-b",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 34.40987493377179,
+            "extraction": 1.3237500097602606,
+            "encode": 0.2799159847199917
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-05-first.png",
+          "sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "a5f3d78ef37f8f5445a27b92351349aef701cde2dcb0d5257f891b0af0292bba",
+      "phase_total_ms": 36.01354092825204,
+      "capture_ms": 34.40987493377179,
+      "extraction_ms": 1.3237500097602606,
+      "encode_ms": 0.2799159847199917,
+      "startup_ms": 0.0,
+      "navigation_ms": 61.59070797730237,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": false,
+      "guard_reason": "scripted_ground_truth_trajectory_abstains",
+      "passed": true,
+      "before": {
+        "selected": null
+      },
+      "after": {
+        "selected": null
+      },
+      "phases_ms": {
+        "dispatch": 0.0,
+        "readback": 0.1804589992389083,
+        "total": 0.4265840398147702
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B07",
+    "family": "map_containment",
+    "variant": "ambiguous",
+    "surface": "browser_fixture",
+    "expected": null,
+    "question": "Does current visible evidence support clicking supplied target marker-a as a marker inside the shaded delivery zone? True only if its center is inside the visible zone or an explicit accessible zone description identifies it as inside. False if outside. If the zone cannot be determined, remain uncertain.",
+    "text": "{\"current_revision\": \"ea7936c7b2683fea084ba4e87a51b562f5ad458fecbf337b98cc10415157c575\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Delivery map\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"Canvas\", \"value\": null}, {\"name\": \"marker-a\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"marker-b\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:06.997917+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 220, \"width\": 640, \"x\": 0, \"y\": 70}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"canvas\", \"target_id\": \"map\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-a\", \"role\": \"button\", \"target_id\": \"marker-a\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 350, \"y\": 190}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-b\", \"role\": \"button\", \"target_id\": \"marker-b\"}], \"rendered_text\": \"Delivery map\\n\\nChoose a marker inside the shaded delivery zone.\\n\\nNo action yet\"}, \"revision\": \"ea7936c7b2683fea084ba4e87a51b562f5ad458fecbf337b98cc10415157c575\"}], \"offered_proposal\": {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"ea7936c7b2683fea084ba4e87a51b562f5ad458fecbf337b98cc10415157c575\", \"target_id\": \"marker-a\", \"x\": 150.0, \"y\": 180.0}}",
+    "images": [
+      "case-06-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "marker-a",
+      "bounds": {
+        "x": 140,
+        "y": 170,
+        "width": 20,
+        "height": 20
+      },
+      "x": 150.0,
+      "y": 180.0,
+      "observation_revision": "ea7936c7b2683fea084ba4e87a51b562f5ad458fecbf337b98cc10415157c575",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": null,
+      "polygon": [],
+      "points_canvas": {
+        "marker-a": [
+          150,
+          110
+        ],
+        "marker-b": [
+          360,
+          130
+        ]
+      },
+      "canvas_offset": [
+        0,
+        70
+      ]
+    },
+    "recipe": {
+      "family": "map_containment",
+      "variant": "ambiguous",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-06-first.png",
+          "image_sha256": "848add37c65857fdb366fb7c271dfaf59a27fce536e5e79069049fc333dbb093",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:06.997917+00:00",
+          "revision": "ea7936c7b2683fea084ba4e87a51b562f5ad458fecbf337b98cc10415157c575",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Delivery map\n\nChoose a marker inside the shaded delivery zone.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "map",
+                "role": "canvas",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 0,
+                  "y": 70,
+                  "width": 640,
+                  "height": 220
+                }
+              },
+              {
+                "target_id": "marker-a",
+                "role": "button",
+                "name": "marker-a",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 140,
+                  "y": 170,
+                  "width": 20,
+                  "height": 20
+                }
+              },
+              {
+                "target_id": "marker-b",
+                "role": "button",
+                "name": "marker-b",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 350,
+                  "y": 190,
+                  "width": 20,
+                  "height": 20
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Delivery map",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "Canvas",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "marker-a",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "marker-b",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 30.53549991454929,
+            "extraction": 1.1160830035805702,
+            "encode": 0.4147919826209545
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-06-first.png",
+          "sha256": "848add37c65857fdb366fb7c271dfaf59a27fce536e5e79069049fc333dbb093",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "873c71de4a626d8610a35a54cf78bf3ac038bc4be20ff212d04acfe75d09ee45",
+      "phase_total_ms": 32.066374900750816,
+      "capture_ms": 30.53549991454929,
+      "extraction_ms": 1.1160830035805702,
+      "encode_ms": 0.4147919826209545,
+      "startup_ms": 0.0,
+      "navigation_ms": 68.40633298270404,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": false,
+      "guard_reason": "scripted_ground_truth_trajectory_abstains",
+      "passed": true,
+      "before": {
+        "selected": null
+      },
+      "after": {
+        "selected": null
+      },
+      "phases_ms": {
+        "dispatch": 0.0,
+        "readback": 0.17229095101356506,
+        "total": 0.42799999937415123
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B08",
+    "family": "map_containment",
+    "variant": "text_control",
+    "surface": "browser_fixture",
+    "expected": true,
+    "question": "Does current visible evidence support clicking supplied target marker-a as a marker inside the shaded delivery zone? True only if its center is inside the visible zone or an explicit accessible zone description identifies it as inside. False if outside. If the zone cannot be determined, remain uncertain.",
+    "text": "{\"current_revision\": \"c3798b6cbf3c23f40959748893029c98b43cedfdf6d4d108ded5711aadaad701\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Delivery map\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"Canvas\", \"value\": null}, {\"name\": \"marker-a: inside delivery zone\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"marker-b: outside delivery zone\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Delivery map\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose a marker inside the shaded delivery zone.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.097724+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 220, \"width\": 640, \"x\": 0, \"y\": 70}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"canvas\", \"target_id\": \"map\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-a: inside delivery zone\", \"role\": \"button\", \"target_id\": \"marker-a\"}, {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 350, \"y\": 190}, \"disabled\": false, \"hidden\": false, \"name\": \"marker-b: outside delivery zone\", \"role\": \"button\", \"target_id\": \"marker-b\"}], \"rendered_text\": \"Delivery map\\n\\nChoose a marker inside the shaded delivery zone.\\n\\nNo action yet\"}, \"revision\": \"c3798b6cbf3c23f40959748893029c98b43cedfdf6d4d108ded5711aadaad701\"}], \"offered_proposal\": {\"bounds\": {\"height\": 20, \"width\": 20, \"x\": 140, \"y\": 170}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"c3798b6cbf3c23f40959748893029c98b43cedfdf6d4d108ded5711aadaad701\", \"target_id\": \"marker-a\", \"x\": 150.0, \"y\": 180.0}}",
+    "images": [
+      "case-07-first.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "marker-a",
+      "bounds": {
+        "x": 140,
+        "y": 170,
+        "width": 20,
+        "height": 20
+      },
+      "x": 150.0,
+      "y": 180.0,
+      "observation_revision": "c3798b6cbf3c23f40959748893029c98b43cedfdf6d4d108ded5711aadaad701",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": true,
+      "polygon": [
+        [
+          80,
+          40
+        ],
+        [
+          260,
+          40
+        ],
+        [
+          280,
+          190
+        ],
+        [
+          70,
+          190
+        ]
+      ],
+      "points_canvas": {
+        "marker-a": [
+          150,
+          110
+        ],
+        "marker-b": [
+          360,
+          130
+        ]
+      },
+      "canvas_offset": [
+        0,
+        70
+      ]
+    },
+    "recipe": {
+      "family": "map_containment",
+      "variant": "text_control",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-07-first.png",
+          "image_sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.097724+00:00",
+          "revision": "c3798b6cbf3c23f40959748893029c98b43cedfdf6d4d108ded5711aadaad701",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Delivery map\n\nChoose a marker inside the shaded delivery zone.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "map",
+                "role": "canvas",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 0,
+                  "y": 70,
+                  "width": 640,
+                  "height": 220
+                }
+              },
+              {
+                "target_id": "marker-a",
+                "role": "button",
+                "name": "marker-a: inside delivery zone",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 140,
+                  "y": 170,
+                  "width": 20,
+                  "height": 20
+                }
+              },
+              {
+                "target_id": "marker-b",
+                "role": "button",
+                "name": "marker-b: outside delivery zone",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 350,
+                  "y": 190,
+                  "width": 20,
+                  "height": 20
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Delivery map",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "Canvas",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "marker-a: inside delivery zone",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "marker-b: outside delivery zone",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Delivery map",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose a marker inside the shaded delivery zone.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 30.526541988365352,
+            "extraction": 1.0572499595582485,
+            "encode": 0.24037493858486414
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-07-first.png",
+          "sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "bf2c7259f5d230fcb62df0226bfbadc5e6fe5903d7b6258371730c6f5de8cad6",
+      "phase_total_ms": 31.824166886508465,
+      "capture_ms": 30.526541988365352,
+      "extraction_ms": 1.0572499595582485,
+      "encode_ms": 0.24037493858486414,
+      "startup_ms": 0.0,
+      "navigation_ms": 67.0512500219047,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": true,
+      "guard_reason": "scope_and_binding_pass",
+      "passed": true,
+      "before": {
+        "selected": null
+      },
+      "after": {
+        "selected": "marker-a"
+      },
+      "phases_ms": {
+        "dispatch": 0.970749999396503,
+        "readback": 0.18024991732090712,
+        "total": 1.4575839741155505
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B09",
+    "family": "target_freshness",
+    "variant": "supported",
+    "surface": "browser_fixture",
+    "expected": true,
+    "question": "Does the offered click, with its stated coordinates and observation revision, support approving the sample in the current observation? True only if it binds to the current visible Approve sample button at those coordinates and the stated revision is current. False if an observed change has invalidated it or the point now targets Cancel. If current controls are obscured and cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.192521+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 1\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\"}, {\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.230664+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 1\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\", \"target_id\": \"approve\", \"x\": 140.0, \"y\": 165.0}}",
+    "images": [
+      "case-08-first.png",
+      "case-08-current.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "approve",
+      "bounds": {
+        "x": 80,
+        "y": 140,
+        "width": 120,
+        "height": 50
+      },
+      "x": 140.0,
+      "y": 165.0,
+      "observation_revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": true,
+      "intended_action": "approve",
+      "changes_layout": false,
+      "obscured": false
+    },
+    "recipe": {
+      "family": "target_freshness",
+      "variant": "supported",
+      "mutations": []
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-08-first.png",
+          "image_sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.192521+00:00",
+          "revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 36.70499997679144,
+            "extraction": 1.1523329885676503,
+            "encode": 0.2748750848695636
+          }
+        },
+        {
+          "image": "case-08-current.png",
+          "image_sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.230664+00:00",
+          "revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 30.74674995150417,
+            "extraction": 1.1041660327464342,
+            "encode": 0.2664579078555107
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-08-first.png",
+          "sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        {
+          "path": "case-08-current.png",
+          "sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "aeecdebee0487eedc2515de645b1ae7e5bc697981581647af55a6a0c8ecea87d",
+      "phase_total_ms": 70.24958194233477,
+      "capture_ms": 67.45174992829561,
+      "extraction_ms": 2.2564990213140845,
+      "encode_ms": 0.5413329927250743,
+      "startup_ms": 0.0,
+      "navigation_ms": 61.2834170460701,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": true,
+      "guard_reason": "scope_and_binding_pass",
+      "passed": true,
+      "before": {
+        "action": null
+      },
+      "after": {
+        "action": "approve"
+      },
+      "phases_ms": {
+        "dispatch": 1.0544590186327696,
+        "readback": 0.21079194266349077,
+        "total": 1.5599170001223683
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B10",
+    "family": "target_freshness",
+    "variant": "near_miss",
+    "surface": "browser_fixture",
+    "expected": false,
+    "question": "Does the offered click, with its stated coordinates and observation revision, support approving the sample in the current observation? True only if it binds to the current visible Approve sample button at those coordinates and the stated revision is current. False if an observed change has invalidated it or the point now targets Cancel. If current controls are obscured and cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.327877+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 1\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\"}, {\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 2\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 2\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.362667+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 2\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834\"}], \"offered_proposal\": {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\", \"target_id\": \"approve\", \"x\": 140.0, \"y\": 165.0}}",
+    "images": [
+      "case-09-first.png",
+      "case-09-current.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "approve",
+      "bounds": {
+        "x": 80,
+        "y": 140,
+        "width": 120,
+        "height": 50
+      },
+      "x": 140.0,
+      "y": 165.0,
+      "observation_revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": false,
+      "intended_action": "approve",
+      "changes_layout": true,
+      "obscured": false
+    },
+    "recipe": {
+      "family": "target_freshness",
+      "variant": "near_miss",
+      "mutations": [
+        "window.changeLayout()"
+      ]
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-09-first.png",
+          "image_sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.327877+00:00",
+          "revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 32.94491593260318,
+            "extraction": 1.176541903987527,
+            "encode": 0.30233291909098625
+          }
+        },
+        {
+          "image": "case-09-current.png",
+          "image_sha256": "9da14f848907595329c2dc4291ca3f243686b3541f1060561620f01fa966a1dd",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.362667+00:00",
+          "revision": "89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 2\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 2",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 2",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 31.722709070891142,
+            "extraction": 0.9300840320065618,
+            "encode": 0.29083399567753077
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-09-first.png",
+          "sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        {
+          "path": "case-09-current.png",
+          "sha256": "9da14f848907595329c2dc4291ca3f243686b3541f1060561620f01fa966a1dd",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "aeecdebee0487eedc2515de645b1ae7e5bc697981581647af55a6a0c8ecea87d",
+      "phase_total_ms": 67.36741785425693,
+      "capture_ms": 64.66762500349432,
+      "extraction_ms": 2.1066259359940886,
+      "encode_ms": 0.593166914768517,
+      "startup_ms": 0.0,
+      "navigation_ms": 63.215916976332664,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": false,
+      "guard_reason": "scripted_ground_truth_trajectory_abstains",
+      "passed": true,
+      "before": {
+        "action": null
+      },
+      "after": {
+        "action": null
+      },
+      "phases_ms": {
+        "dispatch": 0.0,
+        "readback": 0.16233406495302916,
+        "total": 0.4003749927505851
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B11",
+    "family": "target_freshness",
+    "variant": "ambiguous",
+    "surface": "browser_fixture",
+    "expected": null,
+    "question": "Does the offered click, with its stated coordinates and observation revision, support approving the sample in the current observation? True only if it binds to the current visible Approve sample button at those coordinates and the stated revision is current. False if an observed change has invalidated it or the point now targets Cancel. If current controls are obscured and cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"3f004d87f03a03d2af864803edca014ea835466a33f738bb9c705b9064b99a9d\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.462470+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 1\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\"}, {\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Updating layout; controls unavailable\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Updating layout; controls unavailable\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.498213+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 1\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\\n\\nUpdating layout; controls unavailable\"}, \"revision\": \"3f004d87f03a03d2af864803edca014ea835466a33f738bb9c705b9064b99a9d\"}], \"offered_proposal\": {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"3f004d87f03a03d2af864803edca014ea835466a33f738bb9c705b9064b99a9d\", \"target_id\": \"approve\", \"x\": 140.0, \"y\": 165.0}}",
+    "images": [
+      "case-10-first.png",
+      "case-10-current.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "approve",
+      "bounds": {
+        "x": 80,
+        "y": 140,
+        "width": 120,
+        "height": 50
+      },
+      "x": 140.0,
+      "y": 165.0,
+      "observation_revision": "3f004d87f03a03d2af864803edca014ea835466a33f738bb9c705b9064b99a9d",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": null,
+      "intended_action": "approve",
+      "changes_layout": false,
+      "obscured": true
+    },
+    "recipe": {
+      "family": "target_freshness",
+      "variant": "ambiguous",
+      "mutations": [
+        "window.coverLayout()"
+      ]
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-10-first.png",
+          "image_sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.462470+00:00",
+          "revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 33.55008305516094,
+            "extraction": 1.395749975927174,
+            "encode": 0.3797499230131507
+          }
+        },
+        {
+          "image": "case-10-current.png",
+          "image_sha256": "659d14c817de4d7030bc0dc2a531cf6aca350dddf47d44e3006ff18915b063ef",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.498213+00:00",
+          "revision": "3f004d87f03a03d2af864803edca014ea835466a33f738bb9c705b9064b99a9d",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet\n\nUpdating layout; controls unavailable",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Updating layout; controls unavailable",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Updating layout; controls unavailable",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 30.428958008997142,
+            "extraction": 0.9102080948650837,
+            "encode": 0.9191250428557396
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-10-first.png",
+          "sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        {
+          "path": "case-10-current.png",
+          "sha256": "659d14c817de4d7030bc0dc2a531cf6aca350dddf47d44e3006ff18915b063ef",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "aeecdebee0487eedc2515de645b1ae7e5bc697981581647af55a6a0c8ecea87d",
+      "phase_total_ms": 67.58387410081923,
+      "capture_ms": 63.97904106415808,
+      "extraction_ms": 2.305958070792258,
+      "encode_ms": 1.2988749658688903,
+      "startup_ms": 0.0,
+      "navigation_ms": 66.2625840632245,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": false,
+      "guard_reason": "scripted_ground_truth_trajectory_abstains",
+      "passed": true,
+      "before": {
+        "action": null
+      },
+      "after": {
+        "action": null
+      },
+      "phases_ms": {
+        "dispatch": 0.0,
+        "readback": 0.28908299282193184,
+        "total": 0.6884579779580235
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  },
+  {
+    "id": "B12",
+    "family": "target_freshness",
+    "variant": "text_control",
+    "surface": "browser_fixture",
+    "expected": true,
+    "question": "Does the offered click, with its stated coordinates and observation revision, support approving the sample in the current observation? True only if it binds to the current visible Approve sample button at those coordinates and the stated revision is current. False if an observed change has invalidated it or the point now targets Cancel. If current controls are obscured and cannot be resolved, remain uncertain.",
+    "text": "{\"current_revision\": \"89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 1\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.597405+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 1\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4\"}, {\"ax\": [{\"name\": \"Sample approval\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Layout revision 2\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Sample approval\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Layout revision 2\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Approve sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Cancel sample\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T19:33:07.629220+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Approve sample\", \"role\": \"button\", \"target_id\": \"approve\"}, {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 80, \"y\": 140}, \"disabled\": false, \"hidden\": false, \"name\": \"Cancel sample\", \"role\": \"button\", \"target_id\": \"cancel\"}], \"rendered_text\": \"Sample approval\\n\\nLayout revision 2\\n\\nApprove sample\\nCancel sample\\n\\nNo action yet\"}, \"revision\": \"89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834\"}], \"offered_proposal\": {\"bounds\": {\"height\": 50, \"width\": 120, \"x\": 300, \"y\": 140}, \"browser_target_id\": \"704725FCCFE0AA218411F1129DA5CEE2\", \"kind\": \"click\", \"observation_revision\": \"89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834\", \"target_id\": \"approve\", \"x\": 360.0, \"y\": 165.0}}",
+    "images": [
+      "case-11-first.png",
+      "case-11-current.png"
+    ],
+    "proposal": {
+      "kind": "click",
+      "target_id": "approve",
+      "bounds": {
+        "x": 300,
+        "y": 140,
+        "width": 120,
+        "height": 50
+      },
+      "x": 360.0,
+      "y": 165.0,
+      "observation_revision": "89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834",
+      "browser_target_id": "704725FCCFE0AA218411F1129DA5CEE2"
+    },
+    "oracle": {
+      "expected": true,
+      "intended_action": "approve",
+      "changes_layout": true,
+      "obscured": false
+    },
+    "recipe": {
+      "family": "target_freshness",
+      "variant": "text_control",
+      "mutations": [
+        "window.changeLayout()"
+      ]
+    },
+    "capture": {
+      "observations": [
+        {
+          "image": "case-11-first.png",
+          "image_sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.597405+00:00",
+          "revision": "b82634b80dfc708b03e94e8186456fc35e9f6ffdc5ecca7a774288c4dde452e4",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 1",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 30.0729590235278,
+            "extraction": 1.0587499709799886,
+            "encode": 0.32829202245920897
+          }
+        },
+        {
+          "image": "case-11-current.png",
+          "image_sha256": "9da14f848907595329c2dc4291ca3f243686b3541f1060561620f01fa966a1dd",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T19:33:07.629220+00:00",
+          "revision": "89a9fbe452ba9c616e9210b83b5dc0c88b8f37e17bf621f4c1fbf7d216d7c834",
+          "target_id": "704725FCCFE0AA218411F1129DA5CEE2",
+          "process_id": 84702,
+          "dom": {
+            "rendered_text": "Sample approval\n\nLayout revision 2\n\nApprove sample\nCancel sample\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "approve",
+                "role": "button",
+                "name": "Approve sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 300,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              },
+              {
+                "target_id": "cancel",
+                "role": "button",
+                "name": "Cancel sample",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 140,
+                  "width": 120,
+                  "height": 50
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Sample approval",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "Approve sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Layout revision 2",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Sample approval",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Layout revision 2",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Approve sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Cancel sample",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 31.67787496931851,
+            "extraction": 0.9258750360459089,
+            "encode": 0.29979099053889513
+          }
+        }
+      ],
+      "images": [
+        {
+          "path": "case-11-first.png",
+          "sha256": "65e5139c7b0125d6756144ec0179c2a21ea6b0d05c5d9635a4e5232707a5e61a",
+          "dimensions": [
+            640,
+            360
+          ]
+        },
+        {
+          "path": "case-11-current.png",
+          "sha256": "9da14f848907595329c2dc4291ca3f243686b3541f1060561620f01fa966a1dd",
+          "dimensions": [
+            640,
+            360
+          ]
+        }
+      ],
+      "source_sha256": "aeecdebee0487eedc2515de645b1ae7e5bc697981581647af55a6a0c8ecea87d",
+      "phase_total_ms": 64.36354201287031,
+      "capture_ms": 61.75083399284631,
+      "extraction_ms": 1.9846250070258975,
+      "encode_ms": 0.6280830129981041,
+      "startup_ms": 0.0,
+      "navigation_ms": 62.73391598369926,
+      "method": "arc_cua.ChromeBackend + CDP DOM/AX/screenshot; no OCR"
+    },
+    "conformance": {
+      "kind": "scripted_ground_truth_conformance",
+      "dispatch_allowed": true,
+      "guard_reason": "scope_and_binding_pass",
+      "passed": true,
+      "before": {
+        "action": null
+      },
+      "after": {
+        "action": "approve"
+      },
+      "phases_ms": {
+        "dispatch": 0.9032920934259892,
+        "readback": 0.12733403127640486,
+        "total": 1.2713749893009663
+      },
+      "independent_postcondition": "fixture_state_after_real_cdp_input"
+    }
+  }
+]

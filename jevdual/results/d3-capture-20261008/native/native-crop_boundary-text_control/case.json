@@ -1,0 +1,94 @@
+{
+  "family": "crop_boundary",
+  "variant": "text_control",
+  "expected": true,
+  "question": {
+    "instructions": "Does the displayed proposed crop rectangle preserve the entire visible subject?"
+  },
+  "proposal": {
+    "action": "apply_crop",
+    "rectangle": [
+      220,
+      45,
+      400,
+      280
+    ],
+    "target_label": "Apply proposed crop"
+  },
+  "oracle": {
+    "subject_bounds": [
+      260,
+      70,
+      360,
+      260
+    ],
+    "valid_crop": [
+      220,
+      45,
+      400,
+      280
+    ],
+    "positive_label": "Apply safe crop"
+  },
+  "id": "native-crop_boundary-text_control",
+  "surface": "native_fixture",
+  "text": "[{\"AXRole\": \"AXWindow\", \"AXTitle\": \"D3 run-owned visual fixture\", \"bounds\": [50.0, 434.0, 660.0, 468.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"Subject bounds x260..360 y70..260. Crop bounds x220..400 y45..280.\", \"bounds\": [71.0, 473.0, 618.0, 42.0]}, {\"AXRole\": \"AXImage\", \"AXDescription\": \"Task canvas\", \"bounds\": [69.0, 523.0, 622.0, 318.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Apply proposed crop\", \"bounds\": [76.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Apply safe crop\", \"bounds\": [276.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [58.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [98.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [78.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"D3 run-owned visual fixture\", \"bounds\": [288.0, 439.0, 184.0, 16.0]}]\nmacOS Vision OCR (visible screenshot text, not hidden file contents):\n[{\"text\": \"D3 run-owned visual fixture\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.36363636708333325, 0.9572649574786325, 0.27575757575757576, 0.02564102564102566]}, {\"text\": \"Subject bounds x260..360 y70..260. Crop bounds x220..400 y45..280.\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.03333333116161626, 0.8760683765174583, 0.6454545454545454, 0.03418803316915142]}, {\"text\": \"Crop proposal (blue outline); retain the entire subject\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.04848485224242421, 0.7564102566239316, 0.37575757575757573, 0.02991452991452992]}, {\"text\": \"Apply proposed crop\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.08181818623438983, 0.0512820507834757, 0.1848484732887962, 0.02991452991452992]}, {\"text\": \"Apply safe crop\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.40909091045454543, 0.05555555572649573, 0.1363636363636363, 0.02564102564102566]}]",
+  "images": [
+    "native-crop_boundary-text_control/capture.png"
+  ],
+  "capture": {
+    "pid": 84928,
+    "window_id": 27481,
+    "timestamp": "2026-10-08T19:33:14.996112+00:00",
+    "revision": 1,
+    "sha256": "9495c8901e953ce776ac31e2bc824729e7dda9acf3ae0634f6178fd028d643a2",
+    "raw_capture_sha256": "3102adcd6ef9a098c04bfafe3214440025fba0bfe15e7175e7c4380d813d65e1",
+    "encoding": "256-color indexed PNG; exact Cua Driver raw PNG retained separately",
+    "dimensions": [
+      660,
+      468
+    ],
+    "images": [
+      {
+        "path": "native-crop_boundary-text_control/capture.png",
+        "sha256": "9495c8901e953ce776ac31e2bc824729e7dda9acf3ae0634f6178fd028d643a2",
+        "dimensions": [
+          660,
+          468
+        ]
+      }
+    ],
+    "capture_ms": 391.60395797807723,
+    "screenshot_ms": 253.15441691782326,
+    "phase_total_ms": 391.60395797807723,
+    "encoding_rmse": 0.228561484595179,
+    "encoding_max_channel_delta": 24,
+    "extraction_ms": 14.848125050775707,
+    "encoding_ms": 14.095374965108931,
+    "ocr": "macOS Vision VNRecognizeTextRequest; all returned lines retained with confidence and normalized bounds",
+    "ocr_ms": 109.50604104436934,
+    "ax_nodes": 11,
+    "ax_truncated": false,
+    "text_sources": [
+      "native AX tree",
+      "macOS Vision OCR of bound-window screenshot"
+    ],
+    "source": "Cua Driver bound AppKit window + direct native AX tree",
+    "posture": "background_only"
+  },
+  "conformance": {
+    "scripted_proposal_choice": "positive",
+    "negative_proposal_dispatched": false,
+    "effect_existed_before": false,
+    "positive_trajectory": {
+      "dispatched": true,
+      "route": "background_accessibility",
+      "error_code": 0,
+      "target_label": "Apply safe crop"
+    },
+    "postcondition": true,
+    "dispatch_readback_ms": 113.53079206310213,
+    "fresh_readback_observed": true,
+    "scope": "scripted conformance; not provider-driven dispatch"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "commit": "5801ed894e1b5d3b4fa453990775dfca0eed9d10",
+  "source_sha256": {
+    "evals/d3_visual_tasks.py": "cd4522d64a257cee7e8a37fb7f680856ac2bb4c79df3a2c5d2d2634f52eb76a2",
+    "evals/d3_browser.py": "7bfc3f068702476afbc9b8f54101858023560effdf5ccf8c22ea9a2ef7dfe1c8",
+    "evals/d3_native.py": "526e234f6ea2c20fcc9cfd3a6d797a55d2806a2153f4c3e24d71e59721b2dfdb",
+    "evals/visual/d3/native/app.py": "7f816c0b244bb2d2847f75727cbd11353b9d88f8943aab25e51d5c936f5488a2"
+  },
+  "reference_commit": "6b353039111c08c2c64c5229083606941e364eaf",
+  "capture_scope": "24 authored browser/native fixture cases; scripted conformance, not model outcomes"
+}

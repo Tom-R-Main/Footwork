@@ -1,0 +1,52 @@
+[
+  {
+    "text": "D3 run-owned visual fixture",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.36363636708333325,
+      0.9572649574786325,
+      0.27575757575757576,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Subject bounds x260..360 y70..260. Crop bounds x220..400 y45..280.",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.03333333116161626,
+      0.8760683765174583,
+      0.6454545454545454,
+      0.03418803316915142
+    ]
+  },
+  {
+    "text": "Crop proposal (blue outline); retain the entire subject",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.04848485224242421,
+      0.7564102566239316,
+      0.37575757575757573,
+      0.02991452991452992
+    ]
+  },
+  {
+    "text": "Apply proposed crop",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.08181818623438983,
+      0.0512820507834757,
+      0.1848484732887962,
+      0.02991452991452992
+    ]
+  },
+  {
+    "text": "Apply safe crop",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.40909091045454543,
+      0.05555555572649573,
+      0.1363636363636363,
+      0.02564102564102566
+    ]
+  }
+]

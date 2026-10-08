@@ -94,3 +94,9 @@ Test: D3, 24 authored controlled cases, three arms and three replays, captured b
 Predicts: combined all-three correctness improves over Decisions text with no invalid confident true, and scripted effect/readback checks establish usable execution paths without oracle metadata in input.
 Against: any invalid confident true, no combined gain, oracle leakage or a missing route misrepresented as native/live success.
 Refs: docs/experiments/D3-visual-tasks.md
+
+## S-D3CAPTURE · summary · 2026-10-08 15:34
+Established: D3 harness and native/browser fixture source committed5801ed8. Fresh capture produces24cases with no surface errors and all scripted postconditions verified. Full browser DOM/AX and native AX/Vision OCR are retained; manual capture inspection finds intended positive/near-miss/ambiguous/control states. Maximum body32227bytes under48k; source/image hashes and raw/model native encoding receipts are retained. Host focused checks pass; no provider call has measured D3 yet.
+Uncertain: DAPI4 remains open. Captured proposal judgments and reconstructed one-step effects do not establish autonomous real-app workflow, Finder/Preview acceptance, live capture freshness under concurrency, or cross-provider calibration. Native palette encoding and first-call OCR overhead are disclosed.
+Decision: Commit these captures before the216-request pilot, carrying prior conservative upper$0.192055158 into the same$5ceiling. Only native probability decides model acceptance; code guard and independent effect scoring remain distinct. No production defaults or thresholds change.
+Refs: results/d3-capture-20261008/manifest.json; results/d3-capture-20261008/preflight.json; results/d3-capture-20261008/capture-provenance.json; docs/experiments/D3-visual-tasks.md; 5801ed8

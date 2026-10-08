@@ -1,0 +1,72 @@
+[
+  {
+    "text": "\u2022 \u2022",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.03939393884848485,
+      0.9487179485042735,
+      0.05454545454545454,
+      0.038461538461538436
+    ]
+  },
+  {
+    "text": "D3 run-owned visual fixture",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.36363636708333325,
+      0.9572649574786325,
+      0.27575757575757576,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Export progress: 100%. Status: Export complete. Output available.",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.03333334094696949,
+      0.8803418803952991,
+      0.609090909090909,
+      0.02991452991452992
+    ]
+  },
+  {
+    "text": "Export",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.08181818106060608,
+      0.6965811970085469,
+      0.05151515151515153,
+      0.025641025641025772
+    ]
+  },
+  {
+    "text": "100%",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.4515151522025369,
+      0.5555555554131054,
+      0.045454542564623335,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Export complete",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.08787878595959601,
+      0.4273504272079772,
+      0.11515151515151516,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Finish export",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.1181818196212121,
+      0.05555555576923066,
+      0.11515151515151514,
+      0.02564102564102566
+    ]
+  }
+]

@@ -1,0 +1,78 @@
+{
+  "family": "document_identity",
+  "variant": "ambiguous",
+  "expected": null,
+  "question": {
+    "instructions": "Does the observed evidence support selecting Candidate B as the document matching the reference cover?"
+  },
+  "proposal": {
+    "action": "AXPress",
+    "target_label": "Select Candidate B",
+    "candidate_index": 1
+  },
+  "oracle": {
+    "reference_hash": "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+    "positive_label": "Select Candidate B"
+  },
+  "id": "native-document_identity-ambiguous",
+  "surface": "native_fixture",
+  "text": "[{\"AXRole\": \"AXWindow\", \"AXTitle\": \"D3 run-owned visual fixture\", \"bounds\": [50.0, 434.0, 660.0, 468.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"Select the document matching the reference cover.\", \"bounds\": [71.0, 473.0, 618.0, 42.0]}, {\"AXRole\": \"AXImage\", \"AXDescription\": \"Document previews\", \"bounds\": [69.0, 523.0, 622.0, 318.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Select Candidate A\", \"bounds\": [76.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Select Candidate B\", \"bounds\": [276.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [58.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [98.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [78.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"D3 run-owned visual fixture\", \"bounds\": [288.0, 439.0, 184.0, 16.0]}]\nmacOS Vision OCR (visible screenshot text, not hidden file contents):\n[{\"text\": \"D3 run-owned visual fixture\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.36363636708333325, 0.9572649574786325, 0.27575757575757576, 0.02564102564102566]}, {\"text\": \"Select the document matching the reference cover.\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.033333339242424105, 0.8803418805021368, 0.4727272727272728, 0.02991452991452992]}, {\"text\": \"Reference\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.051515152575757554, 0.7521367523504273, 0.08484848484848484, 0.03418803418803418]}, {\"text\": \"Candidate A\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.3605109347140771, 0.7557845235413321, 0.09715994632605351, 0.031165994130648134]}, {\"text\": \"Candidate B\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.6696713014467706, 0.756269447232228, 0.09399073051683826, 0.03446965339856267]}, {\"text\": \"Preview unavailable\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.08181818281818179, 0.4871794875213675, 0.1484848484848485, 0.03418803418803418]}, {\"text\": \"Preview unavailable\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.390909091969697, 0.4871794873626374, 0.1484848484848485, 0.03418803418803407]}, {\"text\": \"Preview unavailable\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.6999999981439394, 0.49145299118589747, 0.14848484848484844, 0.02991452991452992]}, {\"text\": \"Select Candidate A\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.09090909075757576, 0.0555555555788656, 0.16666666666666669, 0.02564102564102566]}, {\"text\": \"Select Candidate B\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.39393939378787884, 0.0555555555788656, 0.16666666666666669, 0.02564102564102566]}]",
+  "images": [
+    "native-document_identity-ambiguous/capture.png"
+  ],
+  "capture": {
+    "pid": 84800,
+    "window_id": 27471,
+    "timestamp": "2026-10-08T19:33:10.666726+00:00",
+    "revision": 1,
+    "sha256": "85f20f31f4bc7bbd30708315333ed68d3e1341a18c8d58841f5c4d8e06cfbddc",
+    "raw_capture_sha256": "2fdc16d07c7755a41aa5e77704a7e5153a3e42f8b0d37c19b31c1db5ecb7fe48",
+    "encoding": "256-color indexed PNG; exact Cua Driver raw PNG retained separately",
+    "dimensions": [
+      660,
+      468
+    ],
+    "images": [
+      {
+        "path": "native-document_identity-ambiguous/capture.png",
+        "sha256": "85f20f31f4bc7bbd30708315333ed68d3e1341a18c8d58841f5c4d8e06cfbddc",
+        "dimensions": [
+          660,
+          468
+        ]
+      }
+    ],
+    "capture_ms": 444.60420904215425,
+    "screenshot_ms": 289.95637502521276,
+    "phase_total_ms": 444.60420904215425,
+    "encoding_rmse": 0.12932494625918747,
+    "encoding_max_channel_delta": 7,
+    "extraction_ms": 19.3200419889763,
+    "encoding_ms": 14.704959001392126,
+    "ocr": "macOS Vision VNRecognizeTextRequest; all returned lines retained with confidence and normalized bounds",
+    "ocr_ms": 120.62283302657306,
+    "ax_nodes": 11,
+    "ax_truncated": false,
+    "text_sources": [
+      "native AX tree",
+      "macOS Vision OCR of bound-window screenshot"
+    ],
+    "source": "Cua Driver bound AppKit window + direct native AX tree",
+    "posture": "background_only"
+  },
+  "conformance": {
+    "scripted_proposal_choice": "skip_negative_or_ambiguous",
+    "negative_proposal_dispatched": false,
+    "effect_existed_before": false,
+    "positive_trajectory": {
+      "dispatched": true,
+      "route": "background_accessibility",
+      "error_code": 0,
+      "target_label": "Select Candidate B"
+    },
+    "postcondition": true,
+    "dispatch_readback_ms": 110.58762494940311,
+    "fresh_readback_observed": true,
+    "scope": "scripted conformance; not provider-driven dispatch"
+  }
+}

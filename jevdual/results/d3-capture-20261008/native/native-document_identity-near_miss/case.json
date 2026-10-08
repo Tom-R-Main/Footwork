@@ -1,0 +1,78 @@
+{
+  "family": "document_identity",
+  "variant": "near_miss",
+  "expected": false,
+  "question": {
+    "instructions": "Does the observed evidence support selecting Candidate B as the document matching the reference cover?"
+  },
+  "proposal": {
+    "action": "AXPress",
+    "target_label": "Select Candidate B",
+    "candidate_index": 1
+  },
+  "oracle": {
+    "reference_hash": "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+    "positive_label": "Select Candidate A"
+  },
+  "id": "native-document_identity-near_miss",
+  "surface": "native_fixture",
+  "text": "[{\"AXRole\": \"AXWindow\", \"AXTitle\": \"D3 run-owned visual fixture\", \"bounds\": [50.0, 434.0, 660.0, 468.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"Select the document matching the reference cover.\", \"bounds\": [71.0, 473.0, 618.0, 42.0]}, {\"AXRole\": \"AXImage\", \"AXDescription\": \"Document previews\", \"bounds\": [69.0, 523.0, 622.0, 318.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Select Candidate A\", \"bounds\": [76.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Select Candidate B\", \"bounds\": [276.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [58.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [98.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [78.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"D3 run-owned visual fixture\", \"bounds\": [288.0, 439.0, 184.0, 16.0]}]\nmacOS Vision OCR (visible screenshot text, not hidden file contents):\n[{\"text\": \"\u2022 \u2022\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.039393939621212105, 0.9487179492521367, 0.05454545454545454, 0.042735042735042805]}, {\"text\": \"D3 run-owned visual fixture\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.36363636708333325, 0.9572649574786325, 0.27575757575757576, 0.02564102564102566]}, {\"text\": \"Select the document matching the reference cover.\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.033333339242424105, 0.8803418805021368, 0.4727272727272728, 0.02991452991452992]}, {\"text\": \"Reference\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.051515150696969714, 0.7564102561965812, 0.08181818181818182, 0.02991452991452992]}, {\"text\": \"Candidate A\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.36363636481060607, 0.760683760897436, 0.09393939393939393, 0.02564102564102555]}, {\"text\": \"Candidate B\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.6726024471805383, 0.7597723830588864, 0.09115873972574862, 0.027463779490218276]}, {\"text\": \"FIELD NOTES\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.08484848570707067, 0.3803418805555555, 0.10303030303030304, 0.03418803418803418]}, {\"text\": \"SITE SURVEY\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.0908445579479687, 0.3286247383648949, 0.10012906392415363, 0.030784709840758206]}, {\"text\": \"FIELD NOTES\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.3909090898484849, 0.38034188017094017, 0.10606060606060602, 0.03418803418803418]}, {\"text\": \"SITE SURVEY\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.3998639934843833, 0.3240706938721468, 0.10027201103441641, 0.03989279983390093]}, {\"text\": \"FIELD NOTES\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.6999999991161616, 0.38034188012820525, 0.10606060606060608, 0.03418803418803418]}, {\"text\": \"SITE SURVEY\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.709090908090909, 0.3290598288034189, 0.09999999999999998, 0.03418803418803418]}, {\"text\": \"Select Candidate A\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.09090909075757576, 0.0555555555788656, 0.16666666666666669, 0.02564102564102566]}, {\"text\": \"Select Candidate B\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.39393939378787884, 0.0555555555788656, 0.16666666666666669, 0.02564102564102566]}]",
+  "images": [
+    "native-document_identity-near_miss/capture.png"
+  ],
+  "capture": {
+    "pid": 84773,
+    "window_id": 27469,
+    "timestamp": "2026-10-08T19:33:09.776938+00:00",
+    "revision": 1,
+    "sha256": "1aae1563224220c173c549bb0ec4f28c142ce19b025ed61572b7d4894fdd7bf3",
+    "raw_capture_sha256": "55b5a23754cf8c4085c4404ad1ac40236c6d512c674e8fd08f5ace7b2d1d600e",
+    "encoding": "256-color indexed PNG; exact Cua Driver raw PNG retained separately",
+    "dimensions": [
+      660,
+      468
+    ],
+    "images": [
+      {
+        "path": "native-document_identity-near_miss/capture.png",
+        "sha256": "1aae1563224220c173c549bb0ec4f28c142ce19b025ed61572b7d4894fdd7bf3",
+        "dimensions": [
+          660,
+          468
+        ]
+      }
+    ],
+    "capture_ms": 447.4652510834858,
+    "screenshot_ms": 275.90212505310774,
+    "phase_total_ms": 447.4652510834858,
+    "encoding_rmse": 0.17791612720834216,
+    "encoding_max_channel_delta": 21,
+    "extraction_ms": 24.961833958514035,
+    "encoding_ms": 13.932832982391119,
+    "ocr": "macOS Vision VNRecognizeTextRequest; all returned lines retained with confidence and normalized bounds",
+    "ocr_ms": 132.6684590894729,
+    "ax_nodes": 11,
+    "ax_truncated": false,
+    "text_sources": [
+      "native AX tree",
+      "macOS Vision OCR of bound-window screenshot"
+    ],
+    "source": "Cua Driver bound AppKit window + direct native AX tree",
+    "posture": "background_only"
+  },
+  "conformance": {
+    "scripted_proposal_choice": "skip_negative_or_ambiguous",
+    "negative_proposal_dispatched": false,
+    "effect_existed_before": false,
+    "positive_trajectory": {
+      "dispatched": true,
+      "route": "background_accessibility",
+      "error_code": 0,
+      "target_label": "Select Candidate A"
+    },
+    "postcondition": true,
+    "dispatch_readback_ms": 111.35949997697026,
+    "fresh_readback_observed": true,
+    "scope": "scripted conformance; not provider-driven dispatch"
+  }
+}

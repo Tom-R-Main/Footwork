@@ -1,0 +1,72 @@
+[
+  {
+    "text": "\u2022 \u2022",
+    "confidence": 0.30000001192092896,
+    "normalized_bounds_bottom_left": [
+      0.006060606792929278,
+      0.9487179489672365,
+      0.08787878787878789,
+      0.038461538461538436
+    ]
+  },
+  {
+    "text": "D3 run-owned visual fixture",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.36363636708333325,
+      0.9572649574786325,
+      0.27575757575757576,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Apply the displayed crop while preserving the entire subject.",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.03333332778787887,
+      0.8803418801282051,
+      0.5545454545454546,
+      0.02991452991452992
+    ]
+  },
+  {
+    "text": "Crop proposal (blue outline); retain the entire subject",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.04545454274891779,
+      0.752136751953602,
+      0.37878787878787873,
+      0.03418803418803418
+    ]
+  },
+  {
+    "text": "Image unavailable",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.3757575768560606,
+      0.4615384618589744,
+      0.13636363636363635,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Apply proposed crop",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.08484848921418783,
+      0.0512820507834757,
+      0.18181817025849314,
+      0.02991452991452992
+    ]
+  },
+  {
+    "text": "Apply safe crop",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.4090909114141413,
+      0.0512820514957264,
+      0.13939393939393946,
+      0.02991452991452992
+    ]
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "text": "D3 run-owned visual fixture",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.36363636708333325,
+      0.9572649574786325,
+      0.27575757575757576,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "Export progress: 100%",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.033333335454545414,
+      0.8803418805555555,
+      0.21212121212121213,
+      0.02991452991452992
+    ]
+  },
+  {
+    "text": "Export",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.08181818106060608,
+      0.6965811970085469,
+      0.05151515151515153,
+      0.025641025641025772
+    ]
+  },
+  {
+    "text": "100%",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.45151515237373735,
+      0.5555555558404559,
+      0.05151515151515146,
+      0.02564102564102555
+    ]
+  },
+  {
+    "text": "Finalizing output...",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.09090909257575752,
+      0.42735042756410246,
+      0.13333333333333333,
+      0.02564102564102566
+    ]
+  },
+  {
+    "text": "C",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.436363635993266,
+      0.2777777775878443,
+      0.06666666666666665,
+      0.09401709401709402
+    ]
+  },
+  {
+    "text": "Finish export",
+    "confidence": 1.0,
+    "normalized_bounds_bottom_left": [
+      0.11818182015151507,
+      0.055555555840455906,
+      0.1181818181818182,
+      0.02564102564102555
+    ]
+  }
+]
