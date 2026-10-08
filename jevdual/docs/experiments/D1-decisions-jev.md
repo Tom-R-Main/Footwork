@@ -97,3 +97,25 @@ pooling differs in the original version; treat those timings as implementation w
 version may use pooled clients for both providers, still reporting connection, parsing and replay
 overhead and making no intrinsic-model or live-session speed claim. All earlier/diagnostic spend
 and unknown-usage reservations carry into the same total $5 cap.
+
+## Amendment: diagnosed singleton capability and version 2, 2026-10-08
+
+The explicit frozen-request diagnostic returns array_below_min_length at questions[2].choices:
+the endpoint requires at least two choice options. Code may bind a singleton's sole supplied value
+without a model request. Version 2 filters those heads from the wire request and marks their
+one-hot conditional distribution/confidence as forced_single_option, never provider judgment or
+empirical correctness confidence. Preserve the actual native receipt and hash the actual wire body.
+Jev still receives its existing supported singleton heads; disclose this adaptation in speed/cost
+and quality reports. All logical evidence and current code admission thresholds remain unchanged.
+
+Use pooled clients for both providers. Record implementation wall time and candidate transport
+wall time; cold connections and local replay overhead remain disclosed. Compute exact selected
+pair correctness separately from safe abstention, and score admitted alternates on their effective
+target. This repair applies to a fresh version 2 run directory; version 1 remains incomplete.
+Carry the diagnostic's conservative budget upper forward, including all unknown-usage failures.
+
+The user clarified that quality and speed determine full agnosticism. Treat money as descriptive;
+recommend broader interchangeability only where both quality/safety and measured latency warrant
+it. A visual capability win may justify a dedicated role without a full provider-neutral refactor.
+Image-versus-text information effects require a separate preregistration and do not establish a
+text-judgment win or live-session performance. Any adoption still requires independent validation.

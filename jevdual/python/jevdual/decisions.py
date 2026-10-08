@@ -11,7 +11,7 @@ import math
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Self
 
 import httpx
 
@@ -55,6 +55,7 @@ class ChoiceAnswer:
     choice: str
     probabilities: Mapping[str, float]
     confidence: float
+    source: str = "provider"
 
 
 @dataclass(frozen=True)
@@ -156,10 +157,16 @@ def serialize_questions(questions: Sequence[Question]) -> list[dict[str, Any]]:
 
 
 def request_body(input: str, questions: Sequence[Question], model: str = MODEL) -> bytes:
-    """Canonical bounded UTF-8 request bytes, usable for preregistered hashes."""
+    """Canonical bounded wire bytes; deterministic singleton choices are omitted.
+
+    If every logical question is a singleton choice, no request is dispatched.
+    """
     _require(isinstance(input, str), "text_input_required")
     _require(model == MODEL, "unsupported_model")
-    serialized = serialize_questions(questions)
+    serialized = [
+        question for question in serialize_questions(questions)
+        if question["type"] != "choice" or len(question["choices"]) > 1
+    ]
     try:
         body = json.dumps(
             {"model": model, "input": input, "questions": serialized},
@@ -280,7 +287,11 @@ def _provider_error(content: bytes, api_key: str) -> dict[str, str] | None:
 
 
 class DecisionsClient:
-    """One request per call, standard endpoint only, with no retries or redirects."""
+    """At most one request per call, pooled standard endpoint, no retry/redirect.
+
+    Singleton choices bind an already supplied sole value in code. Their numeric
+    certainty describes that binding, never a provider judgment or calibration.
+    """
 
     def __init__(self, api_key: str, *, model: str = MODEL,
                  transport: httpx.AsyncBaseTransport | None = None, timeout: float = 60):
@@ -291,18 +302,50 @@ class DecisionsClient:
         self.model = model
         self._transport = transport
         self._timeout = timeout
+        self._client: httpx.AsyncClient | None = None
+        self._closed = False
+
+    async def aclose(self) -> None:
+        """Release the shared connection pool; repeated closure is safe."""
+        self._closed = True
+        if self._client is not None:
+            await self._client.aclose()
+
+    async def __aenter__(self) -> Self:
+        _require(not self._closed, "client_closed")
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        await self.aclose()
 
     async def decide(self, input: str, questions: Sequence[Question]) -> DecisionBatch:
+        _require(not self._closed, "client_closed")
+        logical = serialize_questions(questions)
         body = request_body(input, questions, self.model)
         serialized = json.loads(body)["questions"]
         started = time.perf_counter()
-        try:
-            async with httpx.AsyncClient(
+        forced = {
+            question["name"]: ChoiceAnswer(
+                question["name"], question["choices"][0]["value"],
+                {question["choices"][0]["value"]: 1.0}, 1.0, source="forced_single_option",
+            )
+            for question in logical
+            if question["type"] == "choice" and len(question["choices"]) == 1
+        }
+        if not serialized:
+            return DecisionBatch(
+                "deterministic-single-option", forced, 0,
+                {"source": "forced_single_option", "question_names": list(forced), "provider_request": False},
+                time.perf_counter() - started,
+            )
+        if self._client is None:
+            self._client = httpx.AsyncClient(
                 transport=self._transport, timeout=self._timeout, follow_redirects=False, trust_env=False,
-            ) as client:
-                response = await client.post(ENDPOINT, content=body, headers={
-                    "Authorization": f"Bearer {self._api_key}", "Content-Type": "application/json",
-                })
+            )
+        try:
+            response = await self._client.post(ENDPOINT, content=body, headers={
+                "Authorization": f"Bearer {self._api_key}", "Content-Type": "application/json",
+            })
         except httpx.RequestError:
             raise DecisionsError("network") from None
         if not 200 <= response.status_code < 300:
@@ -314,4 +357,7 @@ class DecisionsClient:
             raw = json.loads(response.content, object_pairs_hook=_unique_object)
         except (ValueError, UnicodeError):
             raise DecisionsError("invalid_json") from None
-        return _parse(raw, serialized, time.perf_counter() - started)
+        batch = _parse(raw, serialized, time.perf_counter() - started)
+        return DecisionBatch(
+            batch.model, {**batch.answers, **forced}, batch.input_tokens, batch.raw, batch.latency_s,
+        )

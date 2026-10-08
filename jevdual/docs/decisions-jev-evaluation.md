@@ -6,8 +6,10 @@ prototype is not evidence about Decisions.
 
 ## Recommendation before measurement
 
-Make the **semantic judgment contract provider-neutral**, with Jev and OpenAI Decisions as
-explicit adapters. Keep admission settings specific to model, role and prompt version. Jev is
+Evaluate a **provider-neutral semantic judgment contract**, with Jev and OpenAI Decisions as
+explicit adapters. A broad refactor depends on measured quality and speed; an image capability
+win can justify a dedicated visual backend. Keep admission settings specific to model, role and
+prompt version. Jev is
 currently the active implementation of bounded judgments; it need not define System One itself.
 Decisions is a direct candidate for that role and cannot generate System Two's arbitrary action
 arguments, extracted fields or written answers. Keep those with the existing generative backend.

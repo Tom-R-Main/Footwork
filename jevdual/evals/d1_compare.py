@@ -221,10 +221,14 @@ async def baseline_result(p: Prepared, response: Any) -> dict:
     v = Arbiter(ArbiterPolicy.from_toml()).judge(
         d, p.arguments["menu"], p.arguments["ctx"], SimpleNamespace()
     )
+    admitted = v.kind in ("act", "retry_alternate")
+    effective_target = d.alternates[0] if v.kind == "retry_alternate" and d.alternates else d.target
     return {
         "decision": "propose" if v.kind in ("act", "retry_alternate") else "abstain",
         "raw_abstain": d.operation in ("blocked", "done", "unsafe", "external"),
-        "admitted": v.kind in ("act", "retry_alternate"),
+        "admitted": admitted,
+        "admitted_target_id": str(effective_target) if admitted and effective_target is not None else None,
+        "admitted_pair_correct": admitted and pair_correct(p.case, d.operation, effective_target),
         "operation": d.operation,
         "target_id": str(d.target) if d.target is not None else None,
         "raw_pair_correct": pair_correct(p.case, d.operation, d.target),
@@ -427,8 +431,6 @@ def correctness(p: Prepared, output: dict) -> bool:
         return output["accept"] == (p.case["expect"] == "accept")
     if p.role == "risk":
         return output["effect"] == p.case["expect"]
-    if p.case["expect_abstain"]:
-        return output["raw_abstain"] and not output["admitted"]
     return output["raw_pair_correct"]
 
 
@@ -507,7 +509,11 @@ def summarize(rows: list[dict], expected_rows: int) -> dict:
                 record["raw_pair_correct_replays"] = sum(r["result"]["raw_pair_correct"] for r in good)
                 record["admitted_replays"] = sum(r["result"]["admitted"] for r in good)
                 record["wrong_admitted_replays"] = sum(
-                    r["result"]["admitted"] and not r["correct"] for r in good
+                    r["result"]["admitted"] and not r["result"]["admitted_pair_correct"] for r in good
+                )
+                record["coarse_safe_abstention_replays"] = sum(
+                    r.get("expect_abstain", False) and r["result"]["raw_abstain"]
+                    and not r["result"]["admitted"] for r in good
                 )
             record["categories"] = {
                 category: {
@@ -649,7 +655,8 @@ async def measure(out: Path, cap: float, prior_cost: float, *, probe: bool = Fal
                 else baseline_body(p)
             )
             try:
-                reservation = budget.reserve(backend, body, len(questions))
+                wire_count = len(json.loads(body)["questions"]) if backend == "decisions" else len(questions)
+                reservation = budget.reserve(backend, body, wire_count)
             except BudgetExceeded as exc:
                 halted = str(exc)
                 break
@@ -661,6 +668,7 @@ async def measure(out: Path, cap: float, prior_cost: float, *, probe: bool = Fal
                 "repeat": repeat,
                 "category": "synthetic contract" if p is None else p.case["category"],
                 "expect": None if p is None else p.case.get("expect"),
+                "expect_abstain": False if p is None else p.case.get("expect_abstain", False),
                 "input_hash": digest(evidence),
                 "request_sha256": hashlib.sha256(body).hexdigest(),
                 "correct": False,
@@ -672,10 +680,16 @@ async def measure(out: Path, cap: float, prior_cost: float, *, probe: bool = Fal
                         p.state, p.questions, model=JEV_MODEL, retry=RetryPolicy(max_retries=0), timeout=60
                     )
                     input_tokens = response.usage.input_tokens
+                    row["request_latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
                     row["native_response"] = response.model_dump(mode="json")
                     row["result"] = await baseline_result(p, response)
                 else:
                     batch = await candidate.decide(evidence, questions)
+                    row["request_latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
+                    row["transport_latency_ms"] = round(batch.latency_s * 1000, 2)
+                    row["answer_provenance"] = {
+                        name: getattr(answer, "source", "provider") for name, answer in batch.answers.items()
+                    }
                     input_tokens = batch.input_tokens
                     row["native_response"], row["native_model"] = batch.raw, batch.model
                     if p is None:
@@ -705,13 +719,16 @@ async def measure(out: Path, cap: float, prior_cost: float, *, probe: bool = Fal
                     else None,
                 }
                 input_tokens = getattr(exc, "input_tokens", input_tokens)
+                provider_error = getattr(exc, "provider_error", None)
+                if provider_error is not None:
+                    row["error"]["provider_error"] = provider_error
                 raw = getattr(exc, "raw", None)
                 if isinstance(raw, dict):
                     row["native_response"] = raw
                 if backend == "decisions" and (
                     status in (400, 401, 403, 404) or isinstance(code, str) and code.startswith("http_4")
                 ):
-                    halted = "candidate account/model/route failure"
+                    halted = "candidate HTTP request rejected"
                 if backend == "jev" and status in (401, 403, 404):
                     halted = "baseline account/model access failure"
             row["latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
@@ -736,7 +753,7 @@ async def measure(out: Path, cap: float, prior_cost: float, *, probe: bool = Fal
     finally:
         if baseline is not None:
             await baseline.aclose()
-        close = getattr(candidate, "close", None)
+        close = getattr(candidate, "aclose", None)
         if close is not None:
             await close()
         write_json(out / "results.json", rows)
@@ -762,6 +779,10 @@ async def dry_run() -> None:
         role: [len(p.questions) for p in prepared if p.role == role]
         for role in ("completion", "risk", "actions")
     }
+    wire_questions = {
+        role: [len(json.loads(candidate_body(p))["questions"]) for p in prepared if p.role == role]
+        for role in ("completion", "risk", "actions")
+    }
     print(
         json.dumps(
             {
@@ -770,6 +791,10 @@ async def dry_run() -> None:
                 "role_counts": {role: len(v) for role, v in questions.items()},
                 "question_counts": {
                     role: {"min": min(v), "max": max(v), "sum": sum(v)} for role, v in questions.items()
+                },
+                "wire_question_counts": {
+                    role: {"min": min(v), "max": max(v), "sum": sum(v)}
+                    for role, v in wire_questions.items()
                 },
                 "replays": REPLAYS,
                 "attempts": len(prepared) * REPLAYS * 2,
@@ -781,7 +806,7 @@ async def dry_run() -> None:
                 * MAX_INPUT
                 * (
                     len(prepared) * PRICES["jev"]
-                    + sum(len(p.questions) for p in prepared) * PRICES["decisions"]
+                    + sum(sum(v) for v in wire_questions.values()) * PRICES["decisions"]
                 )
                 / 1e6
                 + 3 * MAX_INPUT * PRICES["decisions"] / 1e6,

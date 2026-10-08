@@ -39,3 +39,16 @@ Test: one explicit diagnostic dispatch of the frozen A12 request after committin
 Predicts: rejection metadata identifies a question/batch contract constraint that can be represented as an explicit adapter capability limit.
 Against: no reproducing rejection, an opaque error, or evidence of an account/access error instead.
 Refs: docs/experiments/D1-decisions-jev.md; results/d1-dev-20261008
+
+## U-DLIMIT · update · 2026-10-08 14:44
+Resolves: DAPI2 = held
+Observed: The explicit A12 diagnostic on a8c5b94 returned invalid_request_error / array_below_min_length at questions[2].choices, saying the minimum is two and the supplied length is one. The frozen request hash matched version 1. Both rejected attempts retain uncertain-cost reservations; the total upper includes every earlier call. No full comparison result exists.
+Inferred: This is a specific adapter capability restriction. A singleton target is conditionally fixed by code, not a model uncertainty judgment. The user explicitly prioritizes visual value and makes quality and speed determinants of broader agnosticism.
+Next: Mark forced singleton bindings separately from native answers, pool both clients, repair effective alternate scoring and separate exact pair correctness from safe abstention. Commit tests before a fresh version 2 run. Evaluate visual added information separately and let results determine architecture breadth.
+Refs: results/d1-diagnostic-20261008; docs/experiments/D1-decisions-jev.md; a8c5b94
+
+## S-DV2 · summary · 2026-10-08 14:46
+Established: Version 2 handles the diagnosed singleton restriction by marking code-forced heads, preserving actual native receipts and hashing actual wire requests. Both clients pool connections. Exact selected pairs, coarse abstention and effective admitted alternate targets are reported separately. Host checks passed, and preflight retains the original logical evidence/question projection hash. The API error diagnosis is established, not inferred from status alone.
+Uncertain: DAPI1 remains open. Quality, speed, calibration and visual added value remain unmeasured beyond the simple contract and partial risk calls. Synthetic menu cases do not establish live execution performance. Earlier failed calls retain uncertain-cost upper bounds.
+Decision: Commit the repaired harness and run a fresh version 2 paired comparison including all prior budget upper bounds. Quality and speed determine whether broader interchangeability is worth implementing; visual utility can be a dedicated role. No active backend migration is justified yet.
+Refs: results/d1-v2-offline-20261008; results/d1-diagnostic-20261008; docs/experiments/D1-decisions-jev.md; tests/test_decisions.py; tests/test_d1_compare.py

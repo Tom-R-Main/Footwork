@@ -178,6 +178,46 @@ async def test_useful_done_raw_correct_is_separate_from_admission():
 
 
 @pytest.mark.asyncio
+async def test_safe_premature_done_does_not_count_as_exact_correctness():
+    prepared = await d1.prepared_cases()
+    p = next(p for p in prepared if p.role == "actions" and p.case["expect_abstain"])
+    result = {"raw_abstain": True, "admitted": False, "raw_pair_correct": False}
+    assert not d1.correctness(p, result)
+
+
+@pytest.mark.asyncio
+async def test_admitted_alternate_is_scored_on_actual_dispatch_target(monkeypatch):
+    from jevdual.policy import Decision
+
+    p = next(p for p in await d1.prepared_cases() if p.case["id"] == "R1-A01")
+    decision = Decision(
+        operation="click", operation_confidence=0.9, operation_probabilities={"click": 1},
+        target=11, target_confidence=0.4, target_probabilities={11: 0.51, 10: 0.49},
+        alternates=(10,), nouls={}, model="test", request_tokens=1, latency_ms=1,
+    )
+
+    class Policy:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def decide(self, *args):
+            return decision
+
+    class Arbiter:
+        def __init__(self, *args):
+            pass
+
+        def judge(self, *args):
+            return SimpleNamespace(kind="retry_alternate", reason="test alternate dispatch")
+
+    monkeypatch.setattr(d1, "JevPolicy", Policy)
+    monkeypatch.setattr(d1, "Arbiter", Arbiter)
+    result = await d1.baseline_result(p, None)
+    assert result["target_id"] == "11" and not result["raw_pair_correct"]
+    assert result["admitted_target_id"] == "10" and result["admitted_pair_correct"]
+
+
+@pytest.mark.asyncio
 async def test_probe_failure_is_durable_without_exception_text(monkeypatch, tmp_path):
     import jevdual.decisions
 

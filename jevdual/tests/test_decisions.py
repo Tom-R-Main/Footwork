@@ -277,3 +277,90 @@ async def test_malformed_http_diagnostics_are_code_only(wire):
     assert caught.value.provider_error is None
     assert caught.value.raw is None
     assert str(caught.value) == "Decisions request failed: http_400"
+
+
+async def test_singleton_choice_binds_supplied_option_without_http_or_observed_model(monkeypatch):
+    question = ChoiceQuestion("target", "Target conditional on clicking", {"7": "Visible button"})
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Deterministic singleton created an HTTP client")
+
+    monkeypatch.setattr(httpx, "AsyncClient", forbidden)
+    assert serialize_questions([question])[0]["choices"] == [{"value": "7", "description": "Visible button"}]
+    assert json.loads(request_body("Evidence", [question]))["questions"] == []
+    async with DecisionsClient("test-secret") as client:
+        batch = await client.decide("Evidence", [question])
+    assert batch.answers == {
+        "target": ChoiceAnswer("target", "7", {"7": 1.0}, 1.0, source="forced_single_option")
+    }
+    assert batch.model == "deterministic-single-option"
+    assert batch.input_tokens == 0
+    assert batch.raw == {
+        "source": "forced_single_option", "question_names": ["target"], "provider_request": False,
+    }
+
+
+async def test_mixed_batch_filters_singleton_wire_head_preserves_native_receipt_and_usage():
+    singleton = ChoiceQuestion("target", "Conditional click target", {"7": "Visible button"})
+    questions = [singleton, *QUESTIONS]
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        assert request.content == request_body("Evidence", questions)
+        assert json.loads(request.content)["questions"] == serialize_questions(QUESTIONS)
+        return httpx.Response(200, json=RESPONSE)
+
+    async with DecisionsClient("test-secret", transport=httpx.MockTransport(handler)) as client:
+        batch = await client.decide("Evidence", questions)
+    assert len(calls) == 1
+    assert batch.raw == RESPONSE
+    assert {answer["name"] for answer in batch.raw["answers"]} == {"complete", "operation", "severity"}
+    assert batch.input_tokens == 123
+    assert batch.model == RESPONSE["model"]
+    assert batch.answers["target"].source == "forced_single_option"
+    assert batch.answers["target"].confidence == 1.0
+    assert batch.answers["operation"].source == "provider"
+    assert batch.answers["operation"].confidence == 0.63
+
+
+async def test_provider_cannot_claim_filtered_singleton_as_native_answer():
+    singleton = ChoiceQuestion("target", "Conditional click target", {"7": "Visible button"})
+    response = copy.deepcopy(RESPONSE)
+    response["answers"].append({
+        "type": "choice", "name": "target", "choice": "7", "confidence": 1,
+        "probabilities": [{"value": "7", "probability": 1}],
+    })
+    with pytest.raises(DecisionsError, match="answer_set"):
+        await run_response(response, [*QUESTIONS, singleton])
+
+
+async def test_pool_reused_and_context_closes_transport(monkeypatch):
+    constructed = []
+    original_client = httpx.AsyncClient
+
+    def counted_client(**kwargs):
+        client = original_client(**kwargs)
+        constructed.append(client)
+        return client
+
+    monkeypatch.setattr(httpx, "AsyncClient", counted_client)
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, json=RESPONSE))
+    async with DecisionsClient("test-secret", transport=transport) as client:
+        await client.decide("Evidence", QUESTIONS)
+        await client.decide("Second evidence", QUESTIONS)
+        assert len(constructed) == 1
+        assert not constructed[0].is_closed
+    assert constructed[0].is_closed
+    await client.aclose()
+    with pytest.raises(DecisionsError, match="client_closed"):
+        await client.decide("Evidence", QUESTIONS)
+
+
+async def test_context_closes_pool_after_request_failure():
+    transport = httpx.MockTransport(lambda request: httpx.Response(400, json={"error": {"message": "Invalid"}}))
+    client = DecisionsClient("test-secret", transport=transport)
+    with pytest.raises(DecisionsError, match="http_400"):
+        async with client:
+            await client.decide("Evidence", QUESTIONS)
+    assert client._client.is_closed

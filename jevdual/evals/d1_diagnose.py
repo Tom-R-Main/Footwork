@@ -35,7 +35,8 @@ async def main() -> None:
     tokens = None
     row = {"case": "R1-A12", "contract_valid": False}
     try:
-        result = await DecisionsClient(key("OPENAI_API_KEY")).decide(evidence, questions)
+        async with DecisionsClient(key("OPENAI_API_KEY")) as client:
+            result = await client.decide(evidence, questions)
         tokens = result.input_tokens
         row.update(contract_valid=True, native_response=result.raw)
     except DecisionsError as error:
