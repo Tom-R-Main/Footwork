@@ -25,3 +25,17 @@ Observed: The one-shot authenticated contract probe on 5962744 returned the requ
 Inferred: Public documentation and usable access now satisfy the deferral's entry condition. This simple request is access/contract proof, not model quality or comparative latency evidence.
 Next: Commit the probe receipt, then measure the frozen paired development comparison from a clean checkout, including the probe's input-only charge in the same $5 ceiling. DAPI1 remains open.
 Refs: results/d1-contract-20261008; docs/experiments/D1-decisions-jev.md; 5962744
+
+## U-DREJECTED · update · 2026-10-08 14:39
+Observed: D1 stopped after seven attempts on 6a9a67b. Both providers returned all three R16 risk replays; the first A12 candidate request was rejected with HTTP 400. Its 11 questions include singleton target choices. The transport discarded the HTTP error body, so no constraint is established. The runner's account/model/route stop label is overbroad. All attempts and uncertain-cost reservations remain recorded. Independent review also found alternate-admission target scoring and coarse abstention reporting limitations, plus asymmetric connection pooling.
+Inferred: Access was established by the probe and risk calls; this rejection may concern the request contract. The partial run cannot establish comparative performance or safety. DAPI1 remains open.
+Next: Preserve this version, commit bounded diagnosis before another request, capture sanitized provider metadata, and repair effective-target reporting before any new action comparison. A new measured version gets a fresh run directory, never a resumed original run.
+Refs: results/d1-dev-20261008; evals/d1_compare.py; python/jevdual/decisions.py; 6a9a67b
+
+## DAPI2 · prediction · 2026-10-08 14:39
+Question: does the rejected A12 request expose a specific Decisions contract restriction?
+Hypothesis: the rejection concerns the question batch or choice shape, rather than lack of usable account access, because the probe and predicate requests already succeeded.
+Test: one explicit diagnostic dispatch of the frozen A12 request after committing sanitized HTTP error capture; inspect only bounded provider type/code/param/message with key redaction. If a specific restriction is returned, isolate that restriction with a tiny synthetic contract request in a separately committed version. No automatic retry or resumed comparison; all charges/reservations include prior attempts under $5.
+Predicts: rejection metadata identifies a question/batch contract constraint that can be represented as an explicit adapter capability limit.
+Against: no reproducing rejection, an opaque error, or evidence of an account/access error instead.
+Refs: docs/experiments/D1-decisions-jev.md; results/d1-dev-20261008

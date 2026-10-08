@@ -1,0 +1,88 @@
+{
+  "cap_usd": 5,
+  "prior_cost_upper_usd": 3.92e-05,
+  "reserved_or_usage_upper_usd": 0.07061619400000001,
+  "prices_per_million": {
+    "jev": 0.042,
+    "decisions": 0.1
+  },
+  "input_reservation_per_question": 64000,
+  "attempts": [
+    {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.72e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 1135,
+      "request_sha256": "a554e09b0a9cb495ce16ed559014323279a25b065715e41868775dce50768d6c",
+      "input_tokens": 372
+    },
+    {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 2.1798e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 1083,
+      "request_sha256": "362dd1f6835682d109d9f0dc9eab22243aa5dfbd1c67ca88464847cc2cce7ae9",
+      "input_tokens": 519
+    },
+    {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 2.1798e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 1083,
+      "request_sha256": "362dd1f6835682d109d9f0dc9eab22243aa5dfbd1c67ca88464847cc2cce7ae9",
+      "input_tokens": 519
+    },
+    {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.72e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 1135,
+      "request_sha256": "a554e09b0a9cb495ce16ed559014323279a25b065715e41868775dce50768d6c",
+      "input_tokens": 372
+    },
+    {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 2.1798e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 1083,
+      "request_sha256": "362dd1f6835682d109d9f0dc9eab22243aa5dfbd1c67ca88464847cc2cce7ae9",
+      "input_tokens": 519
+    },
+    {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.72e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 1135,
+      "request_sha256": "a554e09b0a9cb495ce16ed559014323279a25b065715e41868775dce50768d6c",
+      "input_tokens": 372
+    },
+    {
+      "provider": "decisions",
+      "reserved_usd": 0.0704,
+      "charged_upper_usd": 0.0704,
+      "usage_known": false,
+      "input_tokens_upper": 704000,
+      "question_count": 11,
+      "body_bytes": 9342,
+      "request_sha256": "57f5c8292ef8a2e6dd677a05882eec2c839f579c273ffbe5576da4745a2b718e"
+    }
+  ]
+}

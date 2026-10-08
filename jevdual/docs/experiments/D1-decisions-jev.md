@@ -81,3 +81,19 @@ cases may expose that question/label scope mismatch rather than provider weaknes
 both prompts and labels, disclose mismatch cases, and do not credit benchmark correctness as proof
 of a complete permission classifier. Action raw pair correctness includes a correct done choice;
 its subsequent Arbiter escalation is mandatory completion verification, not a wrong pair.
+
+## Amendment: bounded request diagnosis and replay repair, 2026-10-08 14:39
+
+The original version stopped after seven attempts on an HTTP 400 at A12. Preserve its receipts;
+the response body was not retained, so no particular API constraint or access failure is inferred.
+Authorize a single explicit diagnostic request of that frozen case under the remaining original
+budget, with bounded key-redacted provider metadata. This is not automatic retry or a resumed run.
+Any diagnosed adaptation is committed with its contract tests before a fresh paired run version.
+
+Independent review found that alternate-admission correctness used the original target rather than
+the effective alternate, and coarse abstention accepted premature done. Before new measurement,
+report exact selected pairs, coarse abstention and effective admitted pairs separately. Connection
+pooling differs in the original version; treat those timings as implementation wall times. A new
+version may use pooled clients for both providers, still reporting connection, parsing and replay
+overhead and making no intrinsic-model or live-session speed claim. All earlier/diagnostic spend
+and unknown-usage reservations carry into the same total $5 cap.
