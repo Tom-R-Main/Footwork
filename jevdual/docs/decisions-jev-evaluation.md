@@ -22,6 +22,12 @@ Jev stays in text completion, risk and bounded selection; source selection was a
 
 No active factories or thresholds changed. The authenticated contract, development adapters, paired harnesses and receipts are committed locally; existing credentials were reused. Reported-input cost estimate for the full pilot is $0.0513, conservative upper $0.1921 under the authorized $5 ceiling.
 
+## arc-cua reference follow-up
+
+The local arc-cua source already separates a standalone driver, shared ChoicePolicy and Jev/Decisions transports. Its consumed-head refusal handling matches the interoperability improvement exposed by D1. Its retained snapshot image and AX/local-OCR split are useful for a dedicated visual evidence envelope. This establishes a practical narrow seam, not performance qualification for all roles.
+
+Preserve Footwork's stricter native provenance and completion floors. Arc's revision excludes pixels; OCR freshness only binds process/window, and a missing image-check answer can inherit the earlier text positive. Do not copy those as visual freshness or completion guarantees. Source-reported driver speed is separate from our model timings and has not been reproduced here. Full source audit, pointers and proposed validation: [arc-cua reference](arc-cua-decisions-reference.md).
+
 ## Recommendation before measurement
 
 Evaluate a **provider-neutral semantic judgment contract**, with Jev and OpenAI Decisions as

@@ -1,0 +1,27 @@
+{
+  "kind": "read-only local source audit, no execution or reproduced benchmark",
+  "repository": "/Volumes/External SSD/referencerepos/arc-cua",
+  "commit": "6b353039111c08c2c64c5229083606941e364eaf",
+  "dirty": false,
+  "sha256": {
+    "README.md": "881cbddc889b10b0b48d59fc7ce6c243aa1042ac678df0a7210fb0e8f7c98fdb",
+    "BENCHMARKS.md": "33f9ae7c55396b2eb9c2e731dfa403c4b6d86497b7e74165163be2b96663681d",
+    "benchmarks/README.md": "4af08d4033fc3f7b9b0fadd1978a1b1d64de001f0d22a7a8b707f2864f75fb4c",
+    "docs/driver.md": "6d3cff7e990a812fea7aff0e2317dfa08c4e34bb28fa7bc4a74651427692a9a9",
+    "src/arc_cua/models.py": "69182f90e89889cb3958fa4faed0422bb6a2947c08ccced788328605df7a5e47",
+    "src/arc_cua/protocols.py": "78d7b1e5a91f73f001e7c6b74b697d9286461acf5d26725a92e04c75df669177",
+    "src/arc_cua/driver.py": "ce80235062ca6eb3d0ff08dd2d2ae563d91e0e1e9be9587da99b6d1f21c42dc5",
+    "src/arc_cua/runtime.py": "246159e5c6ef61ad72298fed0b2bc0982d7d007f8ed16eab044d30c1a535c6fd",
+    "src/arc_cua/settling.py": "6ae63f04ae8d3f5d440e270c2086e4ac740f4eac4f6d9d10ba02b497020d18fc",
+    "src/arc_cua/backends/macos_hybrid.py": "69666c3b45da9565bfaf26dde4f67318360ca54dbec69f40cd5918d42a40c7fe",
+    "src/arc_cua/backends/macos_ocr.py": "26f023931006fae789ba0496cbf1d591ee22a1737182feb86db421db2200a4e7",
+    "src/arc_cua/policies/choice.py": "81854a826492eb5298a6da165efd08dc6af4f387725bde3cdd5afcd1043ad7d9",
+    "src/arc_cua/policies/openai_decisions.py": "64405303f855a40401dbf51b70e27acb472016245e1643f6c6d99bc2cd3d09bd",
+    "src/arc_cua/policies/typesafe.py": "ed83aaf745c0803f630d6f016b9cd8d82082c87333d0a22e3eb365dd130073d8",
+    "tests/test_openai_decisions.py": "4ec84b6f4b83e1136234a078ce48240b04d36bead7aea41aea4fba93d7654e09",
+    "examples/compare_providers.py": "6326efb615851a785614aacbb42bbd66be5d8f61ef2c1c167efc5f7831a8eda0",
+    "examples/decisions_showcase.py": "b9eb12bfb90bdb0bc432ae4dd7d390e67cbd5d07fb02de01162cd38db7b33916"
+  },
+  "scope": "observation/visual/driver boundaries, finite judgment transport and source-reported benchmark limitations",
+  "benchmark_note": "source claims only; driver timing is not model latency or independently reproduced Footwork throughput"
+}
