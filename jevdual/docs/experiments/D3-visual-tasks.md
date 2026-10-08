@@ -31,3 +31,11 @@ Carry prior conservative upper $0.192055158 into the original $5 cap. Reserve 64
 If rule holds, recommend independent real-app cases for qualified visual families, still retaining Jev text. If it fails, preserve family-level evidence and do not activate a broad visual admission gate. Quality and speed govern broader interchangeability. This pilot cannot authorize a runtime switch, full neutralization, driver replacement or independent-heldout use.
 
 Sources: official Decisions guide; local reference audits in docs/arc-cua-decisions-reference.md; CUA basic tasks and browser-use image/paint-order examples. Labels/implementations are new authored development material.
+
+## Amendment before measurement — 2026-10-08 15:24
+
+Capture evidence once per case for the matched 216-request comparison. On repeat zero for every case/arm (72 execution checks), reconstruct the controlled fixture, bind a fresh observed target and apply the same observable deterministic guard to a proposal accepted at native p>=.80. Later replays measure judgment consistency only. This execution cadence limits process/window churn; record setup and action phases separately. Recorded-evidence judgments plus reconstructed one-step effects do not establish autonomous multistep task completion or a live-loop speed comparison.
+
+Never branch on expected/variant/oracle truth to decide whether a confidence-qualified proposal dispatches. Setup may reconstruct registered case state; admission uses only actual current surface, target/revision/resource/effect evidence. Invalid accepted proposals may perform wrong effects in these isolated fixtures; score those honestly. Expected labels enter only post-hoc scoring. Export final acceptance additionally requires completed readable artifact readback. Ambiguous refusal counts safe abstention but is reported separately from valid unknown probability.
+
+The three native families may use an isolated AppKit fixture, explicitly labelled native_fixture. They establish native capture/AX dispatch/postcondition behavior, not Finder/Preview acceptance. Text controls preserve standard accessible descriptions. D3 implements its own48k request/accounting bound; older24k D1/D2 helpers are not silently relaxed.
