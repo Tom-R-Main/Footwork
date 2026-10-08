@@ -100,3 +100,11 @@ preferred backend. Jev can remain the active or preferred backend in any individ
 
 If the account lacks Decisions access, preserve an incomplete access receipt and the preregistration;
 availability in public documentation is not proof that an authenticated request succeeded.
+
+## Measured text conclusion, 2026-10-08
+
+D1 does not justify broad interchangeability on the user's quality-and-speed criteria. Decisions finally accepts 5/18 negative completion cases versus Jev 0/18, despite positive coverage 13/18 versus 11/18. It is modestly slower at the median and has worse tails in this implementation run. Keep Jev active for text roles. This is frozen-prompt, fixed-threshold development evidence, not a universal model ranking.
+
+The primary action result is confounded by nine refusals on unused target heads: offline recovery validates retained native heads and replays unchanged policy, yielding exploratory Decisions 29/30 exact cases versus Jev 28/30. Keep the registered primary at 26/30. A narrow future contract should preserve per-answer refusals, consume only validated dependencies, and bind effect judgment to the exact selected proposal. Such a seam is worthwhile interoperability work; it is not a reason to route every role to every model. Risk gains retain the registered question/label scope limitation.
+
+Evidence and complete accounting: ../results/d1-v2-dev-20261008/report.md. D2 separately evaluates image added information; its results cannot repair failed text completion safety. Neither experiment grants runtime adoption or relaxes code authority.

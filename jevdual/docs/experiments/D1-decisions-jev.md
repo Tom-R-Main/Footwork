@@ -119,3 +119,9 @@ recommend broader interchangeability only where both quality/safety and measured
 it. A visual capability win may justify a dedicated role without a full provider-neutral refactor.
 Image-versus-text information effects require a separate preregistration and do not establish a
 text-judgment win or live-session performance. Any adoption still requires independent validation.
+
+## Result — 2026-10-08
+
+All 636 scheduled version 2 attempts finished; 627 satisfy the strict batch contract. Completion rule fails: Decisions accepts 5/18 negative cases finally and 10/18 semantically, versus Jev 0/18 for both; positive final coverage is 13/18 versus 11/18. No speed advantage is observed in this implementation. Risk correctness is 35/40 versus 33/40 with the preregistered question/label scope limitation.
+
+Primary action correctness remains 26/30 versus 28/30. A separately disclosed offline analysis recovers nine unused-target refusals without inventing scores, yielding exploratory 29/30 versus 28/30; this does not alter the primary. Keep Jev active and avoid a broad neutralization. Evaluate visual value separately under D2. Full accounting, timings, failures, recovery and limitations: ../../results/d1-v2-dev-20261008/report.md. No heldout run or runtime backend change.

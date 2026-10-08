@@ -60,3 +60,10 @@ Test: D2, twelve synthetic paired-state fixtures and four text/image arms, three
 Predicts: combined images improve all-three confident correctness over Decisions text-only, with no confident true on a negative fixture.
 Against: no confident-correct coverage gain, any confident false positive, or apparent gains caused by labels leaking through filenames/metadata rather than visual evidence.
 Refs: docs/experiments/D2-decisions-visual.md
+
+## U-DTEXT · update · 2026-10-08 14:58
+Resolves: DAPI1 = failed
+Observed: All 636 scheduled version 2 attempts finished; nine unused-target refusals make 627 strictly valid batches. Decisions accepts five negative completion cases finally and ten semantically; Jev accepts none. Decisions gains two positive completion cases and two risk fixtures, with the registered scope caveat. Median and tail latency show no speed advantage. Independent offline analysis recovers all nine unused-head refusals, yielding exploratory action correctness 29/30 versus Jev 28/30; the primary stays 26/30 versus 28/30.
+Inferred: Frozen-prompt substitution fails completion safety; this does not establish an inherent model limit. All-or-nothing refusal handling confounds primary action coverage. Quality and speed do not warrant full agnosticism now.
+Next: Keep active Jev routes and settings unchanged. Finish separately registered D2, then recommend a dedicated visual role only if evidence supports it. Preserve native refusals per answer in any future consumed-dependency contract.
+Refs: results/d1-v2-dev-20261008/report.md; results/d1-v2-dev-20261008/analysis.json; results/d1-v2-dev-20261008/unused-head-recovery.json; docs/experiments/D1-decisions-jev.md; b02e72a
