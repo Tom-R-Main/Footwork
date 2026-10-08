@@ -86,3 +86,11 @@ Established: Read-only audit of the user-requested local arc-cua reference at cl
 Uncertain: Source-level visual freshness and image-check merge limits prevent treating the reference as qualified execution behavior. Revision excludes pixels; OCR freshness binds process/window; an omitted image verification head can retain the prior text answer. Independent visual cases and complete capture-to-effect timing remain absent.
 Decision: Keep the measured placement: Jev active text, Decisions specialized visual candidate. Reuse narrow boundary ideas while retaining strict provenance, consumed-head validation, explicit visual freshness and Footwork completion/effect floors. Do not adopt a full reference loop or driver from source claims alone.
 Refs: docs/arc-cua-decisions-reference.md; results/arc-cua-source-20261008/source.json; docs/decisions-jev-evaluation.md
+
+## DAPI4 · prediction · 2026-10-08 15:19
+Question: do the six proposed visual task families show added judgment value with actual surface observations and independent effects checks?
+Hypothesis: combined image/text resolves visual proposals better than normal observed text, with abstention on ambiguous inputs and deterministic refusal of unsupported or stale effects.
+Test: D3, 24 authored controlled cases, three arms and three replays, captured browser/native observations, registered independent oracles, no default activation. Commit fixtures/harness before paid calls; all attempts under the existing combined $5 cap.
+Predicts: combined all-three correctness improves over Decisions text with no invalid confident true, and scripted effect/readback checks establish usable execution paths without oracle metadata in input.
+Against: any invalid confident true, no combined gain, oracle leakage or a missing route misrepresented as native/live success.
+Refs: docs/experiments/D3-visual-tasks.md
