@@ -67,3 +67,16 @@ Observed: All 636 scheduled version 2 attempts finished; nine unused-target refu
 Inferred: Frozen-prompt substitution fails completion safety; this does not establish an inherent model limit. All-or-nothing refusal handling confounds primary action coverage. Quality and speed do not warrant full agnosticism now.
 Next: Keep active Jev routes and settings unchanged. Finish separately registered D2, then recommend a dedicated visual role only if evidence supports it. Preserve native refusals per answer in any future consumed-dependency contract.
 Refs: results/d1-v2-dev-20261008/report.md; results/d1-v2-dev-20261008/analysis.json; results/d1-v2-dev-20261008/unused-head-recovery.json; docs/experiments/D1-decisions-jev.md; b02e72a
+
+## U-DVISUAL · update · 2026-10-08 15:02
+Resolves: DAPI3 = held
+Observed: All 144 D2 attempts finished on 84f3fd5. Both image arms are confidently correct on every fixture in all three replays, with no confident true on negative states. Sparse Jev text stays unknown; Decisions text stays unknown or refuses. Combined median/p95 are 170.56/747.53 ms; these exclude screenshot acquisition and do not establish stable real-session speed. All 802 offline tests passed, 26 skipped; Ruff and notebook checks passed.
+Inferred: Pixels add usable information in this authored capability ablation; this is not evidence-matched model superiority or independent real-app accuracy. D1 and D2 together support a specialized visual candidate while Jev remains preferred active text judgment. Quality and speed do not warrant broad agnosticism now.
+Next: Preserve results and source audit. Collect independent visual cases and capture-to-judgment latency before adoption; keep settings and active factories unchanged.
+Refs: results/d2-dev-20261008/report.md; results/d2-dev-20261008/analysis.json; docs/experiments/D2-decisions-visual.md; 84f3fd5
+
+## S-DPACKAGE · summary · 2026-10-08 15:02
+Established: Public Decisions access and strict native predicate/choice/score contracts are verified. D1 text substitution fails completion safety; offline per-answer recovery distinguishes unused-head refusal from useful action reasoning. D2 shows image information value in twelve authored UI fixtures. Every attempt, native receipt, failure, usage estimate and uncertain-cost reservation is retained; no keys are exposed.
+Uncertain: Independent visual accuracy, calibration, source selection, provider snapshot stability, full live latency and production adoption remain unestablished. Risk question/label mismatch and synthetic action menus limit generalization.
+Decision: Keep Jev active for text; qualify Decisions for a dedicated visual validation package. Defer full agnosticism unless role-specific quality and speed earn it. Combined pilot reported-input estimate is $0.051255158 and conservative upper $0.192055158 under the $5 ceiling; no default routing, thresholds, heldout run, push or deployment changed.
+Refs: docs/decisions-jev-evaluation.md; results/d1-v2-dev-20261008/report.md; results/d2-dev-20261008/report.md

@@ -1,8 +1,26 @@
 # Decisions, Jev and Footwork's System One boundary
 
 Source audit refreshed 2026-10-08 against runtime e3b7b08. D1 is the paired development comparison;
-its measurements, when available, live in a cited results directory. The archived Responses
+D1 and D2 measurements live in the linked results directories. The archived Responses
 prototype is not evidence about Decisions.
+
+## Measured recommendation
+
+Keep **Jev as the active text judgment backend**. Use Decisions as a **dedicated visual candidate** for independent validation. Defer full System One agnosticism: quality and speed have not earned broad interchangeability.
+
+| Evidence | Result | Implication |
+|---|---|---|
+| D1 completion | Decisions finally accepts 5/18 unsupported cases; Jev 0/18 | Frozen substitution fails safety |
+| D1 speed | Decisions medians and p95s higher in this run | No demonstrated text speed gain |
+| D1 action recovery | Exploratory exact correctness 29/30 Decisions, 28/30 Jev after validating unused-head refusals | Preserve per-answer refusal and consumed dependencies; primary remains 26/30 |
+| D2 visual information | Both image arms 12/12 all-three correct; sparse text 0/12, appropriately unknown/refused | Visual role merits independent cases |
+| D2 speed | Combined median 171 ms, p95 748 ms | Added capability with tail-latency work remaining |
+
+These are development experiments, including authored synthetic screens, not adoption proof. Reports: [D1](../results/d1-v2-dev-20261008/report.md), [D2](../results/d2-dev-20261008/report.md).
+
+Jev stays in text completion, risk and bounded selection; source selection was audited but not compared. Decisions fits bounded visual questions when text lacks the needed state. System Two retains generated arguments and open-ended reasoning. Footwork code owns consent, scope, freshness, target/source identity, effects and dispatch. A small typed capability seam can support this split without making every role interchangeable. Model/role/prompt-specific admission and independent real-case latency/quality validation precede any activation.
+
+No active factories or thresholds changed. The authenticated contract, development adapters, paired harnesses and receipts are committed locally; existing credentials were reused. Reported-input cost estimate for the full pilot is $0.0513, conservative upper $0.1921 under the authorized $5 ceiling.
 
 ## Recommendation before measurement
 

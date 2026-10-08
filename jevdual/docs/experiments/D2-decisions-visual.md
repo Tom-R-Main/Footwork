@@ -55,3 +55,9 @@ The useful boundary may stay specifically visual, with Jev retained for text jud
 
 Source: [official Decisions guide](https://developers.openai.com/api/docs/guides/decisions),
 [Jev modalities](https://docs.typesafe.ai/models).
+
+## Result — 2026-10-08
+
+All 144 scheduled requests finished on 84f3fd5. Image and combined arms each achieve 12/12 all-three confident correct cases, text arms 0/12, with no confident true on a negative fixture. Jev text has 36 unknown replays; Decisions text has 30 unknowns and six native refusals. DAPI3 holds as an authored capability demonstration. Combined median/p95 are 170.56/747.53 ms; capture-to-judgment latency remains unmeasured.
+
+The registered decision is to collect independent real visual failure cases for a dedicated role, retaining Jev for text. No broad agnosticism, calibration claim or runtime adoption follows. Receipts, full comparison, accounting and limitations: ../../results/d2-dev-20261008/report.md.

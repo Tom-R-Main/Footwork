@@ -1,0 +1,88 @@
+{
+  "complete": true,
+  "halted": null,
+  "scheduled": 144,
+  "attempts": 144,
+  "arms": {
+    "jev_text": {
+      "attempts": 36,
+      "all_three_correct_confident": 0,
+      "successful_cases": [],
+      "negative_confident_true_any": [],
+      "errors": 0,
+      "unknown": 36,
+      "correct_confident_replays": 0,
+      "unmeasured_or_error_cases": [],
+      "median_ms": 133.415,
+      "p95_ms": 215.43
+    },
+    "decisions_text": {
+      "attempts": 36,
+      "all_three_correct_confident": 0,
+      "successful_cases": [],
+      "negative_confident_true_any": [],
+      "errors": 6,
+      "unknown": 30,
+      "correct_confident_replays": 0,
+      "unmeasured_or_error_cases": [
+        "f00",
+        "f01"
+      ],
+      "median_ms": 155.91000000000003,
+      "p95_ms": 632.33
+    },
+    "decisions_image": {
+      "attempts": 36,
+      "all_three_correct_confident": 12,
+      "successful_cases": [
+        "f00",
+        "f01",
+        "f02",
+        "f03",
+        "f04",
+        "f05",
+        "f06",
+        "f07",
+        "f08",
+        "f09",
+        "f10",
+        "f11"
+      ],
+      "negative_confident_true_any": [],
+      "errors": 0,
+      "unknown": 0,
+      "correct_confident_replays": 36,
+      "unmeasured_or_error_cases": [],
+      "median_ms": 178.82999999999998,
+      "p95_ms": 354.28
+    },
+    "decisions_combined": {
+      "attempts": 36,
+      "all_three_correct_confident": 12,
+      "successful_cases": [
+        "f00",
+        "f01",
+        "f02",
+        "f03",
+        "f04",
+        "f05",
+        "f06",
+        "f07",
+        "f08",
+        "f09",
+        "f10",
+        "f11"
+      ],
+      "negative_confident_true_any": [],
+      "errors": 0,
+      "unknown": 0,
+      "correct_confident_replays": 36,
+      "unmeasured_or_error_cases": [],
+      "median_ms": 170.555,
+      "p95_ms": 747.53
+    }
+  },
+  "combined_gain_cases": 12,
+  "visual_rule_met": true,
+  "interpretation": "authored information ablation; implementation wall latency; no calibration or adoption"
+}
