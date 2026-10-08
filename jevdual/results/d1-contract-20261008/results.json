@@ -1,0 +1,91 @@
+[
+  {
+    "id": "contract",
+    "role": "probe",
+    "backend": "decisions",
+    "repeat": 0,
+    "category": "synthetic contract",
+    "expect": null,
+    "input_hash": "7a3b167b201f3684258771c4da9d9ff1b75573ea141c54a91e614498a825f051",
+    "request_sha256": "1b7bd4a21894625a955417e0fac772d4698ec24cc47ef659d0974d9970b600c9",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "red_cube",
+          "probability": 1.0
+        },
+        {
+          "type": "choice",
+          "name": "shape",
+          "choice": "cube",
+          "probabilities": [
+            {
+              "value": "cube",
+              "probability": 1.0
+            },
+            {
+              "value": "sphere",
+              "probability": 0.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "score",
+          "name": "damage",
+          "score": 0.0,
+          "probabilities": [
+            {
+              "value": 0,
+              "label": "none",
+              "probability": 1.0
+            },
+            {
+              "value": 1,
+              "label": "damaged",
+              "probability": 0.0
+            }
+          ],
+          "confidence": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 392,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 392
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "result": {
+      "contract_valid": true,
+      "answer_types": [
+        "PredicateAnswer",
+        "ChoiceAnswer",
+        "ScoreAnswer"
+      ],
+      "semantic_probe_correct": true
+    },
+    "latency_ms": 1288.83,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0192,
+      "charged_upper_usd": 3.9200000000000004e-05,
+      "usage_known": true,
+      "input_tokens_upper": 192000,
+      "question_count": 3,
+      "body_bytes": 559,
+      "request_sha256": "1b7bd4a21894625a955417e0fac772d4698ec24cc47ef659d0974d9970b600c9",
+      "input_tokens": 392
+    }
+  }
+]

@@ -19,3 +19,9 @@ Established: The optional Decisions HTTP adapter has provider-neutral typed nati
 Uncertain: DAPI1 is still open; offline mocks do not establish usable account access, native response shape, semantic accuracy, billing behavior or latency. Risk fixture labels extend beyond the current destructive question's scope. Fixed-threshold transfer is diagnostic only.
 Decision: Commit the implementation and preflight before a one-shot contract probe, then run paired shadows only if usable access and the native contract are established. Include probe accounting in the same $5 ceiling; no retries or dispatch. Keep active Jev routes unchanged.
 Refs: results/d1-offline-20261008; tests/test_decisions.py; tests/test_d1_compare.py; tests/test_notebook.py; evals/d1_compare.py; docs/experiments/D1-decisions-jev.md
+
+## U-DACCESS · update · 2026-10-08 14:35
+Observed: The one-shot authenticated contract probe on 5962744 returned the requested predicate, choice and score answers, correct synthetic labels, native model identity and input-token usage. The output contract validated; all request accounting was retained and redaction changed no files. No Jev request or paired comparison has run yet.
+Inferred: Public documentation and usable access now satisfy the deferral's entry condition. This simple request is access/contract proof, not model quality or comparative latency evidence.
+Next: Commit the probe receipt, then measure the frozen paired development comparison from a clean checkout, including the probe's input-only charge in the same $5 ceiling. DAPI1 remains open.
+Refs: results/d1-contract-20261008; docs/experiments/D1-decisions-jev.md; 5962744
