@@ -23,6 +23,8 @@ Jev stays in text completion, risk and bounded selection; source selection was a
 
 No active factories or thresholds changed. The authenticated contract, development adapters, paired harnesses and receipts are committed locally; existing credentials were reused. Reported-input cost estimate for the full pilot is $0.0751,conservative upper $0.2159 under the authorized $5 ceiling.
 
+The product follow-through is documented in [Footwork product recommendation](footwork-product-recommendation.md): target-bound evidence first, a reviewed document/image workflow, and a narrow role/capability seam. Activation remains subject to independent quality and end-to-end latency validation.
+
 ## arc-cua reference follow-up
 
 The local arc-cua source already separates a standalone driver, shared ChoicePolicy and Jev/Decisions transports. Its consumed-head refusal handling matches the interoperability improvement exposed by D1. Its retained snapshot image and AX/local-OCR split are useful for a dedicated visual evidence envelope. This establishes a practical narrow seam, not performance qualification for all roles.

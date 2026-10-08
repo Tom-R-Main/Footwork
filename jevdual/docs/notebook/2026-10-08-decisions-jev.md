@@ -119,3 +119,9 @@ Established: Twenty task families catalogued; six implemented as24authored brows
 Uncertain: Fourteen families remain proposed. Real Finder/Preview workflows, photographic/scanned realism, independent heldout visual accuracy, native concurrency freshness, general model calibration and full live-loop latency are unestablished.
 Decision: Keep Jev active for text; retain Decisions as an unactivated bounded visual-perception candidate. No broad action gate or full agnosticism follows. Entire pilot reported-input estimate$0.075117722, conservative upper$0.215917722 under$5; no keys/pins/defaults/settings/heldout/push/deploy changed.
 Refs: docs/visual-test-catalog.md; docs/experiments/D3-visual-tasks.md; results/d3-dev-20261008/report.md; docs/decisions-jev-evaluation.md
+
+## S-DPRODUCT · summary · 2026-10-08 15:49
+Established: Product recommendation grounded in completed D1–D3, current Footwork callers and arc-cua source audit. The text guard remains preferred; image inspection improves document/crop judgments but a confident wrong toolbar effect blocks broad visual admission. Six families were implemented; fourteen remain proposed.
+Uncertain: Target-region evidence is a repair hypothesis, not a tested fix. Independent real-app visual accuracy, release calibration and end-to-end workflow speed remain unqualified.
+Decision: Prioritize observation/target binding, a private reviewed document/image preparation workflow, and a narrow capability/refusal contract. Keep Jev active and code-held permission/freshness/effect authority. Broader interchangeability must earn role-specific quality and speed. This is a product recommendation, not runtime activation or implementation authorization.
+Refs: docs/footwork-product-recommendation.md; results/d1-v2-dev-20261008/report.md; results/d3-dev-20261008/report.md; docs/arc-cua-decisions-reference.md
