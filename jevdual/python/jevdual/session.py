@@ -74,6 +74,9 @@ class SessionState:
     #: names of the secrets typed in this session (``{NAME}``); their values are scrubbed from every
     #: observation before it is rendered, persisted or shown to a model. Names only, never values.
     secret_names: list[str] = field(default_factory=list)
+    #: Visual answers belong to one observation generation and are advisory only.
+    visual_generation: str = ""
+    last_visual_check: dict[str, Any] | None = None
 
     @property
     def path(self) -> Path:
@@ -106,6 +109,8 @@ class SessionState:
         )
 
     def remember(self, nm: NativeMenu) -> None:
+        self.visual_generation = uuid.uuid4().hex
+        self.last_visual_check = None
         self.last_url = nm.menu.url
         self.last_title = nm.menu.title
         self.last_page_text = nm.menu.page_text
@@ -679,6 +684,9 @@ async def cmd_inspect_target(args: Any) -> int:
     }
     manifest.write_text(json.dumps(record, indent=2))
     preview.write_text(_inspection_preview(record, manifest.name), encoding="utf-8")
+    state.visual_generation = uuid.uuid4().hex
+    state.last_visual_check = None
+    state.save()
     state.log(
         {
             "kind": "visual inspection",

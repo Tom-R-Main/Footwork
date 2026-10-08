@@ -56,6 +56,12 @@ capture geometry, truncated observations and changed target identities refuse in
 Native AX projections may be partial: the manifest records that limit, and label-based inspection
 requires a complete observation. Browser inspection through this command is not yet qualified.
 
+`footwork visual-check --request request.json --session SESSION` prepares one native advisory
+document/reference or crop/subject check. It records the original capture and a structured receipt.
+Explicit `--provider decisions --disclose` enables one bounded provider request using an existing
+key; the default contacts no provider. Visual answers grant no action or completion authority.
+See [visual check inputs, limits and escalation](jevdual/docs/visual-checks.md).
+
 Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
 Calculator 48 × 13 in 30 s (System 1 proposed every step at p ≥ 0.94, verifier accept 0.98); TextEdit
 append-and-save in 9 s, the save confirmed by the window title losing its edited mark.

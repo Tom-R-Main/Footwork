@@ -210,6 +210,31 @@ class NativeAgent:
             nm = dataclasses.replace(nm, menu=redact_menu(nm.menu, self.secrets.redactor()))
         return nm, (time.perf_counter() - t0) * 1000
 
+    async def check_visual(self, request: Any, provider: Any, ledger: Any):
+        """Explicit advisory service call; never invoked by the normal action policy.
+
+        The caller supplies a request from capture_request and owns source disclosure.
+        Snapshot equality here is request correlation, not a live pixel precondition.
+        """
+        from jevdual.visual_checks import VisualCheckResult
+
+        def current() -> bool:
+            nm = self.bridge.last
+            return (nm is not None and nm.snapshot_id == request.evidence.capture.observation_id
+                    and nm.pid == request.evidence.capture.surface.pid
+                    and nm.window_id == request.evidence.capture.surface.window_id)
+
+        if self.secrets is not None or not current():
+            result = VisualCheckResult(
+                request.request_id, request.evidence.digest, request.generation, request.role,
+                "unavailable", reason="pixels_withheld" if self.secrets is not None else "generation_changed",
+                request_digest=request.digest,
+            )
+        else:
+            result = await provider.check(request, ledger, is_current=current)
+        self.visual_check = (request, result)
+        return result
+
     def context(self, step: int) -> StepContext:
         lines = self.memory[-self.recent_window :]
         if self.secrets is not None:

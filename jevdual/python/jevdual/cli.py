@@ -348,6 +348,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     common(inspect)
     inspect.set_defaults(fn=S.cmd_inspect_target)
+    from jevdual.visual_native import cmd_visual_check
+
+    visual = sub.add_parser("visual-check", help="record one native advisory visual predicate; never execute")
+    visual.add_argument("--request", required=True, help="JSON request manifest inside the session")
+    visual.add_argument("--provider", choices=("decisions",), help="explicitly enable one provider request")
+    visual.add_argument("--disclose", action="store_true", help="allow this session capture and supplied asset upload")
+    visual.add_argument("--timeout", type=float, default=10.0, help="operational deadline; not an admission setting")
+    visual.add_argument("--max-bytes", type=int, default=4_000_000)
+    visual.add_argument("--max-input-tokens", type=int, default=64_000)
+    visual.add_argument("--max-calls", type=int, choices=(1, 2), default=1,
+                        help="fixed workflow cap; two permits one changed-evidence recovery")
+    visual.add_argument("--max-cost", type=float, default=0.0064)
+    common(visual)
+    visual.set_defaults(fn=cmd_visual_check)
     do = sub.add_parser("do", help="dispatch one action through the boundary and get its receipt")
     do.add_argument("words", nargs="+")
     do.add_argument(
