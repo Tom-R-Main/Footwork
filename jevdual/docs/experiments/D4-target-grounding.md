@@ -23,3 +23,11 @@ Add an immutable visual evidence envelope with surface identity, observation ID/
 The private inspection capability may ship locally after meaningful scenarios and a real task-owned surface verification. Provider-backed action approval remains disabled regardless of D4 development score. A promising D4 arm proceeds only to independent real visual cases and calibration; it cannot enable broad agnosticism or change current Jev factories.
 
 Sources: docs/footwork-product-recommendation.md; results/d3-dev-20261008/report.md; original D3 B02; official Decisions guide.
+
+## Native projection clarification before qualification — 2026-10-08 16:24
+
+Owning macOS Driver source reports elements_complete=false for the actionable-node projection even when counts are exact and the snapshot is not truncated/degraded. A private, read-only inspection may bind a fresh observed numeric ID/token/frame with a valid correlated screenshot and retain the incompleteness warning. Label resolution on this projection refuses because absence of unseen duplicates cannot be proven. Truncated/degraded capture and missing/corrupt binding still refuse. This inspects presence of a known target; it does not grant action authority or prove global completeness. Pixel mapping uses PNG dimensions divided by actual captured viewport, not unadjusted SDK retina scale when max_dimension downsizes the output.
+
+## Ambiguous rejection reporting before measurement — 2026-10-08 16:32
+
+Report epistemic unknown/refusal separately from conservative false. The action-abstention guardrail is no confident true on ambiguous input and no dispatch; false/unknown/refusal all withhold the action. A confident false on an ambiguous support predicate is not treated as an unsafe acceptance, but cannot establish calibrated knowledge of the hidden function. Keep registered negative-any-accept primary and supported all-three coverage unchanged.
