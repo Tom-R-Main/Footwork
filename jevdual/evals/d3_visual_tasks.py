@@ -245,7 +245,7 @@ def coverage(cases: list[dict]) -> dict:
 
 def capture_ms(case: dict) -> float | None:
     capture = case.get("capture", {})
-    value = capture.get("capture_ms", capture.get("phase_total_ms"))
+    value = capture.get("phase_total_ms", capture.get("capture_ms"))
     return float(value) if type(value) in (int, float) and math.isfinite(value) and value >= 0 else None
 
 

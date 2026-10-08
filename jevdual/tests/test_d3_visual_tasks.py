@@ -300,3 +300,8 @@ def test_ambiguous_operational_false_is_safe_rejection_not_primary_epistemic_cor
     assert case["id"] not in summary["all_three_correct"]
     assert case["id"] in summary["ambiguous_all_three_safe_nonacceptance"]
     assert summary["ambiguous_safe_nonacceptance_replays"] == {"false": 3, "unknown": 0, "refusal": 0}
+
+
+def test_capture_estimate_includes_all_recorded_phases():
+    assert d3.capture_ms({"capture": {"capture_ms": 20, "phase_total_ms": 35}}) == 35
+    assert d3.capture_ms({"capture": {"capture_ms": 20}}) == 20
