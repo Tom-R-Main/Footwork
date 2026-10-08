@@ -4,7 +4,7 @@
 
 This recommendation incorporates D1–D4 and the implemented private native inspection capability. Six of twenty proposed visual task families were implemented; fourteen remain proposed. These are authored development fixtures and controlled native/browser observations, not independent real-app adoption evidence. Runtime routing and settings remain unchanged.
 
-The next package is specified in the [reviewed visual System One plan](visual-system-one-plan.md). It remediates invocation and escalation gaps in the initial proposal: explicit role requests, separate reference/crop provenance, temporal validity distinct from immutable binding, disclosure before upload, structured System Two handoff and bounded recovery. Native advisory checks come first; browser capture and reviewed execution require separate qualification. This is a plan revision, not newly implemented functionality.
+The next package is specified in the [reviewed visual System One plan](visual-system-one-plan.md). It remediates invocation and escalation gaps in the initial proposal: explicit role requests, separate reference/crop provenance, temporal validity distinct from immutable binding, disclosure before upload, structured System Two handoff and bounded recovery. Native advisory checks come first; browser capture and reviewed execution require separate qualification. The native advisory service and handoff are now implemented and locally checked; [verification](../results/visual-checks-native-20261008/report.md) uses real native captures and a fixed loopback provider. Independent perception quality, real-provider performance and reviewed execution remain unqualified.
 
 ## What the evidence earns
 

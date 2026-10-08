@@ -28,6 +28,8 @@ The local `footwork inspect-target` command now records target-bound native evid
 
 The product follow-through is documented in [Footwork product recommendation](footwork-product-recommendation.md): target-bound evidence first, a reviewed document/image workflow, and a narrow role/capability seam. Activation remains subject to independent quality and end-to-end latency validation.
 
+The explicit native [visual-check capability](visual-checks.md) now adds typed document/reference and crop/subject advisory questions, bounded image transport and a structured text System Two handoff. [Native verification](../results/visual-checks-native-20261008/report.md) checks the real CLI/Cua path with a loopback contract endpoint. No paid calls or model-quality claims follow from those fixed answers; defaults remain unchanged.
+
 ## arc-cua reference follow-up
 
 The local arc-cua source already separates a standalone driver, shared ChoicePolicy and Jev/Decisions transports. Its consumed-head refusal handling matches the interoperability improvement exposed by D1. Its retained snapshot image and AX/local-OCR split are useful for a dedicated visual evidence envelope. This establishes a practical narrow seam, not performance qualification for all roles.

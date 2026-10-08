@@ -39,16 +39,22 @@ class Server(BaseHTTPRequestHandler):
         pass
 
     def do_POST(self):
-        data = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+        raw = self.rfile.read(int(self.headers["Content-Length"]))
+        data = json.loads(raw)
         self.server.requests += 1
+        images = []
         assert self.path == "/v1/decisions"
         content = data["input"][0]["content"]
         assert len(content) == 3 and data["model"] == MODEL
         for image in content[1:]:
             with Image.open(io.BytesIO(base64.b64decode(image["image_url"].split(",", 1)[1]))) as opened:
                 assert opened.format == "PNG"
+                images.append({"dimensions": opened.size,
+                               "sha256": hashlib.sha256(base64.b64decode(image["image_url"].split(",", 1)[1])).hexdigest()})
                 opened.verify()
         mode = self.server.mode
+        self.server.receipts.append({"mode": mode, "body_sha256": hashlib.sha256(raw).hexdigest(),
+                                     "body_bytes": len(raw), "images": images, "model": data["model"]})
         if mode == "source_changed":
             self.server.asset.write_bytes(self.server.asset.read_bytes() + b"source-revision-changed")
         elif mode == "generation_changed":
@@ -119,7 +125,7 @@ def main():
             processes.append(subprocess.Popen([sys.executable, str(ROOT / "evals/visual/d3/native/app.py"), str(scene)],
                                               stdout=log, stderr=log))
     server = ThreadingHTTPServer(("127.0.0.1", 0), Server)
-    server.requests, server.mode = 0, "valid"
+    server.requests, server.mode, server.receipts = 0, "valid", []
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     original_provider, original_capture = visual_native.make_provider, visual_native.capture_request
@@ -160,6 +166,7 @@ def main():
             assert all(app.poll() is None for app in processes), "fixture failed to launch"
             time.sleep(.1)
         readiness = {scene: json.loads((scene / "ready.json").read_text()) for scene in (fixture, document)}
+        proof["fixture_readiness"] = list(readiness.values())
 
         def setup(name, role="document_reference_match"):
             session = PRIVATE / name
@@ -259,7 +266,8 @@ def main():
             assert commands[-1]["exit"] == 4 and server.requests == before and not (session / "visual").exists()
         assert not action_calls and not any((scene / "effect.json").exists() for scene in (fixture, document))
         assert not list(PRIVATE.rglob("grants.json"))
-        proof.update(checks=checks, commands=commands, requests=server.requests, no_effect=True, no_grants=True, action_dispatches=len(action_calls),
+        proof.update(checks=checks, commands=commands, requests=server.requests, request_receipts=server.receipts,
+                     no_effect=True, no_grants=True, action_dispatches=len(action_calls),
                      source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip())
         write(RESULTS / "verification.json", proof)
         print(json.dumps({"checks": len(checks), "requests": server.requests, "no_effect": True}))
@@ -272,6 +280,9 @@ def main():
         for app in processes:
             app.terminate()
             app.wait(timeout=10)
+        proof["cleanup"] = [{"pid": app.pid, "returncode": app.returncode} for app in processes]
+        proof["loopback_server_closed"] = True
+        write(RESULTS / "verification.json", proof)
 
 if __name__ == "__main__":
     main()

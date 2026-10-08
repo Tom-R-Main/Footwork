@@ -1,6 +1,10 @@
 # Visual System One: reviewed invocation and escalation plan
 
-Plan review and remediation, 2026-10-08. Status: **specified**, not implemented or qualified. The existing private native inspector is separately built and checked. This document governs the proposed next package; it does not activate a provider, change admission settings, authorize experiments, or add execution capability.
+Plan review and remediation, 2026-10-08. Updated implementation status: the native advisory service in Units 1–4 is **built and checked locally** for explicit operator/workflow invocation and the native System Two message handoff. Full autonomous System Two recovery and real-provider perception qualification remain unavailable. Browser capture and reviewed execution remain separate gates. No default model routing or admission setting changed.
+
+## Implementation status
+
+The new [visual-check command](visual-checks.md) supports both typed families, private native captures, explicit disclosure, bounded/persisted provider reservations, final source/generation invalidation and redacted question/result handoff. [Actual CLI verification](../results/visual-checks-native-20261008/report.md) exercises separate task-owned document/crop scenes through Cua and the production adapter against a loopback contract server. Full offline checks pass 1,023 tests with 26 skipped. The fixed server probabilities prove mechanics, not perception accuracy or real OpenAI performance; no paid provider calls were made. Normal action policy does not invoke the service automatically.
 
 ## Recommendation and scope
 
@@ -136,4 +140,4 @@ Observed source anchors: [inspection command](../python/jevdual/session.py), [ca
 
 Unavailable until implementation/qualification: multimodal support on the chosen System Two transport; exact app crop action/readback; general candidate-resource ownership; browser screenshot provenance across reconnect; a stable visual precondition comparator; independent accuracy/calibration and full workflow performance. These are explicit work gates, not reasons to ask the user to guess implementation facts. Any materially different app/workflow or authority requirement is a product scope decision.
 
-Net recommendation: implement Units 1–4 as native advisory checks, then independently qualify one document/image workflow. Keep browser capture separate, Jev active for text, and generic icon/visual action admission disabled. This review changes the plan only; no implementation or paid qualification was performed.
+Net recommendation: retain the implemented native advisory checks and independently qualify one document/image workflow next. Keep browser capture separate, Jev active for text, and generic icon/visual action admission disabled. The original review was plan-only; the subsequently authorized native implementation is recorded above. No paid qualification was performed.

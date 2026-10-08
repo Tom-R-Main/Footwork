@@ -1,0 +1,516 @@
+{
+  "provider_boundary": "production client, official URL intercepted into owned loopback server",
+  "semantic_accuracy": "unqualified; fixed provider predicates",
+  "application_discovery": "unqualified",
+  "reference_recipe": "pdftoppm page 1, 96 dpi PNG; run-owned source-0.pdf",
+  "reference_resource_sha256": "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+  "fixture_binding": "ready pid/window supplied; real CLI and Cua SDK observations",
+  "source_sha256": {
+    "scripts/verify_visual_checks.py": "cc87055c88e97063185233dde3abf4589f10b292ded94a9697839bd27399aac0",
+    "python/jevdual/visual_checks.py": "206e9c32b42ac58c56e6634a19e8760fb829589222f583ae1467acc3f9cc1e20",
+    "python/jevdual/visual_decisions.py": "9846202884e65a03bfba35a7f00f1891dd5f1fb04553fe84aac32bdf30436869",
+    "python/jevdual/visual_native.py": "aa0c25b0f10dd832eba29962de1bb5d1db9479c1b6a7997168d63461cf8e4d8c",
+    "python/jevdual/native.py": "7ebfa295960a2b143be7d9f28324c13cfa8f1a5808f9c42cfa53f6cfb96bd650",
+    "python/jevdual/session.py": "5dec50a44f2bd82bb7640ff5155b62c1e941cabc22a07474a064c214b3e10933",
+    "python/jevdual/cli.py": "74f564dcb040a7f56a3d2eaa8385dde2cfebf2a8213d568a34bb37a82e61cfd1",
+    "python/jevdual/desktop_s2.py": "bed31f81a8501ae0e6532c73a594ec91d8b49909d688af83707c380405a5095c"
+  },
+  "fixture_readiness": [
+    {
+      "window_id": 28478,
+      "pid": 85640
+    },
+    {
+      "window_id": 28477,
+      "pid": 85641
+    }
+  ],
+  "checks": {
+    "prepare-valid-unavailable": {
+      "status": "unavailable",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/prepare/visual/1ef303679cbc4d248b136bdadc822b04.json"
+    },
+    "document_reference_match-valid-valid": {
+      "status": "valid",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/document_reference_match/visual/bfa863acd1dd4e8c84108956c8bf8c6a.json"
+    },
+    "document_reference_match-valid-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/document_reference_match/visual/7362013e3cde4b9d9e18a12478e89762.json"
+    },
+    "crop_subject_containment-valid-valid": {
+      "status": "valid",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/crop_subject_containment/visual/a495b86d1ff54eb8995983bd2d1c8a18.json"
+    },
+    "crop_subject_containment-valid-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/crop_subject_containment/visual/b3134bb848b44b3992d335a0935935b7.json"
+    },
+    "refusal-refusal-refusal": {
+      "status": "refusal",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/refusal/visual/e6ca5dbdfa2a490090fcdcd9e7df0802.json"
+    },
+    "timeout-timeout-timeout": {
+      "status": "timeout",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/timeout/visual/efe0155941804865b0233fb4b98b44f9.json"
+    },
+    "source_changed-source_changed-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/source_changed/visual/1759b8e476f342deb7622d2e36c51d52.json"
+    },
+    "generation_changed-generation_changed-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/evidence1/generation_changed/visual/b2c77c7089c24092b7773cd3a4f106c7.json"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/prepare"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/prepare",
+        "--request",
+        "request.json"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/prepare/visual/1ef303679cbc4d248b136bdadc822b04.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"9c12ba6e4b2b4441a0b675c5e7c04448\", \"evidence_digest\": \"9c7a7774b11bea7e1078b84619c1301019110eb74b7253782f90e3e54f18da06\", \"generation\": \"1ef303679cbc4d248b136bdadc822b04\", \"role\": \"document_reference_match\", \"status\": \"unavailable\", \"p\": null, \"reason\": \"provider_unconfigured\", \"requested_model\": \"\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": null, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"4f333cb12cc32278de40746be79931bb93d99bead95d8193b0700f5c176a8a7d\", \"prompt_sha256\": \"\", \"phases_ms\": [], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"9c12ba6e4b2b4441a0b675c5e7c04448\", \"evidence_digest\": \"9c7a7774b11bea7e1078b84619c1301019110eb74b7253782f90e3e54f18da06\", \"generation\": \"1ef303679cbc4d248b136bdadc822b04\", \"role\": \"document_reference_match\", \"status\": \"unavailable\", \"p\": null, \"reason\": \"provider_unconfigured\", \"requested_model\": \"\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": null, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"4f333cb12cc32278de40746be79931bb93d99bead95d8193b0700f5c176a8a7d\", \"prompt_sha256\": \"\", \"phases_ms\": [], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"9c12ba6e4b2b4441a0b675c5e7c04448\", \"role\": \"document_reference_match\", \"generation\": \"1ef303679cbc4d248b136bdadc822b04\", \"evidence_digest\": \"9c7a7774b11bea7e1078b84619c1301019110eb74b7253782f90e3e54f18da06\", \"reason\": \"provider_unconfigured\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/document_reference_match"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 0,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/document_reference_match/visual/bfa863acd1dd4e8c84108956c8bf8c6a.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"f14b719a2de84cc5897a23b2b53bc388\", \"evidence_digest\": \"ec5b213e0d02c96439f2211cd183bb141c290f223c7b771646592600baaaacc7\", \"generation\": \"bfa863acd1dd4e8c84108956c8bf8c6a\", \"role\": \"document_reference_match\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 57.22800001967698, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"0b15dfc7f05fee651bbc56e7973ee7ac8339a2af5ec7aff3a66346006d93db2a\", \"prompt_sha256\": \"daa5293b74e8f3b01496c5695680a2ee1d349c8617f1c910560a91397f37196d\", \"phases_ms\": [[\"encoding\", 0.5774579476565123], [\"provider\", 55.70820905268192], [\"validation\", 0.38641702849417925]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"f14b719a2de84cc5897a23b2b53bc388\", \"evidence_digest\": \"ec5b213e0d02c96439f2211cd183bb141c290f223c7b771646592600baaaacc7\", \"generation\": \"bfa863acd1dd4e8c84108956c8bf8c6a\", \"role\": \"document_reference_match\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 57.22800001967698, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"0b15dfc7f05fee651bbc56e7973ee7ac8339a2af5ec7aff3a66346006d93db2a\", \"prompt_sha256\": \"daa5293b74e8f3b01496c5695680a2ee1d349c8617f1c910560a91397f37196d\", \"phases_ms\": [[\"encoding\", 0.5774579476565123], [\"provider\", 55.70820905268192], [\"validation\", 0.38641702849417925]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"f14b719a2de84cc5897a23b2b53bc388\", \"role\": \"document_reference_match\", \"generation\": \"bfa863acd1dd4e8c84108956c8bf8c6a\", \"evidence_digest\": \"ec5b213e0d02c96439f2211cd183bb141c290f223c7b771646592600baaaacc7\", \"reason\": \"valid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/document_reference_match/visual/7362013e3cde4b9d9e18a12478e89762.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"916ed0a1c83a4425b63cd3ea537602fd\", \"evidence_digest\": \"89ca0236eb941405c35c0ed7e62846f8a4f1b45593fac7639d5372601bed33ae\", \"generation\": \"7362013e3cde4b9d9e18a12478e89762\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.7489590207114816, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"0197cfc073f315e71dafcca43667076086a1f947aedc249488f2939f3ad02b7b\", \"prompt_sha256\": \"40684a499443644dc9dc46256faf3e4d013f325665e811f05d3fa66a87c8b0a8\", \"phases_ms\": [[\"encoding\", 0.5151249933987856]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"916ed0a1c83a4425b63cd3ea537602fd\", \"evidence_digest\": \"89ca0236eb941405c35c0ed7e62846f8a4f1b45593fac7639d5372601bed33ae\", \"generation\": \"7362013e3cde4b9d9e18a12478e89762\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.7489590207114816, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"0197cfc073f315e71dafcca43667076086a1f947aedc249488f2939f3ad02b7b\", \"prompt_sha256\": \"40684a499443644dc9dc46256faf3e4d013f325665e811f05d3fa66a87c8b0a8\", \"phases_ms\": [[\"encoding\", 0.5151249933987856]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"916ed0a1c83a4425b63cd3ea537602fd\", \"role\": \"document_reference_match\", \"generation\": \"7362013e3cde4b9d9e18a12478e89762\", \"evidence_digest\": \"89ca0236eb941405c35c0ed7e62846f8a4f1b45593fac7639d5372601bed33ae\", \"reason\": \"duplicate_evidence\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Apply proposed crop'\n  [   2] button     'Apply safe crop'\npage text (89 chars):\nApply the displayed crop while preserving the entire subject.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "inspect-target",
+        "1",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment",
+        "--postcondition",
+        "Read-only source canvas geometry"
+      ],
+      "exit": 0,
+      "stdout": "inspection: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment/inspection/ba31cc1d9a554bc085e3c3971ffa92d7.json\npreview: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment/inspection/ba31cc1d9a554bc085e3c3971ffa92d7.html\nread-only evidence recorded; no action or postcondition was verified\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 0,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment/visual/a495b86d1ff54eb8995983bd2d1c8a18.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"ba0cda74675a40d3824dfb6920c7e523\", \"evidence_digest\": \"09293c4340df06daac8dc58ab46b9d8c970f76e77024c5ff00bf6cba36e98a92\", \"generation\": \"a495b86d1ff54eb8995983bd2d1c8a18\", \"role\": \"crop_subject_containment\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.320500031113625, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"9eeaea75eb844c7ef0b6e014c836afce910bb2fedd529c0c18234da593e51395\", \"prompt_sha256\": \"afb7a765d0324f8c07cff35ef53f4eebe8a889cf17dba3974577fc6cc356e98f\", \"phases_ms\": [[\"encoding\", 0.5039590178057551], [\"provider\", 11.83633308392018], [\"validation\", 0.3535830182954669]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"ba0cda74675a40d3824dfb6920c7e523\", \"evidence_digest\": \"09293c4340df06daac8dc58ab46b9d8c970f76e77024c5ff00bf6cba36e98a92\", \"generation\": \"a495b86d1ff54eb8995983bd2d1c8a18\", \"role\": \"crop_subject_containment\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.320500031113625, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"9eeaea75eb844c7ef0b6e014c836afce910bb2fedd529c0c18234da593e51395\", \"prompt_sha256\": \"afb7a765d0324f8c07cff35ef53f4eebe8a889cf17dba3974577fc6cc356e98f\", \"phases_ms\": [[\"encoding\", 0.5039590178057551], [\"provider\", 11.83633308392018], [\"validation\", 0.3535830182954669]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"ba0cda74675a40d3824dfb6920c7e523\", \"role\": \"crop_subject_containment\", \"generation\": \"a495b86d1ff54eb8995983bd2d1c8a18\", \"evidence_digest\": \"09293c4340df06daac8dc58ab46b9d8c970f76e77024c5ff00bf6cba36e98a92\", \"reason\": \"valid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/crop_subject_containment/visual/b3134bb848b44b3992d335a0935935b7.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"c287a9790ff346158d605c636f476988\", \"evidence_digest\": \"0302f8d8a1bfd38fa00c925f280535dc27a7d426d3bbfadfbdca7306c7601ac5\", \"generation\": \"b3134bb848b44b3992d335a0935935b7\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.9175000013783574, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"f4a59cf20e1f8b2d26801d016ae7883e6d2a5eccae6e9c79889eda3ddbee8f36\", \"prompt_sha256\": \"ccc04fb675dc23232ee78b38b0270d4ea8cc07472e4a52cb8b27c7684f3ab22b\", \"phases_ms\": [[\"encoding\", 0.5119160050526261]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"c287a9790ff346158d605c636f476988\", \"evidence_digest\": \"0302f8d8a1bfd38fa00c925f280535dc27a7d426d3bbfadfbdca7306c7601ac5\", \"generation\": \"b3134bb848b44b3992d335a0935935b7\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.9175000013783574, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"f4a59cf20e1f8b2d26801d016ae7883e6d2a5eccae6e9c79889eda3ddbee8f36\", \"prompt_sha256\": \"ccc04fb675dc23232ee78b38b0270d4ea8cc07472e4a52cb8b27c7684f3ab22b\", \"phases_ms\": [[\"encoding\", 0.5119160050526261]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"c287a9790ff346158d605c636f476988\", \"role\": \"crop_subject_containment\", \"generation\": \"b3134bb848b44b3992d335a0935935b7\", \"evidence_digest\": \"0302f8d8a1bfd38fa00c925f280535dc27a7d426d3bbfadfbdca7306c7601ac5\", \"reason\": \"duplicate_evidence\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/refusal"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/refusal",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/refusal/visual/e6ca5dbdfa2a490090fcdcd9e7df0802.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"0111443fd5274e7bb01dd6f833bd0215\", \"evidence_digest\": \"5e9b2b46c53cedd6579dd0de89da3f11e1b543d3c315a892af6144d56c9eec47\", \"generation\": \"e6ca5dbdfa2a490090fcdcd9e7df0802\", \"role\": \"document_reference_match\", \"status\": \"refusal\", \"p\": null, \"reason\": \"refusal\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.613708084449172, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"11a2eed73d115715825786fb0b7e932a458617b6dfff000a1f3d0a3e00991c5a\", \"prompt_sha256\": \"2dbd8f7cdfc00918e88042beca4d3635f44c87ba8a5d19943b3e21c37f98ca39\", \"phases_ms\": [[\"encoding\", 0.4500410286709666], [\"provider\", 12.127083027735353]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"0111443fd5274e7bb01dd6f833bd0215\", \"evidence_digest\": \"5e9b2b46c53cedd6579dd0de89da3f11e1b543d3c315a892af6144d56c9eec47\", \"generation\": \"e6ca5dbdfa2a490090fcdcd9e7df0802\", \"role\": \"document_reference_match\", \"status\": \"refusal\", \"p\": null, \"reason\": \"refusal\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.613708084449172, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"11a2eed73d115715825786fb0b7e932a458617b6dfff000a1f3d0a3e00991c5a\", \"prompt_sha256\": \"2dbd8f7cdfc00918e88042beca4d3635f44c87ba8a5d19943b3e21c37f98ca39\", \"phases_ms\": [[\"encoding\", 0.4500410286709666], [\"provider\", 12.127083027735353]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"0111443fd5274e7bb01dd6f833bd0215\", \"role\": \"document_reference_match\", \"generation\": \"e6ca5dbdfa2a490090fcdcd9e7df0802\", \"evidence_digest\": \"5e9b2b46c53cedd6579dd0de89da3f11e1b543d3c315a892af6144d56c9eec47\", \"reason\": \"refusal\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/timeout"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/timeout",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose",
+        "--timeout",
+        "1"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/timeout/visual/efe0155941804865b0233fb4b98b44f9.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"0a3ba1bb32fa4eea9b949f099577404f\", \"evidence_digest\": \"391bac862de089ebb5529cede0d6621813091eabd462a3cedec6c84b100c67d0\", \"generation\": \"efe0155941804865b0233fb4b98b44f9\", \"role\": \"document_reference_match\", \"status\": \"timeout\", \"p\": null, \"reason\": \"deadline_or_transport_timeout\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 928.671499947086, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"f37d8c896d0b922dcc40d61b343a75bad01e521d0ee000fe39a2725ebdf5fecd\", \"prompt_sha256\": \"3f841f1963fbb5e9bf49a44b51e2f143ac36db08a49690dd863d65fd551f47b7\", \"phases_ms\": [[\"encoding\", 0.48841594252735376]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"0a3ba1bb32fa4eea9b949f099577404f\", \"evidence_digest\": \"391bac862de089ebb5529cede0d6621813091eabd462a3cedec6c84b100c67d0\", \"generation\": \"efe0155941804865b0233fb4b98b44f9\", \"role\": \"document_reference_match\", \"status\": \"timeout\", \"p\": null, \"reason\": \"deadline_or_transport_timeout\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 928.671499947086, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"f37d8c896d0b922dcc40d61b343a75bad01e521d0ee000fe39a2725ebdf5fecd\", \"prompt_sha256\": \"3f841f1963fbb5e9bf49a44b51e2f143ac36db08a49690dd863d65fd551f47b7\", \"phases_ms\": [[\"encoding\", 0.48841594252735376]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"0a3ba1bb32fa4eea9b949f099577404f\", \"role\": \"document_reference_match\", \"generation\": \"efe0155941804865b0233fb4b98b44f9\", \"evidence_digest\": \"391bac862de089ebb5529cede0d6621813091eabd462a3cedec6c84b100c67d0\", \"reason\": \"deadline_or_transport_timeout\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/source_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/source_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/source_changed/visual/1759b8e476f342deb7622d2e36c51d52.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"d0964f417f9940cca57efbf86f356fc7\", \"evidence_digest\": \"e9ce5ea9df91b5f4aadf2f10fd2897d1a7e34c970779972f1da41a0e5e9fb780\", \"generation\": \"1759b8e476f342deb7622d2e36c51d52\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.6567079462111, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"dcf28afe52a29d22a9aa026444dd35cac082a95a62b4c15c5dc473af9244ed88\", \"prompt_sha256\": \"e95fc6a37edba01e5a40008d99c2a104588d718763e080d22cfaf82ea64198f1\", \"phases_ms\": [[\"encoding\", 0.6305830320343375], [\"provider\", 11.987457983195782], [\"validation\", 0.34120806958526373]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"d0964f417f9940cca57efbf86f356fc7\", \"evidence_digest\": \"e9ce5ea9df91b5f4aadf2f10fd2897d1a7e34c970779972f1da41a0e5e9fb780\", \"generation\": \"1759b8e476f342deb7622d2e36c51d52\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.6567079462111, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"dcf28afe52a29d22a9aa026444dd35cac082a95a62b4c15c5dc473af9244ed88\", \"prompt_sha256\": \"e95fc6a37edba01e5a40008d99c2a104588d718763e080d22cfaf82ea64198f1\", \"phases_ms\": [[\"encoding\", 0.6305830320343375], [\"provider\", 11.987457983195782], [\"validation\", 0.34120806958526373]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"d0964f417f9940cca57efbf86f356fc7\", \"role\": \"document_reference_match\", \"generation\": \"1759b8e476f342deb7622d2e36c51d52\", \"evidence_digest\": \"e9ce5ea9df91b5f4aadf2f10fd2897d1a7e34c970779972f1da41a0e5e9fb780\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/generation_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/generation_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/generation_changed/visual/b2c77c7089c24092b7773cd3a4f106c7.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"54cbad108baf4c52a156ca2ff0dc76d1\", \"evidence_digest\": \"23ce718d78c9511eaf955e7551bcd1dd73cf5a778533a3e82d5b19d7fcaee63e\", \"generation\": \"b2c77c7089c24092b7773cd3a4f106c7\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.958915951661766, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"41dc07ed9cde5006db2c83e7a305bce2ca3233b242c70f227a83e9d07c35e8ca\", \"prompt_sha256\": \"9976dcf534d344f9c1e54d9a2c33d1fde41e8bb8bad31930b6ba3fe1247df102\", \"phases_ms\": [[\"encoding\", 0.6544999778270721], [\"provider\", 12.318957946263254], [\"validation\", 0.3136669984087348]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"54cbad108baf4c52a156ca2ff0dc76d1\", \"evidence_digest\": \"23ce718d78c9511eaf955e7551bcd1dd73cf5a778533a3e82d5b19d7fcaee63e\", \"generation\": \"b2c77c7089c24092b7773cd3a4f106c7\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.958915951661766, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"41dc07ed9cde5006db2c83e7a305bce2ca3233b242c70f227a83e9d07c35e8ca\", \"prompt_sha256\": \"9976dcf534d344f9c1e54d9a2c33d1fde41e8bb8bad31930b6ba3fe1247df102\", \"phases_ms\": [[\"encoding\", 0.6544999778270721], [\"provider\", 12.318957946263254], [\"validation\", 0.3136669984087348]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"54cbad108baf4c52a156ca2ff0dc76d1\", \"role\": \"document_reference_match\", \"generation\": \"b2c77c7089c24092b7773cd3a4f106c7\", \"evidence_digest\": \"23ce718d78c9511eaf955e7551bcd1dd73cf5a778533a3e82d5b19d7fcaee63e\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/no-disclosure"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/no-disclosure",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: pixels_withheld; no action authorized\n"
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/secret"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/secret",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: pixels_withheld; no action authorized\n"
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/browser"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/evidence1/browser",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: surface_unsupported; no action authorized\n"
+    }
+  ],
+  "requests": 6,
+  "request_receipts": [
+    {
+      "mode": "valid",
+      "body_sha256": "56f6679e4ddab30b67b162b59ad131f3ac7fba1d322980afff00ac886e2011e0",
+      "body_bytes": 174000,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "84c2d0a6753402287f2fd441c56f74a823b2d3e8b136bc92d81792ac2cc280cd"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "valid",
+      "body_sha256": "de62afa8e09981ef177ae9850d6337ae452a7f006372e0c14975e21276d4b20b",
+      "body_bytes": 136573,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "95acfee7446b5207368c5182947971191bc3c6d2f5762193e25914db2f0d5a0c"
+        },
+        {
+          "dimensions": [
+            620,
+            316
+          ],
+          "sha256": "e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "refusal",
+      "body_sha256": "bebfc758abe5f475665ac674746860252e6450722709526534dab4445318d4d8",
+      "body_bytes": 173999,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "84c2d0a6753402287f2fd441c56f74a823b2d3e8b136bc92d81792ac2cc280cd"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "timeout",
+      "body_sha256": "0586eb5ce3f9cb2d50318fad8891b9fd8195ffaadd766896c438ff4dedcc640e",
+      "body_bytes": 174000,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "84c2d0a6753402287f2fd441c56f74a823b2d3e8b136bc92d81792ac2cc280cd"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "source_changed",
+      "body_sha256": "15ce2ae47fd7e5e53a9e236db2226bc3064b2e6f7a125d49df4165c2239c2f59",
+      "body_bytes": 173998,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "84c2d0a6753402287f2fd441c56f74a823b2d3e8b136bc92d81792ac2cc280cd"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "generation_changed",
+      "body_sha256": "0284542e806d5d352f867945facd4db0c7b0ee1d8feda15cee1ced935471dffd",
+      "body_bytes": 174000,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "84c2d0a6753402287f2fd441c56f74a823b2d3e8b136bc92d81792ac2cc280cd"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    }
+  ],
+  "no_effect": true,
+  "no_grants": true,
+  "action_dispatches": 0,
+  "source_commit": "82aef06e180915a4cfd75ca095a44b98a28ebd7c",
+  "cleanup": [
+    {
+      "pid": 85640,
+      "returncode": -15
+    },
+    {
+      "pid": 85641,
+      "returncode": -15
+    }
+  ],
+  "loopback_server_closed": true
+}

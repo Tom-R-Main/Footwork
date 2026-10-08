@@ -1,0 +1,28 @@
+{
+  "product_commit": "82aef06e180915a4cfd75ca095a44b98a28ebd7c",
+  "full_suite": {
+    "command": ".venv/bin/pytest -q",
+    "exit": 0,
+    "passed": 1023,
+    "skipped": 26,
+    "elapsed_s": 68.78,
+    "source": "observed terminal result before source freeze"
+  },
+  "focused_integration": {
+    "passed": 149,
+    "elapsed_s": 1.74
+  },
+  "ruff": "passed",
+  "notebook": "passed",
+  "cli_help_exit": 0,
+  "source_sha256": {
+    "cli": "74f564dcb040a7f56a3d2eaa8385dde2cfebf2a8213d568a34bb37a82e61cfd1",
+    "session": "5dec50a44f2bd82bb7640ff5155b62c1e941cabc22a07474a064c214b3e10933",
+    "desktop": "16e7123661ac766ddea51a30fd10e682f425aa24853e89c987197cb4c4b1569b",
+    "desktop_s2": "bed31f81a8501ae0e6532c73a594ec91d8b49909d688af83707c380405a5095c",
+    "visual_checks": "206e9c32b42ac58c56e6634a19e8760fb829589222f583ae1467acc3f9cc1e20",
+    "visual_decisions": "9846202884e65a03bfba35a7f00f1891dd5f1fb04553fe84aac32bdf30436869",
+    "visual_native": "aa0c25b0f10dd832eba29962de1bb5d1db9479c1b6a7997168d63461cf8e4d8c"
+  },
+  "qualification": "actual native CLI/Cua and loopback transport mechanics; no paid provider or S2 model calls"
+}

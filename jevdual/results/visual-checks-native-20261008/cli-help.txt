@@ -1,0 +1,22 @@
+usage: footwork visual-check [-h] --request REQUEST [--provider {decisions}]
+                             [--disclose] [--timeout TIMEOUT]
+                             [--max-bytes MAX_BYTES]
+                             [--max-input-tokens MAX_INPUT_TOKENS]
+                             [--max-calls {1,2}] [--max-cost MAX_COST]
+                             [--session SESSION] [--text TEXT]
+
+options:
+  -h, --help            show this help message and exit
+  --request REQUEST     JSON request manifest inside the session
+  --provider {decisions}
+                        explicitly enable one provider request
+  --disclose            allow this session capture and supplied asset upload
+  --timeout TIMEOUT     operational deadline; not an admission setting
+  --max-bytes MAX_BYTES
+  --max-input-tokens MAX_INPUT_TOKENS
+  --max-calls {1,2}     fixed workflow cap; two permits one changed-evidence
+                        recovery
+  --max-cost MAX_COST
+  --session SESSION     session directory (default $FOOTWORK_SESSION or
+                        runs/session)
+  --text TEXT           page text characters to print
