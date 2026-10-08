@@ -25,11 +25,13 @@ import asyncio
 import contextlib
 import copy
 import dataclasses
+import html
 import json
 import os
 import re
 import sys
 import time
+import uuid
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -558,6 +560,166 @@ async def cmd_look(args: Any) -> int:
         for path in menus:
             print(f"  {path}")
     return 0
+
+
+async def cmd_inspect_target(args: Any) -> int:
+    """Private fresh visual binding. It judges nothing, grants nothing and executes nothing."""
+    from jevdual.visual_evidence import Bounds, Surface, bind_visual
+
+    directory = session_dir(args.session)
+    state = SessionState.load(directory)
+
+    def refused(reason: str, message: str) -> int:
+        print(f"not inspected: {reason}: {message}", file=sys.stderr)
+        state.log({"kind": "visual inspection refused", "reason": reason})
+        return 4
+
+    if state.path.resolve() != directory.resolve():
+        print("not inspected: session_path_mismatch: session directory binding changed", file=sys.stderr)
+        return 4
+    # This precedes driver creation and capture. Pixels cannot scrub a handled secret.
+    if state.secret_names:
+        return refused("screenshot_withheld", "the session has handled a secret")
+    if state.mode != "native":
+        return refused("surface_unsupported", "browser target/capture geometry is not yet qualified")
+    if not args.postcondition.strip():
+        return refused("postcondition_missing", "provide the required effect to inspect")
+    inspection = state.path / "inspection"
+    if inspection.is_symlink():
+        return refused("inspection_path_unsafe", "inspection directory must stay inside this session")
+    inspection.mkdir(exist_ok=True)
+    identifier = uuid.uuid4().hex
+    screenshot = inspection / f"{identifier}.png"
+    driver = None
+    nm = None
+    capture_failed = False
+    try:
+        driver, bridge = await bind(state)
+        nm = await bridge.observe(screenshot_path=str(screenshot))
+    except Exception:  # noqa: BLE001 - no raw driver diagnostics or captured text in this refusal
+        capture_failed = True
+    finally:
+        if driver is not None:
+            try:
+                await driver.shutdown()
+            except Exception:  # noqa: BLE001 - driver cleanup failure also stops this inspection
+                capture_failed = True
+    if capture_failed or nm is None:
+        return refused("capture_failed", "the native driver could not complete the fresh capture")
+    if nm.pid != state.pid or nm.window_id != state.window_id:
+        return refused("surface_mismatch", "the observation belongs to a different window")
+    if nm.truncated or nm.degraded or nm.menu.omitted.get("cap"):
+        return refused("observation_incomplete", "the observation is truncated or degraded")
+    target = args.target
+    if target.lstrip("-").isdigit():
+        candidate = nm.menu.candidate(int(target))
+    else:
+        if not nm.elements_complete or nm.menu.omitted.get("duplicate"):
+            return refused(
+                "label_search_incomplete",
+                "use an observed numeric ID; this AX projection cannot prove label uniqueness",
+            )
+        resolved, why = resolve_label(nm, target)
+        if resolved is None:
+            return refused("target_unresolved", why)
+        candidate = nm.menu.candidate(resolved)
+    if candidate is None:
+        return refused("target_missing", "the offered ID is absent from the fresh observation")
+    if target.lstrip("-").isdigit():
+        previous = next((item for item in state.last_candidates if item["id"] == candidate.id), None)
+        if previous and (previous["label"] != candidate.label or previous["role"] != candidate.role):
+            return refused(
+                "target_identity_changed",
+                "the ID identifies a different target than the last session observation",
+            )
+    if args.operation not in candidate.operations:
+        return refused("operation_unsupported", "the fresh target does not offer this operation")
+    token = nm.token(candidate.id)
+    frame = nm.frames.get(candidate.id)
+    if not token or frame is None:
+        return refused("target_binding_missing", "the fresh target lacks its token or bounds")
+    capture = nm.visual_capture
+    if capture is None:
+        return refused(
+            nm.visual_capture_error or "capture_unavailable", "fresh bound-window capture metadata is missing"
+        )
+    try:
+        evidence = bind_visual(
+            png=screenshot.read_bytes(),
+            surface=Surface(kind="native", pid=nm.pid, window_id=nm.window_id, tab_id=None),
+            observation_id=nm.snapshot_id,
+            captured_at=capture.captured_at,
+            viewport=Bounds(*capture.viewport),
+            target_id=str(candidate.id),
+            target_token=token,
+            target_bounds=Bounds(*frame),
+            operation=args.operation,
+            postcondition=args.postcondition,
+        )
+        record = evidence.to_dict()
+        if evidence.dimensions != (capture.width, capture.height):
+            return refused(
+                "capture_dimensions_mismatch", "PNG dimensions differ from the fresh Driver capture"
+            )
+    except (ValueError, OSError) as exc:
+        return refused(getattr(exc, "code", getattr(exc, "reason", "invalid_visual_evidence")), str(exc))
+    manifest = inspection / f"{identifier}.json"
+    preview = inspection / f"{identifier}.html"
+    record["binding_sha256"] = evidence.binding_sha256
+    record["inspection"] = {
+        "screenshot": screenshot.name,
+        "preview": preview.name,
+        "elements_complete": nm.elements_complete,
+        "driver_reported_scale": capture.reported_scale,
+        "target_label": candidate.label,
+        "authority": "read-only evidence; no model judgment, dispatch, consent or verified postcondition",
+        "coverage_warning": None
+        if nm.elements_complete
+        else "AX projection proves this observed target's presence, not absence or global label uniqueness",
+    }
+    manifest.write_text(json.dumps(record, indent=2))
+    preview.write_text(_inspection_preview(record, manifest.name), encoding="utf-8")
+    state.log(
+        {
+            "kind": "visual inspection",
+            "manifest": str(manifest),
+            "preview": str(preview),
+            "observation_id": nm.snapshot_id,
+            "target_id": candidate.id,
+        }
+    )
+    print(f"inspection: {manifest}")
+    print(f"preview: {preview}")
+    print("read-only evidence recorded; no action or postcondition was verified")
+    return 0
+
+
+def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
+    """Static review of the original capture with a CSS target outline; no executable content."""
+    escape = html.escape
+    image, target = record["image"], record["target"]
+    left, top, right, bottom = target["pixel_bounds"]
+    width, height = image["width"], image["height"]
+    overlay = f"left:{left / width * 100:.8f}%;top:{top / height * 100:.8f}%;width:{(right - left) / width * 100:.8f}%;height:{(bottom - top) / height * 100:.8f}%"
+    target_label = record["inspection"]["target_label"]
+    scope = f"Read-only native window {record['surface']['window_id']}, process {record['surface']['pid']}; captured {record['captured_at']}. No model judgment, action, consent or postcondition verification."
+    warning = (
+        record["inspection"]["coverage_warning"]
+        or "The driver reported a complete observation; this capture does not check the current live screen."
+    )
+    return f'''<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
+<title>Target {escape(target["id"])} inspection</title>
+<style>body{{font:16px system-ui,sans-serif;margin:24px;color:#17202a;background:#fafafa}}h1{{font-size:24px}}dt{{font-weight:600}}dd{{margin:4px 0 16px}}.scope{{max-width:80ch}}figure{{margin:24px 0}}.capture{{position:relative;width:100%;max-width:{width}px}}.capture img{{display:block;width:100%;height:auto}}.target-outline{{position:absolute;outline:3px solid #fa6b0c;pointer-events:none}}figcaption{{margin-top:12px}}</style>
+</head><body><h1>Target {escape(target["id"])}: {escape(target_label)}</h1>
+<dl><dt>Operation</dt><dd>{escape(target["operation"])}</dd><dt>Required postcondition</dt><dd>{escape(target["postcondition"])}</dd></dl>
+<p class="scope">{escape(scope)}</p><p class="scope">{escape(warning)}</p>
+<p><a href="{escape(manifest_name, quote=True)}">Capture manifest</a> · <a href="{escape(record["inspection"]["screenshot"], quote=True)}">Original PNG</a></p>
+<figure><div class="capture"><img src="{escape(record["inspection"]["screenshot"], quote=True)}" width="{width}" height="{height}" alt="Original bound-window capture">
+<div class="target-outline" style="{overlay}" aria-label="Offered target {escape(target["id"], quote=True)}"></div></div>
+<figcaption>Orange outline: offered target pixels ({left}, {top}) to ({right}, {bottom}). The original PNG is unchanged.</figcaption></figure>
+</body></html>'''
 
 
 _ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")

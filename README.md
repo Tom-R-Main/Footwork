@@ -41,6 +41,21 @@ never printed); `--authorize "<label>"` names the one change the operator approv
 `start --browser` drives footwork's own Chrome profile through the Driver's DevTools route instead of the
 accessibility tree. Needs macOS with Accessibility granted to the process that runs it, and a TypeSafe key.
 
+For private visual inspection, use a numeric ID from the current native observation:
+
+```sh
+footwork inspect-target 12 --operation click --postcondition "The selected editor enters crop mode"
+```
+
+This records a fresh window PNG, target-bound manifest and static HTML preview under the session's
+`inspection/` directory. The preview outlines the offered target over the unchanged original image
+and displays the operation and required postcondition. It makes no model calls, executes no action
+and does not verify the stated effect.
+Sessions that have handled secrets withhold screenshots before capture. Missing or unqualified
+capture geometry, truncated observations and changed target identities refuse inspection.
+Native AX projections may be partial: the manifest records that limit, and label-based inspection
+requires a complete observation. Browser inspection through this command is not yet qualified.
+
 Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
 Calculator 48 × 13 in 30 s (System 1 proposed every step at p ≥ 0.94, verifier accept 0.98); TextEdit
 append-and-save in 9 s, the save confirmed by the window title losing its edited mark.

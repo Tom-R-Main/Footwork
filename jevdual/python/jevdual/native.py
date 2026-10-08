@@ -29,8 +29,11 @@ import asyncio
 import dataclasses
 import json
 import logging
+import math
 import re
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from jevdual.menu import Candidate, Menu, MenuBudget, Operation, estimate_tokens
@@ -112,6 +115,56 @@ def _get(obj: Any, key: str, default: Any = None) -> Any:
 
 
 @dataclass(frozen=True)
+class NativeVisualCapture:
+    """Geometry supplied with the same explicit bound-window capture, not action authority."""
+
+    path: str
+    captured_at: str
+    viewport: tuple[float, float, float, float]
+    width: int
+    height: int
+    reported_scale: float | None
+
+
+def _visual_capture(snapshot: Any, requested_path: str) -> tuple[NativeVisualCapture | None, str | None]:
+    """Refuse geometry that the Driver did not bind to this exact PNG request."""
+    if _get(snapshot, "screenshot_frame_valid") is not True:
+        return None, "capture_frame_unverified"
+    actual_path = _get(snapshot, "screenshot_file_path")
+    if not actual_path or Path(str(actual_path)).resolve() != Path(requested_path).resolve():
+        return None, "capture_path_mismatch"
+    if not Path(requested_path).is_file():
+        return None, "capture_png_missing"
+    bounds = _get(snapshot, "window_bounds")
+    if bounds is None:
+        return None, "capture_viewport_missing"
+    try:
+        viewport = tuple(float(_get(bounds, name)) for name in ("x", "y", "width", "height"))
+        width, height = int(_get(snapshot, "screenshot_width")), int(_get(snapshot, "screenshot_height"))
+        scale = _get(snapshot, "screenshot_scale")
+        scale = float(scale) if scale is not None else None
+        if (
+            not all(math.isfinite(value) for value in viewport)
+            or viewport[2] <= 0
+            or viewport[3] <= 0
+            or width <= 0
+            or height <= 0
+            or (scale is not None and (not math.isfinite(scale) or scale <= 0))
+        ):
+            return None, "capture_geometry_invalid"
+        return NativeVisualCapture(
+            str(Path(requested_path).resolve()),
+            datetime.now(UTC).isoformat(),
+            viewport,
+            width,
+            height,
+            scale,
+        ), None
+    except (TypeError, ValueError):
+        return None, "capture_geometry_missing"
+
+
+@dataclass(frozen=True)
 class NativeMenu:
     """A menu plus what is needed to act on it: the token behind each id and the snapshot it came from."""
 
@@ -133,6 +186,8 @@ class NativeMenu:
     ax_roles: dict[int, str] = field(default_factory=dict)
     #: ids of elements inside web content (an AXWebArea ancestor): WebKit ignores AXValue writes there
     web: frozenset[int] = frozenset()
+    visual_capture: NativeVisualCapture | None = None
+    visual_capture_error: str | None = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -599,6 +654,9 @@ class NativeBridge:
             )
         )
         self.last = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
+        if screenshot_path is not None:
+            capture, error = _visual_capture(snap, screenshot_path)
+            self.last = dataclasses.replace(self.last, visual_capture=capture, visual_capture_error=error)
         return self.last
 
     def _target(self) -> Any:

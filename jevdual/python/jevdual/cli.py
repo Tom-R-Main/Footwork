@@ -336,6 +336,18 @@ def build_parser() -> argparse.ArgumentParser:
     lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
     common(lk)
     lk.set_defaults(fn=S.cmd_look)
+    inspect = sub.add_parser(
+        "inspect-target", help="record fresh target-bound visual evidence without judging or executing"
+    )
+    inspect.add_argument("target", help="fresh element ID, or a unique label on a complete observation")
+    inspect.add_argument(
+        "--operation", default="click", choices=("click", "hover", "type", "append", "enter", "scroll")
+    )
+    inspect.add_argument(
+        "--postcondition", required=True, help="required effect to inspect; this command does not verify it"
+    )
+    common(inspect)
+    inspect.set_defaults(fn=S.cmd_inspect_target)
     do = sub.add_parser("do", help="dispatch one action through the boundary and get its receipt")
     do.add_argument("words", nargs="+")
     do.add_argument(

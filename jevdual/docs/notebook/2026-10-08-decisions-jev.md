@@ -133,3 +133,9 @@ Test: D4, twelve toolbar proposals and three evidence arms, three replays, actua
 Predicts: at least one bound-target arm removes invalid confident acceptance and wrong effects, retains supported coverage, and reproduces the original failure in the control.
 Against: any invalid confident acceptance, supported coverage loss, unreproduced original failure, oracle leakage, or fabricated/unbound product capture.
 Refs: docs/experiments/D4-target-grounding.md; results/d3-dev-20261008/report.md
+
+## S-D4INSPECT · summary · 2026-10-08 16:37
+Established: Private inspect-target command records a fresh native PNG and immutable source/target/proposal binding, plus a static review preview with exact CSS target outline. Real Footwork CLI/Cua SDK verification on a task-owned AppKit window succeeds with correct retina mapping, unchanged PNG hash and no effect. Secret sessions withhold before Driver creation; incomplete native projection permits only known numeric IDs with a warning; labels, identity drift, missing/invalid capture and unsafe session paths refuse. Scoped host checks and global Ruff pass.
+Uncertain: Browser operator capture geometry is unsupported rather than fabricated. A binding equality check does not query the live screen, and no visual model is qualified for action authority. DAPI5 remains open until the committed D4 comparison.
+Decision: Freeze read-only product capability and D4 source/captures before paid judgments. Keep Jev factories and thresholds unchanged; preserve bounded source metadata and current code authority.
+Refs: python/jevdual/visual_evidence.py; python/jevdual/session.py; tests/test_visual_inspection_session.py; runs/visual-inspection-preview-live-20261008/verification.json; docs/experiments/D4-target-grounding.md
