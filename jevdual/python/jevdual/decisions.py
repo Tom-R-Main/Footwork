@@ -87,11 +87,13 @@ class DecisionsError(Exception):
     deliberately omitted from exception messages and reprs, as are HTTP error bodies.
     """
 
-    def __init__(self, code: str, *, input_tokens: int | None = None, raw: Mapping | None = None):
+    def __init__(self, code: str, *, input_tokens: int | None = None, raw: Mapping | None = None,
+                 provider_error: dict[str, str] | None = None):
         super().__init__(f"Decisions request failed: {code}")
         self.code = code
         self.input_tokens = input_tokens
         self.raw = raw
+        self.provider_error = provider_error
 
 
 def _require(condition: bool, code: str) -> None:
@@ -253,6 +255,30 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict:
     return obj
 
 
+def _provider_error(content: bytes, api_key: str) -> dict[str, str] | None:
+    """Bounded diagnostic fields only; never retain the HTTP error body."""
+    if len(content) > 65_536:
+        return None
+    try:
+        body = json.loads(content, object_pairs_hook=_unique_object)
+    except (ValueError, UnicodeError, DecisionsError):
+        return None
+    if not isinstance(body, dict) or not isinstance(body.get("error"), dict):
+        return None
+    error = body["error"]
+    limits = {"type": 64, "code": 128, "param": 256, "message": 2048}
+    metadata = {}
+    for field, limit in limits.items():
+        value = error.get(field)
+        if value is None:
+            continue
+        if not isinstance(value, str):
+            return None
+        # Redact before truncation so a boundary cannot retain a key prefix.
+        metadata[field] = value.replace(api_key, "[REDACTED]")[:limit]
+    return metadata or None
+
+
 class DecisionsClient:
     """One request per call, standard endpoint only, with no retries or redirects."""
 
@@ -280,7 +306,10 @@ class DecisionsClient:
         except httpx.RequestError:
             raise DecisionsError("network") from None
         if not 200 <= response.status_code < 300:
-            raise DecisionsError(f"http_{response.status_code}")
+            raise DecisionsError(
+                f"http_{response.status_code}",
+                provider_error=_provider_error(response.content, self._api_key),
+            )
         try:
             raw = json.loads(response.content, object_pairs_hook=_unique_object)
         except (ValueError, UnicodeError):

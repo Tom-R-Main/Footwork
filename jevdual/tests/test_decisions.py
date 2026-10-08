@@ -190,6 +190,7 @@ async def test_http_error_sanitized_and_single_attempt(status):
         await DecisionsClient("test-secret", transport=httpx.MockTransport(handler)).decide("Evidence", QUESTIONS)
     assert caught.value.code == f"http_{status}"
     assert caught.value.raw is None
+    assert caught.value.provider_error is None
     assert "test-secret" not in str(caught.value)
     assert len(seen) == 1
 
@@ -220,3 +221,59 @@ async def test_invalid_json_and_duplicate_keys_rejected(wire, code):
         await DecisionsClient("test-secret", transport=transport).decide("Evidence", QUESTIONS)
     assert caught.value.code == code
     assert "test-secret" not in str(caught.value)
+
+
+async def test_http_diagnostic_whitelist_redacts_reflected_key_everywhere():
+    response = {
+        "error": {
+            "type": "invalid_test-secret", "code": "test-secret_code", "param": "questions[test-secret]",
+            "message": "Rejected test-secret in request", "input": "private evidence",
+            "headers": {"Authorization": "Bearer test-secret"}, "request": "private request",
+        },
+        "input": "private evidence", "request": "private request",
+    }
+    transport = httpx.MockTransport(lambda request: httpx.Response(400, json=response))
+    with pytest.raises(DecisionsError) as caught:
+        await DecisionsClient("test-secret", transport=transport).decide("Evidence", QUESTIONS)
+    error = caught.value
+    assert error.provider_error == {
+        "type": "invalid_[REDACTED]", "code": "[REDACTED]_code", "param": "questions[[REDACTED]]",
+        "message": "Rejected [REDACTED] in request",
+    }
+    assert error.raw is None
+    assert str(error) == "Decisions request failed: http_400"
+    exported = json.dumps(vars(error))
+    assert "test-secret" not in exported
+    assert "private evidence" not in exported
+    assert "private request" not in exported
+
+
+async def test_http_diagnostic_bounds_and_redacts_before_truncating():
+    response = {"error": {
+        "type": "t" * 100, "code": "c" * 200, "param": "p" * 300,
+        "message": "m" * 2045 + "test-secret" + "x" * 100,
+    }}
+    transport = httpx.MockTransport(lambda request: httpx.Response(400, json=response))
+    with pytest.raises(DecisionsError) as caught:
+        await DecisionsClient("test-secret", transport=transport).decide("Evidence", QUESTIONS)
+    metadata = caught.value.provider_error
+    assert {key: len(value) for key, value in metadata.items()} == {
+        "type": 64, "code": 128, "param": 256, "message": 2048,
+    }
+    assert metadata["message"].endswith("[RE")
+    assert "test" not in metadata["message"]
+
+
+@pytest.mark.parametrize("wire", [
+    "not JSON test-secret", "[]", '{}', '{"error":[]}', '{"error":{"message":[]}}',
+    '{"error":{"message":"x","message":"test-secret"}}',
+    '{"error":{"message":null}}', '{"error":{"input":"test-secret"}}',
+    '{"error":{"message":"' + 'x' * 65_536 + '"}}',
+])
+async def test_malformed_http_diagnostics_are_code_only(wire):
+    transport = httpx.MockTransport(lambda request: httpx.Response(400, content=wire))
+    with pytest.raises(DecisionsError) as caught:
+        await DecisionsClient("test-secret", transport=transport).decide("Evidence", QUESTIONS)
+    assert caught.value.provider_error is None
+    assert caught.value.raw is None
+    assert str(caught.value) == "Decisions request failed: http_400"
