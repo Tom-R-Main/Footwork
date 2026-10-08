@@ -66,3 +66,18 @@ cheaper/faster or preferable in any individual role. Images and voice are future
 Sources: [Decisions guide](https://developers.openai.com/api/docs/guides/decisions),
 [TypeSafe models](https://docs.typesafe.ai/models). OpenAI's roughly 10x speed statement is versus
 Responses; D1 makes no prior latency claim against Jev.
+
+## Amendment before measurement: fan-out accounting and label scope, 2026-10-08
+
+The guide does not establish whether question fan-out bills shared context once. Conservatively
+reserve 64,000 input tokens **per Decisions question**, versus 64,000 once for Jev. Settle only
+reported total usage and retain the full reservation otherwise. The earlier below-$3 statement
+assumes shared billing and is not an established worst-case bound; the adaptive $5 ceiling may
+stop an incomplete run. Short per-question context is still bounded by the 24,000-byte request.
+
+Risk labels describe permission-bearing persistent/external effects; the current captured
+judge_destructive prompt describes irreversible/external commit. Save, append, export and similar
+cases may expose that question/label scope mismatch rather than provider weakness alone. Preserve
+both prompts and labels, disclose mismatch cases, and do not credit benchmark correctness as proof
+of a complete permission classifier. Action raw pair correctness includes a correct done choice;
+its subsequent Arbiter escalation is mandatory completion verification, not a wrong pair.
