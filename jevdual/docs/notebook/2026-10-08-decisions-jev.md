@@ -52,3 +52,11 @@ Established: Version 2 handles the diagnosed singleton restriction by marking co
 Uncertain: DAPI1 remains open. Quality, speed, calibration and visual added value remain unmeasured beyond the simple contract and partial risk calls. Synthetic menu cases do not establish live execution performance. Earlier failed calls retain uncertain-cost upper bounds.
 Decision: Commit the repaired harness and run a fresh version 2 paired comparison including all prior budget upper bounds. Quality and speed determine whether broader interchangeability is worth implementing; visual utility can be a dedicated role. No active backend migration is justified yet.
 Refs: results/d1-v2-offline-20261008; results/d1-diagnostic-20261008; docs/experiments/D1-decisions-jev.md; tests/test_decisions.py; tests/test_d1_compare.py
+
+## DAPI3 · prediction · 2026-10-08 14:49
+Question: does a screenshot add usable visual judgment value where the same text projection is underdetermined?
+Hypothesis: Decisions can judge common visual-only UI states from pixels more confidently and correctly than either provider can from identical sparse text; useful visual placement need not imply full agnosticism.
+Test: D2, twelve synthetic paired-state fixtures and four text/image arms, three replays, frozen predicate bands, native receipts, no dispatch. Keep image metadata free of expected answers and report the information difference explicitly.
+Predicts: combined images improve all-three confident correctness over Decisions text-only, with no confident true on a negative fixture.
+Against: no confident-correct coverage gain, any confident false positive, or apparent gains caused by labels leaking through filenames/metadata rather than visual evidence.
+Refs: docs/experiments/D2-decisions-visual.md
