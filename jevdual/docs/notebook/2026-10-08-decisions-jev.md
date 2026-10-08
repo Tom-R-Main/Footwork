@@ -14,7 +14,7 @@ Uncertain: This account's usable access, response usage fields, model behavior, 
 Decision: Resume the authorized development-only comparison with existing keys and a combined $5 ceiling. Keep runtime backend selection unchanged; build a strict shadow adapter, retain native provider scores, and refuse malformed/refused results. Record all failed attempts and costs. No new key, install, activation or heldout run.
 Refs: docs/experiments/D1-decisions-jev.md; https://developers.openai.com/api/docs/guides/decisions; https://docs.typesafe.ai/models
 
-## S-DCONTRACT · summary · 2026-10-08 14:38
+## S-DCONTRACT · summary · 2026-10-08 14:35
 Established: The optional Decisions HTTP adapter has provider-neutral typed native outputs and no TypeSafe imports. The D1 eval-only bridge preserves native probabilities/confidence/model/unknown usage, captures existing request builders and replays unchanged verifier/arbiter code. Host offline checks passed; preflight prepares every registered development case and rejects oversized requests. Refusals, invalid distributions and failed requests cannot establish safety. Fan-out reservations are conservative per question and retained when billing usage is unknown.
 Uncertain: DAPI1 is still open; offline mocks do not establish usable account access, native response shape, semantic accuracy, billing behavior or latency. Risk fixture labels extend beyond the current destructive question's scope. Fixed-threshold transfer is diagnostic only.
 Decision: Commit the implementation and preflight before a one-shot contract probe, then run paired shadows only if usable access and the native contract are established. Include probe accounting in the same $5 ceiling; no retries or dispatch. Keep active Jev routes unchanged.
