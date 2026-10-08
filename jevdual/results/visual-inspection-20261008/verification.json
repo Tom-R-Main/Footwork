@@ -1,0 +1,81 @@
+{
+  "fixture_binding_setup": "task-owned pid/window supplied by fixture readiness; actual footwork look and inspect-target CLI + Cua SDK used",
+  "look_exit": 0,
+  "inspect_exit": 0,
+  "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Apply proposed crop'\n  [   2] button     'Apply safe crop'\npage text (89 chars):\nApply the displayed crop while preserving the entire subject.\nD3 run-owned visual fixture\ninspection: runs/visual-inspection-preview-live-20261008/session/inspection/45acf06c2fa1465a98d270f84cfe2a49.json\npreview: runs/visual-inspection-preview-live-20261008/session/inspection/45acf06c2fa1465a98d270f84cfe2a49.html\nread-only evidence recorded; no action or postcondition was verified\n",
+  "stderr": "",
+  "manifest": {
+    "version": 1,
+    "inspection_only": true,
+    "surface": {
+      "kind": "native",
+      "pid": 19424,
+      "window_id": 28043,
+      "tab_id": null
+    },
+    "observation_id": "s00000002",
+    "captured_at": "2026-10-08T20:32:07.797660+00:00",
+    "image": {
+      "sha256": "c795d58e99212b3be8dd82386ec0446556db265c63d949bbde17f274f748e1c6",
+      "width": 1320,
+      "height": 936,
+      "scale_x": 2.0,
+      "scale_y": 2.0
+    },
+    "viewport": {
+      "x": 50.0,
+      "y": 434.0,
+      "width": 660.0,
+      "height": 468.0
+    },
+    "target": {
+      "id": "1",
+      "token": "s00000002:1",
+      "bounds": {
+        "x": 76.0,
+        "y": 859.0,
+        "width": 178.0,
+        "height": 22.0
+      },
+      "operation": "click",
+      "postcondition": "The crop preserves the entire subject",
+      "pixel_bounds": [
+        52,
+        850,
+        408,
+        894
+      ]
+    },
+    "binding_sha256": "914f14f08c0a862f3c051fe9a8a3ef92998315460c896f048a79ca379b4c8479",
+    "inspection": {
+      "screenshot": "45acf06c2fa1465a98d270f84cfe2a49.png",
+      "preview": "45acf06c2fa1465a98d270f84cfe2a49.html",
+      "elements_complete": false,
+      "driver_reported_scale": 2.0,
+      "target_label": "Apply proposed crop",
+      "authority": "read-only evidence; no model judgment, dispatch, consent or verified postcondition",
+      "coverage_warning": "AX projection proves this observed target's presence, not absence or global label uniqueness"
+    }
+  },
+  "effect_file_exists": false,
+  "preview_path": "runs/visual-inspection-preview-live-20261008/session/inspection/45acf06c2fa1465a98d270f84cfe2a49.html",
+  "preview_sha256": "909e9fd7af5fd59a74674c1068caa4eab6fa47a852da6d41c1d1e1f1b8835568",
+  "preview_checks": {
+    "selected_label_displayed": true,
+    "postcondition_displayed": true,
+    "target_outline": true,
+    "relative_original_png": true,
+    "png_hash_unchanged": true,
+    "no_script": true,
+    "token_not_displayed": true
+  },
+  "source_commit": "9fd1575bccb0230454680e6a537a36d6b6448061",
+  "source_sha256": {
+    "jevdual/python/jevdual/visual_evidence.py": "efcb024135838e6d0472714ae3ccc18ab7392c20ea5bff6f2a6d384d83874534",
+    "jevdual/python/jevdual/native.py": "7ebfa295960a2b143be7d9f28324c13cfa8f1a5808f9c42cfa53f6cfb96bd650",
+    "jevdual/python/jevdual/session.py": "ed6a4b6989f4c2ca5753348821dfa2f88445b7b71f7515077c7798d5eb0b83c5",
+    "jevdual/python/jevdual/cli.py": "6b24d43afd14c10699105383cf2bc8451514f8da46d8d9e745e9753f4b6b2b27"
+  },
+  "scope": "CLI/native SDK + task-owned AppKit fixture during implementation; readonly preview separately rendered in isolated Chrome. Code preserved after verification.",
+  "archived_from": "jevdual/runs/visual-inspection-preview-live-20261008"
+}

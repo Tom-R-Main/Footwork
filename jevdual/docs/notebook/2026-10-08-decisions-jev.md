@@ -139,3 +139,9 @@ Established: Private inspect-target command records a fresh native PNG and immut
 Uncertain: Browser operator capture geometry is unsupported rather than fabricated. A binding equality check does not query the live screen, and no visual model is qualified for action authority. DAPI5 remains open until the committed D4 comparison.
 Decision: Freeze read-only product capability and D4 source/captures before paid judgments. Keep Jev factories and thresholds unchanged; preserve bounded source metadata and current code authority.
 Refs: python/jevdual/visual_evidence.py; python/jevdual/session.py; tests/test_visual_inspection_session.py; runs/visual-inspection-preview-live-20261008/verification.json; docs/experiments/D4-target-grounding.md
+
+## S-D4FREEZE · summary · 2026-10-08 16:41
+Established: Full919offline tests pass with26skipped; Ruff and notebook checks pass. Read-only native inspection and static preview verified on actual CLI/Cua SDK and separately rendered in isolated Chrome. Official D4 capture supplies12cases,108scheduled judgments, max14230byte body, source/arm hashes and clip-difference metadata. Original near-miss image matches frozen D3 B02 byte-for-byte; its question is preserved.
+Uncertain: DAPI5 remains open; annotated/region evidence repair is unmeasured. Browser-only D4 and a private native inspector do not qualify broad action approval, model calibration or independent real-app safety.
+Decision: Freeze and commit captures/proof before paired Decisions requests, carrying conservative priorupper$0.215917722 into original$5cap. Keep model-free inspection separate from paid experimental judgments.
+Refs: results/d4-capture-20261008/manifest.json; results/d4-capture-20261008/preflight.json; results/visual-inspection-20261008/report.md; docs/experiments/D4-target-grounding.md
