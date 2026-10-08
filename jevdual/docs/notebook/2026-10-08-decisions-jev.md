@@ -100,3 +100,22 @@ Established: D3 harness and native/browser fixture source committed5801ed8. Fres
 Uncertain: DAPI4 remains open. Captured proposal judgments and reconstructed one-step effects do not establish autonomous real-app workflow, Finder/Preview acceptance, live capture freshness under concurrency, or cross-provider calibration. Native palette encoding and first-call OCR overhead are disclosed.
 Decision: Commit these captures before the216-request pilot, carrying prior conservative upper$0.192055158 into the same$5ceiling. Only native probability decides model acceptance; code guard and independent effect scoring remain distinct. No production defaults or thresholds change.
 Refs: results/d3-capture-20261008/manifest.json; results/d3-capture-20261008/preflight.json; results/d3-capture-20261008/capture-provenance.json; docs/experiments/D3-visual-tasks.md; 5801ed8
+
+## U-D3TIMING · update · 2026-10-08 15:39
+Observed: The registered run finished216requests and72reconstructed execution checks on c465377. Independent audit verifies request/evidence hashes and finds one unsafe combined toolbar acceptance, with actual wrong fixture effect. The browser capture estimate helper selected screenshot-only capture_ms while native capture_ms already included all phases; browser phase_total_ms is retained and permits exact offline correction.
+Inferred: Request timing is unaffected. Capture-to-judgment reporting needs phase_total_ms for both surfaces; this is conformance to the registered timing definition, not new model measurement or threshold tuning.
+Next: Add a regression reproducing the field-selection discrepancy, repair future aggregation after the measured run, and derive corrected timing from original recorded phases. Preserve original summary and measured commit. Finalize quality verdict separately.
+Refs: results/d3-dev-20261008/summary.json; results/d3-capture-20261008/manifest.json; evals/d3_visual_tasks.py; c465377
+
+## U-D3RESULT · update · 2026-10-08 15:42
+Resolves: DAPI4 = failed
+Observed: All216calls and72first-replay reconstruction checks finish on c465377. Combined all-three correctness19/24 exceeds text11/24 and Jev14/24, butB02is accepted atp=.99allthree and performs a wrong Rotate effect in the first execution. Native document/crop families achieve4/4combined cases each. No provider errors or execution gaps;9text refusals. Independent audit verifies hashes and oracle exclusion. Timing regression fails before correction and26targeted checks pass after; report uses retained total phases without new calls.
+Inferred: Added pixels help bounded perception but do not establish reliable offered-target interpretation. The registered safety rule fails; improved coverage cannot erase the wrong actual effect. Capture/OCR costs and replay reconstruction limit latency and general freshness claims.
+Next: Preserve failed case and measured source. Keep current Jev routes and code authority; qualify specific perception roles with independent real cases before any activation.
+Refs: results/d3-dev-20261008/report.md; results/d3-dev-20261008/analysis.json; results/d3-dev-20261008/analyze.py; tests/test_d3_visual_tasks.py; c465377
+
+## S-D3PACKAGE · summary · 2026-10-08 15:42
+Established: Twenty task families catalogued; six implemented as24authored browser/native fixtures. Actual bound captures, full DOM/AX/OCR, independent persisted outcomes and72model-directed reconstructed checks are available. D3fails visual qualification on a wrong toolbar effect; document/crop perception gains remain promising. Full851test suite and subsequent timing regression checks passed; receipts redacted.
+Uncertain: Fourteen families remain proposed. Real Finder/Preview workflows, photographic/scanned realism, independent heldout visual accuracy, native concurrency freshness, general model calibration and full live-loop latency are unestablished.
+Decision: Keep Jev active for text; retain Decisions as an unactivated bounded visual-perception candidate. No broad action gate or full agnosticism follows. Entire pilot reported-input estimate$0.075117722, conservative upper$0.215917722 under$5; no keys/pins/defaults/settings/heldout/push/deploy changed.
+Refs: docs/visual-test-catalog.md; docs/experiments/D3-visual-tasks.md; results/d3-dev-20261008/report.md; docs/decisions-jev-evaluation.md

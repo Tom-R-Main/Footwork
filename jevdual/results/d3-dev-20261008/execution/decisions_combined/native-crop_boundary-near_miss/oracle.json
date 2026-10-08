@@ -1,0 +1,15 @@
+{
+  "subject_bounds": [
+    260,
+    70,
+    360,
+    260
+  ],
+  "valid_crop": [
+    220,
+    45,
+    400,
+    280
+  ],
+  "positive_label": "Apply safe crop"
+}

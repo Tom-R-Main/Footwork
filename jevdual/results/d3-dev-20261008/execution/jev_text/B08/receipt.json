@@ -1,0 +1,197 @@
+{
+  "surface": "browser_fixture",
+  "accepted": false,
+  "dispatched": false,
+  "guard_reason": "model_not_confidently_true",
+  "goal_met": false,
+  "effect_changed": false,
+  "wrong_effect": false,
+  "before": {
+    "selected": null
+  },
+  "after": {
+    "selected": null
+  },
+  "current_observation": {
+    "image": "current.png",
+    "image_sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+    "dimensions": [
+      640,
+      360
+    ],
+    "captured_at": "2026-10-08T19:35:02.684161+00:00",
+    "revision": "c3798b6cbf3c23f40959748893029c98b43cedfdf6d4d108ded5711aadaad701",
+    "target_id": "3A8DC512B4E58CD3383AA08AE269BCF5",
+    "process_id": 85960,
+    "dom": {
+      "rendered_text": "Delivery map\n\nChoose a marker inside the shaded delivery zone.\n\nNo action yet",
+      "elements": [
+        {
+          "target_id": "map",
+          "role": "canvas",
+          "name": "",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 0,
+            "y": 70,
+            "width": 640,
+            "height": 220
+          }
+        },
+        {
+          "target_id": "marker-a",
+          "role": "button",
+          "name": "marker-a: inside delivery zone",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 140,
+            "y": 170,
+            "width": 20,
+            "height": 20
+          }
+        },
+        {
+          "target_id": "marker-b",
+          "role": "button",
+          "name": "marker-b: outside delivery zone",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 350,
+            "y": 190,
+            "width": 20,
+            "height": 20
+          }
+        }
+      ]
+    },
+    "ax": [
+      {
+        "role": "heading",
+        "name": "Delivery map",
+        "value": null,
+        "properties": [
+          {
+            "name": "level",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "Canvas",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "button",
+        "name": "marker-a: inside delivery zone",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "button",
+        "name": "marker-b: outside delivery zone",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Delivery map",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Choose a marker inside the shaded delivery zone.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Delivery map",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Choose a marker inside the shaded delivery zone.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      }
+    ],
+    "phases_ms": {
+      "capture": 36.542207933962345,
+      "extraction": 2.55687499884516,
+      "encode": 0.29804196674376726
+    }
+  },
+  "reconstruction_content_matches": true,
+  "phases_ms": {
+    "dispatch": 0.0,
+    "setup_capture": 505.4125830065459,
+    "validation": 0.015292083844542503,
+    "readback": 0.1742909662425518,
+    "total": 505.86224999278784
+  },
+  "evaluation": "oracle used only in independent goal/effect check"
+}

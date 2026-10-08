@@ -1,0 +1,18 @@
+{
+  "accepted_by_model": false,
+  "final_accepted": false,
+  "dispatched": false,
+  "postcondition_observed": false,
+  "admission_reason": "model_not_accepted",
+  "action": null,
+  "setup_ms": 377.7507080230862,
+  "effect_ms": 0.00016693957149982452,
+  "total_ms": 377.75158300064504,
+  "fresh_bound_window": {
+    "pid": 85785,
+    "window_id": 27559
+  },
+  "observation_sha256": "ce7052436cbdd1b70fa740b5f62fd17796a3bd7c33ddc5e62bcb27484ae08f7b",
+  "surface": "native_fixture",
+  "scope": "reconstructed authored fixture; independently checked persisted effect"
+}

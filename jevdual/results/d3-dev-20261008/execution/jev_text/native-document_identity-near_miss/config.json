@@ -1,0 +1,14 @@
+{
+  "family": "document_identity",
+  "variant": "near_miss",
+  "source_hashes": [
+    "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+    "baf5ab1a783e8b1c4dd87743c8ef9c331fc9d604897ad65a01815df2ccc092e3"
+  ],
+  "reference_hash": "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+  "buttons": [
+    "Select Candidate A",
+    "Select Candidate B"
+  ],
+  "caption": "Select the document matching the reference cover."
+}

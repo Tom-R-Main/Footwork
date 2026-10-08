@@ -1,0 +1,23 @@
+{
+  "accepted_by_model": true,
+  "final_accepted": true,
+  "dispatched": true,
+  "postcondition_observed": true,
+  "admission_reason": "effect_verified",
+  "action": {
+    "dispatched": true,
+    "route": "background_accessibility",
+    "error_code": 0,
+    "target_label": "Select Candidate B"
+  },
+  "setup_ms": 374.6895409421995,
+  "effect_ms": 108.63924992736429,
+  "total_ms": 483.33049996290356,
+  "fresh_bound_window": {
+    "pid": 86752,
+    "window_id": 27705
+  },
+  "observation_sha256": "0c5d9dffca562c9dabc731675b5a1aba381044d05e812ed05511c6dd8e722aaf",
+  "surface": "native_fixture",
+  "scope": "reconstructed authored fixture; independently checked persisted effect"
+}

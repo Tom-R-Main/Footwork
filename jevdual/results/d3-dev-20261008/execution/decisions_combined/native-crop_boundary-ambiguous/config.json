@@ -1,0 +1,21 @@
+{
+  "family": "crop_boundary",
+  "variant": "ambiguous",
+  "buttons": [
+    "Apply proposed crop",
+    "Apply safe crop"
+  ],
+  "proposed_crop": [
+    220,
+    45,
+    400,
+    280
+  ],
+  "valid_crop": [
+    220,
+    45,
+    400,
+    280
+  ],
+  "caption": "Apply the displayed crop while preserving the entire subject."
+}

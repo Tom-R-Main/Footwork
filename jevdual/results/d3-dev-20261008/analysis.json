@@ -1,0 +1,172 @@
+{
+  "measured_commit": "c4653771afceebc1378acc27db027cf3c4411a02",
+  "attempts": 216,
+  "execution_checks": 72,
+  "arms": {
+    "jev_text": {
+      "primary_all_three_correct": 14,
+      "positive_all_three": 7,
+      "negative_all_three": 1,
+      "ambiguous_primary_all_three": 6,
+      "ambiguous_safe_all_three": 6,
+      "invalid_confident_positive_cases": [],
+      "wrong_effect_cases": [],
+      "refusals": 0,
+      "provider_errors": 0,
+      "execution_checks": 24,
+      "execution_coverage_errors": [],
+      "actual_dispatches": 5,
+      "goal_or_postcondition_met": 7,
+      "request_timing": {
+        "n": 72,
+        "median_ms": 148.10756198130548,
+        "p95_ms": 229.0486249839887
+      },
+      "corrected_capture_to_judgment_estimate": {
+        "n": 72,
+        "median_ms": 408.81745744263753,
+        "p95_ms": 672.7209590608254
+      },
+      "reconstructed_execution_total": {
+        "n": 24,
+        "median_ms": 494.1597914439626,
+        "p95_ms": 614.8243750212714
+      },
+      "family_all_three": {
+        "toolbar_glyph": 2,
+        "map_containment": 1,
+        "target_freshness": 4,
+        "document_identity": 2,
+        "crop_boundary": 2,
+        "export_finalizing": 3
+      },
+      "corrected_capture_to_judgment_by_surface": {
+        "browser_fixture": {
+          "n": 36,
+          "median_ms": 196.83472806354985,
+          "p95_ms": 257.96808197628707
+        },
+        "native_fixture": {
+          "n": 36,
+          "median_ms": 549.8956039664336,
+          "p95_ms": 1339.9005831452087
+        }
+      }
+    },
+    "decisions_text": {
+      "primary_all_three_correct": 11,
+      "positive_all_three": 5,
+      "negative_all_three": 1,
+      "ambiguous_primary_all_three": 5,
+      "ambiguous_safe_all_three": 6,
+      "invalid_confident_positive_cases": [],
+      "wrong_effect_cases": [],
+      "refusals": 9,
+      "provider_errors": 0,
+      "execution_checks": 24,
+      "execution_coverage_errors": [],
+      "actual_dispatches": 3,
+      "goal_or_postcondition_met": 5,
+      "request_timing": {
+        "n": 72,
+        "median_ms": 138.80981254624203,
+        "p95_ms": 306.82712502311915
+      },
+      "corrected_capture_to_judgment_estimate": {
+        "n": 72,
+        "median_ms": 444.4807090330869,
+        "p95_ms": 805.1275428151712
+      },
+      "reconstructed_execution_total": {
+        "n": 24,
+        "median_ms": 476.11508349655196,
+        "p95_ms": 625.5928330356255
+      },
+      "family_all_three": {
+        "toolbar_glyph": 2,
+        "map_containment": 1,
+        "target_freshness": 3,
+        "document_identity": 1,
+        "crop_boundary": 1,
+        "export_finalizing": 3
+      },
+      "corrected_capture_to_judgment_by_surface": {
+        "browser_fixture": {
+          "n": 36,
+          "median_ms": 192.93149939039722,
+          "p95_ms": 442.6279569743201
+        },
+        "native_fixture": {
+          "n": 36,
+          "median_ms": 522.4805004545487,
+          "p95_ms": 1311.0096661839634
+        }
+      }
+    },
+    "decisions_combined": {
+      "primary_all_three_correct": 19,
+      "positive_all_three": 11,
+      "negative_all_three": 5,
+      "ambiguous_primary_all_three": 3,
+      "ambiguous_safe_all_three": 6,
+      "invalid_confident_positive_cases": [
+        "B02"
+      ],
+      "wrong_effect_cases": [
+        "B02"
+      ],
+      "refusals": 0,
+      "provider_errors": 0,
+      "execution_checks": 24,
+      "execution_coverage_errors": [],
+      "actual_dispatches": 10,
+      "goal_or_postcondition_met": 11,
+      "request_timing": {
+        "n": 72,
+        "median_ms": 163.45972899580374,
+        "p95_ms": 294.6850840235129
+      },
+      "corrected_capture_to_judgment_estimate": {
+        "n": 72,
+        "median_ms": 446.4414584217593,
+        "p95_ms": 1233.0680841114372
+      },
+      "reconstructed_execution_total": {
+        "n": 24,
+        "median_ms": 536.9442915543914,
+        "p95_ms": 703.3416249323636
+      },
+      "family_all_three": {
+        "toolbar_glyph": 2,
+        "map_containment": 3,
+        "target_freshness": 2,
+        "document_identity": 4,
+        "crop_boundary": 4,
+        "export_finalizing": 4
+      },
+      "corrected_capture_to_judgment_by_surface": {
+        "browser_fixture": {
+          "n": 36,
+          "median_ms": 215.3861444676295,
+          "p95_ms": 427.331248880364
+        },
+        "native_fixture": {
+          "n": 36,
+          "median_ms": 553.0668124556541,
+          "p95_ms": 1332.0907910820097
+        }
+      }
+    }
+  },
+  "primary_gain_combined_vs_text": 8,
+  "qualification_rule_met": false,
+  "failure": "B02 combined p=.99 all three; repeat0 real click enters rotate rather than crop",
+  "accounting": {
+    "d3_reported_input_estimate_usd": 0.023862564000000003,
+    "pilot_reported_input_estimate_usd": 0.075117722,
+    "pilot_reported_or_reserved_upper_usd": 0.215917722,
+    "d3_unknown_usage": 0,
+    "prior_unknown_usage": 2
+  },
+  "timing_correction": "Original browser estimate used screenshot-only capture_ms; offline calculation uses retained phase_total_ms. Original summary preserved. Native total unchanged."
+}

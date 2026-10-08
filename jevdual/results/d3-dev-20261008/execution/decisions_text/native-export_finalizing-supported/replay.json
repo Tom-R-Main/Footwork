@@ -1,0 +1,18 @@
+{
+  "accepted_by_model": true,
+  "final_accepted": true,
+  "dispatched": false,
+  "postcondition_observed": true,
+  "admission_reason": "persisted_output_verified",
+  "action": null,
+  "setup_ms": 329.40312498249114,
+  "effect_ms": 0.12920796871185303,
+  "total_ms": 329.53358290251344,
+  "fresh_bound_window": {
+    "pid": 87107,
+    "window_id": 27731
+  },
+  "observation_sha256": "1bf93c0b212a59b9ef30148e596a99c082859c5eac1766f5ed77845ea66a9762",
+  "surface": "native_fixture",
+  "scope": "reconstructed authored fixture; independently checked persisted effect"
+}
