@@ -125,3 +125,11 @@ Established: Product recommendation grounded in completed D1–D3, current Footw
 Uncertain: Target-region evidence is a repair hypothesis, not a tested fix. Independent real-app visual accuracy, release calibration and end-to-end workflow speed remain unqualified.
 Decision: Prioritize observation/target binding, a private reviewed document/image preparation workflow, and a narrow capability/refusal contract. Keep Jev active and code-held permission/freshness/effect authority. Broader interchangeability must earn role-specific quality and speed. This is a product recommendation, not runtime activation or implementation authorization.
 Refs: docs/footwork-product-recommendation.md; results/d1-v2-dev-20261008/report.md; results/d3-dev-20261008/report.md; docs/arc-cua-decisions-reference.md
+
+## DAPI5 · prediction · 2026-10-08 16:16
+Question: will explicit offered-target evidence repair the Rotate-as-Crop false approval while retaining supported judgments?
+Hypothesis: full-page evidence leaves an icon's proposal binding ambiguous to the model; marked or region captures make that binding more reliable. The cause is not established by D3.
+Test: D4, twelve toolbar proposals and three evidence arms, three replays, actual source-bound captures and first-replay fixture effects; commit before paid calls and stay under the existing combined$5cap. Add a read-only private inspection command and immutable evidence validation with scenario/live verification.
+Predicts: at least one bound-target arm removes invalid confident acceptance and wrong effects, retains supported coverage, and reproduces the original failure in the control.
+Against: any invalid confident acceptance, supported coverage loss, unreproduced original failure, oracle leakage, or fabricated/unbound product capture.
+Refs: docs/experiments/D4-target-grounding.md; results/d3-dev-20261008/report.md
