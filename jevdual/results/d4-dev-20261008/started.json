@@ -1,0 +1,8 @@
+{
+  "commit": "5d67e88639f4ce57af9a77a23fd4142115a7f54a",
+  "manifest_sha256": "bd5e3d4a8d199db6958ad0d34edbad83aea5e34990dc83b024becd8790019842",
+  "seed": 10082029,
+  "prior_cost_upper_usd": 0.215917722,
+  "cap_usd": 5.0,
+  "model": "gpt-6-luna"
+}

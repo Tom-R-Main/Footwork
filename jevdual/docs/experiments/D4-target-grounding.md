@@ -31,3 +31,11 @@ Owning macOS Driver source reports elements_complete=false for the actionable-no
 ## Ambiguous rejection reporting before measurement — 2026-10-08 16:32
 
 Report epistemic unknown/refusal separately from conservative false. The action-abstention guardrail is no confident true on ambiguous input and no dispatch; false/unknown/refusal all withhold the action. A confident false on an ambiguous support predicate is not treated as an unsafe acceptance, but cannot establish calibrated knowledge of the hidden function. Keep registered negative-any-accept primary and supported all-three coverage unchanged.
+
+## Result
+
+All 108 requests and 36 reconstructed checks completed on 5d67e88. Original / marked / region invalid-accepted cases: 1/4 / 0/4 / 0/4; supported all-three coverage: 3/4 / 4/4 / 4/4; wrong effects: 1 / 0 / 0. Ambiguous unknown replays: 0/12 / 3/12 / 12/12; remaining ambiguous judgments were conservative false, with no action.
+
+D3 B02 did not reproduce in original G02 despite unchanged source PNG, HTML, bounds and question; fresh observation time and browser identity differ. The registered repair-attribution condition is unmet: DAPI5 is inconclusive. Variants support independent target-grounding tests, not automatic action approval or broader agnosticism.
+
+Capture-to-judgment median estimates: 237 / 302 / 297 ms. Region request p95 is 715 ms; smaller payload does not establish universal speed advantage. New cost estimate $0.0118962; cumulative reported estimate $0.087013922, conservative upper $0.227813922 under $5. Full report and raw receipts: [D4 results](../../results/d4-dev-20261008/report.md). Read-only native inspection is separately [implemented and verified](../../results/visual-inspection-20261008/report.md); browser operator inspection remains unsupported and existing Jev routes/settings remain unchanged.

@@ -2,7 +2,7 @@
 
 **Improve Footwork as a verified execution product. Keep Jev as the active text guard and mechanical policy. Add scoped visual inspection as an experimental capability, starting with document/image preparation. Defer a broad model-agnostic rewrite and automatic visual action approval.**
 
-This recommendation closes the completed D1–D3 development package. Six of twenty proposed visual task families were implemented; fourteen remain proposed. These are authored development fixtures and controlled native/browser observations, not independent real-app adoption evidence. Runtime routing and settings remain unchanged.
+This recommendation incorporates D1–D4 and the implemented private native inspection capability. Six of twenty proposed visual task families were implemented; fourteen remain proposed. These are authored development fixtures and controlled native/browser observations, not independent real-app adoption evidence. Runtime routing and settings remain unchanged.
 
 ## What the evidence earns
 
@@ -15,18 +15,23 @@ This recommendation closes the completed D1–D3 development package. Six of twe
 | D3: Rotate approved as Crop at p=.99 in all three replays; a real wrong fixture effect follows | Bind every visual question to the exact offered target and test that binding; confidence alone cannot approve an action |
 | D3: freshness 4/4 Jev, 2/4 combined; visible100% still requires artifact readback | Keep freshness and completion authority in code; images do not replace resource/effect evidence |
 | D3: request medians 148ms Jev,163ms combined; native capture-to-judgment estimates around550ms | Optimize the whole observation path and call visual inspection selectively; model latency alone does not determine task speed |
+| D4: marked/region views approve 0/4 invalid cases and retain 4/4 supported; original control produces one wrong effect, but D3 B02 does not reproduce | Target grounding merits independent testing; causal repair attribution remains inconclusive |
 
-Sources: [D1](../results/d1-v2-dev-20261008/report.md), [D2](../results/d2-dev-20261008/report.md), [D3](../results/d3-dev-20261008/report.md). Timing estimates, repetitions, refusals and corpus limits are detailed there. The product position is consistent with Footwork's existing README: the guard is the core product, while System One acting is optional.
+Sources: [D1](../results/d1-v2-dev-20261008/report.md), [D2](../results/d2-dev-20261008/report.md), [D3](../results/d3-dev-20261008/report.md), [D4](../results/d4-dev-20261008/report.md). Timing estimates, repetitions, refusals and corpus limits are detailed there. The product position is consistent with Footwork's existing README: the guard is the core product, while System One acting is optional.
 
 ## Priority 1: make the proposed target unmistakable
 
-Introduce an observation-bound visual evidence envelope: surface/window/tab identity, observation token, timestamp, image hash, dimensions/scale, exact offered target ID and bounds, intended operation, and required postcondition. The UI should show which element or source the proposal concerns and the expected result. A changed view invalidates the proposal and prompts a fresh observation rather than carrying approval forward.
+**Implemented locally:** `footwork inspect-target` records a fresh native observation, immutable source/target/operation/postcondition binding, original PNG and static HTML review with an exact target outline. Actual CLI/Cua SDK verification on a task-owned AppKit window confirms correct pixel mapping and no action. Secret sessions withhold capture; invalid/mismatched observations refuse. Numeric target inspection preserves the incomplete AX warning; label resolution refuses without uniqueness proof. Browser operator inspection explicitly refuses until screenshot geometry is qualified. See [qualification](../results/visual-inspection-20261008/report.md) and [saved preview](../results/visual-inspection-20261008/preview/45acf06c2fa1465a98d270f84cfe2a49.html).
 
-Evaluate the exact target region alongside the relevant context. Treat this as a hypothesis for repairing the B02 failure, not a proven fix: the experiment establishes wrong offered-target interpretation but not its cause. Compare full-frame, explicitly marked target and target-region evidence under a new preregistration, including similar neighboring glyphs and changed-after-capture cases. Preserve ordinary accessible text; do not make visual input appear valuable by removing useful labels.
+D4 completed the registered full-frame/marked/region comparison. Marked and region arms retained all supported cases without invalid approvals; region evidence also expressed uncertainty on every ambiguous replay. The exact D3 B02 failure did not reproduce, so repair attribution is inconclusive. Capture-to-judgment median estimates were 237 / 302 / 297 ms; region request p95 was 715 ms. Keep the visual role unactivated and collect independent cases before reviewed execution. Binding equality itself does not query the live screen or grant authority.
+
+The implemented envelope records surface/window/tab identity, observation token, timestamp, image hash, dimensions/scale, exact offered target ID and bounds, intended operation, and required postcondition. The preview shows which element the proposal concerns and the required result. Future reviewed execution must invalidate a changed view and require a fresh observation instead of carrying approval forward.
+
+Further evaluation should combine the exact target region with relevant context, including neighboring glyphs and changed-after-capture cases. D4 does not establish the cause or repair of B02. Preserve ordinary accessible text; visual input should add missing information rather than benefit from removed useful labels.
 
 Existing scope, token and live target checks stay in place. They passed B02 and still allowed the wrong semantic effect, so stronger freshness alone cannot repair icon interpretation. Keep unqualified visual judgments advisory. Permission to act and independently confirmed completion remain separate from the visual model's probability.
 
-Implementation seam: NativeMenu/native.py and browser observation metadata feed a small visual check boundary; operator session/desktop proposals carry the binding through dispatch and receipt. No need to replace the driver to add this envelope.
+Implemented seam: NativeMenu/native.py supplies correlated native capture metadata to visual_evidence.py; session.py records the binding and static preview. Browser capture and carrying the binding through reviewed dispatch/receipt remain future work; no driver replacement was needed for private native inspection.
 
 ## Priority 2: offer a bounded visual inspection capability
 
@@ -52,10 +57,10 @@ Report verified completion time, dangerous or wrong effects, useful coverage, es
 
 ## Release sequence and acceptance
 
-1. Preserve the B02 counterexample and add target-bound visual evidence in a private inspection mode. No new default authority.
-2. Run a registered target-grounding comparison and an independently collected real document/crop corpus with blinded labels. Include near misses, missing evidence, duplicate-looking sources, layout changes and actual saved-artifact checks. Keep existing sealed adoption data untouched.
+1. **Completed locally:** preserve B02 and add target-bound evidence in private native inspection. No new default authority; browser inspection remains unsupported.
+2. **D4 comparison completed; repair attribution inconclusive.** Next collect an independent real document/crop corpus with blinded labels and harder target-grounding cases. Include near misses, missing evidence, duplicate-looking sources, layout changes and actual saved-artifact checks. Keep existing sealed adoption data untouched.
 3. Add reviewed execution for a qualified family, with the exact reviewed revision and outcome readback. Validate actual Finder/Preview or the chosen app separately from the AppKit fixtures.
 4. Consider autonomous use only for a narrowly scoped family after it improves useful verified coverage without wrong accepted effects and meets the workflow's preregistered end-to-end latency criterion. Calibrate on development data and validate independently; zero errors in a small corpus is not a universal guarantee.
 5. Broaden backend interchangeability only when another role earns it on both quality and speed. Expand the remaining task families where they resolve a real product decision, rather than build all fourteen before testing a useful workflow.
 
-The release gates and workflow are recommendations, not newly measured results or an approval to activate them. The completed experiments support an additional visual observation capability and a better evidence/target contract; they do not support turning Footwork into a universally interchangeable model-driven executor.
+Beyond the implemented read-only inspection and completed D4 study, the release gates and workflow remain recommendations rather than completed functionality or authority to activate them. The completed experiments support an additional visual observation capability and a better evidence/target contract; they do not support turning Footwork into a universally interchangeable model-driven executor.

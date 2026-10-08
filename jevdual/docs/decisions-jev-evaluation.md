@@ -1,7 +1,7 @@
 # Decisions, Jev and Footwork's System One boundary
 
 Source audit refreshed 2026-10-08 against runtime e3b7b08. D1 is the paired development comparison;
-D1,D2 and D3 measurements live in the linked results directories. The archived Responses
+D1–D4 measurements live in the linked results directories. The archived Responses
 prototype is not evidence about Decisions.
 
 ## Measured recommendation
@@ -16,12 +16,15 @@ Keep **Jev as the active text judgment backend**. Decisions remains an **unactiv
 | D2 visual information | Both image arms 12/12 all-three correct; sparse text 0/12, appropriately unknown/refused | Visual role merits independent cases |
 | D2 speed | Combined median 171 ms,p95 748 ms | Added capability with tail-latency work remaining |
 | D3 proposal/effect checks | Combined 19/24 cases versus text 11/24/Jev 14/24; wrong Rotate-as-Crop acceptance at p=.99 all three and actual wrong effect | Visual admission rule fails; document/crop perception remains promising |
+| D4 target grounding | Marked/region approve 0/4 invalid cases, retain 4/4 supported; original produces one wrong effect, but D3 B02 does not reproduce | Promising development comparison; repair attribution inconclusive, no activation |
 
-These are development experiments, including authored synthetic screens, not adoption proof. Reports: [D1](../results/d1-v2-dev-20261008/report.md),[D2](../results/d2-dev-20261008/report.md),[D3](../results/d3-dev-20261008/report.md). D3 implements six of the [twenty proposed task families](visual-test-catalog.md) on actual controlled browser/native surfaces; these are not real-app adoption evidence.
+These are development experiments, including authored synthetic screens, not adoption proof. Reports: [D1](../results/d1-v2-dev-20261008/report.md),[D2](../results/d2-dev-20261008/report.md),[D3](../results/d3-dev-20261008/report.md), [D4](../results/d4-dev-20261008/report.md). D3 implements six of the [twenty proposed task families](visual-test-catalog.md) on actual controlled browser/native surfaces; these are not real-app adoption evidence.
 
 Jev stays in text completion, risk and bounded selection; source selection was audited but not compared. Decisions fits bounded visual questions when text lacks the needed state. System Two retains generated arguments and open-ended reasoning. Footwork code owns consent, scope, freshness, target/source identity, effects and dispatch. A small typed capability seam can support this split without making every role interchangeable. Model/role/prompt-specific admission and independent real-case latency/quality validation precede any activation.
 
-No active factories or thresholds changed. The authenticated contract, development adapters, paired harnesses and receipts are committed locally; existing credentials were reused. Reported-input cost estimate for the full pilot is $0.0751,conservative upper $0.2159 under the authorized $5 ceiling.
+No active factories or thresholds changed. The authenticated contract, development adapters, paired harnesses and receipts are committed locally; existing credentials were reused. Reported-input cost estimate for the full pilot is $0.0870, conservative upper $0.2278 under the authorized $5 ceiling.
+
+The local `footwork inspect-target` command now records target-bound native evidence and a static review preview without model calls or actions. [Actual CLI qualification](../results/visual-inspection-20261008/report.md) verifies the new entry point on a task-owned AppKit window; browser operator inspection remains unsupported. The D4 comparison supports further independent testing, with capture-to-judgment median estimates of 237 ms original, 302 ms marked and 297 ms region. It does not qualify automatic visual action approval.
 
 The product follow-through is documented in [Footwork product recommendation](footwork-product-recommendation.md): target-bound evidence first, a reviewed document/image workflow, and a narrow role/capability seam. Activation remains subject to independent quality and end-to-end latency validation.
 

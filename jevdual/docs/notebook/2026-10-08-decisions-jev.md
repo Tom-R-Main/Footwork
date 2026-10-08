@@ -145,3 +145,16 @@ Established: Full919offline tests pass with26skipped; Ruff and notebook checks p
 Uncertain: DAPI5 remains open; annotated/region evidence repair is unmeasured. Browser-only D4 and a private native inspector do not qualify broad action approval, model calibration or independent real-app safety.
 Decision: Freeze and commit captures/proof before paired Decisions requests, carrying conservative priorupper$0.215917722 into original$5cap. Keep model-free inspection separate from paid experimental judgments.
 Refs: results/d4-capture-20261008/manifest.json; results/d4-capture-20261008/preflight.json; results/visual-inspection-20261008/report.md; docs/experiments/D4-target-grounding.md
+
+## U-D4RESULT · update · 2026-10-08 16:49
+Resolves: DAPI5 = inconclusive
+Observed: All 108 calls and 36 first-replay reconstructed checks completed on 5d67e88. Original approves one invalid case and produces a wrong Rotate effect; marked and region approve none and retain all four supported cases in all three replays. Original G02 does not reproduce D3 B02: p=0 versus earlier p=.99, despite identical PNG, HTML, bounds and question. Only capture time and browser tab identity differ in observed text. Ambiguous inputs all withhold action; region returns unknown on all twelve replays. Independent recount confirms counts and accounting.
+Inferred: Bound-target evidence helps these exposed authored variants, but cannot establish repair of the original failure or general calibrated visual admission. Smaller region payload does not guarantee faster outcomes; capture-to-judgment medians are 237 / 302 / 297 ms and region request p95 is 715 ms.
+Next: Keep visual action approval disabled and Jev active for text. Preserve the counterexample and advance target grounding to independently collected cases; no sealed corpus or thresholds change.
+Refs: results/d4-dev-20261008/report.md; results/d4-dev-20261008/analysis.json; docs/experiments/D4-target-grounding.md; results/d3-dev-20261008/report.md; 5d67e88
+
+## S-D4PACKAGE · summary · 2026-10-08 16:49
+Established: Private native inspect-target records immutable image/surface/target/proposal binding and an exact static preview. Actual CLI/Cua SDK fixture verification confirms correct scale mapping, unchanged PNG and no effect; 919 tests pass with 26 skipped. D4 completes the matched development comparison with retained native receipts, source hashes, effects and costs.
+Uncertain: Original semantic failure reproduction and causal repair, independent real-app accuracy/calibration, browser operator geometry, concurrency freshness and full workflow speed remain unqualified. Binding equality is not a live observation or authority. Reviewed document/image execution remains a recommendation, not implemented functionality.
+Decision: Ship the local read-only inspection milestone and retain active Jev text roles. No visual action gate, broad agnostic rewrite, default/settings change, heldout run, push or deployment. Cumulative reported-input estimate $0.087013922 and conservative upper $0.227813922 remain under the authorized $5 cap.
+Refs: results/visual-inspection-20261008/report.md; results/d4-dev-20261008/report.md; docs/footwork-product-recommendation.md; docs/decisions-jev-evaluation.md
