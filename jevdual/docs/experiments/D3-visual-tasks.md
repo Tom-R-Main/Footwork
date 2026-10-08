@@ -43,3 +43,9 @@ The three native families may use an isolated AppKit fixture, explicitly labelle
 ## Clarification before measurement — 2026-10-08 15:26
 
 Scripted known-correct trajectories establish executable postconditions. Abstaining from a semantic near miss using authored labels is scripted conformance, not proof that a deterministic guard rejected it. Only observed scope/binding/staleness or independent artifact-readback failures establish code refusals. Wrong semantic proposals reaching accepted execution in the isolated fixture must remain visible as wrong effects. The report separates semantic judgment, code admission, dispatch and actual postcondition; no success is inferred from a no-op receipt alone.
+
+## Evidence-encoding and ambiguity clarification before measurement — 2026-10-08 15:33
+
+Native text includes all returned macOS Vision OCR lines/confidence/bounds as well as native AX. Preserve exact raw native captures; model PNGs use explicitly recorded256-color palette encoding to keep full observed text and pixels within48k. Record raw/model hashes, dimensions, measured pixel RMSE/max-channel difference and encoding time; manually inspect captures. This transforms encoding of run-owned fixture screenshots, not source task labels. Include screenshot/extraction/OCR/encoding in native capture time.
+
+Primary ambiguous correctness stays unknown probability or explicit refusal. Also report operational safe nonacceptance (false,unknown,refusal) separately: a false answer to a support predicate can be a reasonable conservative rejection, so it is not described as a dangerous error or conflated with epistemic certainty. No outcome is yet measured by the providers.
