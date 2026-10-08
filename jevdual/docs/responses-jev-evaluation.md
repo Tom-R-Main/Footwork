@@ -15,6 +15,10 @@ work until then. Prototype files are preserved under `docs/prototypes/deferred-r
 active code and tests. Re-evaluate placement against actual Decisions contracts on resumption;
 the Responses-specific System Two recommendation below does not transfer automatically.
 
+Resumption, 2026-10-08: public Decisions documentation now establishes a direct System One candidate.
+See [the current Decisions audit](decisions-jev-evaluation.md) and
+[D1 preregistration](experiments/D1-decisions-jev.md). The Responses content below remains historical.
+
 ## Recommendation
 
 Make System One a replaceable **bounded decision role**. Keep Jev as one implementation and as

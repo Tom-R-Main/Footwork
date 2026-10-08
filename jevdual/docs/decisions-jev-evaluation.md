@@ -31,6 +31,12 @@ stability, account access or Footwork task accuracy. The example choice confiden
 its selected probability; do not replace one with the other. A severity score is not a truth
 probability, even if normalized to 0..1.
 
+[TypeSafe documents](https://docs.typesafe.ai/confidence) Choice confidence as
+`(p_max - 1/n) / (1 - 1/n)`. The OpenAI guide's four-option example is consistent with that statistic
+after rounding, but does not specify its formula. Code can define a shared distribution statistic
+and retain both native confidences; that makes the statistic comparable in meaning, not the models'
+empirical accuracy or calibration. Such a change to admission requires its own settings package.
+
 The guide quotes $0.10/M input tokens with free output/cache reads/cache writes. Regional and
 long-context premiums may apply. [Jev 1.13](https://docs.typesafe.ai/models) quotes $0.042/M input
 and free output. At equal billed input tokens, Decisions costs about 2.38 times as much. Actual
