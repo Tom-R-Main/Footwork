@@ -22,3 +22,17 @@ Test: retain the first failed launch (output/capability-comparison-20261009-1826
 Predicts: the fresh fixture reaches ready with exactly one owned browser window and one exact AXDocument match; independent AX reads the original prefix without any permission change or input action.
 Against: discovery still times out, identifies another document, or needs a permission/configuration change.
 Refs: scripts/capability_fixture.py:scope_for; output/capability-comparison-20261009-1826
+
+## CR3-U1 · update · 2026-10-09 18:26
+Resolves: CR3 = inconclusive
+Observed: the second owned fixture timed out after 30 seconds. A separate read-only posture probe reported Accessibility trusted true and CGSSessionScreenIsLocked true; no owned AXDocument was exposed. No scope was published, no append or provider call ran. Both launchers exited through cleanup. CR3's heading time was entered ahead of the clock; commit b9d7145 establishes prediction-before-retry ordering, and the actual write was at 18:25.
+Inferred: locked-machine posture explains missing AX surfaces; the current evidence cannot establish the opening-window race hypothesis. Waiting for an unlocked desktop is a prerequisite, not a product comparison result.
+Next: add a fail-before-launch posture check to the fixture helper; qualify server initialization and catalogs without UI, prepare C1 while waiting for Tom's unlock response.
+Refs: output/capability-comparison-20261009-1826; output/capability-comparison-20261009-1828; scripts/capability_fixture.py
+
+## CR4 · prediction · 2026-10-09 18:26
+Hypothesis: checking the existing read-only screen lock state and Accessibility trust before creating files/apps prevents another locked-machine fixture launch without weakening its exact document identity requirement.
+Test: add a fixture posture precondition and exercise it on the currently locked machine; require a typed readiness error before the requested new run directory exists. An unlocked run remains a separate prerequisite.
+Predicts: locked posture refuses before opening Chrome/TextEdit or creating the run directory; no permission dialog is triggered.
+Against: a run directory or app is created despite the locked posture, or the check prompts for permission.
+Refs: scripts/capability_fixture.py
