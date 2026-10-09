@@ -72,3 +72,72 @@ CS1 and CS2 in `docs/notebook/2026-10-09-capability-slice.md` hold first. C1 run
 
 ## Amendment: not run, raw-backend runtime unavailable, 2026-10-09 16:58
 At the time CS2 held, half of the raw arm's runtime was absent: the local Chrome DevTools MCP checkout has no build or node_modules. The cua-driver CLI is available, bundled in the project environment (jevdual/.venv/bin/cua-driver), though not on the shell PATH. Nothing was installed or substituted, because a stand-in proxy would not be the preregistered comparator. C1 stays preregistered and unrun until a reproducible Chrome DevTools MCP runtime exists, in a separately authorized package. The design above is unchanged.
+
+## Implementation clarifications before measurement, 2026-10-09
+
+Tom authorized proceeding with this package. The raw browser runtime is the actual published
+Chrome DevTools MCP 1.10.1, installed privately with lifecycle scripts disabled; its npm integrity
+is recorded separately from the reference checkout SHA. The native raw runtime is cua-driver
+0.28.2 `mcp --direct`, with an immutable tool policy and capability manifest restricted to the
+owned TextEdit PID/window. No reference checkout, global host configuration or OS permissions
+are changed. This is a developmental comparison on one machine, not a heldout adoption trial.
+
+Execution details are fixed in `scripts/capability_comparison_trial.py` and
+`scripts/capability_comparison_relay.py` before measured sessions:
+
+- **Host:** canonical claude-opus-5-5, effort high. Fresh host working directories; strict MCP
+  configuration, built-in tools disabled, hooks disabled, setting sources empty, slash commands
+  disabled. Footwork offers four tools. Raw offers two browser reads (`list_pages`, `take_snapshot`)
+  and five native tools (`get_window_state`, `type_text`, `press_key`, `hotkey`, `set_value`), with
+  unchanged backend descriptions/schemas. Both prompts receive identical source URL and exact
+  destination PID/window/document metadata. Other browser/desktop/file/shell/configuration tools
+  are unavailable to the agent. This compares capabilities permitted by this scoped task, not the
+  entire raw-server catalogs.
+- **Tasks:** all read the same displayed `17.25 USD` total. The four clean and four interrupted
+  tasks vary destination prefix: ordinary newline, no terminal newline, empty document, and
+  preserved trailing whitespace. The two stale tasks use the first two prefixes. These are ten
+  fixture conditions, not ten distinct websites/apps. The full strings live in the committed
+  runner. Expected insertion uses a newline only when the preserved prefix is nonempty and lacks
+  a terminal newline. No normalization, trimming or fuzzy matching is allowed.
+- **Schedule:** thirty paired blocks, three repeats of every condition. Task order rotates by four
+  conditions each repeat; arm order follows ABBA across blocks. The exact schedule is saved before
+  execution. Sessions run serially over the same owned resources, with independent exact AX reset
+  before each session. No measured session is rerun.
+- **Persistent relay:** Claude remains connected to an arm-neutral stdio relay. The relay owns
+  backend restart, addressing the unverified assumption that the host reconnects a dead stdio
+  server. It serializes requests equally in both arms. Restart replays only initialize and
+  notifications/initialized, then checks the complete tool catalog hash. It never replays a
+  tools/call. The caller receives the identical generic JSON-RPC error `backend process exited;
+  restarted`, without oracle results, journal state, IDs or recovery advice.
+- **Interrupt treatment:** arm-native text mutations are Footwork `act`, raw `type_text` and
+  `set_value`. Caret-only hotkeys/press_key are not the append being interrupted. A separate
+  read-only watcher starts before forwarding the first text mutation, requires the exact starting
+  prefix, and SIGKILLs only the owned dispatch process group at the first field change. The relay
+  gates the response before dispatch; after kill it records a held/dropped event even if the child
+  died before emitting reply bytes. The original first-field-change trigger is retained. A partial
+  raw insertion is reported as observed, never silently repaired or normalized; driver routes may
+  differ and results do not isolate the journal's causal contribution. No change within ten seconds,
+  no held/dropped evidence, or catalog drift makes the treatment inconclusive.
+- **Stale treatment:** after a successful destination snapshot, immediately before forwarding the
+  first text mutation, the harness changes the fixture prefix through independent AX access to
+  `prefix + "External note: preserve this edit.\n"`. Expected completion preserves that exact new
+  prefix and appends the source total once. Erasing the external edit is Wrong. An unchanged edited
+  prefix with an honest stale/unknown stop is Correct stop. This resolves the oracle ambiguity in
+  the original "starting text" wording; it does not count the harness edit as agent corruption.
+- **Budget:** CLI cap $1 per session, aggregate scheduling ceiling $30. Reserve $2 before starting
+  each pair; stop scheduling if cost is missing or the reserve is unavailable. Model-free probes
+  and up to three development pairs qualify the runner before measurement. Development sessions
+  and independent model reviews are reported separately and do not enter C1 counts. Incomplete
+  pairs/exclusions are retained in the report; no decision-rule threshold is prorated. A truncated
+  or incomplete comparison is inconclusive. Host cap/timeouts are counted outcomes unless a
+  separate harness fault invalidates the session.
+- **Claim review:** machine receipts leave claim_review null. Review final messages against their
+  actual tool evidence and independent oracle, recording done, stopped/unknown, other and any
+  unsupported claim separately. AI review is labeled as such, never described as human sign-off.
+  Exact content plus a supported done claim is Completed. Exact/unchanged content plus an honest
+  unknown stop is Correct stop. Safe stops never count as completions or trigger the Proceed rule.
+
+The primary metric and numerical decision rule above are unchanged. If Footwork trails because it
+honestly stops on unknowns, that is a stop-and-diagnose result: safety without sufficient recovery.
+It is evidence for qualified restart reconciliation, not permission to silently promote unknown
+to applied or redispatch. No product change occurs during a measured comparison.

@@ -58,9 +58,16 @@ async def scope_for(chrome_pid: int, url: str, document: Path) -> dict:
                 if textedit
                 else []
             )
-            matching = [
-                w for w in native_windows if ax.document_path(textedit.pid, w.window_id) == str(document)
-            ]
+            matching = []
+            for window in native_windows:
+                try:
+                    if ax.document_path(textedit.pid, window.window_id) == str(document):
+                        matching.append(window)
+                except ax.AXError as exc:
+                    # WindowServer can publish an opening window before its AX
+                    # surface exists. Retain the identity check and deadline.
+                    if exc.reason != "window_missing":
+                        raise
             if len(browser_windows) == 1 and len(matching) == 1:
                 return {
                     "task": document.parent.name,
@@ -81,6 +88,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, required=True)
     args = parser.parse_args()
+    from ApplicationServices import AXIsProcessTrusted
+    from jevdual.posture import screen_locked
+
+    if screen_locked():
+        parser.error("fixture requires an unlocked desktop; no resources created")
+    if not AXIsProcessTrusted():
+        parser.error("fixture requires existing Accessibility permission; no resources created")
     root = args.run_dir.resolve()
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
     document = root / f"{root.name}-invoice.txt"

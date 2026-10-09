@@ -65,3 +65,24 @@ Test: a subprocess fake MCP backend that writes an independently observed file, 
 Predicts: file changes once; no successful mutating reply reaches the host; exactly one error is returned; restart replays initialization only; the next observation reports the changed file; stale injection preserves the edited prefix; backend process groups are reaped.
 Against: duplicated content, leaked held reply, mutation replay, silently accepted catalog drift, or a surviving child/watcher after host EOF.
 Refs: scripts/capability_comparison_relay.py; tests/test_capability_comparison_relay.py; docs/experiments/C1-capability-slice.md
+
+## CR1-U1 · update · 2026-10-09 18:38
+Resolves: CR1 = held
+Observed: exact published Chrome1.10.1 staged under project output with lifecycle scripts disabled and pinned npm integrity. Install ran with uv's existing Node26.5.1; server help/version and all MCP probes ran on explicitly selected existing Node22.17.1. After the screen unlocked, the owned fixture exposed exact browser and AXDocument identities and its starting prefix. Live raw probe v2 read the exact source value through Chrome snapshot, wrote the owned native field through raw set_value, and independently read the exact expected prefix plus value; reset was verified. The first live probe used an incorrectly entered browser port and a string pageId, so its browser read failed while native write/reset passed. That failed probe is retained; the corrected probe requires a successful browser read before proceeding to native write.
+Inferred: the two real pinned raw MCP backends can perform this scoped fixture task. This establishes prerequisites, not agent usability, restart behavior or comparative value.
+Next: qualify the relay/host integration on development pairs, then freeze and run C1.
+Refs: output/capability-baseline-20261009/runtime.json; output/capability-baseline-live-20261009-v2/receipt.json; output/capability-comparison-20261009-live/scope.json
+
+## CR6-U1 · update · 2026-10-09 18:38
+Resolves: CR6 = held
+Observed: seven focused subprocess/fixture regression tests passed in 11.73 seconds. The independent file watcher killed the actual fake dispatch child; the host got one generic error, restart replayed initialization only, content appeared once, and a subsequent read succeeded. Catalog drift failed; an unchanged refused write was forwarded but labeled inconclusive. EOF reaped dispatch process groups. Fixture tests preserve exact identity and fail locked startup before files/resources.
+Inferred: relay mechanics are established against a separate file-backed fake MCP process. Live AX watcher, real native dispatch, and Claude continuation remain unqualified until development host probes.
+Next: commit harness and implementation clarifications before any development provider calls. Independently reviewed Opus5.5 consultation raised host restart, stale oracle and unknown-stop scoring gaps; retained exact oracle and original first-field-change kill trigger rather than its suggested normalization/reply-trigger change.
+Refs: tests/test_capability_comparison_relay.py; tests/test_capability_fixture.py; output/capability-comparison-peer-20261009/transcript.jsonl; c547b97
+
+## CR7 · prediction · 2026-10-09 18:38
+Hypothesis: the existing Claude host can continue on the persistent relay after one native dispatch interruption with no built-in tools, and the raw host's disallowed-tool configuration removes out-of-scope browser tools from its actual init inventory.
+Test: at most three development pairs (clean, interrupted, stale) using the committed runner, fixed first condition in each stratum, canonical Opus5.5/high and the declared budget. Inspect actual init tools/server/model inventories, relay held/dropped/restart events, exact AX oracle and supported final claims. Development pairs are not C1 measurements and are never pooled into its counts.
+Predicts: exact four-tool Footwork/seven-tool raw inventories; both interrupted hosts receive the same generic error then can make a fresh read-only call through the restarted backend; stale injection is recorded and oracle preserves the new prefix. Honest stops remain stops.
+Against: host loses the entire transport, raw capabilities leak into the offered inventory, a relay repeats an input, or the runner cannot distinguish failed treatment from a measured product failure.
+Refs: scripts/capability_comparison_trial.py; docs/experiments/C1-capability-slice.md
