@@ -36,7 +36,7 @@ class Page(BaseHTTPRequestHandler):
 
 def script(source: str, *args: str) -> str:
     return subprocess.run(
-        ["osascript", "-e", source, *args], check=True, capture_output=True, text=True
+        ["osascript", "-e", source, *args], check=True, capture_output=True, text=True, timeout=10
     ).stdout.strip()
 
 
@@ -108,10 +108,9 @@ def main() -> None:
         start_new_session=True,
     )
     try:
-        script(
-            'on run argv\ntell application "TextEdit" to open POSIX file (item 1 of argv)\nend run',
-            str(document),
-        )
+        # Launch Services supplies the selected-file sandbox extension; a raw
+        # AppleEvent open can be refused by sandboxed TextEdit.
+        subprocess.run(["open", "-a", "TextEdit", str(document)], check=True)
         scope = asyncio.run(scope_for(browser.pid, url, document))
         (root / "scope.json").write_text(json.dumps(scope, indent=2) + "\n")
         (root / "fixture.json").write_text(
@@ -141,7 +140,7 @@ def main() -> None:
                 "end repeat\nend tell\nend run",
                 str(document),
             )
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
             print("Fixture document cleanup could not be confirmed; browser cleanup continues.", flush=True)
         browser.terminate()
         try:

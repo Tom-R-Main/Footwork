@@ -18,3 +18,10 @@ Test: Acknowledge only the alert explicitly naming this run's owned fixture, the
 Predicts: the Launch Services route yields an exact fixture document AX identity without a file-access alert, permitting the unpaid MCP preflight.
 Against: the exact fixture remains inaccessible or the same owned permission alert appears after Launch Services opening.
 Refs: scripts/capability_fixture.py; output/capability-live-20261009-1647; 64ddfdb
+
+## CL4 · update · 2026-10-09 16:53
+Resolves: CL3 = held
+Observed: Launch Services opening produced the exact run-owned AXDocument identity without changing OS permissions. The unpaid real MCP preflight bound the scoped browser and TextEdit document, read the displayed invoice value, appended once through the offered target and returned applied with exact field readback. Independent PyObjC AX oracle matched the expected prefix plus value; server EOF exited 0. The separate independent AX reset restored the starting prefix, establishing CS2 prerequisites. Native observation retained its explicit incomplete-element coverage. No provider calls occurred.
+Inferred: The fixture's permission alert came from the opening route's sandbox access, not unreadable Unix file permissions or absent Accessibility. This establishes this fixture adapter route; it does not establish fresh-agent usability, disk persistence or the raw-backend advantage.
+Next: Freeze the corrected fixture and fresh-host runner, then run the three preregistered CS2 sessions with four-tool inventory, independent oracle and bounded provider cost. C1 remains conditional on CS2.
+Refs: output/capability-live-20261009-1651/preflight.json; output/capability-live-20261009-1651/preflight-responses.json; output/capability-live-20261009-1651/scope.json; scripts/capability_host_trial.py; d49b0fd; 41182a1
