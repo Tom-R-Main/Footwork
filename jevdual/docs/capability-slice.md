@@ -17,9 +17,13 @@ The first boundary is now verified on this machine: three fresh Claude Code sess
 completed the clean browser-to-TextEdit flow with only the four tools and zero argument
 repairs ([CS2 evidence](../results/capability-slice-20261009/host/report.md)). Two real
 SIGKILL/restart cases retained unknown operations and prevented another append
-([CS3 evidence](../results/capability-slice-20261009/interruption/report.md)). The wider
-raw-backend comparison remains unrun. This qualifies the scoped prototype, not arbitrary
-apps, saved-file persistence, parallel hosts or a packaged public release.
+([CS3 evidence](../results/capability-slice-20261009/interruption/report.md)). The sixty-session
+[C1 comparison](../results/capability-comparison-20261009/comparison/report.md) found strong
+stale-edit preservation, but failed the clean completion guardrail; its interrupted comparison
+is inconclusive after three untreated empty-field sessions. Fix separator semantics and empty-field
+target qualification before widening the slice ([next work](plans/capability-remediation-20261009.md)).
+Evidence covers the scoped prototype. Arbitrary apps, saved-file persistence,
+parallel hosts and a packaged public release remain unqualified.
 
 ## Setup for the fixture owner
 

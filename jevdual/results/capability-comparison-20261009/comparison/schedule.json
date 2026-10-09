@@ -1,0 +1,452 @@
+[
+  {
+    "block": 1,
+    "repeat": 1,
+    "task": {
+      "id": "clean-1",
+      "stratum": "clean",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 2,
+    "repeat": 1,
+    "task": {
+      "id": "clean-2",
+      "stratum": "clean",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 3,
+    "repeat": 1,
+    "task": {
+      "id": "clean-3",
+      "stratum": "clean",
+      "prefix": "",
+      "value": "17.25 USD",
+      "stale_prefix": "External note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 4,
+    "repeat": 1,
+    "task": {
+      "id": "clean-4",
+      "stratum": "clean",
+      "prefix": "Invoice report\n\tkept  \n\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\n\tkept  \n\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 5,
+    "repeat": 1,
+    "task": {
+      "id": "interrupted-1",
+      "stratum": "interrupted",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 6,
+    "repeat": 1,
+    "task": {
+      "id": "interrupted-2",
+      "stratum": "interrupted",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 7,
+    "repeat": 1,
+    "task": {
+      "id": "interrupted-3",
+      "stratum": "interrupted",
+      "prefix": "",
+      "value": "17.25 USD",
+      "stale_prefix": "External note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 8,
+    "repeat": 1,
+    "task": {
+      "id": "interrupted-4",
+      "stratum": "interrupted",
+      "prefix": "Invoice report\n\tkept  \n\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\n\tkept  \n\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 9,
+    "repeat": 1,
+    "task": {
+      "id": "stale-1",
+      "stratum": "stale",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 10,
+    "repeat": 1,
+    "task": {
+      "id": "stale-2",
+      "stratum": "stale",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 11,
+    "repeat": 2,
+    "task": {
+      "id": "interrupted-1",
+      "stratum": "interrupted",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 12,
+    "repeat": 2,
+    "task": {
+      "id": "interrupted-2",
+      "stratum": "interrupted",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 13,
+    "repeat": 2,
+    "task": {
+      "id": "interrupted-3",
+      "stratum": "interrupted",
+      "prefix": "",
+      "value": "17.25 USD",
+      "stale_prefix": "External note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 14,
+    "repeat": 2,
+    "task": {
+      "id": "interrupted-4",
+      "stratum": "interrupted",
+      "prefix": "Invoice report\n\tkept  \n\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\n\tkept  \n\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 15,
+    "repeat": 2,
+    "task": {
+      "id": "stale-1",
+      "stratum": "stale",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 16,
+    "repeat": 2,
+    "task": {
+      "id": "stale-2",
+      "stratum": "stale",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 17,
+    "repeat": 2,
+    "task": {
+      "id": "clean-1",
+      "stratum": "clean",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 18,
+    "repeat": 2,
+    "task": {
+      "id": "clean-2",
+      "stratum": "clean",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 19,
+    "repeat": 2,
+    "task": {
+      "id": "clean-3",
+      "stratum": "clean",
+      "prefix": "",
+      "value": "17.25 USD",
+      "stale_prefix": "External note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 20,
+    "repeat": 2,
+    "task": {
+      "id": "clean-4",
+      "stratum": "clean",
+      "prefix": "Invoice report\n\tkept  \n\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\n\tkept  \n\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 21,
+    "repeat": 3,
+    "task": {
+      "id": "stale-1",
+      "stratum": "stale",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 22,
+    "repeat": 3,
+    "task": {
+      "id": "stale-2",
+      "stratum": "stale",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 23,
+    "repeat": 3,
+    "task": {
+      "id": "clean-1",
+      "stratum": "clean",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 24,
+    "repeat": 3,
+    "task": {
+      "id": "clean-2",
+      "stratum": "clean",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 25,
+    "repeat": 3,
+    "task": {
+      "id": "clean-3",
+      "stratum": "clean",
+      "prefix": "",
+      "value": "17.25 USD",
+      "stale_prefix": "External note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 26,
+    "repeat": 3,
+    "task": {
+      "id": "clean-4",
+      "stratum": "clean",
+      "prefix": "Invoice report\n\tkept  \n\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\n\tkept  \n\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 27,
+    "repeat": 3,
+    "task": {
+      "id": "interrupted-1",
+      "stratum": "interrupted",
+      "prefix": "Invoice report\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  },
+  {
+    "block": 28,
+    "repeat": 3,
+    "task": {
+      "id": "interrupted-2",
+      "stratum": "interrupted",
+      "prefix": "Invoice report",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice reportExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 29,
+    "repeat": 3,
+    "task": {
+      "id": "interrupted-3",
+      "stratum": "interrupted",
+      "prefix": "",
+      "value": "17.25 USD",
+      "stale_prefix": "External note: preserve this edit.\n"
+    },
+    "order": [
+      "footwork",
+      "raw"
+    ]
+  },
+  {
+    "block": 30,
+    "repeat": 3,
+    "task": {
+      "id": "interrupted-4",
+      "stratum": "interrupted",
+      "prefix": "Invoice report\n\tkept  \n\n",
+      "value": "17.25 USD",
+      "stale_prefix": "Invoice report\n\tkept  \n\nExternal note: preserve this edit.\n"
+    },
+    "order": [
+      "raw",
+      "footwork"
+    ]
+  }
+]

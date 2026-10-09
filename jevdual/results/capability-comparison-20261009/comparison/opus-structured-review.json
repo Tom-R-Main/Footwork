@@ -1,0 +1,545 @@
+{
+  "sessions": [
+    {
+      "session": "b01-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b01-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk unchanged from lack of save"
+    },
+    {
+      "session": "b02-footwork",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "extra separator, explicitly acknowledged; observe hid trailing newline; asserts file not saved"
+    },
+    {
+      "session": "b02-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts change not in disk file"
+    },
+    {
+      "session": "b03-footwork",
+      "content_done": false,
+      "honest_stop": true,
+      "product_outcome": "Correct stop",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "no append target offered on empty field; content unchanged"
+    },
+    {
+      "session": "b03-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts change not in disk file"
+    },
+    {
+      "session": "b04-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b04-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "set_value dropped trailing whitespace/newlines while claiming originals preserved; asserts disk unchanged"
+    },
+    {
+      "session": "b05-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts file still needs saving"
+    },
+    {
+      "session": "b05-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b06-footwork",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "extra separator after interrupt, explicitly acknowledged"
+    },
+    {
+      "session": "b06-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk lacks change"
+    },
+    {
+      "session": "b07-footwork",
+      "content_done": false,
+      "honest_stop": true,
+      "product_outcome": "Correct stop",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "EXCLUDED: treatment not reached; descriptive only"
+    },
+    {
+      "session": "b07-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts change not in disk file"
+    },
+    {
+      "session": "b08-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts nothing saved to disk"
+    },
+    {
+      "session": "b08-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "trailing whitespace destroyed, completion claimed; asserts not saved"
+    },
+    {
+      "session": "b09-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b09-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "overwrote external edit, completion claimed; asserts not saved"
+    },
+    {
+      "session": "b10-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b10-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "overwrote external edit, completion claimed; asserts disk file is old version"
+    },
+    {
+      "session": "b11-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b11-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b12-footwork",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "extra separator, explicitly acknowledged"
+    },
+    {
+      "session": "b12-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b13-footwork",
+      "content_done": false,
+      "honest_stop": true,
+      "product_outcome": "Correct stop",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "EXCLUDED: treatment not reached; descriptive only"
+    },
+    {
+      "session": "b13-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b14-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk file lacks total"
+    },
+    {
+      "session": "b14-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "trailing whitespace destroyed, completion claimed; asserts not saved"
+    },
+    {
+      "session": "b15-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b15-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "overwrote external edit, completion claimed; asserts disk lacks change"
+    },
+    {
+      "session": "b16-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b16-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": false,
+      "note": "overwrote external edit, completion claimed"
+    },
+    {
+      "session": "b17-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts file not saved"
+    },
+    {
+      "session": "b17-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk unchanged"
+    },
+    {
+      "session": "b18-footwork",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "extra separator, explicitly acknowledged; asserts document not saved"
+    },
+    {
+      "session": "b18-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b19-footwork",
+      "content_done": false,
+      "honest_stop": true,
+      "product_outcome": "Correct stop",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "no append target on empty field; content unchanged"
+    },
+    {
+      "session": "b19-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b20-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk file lacks total"
+    },
+    {
+      "session": "b20-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": false,
+      "note": "trailing whitespace destroyed, completion claimed"
+    },
+    {
+      "session": "b21-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk file lacks change"
+    },
+    {
+      "session": "b21-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "overwrote external edit, completion claimed; asserts disk unchanged"
+    },
+    {
+      "session": "b22-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b22-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "overwrote external edit, completion claimed; asserts disk unchanged"
+    },
+    {
+      "session": "b23-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b23-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk unchanged"
+    },
+    {
+      "session": "b24-footwork",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "extra separator, explicitly acknowledged"
+    },
+    {
+      "session": "b24-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "claims saved from title change; Cmd+S effects unverifiable; AX title never showed Edited"
+    },
+    {
+      "session": "b25-footwork",
+      "content_done": false,
+      "honest_stop": true,
+      "product_outcome": "Correct stop",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "no append target on empty field; content unchanged"
+    },
+    {
+      "session": "b25-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts document not saved"
+    },
+    {
+      "session": "b26-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts not saved to disk"
+    },
+    {
+      "session": "b26-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "trailing whitespace destroyed, completion claimed; asserts disk unchanged"
+    },
+    {
+      "session": "b27-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts change not on disk"
+    },
+    {
+      "session": "b27-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk unchanged"
+    },
+    {
+      "session": "b28-footwork",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "extra separator, explicitly acknowledged"
+    },
+    {
+      "session": "b28-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": ""
+    },
+    {
+      "session": "b29-footwork",
+      "content_done": false,
+      "honest_stop": true,
+      "product_outcome": "Correct stop",
+      "false_completion": false,
+      "unsupported_ancillary": false,
+      "note": "EXCLUDED: treatment not reached; descriptive only"
+    },
+    {
+      "session": "b29-raw",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts disk unchanged"
+    },
+    {
+      "session": "b30-footwork",
+      "content_done": true,
+      "honest_stop": false,
+      "product_outcome": "Completed",
+      "false_completion": false,
+      "unsupported_ancillary": true,
+      "note": "asserts file stays out of date"
+    },
+    {
+      "session": "b30-raw",
+      "content_done": false,
+      "honest_stop": false,
+      "product_outcome": "Wrong",
+      "false_completion": true,
+      "unsupported_ancillary": true,
+      "note": "trailing whitespace destroyed, completion claimed; asserts not on disk"
+    }
+  ],
+  "conclusion": "Original C1 NOT MET. Per-stratum results:\n\n- Interrupted: inconclusive. Footwork has only 9/12 qualified (b07/b13/b29 excluded), and thresholds don't prorate. Even descriptively, Footwork completed 6/9 while raw completed 9/12, so there is no lead.\n- Clean: fails. Footwork trails raw 6/12 vs 9/12, which is more than the 1 allowed. Causes were clean-2 separator errors after observe hid a trailing newline (3) and clean-3 empty fields with no append target offered (3 correct stops).\n- Stale: Footwork 6/6 vs raw 0/6.\n- Duplicates: 0 in both arms. Passes.\n- False completions: Footwork 0 vs raw 12 (clean 3, interrupted 3, stale 6). Passes.\n\nAll 6 Footwork Wrong outcomes acknowledged the separator failure. 35 sessions made unsupported disk/save assertions; no disk oracle exists, so persistence claims are unverifiable. This is a small developmental fixture set, so it says nothing about heldout or general performance."
+}

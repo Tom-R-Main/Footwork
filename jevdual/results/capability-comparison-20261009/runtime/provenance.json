@@ -1,0 +1,9 @@
+{
+  "runtime_receipt_sha256": "4a4a7d2252d1d98a3881d16eb7c1af1e76fa186b299326f472476f7ffb84cf61",
+  "execution_node": "/Users/thomasmain/.nvm/versions/node/v22.17.1/bin/node",
+  "execution_node_version": "v22.17.1",
+  "installation_node_version": "v26.5.1",
+  "reference_checkout_changed_by_this_package": false,
+  "provider_calls_in_probes": 0,
+  "private_runtime_root": "/Users/thomasmain/projects/footwork/output/capability-baseline-20261009"
+}

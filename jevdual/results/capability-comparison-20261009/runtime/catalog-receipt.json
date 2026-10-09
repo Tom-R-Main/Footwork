@@ -1,0 +1,76 @@
+{
+  "catalog_only": true,
+  "servers": {
+    "chrome": {
+      "server": {
+        "name": "chrome_devtools",
+        "title": "Chrome DevTools MCP server",
+        "version": "1.10.1"
+      },
+      "tools": [
+        "click",
+        "close_page",
+        "drag",
+        "emulate",
+        "fill",
+        "fill_form",
+        "get_console_message",
+        "get_css_styles",
+        "get_network_request",
+        "handle_dialog",
+        "hover",
+        "lighthouse_audit",
+        "list_console_messages",
+        "list_network_requests",
+        "list_pages",
+        "navigate_page",
+        "new_page",
+        "performance_analyze_insight",
+        "performance_start_trace",
+        "performance_stop_trace",
+        "press_key",
+        "resize_page",
+        "select_page",
+        "take_heapsnapshot",
+        "take_screenshot",
+        "take_snapshot",
+        "type_text",
+        "upload_file",
+        "wait_for"
+      ]
+    },
+    "native": {
+      "server": {
+        "name": "cua-driver",
+        "version": "0.28.2"
+      },
+      "tools": [
+        "get_window_state",
+        "type_text",
+        "press_key",
+        "hotkey",
+        "set_value"
+      ],
+      "outside_refusal": {
+        "content": [
+          {
+            "type": "text",
+            "text": "protected resource is outside the capability manifest: desktop pid 2147483647 window 2147483647 is outside the capability manifest"
+          }
+        ],
+        "structuredContent": {
+          "refusal": {
+            "code": "bounded_resource_outside_manifest",
+            "message": "protected resource is outside the capability manifest: desktop pid 2147483647 window 2147483647 is outside the capability manifest"
+          },
+          "status": "refused"
+        },
+        "isError": true,
+        "resultType": "complete"
+      }
+    }
+  },
+  "provider_calls": 0,
+  "native_catalog_is_bounded": true,
+  "runtime_receipt_sha256": "4a4a7d2252d1d98a3881d16eb7c1af1e76fa186b299326f472476f7ffb84cf61"
+}

@@ -176,3 +176,13 @@ block/task and pair completeness; decision_eligible remains false until complete
 claim review. Missing cost stops scheduling and reserves its session ceiling as an explicitly
 uncertain upper bound. Prior qualification/review spend is included in the $30 scheduling ceiling
 through --prior-cost. Numerical C1 thresholds, exact oracle and no-retry rule remain unchanged.
+
+## Result: 2026-10-09 19:24
+
+All sixty scheduled developmental sessions finished on frozen c7c418c (product/harness source 4f209be). Completed clean/interrupted/stale counts are Footwork **6/6/6**, raw **9/9/0**. Three Footwork interrupted empty-field sessions never reached the required mutation/kill and are retained as exclusions. The formal interrupted comparison is **inconclusive**, with no prorated thresholds; the nine matched qualified pairs descriptively tie at six completions each. The fully qualified clean guardrail fails: Footwork trails by three. Engineering decision: **stop and diagnose** text semantics and empty-field qualification before expanding the slice. Neither arm duplicated an append. False requested-content completions were Footwork zero, raw twelve; unsupported disk claims are separate.
+
+The final independent Opus structured review covers sixty cases and agrees on all outcome classes/false-completion flags, but its CLI terminal result is error_max_budget_usd after emitting the JSON. Its causal newline inference is rejected against the committed task reset and source; selected scoring evidence omitted the initial prefixes. The original mailbox peer did not respond to this package. These are AI reviews, not human or reciprocal peer approval.
+
+Measured CLI-reported cost estimate $11.8680668; qualification/initial reviews $2.6628026; final scoring $1.4148710; aggregate $15.9457404. The requested final-review $1 cap was soft and exceeded. All raw/private runs, failures and development exclusions are referenced by hashes. The current offline suite passed 1198 tests, with 26 skipped. Owned document/browser cleanup was freshly confirmed; five other TextEdit windows remain open. No measured retries, product/harness changes during measurement, pushes or public release.
+
+Evidence: `results/capability-comparison-20261009/comparison/report.md`, `summary.json`, `cases.json`, `schedule.json`, both structured claim reviews and `cleanup.json`; runtime and offline qualification are in sibling directories. Next work: `docs/plans/capability-remediation-20261009.md`. The preregistration and numerical rules above remain unchanged.
