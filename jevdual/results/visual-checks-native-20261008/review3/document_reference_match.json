@@ -1,0 +1,214 @@
+{
+  "request": {
+    "request_id": "b9b80b7d21eb44848086e9eb3a6aeea0",
+    "role": "document_reference_match",
+    "criterion_sha256": "7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5",
+    "criterion_version": "qa-v1",
+    "generation": "826286a8b6194c698fce8c735cb253f7",
+    "deadline_monotonic": 846213.809077291,
+    "evidence": {
+      "capture": {
+        "version": 1,
+        "inspection_only": true,
+        "surface": {
+          "kind": "native",
+          "pid": 81712,
+          "window_id": 28623,
+          "tab_id": null
+        },
+        "observation_id": "s00000004",
+        "captured_at": "2026-10-09T00:34:01.513359+00:00",
+        "image": {
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6",
+          "width": 1320,
+          "height": 936,
+          "scale_x": 2.0,
+          "scale_y": 2.0
+        },
+        "viewport": {
+          "x": 50.0,
+          "y": 434.0,
+          "width": 660.0,
+          "height": 468.0
+        },
+        "target": {
+          "id": "1",
+          "bounds": {
+            "x": 76.0,
+            "y": 859.0,
+            "width": 178.0,
+            "height": 22.0
+          },
+          "operation": "inspect",
+          "pixel_bounds": [
+            52,
+            850,
+            408,
+            894
+          ],
+          "postcondition_sha256": "7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5"
+        }
+      },
+      "capture_binding_sha256": "43e510cb17608ef751a0cbfab25b68d2dea55323942c4528168d18b312dfb4e1",
+      "generation": "826286a8b6194c698fce8c735cb253f7",
+      "capture_started": 846203.809077291,
+      "capture_finished": 846203.87392425,
+      "source_scope": [
+        "qa-source"
+      ],
+      "reference": {
+        "resource_id": "qa-source",
+        "revision": "qa-v1",
+        "page": 1,
+        "render_recipe": "pdftoppm-96dpi-page-1",
+        "dimensions": [
+          247,
+          347
+        ],
+        "image_sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+      },
+      "source": null,
+      "crop": null,
+      "display_transform_proven": false,
+      "display_transform": "caller_declared_unverified",
+      "accessible_text_sha256": "8d2d26f93a96bed71c9d4cb8dced6b8653eefb1f16601cfccfe0b80e1729cd40",
+      "coverage_warning": "Observed candidate only; native AX projection is not exhaustive.",
+      "declared_resource_ownership": "caller_supplied_unverified",
+      "ownership_proven": false,
+      "inspection_only": true
+    },
+    "disclosure_allowed": true,
+    "budget": {
+      "max_bytes": 4000000,
+      "max_input_tokens": 64000,
+      "max_calls": 1,
+      "max_cost_usd": 0.0064
+    },
+    "prompt_version": "visual-check-v1",
+    "advisory_only": true
+  },
+  "question": {
+    "role": "document_reference_match",
+    "criterion": "Compare the offered document preview to the supplied reference page",
+    "criterion_version": "qa-v1",
+    "target": {
+      "id": "1",
+      "bounds": {
+        "x": 76.0,
+        "y": 859.0,
+        "width": 178.0,
+        "height": 22.0
+      },
+      "operation": "inspect",
+      "pixel_bounds": [
+        52,
+        850,
+        408,
+        894
+      ],
+      "postcondition_sha256": "7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5"
+    },
+    "reference": {
+      "resource_id": "qa-source",
+      "revision": "qa-v1",
+      "page": 1,
+      "render_recipe": "pdftoppm-96dpi-page-1",
+      "dimensions": [
+        247,
+        347
+      ],
+      "image_sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+    },
+    "source": null,
+    "crop": null,
+    "resource_ownership_proven": false,
+    "display_transform_proven": false,
+    "result": {
+      "request_id": "b9b80b7d21eb44848086e9eb3a6aeea0",
+      "evidence_digest": "558d60d33a644c1d65ecd8726fcd7c9d863b94dfb12ca2d03c5260a3d6d2baa5",
+      "generation": "826286a8b6194c698fce8c735cb253f7",
+      "role": "document_reference_match",
+      "status": "valid",
+      "p": 0.97,
+      "reason": "",
+      "requested_model": "gpt-6-luna",
+      "returned_model": "gpt-6-luna",
+      "input_tokens": 100,
+      "output_tokens": null,
+      "elapsed_ms": 52.57758393418044,
+      "prompt_version": "visual-check-v1",
+      "request_digest": "08ee8d0f823102f67bc2392b1f3ad58b9237634a6c58f687c8940f24a1d03428",
+      "prompt_sha256": "66b9fefc71990f2334c49d14c125bc0d9ad570f3cbdd77bf3a1372f96e4e5db1",
+      "phases_ms": [
+        [
+          "encoding",
+          0.5102090071886778
+        ],
+        [
+          "provider",
+          51.16079200524837
+        ],
+        [
+          "validation",
+          0.3498330479487777
+        ]
+      ],
+      "advisory_only": true,
+      "execution_authority": false
+    },
+    "image_visible_to_s2": false,
+    "execution_authority": false
+  },
+  "result": {
+    "request_id": "b9b80b7d21eb44848086e9eb3a6aeea0",
+    "evidence_digest": "558d60d33a644c1d65ecd8726fcd7c9d863b94dfb12ca2d03c5260a3d6d2baa5",
+    "generation": "826286a8b6194c698fce8c735cb253f7",
+    "role": "document_reference_match",
+    "status": "valid",
+    "p": 0.97,
+    "reason": "",
+    "requested_model": "gpt-6-luna",
+    "returned_model": "gpt-6-luna",
+    "input_tokens": 100,
+    "output_tokens": null,
+    "elapsed_ms": 52.57758393418044,
+    "prompt_version": "visual-check-v1",
+    "request_digest": "08ee8d0f823102f67bc2392b1f3ad58b9237634a6c58f687c8940f24a1d03428",
+    "prompt_sha256": "66b9fefc71990f2334c49d14c125bc0d9ad570f3cbdd77bf3a1372f96e4e5db1",
+    "phases_ms": [
+      [
+        "encoding",
+        0.5102090071886778
+      ],
+      [
+        "provider",
+        51.16079200524837
+      ],
+      [
+        "validation",
+        0.3498330479487777
+      ]
+    ],
+    "advisory_only": true,
+    "execution_authority": false
+  },
+  "escalation": {
+    "request_id": "b9b80b7d21eb44848086e9eb3a6aeea0",
+    "role": "document_reference_match",
+    "generation": "826286a8b6194c698fce8c735cb253f7",
+    "evidence_digest": "558d60d33a644c1d65ecd8726fcd7c9d863b94dfb12ca2d03c5260a3d6d2baa5",
+    "reason": "valid",
+    "coverage_warning": "Observed candidate only; native AX projection is not exhaustive.",
+    "remaining_recovery": 0,
+    "image_visible_to_s2": false,
+    "pixel_question_resolved": false,
+    "execution_authority": false
+  },
+  "previous_action_receipt": null,
+  "screenshot": "826286a8b6194c698fce8c735cb253f7.png",
+  "capture_atomic": false,
+  "capture_time_basis": "native receipt time; monotonic interval brackets driver call",
+  "retention": "private session evidence; retained until operator removes the session",
+  "image_visible_to_s2": false,
+  "execution_authority": false
+}

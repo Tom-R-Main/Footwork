@@ -4,7 +4,7 @@ Plan review and remediation, 2026-10-08. Updated implementation status: the nati
 
 ## Implementation status
 
-The new [visual-check command](visual-checks.md) supports both typed families, private native captures, explicit disclosure, bounded/persisted provider reservations, final source/generation invalidation and redacted question/result handoff. [Actual CLI verification](../results/visual-checks-native-20261008/report.md) exercises separate task-owned document/crop scenes through Cua and the production adapter against a loopback contract server. Full offline checks pass 1,023 tests with 26 skipped. The fixed server probabilities prove mechanics, not perception accuracy or real OpenAI performance; no paid provider calls were made. Normal action policy does not invoke the service automatically.
+The new [visual-check command](visual-checks.md) supports both typed families, private native captures, explicit disclosure, bounded/persisted provider reservations, final source/generation invalidation and redacted question/result handoff. [Post-implementation review and native requalification](../results/visual-checks-review-20261008/report.md) fixes six reproduced defects and a library source-validity gap. Its final native pass exercises fifteen selected scenarios in task-owned document/crop scenes through Cua and the production adapter against a loopback contract server. Full offline checks pass 1,031 tests with 26 skipped. The fixed server probabilities prove mechanics, not perception accuracy or real OpenAI performance; no paid provider calls were made. Normal action policy does not invoke the service automatically.
 
 ## Recommendation and scope
 

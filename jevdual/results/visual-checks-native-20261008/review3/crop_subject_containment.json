@@ -1,0 +1,242 @@
+{
+  "request": {
+    "request_id": "f9c1a56bc3254ec1844a98f14177d0ed",
+    "role": "crop_subject_containment",
+    "criterion_sha256": "2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5",
+    "criterion_version": "qa-v1",
+    "generation": "4be612911d614907aae11e1829e8a647",
+    "deadline_monotonic": 846214.310742208,
+    "evidence": {
+      "capture": {
+        "version": 1,
+        "inspection_only": true,
+        "surface": {
+          "kind": "native",
+          "pid": 81711,
+          "window_id": 28622,
+          "tab_id": null
+        },
+        "observation_id": "s00000009",
+        "captured_at": "2026-10-09T00:34:02.013291+00:00",
+        "image": {
+          "sha256": "99d3ff7309490a21324cd3747b4b812ea21e39afe4ba8d9e21c4e4e0f4ed3113",
+          "width": 1320,
+          "height": 936,
+          "scale_x": 2.0,
+          "scale_y": 2.0
+        },
+        "viewport": {
+          "x": 50.0,
+          "y": 434.0,
+          "width": 660.0,
+          "height": 468.0
+        },
+        "target": {
+          "id": "1",
+          "bounds": {
+            "x": 76.0,
+            "y": 859.0,
+            "width": 178.0,
+            "height": 22.0
+          },
+          "operation": "inspect",
+          "pixel_bounds": [
+            52,
+            850,
+            408,
+            894
+          ],
+          "postcondition_sha256": "2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5"
+        }
+      },
+      "capture_binding_sha256": "0790b2254df22bee5d98b6acd1ca1889eed0604f6eea648d0f0b4ede8aaaf0ac",
+      "generation": "4be612911d614907aae11e1829e8a647",
+      "capture_started": 846204.310742208,
+      "capture_finished": 846204.373844875,
+      "source_scope": [
+        "qa-source"
+      ],
+      "reference": null,
+      "source": {
+        "resource_id": "qa-source",
+        "revision": "qa-v1",
+        "page": 1,
+        "render_recipe": "supplied_png",
+        "dimensions": [
+          620,
+          316
+        ],
+        "image_sha256": "e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207"
+      },
+      "crop": {
+        "rectangle": {
+          "x": 220.0,
+          "y": 45.0,
+          "width": 180.0,
+          "height": 235.0
+        },
+        "displayed_bounds": {
+          "x": 70.0,
+          "y": 524.0,
+          "width": 620.0,
+          "height": 316.0
+        },
+        "orientation": "upright"
+      },
+      "display_transform_proven": false,
+      "display_transform": "caller_declared_unverified",
+      "accessible_text_sha256": "8c16a475db30841d38faeb64596840fe00639b514185bb1136d6d7618132c38d",
+      "coverage_warning": "Observed candidate only; native AX projection is not exhaustive.",
+      "declared_resource_ownership": "caller_supplied_unverified",
+      "ownership_proven": false,
+      "inspection_only": true
+    },
+    "disclosure_allowed": true,
+    "budget": {
+      "max_bytes": 4000000,
+      "max_input_tokens": 64000,
+      "max_calls": 1,
+      "max_cost_usd": 0.0064
+    },
+    "prompt_version": "visual-check-v1",
+    "advisory_only": true
+  },
+  "question": {
+    "role": "crop_subject_containment",
+    "criterion": "Retain the whole visible subject inside the supplied crop",
+    "criterion_version": "qa-v1",
+    "target": {
+      "id": "1",
+      "bounds": {
+        "x": 76.0,
+        "y": 859.0,
+        "width": 178.0,
+        "height": 22.0
+      },
+      "operation": "inspect",
+      "pixel_bounds": [
+        52,
+        850,
+        408,
+        894
+      ],
+      "postcondition_sha256": "2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5"
+    },
+    "reference": null,
+    "source": {
+      "resource_id": "qa-source",
+      "revision": "qa-v1",
+      "page": 1,
+      "render_recipe": "supplied_png",
+      "dimensions": [
+        620,
+        316
+      ],
+      "image_sha256": "e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207"
+    },
+    "crop": {
+      "rectangle": {
+        "x": 220.0,
+        "y": 45.0,
+        "width": 180.0,
+        "height": 235.0
+      },
+      "displayed_bounds": {
+        "x": 70.0,
+        "y": 524.0,
+        "width": 620.0,
+        "height": 316.0
+      },
+      "orientation": "upright"
+    },
+    "resource_ownership_proven": false,
+    "display_transform_proven": false,
+    "result": {
+      "request_id": "f9c1a56bc3254ec1844a98f14177d0ed",
+      "evidence_digest": "19d2156a40db07b19ffbc8bf9dc6579a0ff63be8b545e307584105fb91eb04d4",
+      "generation": "4be612911d614907aae11e1829e8a647",
+      "role": "crop_subject_containment",
+      "status": "valid",
+      "p": 0.97,
+      "reason": "",
+      "requested_model": "gpt-6-luna",
+      "returned_model": "gpt-6-luna",
+      "input_tokens": 100,
+      "output_tokens": null,
+      "elapsed_ms": 12.473167036660016,
+      "prompt_version": "visual-check-v1",
+      "request_digest": "031bd6b96183c2bbe42b0200617fc7056d2a4b322b516a6bb3a99e9f0b149f1f",
+      "prompt_sha256": "cefa035c292c02bf629e218f21293ed94030316be6cdc50d586a4df11a46773c",
+      "phases_ms": [
+        [
+          "encoding",
+          0.5573750240728259
+        ],
+        [
+          "provider",
+          11.110708001069725
+        ],
+        [
+          "validation",
+          0.29429199639707804
+        ]
+      ],
+      "advisory_only": true,
+      "execution_authority": false
+    },
+    "image_visible_to_s2": false,
+    "execution_authority": false
+  },
+  "result": {
+    "request_id": "f9c1a56bc3254ec1844a98f14177d0ed",
+    "evidence_digest": "19d2156a40db07b19ffbc8bf9dc6579a0ff63be8b545e307584105fb91eb04d4",
+    "generation": "4be612911d614907aae11e1829e8a647",
+    "role": "crop_subject_containment",
+    "status": "valid",
+    "p": 0.97,
+    "reason": "",
+    "requested_model": "gpt-6-luna",
+    "returned_model": "gpt-6-luna",
+    "input_tokens": 100,
+    "output_tokens": null,
+    "elapsed_ms": 12.473167036660016,
+    "prompt_version": "visual-check-v1",
+    "request_digest": "031bd6b96183c2bbe42b0200617fc7056d2a4b322b516a6bb3a99e9f0b149f1f",
+    "prompt_sha256": "cefa035c292c02bf629e218f21293ed94030316be6cdc50d586a4df11a46773c",
+    "phases_ms": [
+      [
+        "encoding",
+        0.5573750240728259
+      ],
+      [
+        "provider",
+        11.110708001069725
+      ],
+      [
+        "validation",
+        0.29429199639707804
+      ]
+    ],
+    "advisory_only": true,
+    "execution_authority": false
+  },
+  "escalation": {
+    "request_id": "f9c1a56bc3254ec1844a98f14177d0ed",
+    "role": "crop_subject_containment",
+    "generation": "4be612911d614907aae11e1829e8a647",
+    "evidence_digest": "19d2156a40db07b19ffbc8bf9dc6579a0ff63be8b545e307584105fb91eb04d4",
+    "reason": "valid",
+    "coverage_warning": "Observed candidate only; native AX projection is not exhaustive.",
+    "remaining_recovery": 0,
+    "image_visible_to_s2": false,
+    "pixel_question_resolved": false,
+    "execution_authority": false
+  },
+  "previous_action_receipt": null,
+  "screenshot": "4be612911d614907aae11e1829e8a647.png",
+  "capture_atomic": false,
+  "capture_time_basis": "native receipt time; monotonic interval brackets driver call",
+  "retention": "private session evidence; retained until operator removes the session",
+  "image_visible_to_s2": false,
+  "execution_authority": false
+}

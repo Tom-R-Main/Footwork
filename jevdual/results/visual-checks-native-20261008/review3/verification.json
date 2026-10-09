@@ -1,0 +1,610 @@
+{
+  "provider_boundary": "production client, official URL intercepted into owned loopback server",
+  "semantic_accuracy": "unqualified; fixed provider predicates",
+  "application_discovery": "unqualified",
+  "reference_recipe": "pdftoppm page 1, 96 dpi PNG; run-owned source-0.pdf",
+  "reference_resource_sha256": "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+  "fixture_binding": "ready pid/window supplied; real CLI and Cua SDK observations",
+  "source_sha256": {
+    "scripts/verify_visual_checks.py": "be2d7f2077c762ecc342fa04e37df4a5304fce53d79349eb0203c83049687b86",
+    "python/jevdual/visual_checks.py": "206e9c32b42ac58c56e6634a19e8760fb829589222f583ae1467acc3f9cc1e20",
+    "python/jevdual/visual_decisions.py": "c7133e3119cbe5f0432a5f9cfe5d81d2dc69a40e4e431b6e9e412599dcf7a3be",
+    "python/jevdual/visual_native.py": "c10fabc53f325c65c486f41e6e0ac0a726a4cf72d095f3c7e0484bfbf059a10b",
+    "python/jevdual/native.py": "7ebfa295960a2b143be7d9f28324c13cfa8f1a5808f9c42cfa53f6cfb96bd650",
+    "python/jevdual/session.py": "1eea62d4ee29e99dc9fea2838856d63c07ebab0c35500ecf0cde3fa126ae8839",
+    "python/jevdual/cli.py": "74f564dcb040a7f56a3d2eaa8385dde2cfebf2a8213d568a34bb37a82e61cfd1",
+    "python/jevdual/desktop_s2.py": "5f9623f17e7392faedad5a831c008c91d808a30725aa932e072a0a37ba2de4e1"
+  },
+  "fixture_readiness": [
+    {
+      "window_id": 28622,
+      "pid": 81711
+    },
+    {
+      "window_id": 28623,
+      "pid": 81712
+    }
+  ],
+  "checks": {
+    "prepare-valid-unavailable": {
+      "status": "unavailable",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/review3/prepare/visual/86be8c5ba6cb48059a305c26eb5fca77.json"
+    },
+    "document_reference_match-valid-valid": {
+      "status": "valid",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/document_reference_match/visual/826286a8b6194c698fce8c735cb253f7.json"
+    },
+    "document_reference_match-valid-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/review3/document_reference_match/visual/690fde9bbfe147cabd9a3f77393a4b7e.json"
+    },
+    "document_reference_match-interrupted_ledger-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/review3/document_reference_match/visual/3c9fedd7014c4aaa9e2e752fdf5cc82d.json"
+    },
+    "crop_subject_containment-valid-valid": {
+      "status": "valid",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/crop_subject_containment/visual/4be612911d614907aae11e1829e8a647.json"
+    },
+    "crop_subject_containment-valid-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/review3/crop_subject_containment/visual/2a7f23c5b3a24abf80bb1f8f00c5fd10.json"
+    },
+    "crop_subject_containment-interrupted_ledger-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/review3/crop_subject_containment/visual/bdfe5d5ad20f4e409ecde97ba3416e3c.json"
+    },
+    "publication_changed-valid-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/publication_changed/visual/bd539e41797c4761bfb8beacaeef6cee.json"
+    },
+    "refusal-refusal-refusal": {
+      "status": "refusal",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/refusal/visual/a91a53f5ffcd4bb4baf28f9dfbc3abf9.json"
+    },
+    "timeout-timeout-timeout": {
+      "status": "timeout",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/timeout/visual/17844b9f715943b6a19012dd707f99e1.json"
+    },
+    "source_changed-source_changed-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/source_changed/visual/0fd67f9d1d894165956be624d5de7023.json"
+    },
+    "generation_changed-generation_changed-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/review3/generation_changed/visual/0f50d037a80f4f2fbece4ca2774dce87.json"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/prepare"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/prepare",
+        "--request",
+        "request.json"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/prepare/visual/86be8c5ba6cb48059a305c26eb5fca77.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"fc38d040982d4e9db57e2383ea564a55\", \"evidence_digest\": \"4db4bc2367b3afba19c2228cfe3657f427ea309116a31aab716072fda004c93f\", \"generation\": \"86be8c5ba6cb48059a305c26eb5fca77\", \"role\": \"document_reference_match\", \"status\": \"unavailable\", \"p\": null, \"reason\": \"provider_unconfigured\", \"requested_model\": \"\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": null, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"d32c1a3297bbae7b0e884576603c95e250bc21df0ec28eb5eb9bef2962eb4c78\", \"prompt_sha256\": \"\", \"phases_ms\": [], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"fc38d040982d4e9db57e2383ea564a55\", \"evidence_digest\": \"4db4bc2367b3afba19c2228cfe3657f427ea309116a31aab716072fda004c93f\", \"generation\": \"86be8c5ba6cb48059a305c26eb5fca77\", \"role\": \"document_reference_match\", \"status\": \"unavailable\", \"p\": null, \"reason\": \"provider_unconfigured\", \"requested_model\": \"\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": null, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"d32c1a3297bbae7b0e884576603c95e250bc21df0ec28eb5eb9bef2962eb4c78\", \"prompt_sha256\": \"\", \"phases_ms\": [], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"fc38d040982d4e9db57e2383ea564a55\", \"role\": \"document_reference_match\", \"generation\": \"86be8c5ba6cb48059a305c26eb5fca77\", \"evidence_digest\": \"4db4bc2367b3afba19c2228cfe3657f427ea309116a31aab716072fda004c93f\", \"reason\": \"provider_unconfigured\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 0,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match/visual/826286a8b6194c698fce8c735cb253f7.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"b9b80b7d21eb44848086e9eb3a6aeea0\", \"evidence_digest\": \"558d60d33a644c1d65ecd8726fcd7c9d863b94dfb12ca2d03c5260a3d6d2baa5\", \"generation\": \"826286a8b6194c698fce8c735cb253f7\", \"role\": \"document_reference_match\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 52.57758393418044, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"08ee8d0f823102f67bc2392b1f3ad58b9237634a6c58f687c8940f24a1d03428\", \"prompt_sha256\": \"66b9fefc71990f2334c49d14c125bc0d9ad570f3cbdd77bf3a1372f96e4e5db1\", \"phases_ms\": [[\"encoding\", 0.5102090071886778], [\"provider\", 51.16079200524837], [\"validation\", 0.3498330479487777]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"b9b80b7d21eb44848086e9eb3a6aeea0\", \"evidence_digest\": \"558d60d33a644c1d65ecd8726fcd7c9d863b94dfb12ca2d03c5260a3d6d2baa5\", \"generation\": \"826286a8b6194c698fce8c735cb253f7\", \"role\": \"document_reference_match\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 52.57758393418044, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"08ee8d0f823102f67bc2392b1f3ad58b9237634a6c58f687c8940f24a1d03428\", \"prompt_sha256\": \"66b9fefc71990f2334c49d14c125bc0d9ad570f3cbdd77bf3a1372f96e4e5db1\", \"phases_ms\": [[\"encoding\", 0.5102090071886778], [\"provider\", 51.16079200524837], [\"validation\", 0.3498330479487777]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"b9b80b7d21eb44848086e9eb3a6aeea0\", \"role\": \"document_reference_match\", \"generation\": \"826286a8b6194c698fce8c735cb253f7\", \"evidence_digest\": \"558d60d33a644c1d65ecd8726fcd7c9d863b94dfb12ca2d03c5260a3d6d2baa5\", \"reason\": \"valid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match/visual/690fde9bbfe147cabd9a3f77393a4b7e.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"9ba58c96532b4cce979e918fbb4da2f1\", \"evidence_digest\": \"d014fd0f495233dbe1e3c08da161f72c58aa42c784e6d5c8e405beaa12fb3d64\", \"generation\": \"690fde9bbfe147cabd9a3f77393a4b7e\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.7870830595493317, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"c079f6f3269c7e5920f9a53f317eaddc9a8713950938ffac39c79e584df1039d\", \"prompt_sha256\": \"e4d7c542f14977ab027bc0a1b7ab9d615dfcc0f0b50b63046499ba4c54080f97\", \"phases_ms\": [[\"encoding\", 0.5051250336691737]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"9ba58c96532b4cce979e918fbb4da2f1\", \"evidence_digest\": \"d014fd0f495233dbe1e3c08da161f72c58aa42c784e6d5c8e405beaa12fb3d64\", \"generation\": \"690fde9bbfe147cabd9a3f77393a4b7e\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.7870830595493317, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"c079f6f3269c7e5920f9a53f317eaddc9a8713950938ffac39c79e584df1039d\", \"prompt_sha256\": \"e4d7c542f14977ab027bc0a1b7ab9d615dfcc0f0b50b63046499ba4c54080f97\", \"phases_ms\": [[\"encoding\", 0.5051250336691737]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"9ba58c96532b4cce979e918fbb4da2f1\", \"role\": \"document_reference_match\", \"generation\": \"690fde9bbfe147cabd9a3f77393a4b7e\", \"evidence_digest\": \"d014fd0f495233dbe1e3c08da161f72c58aa42c784e6d5c8e405beaa12fb3d64\", \"reason\": \"duplicate_evidence\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/document_reference_match/visual/3c9fedd7014c4aaa9e2e752fdf5cc82d.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"71978c22b1ea4d92b7be70620eeff8bc\", \"evidence_digest\": \"22e1fff3c4e5151f762f0a98c8938bb18dea7bc021ca8b9870c8651693bb656d\", \"generation\": \"3c9fedd7014c4aaa9e2e752fdf5cc82d\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"ledger_invalid\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.775291002355516, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"ac0effb2da20905c5dbaf6eb49257cf11555a78f1610aef611d96a111e3d72e2\", \"prompt_sha256\": \"2cab99e5e6d73c395c2aeb507c0ef8c40d3e804026036597b2b61032b857f150\", \"phases_ms\": [[\"encoding\", 0.5339159397408366]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"71978c22b1ea4d92b7be70620eeff8bc\", \"evidence_digest\": \"22e1fff3c4e5151f762f0a98c8938bb18dea7bc021ca8b9870c8651693bb656d\", \"generation\": \"3c9fedd7014c4aaa9e2e752fdf5cc82d\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"ledger_invalid\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.775291002355516, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"ac0effb2da20905c5dbaf6eb49257cf11555a78f1610aef611d96a111e3d72e2\", \"prompt_sha256\": \"2cab99e5e6d73c395c2aeb507c0ef8c40d3e804026036597b2b61032b857f150\", \"phases_ms\": [[\"encoding\", 0.5339159397408366]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"71978c22b1ea4d92b7be70620eeff8bc\", \"role\": \"document_reference_match\", \"generation\": \"3c9fedd7014c4aaa9e2e752fdf5cc82d\", \"evidence_digest\": \"22e1fff3c4e5151f762f0a98c8938bb18dea7bc021ca8b9870c8651693bb656d\", \"reason\": \"ledger_invalid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Apply proposed crop'\n  [   2] button     'Apply safe crop'\npage text (89 chars):\nApply the displayed crop while preserving the entire subject.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "inspect-target",
+        "1",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment",
+        "--postcondition",
+        "Read-only source canvas geometry"
+      ],
+      "exit": 0,
+      "stdout": "inspection: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment/inspection/4c563cd7f65b473495db4f070645cef0.json\npreview: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment/inspection/4c563cd7f65b473495db4f070645cef0.html\nread-only evidence recorded; no action or postcondition was verified\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 0,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment/visual/4be612911d614907aae11e1829e8a647.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"f9c1a56bc3254ec1844a98f14177d0ed\", \"evidence_digest\": \"19d2156a40db07b19ffbc8bf9dc6579a0ff63be8b545e307584105fb91eb04d4\", \"generation\": \"4be612911d614907aae11e1829e8a647\", \"role\": \"crop_subject_containment\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.473167036660016, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"031bd6b96183c2bbe42b0200617fc7056d2a4b322b516a6bb3a99e9f0b149f1f\", \"prompt_sha256\": \"cefa035c292c02bf629e218f21293ed94030316be6cdc50d586a4df11a46773c\", \"phases_ms\": [[\"encoding\", 0.5573750240728259], [\"provider\", 11.110708001069725], [\"validation\", 0.29429199639707804]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"f9c1a56bc3254ec1844a98f14177d0ed\", \"evidence_digest\": \"19d2156a40db07b19ffbc8bf9dc6579a0ff63be8b545e307584105fb91eb04d4\", \"generation\": \"4be612911d614907aae11e1829e8a647\", \"role\": \"crop_subject_containment\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.473167036660016, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"031bd6b96183c2bbe42b0200617fc7056d2a4b322b516a6bb3a99e9f0b149f1f\", \"prompt_sha256\": \"cefa035c292c02bf629e218f21293ed94030316be6cdc50d586a4df11a46773c\", \"phases_ms\": [[\"encoding\", 0.5573750240728259], [\"provider\", 11.110708001069725], [\"validation\", 0.29429199639707804]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"f9c1a56bc3254ec1844a98f14177d0ed\", \"role\": \"crop_subject_containment\", \"generation\": \"4be612911d614907aae11e1829e8a647\", \"evidence_digest\": \"19d2156a40db07b19ffbc8bf9dc6579a0ff63be8b545e307584105fb91eb04d4\", \"reason\": \"valid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment/visual/2a7f23c5b3a24abf80bb1f8f00c5fd10.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"4332f37e80fe4dd1abf6350cc82b2246\", \"evidence_digest\": \"ba2ee57efa3939a6ed8c0a7f897e0a2c26d5273744832eec4766729cda1ea378\", \"generation\": \"2a7f23c5b3a24abf80bb1f8f00c5fd10\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.6702080136165023, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"2a7002262b3a04c6f0a46d1caea33aa4e3320bfa9c22163c0d717ef0bd40b7fd\", \"prompt_sha256\": \"babdb98ac54bd1696ccfe689d152f2b70567e9e39e196ab1842a4415a656cdf7\", \"phases_ms\": [[\"encoding\", 0.415208050981164]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"4332f37e80fe4dd1abf6350cc82b2246\", \"evidence_digest\": \"ba2ee57efa3939a6ed8c0a7f897e0a2c26d5273744832eec4766729cda1ea378\", \"generation\": \"2a7f23c5b3a24abf80bb1f8f00c5fd10\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.6702080136165023, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"2a7002262b3a04c6f0a46d1caea33aa4e3320bfa9c22163c0d717ef0bd40b7fd\", \"prompt_sha256\": \"babdb98ac54bd1696ccfe689d152f2b70567e9e39e196ab1842a4415a656cdf7\", \"phases_ms\": [[\"encoding\", 0.415208050981164]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"4332f37e80fe4dd1abf6350cc82b2246\", \"role\": \"crop_subject_containment\", \"generation\": \"2a7f23c5b3a24abf80bb1f8f00c5fd10\", \"evidence_digest\": \"ba2ee57efa3939a6ed8c0a7f897e0a2c26d5273744832eec4766729cda1ea378\", \"reason\": \"duplicate_evidence\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/crop_subject_containment/visual/bdfe5d5ad20f4e409ecde97ba3416e3c.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"08d494a0cf6a4adf8e9e72bb9a261dad\", \"evidence_digest\": \"44cb62288617abab9bebcf38cfae467ec7d0c6f58c15a2b6c801a801fee7cdd7\", \"generation\": \"bdfe5d5ad20f4e409ecde97ba3416e3c\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"ledger_invalid\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.6094169802963734, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"144e1d58cabe3c2a6d9e74aaeac7aaa869f258c85f196ee20215847b701a6439\", \"prompt_sha256\": \"a9364c7929d415a1d0e9b241319623d305b189bac9d170f2f0664f38908486c8\", \"phases_ms\": [[\"encoding\", 0.3974169958382845]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"08d494a0cf6a4adf8e9e72bb9a261dad\", \"evidence_digest\": \"44cb62288617abab9bebcf38cfae467ec7d0c6f58c15a2b6c801a801fee7cdd7\", \"generation\": \"bdfe5d5ad20f4e409ecde97ba3416e3c\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"ledger_invalid\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.6094169802963734, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"144e1d58cabe3c2a6d9e74aaeac7aaa869f258c85f196ee20215847b701a6439\", \"prompt_sha256\": \"a9364c7929d415a1d0e9b241319623d305b189bac9d170f2f0664f38908486c8\", \"phases_ms\": [[\"encoding\", 0.3974169958382845]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"08d494a0cf6a4adf8e9e72bb9a261dad\", \"role\": \"crop_subject_containment\", \"generation\": \"bdfe5d5ad20f4e409ecde97ba3416e3c\", \"evidence_digest\": \"44cb62288617abab9bebcf38cfae467ec7d0c6f58c15a2b6c801a801fee7cdd7\", \"reason\": \"ledger_invalid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/publication_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/publication_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/publication_changed/visual/bd539e41797c4761bfb8beacaeef6cee.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"e1bb45ab1e9f452b8a96a9bf8282ff55\", \"evidence_digest\": \"7f784b9688b2ca9361e16f74e007eb13f1de22b17ee5ff4d7d2c2753a8054265\", \"generation\": \"bd539e41797c4761bfb8beacaeef6cee\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.739458004944026, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"a75037714284f2784da188f20720569351fdc44fc87706e4d9e7652a6397788c\", \"prompt_sha256\": \"2fc101c1bd7a9afce5fc0f74085a489633667d02f6b4a1aa9df451ce96c5361f\", \"phases_ms\": [[\"encoding\", 0.4926250549033284], [\"provider\", 11.217042105272412], [\"validation\", 0.34312496427446604]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"e1bb45ab1e9f452b8a96a9bf8282ff55\", \"evidence_digest\": \"7f784b9688b2ca9361e16f74e007eb13f1de22b17ee5ff4d7d2c2753a8054265\", \"generation\": \"bd539e41797c4761bfb8beacaeef6cee\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.739458004944026, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"a75037714284f2784da188f20720569351fdc44fc87706e4d9e7652a6397788c\", \"prompt_sha256\": \"2fc101c1bd7a9afce5fc0f74085a489633667d02f6b4a1aa9df451ce96c5361f\", \"phases_ms\": [[\"encoding\", 0.4926250549033284], [\"provider\", 11.217042105272412], [\"validation\", 0.34312496427446604]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"e1bb45ab1e9f452b8a96a9bf8282ff55\", \"role\": \"document_reference_match\", \"generation\": \"bd539e41797c4761bfb8beacaeef6cee\", \"evidence_digest\": \"7f784b9688b2ca9361e16f74e007eb13f1de22b17ee5ff4d7d2c2753a8054265\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/refusal"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/refusal",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/refusal/visual/a91a53f5ffcd4bb4baf28f9dfbc3abf9.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"e4e44cc76d1349e1be4301a169b5dedf\", \"evidence_digest\": \"1831f400380c7af531cc42b95059707fc283128e16145604c6ca4eb15803e566\", \"generation\": \"a91a53f5ffcd4bb4baf28f9dfbc3abf9\", \"role\": \"document_reference_match\", \"status\": \"refusal\", \"p\": null, \"reason\": \"refusal\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.988417060114443, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"26c6d824f927648faad58c5e6a88478632d7754b35d25430a257285cdfdedad9\", \"prompt_sha256\": \"5282ae3a22582fc7622b6444408d187e6141165b04f72d63cabf01b012967b64\", \"phases_ms\": [[\"encoding\", 0.49183296505361795], [\"provider\", 11.618250049650669]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"e4e44cc76d1349e1be4301a169b5dedf\", \"evidence_digest\": \"1831f400380c7af531cc42b95059707fc283128e16145604c6ca4eb15803e566\", \"generation\": \"a91a53f5ffcd4bb4baf28f9dfbc3abf9\", \"role\": \"document_reference_match\", \"status\": \"refusal\", \"p\": null, \"reason\": \"refusal\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.988417060114443, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"26c6d824f927648faad58c5e6a88478632d7754b35d25430a257285cdfdedad9\", \"prompt_sha256\": \"5282ae3a22582fc7622b6444408d187e6141165b04f72d63cabf01b012967b64\", \"phases_ms\": [[\"encoding\", 0.49183296505361795], [\"provider\", 11.618250049650669]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"e4e44cc76d1349e1be4301a169b5dedf\", \"role\": \"document_reference_match\", \"generation\": \"a91a53f5ffcd4bb4baf28f9dfbc3abf9\", \"evidence_digest\": \"1831f400380c7af531cc42b95059707fc283128e16145604c6ca4eb15803e566\", \"reason\": \"refusal\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/timeout"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/timeout",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose",
+        "--timeout",
+        "1"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/timeout/visual/17844b9f715943b6a19012dd707f99e1.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"b316f35c2d4a47bc9fa3b370510d45d8\", \"evidence_digest\": \"d0e41356ba060fb2deb107359db6fe549bfd3a552fb43c7f564432191ceb9c50\", \"generation\": \"17844b9f715943b6a19012dd707f99e1\", \"role\": \"document_reference_match\", \"status\": \"timeout\", \"p\": null, \"reason\": \"deadline_or_transport_timeout\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 928.938917000778, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"3339bc83b0ee1db8119b387596cba190eba5ecfc22ad129f61d74bed2e0fa100\", \"prompt_sha256\": \"4e1299f737f361554a6f046f0402b69475fdc1609b3da3455f52e0b44c4e01e8\", \"phases_ms\": [[\"encoding\", 0.4507920239120722]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"b316f35c2d4a47bc9fa3b370510d45d8\", \"evidence_digest\": \"d0e41356ba060fb2deb107359db6fe549bfd3a552fb43c7f564432191ceb9c50\", \"generation\": \"17844b9f715943b6a19012dd707f99e1\", \"role\": \"document_reference_match\", \"status\": \"timeout\", \"p\": null, \"reason\": \"deadline_or_transport_timeout\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 928.938917000778, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"3339bc83b0ee1db8119b387596cba190eba5ecfc22ad129f61d74bed2e0fa100\", \"prompt_sha256\": \"4e1299f737f361554a6f046f0402b69475fdc1609b3da3455f52e0b44c4e01e8\", \"phases_ms\": [[\"encoding\", 0.4507920239120722]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"b316f35c2d4a47bc9fa3b370510d45d8\", \"role\": \"document_reference_match\", \"generation\": \"17844b9f715943b6a19012dd707f99e1\", \"evidence_digest\": \"d0e41356ba060fb2deb107359db6fe549bfd3a552fb43c7f564432191ceb9c50\", \"reason\": \"deadline_or_transport_timeout\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/source_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/source_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/source_changed/visual/0fd67f9d1d894165956be624d5de7023.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"f726b7a1ef1049d69fba9a5d8344ef09\", \"evidence_digest\": \"7c61e9d8fe1eee4ddf13805bf1377c6ab9163dc74a3107e2991014b2ab751c82\", \"generation\": \"0fd67f9d1d894165956be624d5de7023\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.068792060948908, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"a0ed05f3b6f9fb8f20a22d6209ae7b1be23c6525bbca3d73d4d6e5fe3cd79de4\", \"prompt_sha256\": \"be6b0becbe31acb7e516a5251932ff30f5bfdd98c89e994a622a07e464ae8ea9\", \"phases_ms\": [[\"encoding\", 0.5353750893846154], [\"provider\", 11.704041971825063], [\"validation\", 0.29004202224314213]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"f726b7a1ef1049d69fba9a5d8344ef09\", \"evidence_digest\": \"7c61e9d8fe1eee4ddf13805bf1377c6ab9163dc74a3107e2991014b2ab751c82\", \"generation\": \"0fd67f9d1d894165956be624d5de7023\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 13.068792060948908, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"a0ed05f3b6f9fb8f20a22d6209ae7b1be23c6525bbca3d73d4d6e5fe3cd79de4\", \"prompt_sha256\": \"be6b0becbe31acb7e516a5251932ff30f5bfdd98c89e994a622a07e464ae8ea9\", \"phases_ms\": [[\"encoding\", 0.5353750893846154], [\"provider\", 11.704041971825063], [\"validation\", 0.29004202224314213]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"f726b7a1ef1049d69fba9a5d8344ef09\", \"role\": \"document_reference_match\", \"generation\": \"0fd67f9d1d894165956be624d5de7023\", \"evidence_digest\": \"7c61e9d8fe1eee4ddf13805bf1377c6ab9163dc74a3107e2991014b2ab751c82\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/generation_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/generation_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/generation_changed/visual/0f50d037a80f4f2fbece4ca2774dce87.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"f6e39b1dd3b54164aeeb96191f4c9da0\", \"evidence_digest\": \"ed99281603ad52df23cda52579ab17dda3cfa9c3a29c38e8488179e2c782c4a4\", \"generation\": \"0f50d037a80f4f2fbece4ca2774dce87\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.65891594812274, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"e630d14f0bfde980546225e2be70a8898dbb396aa47c8c967089250ab7ace095\", \"prompt_sha256\": \"c8719044a6bcc411c13c9beace62539707babb54a9683b43a36eedbbbf5bcad2\", \"phases_ms\": [[\"encoding\", 0.45983295422047377], [\"provider\", 11.524249915964901], [\"validation\", 0.23324997164309025]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"f6e39b1dd3b54164aeeb96191f4c9da0\", \"evidence_digest\": \"ed99281603ad52df23cda52579ab17dda3cfa9c3a29c38e8488179e2c782c4a4\", \"generation\": \"0f50d037a80f4f2fbece4ca2774dce87\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.65891594812274, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"e630d14f0bfde980546225e2be70a8898dbb396aa47c8c967089250ab7ace095\", \"prompt_sha256\": \"c8719044a6bcc411c13c9beace62539707babb54a9683b43a36eedbbbf5bcad2\", \"phases_ms\": [[\"encoding\", 0.45983295422047377], [\"provider\", 11.524249915964901], [\"validation\", 0.23324997164309025]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"f6e39b1dd3b54164aeeb96191f4c9da0\", \"role\": \"document_reference_match\", \"generation\": \"0f50d037a80f4f2fbece4ca2774dce87\", \"evidence_digest\": \"ed99281603ad52df23cda52579ab17dda3cfa9c3a29c38e8488179e2c782c4a4\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/no-disclosure"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/no-disclosure",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: pixels_withheld; no action authorized\n"
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/secret"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/secret",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: pixels_withheld; no action authorized\n"
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/browser"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/review3/browser",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: surface_unsupported; no action authorized\n"
+    }
+  ],
+  "requests": 7,
+  "request_receipts": [
+    {
+      "mode": "valid",
+      "body_sha256": "35fe08b9d1f94c5d358648cadc56fa8916b5a73d416cf6c4077912b5480166d9",
+      "body_bytes": 176067,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "valid",
+      "body_sha256": "91b5f15ed0f8a561f4354ae6f4a2717066d90fd39bf71cfe1c00e64e26b1691d",
+      "body_bytes": 138676,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "99d3ff7309490a21324cd3747b4b812ea21e39afe4ba8d9e21c4e4e0f4ed3113"
+        },
+        {
+          "dimensions": [
+            620,
+            316
+          ],
+          "sha256": "e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "valid",
+      "body_sha256": "4c3bfba7a65510205840b0f428dceea0b34073c5a093e55abfa6dad02e80886a",
+      "body_bytes": 176068,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "refusal",
+      "body_sha256": "d2becdb98f04b3d8e161f21cf399d9a42783c21c3a78d13f9011fe9a7d456062",
+      "body_bytes": 176068,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "timeout",
+      "body_sha256": "b5cb44614bb7fb57929be571d1c0b26f34c54b2cebf724e92b1ae9976ca79bc6",
+      "body_bytes": 176068,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "source_changed",
+      "body_sha256": "16ae34b2bd6d208e985ab2ecf86e18a04748b2d258a37f39bb0d7f48c8ec9936",
+      "body_bytes": 176066,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    },
+    {
+      "mode": "generation_changed",
+      "body_sha256": "7393f1233cc167db69e7a2b9b94e922c9d102c7e926ccf77fde5f9a5449a7509",
+      "body_bytes": 176068,
+      "images": [
+        {
+          "dimensions": [
+            1320,
+            936
+          ],
+          "sha256": "7e6de18de3d929a04e1663767e67b764d05e42bcc4ea0467f7ab7d714d8df5a6"
+        },
+        {
+          "dimensions": [
+            247,
+            347
+          ],
+          "sha256": "db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc"
+        }
+      ],
+      "model": "gpt-6-luna"
+    }
+  ],
+  "no_effect": true,
+  "no_grants": true,
+  "action_dispatches": 0,
+  "owning_bridge_invalidation_checked": true,
+  "handoff_redaction_checked": true,
+  "source_commit": "9148c2e20221461993086c746f1a8253e386835e",
+  "cleanup": [
+    {
+      "pid": 81711,
+      "returncode": -15
+    },
+    {
+      "pid": 81712,
+      "returncode": -15
+    }
+  ],
+  "loopback_server_closed": true
+}
