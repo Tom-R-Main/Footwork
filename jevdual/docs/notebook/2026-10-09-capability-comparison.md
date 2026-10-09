@@ -36,3 +36,16 @@ Test: add a fixture posture precondition and exercise it on the currently locked
 Predicts: locked posture refuses before opening Chrome/TextEdit or creating the run directory; no permission dialog is triggered.
 Against: a run directory or app is created despite the locked posture, or the check prompts for permission.
 Refs: scripts/capability_fixture.py
+
+## CR4-U1 · update · 2026-10-09 18:29
+Resolves: CR4 = held
+Observed: the fixture launcher returned argparse exit 2 with the unlocked-desktop prerequisite and the requested capability-comparison-locked-check directory did not exist. No Chrome/TextEdit launch or permission prompt occurred. The changed helper also passes static lint.
+Next: leave live fixture qualification pending unlock and continue raw MCP catalog qualification.
+Refs: scripts/capability_fixture.py
+
+## CR5 · prediction · 2026-10-09 18:29
+Hypothesis: cua-driver's capability manifest enforces resource/tool authorization at invocation but does not filter tools/list; its separate immutable YAML policy layer can narrow the advertised catalog to the five permitted native observation/input tools without a custom proxy.
+Test: retain the first full catalog (capability-baseline-catalog-20261009-v2), add a trusted project-owned policy containing only get_window_state, set_value, type_text, hotkey and press_key, initialize the same direct raw server and check its catalog. Issue a read-only get_window_state with nonexistent resource IDs outside the manifest; require explicit authorization refusal, never a surface payload.
+Predicts: exact five-tool catalog; a call outside the approved window is rejected by bounded resource authorization before observation. Existing driver binary and native tool descriptions remain unchanged.
+Against: the installed binary lacks YAML support, still advertises additional tools, or returns an observation for the outside-manifest call.
+Refs: scripts/capability_baseline_probe.py; /Volumes/External SSD/referencerepos/cua/libs/cua-driver/rust/crates/cua-driver-core/src/policy.rs
