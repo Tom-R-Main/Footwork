@@ -83,7 +83,8 @@ TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
     },
     "act": {
         "description": "Append text once using an offered destination target. Returns an operation ID and exact "
-        "readback. Optional client_token makes identical repeats return the original operation. After a lost "
+        "readback. Optional client_token must be unique per intended effect; reuse it only to collect or retry "
+        "that same operation. Identical repeats return the original operation. After a lost "
         "reply or unknown result call status; do not issue another append to obtain a cleaner receipt.",
         "inputSchema": {
             "type": "object",

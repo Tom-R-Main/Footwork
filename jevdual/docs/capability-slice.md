@@ -81,7 +81,8 @@ writes follow the mailbox's explicit authorization boundary.
 2. Read the requested value from that observation.
 3. `bind({"name":"destination"})` returns current document content and an append target.
 4. `act({"target":"<offered target>","text":"<source value>"})` records intent, validates
-   the target/content and appends. Optionally include a `client_token` for repeat-safe receipt lookup.
+   the target/content and appends. Optionally include a `client_token` for repeat-safe receipt lookup;
+   use a new token for each intended effect and reuse it only for that same operation.
 5. Inspect the operation's exact readback. `observe({"resource":"<destination resource>"})`
    independently shows current field content.
 
