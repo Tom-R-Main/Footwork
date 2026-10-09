@@ -50,9 +50,13 @@ async def scope_for(chrome_pid: int, url: str, document: Path) -> dict:
         while time.monotonic() < deadline:
             apps = (await driver.list_apps(ListAppsInput())).apps
             textedit = next((a for a in apps if a.name == "TextEdit" and a.pid), None)
-            browser_windows = (await driver.list_windows(ListWindowsInput(pid=chrome_pid))).windows
+            browser_windows = (
+                await driver.list_windows(ListWindowsInput(pid=chrome_pid, on_screen_only=True))
+            ).windows
             native_windows = (
-                (await driver.list_windows(ListWindowsInput(pid=textedit.pid))).windows if textedit else []
+                (await driver.list_windows(ListWindowsInput(pid=textedit.pid, on_screen_only=True))).windows
+                if textedit
+                else []
             )
             matching = [
                 w for w in native_windows if ax.document_path(textedit.pid, w.window_id) == str(document)
@@ -79,7 +83,7 @@ def main() -> None:
     args = parser.parse_args()
     root = args.run_dir.resolve()
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
-    document = root / "footwork-invoice-fixture.txt"
+    document = root / f"{root.name}-invoice.txt"
     document.write_text(PREFIX)
     (root / "fixture.html").write_text(HTML)
     http = ThreadingHTTPServer(("127.0.0.1", 0), Page)
@@ -104,7 +108,10 @@ def main() -> None:
         start_new_session=True,
     )
     try:
-        subprocess.run(["open", "-a", "TextEdit", str(document)], check=True)
+        script(
+            'on run argv\ntell application "TextEdit" to open POSIX file (item 1 of argv)\nend run',
+            str(document),
+        )
         scope = asyncio.run(scope_for(browser.pid, url, document))
         (root / "scope.json").write_text(json.dumps(scope, indent=2) + "\n")
         (root / "fixture.json").write_text(
@@ -127,12 +134,15 @@ def main() -> None:
         pass
     finally:
         # This exact file was created and opened by this fixture owner.
-        script(
-            'on run argv\ntell application "TextEdit"\n'
-            "repeat with d in documents\nif path of d is (item 1 of argv) then close d saving no\n"
-            "end repeat\nend tell\nend run",
-            str(document),
-        )
+        try:
+            script(
+                'on run argv\ntell application "TextEdit"\n'
+                "repeat with d in documents\nif path of d is (item 1 of argv) then close d saving no\n"
+                "end repeat\nend tell\nend run",
+                str(document),
+            )
+        except subprocess.CalledProcessError:
+            print("Fixture document cleanup could not be confirmed; browser cleanup continues.", flush=True)
         browser.terminate()
         try:
             browser.wait(timeout=10)
