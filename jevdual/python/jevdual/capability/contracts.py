@@ -1,0 +1,142 @@
+"""Small contracts for the single-process, fixture-scoped capability slice.
+
+The host sees four tools. An offered target contains its resource, observation
+and move binding; callers need not reconstruct those fields for every append.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any, Literal, Protocol
+
+Disposition = Literal["applied", "partial", "refused", "not_sent", "unknown"]
+Phase = Literal["not_sent", "sent", "ambiguous"]
+ReadbackOutcome = Literal["applied", "absent", "partial", "duplicate", "indeterminate"]
+
+
+class CapabilityError(Exception):
+    """Known no-send refusal; unexpected dispatch errors must remain unknown."""
+
+    def __init__(self, code: str, message: str, operation_id: str | None = None):
+        super().__init__(message)
+        self.code = code
+        self.operation_id = operation_id
+
+    def to_result(self) -> dict[str, Any]:
+        result: dict[str, Any] = {"code": self.code, "message": str(self)}
+        if self.operation_id:
+            result["operation_id"] = self.operation_id
+        return {"schema_version": "1", "error": result}
+
+
+@dataclass(frozen=True)
+class Validated:
+    resource: str
+    observation: str
+    target: str | None
+    move: str
+    args: dict[str, Any]
+    # Private execution context, never serialized or treated as durable identity.
+    context: Any = field(default=None, repr=False, compare=False)
+
+
+@dataclass(frozen=True)
+class DispatchOutcome:
+    phase: Phase
+    effect_hint: str
+    error: str | None = None
+    evidence: dict[str, Any] = field(default_factory=dict)
+
+
+class Backend(Protocol):
+    async def validate(
+        self, resource: str, observation: str, target: str | None, move: str, args: dict[str, Any]
+    ) -> Validated: ...
+
+    async def dispatch(self, validated: Validated) -> DispatchOutcome: ...
+
+    async def readback(self, validated: Validated) -> dict[str, Any]: ...
+
+    def same_incarnation(self, resource: str) -> bool: ...
+
+
+TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
+    "bind": {
+        "description": "Bind source or destination from the configured fixture scope. Returns an observation. "
+        "Source is read-only. Destination offers append targets. No apps or tabs are created.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"name": {"type": "string", "enum": ["source", "destination"]}},
+            "required": ["name"],
+            "additionalProperties": False,
+        },
+    },
+    "observe": {
+        "description": "Read a bound resource and receive fresh targets and visible values. "
+        "A new observation expires its prior targets. Document readback proves field content, not disk persistence.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"resource": {"type": "string", "minLength": 1}},
+            "required": ["resource"],
+            "additionalProperties": False,
+        },
+    },
+    "act": {
+        "description": "Append text once using an offered destination target. Returns an operation ID and exact "
+        "readback. Optional client_token makes identical repeats return the original operation. After a lost "
+        "reply or unknown result call status; do not issue another append to obtain a cleaner receipt.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target": {"type": "string", "minLength": 1},
+                "text": {"type": "string", "minLength": 1, "maxLength": 4096},
+                "client_token": {"type": "string", "minLength": 1, "maxLength": 128},
+            },
+            "required": ["target", "text"],
+            "additionalProperties": False,
+        },
+    },
+    "status": {
+        "description": "Read an operation or find this task's unresolved operations after a lost reply/restart. "
+        "reconcile requests readback only when original resource/attempt identity is retained. Never repeats input. "
+        "An unknown outcome blocks conflicting appends and may require an operator to inspect the document.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "operation": {"type": "string", "minLength": 1},
+                "client_token": {"type": "string", "minLength": 1, "maxLength": 128},
+                "reconcile": {"type": "boolean", "default": False},
+            },
+            "additionalProperties": False,
+        },
+    },
+}
+
+
+def check_arguments(tool: str, arguments: Any) -> dict[str, Any]:
+    """Validate the deliberately flat schemas without another schema runtime."""
+    if tool not in TOOL_SCHEMAS:
+        raise CapabilityError("unknown_tool", f"Unknown tool {tool!r}")
+    if not isinstance(arguments, dict):
+        raise CapabilityError("invalid_arguments", "Arguments must be an object")
+    schema = TOOL_SCHEMAS[tool]["inputSchema"]
+    properties = schema["properties"]
+    if set(arguments) - set(properties):
+        raise CapabilityError("invalid_arguments", "Unknown argument")
+    if set(schema.get("required", ())) - set(arguments):
+        raise CapabilityError("invalid_arguments", "Missing required argument")
+    for name, value in arguments.items():
+        spec = properties[name]
+        if spec["type"] == "boolean":
+            if type(value) is not bool:
+                raise CapabilityError("invalid_arguments", f"{name} must be a boolean")
+        else:
+            if not isinstance(value, str) or not value or not value.strip():
+                raise CapabilityError("invalid_arguments", f"{name} must be a nonempty string")
+            if len(value) > spec.get("maxLength", 4096):
+                raise CapabilityError("invalid_arguments", f"{name} is too long")
+            if "enum" in spec and value not in spec["enum"]:
+                raise CapabilityError("invalid_arguments", f"Invalid {name}")
+    if tool == "status" and "operation" in arguments and "client_token" in arguments:
+        raise CapabilityError("invalid_arguments", "Choose operation or client_token")
+    return arguments

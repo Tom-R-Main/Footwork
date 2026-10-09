@@ -1,0 +1,42 @@
+{
+  "recorded_at": "2026-10-09T16:39:50.915896-04:00",
+  "base_commit": "91f72ad44733c5612a0e6a0c0a90fb59cfc36255",
+  "scope": "Offline conformance; does not qualify real app or model behavior",
+  "checks": [
+    {
+      "command": "uv run --no-sync ruff check python evals tests scripts",
+      "exit_code": 0
+    },
+    {
+      "command": "uv run --no-sync pytest -q",
+      "exit_code": 0,
+      "passed": 1188,
+      "skipped": 26,
+      "duration_seconds": 103.85
+    },
+    {
+      "command": "uv run --no-sync pytest tests/test_capability_backend.py tests/test_capability_mcp.py -q",
+      "exit_code": 0,
+      "passed": 11
+    }
+  ],
+  "files": {
+    "jevdual/python/jevdual/capability/service.py": "55cfeb315108466c1ef83e6d018fd288c2c82da12010c229a9d698349e595542",
+    "jevdual/python/jevdual/capability/backend.py": "0c212f18f30b811de1047ec5821c01eda6578ab8eafd9d1c7bf723a0ee63ce5c",
+    "jevdual/python/jevdual/capability/journal.py": "8b65d579e96e6d8c8de38da5bf6f20f7eaa441145acef2d48438a135f3d5691a",
+    "jevdual/python/jevdual/capability/observations.py": "c77e4a2a17353e4a12798aac3c153494a4915cf7b745d405415a08e05af0fa92",
+    "jevdual/python/jevdual/capability/__init__.py": "884c16358ba194d7017e55d98d8a801193f29836a4d6faf579c1c080e31b659d",
+    "jevdual/python/jevdual/capability/contracts.py": "b2eaa8a0df173190a29c8d5d8bdceac233a10fbe5bc44d531a1982591a9f6d08",
+    "jevdual/python/jevdual/capability/mcp_server.py": "a5df8bc40a5108cefe470c744e16839fc3211832b2427174d2490d937fed7f70",
+    "jevdual/tests/test_capability_mcp.py": "adea8f486ce5025b56860d2c4c926ee2ec7f6e22188da2c2230109083d131a44",
+    "jevdual/tests/test_capability_service.py": "7c62c1a16b42f594ef910038a2ba2c317c272a34389ec31640423ac858841603",
+    "jevdual/tests/test_capability_journal.py": "59c95f5d72df433a8a02835713efae4f14f94d52f3059f78505d85510c0ebe1e",
+    "jevdual/tests/test_capability_backend.py": "712196bb70b99f1c12feaba6fbd25a7bbf1977c5841a9581f5f3132a571c8bfc",
+    "jevdual/tests/test_capability_contracts.py": "185a0d1698741864f87c236132f7b7e3935e24eeb80aefdfd4231b6568372d29"
+  },
+  "unverified": [
+    "real browser/TextEdit readback",
+    "fresh Claude Code usability CS2",
+    "raw backend comparison C1"
+  ]
+}
