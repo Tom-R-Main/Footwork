@@ -8,8 +8,11 @@ retried. Full transcript/journal/relay evidence remains private in project outpu
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
+import importlib.metadata
 import json
+import math
 import os
 import signal
 import subprocess
@@ -20,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 from capability_baseline_probe import NATIVE_TOOLS, native_manifest, raw_parameters
-from capability_host_trial import ax_document_text, ax_reset_text
+from capability_host_trial import OracleError, ax_document_text, ax_reset_text
 
 MODEL = "claude-opus-5-5"
 EFFORT = "high"
@@ -66,6 +69,8 @@ def prompt(scope: dict[str, Any]) -> str:
         "total directly at the end. Tell me when it is done and how you know.\n"
         f"Source page: {scope['source']['url']}\n"
         f"Destination: TextEdit document {dst['document']}; pid {dst['pid']}, window_id {dst['window_id']}.\n"
+        "Only operate on that native pid and window_id. Explicitly include both in any native tool call "
+        "that accepts them, even when also using an element token.\n"
         "Use only the supplied MCP tools."
     )
 
@@ -81,9 +86,15 @@ def config_for(
         "mode": task["stratum"],
         "prefix": task["prefix"],
         "stale_prefix": task["stale_prefix"],
-        "oracle": {"kind": "ax", "pid": destination["pid"], "document": destination["document"]},
+        "oracle": {
+            "kind": "ax",
+            "pid": destination["pid"],
+            "window_id": destination["window_id"],
+            "document": destination["document"],
+        },
     }
     if arm == "footwork":
+        cfg["destination_resource"] = f"native:{destination['pid']}:{destination['window_id']}"
         journal = root / "operations.sqlite"
         cfg.update(
             {
@@ -130,7 +141,7 @@ def config_for(
                         "CUA_DRIVER_POLICY_FILE",
                     }
                 },
-                "mutation_tools": ["set_value", "type_text"],
+                "mutation_tools": ["set_value", "type_text", "press_key", "hotkey"],
                 "observation_tools": ["get_window_state"],
             }
         )
@@ -225,6 +236,8 @@ def run_host(cmd: list[str], task_prompt: str, root: Path) -> tuple[int, bool]:
         )
         try:
             proc.communicate(task_prompt, timeout=TIMEOUT)
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(proc.pid, signal.SIGTERM)
             return proc.returncode, False
         except subprocess.TimeoutExpired:
             os.killpg(proc.pid, signal.SIGTERM)
@@ -241,6 +254,34 @@ def relay_events(root: Path) -> list[dict]:
     return [json.loads(x) for x in path.read_text().splitlines()] if path.exists() else []
 
 
+def retire_backends(root: Path) -> bool:
+    """Reap only attested dispatch process groups before GUI observation/reset."""
+    for event in relay_events(root):
+        if event["kind"] != "spawn":
+            continue
+        pid = event["pid"]
+        identity = subprocess.run(
+            ["ps", "-p", str(pid), "-o", "lstart="], capture_output=True, text=True, check=False
+        ).stdout.strip()
+        try:
+            os.killpg(pid, 0)
+        except ProcessLookupError:
+            continue
+        if not identity or identity != event.get("start_identity"):
+            return False
+        os.killpg(pid, signal.SIGKILL)
+        deadline = time.monotonic() + 3
+        while time.monotonic() < deadline:
+            try:
+                os.killpg(pid, 0)
+            except ProcessLookupError:
+                break
+            time.sleep(0.05)
+        else:
+            return False
+    return True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scope", type=Path)
@@ -251,6 +292,7 @@ def main() -> None:
     parser.add_argument("--plan", action="store_true")
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--development-blocks", type=int, default=0)
+    parser.add_argument("--prior-cost", type=float, default=0.0)
     args = parser.parse_args()
     project = Path(__file__).resolve().parents[2]
     root = args.run_dir.resolve()
@@ -270,6 +312,10 @@ def main() -> None:
         return
     if not all((args.scope, args.runtime, args.catalog, args.browser_url)):
         parser.error("execution requires --scope --runtime --catalog --browser-url")
+    if not math.isfinite(args.prior_cost) or not 0 <= args.prior_cost < TOTAL_CAP:
+        parser.error("prior cost must be finite, nonnegative and below the total ceiling")
+    if subprocess.check_output(["git", "status", "--porcelain"], cwd=project, text=True).strip():
+        parser.error("commit the measured code first; execution requires a clean worktree")
     from ApplicationServices import AXIsProcessTrusted
     from jevdual.posture import screen_locked
 
@@ -296,12 +342,31 @@ def main() -> None:
         "development": bool(args.development_blocks),
         "sessions": [],
         "total_cost_usd": 0.0,
+        "prior_cost_usd": args.prior_cost,
+        "budget_upper_bound_usd": args.prior_cost,
         "stop_reason": None,
+        "decision_eligible": False,
+        "claim_review_pending": True,
         "relay_sha256": hashlib.sha256(RELAY.read_bytes()).hexdigest(),
+    }
+    paths = [
+        Path(__file__).resolve(),
+        RELAY,
+        Path(__file__).with_name("capability_host_trial.py"),
+        Path(__file__).with_name("capability_baseline_probe.py"),
+        project / "jevdual/uv.lock",
+    ]
+    paths += sorted((project / "jevdual/python/jevdual/capability").glob("*.py"))
+    paths += [project / f"jevdual/python/jevdual/{name}.py" for name in ("native", "ax", "browser_driver")]
+    summary["module_hashes"] = {
+        str(path.relative_to(project)): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths
+    }
+    summary["package_versions"] = {
+        name: importlib.metadata.version(name) for name in ("mcp", "cua-driver", "browser-use")
     }
     destination = scope["destination"]
     for block in blocks:
-        if summary["total_cost_usd"] + 2 * SESSION_CAP > TOTAL_CAP:
+        if summary["budget_upper_bound_usd"] + 2 * SESSION_CAP > TOTAL_CAP:
             summary["stop_reason"] = "aggregate_budget_reserve"
             break
         for arm in block["order"]:
@@ -324,6 +389,7 @@ def main() -> None:
             (session / "prompt.txt").write_text(task_prompt)
             start = time.monotonic()
             code, timed_out = run_host(cmd, task_prompt, session)
+            retired = retire_backends(session)
             evidence = parse_transcript(session / "transcript.jsonl", tools, list(cfg["mcpServers"]))
             events = relay_events(session)
             treatment = any(
@@ -331,7 +397,17 @@ def main() -> None:
                 for e in events
             )
             invalid = any(e["kind"] == "invalid" for e in events)
-            actual = ax_document_text(destination["pid"], destination["document"])
+            actual, oracle_error = None, None
+            try:
+                if not retired:
+                    raise RuntimeError("owned backend retirement could not be confirmed")
+                first = ax_document_text(destination["pid"], destination["document"])
+                time.sleep(0.2)
+                actual = ax_document_text(destination["pid"], destination["document"])
+                if actual != first:
+                    raise RuntimeError("post-teardown oracle changed between reads")
+            except (OracleError, RuntimeError) as exc:
+                oracle_error = type(exc).__name__ + ": " + str(exc)[:160]
             preserved = task["stale_prefix"] if task["stratum"] == "stale" and treatment else task["prefix"]
             expected = expected_text(preserved, task["value"])
             evidence.update(
@@ -344,11 +420,14 @@ def main() -> None:
                     "timed_out": timed_out,
                     "elapsed_seconds": time.monotonic() - start,
                     "oracle_exact": actual == expected,
+                    "oracle_error": oracle_error,
+                    "backends_retired": retired,
                     "oracle_unchanged": actual == preserved,
                     "oracle_actual": actual,
                     "oracle_expected": expected,
                     "treatment_applied": treatment,
                     "harness_invalid": invalid
+                    or oracle_error is not None
                     or not evidence["valid_environment"]
                     or (task["stratum"] != "clean" and not treatment),
                     "relay_events": events,
@@ -358,6 +437,8 @@ def main() -> None:
             summary["sessions"].append(
                 {
                     "path": session.name,
+                    "block": block["block"],
+                    "task_id": task["id"],
                     "arm": arm,
                     "stratum": task["stratum"],
                     "oracle_exact": evidence["oracle_exact"],
@@ -368,8 +449,21 @@ def main() -> None:
             cost = evidence["cost_usd"]
             if not isinstance(cost, (int, float)) or cost < 0:
                 summary["stop_reason"] = "cost_unavailable"
+                summary["budget_upper_bound_usd"] += SESSION_CAP
             else:
                 summary["total_cost_usd"] += cost
+                summary["budget_upper_bound_usd"] += cost
+            if oracle_error:
+                summary["stop_reason"] = "oracle_or_teardown_unqualified"
+            summary["pairs"] = [
+                {
+                    "block": b["block"],
+                    "task_id": b["task"]["id"],
+                    "pair_complete": sum(s["block"] == b["block"] for s in summary["sessions"]) == 2,
+                }
+                for b in blocks
+                if any(s["block"] == b["block"] for s in summary["sessions"])
+            ]
             (root / "summary.json").write_text(json.dumps(summary, indent=2))
             print(json.dumps(summary["sessions"][-1]), flush=True)
             if evidence["harness_invalid"] and args.development_blocks:

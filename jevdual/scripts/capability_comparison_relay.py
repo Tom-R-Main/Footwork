@@ -16,8 +16,10 @@ import json
 import os
 import signal
 import sqlite3
+import subprocess
 import sys
 import time
+from collections import deque
 from pathlib import Path
 from typing import Any
 
@@ -58,7 +60,19 @@ def watch(path: Path) -> None:
         after = oracle_read(cfg["oracle"])
         if after != before:
             os.killpg(cfg["child_pid"], signal.SIGKILL)
-            print(json.dumps({"changed": True, "time_ns": time.time_ns()}), flush=True)
+            detected = time.time_ns()
+            time.sleep(0.1)
+            print(
+                json.dumps(
+                    {
+                        "changed": True,
+                        "time_ns": detected,
+                        "after_at_detection": after,
+                        "after_100ms": oracle_read(cfg["oracle"]),
+                    }
+                ),
+                flush=True,
+            )
             return
         time.sleep(0.005)
     print(json.dumps({"changed": False, "time_ns": time.time_ns()}), flush=True)
@@ -78,6 +92,9 @@ class Relay:
         self.error_log: Any = None
         self.init: dict[str, Any] | None = None
         self.catalog: str | None = None
+        self.catalog_request: dict[str, Any] | None = None
+        self.host_reader: asyncio.StreamReader | None = None
+        self.pending_host: deque[dict[str, Any]] = deque()
         self.interfered = False
         self.destination_observed = False
         self.spawn_count = 0
@@ -98,7 +115,15 @@ class Relay:
             start_new_session=True,
             limit=FRAME_LIMIT,
         )
-        self.event("spawn", pid=self.proc.pid, generation=self.spawn_count)
+        identity_result = await asyncio.to_thread(
+            subprocess.run,
+            ["ps", "-p", str(self.proc.pid), "-o", "lstart="],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        identity = identity_result.stdout.strip()
+        self.event("spawn", pid=self.proc.pid, generation=self.spawn_count, start_identity=identity)
 
     async def stop(self) -> None:
         if self.watcher and self.watcher.returncode is None:
@@ -113,6 +138,11 @@ class Relay:
                 with contextlib.suppress(ProcessLookupError):
                     os.killpg(self.proc.pid, signal.SIGKILL)
                 await self.proc.wait()
+        # The leader exiting does not establish that all owned group members
+        # stopped. Always retire this group's remaining children as well.
+        if self.proc:
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(self.proc.pid, signal.SIGKILL)
         if self.error_log:
             self.error_log.close()
 
@@ -125,15 +155,35 @@ class Relay:
             if not line:
                 raise EOFError("backend stdout ended")
             response = json.loads(line)
-            if response.get("id") == msg["id"]:
-                return response
             if "method" in response:
-                if forward_notifications:
+                if "id" in response:
+                    # Requests need their backchannel even when a mutating
+                    # result is held. Buffer other host work, never replay it.
+                    self.output(response)
+                    await self.client_response(response["id"])
+                elif forward_notifications:
                     self.output(response)
                 else:
                     self.event("held_notification", method=response["method"])
+            elif response.get("id") == msg["id"]:
+                return response
             else:
                 raise RuntimeError("unexpected backend response id")
+
+    async def client_response(self, request_id: Any) -> None:
+        assert self.host_reader
+        while line := await asyncio.wait_for(self.host_reader.readline(), timeout=30):
+            if not line.strip():
+                continue
+            msg = json.loads(line)
+            if "method" not in msg and msg.get("id") == request_id:
+                await self.notify(msg)
+                return
+            if "id" not in msg:
+                await self.notify(msg)
+            else:
+                self.pending_host.append(msg)
+        raise EOFError("host ended before answering backend request")
 
     def output(self, msg: dict[str, Any]) -> None:
         print(json.dumps(msg), flush=True)
@@ -144,8 +194,8 @@ class Relay:
         await self.proc.stdin.drain()
 
     async def restart(self) -> None:
-        if not self.init or not self.catalog:
-            raise RuntimeError("restart requires prior initialize and catalog")
+        if not self.init or not self.catalog or not self.catalog_request:
+            raise RuntimeError("restart requires prior lifecycle and catalog")
         await self.stop()
         await self.spawn()
         initialized = await self.request(
@@ -153,9 +203,10 @@ class Relay:
         )
         if "error" in initialized:
             raise RuntimeError("backend reinitialization failed")
-        await self.notify({"jsonrpc": "2.0", "method": "notifications/initialized"})
+        if self.init["method"] == "initialize":
+            await self.notify({"jsonrpc": "2.0", "method": "notifications/initialized"})
         listed = await self.request(
-            {"jsonrpc": "2.0", "id": "__relay_catalog", "method": "tools/list"}, forward_notifications=False
+            {**self.catalog_request, "id": "__relay_catalog"}, forward_notifications=False
         )
         fresh = catalog_hash(listed["result"])
         if fresh != self.catalog:
@@ -167,7 +218,7 @@ class Relay:
         journal = self.cfg.get("journal")
         if not journal or not Path(journal).exists():
             return []
-        with sqlite3.connect(f"file:{journal}?mode=ro", uri=True) as db:
+        with contextlib.closing(sqlite3.connect(f"file:{journal}?mode=ro", uri=True)) as db:
             return [
                 dict(zip(("id", "state", "disposition"), row, strict=True))
                 for row in db.execute("SELECT id,state,disposition FROM operations")
@@ -198,6 +249,15 @@ class Relay:
         try:
             response = await self.request(msg, forward_notifications=False)
             self.event("reply_received_held", request_id=msg["id"])
+            if oracle_read(self.cfg["oracle"]) == self.cfg["prefix"]:
+                # A caret movement or affirmative no-send refusal is not the
+                # field change under test. Release it without spending the kill.
+                if self.watcher.returncode is None:
+                    self.watcher.terminate()
+                await self.watcher.wait()
+                self.event("candidate_unchanged", request_id=msg["id"])
+                self.interfered = False
+                return response
         except EOFError:
             pass
         result_line = await asyncio.wait_for(self.watcher.stdout.readline(), timeout=WATCH_TIMEOUT + 2)
@@ -209,6 +269,7 @@ class Relay:
                 raise RuntimeError("backend died without qualified interruption")
             return response
         await self.proc.wait()
+        self.interfered = True
         self.event(
             "dropped",
             request_id=msg["id"],
@@ -221,35 +282,50 @@ class Relay:
         return {"jsonrpc": "2.0", "id": msg["id"], "error": LOST}
 
     async def handle(self, msg: dict[str, Any]) -> None:
-        if "id" not in msg:
+        if "id" not in msg or "method" not in msg:
             await self.notify(msg)
             return
-        method, params = msg.get("method"), msg.get("params", {})
+        method, params = msg.get("method"), msg.get("params") or {}
+        arguments = params.get("arguments") or {}
         tool = params.get("name") if method == "tools/call" else None
+        self.event(
+            "host_request",
+            method=method,
+            request_id=msg["id"],
+            tool=tool,
+            arguments_sha256=hashlib.sha256(json.dumps(arguments, sort_keys=True).encode()).hexdigest(),
+        )
         mutation = tool in self.cfg.get("mutation_tools", [])
         observation = tool in self.cfg.get("observation_tools", [])
         if tool == "bind":
-            observation = params.get("arguments", {}).get("name") == "destination"
+            observation = arguments.get("name") == "destination"
+        elif tool == "observe":
+            observation = arguments.get("resource") == self.cfg.get("destination_resource")
         if mutation and not self.interfered and self.cfg["mode"] != "clean":
-            if not self.destination_observed:
+            if self.cfg["mode"] == "stale" and not self.destination_observed:
                 self.event("invalid", reason="mutation_before_destination_observation")
-                raise RuntimeError("no successful destination observation before treatment")
-            self.interfered = True
-            if self.cfg["mode"] == "interrupted":
+                response = await self.request(msg)
+            elif self.cfg["mode"] == "interrupted":
                 response = await self.interrupted(msg)
             else:
                 before = oracle_read(self.cfg["oracle"])
                 if before != self.cfg["prefix"]:
-                    raise RuntimeError("stale injection prerequisite prefix mismatch")
-                oracle_edit(self.cfg["oracle"], self.cfg["stale_prefix"])
-                self.event("stale_injected", request_id=msg["id"])
+                    self.event("invalid", reason="stale_prefix_mismatch")
+                else:
+                    oracle_edit(self.cfg["oracle"], self.cfg["stale_prefix"])
+                    self.interfered = True
+                    self.event("stale_injected", request_id=msg["id"])
                 response = await self.request(msg)
         else:
             response = await self.request(msg)
-        if method == "initialize":
+        if method in ("initialize", "server/discover") and "result" in response:
             self.init = msg
+            self.event("lifecycle", method=method)
         if method == "tools/list" and "result" in response:
             self.catalog = catalog_hash(response["result"])
+            self.catalog_request = msg
+            if response["result"].get("nextCursor"):
+                self.event("invalid", reason="unexpected_paginated_catalog")
             self.event("catalog", sha256=self.catalog)
         if observation and "result" in response and not response["result"].get("isError", False):
             self.destination_observed = True
@@ -259,14 +335,24 @@ class Relay:
         await self.spawn()
         loop = asyncio.get_running_loop()
         reader = asyncio.StreamReader(limit=FRAME_LIMIT)
+        self.host_reader = reader
         protocol = asyncio.StreamReaderProtocol(reader)
         await loop.connect_read_pipe(lambda: protocol, sys.stdin)
         task = asyncio.current_task()
         assert task
         loop.add_signal_handler(signal.SIGTERM, task.cancel)
         try:
-            while line := await reader.readline():
-                await self.handle(json.loads(line))
+            while True:
+                if self.pending_host:
+                    msg = self.pending_host.popleft()
+                else:
+                    line = await reader.readline()
+                    if not line:
+                        break
+                    if not line.strip():
+                        continue
+                    msg = json.loads(line)
+                await self.handle(msg)
         finally:
             await self.stop()
             self.event("closed")

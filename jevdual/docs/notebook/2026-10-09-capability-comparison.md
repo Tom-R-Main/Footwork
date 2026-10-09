@@ -128,3 +128,17 @@ Test: subprocess regressions for discovery-era restart, candidate no-change foll
 Predicts: both lifecycle eras restart transparently; a caret/no-send response is forwarded promptly and does not spend the one interruption; every actual first text change is eligible for the same watcher; host requests/replies cannot deadlock the relay; cleanup precedes reset/readback; partial pairs and unknown cost never produce an eligible comparison decision.
 Against: a new handshake changes catalogs, a candidate triggers duplicate dispatch, a backend survives into the next reset, or an invalid/partial run is presented as decision-eligible.
 Refs: scripts/capability_comparison_relay.py; scripts/capability_comparison_trial.py; docs/experiments/C1-capability-slice.md
+
+## CR9-U1 · update · 2026-10-09 18:52
+Resolves: CR9 = held
+Observed: ten relay/fixture tests passed in 2.61 seconds, including modern discovery with preserved catalog metadata, independent first-change kill, no-change candidate followed by one real insertion, roots/list backchannel, large frame, catalog drift and EOF retirement. Both native input keys are now eligible mutation candidates; destination observation is scoped; missing cost has an explicit upper bound/stop and partial pairs have named completeness. Runner hashes core/harness/lock modules and refuses dirty measurement. Product code remains unchanged.
+Inferred: repaired mechanics address the independent Opus code-review blockers on subprocess cases. Actual host/AX continuation is still a development prerequisite. The common prompt adds explicit PID+window binding rather than broadening the raw manifest or rewriting raw tool arguments.
+Next: freeze a new development version and run one clean/interrupted/stale pair; prior paid spend $1.4595798 is recorded toward the aggregate ceiling.
+Refs: tests/test_capability_comparison_relay.py; scripts/capability_comparison_trial.py; docs/experiments/C1-capability-slice.md
+
+## CR10 · prediction · 2026-10-09 18:52
+Hypothesis: the repaired relay and identical explicit resource-binding task instruction let both actual hosts reach the intended live treatments without transport loss or widened authorization.
+Test: development v3, at most three fixed pairs, same real fixture and products, canonical Opus5.5/high, $1/session and $30 aggregate including prior spend. Inspect actual lifecycle eras, inventory, kill-time content, catalog equality, backend retirement, stable independent readback and claim evidence.
+Predicts: both arms operate only on the scoped document; interruption reaches a qualified held/dropped event and the same persistent transport permits later read-only calls; stale treatment preserves its predeclared oracle prefix. Honest stops and incorrect content remain visible.
+Against: missed treatment due framing/handshake/configuration, leaked capability, replayed input, ambiguous retirement/readback or unsupported completion promoted to success.
+Refs: scripts/capability_comparison_trial.py; scripts/capability_comparison_relay.py

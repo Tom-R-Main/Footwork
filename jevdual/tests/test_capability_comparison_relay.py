@@ -25,13 +25,19 @@ for line in sys.stdin:
     with (root/'requests.jsonl').open('a') as log: log.write(json.dumps(q)+'\n')
     if 'id' not in q: continue
     m=q['method']
-    if m=='initialize':
+    if m in ('initialize','server/discover'):
         result={'protocolVersion':'2025-11-25','capabilities':{},'serverInfo':{'name':'fake','version':'1'}}
     elif m=='tools/list':
+        if (root/'modern').exists() and q.get('params',{}).get('_meta')!={'version':'2026-07-28'}:
+            raise RuntimeError('modern catalog envelope lost')
         tools=['get_window_state','act']
         if n>1 and (root/'drift').exists(): tools.append('different')
         result={'tools':[{'name':t,'inputSchema':{'type':'object'}} for t in tools]}
     elif q['params']['name']=='get_window_state':
+        if q['params']['arguments'].get('roots'):
+            print(json.dumps({'jsonrpc':'2.0','id':'backend-root','method':'roots/list','params':{}}),flush=True)
+            answer=json.loads(sys.stdin.readline())
+            if answer.get('result')!={'roots':[]}: raise RuntimeError('client response lost')
         pad='x'*100000 if q['params']['arguments'].get('large') else ''
         result={'content':[{'type':'text','text':pad+(root/'document').read_text()}]}
     else:
@@ -48,12 +54,14 @@ for line in sys.stdin:
 
 
 class Client:
-    def __init__(self, root: Path, mode: str, *, drift: bool = False) -> None:
+    def __init__(self, root: Path, mode: str, *, drift: bool = False, modern: bool = False) -> None:
         self.root = root
         (root / "document").write_text("start\n")
         (root / "backend.py").write_text(FAKE)
         if drift:
             (root / "drift").touch()
+        if modern:
+            (root / "modern").touch()
         cfg = {
             "argv": [sys.executable, str(root / "backend.py"), str(root)],
             "mode": mode,
@@ -74,7 +82,7 @@ class Client:
         )
         self.seq = 0
         self.rpc(
-            "initialize",
+            "server/discover" if modern else "initialize",
             {
                 "protocolVersion": "2025-11-25",
                 "capabilities": {},
@@ -82,7 +90,7 @@ class Client:
             },
         )
         self.send({"jsonrpc": "2.0", "method": "notifications/initialized"})
-        self.rpc("tools/list", {})
+        self.rpc("tools/list", {"_meta": {"version": "2026-07-28"}} if modern else {})
 
     def send(self, value: dict) -> None:
         assert self.proc.stdin
@@ -167,7 +175,7 @@ def test_catalog_drift_after_kill_is_invalid_and_does_not_replay(tmp_path):
         client.close()
 
 
-def test_no_change_refusal_is_forwarded_but_treatment_is_inconclusive(tmp_path):
+def test_no_change_candidate_does_not_spend_the_interruption(tmp_path):
     client = Client(tmp_path, "interrupted")
     start = time.monotonic()
     try:
@@ -175,9 +183,12 @@ def test_no_change_refusal_is_forwarded_but_treatment_is_inconclusive(tmp_path):
         result = client.tool("act", refuse=True)
         assert result["result"]["isError"] is True
         assert (tmp_path / "document").read_text() == "start\n"
-        assert any(e.get("reason") == "no_observed_change" for e in client.events())
+        assert any(e["kind"] == "candidate_unchanged" for e in client.events())
         assert not any(e["kind"] == "dropped" for e in client.events())
-        assert time.monotonic() - start < 14
+        assert time.monotonic() - start < 3
+        result = client.tool("act", text="17.25 USD")
+        assert result["error"]["code"] == -32000
+        assert (tmp_path / "document").read_text() == "start\n17.25 USD"
     finally:
         client.close()
 
@@ -187,5 +198,43 @@ def test_large_raw_response_preserves_every_byte(tmp_path):
     try:
         result = client.tool("get_window_state", large=True)
         assert result["result"]["content"][0]["text"] == "x" * 100000 + "start\n"
+    finally:
+        client.close()
+
+
+def test_modern_discovery_and_catalog_metadata_survive_restart(tmp_path):
+    client = Client(tmp_path, "interrupted", modern=True)
+    try:
+        client.tool("get_window_state")
+        result = client.tool("act", text="17.25 USD")
+        assert result["error"]["code"] == -32000
+        assert client.tool("get_window_state")["result"]["content"][0]["text"] == "start\n17.25 USD"
+        requests = [json.loads(x) for x in (tmp_path / "requests.jsonl").read_text().splitlines()]
+        assert sum(x["method"] == "server/discover" for x in requests) == 2
+        assert sum(x.get("params", {}).get("name") == "act" for x in requests) == 1
+    finally:
+        client.close()
+
+
+def test_backend_request_uses_client_backchannel_without_deadlock(tmp_path):
+    client = Client(tmp_path, "clean")
+    try:
+        client.seq += 1
+        client.send(
+            {
+                "jsonrpc": "2.0",
+                "id": client.seq,
+                "method": "tools/call",
+                "params": {"name": "get_window_state", "arguments": {"roots": True}},
+            }
+        )
+        assert select.select([client.proc.stdout], [], [], 5)[0]
+        request = json.loads(client.proc.stdout.readline())
+        assert request["method"] == "roots/list"
+        client.send({"jsonrpc": "2.0", "id": request["id"], "result": {"roots": []}})
+        assert select.select([client.proc.stdout], [], [], 5)[0]
+        response = json.loads(client.proc.stdout.readline())
+        assert response["id"] == client.seq
+        assert response["result"]["content"][0]["text"] == "start\n"
     finally:
         client.close()

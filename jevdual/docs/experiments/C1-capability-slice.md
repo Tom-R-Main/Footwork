@@ -141,3 +141,38 @@ The primary metric and numerical decision rule above are unchanged. If Footwork 
 honestly stops on unknowns, that is a stop-and-diagnose result: safety without sufficient recovery.
 It is evidence for qualified restart reconciliation, not permission to silently promote unknown
 to applied or redispatch. No product change occurs during a measured comparison.
+
+## Pre-measurement harness qualification amendment, 2026-10-09 18:52
+
+Development versions v1/v2 are retained and excluded from C1. They exposed a 64KB framing limit
+and legacy-only lifecycle assumption, both repaired before measurement. The final relay preserves
+32MiB bounded frames and both successful legacy initialize and modern server/discover lifecycle
+requests, including the original per-request catalog envelope. Backend-to-client requests retain
+their backchannel; no tools/call is replayed. Bind(destination) is a valid snapshot because this
+product returns its fresh observation from bind. Observe(source) does not qualify as a destination
+snapshot. Interrupted treatment needs the exact independent starting prefix, not a particular
+agent observation call; stale treatment still requires a successful destination snapshot.
+
+Every raw write-capable native call (set_value, type_text, press_key and hotkey) is a candidate
+until the field first changes. A completed candidate whose independent field read remains equal
+to the starting prefix releases its held reply promptly and leaves the kill available. This
+prevents caret motion or a refused call from spending the treatment. No observed change during
+an unresolved call remains inconclusive. The original first-field-change kill stays unchanged.
+Watch evidence records exact detection content and a limited read 100ms after SIGKILL, without
+claiming a universal absence-of-late-delivery bound.
+
+The identical task prompt now explicitly requires both specified PID and window ID on native
+calls accepting them, including token-addressed calls. This keeps the existing exact-window
+manifest intact: development agents following the upstream optional-window schema otherwise
+received an application-level authorization refusal. No raw schema, request or response is
+rewritten, and no application-wide grant is added. This is a task resource-binding instruction
+for both arms, not an outcome/recovery hint. Setup burden includes this configuration nuance.
+
+Before oracle readback/reset, the runner retires attested owned backend groups and requires two
+equal AX readings 200ms apart. This proves the observed state over that interval only. Unknown
+PID identity, unreadable/changing oracle, catalog drift or transport failure stays unqualified.
+Clean-tree status, core/harness/lock hashes and package versions are recorded. Summary rows name
+block/task and pair completeness; decision_eligible remains false until complete measurement and
+claim review. Missing cost stops scheduling and reserves its session ceiling as an explicitly
+uncertain upper bound. Prior qualification/review spend is included in the $30 scheduling ceiling
+through --prior-cost. Numerical C1 thresholds, exact oracle and no-retry rule remain unchanged.
