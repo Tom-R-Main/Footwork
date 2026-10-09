@@ -49,3 +49,19 @@ Test: retain the first full catalog (capability-baseline-catalog-20261009-v2), a
 Predicts: exact five-tool catalog; a call outside the approved window is rejected by bounded resource authorization before observation. Existing driver binary and native tool descriptions remain unchanged.
 Against: the installed binary lacks YAML support, still advertises additional tools, or returns an observation for the outside-manifest call.
 Refs: scripts/capability_baseline_probe.py; /Volumes/External SSD/referencerepos/cua/libs/cua-driver/rust/crates/cua-driver-core/src/policy.rs
+
+## CR5-U1 · update · 2026-10-09 18:32
+Resolves: CR5 = held
+Observed: actual raw MCP catalog probe v3 initialized Chrome DevTools MCP 1.10.1 and cua-driver 0.28.2. The native YAML policy yielded exactly five permitted tools. A read-only request using nonexistent IDs outside the manifest returned bounded_resource_outside_manifest with isError true and no surface payload. Probe v1 failed on this harness's obsolete SDK attribute spelling; corrected to SDK 2.1.1 snake_case fields. Probe v2 exposed the complete native catalog before the policy layer was added. No provider calls in any probe.
+Inferred: native execution scope and advertised-tool scope are distinct controls. Both can be narrowed using real driver configuration, without rewriting its tool schemas or dispatcher.
+Next: live browser/native read-write qualification remains pending unlock; continue the C1 relay.
+Refs: output/capability-baseline-catalog-20261009-v3/receipt.json; 020c596; scripts/capability_baseline_probe.py
+
+## CR6 · prediction · 2026-10-09 18:32
+Question: can a persistent stdio relay carry identical lost-reply semantics across both real native backends without replaying an input?
+Hypothesis: retaining the host transport while killing/reinitializing only the dispatch subprocess lets the host receive one generic connection-loss error and continue through the unchanged catalog; the relay never needs to re-send a tools/call.
+Alternatives: host JSON-RPC IDs collide with relay initialization, catalog changes after restart, a buffered input is sent twice, or simultaneous replies leak the held result to the host.
+Test: a subprocess fake MCP backend that writes an independently observed file, and a separate watcher process. Forward a native observation, send one mutating request, hold its reply, kill the backend on the first file change, restart with original initialize params, compare tools/list, and require exactly one host error plus subsequent read-only observation. Also exercise stale-prefix injection, EOF cleanup, unchanged/refused writes and a catalog drift refusal. Real raw-route qualification is separate.
+Predicts: file changes once; no successful mutating reply reaches the host; exactly one error is returned; restart replays initialization only; the next observation reports the changed file; stale injection preserves the edited prefix; backend process groups are reaped.
+Against: duplicated content, leaked held reply, mutation replay, silently accepted catalog drift, or a surviving child/watcher after host EOF.
+Refs: scripts/capability_comparison_relay.py; tests/test_capability_comparison_relay.py; docs/experiments/C1-capability-slice.md
