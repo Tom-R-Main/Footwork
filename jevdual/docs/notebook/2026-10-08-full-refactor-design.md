@@ -1,0 +1,9 @@
+# Full Footwork refactor design review
+
+Read-only source/reference review with a design artifact; no substantive experiment, harness change or runtime test. The independently opened native visual-check prediction remains owned by its current package.
+
+## S-FR1 · summary · 2026-10-08 18:55
+Established: Traced operator session persistence and dispatch, separate grant writes, prose-derived completion effects, CLI-based cross-surface orchestration, browser/native gate ownership, pinned upstream contracts, Rust equality rules and the latest Decisions/visual evaluation handoff. Inspected local arc-cua, pi, Cua, browser-use and Inspect implementation seams and durable-workflow guidance. Wrote a dependency-ordered design for a shared Python execution protocol, structured evidence, transactional intent journal and adapters; preserved current model roles and inspection-lab boundaries.
+Uncertain: Source-level crash windows and coupling were identified, not reproduced here. No comparative recovery, latency, live platform or new provider evidence was generated. Reference source and documentation do not qualify replacement drivers/frameworks. New native advisory visual implementation prediction VC1 is open; its implementation was not audited as completed behavior.
+Decision: Recommend incremental packages A–D first: characterize contracts, emit typed evidence, introduce recoverable transactional sessions, and make the operator CLI a thin caller. Migrate other loops subsequently; keep qualified Jev roles, upstream pins, heldout discipline and conservative reconciliation. This task produces a proposal only, with no runtime edits, install, paid calls, heldout execution, commit, push or deployment.
+Refs: docs/plans/full-refactor-20261008.md; docs/notebook/2026-10-08-decisions-jev.md; docs/notebook/2026-10-08-visual-checks.md; python/jevdual/session.py; python/jevdual/completion.py; python/jevdual/crossloop.py; docs/arc-cua-decisions-reference.md
