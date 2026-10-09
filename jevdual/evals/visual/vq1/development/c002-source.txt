@@ -1,0 +1,2 @@
+Authored fixture; synthetic surface IDs; no real native capture.
+Construction: role=document_reference_match; style=0; variant=near_miss.

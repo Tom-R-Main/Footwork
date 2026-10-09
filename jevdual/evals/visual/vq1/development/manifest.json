@@ -1,0 +1,2218 @@
+{
+  "version": 1,
+  "split": "development",
+  "labels": {
+    "path": "labels.json",
+    "sha256": "0110ac7369729a9e3a71d850dc8ab14286aaa38ecf431831ccb961d96501e210"
+  },
+  "cases": [
+    {
+      "id": "c001",
+      "role": "document_reference_match",
+      "source_group": "g001",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c001-a.png",
+          "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c001-b.png",
+          "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c001-source.txt",
+          "sha256": "0d5542afd53b41033cc02bfc24c3495a18988de793029ca0bece252bf896bba3"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c002",
+      "role": "document_reference_match",
+      "source_group": "g001",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c002-a.png",
+          "sha256": "49f6a707320067b74329bbe55becb0d4435443328293b165cf35f77f95855368",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "49f6a707320067b74329bbe55becb0d4435443328293b165cf35f77f95855368",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c002-b.png",
+          "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c002-source.txt",
+          "sha256": "ee9de7ecc76a7fb48f432c6c02eeb7006e715d0cc7a78d1b85e08d4c157d8130"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c003",
+      "role": "document_reference_match",
+      "source_group": "g001",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Lower preview area is obscured.",
+        "capture": {
+          "path": "assets/c003-a.png",
+          "sha256": "10f8d53ecfc12748b1057ff95cd234f2b227e7ce35a04a89fd4b46cb9898d160",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "10f8d53ecfc12748b1057ff95cd234f2b227e7ce35a04a89fd4b46cb9898d160",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c003-b.png",
+          "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c003-source.txt",
+          "sha256": "22950155eb13718ca497cf4dceeda0ca60679537aa3ce89727269f8b95855daf"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c004",
+      "role": "document_reference_match",
+      "source_group": "g001",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Reference and offered page each show FIELD NOTES; SITE SURVEY; REVISION 3. Both have the same centered triangle symbol and page border, with no obscured areas.",
+        "capture": {
+          "path": "assets/c004-a.png",
+          "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c004-b.png",
+          "sha256": "56bbff3d9c88039484a46c83d9ea3da242090f3f11b4d4fbbd47bf8fbd8fec05",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c004-source.txt",
+          "sha256": "220df2ff76e3e193fd989e8f591c1b42a7a938009c9b3ad603d52406a4455e1a"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c005",
+      "role": "document_reference_match",
+      "source_group": "g002",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c005-a.png",
+          "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c005-b.png",
+          "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c005-source.txt",
+          "sha256": "492b7e8edc9b1e4e20ea8e7bf526774f2768ce54e111eced7a51ef677161b88d"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c006",
+      "role": "document_reference_match",
+      "source_group": "g002",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c006-a.png",
+          "sha256": "93c9ac7274da969ca0dfe26bb2f7e82b6f592a88b8b4f02862f7a6069a4aeb45",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "93c9ac7274da969ca0dfe26bb2f7e82b6f592a88b8b4f02862f7a6069a4aeb45",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c006-b.png",
+          "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c006-source.txt",
+          "sha256": "f675e0bb6c4e92f0f0279eee219a7dfc762b893880401e835034c2e9fa666860"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c007",
+      "role": "document_reference_match",
+      "source_group": "g002",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Lower preview area is obscured.",
+        "capture": {
+          "path": "assets/c007-a.png",
+          "sha256": "e972b40b47d4e0c0bf8d6f7a3fdbe8b74643cd07c314cae1c4f3d0a579c26911",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "e972b40b47d4e0c0bf8d6f7a3fdbe8b74643cd07c314cae1c4f3d0a579c26911",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c007-b.png",
+          "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c007-source.txt",
+          "sha256": "aea95f87bc1a819977a2fa27916ec748c006e8f797a0afa61621be16910aef7f"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c008",
+      "role": "document_reference_match",
+      "source_group": "g002",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Reference and offered page each show FIELD NOTES; SITE SURVEY; REVISION 3. Both have the same centered square symbol and page border, with no obscured areas.",
+        "capture": {
+          "path": "assets/c008-a.png",
+          "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c008-b.png",
+          "sha256": "cacbecdd0259b388a37b5ffedc43234362ad6b2b422aca11b50a63bcb71c3686",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c008-source.txt",
+          "sha256": "c6356baba5ef300d721969f07c53c6169c51e8590bcd2f859f9aa7bb76b862bd"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c009",
+      "role": "document_reference_match",
+      "source_group": "g003",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c009-a.png",
+          "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c009-b.png",
+          "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c009-source.txt",
+          "sha256": "cfaa08b39e23a346c01faf2bf5eb6d75b3b79ba3fd94729d92f4f980e1a68bd3"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c010",
+      "role": "document_reference_match",
+      "source_group": "g003",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c010-a.png",
+          "sha256": "e727f89fb06048e8e93a088f2a60de10bb2d83fafba24c9dd830fce3cbc76794",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "e727f89fb06048e8e93a088f2a60de10bb2d83fafba24c9dd830fce3cbc76794",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c010-b.png",
+          "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c010-source.txt",
+          "sha256": "eb39a766171d979be760af21db4a8bbc443ae0a8e24bd0c8ad11850632609b00"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c011",
+      "role": "document_reference_match",
+      "source_group": "g003",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Lower preview area is obscured.",
+        "capture": {
+          "path": "assets/c011-a.png",
+          "sha256": "43f2a095a76eb7fbf56c4fbc651ba6d0b13fb1688002e06c838756a6c1caa228",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "43f2a095a76eb7fbf56c4fbc651ba6d0b13fb1688002e06c838756a6c1caa228",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c011-b.png",
+          "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c011-source.txt",
+          "sha256": "98d1b4431cab2ddee0e94b13c5a0066461942013ad68604e85a6fe39d38cb131"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c012",
+      "role": "document_reference_match",
+      "source_group": "g003",
+      "input": {
+        "criterion": "Assess whether the offered page matches the supplied reference, including its revision.",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Reference and offered page each show FIELD NOTES; SITE SURVEY; REVISION 3. Both have the same centered triangle symbol and page border, with no obscured areas.",
+        "capture": {
+          "path": "assets/c012-a.png",
+          "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c012-b.png",
+          "sha256": "bb158439ae69805b7e0e83526590a3d3ebfd78b84e45da78d026624353697fb5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": null
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c012-source.txt",
+          "sha256": "aca4a9a604afb27d477230cce00fd8c52c8a1e8e6fccc6affe0805c4ad337418"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c013",
+      "role": "crop_subject_containment",
+      "source_group": "g004",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c013-a.png",
+          "sha256": "87269b1d173bb06dce93735a630f65ce7d424b8fb988123475d8b62812e4a426",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "87269b1d173bb06dce93735a630f65ce7d424b8fb988123475d8b62812e4a426",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c013-b.png",
+          "sha256": "a578666853a836229ed53fa87b58471ae10ed8455cef23419f329d4c9577af07",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 120.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c013-source.txt",
+          "sha256": "9aed1e30b5b08dc966d63d7d3d22405c382a1292149201c1e1bde7be133c75da"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c014",
+      "role": "crop_subject_containment",
+      "source_group": "g004",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c014-a.png",
+          "sha256": "cd6051cc641a373984366290417196c9b73eaec27fbc832cfd8859d7548c8f1c",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "cd6051cc641a373984366290417196c9b73eaec27fbc832cfd8859d7548c8f1c",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c014-b.png",
+          "sha256": "a578666853a836229ed53fa87b58471ae10ed8455cef23419f329d4c9577af07",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 175.0,
+            "y": 40.0,
+            "width": 195.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c014-source.txt",
+          "sha256": "397c03e43012f6843f1629617d87b103180d76725b8e1bc8cac8496231999d4c"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c015",
+      "role": "crop_subject_containment",
+      "source_group": "g004",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "A foreground opaque patch hides part of the orange figure.",
+        "capture": {
+          "path": "assets/c015-a.png",
+          "sha256": "cc5d69e22ca3eb1059eff6b49e42e252c6907acea69ee1d39dd6bf3c40056b9d",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "cc5d69e22ca3eb1059eff6b49e42e252c6907acea69ee1d39dd6bf3c40056b9d",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c015-b.png",
+          "sha256": "477e132f7b496719ede5b6b9f31ffe7ffedee5e4e9c49901c4b7a9568ac6a4b7",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 120.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c015-source.txt",
+          "sha256": "485770ed31b86b6a3d1179bfd579bb6bde4cad194cf8a5964c521fccd0f8ae90"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c016",
+      "role": "crop_subject_containment",
+      "source_group": "g004",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Complete visible orange figure extent: x=140..340, y=60..300; crop x=120.0..370.0, y=40..320. No occlusion.",
+        "capture": {
+          "path": "assets/c016-a.png",
+          "sha256": "87269b1d173bb06dce93735a630f65ce7d424b8fb988123475d8b62812e4a426",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "87269b1d173bb06dce93735a630f65ce7d424b8fb988123475d8b62812e4a426",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c016-b.png",
+          "sha256": "a578666853a836229ed53fa87b58471ae10ed8455cef23419f329d4c9577af07",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 120.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c016-source.txt",
+          "sha256": "fb12064dd2da752a35f1fd12cfe01d27d7ec6b95f910613104e565be7d8d6936"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c017",
+      "role": "crop_subject_containment",
+      "source_group": "g005",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c017-a.png",
+          "sha256": "a4d99612669096e396580a172273ecf055bdcac714333263827c3202d17b9adf",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "a4d99612669096e396580a172273ecf055bdcac714333263827c3202d17b9adf",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c017-b.png",
+          "sha256": "19bbf0b420714753d37f46755251aaaf1553513955763e84edcbd436a8ad5b08",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 128.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c017-source.txt",
+          "sha256": "1f0e642414294f6c35710e62b85be55bc0ddeb79e058f7bc742b7e38ddc754ab"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c018",
+      "role": "crop_subject_containment",
+      "source_group": "g005",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c018-a.png",
+          "sha256": "57db895b30d73ce47f689ab2eb0e728cbd1a7d61d985df86450dd825e1602c5b",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "57db895b30d73ce47f689ab2eb0e728cbd1a7d61d985df86450dd825e1602c5b",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c018-b.png",
+          "sha256": "19bbf0b420714753d37f46755251aaaf1553513955763e84edcbd436a8ad5b08",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 183.0,
+            "y": 40.0,
+            "width": 195.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c018-source.txt",
+          "sha256": "b0f37fc85f46d0e4357dd429801152126e9f1b39d6e62de49628b587b8271158"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c019",
+      "role": "crop_subject_containment",
+      "source_group": "g005",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "A foreground opaque patch hides part of the orange figure.",
+        "capture": {
+          "path": "assets/c019-a.png",
+          "sha256": "83cab56b21f3ae61c21d4db2f92a5ae839906b3a4293adc8544e27a3088916d7",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "83cab56b21f3ae61c21d4db2f92a5ae839906b3a4293adc8544e27a3088916d7",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c019-b.png",
+          "sha256": "2743a38e9c1d950a13a2d8dba8e713d39d3e413b0398d0a8530547d0d5026ea9",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 128.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c019-source.txt",
+          "sha256": "dfa02f55bcc130e74b4cc7a0998b0e06e558b77899980fa8b6e6eff033f5fc31"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c020",
+      "role": "crop_subject_containment",
+      "source_group": "g005",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Complete visible orange figure extent: x=148..348, y=60..300; crop x=128.0..378.0, y=40..320. No occlusion.",
+        "capture": {
+          "path": "assets/c020-a.png",
+          "sha256": "a4d99612669096e396580a172273ecf055bdcac714333263827c3202d17b9adf",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "a4d99612669096e396580a172273ecf055bdcac714333263827c3202d17b9adf",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c020-b.png",
+          "sha256": "19bbf0b420714753d37f46755251aaaf1553513955763e84edcbd436a8ad5b08",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 128.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c020-source.txt",
+          "sha256": "0665c9f42b218de71485f6c28029977e65045adb30b9f08e1d13cc357ed8e9fd"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c021",
+      "role": "crop_subject_containment",
+      "source_group": "g006",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c021-a.png",
+          "sha256": "93c82ef6133d0f68b55f7251104d02777c3388a046cb607bd4810e258d3475ab",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "93c82ef6133d0f68b55f7251104d02777c3388a046cb607bd4810e258d3475ab",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c021-b.png",
+          "sha256": "8893b6bf4ba46a90c22fa62b63c2de2516597fb41d51a0f196d0b9379d556e96",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 136.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c021-source.txt",
+          "sha256": "8c044b1444bd9ae6de7531b601036230c98b54382e0c5d8346495957e7bdc354"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c022",
+      "role": "crop_subject_containment",
+      "source_group": "g006",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Offered preview has no additional accessible description.",
+        "capture": {
+          "path": "assets/c022-a.png",
+          "sha256": "de85fe73205f001f314aed0f93e2ed023e08e9868a33b0f0c6b425280e2a8029",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "de85fe73205f001f314aed0f93e2ed023e08e9868a33b0f0c6b425280e2a8029",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c022-b.png",
+          "sha256": "8893b6bf4ba46a90c22fa62b63c2de2516597fb41d51a0f196d0b9379d556e96",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 191.0,
+            "y": 40.0,
+            "width": 195.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c022-source.txt",
+          "sha256": "43e18294607034b30fded5378b513c6bbcc911f1d71839ec41497d60c46d3de1"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c023",
+      "role": "crop_subject_containment",
+      "source_group": "g006",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "A foreground opaque patch hides part of the orange figure.",
+        "capture": {
+          "path": "assets/c023-a.png",
+          "sha256": "4f67306142ac00e6dcacda716739b868b580530bb51b60f3c43201506d2e9945",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "4f67306142ac00e6dcacda716739b868b580530bb51b60f3c43201506d2e9945",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c023-b.png",
+          "sha256": "7d1c074a32e9d362a18b2b1e807c69546a9027e409b189c5eb137a81f11507b5",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 136.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c023-source.txt",
+          "sha256": "8d2836318f43c5877bc9fec058131ecda4ab9d3d95d367b1a98fb6a4c7e7b64f"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    },
+    {
+      "id": "c024",
+      "role": "crop_subject_containment",
+      "source_group": "g006",
+      "input": {
+        "criterion": "Does the proposed rectangle retain the entire orange figure, including both arms?",
+        "criterion_version": "vq-v1",
+        "accessible_text": "Complete visible orange figure extent: x=156..356, y=60..300; crop x=136.0..386.0, y=40..320. No occlusion.",
+        "capture": {
+          "path": "assets/c024-a.png",
+          "sha256": "93c82ef6133d0f68b55f7251104d02777c3388a046cb607bd4810e258d3475ab",
+          "dimensions": [
+            480,
+            360
+          ],
+          "binding": {
+            "version": 1,
+            "inspection_only": true,
+            "surface": {
+              "kind": "native",
+              "pid": 1,
+              "window_id": 2,
+              "tab_id": null
+            },
+            "observation_id": "authored-observation",
+            "captured_at": "2026-10-09T02:06:20.524187+00:00",
+            "image": {
+              "sha256": "93c82ef6133d0f68b55f7251104d02777c3388a046cb607bd4810e258d3475ab",
+              "width": 480,
+              "height": 360,
+              "scale_x": 1.0,
+              "scale_y": 1.0
+            },
+            "viewport": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 480.0,
+              "height": 360.0
+            },
+            "target": {
+              "id": "1",
+              "token": "authored-placeholder",
+              "bounds": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 480.0,
+                "height": 360.0
+              },
+              "operation": "inspect",
+              "postcondition": "appearance assessment only",
+              "pixel_bounds": [
+                0,
+                0,
+                480,
+                360
+              ]
+            }
+          }
+        },
+        "resource": {
+          "path": "assets/c024-b.png",
+          "sha256": "8893b6bf4ba46a90c22fa62b63c2de2516597fb41d51a0f196d0b9379d556e96",
+          "dimensions": [
+            480,
+            360
+          ],
+          "resource_id": "supplied-resource",
+          "revision": "v1",
+          "page": 1,
+          "render_recipe": "authored-vq-fixture"
+        },
+        "crop": {
+          "rectangle": {
+            "x": 136.0,
+            "y": 40.0,
+            "width": 250.0,
+            "height": 280.0
+          },
+          "displayed_bounds": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 360.0
+          },
+          "orientation": "upright"
+        }
+      },
+      "provenance": {
+        "kind": "authored_fixture",
+        "source_record": {
+          "path": "c024-source.txt",
+          "sha256": "316cf619bf4ef9011590840069d0884c685bdc2cdb3ab281885567fa1eb978d1"
+        },
+        "labelers": [
+          "fixture-construction"
+        ],
+        "adjudicated": false
+      }
+    }
+  ]
+}

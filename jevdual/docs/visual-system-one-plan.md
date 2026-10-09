@@ -141,3 +141,7 @@ Observed source anchors: [inspection command](../python/jevdual/session.py), [ca
 Unavailable until implementation/qualification: multimodal support on the chosen System Two transport; exact app crop action/readback; general candidate-resource ownership; browser screenshot provenance across reconnect; a stable visual precondition comparator; independent accuracy/calibration and full workflow performance. These are explicit work gates, not reasons to ask the user to guess implementation facts. Any materially different app/workflow or authority requirement is a product scope decision.
 
 Net recommendation: retain the implemented native advisory checks and independently qualify one document/image workflow next. Keep browser capture separate, Jev active for text, and generic icon/visual action admission disabled. The original review was plan-only; the subsequently authorized native implementation is recorded above. No paid qualification was performed.
+
+## VQ1 machinery status — 2026-10-08
+
+The [qualification guide](visual-qualification.md) describes the new offline corpus validation, frozen schedules, production-image transport smoke, source-group quality/calibration scoring and workflow timing contract. The authored development corpus remains ineligible. Unit 6 now has local machinery; independent real-corpus accuracy and complete workflow speed still require separately scoped measurement. No paid collection or broader model/action activation follows from a passing mock run.

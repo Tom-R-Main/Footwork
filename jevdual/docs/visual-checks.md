@@ -73,3 +73,5 @@ Evidence remains under private `SESSION/visual/` until the operator removes the 
 Run `.venv/bin/python scripts/verify_visual_checks.py <fresh-attempt-name>` from `jevdual/` for repeatable verification on task-owned AppKit scenes. It uses the actual CLI/Cua driver and production HTTP adapter directed to an owned loopback endpoint, with action dispatch forbidden. Fixed provider answers verify mechanics only. Independent model quality, real OpenAI access through this new adapter, browser capture and reviewed execution need separate qualification. See the [plan](visual-system-one-plan.md) for those gates.
 
 [Post-implementation review](../results/visual-checks-review-20261008/report.md) records the corrected failure paths, full-suite checks and final native proof. Supply a fresh attempt name to preserve earlier evidence.
+
+Use the [qualification harness](visual-qualification.md) to prepare independent role evidence; its offline smoke is not a perception-quality result.

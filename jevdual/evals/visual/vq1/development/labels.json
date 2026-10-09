@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "labels": {
+    "c001": true,
+    "c002": false,
+    "c003": null,
+    "c004": true,
+    "c005": true,
+    "c006": false,
+    "c007": null,
+    "c008": true,
+    "c009": true,
+    "c010": false,
+    "c011": null,
+    "c012": true,
+    "c013": true,
+    "c014": false,
+    "c015": null,
+    "c016": true,
+    "c017": true,
+    "c018": false,
+    "c019": null,
+    "c020": true,
+    "c021": true,
+    "c022": false,
+    "c023": null,
+    "c024": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "experiment": "VQ1",
+  "roles": [
+    "document_reference_match",
+    "crop_subject_containment"
+  ],
+  "arms": {
+    "jev_text": {
+      "model": "jev-1.13.0",
+      "capability": "text"
+    },
+    "decisions_visual": {
+      "model": "gpt-6-luna",
+      "capability": "image"
+    }
+  },
+  "replays": 2,
+  "seed": 10082031,
+  "accept_p": 0.9,
+  "reject_p": 0.1,
+  "confidence": 0.95,
+  "max_false_endorsement_rate": 0.01,
+  "min_positive_coverage": 0.8,
+  "min_ambiguous_abstention": 0.95,
+  "max_p95_workflow_ratio": 1.1,
+  "baseline_arm": "jev_text",
+  "max_calls": 200,
+  "max_reserved_cost_usd": 2.0,
+  "reservation_usd_per_attempt": 0.01,
+  "deadline_s": 10.0
+}
