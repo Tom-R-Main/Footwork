@@ -2,6 +2,7 @@
 import hashlib
 import json
 from dataclasses import replace
+from pathlib import Path
 
 import httpx
 import pytest
@@ -152,6 +153,25 @@ def test_source_changed_during_provider_cleanup_invalidates_printed_receipt(oper
     assert code == 4
     assert record(path)["result"]["status"] == "invalidated"
     assert record(path)["result"]["p"] is None
+    assert '"p": 0.99' not in out
+
+
+def test_receipt_publication_cannot_print_positive_after_detecting_source_change(operator, monkeypatch):
+    _, path, run = operator
+    manifest, image = spec(path)
+    provider(monkeypatch)
+    original = Path.write_text
+    def changes_during_publication(file, data, *args, **kwargs):
+        answer = original(file, data, *args, **kwargs)
+        if file.parent == path / "visual" and file.name != "budget.json":
+            image.write_bytes(b"changed during receipt publication")
+        return answer
+    monkeypatch.setattr(Path, "write_text", changes_during_publication)
+    code, out, _ = run("visual-check", "--request", str(manifest), "--provider", "decisions", "--disclose")
+    assert code == 4
+    receipt = record(path)
+    assert receipt["result"]["p"] is None and receipt["question"]["result"]["p"] is None
+    assert receipt["result"]["status"] == "invalidated"
     assert '"p": 0.99' not in out
 
 

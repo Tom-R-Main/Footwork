@@ -29,3 +29,9 @@ Observed: The delayed-driver CLI probe failed before repair: it completed the de
 Inferred: The missing timeout around the native capture await was the measured cause. This bounds cooperative capture waits; it does not establish a hard real-time limit for driver startup, synchronous decoding or cleanup.
 Next: Include the corrected boundary in native requalification and retain separate provider-quality limits.
 Refs: tests/test_visual_native.py; python/jevdual/visual_native.py; docs/visual-checks.md
+
+## U-VCRPUBLICATION · update · 2026-10-08 20:29
+Observed: After review1 native requalification passed, an additional CLI publication probe found that a source change during receipt I/O was detected by the storage guard but still left valid stdout and a positive receipt. The initial probe required a missing pathlib import repair; the corrected probe failed on exit 0 versus 4. Centralizing the output packet and reconciling after receipt I/O makes saved receipt, nested question/result, escalation, stdout and current summary use one invalidated result. Independent reviewer reruns this regression and all 24 native scenarios, with no remaining blocker in the correction. Full suite passes 1031 tests, 26 skipped, in 68.07 s.
+Inferred: The recurring mechanism was separating persistence eligibility from final result consumption. The repair unifies those outputs; it still cannot assert external resources remain atomic after the final check.
+Next: Freeze the publisher correction and rerun native proof with publication-time source invalidation, preserving review1 and earlier evidence.
+Refs: tests/test_visual_native.py; python/jevdual/visual_native.py; scripts/verify_visual_checks.py; results/visual-checks-native-20261008/review1/verification.json; c088a2b

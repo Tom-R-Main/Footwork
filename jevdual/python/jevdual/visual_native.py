@@ -264,9 +264,12 @@ async def cmd_visual_check(args: Any) -> int:
         request, now=time.monotonic(), current_generation=identifier,
     )):
         result = replace(result, status="invalidated", p=None, reason="generation_changed_or_expired")
-    escalation = result_to_escalation(request, result)
-    question = handoff_summary(request, result)
-    record = {"request": request.to_dict(), "question": question, "result": result.to_dict(), "escalation": escalation.to_dict(),
+    def output_packet(answer: VisualCheckResult) -> dict:
+        return {"question": handoff_summary(request, answer), "result": answer.to_dict(),
+                "escalation": result_to_escalation(request, answer).to_dict()}
+
+    packet = output_packet(result)
+    record = {"request": request.to_dict(), **packet,
               "previous_action_receipt": previous_receipt,
               "screenshot": f"{identifier}.png", "capture_atomic": False,
               "capture_time_basis": "native receipt time; monotonic interval brackets driver call",
@@ -274,14 +277,25 @@ async def cmd_visual_check(args: Any) -> int:
               "image_visible_to_s2": False, "execution_authority": False}
     receipt = visual / f"{identifier}.json"
     receipt.write_text(json.dumps(record, indent=2), encoding="utf-8")
-    if current():
+    # Publication is another consumption boundary: file I/O may expose a source
+    # change. A failed persistence guard must also invalidate receipt and stdout.
+    publish_current = current()
+    if result.status == "valid" and (not publish_current or not result.is_current(
+        request, now=time.monotonic(), current_generation=identifier,
+    )):
+        result = replace(result, status="invalidated", p=None, reason="generation_changed_or_expired")
+        packet = output_packet(result)
+        record.update(packet)
+        receipt.write_text(json.dumps(record, indent=2), encoding="utf-8")
+        publish_current = current()
+    if publish_current:
         fresh = SessionState.load(root)
-        fresh.last_visual_check = {"question": question, "result": result.to_dict(), "escalation": escalation.to_dict(),
+        fresh.last_visual_check = {**packet,
                                   "receipt": str(receipt), "image_visible_to_s2": False}
         fresh.save()
     state.log({"kind": "visual check", "receipt": str(receipt), "status": result.status,
                "reason": result.reason, "evidence_digest": request.evidence.digest, "advisory_only": True})
     print(f"visual check: {receipt}")
-    print(json.dumps({"question": question, "result": result.to_dict(), "escalation": escalation.to_dict()}))
+    print(json.dumps(packet))
     print("Advisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.")
     return 0 if result.status == "valid" else 4

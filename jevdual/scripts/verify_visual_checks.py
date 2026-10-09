@@ -276,6 +276,20 @@ def main():
             ledger_path.write_bytes(b"")  # owned local fault injection, never a real provider budget
             _, interrupted = run(session, mode="interrupted_ledger", extra=explicit, expect="budget_exhausted")
             assert interrupted["result"]["reason"] == "ledger_invalid"
+        session, _ = setup("publication_changed")
+        original_write = Path.write_text
+        def change_during_publication(path, data, *args, **kwargs):
+            outcome = original_write(path, data, *args, **kwargs)
+            if path.parent == session / "visual" and path.name != "budget.json":
+                asset = session / "assets/source.png"
+                asset.write_bytes(asset.read_bytes() + b"publication-revision-changed")
+            return outcome
+        Path.write_text = change_during_publication
+        try:
+            _, changed = run(session, extra=explicit, expect="invalidated")
+            assert changed["question"]["result"]["p"] is None
+        finally:
+            Path.write_text = original_write
         for mode, expected in (("refusal", "refusal"), ("timeout", "timeout"),
                                ("source_changed", "invalidated"), ("generation_changed", "invalidated")):
             session, _ = setup(mode)
