@@ -216,6 +216,16 @@ async def test_durable_reservation_is_present_before_network(tmp_path):
     assert json.loads((tmp_path / "ledger.json").read_text())["entries"][0]["cost"] == pytest.approx(.00005)
 
 
+async def test_existing_empty_ledger_never_resets_a_charged_workflow(tmp_path):
+    ledger = VisualCallLedger(tmp_path / "ledger.json")
+    ledger.reserve(request())
+    ledger.path.write_bytes(b"")  # an interrupted/truncated persisted budget
+    result, seen = await call(tmp_path, ledger=ledger)
+    assert seen == []
+    assert result.status == "budget_exhausted" and result.reason == "ledger_invalid"
+    assert ledger.path.read_bytes() == b""
+
+
 def test_new_receipt_generation_and_criterion_version_do_not_reset_same_pixel_budget(tmp_path):
     req = request()
     ledger = VisualCallLedger(tmp_path / "ledger.json", max_calls=2, max_input_tokens=128_000,

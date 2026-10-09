@@ -67,7 +67,14 @@ class VisualCallLedger:
             for parent in self.path.parents:
                 if parent.is_symlink() or not parent.is_dir():
                     raise VisualLedgerError("ledger_path")
-            fd = os.open(self.path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+            # Only this exclusive creator may initialize an empty file. Existing
+            # empty state can be a crashed write and must never reset reservations.
+            try:
+                fd = os.open(self.path, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+                created = True
+            except FileExistsError:
+                fd = os.open(self.path, os.O_RDWR | os.O_NOFOLLOW)
+                created = False
             fcntl.flock(fd, fcntl.LOCK_EX)
             info = os.fstat(fd)
             if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o077
@@ -78,6 +85,8 @@ class VisualCallLedger:
             with os.fdopen(fd, "r+", encoding="utf-8") as file:
                 fd = None
                 content = file.read()
+                if not content and not created:
+                    raise VisualLedgerError("ledger_invalid")
                 state = json.loads(content, object_pairs_hook=_unique_object) if content else {
                     "version": 1, "limits": self.limits, "entries": [],
                 }

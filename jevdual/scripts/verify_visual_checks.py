@@ -142,7 +142,7 @@ def main():
 
     async def capture(*args, **kwargs):
         answer = await original_capture(*args, **kwargs)
-        captured.append(answer)
+        captured.append((*answer, args[0]))
         return answer
 
     def provider():
@@ -234,19 +234,48 @@ def main():
             assert record["result"]["p"] == .97 and SessionState.load(session).last_visual_check
             shutil.copyfile(path, RESULTS / f"{role}.json")
             shutil.copyfile(path.parent / record["screenshot"], RESULTS / f"{role}.png")
-            request, nm, _ = captured[-1]
+            request, nm, asset_path, owning_bridge = captured[-1]
             from jevdual.visual_checks import VisualCheckResult
             values = dict(record["result"])
             values["phases_ms"] = tuple(tuple(pair) for pair in values["phases_ms"])
             answer = VisualCheckResult(**{k: v for k, v in values.items()
                                           if k not in ("advisory_only", "execution_authority")})
             agent = SimpleNamespace(task="Advisory QA", requirements=(), memory=[], secrets=None,
-                                    visual_check=(request, answer), bridge=SimpleNamespace(policy=None))
+                                    visual_check=(request, answer), bridge=owning_bridge,
+                                    visual_check_current=lambda session=session, request=request, asset_path=asset_path:
+                                    SessionState.load(session).visual_generation == request.generation
+                                    and sha(asset_path) == (request.evidence.reference or request.evidence.source).image_sha256)
             handoff = NativeS2(None).messages(agent, nm, "visual advisory", SimpleNamespace(decision=None, step=0))
-            assert json.loads(handoff[1]["content"])["visual_check"]["image_visible_to_s2"] is False
+            payload = json.loads(handoff[1]["content"])["visual_check"]
+            assert payload["image_visible_to_s2"] is False and payload["current_advisory_answer"]
+            assert payload["result"]["p"] == .97
             write(RESULTS / f"{role}-handoff.json", handoff)
+            owning_bridge.last = None
+            historical = NativeS2(None).messages(agent, nm, "owner invalidated", SimpleNamespace(decision=None, step=0))
+            payload = json.loads(historical[1]["content"])["visual_check"]
+            assert not payload["current_advisory_answer"] and payload["result"]["p"] is None
+            assert payload["question"]["result"]["p"] is None
+            write(RESULTS / f"{role}-invalidated-handoff.json", historical)
+            from dataclasses import replace
+
+            from jevdual.secrets import SecretStore
+            fixture_value = "run-owned-synthetic-credential"
+            sensitive_request = replace(request, request_id="request-" + fixture_value,
+                                        criterion="Compare " + fixture_value)
+            withheld = replace(answer, request_id=sensitive_request.request_id, request_digest=sensitive_request.digest,
+                               status="unavailable", p=None, reason="pixels_withheld")
+            agent.secrets = SecretStore({"fixture": fixture_value})
+            agent.visual_check = (sensitive_request, withheld)
+            redacted = NativeS2(None).messages(agent, nm, "withheld", SimpleNamespace(decision=None, step=0))
+            assert fixture_value not in json.dumps(redacted)
+            write(RESULTS / f"{role}-redacted-handoff.json", redacted)
             _, second = run(session, extra=explicit, expect="budget_exhausted")
             assert second["result"]["p"] is None
+            ledger_path = session / "visual/budget.json"
+            shutil.copyfile(ledger_path, session / "budget-before-interruption.json")
+            ledger_path.write_bytes(b"")  # owned local fault injection, never a real provider budget
+            _, interrupted = run(session, mode="interrupted_ledger", extra=explicit, expect="budget_exhausted")
+            assert interrupted["result"]["reason"] == "ledger_invalid"
         for mode, expected in (("refusal", "refusal"), ("timeout", "timeout"),
                                ("source_changed", "invalidated"), ("generation_changed", "invalidated")):
             session, _ = setup(mode)
@@ -268,6 +297,7 @@ def main():
         assert not list(PRIVATE.rglob("grants.json"))
         proof.update(checks=checks, commands=commands, requests=server.requests, request_receipts=server.receipts,
                      no_effect=True, no_grants=True, action_dispatches=len(action_calls),
+                     owning_bridge_invalidation_checked=True, handoff_redaction_checked=True,
                      source_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip())
         write(RESULTS / "verification.json", proof)
         print(json.dumps({"checks": len(checks), "requests": server.requests, "no_effect": True}))

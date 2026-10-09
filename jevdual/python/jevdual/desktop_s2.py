@@ -257,15 +257,23 @@ class NativeS2:
             import time
 
             from jevdual.visual_checks import result_to_escalation
-            from jevdual.visual_native import handoff_summary
+            from jevdual.visual_native import handoff_summary, redact_visual_payload
 
             request, result = visual
+            owning = getattr(agent.bridge, "last", None)
             same_observation = (
-                nm.snapshot_id == request.evidence.capture.observation_id
+                owning is not None and owning.snapshot_id == nm.snapshot_id
+                and owning.pid == nm.pid and owning.window_id == nm.window_id
+                and nm.snapshot_id == request.evidence.capture.observation_id
                 and nm.pid == request.evidence.capture.surface.pid
                 and nm.window_id == request.evidence.capture.surface.window_id
             )
-            current = same_observation and result.is_current(
+            guard = getattr(agent, "visual_check_current", None)
+            try:
+                workflow_current = callable(guard) and guard() is True
+            except Exception:  # noqa: BLE001 - failed source/generation reconciliation withholds the answer
+                workflow_current = False
+            current = same_observation and workflow_current and result.is_current(
                 request, now=time.monotonic(), current_generation=request.generation,
             )
             safe_result = result.to_dict()
@@ -275,13 +283,14 @@ class NativeS2:
             if result.status == "valid" and not current:
                 escalation["reason"] = "visual_answer_unavailable_or_historical"
             state["visual_check"] = {
-                "question": handoff_summary(request, result, redactor=red),
+                "question": handoff_summary(request, result),
                 "result": safe_result, "escalation": escalation,
                 "current_advisory_answer": current, "image_visible_to_s2": False,
                 "pixel_question_resolved": False, "execution_authority": False,
                 "limitation": "Only a bound advisory receipt is supplied. This text transport does not see pixels.",
             }
             state["visual_check"]["question"]["result"] = safe_result
+            state["visual_check"] = redact_visual_payload(state["visual_check"], red)
         mode = getattr(getattr(agent.bridge, "policy", None), "mode", "exclusive_desktop")
         return [
             {"role": "system", "content": SYSTEM_PROMPT + POSTURE_NOTE.get(mode, "")},

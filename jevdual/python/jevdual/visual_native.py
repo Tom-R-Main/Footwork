@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import math
@@ -108,7 +109,11 @@ async def capture_request(bridge: Any, *, root: Path, spec: dict, generation: st
                  "invalid_crop_bounds")
         crop = CropSpec(Bounds(*spec["rectangle"]), Bounds(*spec["displayed_bounds"]), spec["orientation"])
     started = time.monotonic()
-    nm = await bridge.observe(screenshot_path=str(screenshot))
+    try:
+        async with asyncio.timeout(timeout):
+            nm = await bridge.observe(screenshot_path=str(screenshot))
+    except TimeoutError:
+        raise VisualEvidenceError("capture_timeout") from None
     finished = time.monotonic()
     _require(not (nm.truncated or nm.degraded or nm.menu.omitted.get("cap")), "observation_incomplete")
     candidate = nm.menu.candidate(spec["target"])
@@ -147,27 +152,29 @@ def make_provider():
     return VisualDecisionsClient(os.environ["OPENAI_API_KEY"])
 
 
+def redact_visual_payload(value: Any, redactor) -> Any:
+    """Apply the owning session's redactor after the whole handoff is assembled."""
+    if isinstance(value, str):
+        return redactor(value)
+    if isinstance(value, dict):
+        return {k: redact_visual_payload(v, redactor) for k, v in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [redact_visual_payload(v, redactor) for v in value]
+    return value
+
+
 def handoff_summary(request: VisualCheckRequest, result: VisualCheckResult, *, redactor=lambda s: s) -> dict:
     """Text-visible question association, not image visibility or resource proof."""
-    def red(value):
-        if isinstance(value, str):
-            return redactor(value)
-        if isinstance(value, dict):
-            return {k: red(v) for k, v in value.items()}
-        if isinstance(value, (tuple, list)):
-            return [red(v) for v in value]
-        return value
-
     evidence = request.evidence.to_dict()
-    return red({"role": request.role, "criterion": request.criterion, "criterion_version": request.criterion_version,
+    return redact_visual_payload({"role": request.role, "criterion": request.criterion, "criterion_version": request.criterion_version,
                 "target": evidence["capture"]["target"], "reference": evidence["reference"],
                 "source": evidence["source"], "crop": evidence["crop"],
                 "resource_ownership_proven": False, "display_transform_proven": False,
-                "result": result.to_dict(), "image_visible_to_s2": False, "execution_authority": False})
+                "result": result.to_dict(), "image_visible_to_s2": False, "execution_authority": False}, redactor)
 
 
 async def cmd_visual_check(args: Any) -> int:
-    from .session import SessionState, bind, session_dir
+    from .session import SessionState, bind, finish_observation, session_dir
     from .visual_decisions import VisualCallLedger
 
     directory = session_dir(args.session).absolute()
@@ -226,9 +233,7 @@ async def cmd_visual_check(args: Any) -> int:
         return refused("capture_failed")
     if _sha(root / "session.json") != original_state_hash:
         return refused("generation_changed")
-    state.remember(nm)
-    state.visual_generation = identifier
-    state.save()
+    nm, previous_receipt = finish_observation(state, nm, generation=identifier)
     state_hash = _sha(root / "session.json")
 
     def current() -> bool:
@@ -262,6 +267,7 @@ async def cmd_visual_check(args: Any) -> int:
     escalation = result_to_escalation(request, result)
     question = handoff_summary(request, result)
     record = {"request": request.to_dict(), "question": question, "result": result.to_dict(), "escalation": escalation.to_dict(),
+              "previous_action_receipt": previous_receipt,
               "screenshot": f"{identifier}.png", "capture_atomic": False,
               "capture_time_basis": "native receipt time; monotonic interval brackets driver call",
               "retention": "private session evidence; retained until operator removes the session",

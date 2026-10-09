@@ -193,6 +193,25 @@ def test_manifest_path_cannot_read_external_assets(operator, tmp_path):
     assert code == 4 and "asset_outside_session" in error and before == world.capture_calls
 
 
+def test_visual_capture_reconciles_pending_action_before_replacing_effect_baseline(operator):
+    world, path, run = operator
+    manifest, _ = spec(path)
+    state_path = path / "session.json"
+    state = json.loads(state_path.read_text())
+    state["pending"] = {"line": "click Seven", "op": "click", "driver_effect": "confirmed"}
+    state["step"] = 1
+    state_path.write_text(json.dumps(state))
+    world.calc.press("7")  # historical delivered input, not an action from visual-check
+    assert run("visual-check", "--request", str(manifest))[0] == 4
+    assert json.loads(state_path.read_text())["pending"] is None
+    records = [json.loads(line) for line in (path / "session.jsonl").read_text().splitlines()]
+    receipt = next(item for item in records if item["kind"] == "receipt")
+    assert receipt["effect"] == "confirmed"
+    assert run("look")[0] == 0
+    records = [json.loads(line) for line in (path / "session.jsonl").read_text().splitlines()]
+    assert sum(item["kind"] == "receipt" for item in records) == 1
+
+
 def test_duplicate_manifest_keys_are_rejected_before_capture(operator):
     world, path, run = operator
     manifest, _ = spec(path)
@@ -210,6 +229,24 @@ def test_preexisting_broad_readable_capture_directory_refuses(operator):
     before = world.capture_calls
     code, _, error = run("visual-check", "--request", str(manifest))
     assert code == 4 and "visual_path_unsafe" in error and before == world.capture_calls
+
+
+def test_native_capture_deadline_cancels_delayed_snapshot_without_replacing_baseline(operator, monkeypatch):
+    import asyncio
+    world, path, run = operator
+    manifest, _ = spec(path)
+    before = (path / "session.json").read_bytes()
+    original = world.get_window_state
+    finished = []
+    async def delayed_snapshot(inp):
+        await asyncio.sleep(.2)
+        finished.append(True)
+        return await original(inp)
+    monkeypatch.setattr(world, "get_window_state", delayed_snapshot)
+    code, _, error = run("visual-check", "--request", str(manifest), "--timeout", "0.01")
+    assert code == 4 and "capture_timeout" in error
+    assert not finished
+    assert (path / "session.json").read_bytes() == before
 
 
 def test_agent_explicit_service_and_text_handoff_invalidate_changed_snapshot(tmp_path):
@@ -234,7 +271,8 @@ def test_agent_explicit_service_and_text_handoff_invalidate_changed_snapshot(tmp
     async def call():
         async with httpx.AsyncClient(transport=httpx.MockTransport(response)) as http:
             client = VisualDecisionsClient("fixture", client=http)
-            return await agent.check_visual(req, client, VisualCallLedger(tmp_path / "budget.json"))
+            return await agent.check_visual(req, client, VisualCallLedger(tmp_path / "budget.json"),
+                                             is_current=lambda: True)
     result = asyncio.run(call())
     assert result.status == "valid"
     s2 = NativeS2(None)
@@ -249,3 +287,80 @@ def test_agent_explicit_service_and_text_handoff_invalidate_changed_snapshot(tmp
     nm.snapshot_id="changed"
     handoff=json.loads(s2.messages(agent,nm,"changed",out)[1]["content"])["visual_check"]
     assert handoff["result"]["p"] is None and handoff["result"]["status"] == "invalidated"
+
+
+def _agent_request():
+    import time
+    from types import SimpleNamespace
+
+    from jevdual.desktop import NativeAgent, StepOutcome
+
+    from tests.test_visual_checks import evidence, request
+
+    ev = replace(evidence(), capture_started=time.monotonic(), capture_finished=time.monotonic())
+    req = request(evidence=ev, deadline_monotonic=time.monotonic()+10)
+    menu = SimpleNamespace(title="Fixture", page_text="", candidates=[], omitted={})
+    nm = SimpleNamespace(snapshot_id="observation", pid=11, window_id=22, menu=menu, app_name="Fixture")
+    agent = NativeAgent(SimpleNamespace(last=nm), None, task="Inspect a page")
+    return agent, req, nm, StepOutcome(1, "s2", nm)
+
+
+def test_text_handoff_cannot_resurrect_invalidated_owning_bridge():
+    from jevdual.desktop_s2 import NativeS2
+
+    from tests.test_visual_checks import result
+    agent, req, nm, out = _agent_request()
+    agent.visual_check = (req, result(req))
+    agent.visual_check_current = lambda: True
+    agent.bridge.last = None
+    handoff = json.loads(NativeS2(None).messages(agent, nm, "bridge invalidated", out)[1]["content"])["visual_check"]
+    assert handoff["current_advisory_answer"] is False
+    assert handoff["result"]["p"] is None and handoff["question"]["result"]["p"] is None
+
+
+def test_final_visual_handoff_redacts_result_and_escalation_metadata():
+    from jevdual.desktop_s2 import NativeS2
+    from jevdual.secrets import SecretStore
+    from jevdual.visual_checks import VisualCheckResult
+    fixture_value = "synthetic-credential-for-redaction-test"
+    agent, req, nm, out = _agent_request()
+    agent.secrets = SecretStore({"fixture": fixture_value})
+    req = replace(req, request_id="request-"+fixture_value, criterion="Compare "+fixture_value)
+    result = VisualCheckResult(req.request_id, req.evidence.digest, req.generation, req.role,
+                               "unavailable", reason="pixels_withheld", request_digest=req.digest)
+    agent.visual_check = (req, result)
+    raw = NativeS2(None).messages(agent, nm, "withheld", out)[1]["content"]
+    assert fixture_value not in raw
+    assert json.loads(raw)["visual_check"]["result"]["status"] == "unavailable"
+
+
+async def test_library_requires_workflow_source_guard_before_provider_dispatch(tmp_path):
+    from tests.test_visual_checks import result
+    agent, req, _, _ = _agent_request()
+    calls = []
+    class Provider:
+        async def check(self, *args, **kwargs):
+            calls.append(True)
+            return result(req)
+    answer = await agent.check_visual(req, Provider(), None)
+    assert not calls
+    assert answer.status == "unavailable" and answer.reason == "source_current_unavailable"
+
+
+async def test_library_source_guard_is_retained_for_final_handoff(tmp_path):
+    from jevdual.desktop_s2 import NativeS2
+    from jevdual.visual_decisions import VisualCallLedger
+    agent, req, nm, out = _agent_request()
+    source = tmp_path / "owned-source-revision"
+    source.write_text("original")
+    async def response(_):
+        return httpx.Response(200, json={"model":"gpt-6-luna", "answers":[{"name":"required","type":"predicate","probability":.99}]})
+    async with httpx.AsyncClient(transport=httpx.MockTransport(response)) as http:
+        answer = await agent.check_visual(req, VisualDecisionsClient("fixture", client=http),
+                                           VisualCallLedger(tmp_path / "ledger.json"),
+                                           is_current=lambda: source.read_text()=="original")
+    assert answer.status == "valid"
+    source.write_text("changed")
+    handoff = json.loads(NativeS2(None).messages(agent,nm,"reference changed",out)[1]["content"])["visual_check"]
+    assert not handoff["current_advisory_answer"]
+    assert handoff["result"]["p"] is None and handoff["question"]["result"]["p"] is None

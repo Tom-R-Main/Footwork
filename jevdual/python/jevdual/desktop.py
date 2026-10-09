@@ -210,29 +210,42 @@ class NativeAgent:
             nm = dataclasses.replace(nm, menu=redact_menu(nm.menu, self.secrets.redactor()))
         return nm, (time.perf_counter() - t0) * 1000
 
-    async def check_visual(self, request: Any, provider: Any, ledger: Any):
+    async def check_visual(self, request: Any, provider: Any, ledger: Any, *,
+                           is_current: Callable[[], bool] | None = None):
         """Explicit advisory service call; never invoked by the normal action policy.
 
-        The caller supplies a request from capture_request and owns source disclosure.
+        The caller supplies a request from capture_request and a workflow guard for
+        source/reference revision and generation. The guard is retained for handoff.
         Snapshot equality here is request correlation, not a live pixel precondition.
         """
         from jevdual.visual_checks import VisualCheckResult
 
         def current() -> bool:
             nm = self.bridge.last
-            return (nm is not None and nm.snapshot_id == request.evidence.capture.observation_id
-                    and nm.pid == request.evidence.capture.surface.pid
-                    and nm.window_id == request.evidence.capture.surface.window_id)
+            try:
+                return (self.secrets is None and nm is not None
+                        and nm.snapshot_id == request.evidence.capture.observation_id
+                        and nm.pid == request.evidence.capture.surface.pid
+                        and nm.window_id == request.evidence.capture.surface.window_id
+                        and is_current is not None and is_current() is True)
+            except Exception:  # noqa: BLE001 - unavailable source validity cannot keep a positive
+                return False
 
-        if self.secrets is not None or not current():
+        if self.secrets is not None or is_current is None or not current():
             result = VisualCheckResult(
                 request.request_id, request.evidence.digest, request.generation, request.role,
-                "unavailable", reason="pixels_withheld" if self.secrets is not None else "generation_changed",
+                "unavailable", reason=("pixels_withheld" if self.secrets is not None else
+                                       "source_current_unavailable" if is_current is None else "generation_changed"),
                 request_digest=request.digest,
             )
         else:
             result = await provider.check(request, ledger, is_current=current)
+        if result.status == "valid" and (not current() or not result.is_current(
+            request, now=time.monotonic(), current_generation=request.generation,
+        )):
+            result = dataclasses.replace(result, status="invalidated", p=None, reason="generation_changed_or_expired")
         self.visual_check = (request, result)
+        self.visual_check_current = current
         return result
 
     def context(self, step: int) -> StepContext:

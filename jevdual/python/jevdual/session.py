@@ -424,6 +424,13 @@ async def observe(
         shots.mkdir(exist_ok=True)
         shot = str(shots / f"obs-{state.step:03d}-{int(time.time())}.png")
     nm = await bridge.observe(screenshot_path=shot)
+    return finish_observation(state, nm, secret_value=secret_value)
+
+
+def finish_observation(
+    state: SessionState, nm: NativeMenu, *, secret_value: str | None = None, generation: str | None = None
+) -> tuple[NativeMenu, dict[str, Any] | None]:
+    """Reconcile the prior action before replacing its observation baseline."""
     receipt = receipt_for(state, nm, secret_value=secret_value)
     nm = scrub(state, nm, secret_value)
     if receipt is not None and state.pending is not None:
@@ -433,6 +440,8 @@ async def observe(
         state.log({"kind": "receipt", "action": state.pending, **receipt})
         state.pending = None
     state.remember(nm)
+    if generation is not None:
+        state.visual_generation = generation
     state.save()
     return nm, receipt
 
