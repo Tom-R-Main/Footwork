@@ -23,6 +23,7 @@ from typing import Any
 
 LOST = {"code": -32000, "message": "backend process exited; restarted"}
 WATCH_TIMEOUT = 10.0
+FRAME_LIMIT = 32 * 1024 * 1024
 
 
 def oracle_read(spec: dict[str, Any]) -> str:
@@ -95,6 +96,7 @@ class Relay:
             stderr=self.error_log,
             env={**os.environ, **self.cfg.get("env", {})},
             start_new_session=True,
+            limit=FRAME_LIMIT,
         )
         self.event("spawn", pid=self.proc.pid, generation=self.spawn_count)
 
@@ -256,7 +258,7 @@ class Relay:
     async def run(self) -> None:
         await self.spawn()
         loop = asyncio.get_running_loop()
-        reader = asyncio.StreamReader()
+        reader = asyncio.StreamReader(limit=FRAME_LIMIT)
         protocol = asyncio.StreamReaderProtocol(reader)
         await loop.connect_read_pipe(lambda: protocol, sys.stdin)
         task = asyncio.current_task()

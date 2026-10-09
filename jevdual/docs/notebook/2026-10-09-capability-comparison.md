@@ -100,3 +100,17 @@ Test: add a fake-backend response over 64KB and observe it fail on the existing 
 Predicts: the large-response regression fails before the fix and passes after it without schema rewriting or content truncation; no-replay and cleanup tests remain green.
 Against: the response still fails, changes content, or removing the 64KB limit allows an interrupted reply or duplicated input to reach the caller.
 Refs: scripts/capability_comparison_relay.py; tests/test_capability_comparison_relay.py; output/capability-comparison-dev-20261009-v1/b01-raw/relay/events.jsonl
+
+## CR8-U1 · update · 2026-10-09 18:43
+Resolves: CR8 = held
+Observed: large-response regression failed on e00818b with EOF after the relay's 64KB reader rejected the frame. With an explicit 32MiB bound on child stdout and host stdin, the exact 100,000-character payload passed. All eight relay/fixture regressions passed in 11.77 seconds; static lint passed. The old development pair remains invalid and retained, not counted or repaired.
+Next: new development version to qualify actual host continuation and stale treatment.
+Refs: output/capability-large-frame-before.log; tests/test_capability_comparison_relay.py:test_large_raw_response_preserves_every_byte
+
+## CR7B · prediction · 2026-10-09 18:43
+Revises: CR7
+Hypothesis: the bounded large-frame repair removes the raw host's transport failures while preserving exact four/seven tool inventory and first-field-change restart semantics.
+Test: new development run with up to three fixed pairs, identical products/resources/model/budget, never pooled into C1 or replacing the invalid v1 pair. Review init inventories, treatment evidence, exact oracle and supported claims.
+Predicts: clean raw observations pass through without connection-close errors; interrupted hosts can call a fresh observation after the relay's generic error; both stale treatments are applied to the predeclared edited prefix. Raw refusal for omitted window identity remains a real tool outcome, not repaired by widening scope.
+Against: any transport/framing failure, replayed write, incorrect treatment labeling, or an observation/effect outside the owned resource.
+Refs: scripts/capability_comparison_trial.py; scripts/capability_comparison_relay.py; output/capability-comparison-dev-20261009-v1

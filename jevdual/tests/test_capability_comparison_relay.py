@@ -32,7 +32,8 @@ for line in sys.stdin:
         if n>1 and (root/'drift').exists(): tools.append('different')
         result={'tools':[{'name':t,'inputSchema':{'type':'object'}} for t in tools]}
     elif q['params']['name']=='get_window_state':
-        result={'content':[{'type':'text','text':(root/'document').read_text()}]}
+        pad='x'*100000 if q['params']['arguments'].get('large') else ''
+        result={'content':[{'type':'text','text':pad+(root/'document').read_text()}]}
     else:
         args=q['params']['arguments']
         if args.get('refuse'):
@@ -177,5 +178,14 @@ def test_no_change_refusal_is_forwarded_but_treatment_is_inconclusive(tmp_path):
         assert any(e.get("reason") == "no_observed_change" for e in client.events())
         assert not any(e["kind"] == "dropped" for e in client.events())
         assert time.monotonic() - start < 14
+    finally:
+        client.close()
+
+
+def test_large_raw_response_preserves_every_byte(tmp_path):
+    client = Client(tmp_path, "clean")
+    try:
+        result = client.tool("get_window_state", large=True)
+        assert result["result"]["content"][0]["text"] == "x" * 100000 + "start\n"
     finally:
         client.close()
