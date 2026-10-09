@@ -265,6 +265,73 @@ def test_a_key_and_a_return_go_to_the_judge_through_the_real_command(world, fw):
         _Verifier.p = 0.05
 
 
+@pytest.mark.parametrize("words", [
+    ("click", "All Clear"), ("key", "Tab"), ("hotkey", "cmd", "s"),
+    ("menu", "File > Save"), ("enter", "All Clear"), ("navigate", "http://127.0.0.1/fixture"),
+])
+def test_missing_required_judge_pauses_operator_routes(world, fw, monkeypatch, words):
+    import jevdual.keys
+    from jevdual.native import NativeBridge
+
+    dispatch_calls = []
+
+    def spy(method):
+        original = getattr(NativeBridge, method, None)
+
+        async def recorded(*args, **kwargs):
+            dispatch_calls.append(method)
+            if original is None:
+                raise RuntimeError(f"unexpected {method} dispatch on native fixture")
+            return await original(*args, **kwargs)
+
+        return recorded
+
+    for method in ("act", "key", "hotkey", "menu", "navigate"):
+        monkeypatch.setattr(NativeBridge, method, spy(method), raising=False)
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(jevdual.keys, "load_keys", lambda *a, **k: {})
+    code, out, err = fw("do", *words)
+    assert code == 3 and "judgment_unavailable" in out, (code, out, err)
+    assert dispatch_calls == []
+    assert world.presses == []
+    assert _state(fw).get("pending") is None
+
+
+def test_explicit_no_judge_preserves_keyword_only_mode(world, fw, monkeypatch):
+    import jevdual.keys
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(jevdual.keys, "load_keys", lambda *a, **k: {})
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code == 0, (out, err)
+    assert world.presses == ["All Clear"]
+    code, out, _ = fw("do", "click", "Delete", "--no-judge")
+    assert code == 3 and "paused before dispatch" in out
+    assert world.presses == ["All Clear"]
+
+
+def test_missing_judge_is_not_cleared_by_an_exact_grant(world, fw, monkeypatch):
+    import jevdual.keys
+
+    fw("start", "Compute", "--app", "Calculator")
+    fw("grant", "click", "All Clear")
+    monkeypatch.setattr(jevdual.keys, "load_keys", lambda *a, **k: {})
+    code, out, err = fw("do", "click", "All Clear")
+    assert code == 3 and "judgment_unavailable" in out, (code, out, err)
+    assert world.presses == []
+
+
+def test_observations_remain_available_without_judgment_credentials(world, fw, monkeypatch):
+    import jevdual.keys
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(jevdual.keys, "load_keys", lambda *a, **k: {})
+    code, out, err = fw("look")
+    assert code == 0 and "All Clear" in out, (out, err)
+    assert world.presses == []
+
+
 def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, monkeypatch):
     """cmd_do caught a bridge exception, then read ``eff.readback`` with ``eff`` unassigned."""
     from jevdual.native import NativeBridge, NativeBridgeError

@@ -368,7 +368,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--authorize", default="", help="stand the boundary down for these labels, this action only"
     )
     do.add_argument("--settle", type=float, default=S.SETTLE_S)
-    do.add_argument("--no-judge", action="store_true", help="skip the Jev destructive judgment on clicks")
+    do.add_argument(
+        "--no-judge", action="store_true",
+        help="explicit keyword/replacement-only mode; skips Jev judgment on click/menu/key/enter/navigation",
+    )
     do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
     do.add_argument(
         "--route",

@@ -901,6 +901,19 @@ async def cmd_do(args: Any) -> int:
                 client = AsyncTypeSafeClient()
                 await client.__aenter__()
                 judge = Verifier(client).judge_destructive
+            else:
+                reason = (
+                    f"judgment_unavailable: {op} requires configured Jev judgment. "
+                    "No action dispatched. Configure judgment access, or deliberately choose "
+                    "--no-judge for keyword/replacement-only checks."
+                )
+                state.memory.append(f"step {state.step + 1}: {op} -> paused before dispatch ({reason})")
+                state.log({"kind": "paused", "code": "judgment_unavailable", "op": op, "reason": reason})
+                state.save()
+                print(f"paused before dispatch: {reason}")
+                return 3
+        if getattr(args, "no_judge", False):
+            print("judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment")
         authorizer = Authorizer(
             policy=ArbiterPolicy.from_toml(),
             authorized_actions=tuple(state.authorized) + _split(args.authorize, ","),
