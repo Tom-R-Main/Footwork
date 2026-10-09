@@ -52,3 +52,5 @@ The reusable collector records evidence replay only. A future approved workflow 
 ## Build on the result
 
 First collect and independently label one real document-preview/reference corpus. Review the concrete inputs, frozen protocol and bounded spend before provider-backed measurement. If the family passes quality, run one measured document workflow with operator review and independent document identity readback. Qualify browser capture separately. Crop execution, automatic visual routing, broader provider interchangeability and additional action authority remain later scoped decisions.
+
+[Local verification and review](../results/vq1-local-20261008/report.md) records the committed package, complete mock schedule, refusal probes and full-suite checks. The statistical counts are per label stratum, not necessarily disjoint source identities.
