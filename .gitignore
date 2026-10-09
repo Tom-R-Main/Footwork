@@ -13,3 +13,6 @@
 *.pyc
 .DS_Store
 /external/
+
+# Local capability trial scratch; qualification summaries live in results/.
+/jevdual/output/

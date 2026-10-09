@@ -53,7 +53,33 @@
           "basis": "Independent raw transcript/tool-result and oracle review; no unsupported completion, persistence or fixed-token claim."
         }
       ],
-      "claude_code_version": "2.1.296"
+      "claude_code_version": "2.1.296",
+      "builtin_host_plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-telemetry",
+        "cc-plugin-plugin-authoring"
+      ],
+      "host_skill_catalog": [
+        "deep-research",
+        "design",
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "workflow-authoring",
+        "run",
+        "run-skill-generator",
+        "plugin-authoring"
+      ]
     },
     {
       "session": 2,
@@ -93,7 +119,33 @@
           "basis": "Independent raw transcript/tool-result and oracle review; no unsupported completion, persistence or fixed-token claim."
         }
       ],
-      "claude_code_version": "2.1.296"
+      "claude_code_version": "2.1.296",
+      "builtin_host_plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-telemetry",
+        "cc-plugin-plugin-authoring"
+      ],
+      "host_skill_catalog": [
+        "deep-research",
+        "design",
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "workflow-authoring",
+        "run",
+        "run-skill-generator",
+        "plugin-authoring"
+      ]
     },
     {
       "session": 3,
@@ -133,7 +185,33 @@
           "basis": "Independent raw transcript/tool-result and oracle review; no unsupported completion, persistence or fixed-token claim."
         }
       ],
-      "claude_code_version": "2.1.296"
+      "claude_code_version": "2.1.296",
+      "builtin_host_plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-telemetry",
+        "cc-plugin-plugin-authoring"
+      ],
+      "host_skill_catalog": [
+        "deep-research",
+        "design",
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "workflow-authoring",
+        "run",
+        "run-skill-generator",
+        "plugin-authoring"
+      ]
     }
   ],
   "raw_evidence_sha256": {
@@ -146,5 +224,6 @@
   },
   "scope": "Three clean sessions on one local fixture; exact observed field content, not saved-file proof. No raw-backend comparison or real-host interrupted trial.",
   "evaluated_tool_description_source": "39a3b93:jevdual/python/jevdual/capability/contracts.py",
-  "evaluated_tool_description_sha256": "b2eaa8a0df173190a29c8d5d8bdceac233a10fbe5bc44d531a1982591a9f6d08"
+  "evaluated_tool_description_sha256": "b2eaa8a0df173190a29c8d5d8bdceac233a10fbe5bc44d531a1982591a9f6d08",
+  "host_context_limit": "Normal builtin host catalogs were present; actionable tool inventory and observed calls were exactly the four Footwork tools. Repository source was not exposed through tools."
 }

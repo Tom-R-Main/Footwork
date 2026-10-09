@@ -13,6 +13,14 @@ backend comparison have separate preregistrations in
 [C1](experiments/C1-capability-slice.md). Check their outcomes before treating the slice
 as qualified.
 
+The first boundary is now verified on this machine: three fresh Claude Code sessions
+completed the clean browser-to-TextEdit flow with only the four tools and zero argument
+repairs ([CS2 evidence](../results/capability-slice-20261009/host/report.md)). Two real
+SIGKILL/restart cases retained unknown operations and prevented another append
+([CS3 evidence](../results/capability-slice-20261009/interruption/report.md)). The wider
+raw-backend comparison remains unrun. This qualifies the scoped prototype, not arbitrary
+apps, saved-file persistence, parallel hosts or a packaged public release.
+
 ## Setup for the fixture owner
 
 Use an existing project environment. Start a loopback HTTP fixture in a dedicated browser

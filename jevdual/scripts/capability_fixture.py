@@ -136,9 +136,12 @@ def main() -> None:
         try:
             script(
                 'on run argv\ntell application "TextEdit"\n'
-                "repeat with d in documents\nif path of d is (item 1 of argv) then close d saving no\n"
-                "end repeat\nend tell\nend run",
+                "set matches to every document whose name is (item 2 of argv)\n"
+                "if (count of matches) is 1 then\nset d to item 1 of matches\n"
+                "if path of d is (item 1 of argv) then close d saving no\n"
+                "end if\nend tell\nend run",
                 str(document),
+                document.name,
             )
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
             print("Fixture document cleanup could not be confirmed; browser cleanup continues.", flush=True)
