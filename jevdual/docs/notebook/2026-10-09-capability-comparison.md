@@ -142,3 +142,18 @@ Test: development v3, at most three fixed pairs, same real fixture and products,
 Predicts: both arms operate only on the scoped document; interruption reaches a qualified held/dropped event and the same persistent transport permits later read-only calls; stale treatment preserves its predeclared oracle prefix. Honest stops and incorrect content remain visible.
 Against: missed treatment due framing/handshake/configuration, leaked capability, replayed input, ambiguous retirement/readback or unsupported completion promoted to success.
 Refs: scripts/capability_comparison_trial.py; scripts/capability_comparison_relay.py
+
+## CR10-U1 · update · 2026-10-09 18:56
+Resolves: CR10 = held
+Observed: development v3 on 4f209be completed all six fixed sessions with exact four/seven tool inventories, no transport/treatment invalidity, confirmed backend retirement and stable independent AX readings. Clean and interrupted pairs had exact intended text in both arms. Both interrupted relays recorded held/dropped, actual SIGKILL, successful lifecycle replay/catalog equality and subsequent caller readback; no duplicate insertion. Stale Footwork refused the old precondition, reobserved the external edit and appended preserving it. Stale raw rebuilt from the old trimmed field and erased the external note, then reported completion; independent AX oracle rejected it. Spend $1.2032228; all qualification/review spend so far $2.6628026. Final messages also sometimes inferred unsaved disk state from unchecked persistence; this is an unsupported ancillary claim and will be reported separately from task-content completion.
+Inferred: actual host/lifecycle/treatment mechanics are qualified for the frozen fixture comparison. Development observations suggest both agents can recover by reading, while stale/prefix preservation may differentiate the interfaces. These six sessions are not C1 counts.
+Next: freeze the measurement version, run all sixty sessions without code changes or retries, then classify supported claims and apply the existing decision rule.
+Refs: output/capability-comparison-dev-20261009-v3/summary.json; 4f209be; docs/experiments/C1-capability-slice.md
+
+## CR11 · prediction · 2026-10-09 18:56
+Question: where does this scoped abstraction help the current external host?
+Hypothesis: fresh Opus5.5 agents can independently read back after a lost reply through either interface, so the original C1 interrupted-completion advantage may fail; Footwork's stronger preconditions/exact append should instead preserve whitespace and external edits more reliably.
+Test: the original C1 sixty-session fixed paired schedule on the frozen committed products/harness, with exact AX oracle, independent final-claim review, zero measured retries and all exclusions/costs retained. C1 numerical decision thresholds are unchanged.
+Predicts: interrupted completion counts are within one session with no raw duplicates; Footwork does at least as well in clean/stale content preservation, with no duplicates or unsupported content completion. Correct stops remain distinct.
+Against: Footwork leads interrupted completions by at least two, raw duplicates an insertion, or Footwork corrupts a prefix/external edit or asserts completion with an incorrect oracle. An incomplete/treatment-invalid comparison remains inconclusive rather than falsifying either architecture claim.
+Refs: docs/experiments/C1-capability-slice.md; scripts/capability_comparison_trial.py; output/capability-comparison-dev-20261009-v3
