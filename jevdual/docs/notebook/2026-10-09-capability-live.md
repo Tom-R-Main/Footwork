@@ -10,3 +10,11 @@ Observed: First live fixture prerequisite failed before scope creation or append
 Changes: Supply the required SDK field, explicitly open the exact file through TextEdit, use a unique document basename and make failed document cleanup unable to skip browser/process cleanup.
 Next: Check the fixture helper against the installed SDK and retry prerequisite verification with fresh owned resources. Do not start CS2 until the actual scoped resources are observed.
 Refs: scripts/capability_fixture.py; output/capability-live-20261009-1643; f8009e4
+
+## CL3 · prediction · 2026-10-09 16:50
+Hypothesis: AppleScript's open POSIX file lacks the per-file sandbox extension TextEdit needs, while Launch Services open -a TextEdit grants it. The owned alert says this fixture cannot be opened despite same-UID readable file permissions; this is not absent Accessibility or a locked screen.
+Alternatives: TextEdit has a broader filesystem permission problem that neither opening route can solve; an earlier modal dialog prevented processing the request.
+Test: Acknowledge only the alert explicitly naming this run's owned fixture, then use Launch Services to open the next fresh run-owned plain-text document. Wait for its exact AXDocument path before constructing scope. No OS permission changes or provider calls.
+Predicts: the Launch Services route yields an exact fixture document AX identity without a file-access alert, permitting the unpaid MCP preflight.
+Against: the exact fixture remains inaccessible or the same owned permission alert appears after Launch Services opening.
+Refs: scripts/capability_fixture.py; output/capability-live-20261009-1647; 64ddfdb
