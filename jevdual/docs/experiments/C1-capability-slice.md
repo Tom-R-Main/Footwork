@@ -69,3 +69,6 @@ CS1 and CS2 in `docs/notebook/2026-10-09-capability-slice.md` hold first. C1 run
 ## Result
 
 *(appended after the run)*
+
+## Amendment: not run, raw-backend runtime unavailable, 2026-10-09 16:58
+At the time CS2 held, half of the raw arm's runtime was absent: the local Chrome DevTools MCP checkout has no build or node_modules. The cua-driver CLI is available, bundled in the project environment (jevdual/.venv/bin/cua-driver), though not on the shell PATH. Nothing was installed or substituted, because a stand-in proxy would not be the preregistered comparator. C1 stays preregistered and unrun until a reproducible Chrome DevTools MCP runtime exists, in a separately authorized package. The design above is unchanged.
