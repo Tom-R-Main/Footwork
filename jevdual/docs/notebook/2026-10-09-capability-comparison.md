@@ -86,3 +86,17 @@ Test: at most three development pairs (clean, interrupted, stale) using the comm
 Predicts: exact four-tool Footwork/seven-tool raw inventories; both interrupted hosts receive the same generic error then can make a fresh read-only call through the restarted backend; stale injection is recorded and oracle preserves the new prefix. Honest stops remain stops.
 Against: host loses the entire transport, raw capabilities leak into the offered inventory, a relay repeats an input, or the runner cannot distinguish failed treatment from a measured product failure.
 Refs: scripts/capability_comparison_trial.py; docs/experiments/C1-capability-slice.md
+
+## CR7-U1 · update · 2026-10-09 18:42
+Resolves: CR7 = inconclusive
+Observed: development v1 stopped after its clean pair: Footwork exact completion, raw truthful stop with unchanged document. Both actual host inventories matched the intended four/seven tools and Opus5.5 model. Raw relay repeatedly failed with asyncio StreamReader's 64KB line limit while receiving normal screenshot/tree responses; those errors mark the raw session and pair invalid. After reconnecting and requesting a bounded tree, the raw agent omitted window_id on token-addressed set_value and received the upstream manifest's application-level refusal, then stopped honestly. Total development spend $0.2545796; no C1 session ran.
+Inferred: actual inventory isolation works; relay framing failed before recovery treatments could be qualified. The separate token/window manifest nuance is actual upstream behavior, not permission to broaden scope or silently rewrite raw requests.
+Next: retain v1; reproduce the large-frame relay failure, increase the bounded transport limit, then start a new development version.
+Refs: output/capability-comparison-dev-20261009-v1; e00818b
+
+## CR8 · prediction · 2026-10-09 18:42
+Hypothesis: asyncio's default 64KB stream limit, rather than native backend death, caused raw screenshot replies to terminate the relay; a 32MiB line limit can pass normal native responses unchanged while retaining a finite bound.
+Test: add a fake-backend response over 64KB and observe it fail on the existing relay; configure the same bounded limit on child stdout and host stdin, then require exact payload and the existing interruption/no-replay/catalog-drift/EOF tests to pass.
+Predicts: the large-response regression fails before the fix and passes after it without schema rewriting or content truncation; no-replay and cleanup tests remain green.
+Against: the response still fails, changes content, or removing the 64KB limit allows an interrupted reply or duplicated input to reach the caller.
+Refs: scripts/capability_comparison_relay.py; tests/test_capability_comparison_relay.py; output/capability-comparison-dev-20261009-v1/b01-raw/relay/events.jsonl
