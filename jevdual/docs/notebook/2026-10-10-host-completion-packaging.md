@@ -23,3 +23,15 @@ Refs: docs/experiments/A2-host-completion-validation.md; output/a2-completion-ch
 Observed: completion/MCP/service/recovery checks pass75; readonly reads work while the owner is live, after clean close and after SIGKILL with WAL retained. Retained A1 Codex optimistic claim is rejected as unknown and its original DB hash is unchanged. The first update heading reused HC1 and omitted required field labels; this commit repairs formatting without changing the recorded observation. Offline uv resolution lacked cached cross-version metadata; only the root dependency declaration for already-resolved MCP2.1.1 was synchronized, preserving the full resolved package graph.
 Next: run four native structured Codex sessions on frozen code, then open packaging if the published adapter gate qualifies.
 Refs: tests/test_capability_completion.py; output/a2-retained-replay.json; scripts/capability_completion_trial.py
+
+## HCU3 · update · 2026-10-10 15:53
+Observed: frozen7449164 native v1 passes execution and enforced summaries for clean, receipt and later_edit, while all three raw final reports use action prose instead of operation IDs and are rejected. The no_receipt session is invalid: it executes connector resource/search tools, never calls Footwork, and creates no operation. No unsafe completed summary was published, but the four-case native gate is unmet. Claude approves the core with one confirmed RecursionError CLI bug and ledger-span/downgrade presentation gaps. HCU1/HCU2 times were mistakenly typed as future times; commit ordering records their actual precedence.
+Next: preserve v1, repair only trial isolation and schema guidance plus the reviewed CLI/summary gaps; freeze a separate v2 and rerun all four development cases.
+Refs: output/a2-hosts-v1/summary.json; output/a2-hosts-v1/codex-no_receipt/receipt.json; output/a2-full-suite.log; Claude mailbox1791661855739708000
+
+## HC2 · prediction · 2026-10-10 15:53
+Hypothesis: disabling the installed CLI's explicit apps and skill_search features removes the connector route missed by the original trial configuration, while operation-ID descriptions distinguish structured records from task prose.
+Test: separate frozen A2v2 four-case native run; retain v1, audit every selected call and report shape, and require the original independent oracle/injection/worker gate.
+Predicts: four sessions execute only the five scoped Footwork tools, no_receipt actually reaches its private interruption boundary, and the adapter reports unknown without duplicate input. Raw report acceptance is measured separately and is not promised.
+Against: any external selected call, unqualified injection/worker cleanup, unsafe summary or changed scenario oracle.
+Refs: local codex-cli core/src/config/mod.rs apps_enabled; installed codex features list; scripts/capability_completion_trial.py
