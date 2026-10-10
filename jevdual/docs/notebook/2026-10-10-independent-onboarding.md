@@ -13,3 +13,16 @@ Test: U2 independent environment first-use lane, with initial strict diagnostics
 Predicts: initial missing Accessibility blocks before input, the approved host's installed native flow passes and grants are attributed to that host rather than inherited from the current Mac or a golden seed.
 Against: the initial baseline is already granted, the blocked route sends input, host attribution changes, or approved permission still cannot satisfy the actual native oracle.
 Refs: docs/experiments/U2-independent-onboarding.md; local Cua macos-lume SIP-on permission-flow lane; local Arc Accessibility-only setup
+
+## UOU1 · update · 2026-10-10 19:34
+Observed: frozenf39b76a packet builds match at13members, helpers import outside the checkout on installed3.12.6/3.14.7, four help entries pass, placeholder-resource config stays private/fresh and creates no journal, malformed/reused configs refuse, and modified/extra archive members reject.17 selected tests and Ruff pass. The Claude request remains unread in the mailbox; no independent verdict is available. Self-review finds a missing explicit Chrome prerequisite and a verifier coupling its recorded source commit to currentHEAD, which would invalidate a frozen packet after evidence-only commits.
+Changes: UO1/UO2 heading times were entered19:20 while the terminal clock was19:19; preregistration order is established by committed aa6be28 preceding frozenf39b76a and all resolving tests. No prediction text is rewritten.
+Next: retainv1, clarify source-checkout/browser prerequisites and qualify explicit immutable source binding in a separate packet version. UO2 remains unexecuted pending environment selection.
+Refs: output/u2-packet-smoke-v1/receipt.json; output/u2-packet-v1; Claude request1791674683421027000
+
+## UO3 · prediction · 2026-10-10 19:34
+Hypothesis: reading the packet's fixed helper/doc inventory from an explicitly selected immutable Git commit lets a frozen artifact remain verifiable after evidence-only commits without trusting unrecorded working-tree bytes.
+Test: verify oldv1 from this later commit with an explicit frozen source ref; build a new version from committed source, verify it against that ref, and reject mismatched refs/member bytes. Keep the reviewed wheel's current source verifier and external archive hash.
+Predicts: explicit frozen-ref verification succeeds despite currentHEAD differing; the caller's expected ref, exact allowed Git blobs and wheel/member hashes still reject foreign or altered contents.
+Against: verification still depends on currentHEAD, uses dirty payload bytes, silently accepts another ref, or helper/runtime inventory changes outside the declared preparation scope.
+Refs: scripts/build_onboarding_packet.py; output/u2-packet-v1/footwork-onboarding-u2.zip
