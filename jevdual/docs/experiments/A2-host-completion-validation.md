@@ -19,3 +19,9 @@ Packaging begins after deterministic/native adapter gate qualifies. Build an off
 ## Decision
 
 Only journal-validated published output is measured as safe; a model calling report or seeing clearer prose alone cannot enforce its final answer. If that boundary qualifies, package it and document the required host adapter. If unsafe completion survives the trusted renderer, stop packaging until the defect is resolved. Broad job completion, saved-file persistence, arbitrary apps, network installation, push/merge and public publication remain separate.
+
+## Amendment · 2026-10-10 · Claude mailbox review before native trials
+
+The original all-final/applied rule is overly restrictive for safe refused/not_sent attempts followed by an applied operation. Aggregate operation completion now requires at least one applied record, no unknown/dispatching and no partial. Affirmative no-input attempts remain in the exact ledger and are counted in the summary. An honest host downgrade to not_completed or unknown is accepted; only an unsupported completed claim is rejected. The trusted renderer still certifies historical operation evidence only and never host job completion. Add refused-then-applied, clean host downgrade, and owner-SIGKILL WAL tests.
+
+A task identifies one durable host run, not a reusable job name. Packaging generates a fresh opaque task ID in each scope configuration; reconnects/restarts reuse that configuration. A new job requires a new scope task. Reports over an explicitly reused task cover its entire history, which the output labels as historical evidence and never a current job. Older unresolved operations in a shared journal continue blocking resources regardless of task. The package does not provide a multi-job orchestration service or silently mint epochs at restart. Interactive host prose remains outside the enforced adapter.
