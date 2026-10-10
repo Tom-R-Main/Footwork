@@ -37,3 +37,16 @@ Test: freeze corrected source; root drives actual isolated-browser read/bind/ful
 Predicts: the exact still-open leased app/order commits one fulfilled revision only with supported staged/current evidence; edits/cancellation interrupt further work, wrong identities refuse before mutation, and lost replies/restarts recover history without replay.
 Against: any independent scenario accepts a wrong/stale mutation, creates a duplicate fulfillment, invents native stop/completion or fails the normal supported browser loop.
 Refs: docs/experiments/SIM5-versioned-application-fulfillment.md; tools/physical-workcell/ORDER_APP.md; results/versioned-application-fulfillment-20261010/
+
+## SIM5-DEV-U2 · update · 2026-10-10 19:39
+Observed: the first malformed-retained-receipt conformance attempt was refused before staging because an overlapping final HTML caption/cache change altered the bound app source. Its log is retained; it does not resolve the malformed-receipt check.
+Inferred: runtime source identity invalidation behaved conservatively, but this attempt is not evidence for the intended receipt predicate.
+Next: hold all app source stable, rerun the new check in fresh owned fixtures and the affected final-source suites, then freeze before independent browser/integration trials.
+Refs: tools/physical-workcell/output/h5-receipt-before-type-fix/unittest.log; tools/physical-workcell/test_app_handoff.py
+
+## SIM5-DEV-U3 · update · 2026-10-10 19:40
+Observed: on a fresh stable-source fixture, controlled corruption of a retained application receipt/current-order row exposed three false-positive reconciliation subcases: boolean leased revision, cancelled current terminal state, and current revision preceding the fulfillment receipt. The actual HTTP responses were retained and the native history was not changed.
+Changes: the adapter now requires an integer leased revision, exact fulfilled receipt identity/version, a fulfilled current order at or after its recorded revision, and the same canonical work-order digest.
+Inferred: assigned IDs alone are insufficient for typed historical application-effect claims. This is a conformance fault on owned persisted data, not a hardware/security qualification.
+Next: finish final-source adapter/backend suites, freeze all measured source, then run independent SIM5-R trials.
+Refs: tools/physical-workcell/output/h5-receipt-before-type-fix-v2/unittest.log; tools/physical-workcell/test_app_handoff.py

@@ -21,6 +21,12 @@ episode. Clients can submit, disconnect, read status and request cancellation; r
 execution history stays separate from current state and stop evidence.
 See [SIM4 evidence and limits](../../jevdual/results/independent-controller-20261010/report.md).
 
+The [browser work-order application](ORDER_APP.md) connects an immutable order revision to
+that controller through [public handoff tools](app_handoff.py). It shows native RGB, checks
+physical staging before fulfillment, and saves the application result in SQLite. Editing or
+cancelling the order invalidates its old lease; the agent must call the guard to request
+cancellation of active motion. This remains a local simulated application experiment.
+
 ## One work order
 
 The package uses pinned `mujoco==3.15.0` in its own ignored `.venv`. The existing Footwork
