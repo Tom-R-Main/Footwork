@@ -848,3 +848,62 @@ def test_a_grant_does_not_follow_its_label_to_another_element(world, fw):
 
 def _id_of_label(world, label):
     return next(e["element_index"] for e in world.base["elements"] if e.get("label") == label)
+
+
+@pytest.mark.parametrize("change", ["trailing_space", "trailing_newline", "frame", "unwritable"])
+@pytest.mark.parametrize("durable", [False, True])
+async def test_capability_exact_preconditions_survive_native_dispatch(change, durable, request, monkeypatch):
+    """An external edit after validation must refuse before either AX setter."""
+    from jevdual.capability.backend import ScopedBackend
+
+    fixture = request.getfixturevalue("durable_text_capability" if durable else "text_capability")
+    world, tools = fixture[:2]
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    original = ScopedBackend.dispatch
+
+    async def changed_between_validation_and_input(backend, validated):
+        if change == "trailing_space":
+            world.content += " "
+        elif change == "trailing_newline":
+            world.content += "\n"
+        elif change == "frame":
+            world.frame = (110, 20, 400, 300)
+        else:
+            world.insertable = False
+        return await original(backend, validated)
+
+    monkeypatch.setattr(ScopedBackend, "dispatch", changed_between_validation_and_input)
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["phase"] == "not_sent"
+    assert result["disposition"] in {"not_sent", "refused"}
+    assert world.writes == []
+    assert "17.25 USD" not in world.content
+
+
+@pytest.mark.parametrize(
+    "durable,change", [(False, "document"), (True, "document"), (True, "process"), (True, "inode")]
+)
+async def test_capability_resource_replacement_during_live_observation_sends_nothing(
+    durable, change, request, monkeypatch
+):
+    from jevdual.native import NativeBridge
+
+    fixture = request.getfixturevalue("durable_text_capability" if durable else "text_capability")
+    world, tools = fixture[:2]
+    identity = fixture[2] if durable else None
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    original = NativeBridge._live
+
+    async def replace_while_observing(bridge, snapshot, cid, operation):
+        if change == "document":
+            world.document = world.document.with_name("replacement.txt")
+        elif change == "process":
+            identity["start"] = "0x2.0p0"
+        else:
+            identity["inode"] += 1
+        return await original(bridge, snapshot, cid, operation)
+
+    monkeypatch.setattr(NativeBridge, "_live", replace_while_observing)
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["phase"] == "not_sent"
+    assert world.writes == [] and world.content == "Invoice report"

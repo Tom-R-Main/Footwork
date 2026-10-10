@@ -115,6 +115,7 @@ async def run(packet_path: Path) -> int:
                 raise CapabilityError("precondition_changed", "Original exact content changed")
             if await asyncio.to_thread(native_identity, backend.scope) != recovery["identity"]:
                 raise CapabilityError("identity_changed", "Original native identity changed before input")
+            context["recovery_identity"] = dict(recovery["identity"])
             with admission:
                 admitted = True  # no blocking I/O under the watchdog fence
             store.write_record(op_id, "input_started", {**proof, "t": time.time()})

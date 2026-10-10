@@ -41,3 +41,39 @@ Test: actual public capability and fixed-worker scenarios replace AXDocument whi
 Predicts: final append guard checks canonical AXDocument and the worker's qualified original identity before any setter, with missing/changed/unsupported facts producing known no-send; existing after-input safe-save treatment remains informational.
 Against: replacement field receives any input, a live-remapped resource is guessed, readonly status replays an attempt, or legitimate unchanged resource fails.
 Refs: python/jevdual/native.py; python/jevdual/capability/backend.py; python/jevdual/capability/execution_worker.py; tests/test_session_scenarios.py; same-reviewer pr_review delta reproducer
+
+## PRU1 · update · 2026-10-10 13:14
+Resolves: PR1 = held
+Observed: Later possible same-source inputs now limit prior field evidence, including changed IDs/labels, keyboard/menu/unknown routes; record order replaces timestamp inference. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
+Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
+Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review
+
+## PRU2 · update · 2026-10-10 13:14
+Resolves: PR2 = held
+Observed: Canonical bounded repr parsing preserves literal Unicode, quotes and whitespace in actual producer tests; malformed literals do not confer authority. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
+Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
+Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review
+
+## PRU3 · update · 2026-10-10 13:14
+Resolves: PR3 = held
+Observed: Twelve public legacy/fixed-worker scenarios refuse whitespace, frame or writability changes after validation before AX setters. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
+Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
+Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review
+
+## PRU4 · update · 2026-10-10 13:14
+Resolves: PR4 = held
+Observed: Generic query navigation no longer emits submitted effects or supplied-field provenance. A separate repeat-risk guard remains conservative without historical submission authority. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
+Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
+Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review
+
+## PRU5 · update · 2026-10-10 13:14
+Resolves: PR5 = held
+Observed: Save evidence now expires by ordered later same-source possible inputs including cut/menu/hotkey and equal/regressed clocks; known no-send/read-only/other-source controls remain preserved. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
+Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
+Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review
+
+## PRU6 · update · 2026-10-10 13:14
+Resolves: PR6 = held
+Observed: AXDocument, process-start and file identity changes inside awaited live observation now refuse before AX input. Recovery identity is retained in private validated context and checked at the final native boundary; post-input safe-save metadata remains informational. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
+Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
+Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review

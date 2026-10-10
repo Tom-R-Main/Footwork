@@ -31,6 +31,7 @@ import json
 import logging
 import math
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -586,6 +587,17 @@ def _norm_tail(s: str) -> str:
     return s.rstrip()
 
 
+@dataclass(frozen=True)
+class AppendPrecondition:
+    """An exact AX baseline for callers that have independently qualified a field."""
+
+    value: str
+    role: str
+    frame: tuple[float, float, float, float]
+    document: str | None = None
+    resource_check: Callable[[], bool] | None = field(default=None, repr=False, compare=False)
+
+
 class NativeBridge:
     """Observe one native window through the Driver and execute menu decisions against it.
 
@@ -806,7 +818,14 @@ class NativeBridge:
             return dataclasses.replace(eff, evidence=(*eff.evidence, f"background: {AMBIGUITY}"))
         return eff
 
-    async def _append(self, nm: NativeMenu, id: int, cand: Candidate, text: str) -> NativeEffect:
+    async def _append(
+        self,
+        nm: NativeMenu,
+        id: int,
+        cand: Candidate,
+        text: str,
+        precondition: AppendPrecondition | None = None,
+    ) -> NativeEffect:
         """Insert at the end of the exact value through AX and require ``after == before + inserted``.
         Nothing is rebuilt from a preview; a value that no longer matches the decision is refused before
         writing."""
@@ -814,9 +833,42 @@ class NativeBridge:
         frame = nm.frames.get(id)
         ax = self.ax
         try:
+            if precondition is not None and (role != precondition.role or frame != precondition.frame):
+                return self._not_sent(
+                    "append",
+                    id,
+                    cand.label,
+                    "target_changed",
+                    "the original field role or frame changed; nothing written",
+                    "background",
+                )
             el = ax.resolve(self.pid, self.window_id, role, ax.Frame(*frame) if frame else None)
+            if precondition is not None:
+                if ax.frame_of(el) != ax.Frame(*precondition.frame):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "target_changed",
+                        "the original field frame changed; nothing written",
+                        "background",
+                    )
+                if not ax.can_insert(el):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "not_writable",
+                        "exact insertion is no longer available; nothing written",
+                        "background",
+                    )
             exact = ax.value(el)
-            if _norm_tail(exact) != _norm_tail(nm.values.get(id, "")):
+            changed = (
+                exact != precondition.value
+                if precondition is not None
+                else _norm_tail(exact) != _norm_tail(nm.values.get(id, ""))
+            )
+            if changed:
                 return self._not_sent(
                     "append",
                     id,
@@ -825,6 +877,39 @@ class NativeBridge:
                     "the field holds different text than when the step was decided; nothing written",
                     "background",
                 )
+            if precondition is not None:
+                # The higher-level adapter supplies a trusted readonly check of
+                # process/file identity. It runs after live observation and field reads.
+                if precondition.resource_check is not None and not precondition.resource_check():
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "lost_identity",
+                        "the original resource changed; nothing written",
+                        "background",
+                    )
+                document = ax.document_path(self.pid, self.window_id)
+                if precondition.document is not None and (
+                    not document or Path(document).resolve() != Path(precondition.document).resolve()
+                ):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "lost_identity",
+                        "the original document changed; nothing written",
+                        "background",
+                    )
+                if ax.frame_of(el) != ax.Frame(*precondition.frame) or not ax.can_insert(el):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "target_changed",
+                        "the original field changed; nothing written",
+                        "background",
+                    )
             sep = "" if exact == "" or exact.endswith("\n") else "\n"
             before, after = ax.insert_at_end(el, sep + text, expect=exact)
         except ax.AXError as exc:
@@ -942,9 +1027,21 @@ class NativeBridge:
             )
         )
 
-    async def act(self, nm: NativeMenu, operation: str, id: int, text: str | None = None) -> NativeEffect:
+    async def act(
+        self,
+        nm: NativeMenu,
+        operation: str,
+        id: int,
+        text: str | None = None,
+        *,
+        append_precondition: AppendPrecondition | None = None,
+    ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
+        if append_precondition is not None and operation != "append":
+            raise NativeBridgeError(
+                "unknown_operation", "An exact append precondition only applies to append"
+            )
         cand, token = self._require_fresh(nm, id)
         if operation not in cand.operations:
             raise NativeBridgeError(
@@ -964,7 +1061,7 @@ class NativeBridge:
         label = cand.label
         if operation == "append":
             assert text is not None
-            return await self._append(nm, id, cand, text)
+            return await self._append(nm, id, cand, text, append_precondition)
         if operation in ("enter",):
             return await self._key_route("enter", id, label, "return", [], token)
         if operation == "hover":

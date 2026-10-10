@@ -49,7 +49,10 @@ class FakeBridge:
             degraded=False,
         )
 
-    async def act(self, snapshot, operation, cid, text):
+    async def act(self, snapshot, operation, cid, text, *, append_precondition=None):
+        assert append_precondition.value == snapshot.values[cid]
+        assert append_precondition.role == snapshot.ax_roles[cid]
+        assert append_precondition.frame == snapshot.frames[cid]
         self.dispatches += 1
         self.content += text
         return SimpleNamespace(dispatched=True, effect=self.effect, error_code=None, summary="")
@@ -131,7 +134,7 @@ async def test_known_append_guard_is_no_send_but_other_native_error_remains_unkn
         resource, observed["observation"], observed["elements"][0]["target"], "append", {"text": "17.25"}
     )
 
-    async def stale(*args):
+    async def stale(*args, **kwargs):
         raise NativeBridgeError("stale", "snapshot changed before input")
 
     bridge.act = stale
@@ -139,7 +142,7 @@ async def test_known_append_guard_is_no_send_but_other_native_error_remains_unkn
         await backend.dispatch(validated)
     assert caught.value.code == "stale" and bridge.dispatches == 0
 
-    async def other(*args):
+    async def other(*args, **kwargs):
         raise NativeBridgeError("not_key", "possibly prepared input before failure")
 
     bridge.act = other

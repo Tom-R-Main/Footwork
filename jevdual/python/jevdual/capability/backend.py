@@ -219,14 +219,36 @@ class ScopedBackend:
         )
 
     async def dispatch(self, validated: Validated) -> DispatchOutcome:
-        from jevdual.native import NativeBridgeError
+        from jevdual.native import AppendPrecondition, NativeBridgeError
 
         context = validated.context
+        identity = context.get("recovery_identity")
+
+        def resource_current() -> bool:
+            if identity is None:
+                return True
+            from .recovery import native_identity
+
+            try:
+                return native_identity(self.scope) == identity
+            except Exception:  # noqa: BLE001 - unsupported identity never grants input
+                return False
+
         try:
             # Recheck the declared document immediately before invoking input.
             await self._document_identity(context["bridge"], context["snapshot"])
             effect = await context["bridge"].act(
-                context["snapshot"], "append", context["candidate_id"], validated.args["text"]
+                context["snapshot"],
+                "append",
+                context["candidate_id"],
+                validated.args["text"],
+                append_precondition=AppendPrecondition(
+                    context["before"],
+                    context["snapshot"].ax_roles[context["candidate_id"]],
+                    context["snapshot"].frames[context["candidate_id"]],
+                    document=self.scope["destination"]["document"],
+                    resource_check=resource_current,
+                ),
             )
         except NativeBridgeError as exc:
             # These append-route guards are before NativeBridge's send boundary.
@@ -288,6 +310,7 @@ class ScopedBackend:
         try:
             identity = await asyncio.to_thread(native_identity, self.scope)
             await self._document_identity(context["bridge"], snapshot)
+            context["recovery_identity"] = dict(identity)
             return make_recovery(
                 self.scope,
                 identity,
