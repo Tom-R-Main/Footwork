@@ -27,11 +27,52 @@ def test_frozen_pairs_have_identical_text_questions_distinct_pixels_no_metadata(
         assert pair[0]["sha256"] != pair[1]["sha256"]
         for case in pair:
             raw = (d2.FIXTURES / case["file"]).read_bytes()
-            assert raw == d2.render(category, case["expected"])
+            # Authored PNG bytes are immutable; encoding/font libraries can vary by host.
             assert d2.sha(raw) == case["sha256"]
             with Image.open(io.BytesIO(raw)) as image:
                 assert image.size == (480, 300)
                 assert not image.info
+
+
+def test_authored_cases_load_without_using_the_current_renderer(monkeypatch):
+    def different_renderer():
+        raise AssertionError("a frozen corpus must not be regenerated during readback")
+
+    monkeypatch.setattr(d2, "generate_manifest", different_renderer)
+    assert len(d2.load_cases()) == 12
+
+
+@pytest.mark.parametrize("field,value", [("expected", False), ("text", "altered context"),
+                                          ("sha256", "0" * 64)])
+def test_altered_manifest_cannot_change_the_frozen_oracle(monkeypatch, tmp_path, field, value):
+    manifest = json.loads((d2.FIXTURES / "manifest.json").read_text())
+    manifest["cases"][0][field] = value
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest))
+    monkeypatch.setattr(d2, "FIXTURES", tmp_path)
+    with pytest.raises(ValueError, match="manifest integrity"):
+        d2.load_cases()
+
+
+def test_altered_png_is_rejected_against_the_authored_digest(monkeypatch, tmp_path):
+    import shutil
+
+    for path in d2.FIXTURES.iterdir():
+        if path.is_file():
+            shutil.copyfile(path, tmp_path / path.name)
+    image = tmp_path / "f00.png"
+    image.write_bytes(image.read_bytes() + b"altered")
+    monkeypatch.setattr(d2, "FIXTURES", tmp_path)
+    with pytest.raises(ValueError, match="PNG integrity"):
+        d2.load_cases()
+
+
+@pytest.mark.parametrize("category", [definition[0] for definition in d2.DEFINITIONS])
+def test_current_renderer_keeps_the_pixel_input_format(category):
+    for expected in (True, False):
+        with Image.open(io.BytesIO(d2.render(category, expected))) as image:
+            assert image.size == (480, 300)
+            assert image.format == "PNG"
+            assert not image.info
 
 
 def test_wire_inputs_do_not_include_oracle_ids_or_image_paths():

@@ -39,6 +39,9 @@ from evals.d1_compare import Budget, BudgetExceeded, checkout_dirty, key, write_
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "evals/visual/d2"
+# Authored corpus identity, independent of host PNG/font rendering libraries.
+# A corpus revision requires a separately reviewed manifest and digest.
+FROZEN_MANIFEST_SHA256 = "62534be3c0114d951d8b76cd75749081bf171c8d4684a5d444c1b6bc7d1d60bc"
 MAX_BODY = 24_000
 REPLAYS = 3
 SEED = 10082027
@@ -169,9 +172,10 @@ def freeze_fixtures() -> None:
 
 
 def load_cases() -> list[dict]:
-    manifest = json.loads((FIXTURES / "manifest.json").read_text())
-    if manifest != generate_manifest():
+    raw_manifest = (FIXTURES / "manifest.json").read_bytes()
+    if sha(raw_manifest) != FROZEN_MANIFEST_SHA256:
         raise ValueError("manifest integrity mismatch")
+    manifest = json.loads(raw_manifest)
     cases = manifest["cases"]
     for case in cases:
         data = (FIXTURES / case["file"]).read_bytes()
