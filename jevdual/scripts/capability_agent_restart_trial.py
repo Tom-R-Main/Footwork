@@ -372,22 +372,32 @@ def main() -> int:
                     try:
                         client.tool("bind", {"name": "source"})
                         dest = client.tool("bind", {"name": "destination"})
+                        arguments = {
+                            "target": destination_target(dest),
+                            "text": VALUE,
+                            "client_token": "A1-control-" + case,
+                        }
                         try:
-                            act = client.tool(
-                                "act",
-                                {
-                                    "target": destination_target(dest),
-                                    "text": VALUE,
-                                    "client_token": "A1-control-" + case,
-                                },
-                            )
+                            act = client.tool("act", arguments)
                         except RuntimeError as exc:
                             if case == "clean" or "backend process exited; restarted" not in str(exc):
                                 raise
                             act = {"transport_error": str(exc)}
                         # The relay presents a transport error; collect only public status.
-                        status = client.tool("status", {"reconcile": True})
-                        write(session / "public.json", {"act": act, "status": status})
+                        listing = client.tool("status", {})
+                        recent = listing.get("recent", [])
+                        if len(recent) != 1:
+                            raise RuntimeError("public status did not identify one operation")
+                        status = client.tool(
+                            "status", {"operation": recent[0]["operation_id"], "reconcile": True}
+                        )
+                        repeat = client.tool("act", arguments)
+                        if repeat.get("operation_id") != recent[0]["operation_id"]:
+                            raise RuntimeError("token collection did not preserve operation identity")
+                        write(
+                            session / "public.json",
+                            {"act": act, "listing": listing, "status": status, "repeat": repeat},
+                        )
                     finally:
                         client.stop()
                     receipt = {"valid_environment": True, "host": "control"}
@@ -440,6 +450,29 @@ def main() -> int:
                     or receipt.get("result_is_error")
                 ):
                     raise RuntimeError(summary["stop_reason"] or "session failed or invalid; no retry")
+        if args.controls_only:
+            negative = root / "control-missing-boundary"
+            negative.mkdir(mode=0o700)
+            ax_reset_text(dst["pid"], dst["document"], PREFIX)
+            if ax_document_text(dst["pid"], dst["document"]) != PREFIX:
+                raise RuntimeError("negative-control reset unqualified")
+            configuration(negative, scope_path, "receipt")
+            client = RelayClient(negative)
+            try:
+                result = client.tool("act", {"target": "not-an-offered-target", "text": VALUE})
+            finally:
+                client.stop()
+            events = [json.loads(line) for line in (negative / "relay/events.jsonl").read_text().splitlines()]
+            rejected = (
+                result.get("is_error")
+                and ax_document_text(dst["pid"], dst["document"]) == PREFIX
+                and any(e.get("reason") == "mutation_returned_before_required_boundary" for e in events)
+                and not any(e["kind"] == "dropped" for e in events)
+            )
+            write(negative / "receipt.json", {"missing_boundary_rejected": bool(rejected), "public": result})
+            summary["missing_boundary_rejected"] = bool(rejected)
+            if not rejected:
+                raise RuntimeError("missing boundary was not rejected")
     except Exception as exc:
         summary["stop_reason"] = type(exc).__name__ + ": " + str(exc)[:200]
         raise
