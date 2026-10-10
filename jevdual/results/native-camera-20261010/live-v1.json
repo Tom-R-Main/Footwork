@@ -1,0 +1,11 @@
+{
+  "source_commit": "2bccd45",
+  "run": "tools/camera-capture-experiment/output/live-v1",
+  "token": "native-frame-001",
+  "state": "unknown",
+  "png_count": 0,
+  "diagnosis": "FFmpeg default 29.970030 fps rejected; device reports 15.000000 to 30.000000 fps modes",
+  "repeat_same_request": "retained unknown record, no new intent or image",
+  "ledger_sha256": "2fa6e53a27e1ba460546c2f59f9f83543090edad2591efb4583950aa861de916",
+  "permission": "not qualified by frame acquisition"
+}

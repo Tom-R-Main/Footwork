@@ -25,3 +25,6 @@ Decision rule: advance only frame-acquisition feasibility when all required conf
 ## Result
 
 Pending; source and notebook prediction must be committed before resolving checks.
+
+## Amendment · 2026-10-10 14:30
+Live-v1 on 2bccd45 found FFmpeg default 29.970030 fps unsupported; no PNG exists and its ledger remains unknown. Next frozen version will explicitly request device-reported 30 fps and record it as part of the request. Live-v2 is a distinct operation, without altering or replaying live-v1. Original scope and decision rule remain unchanged.
