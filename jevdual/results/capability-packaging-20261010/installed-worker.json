@@ -1,0 +1,224 @@
+{
+  "passed": true,
+  "source_commit": "b28af7c380447a6499bb376174e6b76188b79e76",
+  "origins": {
+    "artifact_version": "0.0.1",
+    "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv/bin/python",
+    "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv",
+    "kernel_executable": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+    "kernel_argv0": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+    "package": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv/lib/python3.12/site-packages/jevdual/__init__.py",
+    "worker": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv/lib/python3.12/site-packages/jevdual/capability/execution_worker.py",
+    "backend": "pure-python",
+    "sys_path": [
+      "",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python312.zip",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/lib-dynload",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv/lib/python3.12/site-packages",
+      "/Users/thomasmain/projects/footwork/jevdual/.venv/lib/python3.12/site-packages"
+    ]
+  },
+  "initialized": {
+    "capabilities": {
+      "experimental": {},
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "protocolVersion": "2025-06-18",
+    "serverInfo": {
+      "name": "footwork-capability",
+      "version": "0.0.1"
+    }
+  },
+  "worker_proofs": [
+    {
+      "registration": {
+        "nonce": "4d95f62ef02640b590481ea6abd7a413",
+        "operation_id": "op_45dd527a4222",
+        "packet_digest": "2de8bc5bb73a635052210b49ed67fa1e4a26f63960c5ee1fcfcb05cdaf752fd7",
+        "pgid": 66095,
+        "pid": 66095,
+        "request_digest": "3990b94d7b889648e9a9a9081fbc80b426bac2905cf6a749a39aedd21206df17",
+        "start": "0x1.ab2a6df92083ap+30",
+        "version": 1
+      },
+      "cmdline": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+        "-m",
+        "jevdual.capability.execution_worker",
+        "--packet",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-config-v2/operations.sqlite.executions/op_45dd527a4222/packet.json"
+      ],
+      "executable": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "action": {
+    "is_error": false,
+    "schema_version": "1",
+    "operation_id": "op_45dd527a4222",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": false,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 24,
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+          },
+          "before": {
+            "length": 15,
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-fixture-v1/a2-fixture-v1-invoice.txt",
+            "inode": 348870567,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "identity_after": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-fixture-v1/a2-fixture-v1-invoice.txt",
+            "inode": 348870567,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "4d95f62ef02640b590481ea6abd7a413",
+        "operation_id": "op_45dd527a4222",
+        "packet_digest": "2de8bc5bb73a635052210b49ed67fa1e4a26f63960c5ee1fcfcb05cdaf752fd7",
+        "phase": "sent",
+        "request_digest": "3990b94d7b889648e9a9a9081fbc80b426bac2905cf6a749a39aedd21206df17",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "installed-once"
+  },
+  "repeat": {
+    "is_error": false,
+    "schema_version": "1",
+    "operation_id": "op_45dd527a4222",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": true,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 24,
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+          },
+          "before": {
+            "length": 15,
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-fixture-v1/a2-fixture-v1-invoice.txt",
+            "inode": 348870567,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "identity_after": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-fixture-v1/a2-fixture-v1-invoice.txt",
+            "inode": 348870567,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "4d95f62ef02640b590481ea6abd7a413",
+        "operation_id": "op_45dd527a4222",
+        "packet_digest": "2de8bc5bb73a635052210b49ed67fa1e4a26f63960c5ee1fcfcb05cdaf752fd7",
+        "phase": "sent",
+        "request_digest": "3990b94d7b889648e9a9a9081fbc80b426bac2905cf6a749a39aedd21206df17",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "installed-once"
+  },
+  "report": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": true,
+      "reasons": []
+    },
+    "operation_completion": "completed",
+    "operations": [
+      {
+        "operation": "op_45dd527a4222",
+        "state": "final",
+        "disposition": "applied",
+        "updated": 1791662975.19548,
+        "created": 1791662974.28037
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "task_4a93837c768b40aa8542ee669bb99a6f",
+    "snapshot_digest": "6dd1bd21bccd469f759f54f18ae951e58012e39c4fa308b7d77a9b29c4837902",
+    "ledger_span": {
+      "first_created": 1791662974.28037,
+      "last_updated": 1791662975.19548,
+      "count": 1
+    },
+    "accepted_host_claim": "completed",
+    "as_of": 1791662975.7323189,
+    "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-10T20:09:34.280370+00:00 through 2026-10-10T20:09:35.195480+00:00. Current document state and disk persistence are not certified by this report."
+  },
+  "oracle_actual": "Invoice report\n17.25 USD",
+  "owned_worker_finished": true,
+  "limits": "Wheel installed offline; dependencies reused from existing environment via an explicit owned .pth file."
+}

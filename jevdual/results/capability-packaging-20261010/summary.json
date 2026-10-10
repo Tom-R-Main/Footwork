@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "full_suite": {
+    "passed": 1473,
+    "skipped": 27,
+    "log": "output/a2-packaging-final-full-suite.log"
+  },
+  "ruff": "passed",
+  "notebook": "passed",
+  "completion_gate": "results/operation-completion-20261010",
+  "installed_native": "passed",
+  "fixture_cleanup": "passed",
+  "source_commit": "b28af7c380447a6499bb376174e6b76188b79e76",
+  "wheel_sha256": "f734ad127da548ce1b12d3e95b114f76d9893cefe58e6a188d49059cdd3414f7",
+  "limits": [
+    "macOS loopback browser-to-TextEdit scoped slice",
+    "dependencies reused; clean-machine resolution unverified",
+    "worker module origin qualified by installed probe, inherited interpreter/module resolution, observed kernel command and retained receipt; not direct process-memory inspection",
+    "no provider key/Rust required for this slice",
+    "unmerged local branch; no remote CI/public publication"
+  ]
+}

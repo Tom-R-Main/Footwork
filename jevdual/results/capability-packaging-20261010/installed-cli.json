@@ -1,0 +1,128 @@
+{
+  "passed": true,
+  "entrypoint": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv/bin/footwork-capability",
+  "manifest": {
+    "task": "task_4a93837c768b40aa8542ee669bb99a6f",
+    "host_config": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-config-v2/host.json",
+    "scope": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-config-v2/scope.json",
+    "report_schema": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-config-v2/report-schema.json",
+    "report_adapter": [
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-package-venv/bin/python",
+      "-m",
+      "jevdual.capability.cli",
+      "report",
+      "--journal",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-config-v2/operations.sqlite",
+      "--task",
+      "task_4a93837c768b40aa8542ee669bb99a6f"
+    ],
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "publication": "Validate the structured final report through report_adapter and publish only trusted_summary. Never fall back to raw host prose.",
+    "lifecycle": "Reuse this task only for reconnect/restart of this job. Generate a new run directory for each new job."
+  },
+  "doctor": {
+    "platform": "darwin",
+    "supported": true,
+    "dependencies": {
+      "browser-use": {
+        "version": "0.13.10",
+        "requirement": "==0.13.10",
+        "compatible": true
+      },
+      "typesafe-sdk": {
+        "version": "0.7.0",
+        "requirement": "<1,>=0.7",
+        "compatible": true
+      },
+      "orjson": {
+        "version": "3.12.0",
+        "requirement": ">=3.10",
+        "compatible": true
+      },
+      "psutil": {
+        "version": "7.2.2",
+        "requirement": "==7.2.2",
+        "compatible": true
+      },
+      "mcp": {
+        "version": "2.1.1",
+        "requirement": "==2.1.1",
+        "compatible": true
+      },
+      "cua-driver": {
+        "version": "0.28.2",
+        "requirement": "==0.28.2",
+        "compatible": true
+      },
+      "pyobjc-framework-applicationservices": {
+        "version": "12.1",
+        "requirement": ">=12",
+        "compatible": true
+      },
+      "pyobjc-framework-quartz": {
+        "version": "12.1",
+        "requirement": ">=12",
+        "compatible": true
+      },
+      "pyobjc-framework-cocoa": {
+        "version": "12.1",
+        "requirement": ">=12",
+        "compatible": true
+      }
+    },
+    "permissions": {
+      "accessibility": "granted",
+      "screen_recording": "granted"
+    },
+    "scope": {
+      "valid": true,
+      "document_exists": true,
+      "window_identity": "checked_at_bind",
+      "pids_exist": true
+    },
+    "journal": "not_created",
+    "warnings": [],
+    "dependency_metadata": "installed distribution",
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "provider_account_required": false,
+    "rust_toolchain_required": false
+  },
+  "no_overwrite_exit": 2,
+  "retained_unknown": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": false,
+      "reasons": [
+        "disposition_mismatch",
+        "completion_mismatch"
+      ]
+    },
+    "operation_completion": "unknown",
+    "operations": [
+      {
+        "operation": "op_39d4a667241f",
+        "state": "unknown",
+        "disposition": "unknown",
+        "updated": 1791659556.137922,
+        "created": 1791659554.733087
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "agent-acceptance-fixture-v2",
+    "snapshot_digest": "3a458438a150053499d6d64e9019ef30dc70a5654379e77feb8b4c3303bfc1ab",
+    "ledger_span": {
+      "first_created": 1791659554.733087,
+      "last_updated": 1791659556.137922,
+      "count": 1
+    },
+    "accepted_host_claim": null,
+    "as_of": 1791662972.6930912,
+    "trusted_summary": "Host completion report rejected (disposition_mismatch, completion_mismatch). Execution remains unknown. Matching text cannot confirm the attempted append; do not append again. Full task ledger: 1 records, 2026-10-10T19:12:34.733087+00:00 through 2026-10-10T19:12:36.137922+00:00. Current document state and disk persistence are not certified by this report."
+  },
+  "malformed_exit": 2,
+  "original_journal_sha256": "d405fbc2df562fce249630e4ce77beebfb8bfd930b23db6660d919028115b515",
+  "original_journal_unchanged": true,
+  "source_commit": "b28af7c380447a6499bb376174e6b76188b79e76"
+}

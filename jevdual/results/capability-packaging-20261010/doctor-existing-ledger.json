@@ -1,0 +1,72 @@
+{
+  "platform": "darwin",
+  "supported": true,
+  "dependencies": {
+    "browser-use": {
+      "version": "0.13.10",
+      "requirement": "==0.13.10",
+      "compatible": true
+    },
+    "typesafe-sdk": {
+      "version": "0.7.0",
+      "requirement": "<1,>=0.7",
+      "compatible": true
+    },
+    "orjson": {
+      "version": "3.12.0",
+      "requirement": ">=3.10",
+      "compatible": true
+    },
+    "psutil": {
+      "version": "7.2.2",
+      "requirement": "==7.2.2",
+      "compatible": true
+    },
+    "mcp": {
+      "version": "2.1.1",
+      "requirement": "==2.1.1",
+      "compatible": true
+    },
+    "cua-driver": {
+      "version": "0.28.2",
+      "requirement": "==0.28.2",
+      "compatible": true
+    },
+    "pyobjc-framework-applicationservices": {
+      "version": "12.1",
+      "requirement": ">=12",
+      "compatible": true
+    },
+    "pyobjc-framework-quartz": {
+      "version": "12.1",
+      "requirement": ">=12",
+      "compatible": true
+    },
+    "pyobjc-framework-cocoa": {
+      "version": "12.1",
+      "requirement": ">=12",
+      "compatible": true
+    }
+  },
+  "permissions": {
+    "accessibility": "granted",
+    "screen_recording": "granted"
+  },
+  "scope": {
+    "valid": true,
+    "document_exists": true,
+    "window_identity": "checked_at_bind",
+    "pids_exist": true
+  },
+  "journal": {
+    "operations": 1,
+    "operation_completion": "completed"
+  },
+  "warnings": [
+    "This task already has operation history. Reuse only for the same job; report its full ledger. Start a fresh run for a new job."
+  ],
+  "dependency_metadata": "installed distribution",
+  "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+  "provider_account_required": false,
+  "rust_toolchain_required": false
+}

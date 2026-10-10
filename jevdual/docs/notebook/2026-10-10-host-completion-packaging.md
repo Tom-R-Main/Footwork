@@ -72,3 +72,15 @@ Resolves: HP3 = held
 Observed: unchanged wheel installed-native v3 passes: pure module/worker origins and prefix resolve inside owned venv outside source, kernel worker identity matches the same-interpreter probe, registration/cmdline/packet match, actual append and restart-token collection leave one record and exact text. Claude's packaging review has no blocker, with three minor issues: hand-copied doctor requirements, permission attribution and inconsistent server/artifact versions.
 Next: derive doctor requirements and server version from installed distribution metadata, clarify responsible-process permissions, then rebuild a separate wheel and qualify its installed public entry points/native worker. Preserve old artifacts and failed harness directories. HP1 remains open until final artifact checks.
 Refs: output/a2-installed-trial-v3/receipt.json; Claude mailbox1791662699420820000; output/a2-wheel-v1
+
+## HPU4 · update · 2026-10-10 16:12
+Resolves: HP1 = held
+Observed: final b28af7c wheel74members/RECORD/license verifies and repeated builds match SHA256 f734ad127da548ce1b12d3e95b114f76d9893cefe58e6a188d49059cdd3414f7. Offline installed console config/doctor/report checks and actual generated-task native v4 pass outside source; real detached worker, one exact append and restart-token collection qualify. Full final suite1473pass/27skip, Ruff/notebook pass. Fixture owner exited0; independent browser absence and zero owned-document windows verified. Claude confirmed review follow-ups closed and approved packaging subject to these now-completed checks.
+Next: close local packaging; clean-machine dependency install and release delivery remain separate. No push/merge/publication/global configuration occurred.
+Refs: results/capability-packaging-20261010/report.md; results/capability-packaging-20261010/summary.json; output/a2-packaging-final-full-suite.log; Claude mailbox1791663054444394000
+
+## HCS1 · summary · 2026-10-10 16:12
+Established: journal-derived publication prevents the retained false completion assertion; separate A2v2 execution/raw report/adapter gates qualify4/4. Offline pure wheel and installed native worker are checked, with exact artifact and retained failure context.
+Uncertain: fresh-machine dependency resolution, arbitrary apps, saved-file persistence, full host inventory/exact default model, unwrapped interactive final prose and public release are unqualified.
+Decision: deliver local wheel/guide and evidence on the unmerged branch. Preserve run/journal/artifact context and original A1/v1/harness outcomes.
+Refs: results/operation-completion-20261010; results/capability-packaging-20261010; docs/capability-packaging.md

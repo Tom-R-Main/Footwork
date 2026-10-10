@@ -55,7 +55,7 @@ Check a run without taking journal ownership:
   --journal /absolute/owned/job-run/operations.sqlite
 ```
 
-Diagnostics report whether the configured document and processes exist; window identity is checked at bind. If the task already has operations, diagnostics warn that the full history belongs in its completion report. A read-only ledger check never performs startup recovery or dispatches input.
+Diagnostics report whether the configured document and processes exist; window identity is checked at bind. If the task already has operations, diagnostics warn that the full history belongs in its completion report. A read-only ledger check never performs startup recovery or dispatches input. Doctor parses the installed distribution's requirements when the optional `packaging` parser is available; otherwise it reports dependency compatibility as unverified.
 
 ## Enforce the completion adapter
 
