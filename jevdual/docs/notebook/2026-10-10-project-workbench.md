@@ -13,3 +13,23 @@ Test: measure bounded local repeated file/hash/exact-artifact library work, publ
 Predicts: direct small-note validation and image hashing take materially less time than public command/native OCR stages; identify existing native work and process overhead separately.
 Against: direct Python processing or hashing dominates the measured route, a sustained high-rate frame workload is found, or local native work was wrongly assumed to be Python.
 Refs: docs/rust-boundary.md; crates/jevdual-core/Cargo.toml; tools/desk-inbox-experiment/recognize.swift; results/desk-inbox-20261010/source.json
+
+## U-WB1 · update · 2026-10-10 15:26
+Resolves: WB1 = held
+Observed: frozen 419a677 links the previously approved real paper source to the exact user-selected Footwork project. Public independent checks confirm JSON/Markdown bytes; fresh-process repeats preserve source/manifest/artifacts and project-filtered list returns one record. Caller interpretation and proposed not_run check remain separate. All 15 tests plus 11 subtests and Ruff pass, including unknown/no replay and context drift cases.
+Inferred: local project association and checked handoff are established, not autonomous physical/computer execution or daily utility.
+Next: close the workbench package; following user steering, prioritize a physical body plus computer-action simulation.
+Refs: results/workbench-20261010/live-link.json; results/workbench-20261010/source.json; results/workbench-20261010/report.md
+
+## U-WB2 · update · 2026-10-10 15:26
+Resolves: WB2 = held
+Observed: local retained-frame profiling records direct note check below 1ms and 2.46MB image read/hash around 1.3ms median, versus fresh public CLI around 201ms and Swift process plus real printed OCR around 452ms. Hashing uses native _hashlib. No sustained-video or Rust alternative was measured. Native DOM paint/hash/evidence backends are observed; snapshot lookup is pure fallback.
+Inferred: current on-demand file plumbing is not the dominant cost; helper/process overhead warrants attention before a Rust rewrite. Future streaming/control workloads remain unmeasured.
+Next: retain Python/Swift/native media boundaries; reassess sustained frame/control loops separately.
+Refs: results/workbench-20261010/route-profile.json; results/workbench-20261010/source.json; docs/rust-boundary.md
+
+## S-WBCLOSED · summary · 2026-10-10 15:26
+Established: explicit project-bound provenance, meaningful proposed check and independent saved-artifact verification; local route timings distinguish native work from orchestration.
+Uncertain: daily utility, semantic interpretation quality, action authority and any physical actuator effects.
+Decision: keep notes as supporting machinery and pursue the user's revised priority of physical actuation plus computer actions; user chose simulation with no robot available.
+Refs: results/workbench-20261010/report.md; docs/plans/workbench-notes-directions.md

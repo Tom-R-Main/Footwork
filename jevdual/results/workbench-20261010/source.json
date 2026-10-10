@@ -1,0 +1,17 @@
+{
+  "workbench_source_commit": "419a677",
+  "workbench_source_sha256": "db46fb536257218b4c1727dff5d3c349f8fd581eeb378651d6cd414dad0420df",
+  "test_command": "uv run --no-sync python -m unittest discover -s ../tools/workbench-notes -p 'test_*.py' -v",
+  "test_cwd": "jevdual",
+  "tests_passed": 15,
+  "test_subtests": 11,
+  "test_exit_code": 0,
+  "ruff_exit_code": 0,
+  "profile_driver_sha256": "953e252baaf697ae6b35601893970be31dbe6c73acfedfb6a28ff80c13c982fd",
+  "observed_backend": {
+    "paint_order": "native",
+    "snapshot_lookup": "pure",
+    "element_hashes": "native",
+    "evidence_match": "native"
+  }
+}
