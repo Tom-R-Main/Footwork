@@ -25,6 +25,9 @@ FOOTWORK = BASE.parents[1] / "jevdual" / ".venv" / "bin" / "footwork"
 SPEC = importlib.util.spec_from_file_location("camera_utils", BASE.parent / "camera-capture-experiment" / "capture.py")
 utils = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(utils)
+CASE_SPEC = importlib.util.spec_from_file_location("episode_case_contract", BASE / "episode_cases.py")
+cases = importlib.util.module_from_spec(CASE_SPEC)
+CASE_SPEC.loader.exec_module(cases)
 Refusal = utils.Refusal
 PINNED_VERSION = "3.15.0"
 SOURCE_KIND = "mujoco_simulation"
@@ -140,6 +143,7 @@ def fingerprints():
         raise Refusal("runtime must use pinned MuJoCo 3.15.0")
     return {"mujoco_version": mujoco.__version__, "model_sha256": sha(read_bytes(SCENE)),
             "implementation_sha256": sha(read_bytes(Path(__file__))),
+            "case_validator_sha256": sha(read_bytes(BASE / "episode_cases.py")),
             "controller_sha256": sha(encoded(CONTROLLER)),
             "state_spec": int(mujoco.mjtState.mjSTATE_INTEGRATION)}
 
@@ -181,6 +185,7 @@ def load(root):
         raise Refusal("state generation is invalid")
     if manifest.get("fingerprints") != fingerprints():
         raise Refusal("model, controller, implementation or native runtime fingerprint changed")
+    case_for(root, manifest)
     for key in ("state_sha256", "work_order_sha256"):
         if not isinstance(manifest.get(key), str) or not DIGEST.fullmatch(manifest[key]):
             raise Refusal("retained digest is invalid")
@@ -289,7 +294,52 @@ def observation(root, loaded=None):
     return result
 
 
-def initialize(root, work_order, work_order_sha256):
+def case_for(root, manifest=None):
+    manifest = manifest or decoded(read_bytes(root / "manifest.json"))
+    binding = manifest.get("episode_case")
+    if binding is None:
+        return None
+    fields(binding, ("case_id", "case_file", "case_sha256", "max_actions"), "retained episode binding")
+    try:
+        case, _, content = cases.load(binding["case_file"], binding["case_sha256"])
+        retained = cases.read_bytes(root / "episode-case.json")
+        if retained != content or binding["case_id"] != case["case_id"] or binding["max_actions"] != case["max_actions"]:
+            raise Refusal("retained case binding or bytes changed")
+        return case
+    except cases.CaseError as exc:
+        raise Refusal(str(exc)) from exc
+
+
+def action_budget(root, manifest=None):
+    manifest = manifest or decoded(read_bytes(root / "manifest.json"))
+    case = case_for(root, manifest)
+    admitted = sum(load_op(path)["request"]["kind"] in {"act", "complete"} for path in root.glob("op-*.json"))
+    maximum = case["max_actions"] if case else None
+    return {"max_actions": maximum, "admitted_dispatches": admitted,
+            "remaining": None if maximum is None else max(0, maximum - admitted)}
+
+
+def validate_episode_marker(root, binding):
+    path = root / "episode.json"
+    if not path.exists() and not path.is_symlink():
+        return
+    marker = decoded(read_bytes(path))
+    fields(marker, ("version", "episode_id", "run_dir", "case_path", "case_sha256", "participant",
+                    "started_time_unix", "phase", "fingerprint"), "episode initialization marker")
+    if (type(marker["version"]) is not int or marker["version"] != 1 or marker["phase"] != "initializing" or
+            marker["run_dir"] != str(root) or marker["case_path"] != binding["case_file"] or
+            marker["case_sha256"] != binding["case_sha256"] or
+            marker["participant"] not in {"fresh_host", "deterministic_rgb"} or
+            not isinstance(marker["episode_id"], str) or not re.fullmatch(r"[0-9a-f]{32}", marker["episode_id"])):
+        raise Refusal("episode initialization marker is not bound to this case/run")
+    if number(marker["started_time_unix"]) <= 0:
+        raise Refusal("episode start time must be a positive finite timestamp")
+    fields(marker["fingerprint"], ("runner_sha256", "vision"), "episode runner fingerprint")
+    if not isinstance(marker["fingerprint"]["runner_sha256"], str) or not DIGEST.fullmatch(marker["fingerprint"]["runner_sha256"]) or not isinstance(marker["fingerprint"]["vision"], dict):
+        raise Refusal("episode initialization fingerprint is invalid")
+
+
+def initialize(root, work_order, work_order_sha256, *, episode_case=None, case_binding=None):
     if not DIGEST.fullmatch(work_order_sha256):
         raise Refusal("work-order SHA256 must be an exact lowercase digest")
     source = read_bytes(Path(work_order))
@@ -299,16 +349,22 @@ def initialize(root, work_order, work_order_sha256):
     original = str(Path(os.path.abspath(work_order)))
     if (root / "manifest.json").exists() or (root / "manifest.json").is_symlink():
         loaded = load(root)
-        if loaded[0]["work_order_sha256"] != work_order_sha256 or loaded[0]["work_order_path"] != original:
+        if (loaded[0]["work_order_sha256"] != work_order_sha256 or loaded[0]["work_order_path"] != original or
+                loaded[0].get("episode_case") != case_binding):
             raise Refusal("run already belongs to another work order")
         return observation(root, loaded)
-    if any(path.name != "lock" for path in root.iterdir()):
+    allowed = {"lock", "episode.json", "episode-case.json", "episode-work-order.json"} if episode_case else {"lock"}
+    if any(path.name not in allowed for path in root.iterdir()):
         raise Refusal("unreceipted run files exist; implicit initialization/reset is forbidden")
     fingerprint = fingerprints()
     create_file(root / "model.xml", read_bytes(SCENE))
     create_file(root / "work-order.json", source)
     model = model_for(root, order)
     data = mujoco.MjData(model)
+    if episode_case is not None:
+        # The caller-specified initial state is applied only on first initialization, never act/load.
+        start = model.jnt_qposadr[model.joint("block_free").id]
+        data.qpos[start:start + 2] = episode_case["scene"]["block_xy"]
     for _ in range(round(CONTROLLER["settle_s"] / CONTROLLER["timestep_s"])):
         mujoco.mj_step(model, data)
     mujoco.mj_forward(model, data)
@@ -316,8 +372,29 @@ def initialize(root, work_order, work_order_sha256):
     manifest = {"version": 1, "source_kind": SOURCE_KIND, "phase": "ready", "generation": 0,
                 "work_order_path": original, "work_order_sha256": work_order_sha256,
                 "fingerprints": fingerprint, "state_sha256": state_sha}
+    if case_binding is not None:
+        manifest["episode_case"] = case_binding
     utils.persist(root / "manifest.json", manifest)
     return observation(root)
+
+
+def initialize_episode(root, case_file, case_sha256):
+    try:
+        case, source_path, content = cases.load(case_file, case_sha256)
+    except cases.CaseError as exc:
+        raise Refusal(str(exc)) from exc
+    binding = {"case_id": case["case_id"], "case_file": str(source_path), "case_sha256": case_sha256,
+               "max_actions": case["max_actions"]}
+    order_path = root / "episode-work-order.json"
+    order_bytes = encoded(case["work_order"])
+    if (root / "manifest.json").exists() or (root / "manifest.json").is_symlink():
+        return initialize(root, str(order_path), sha(order_bytes), episode_case=case, case_binding=binding)
+    validate_episode_marker(root, binding)
+    if any(path.name not in {"lock", "episode.json"} for path in root.iterdir()):
+        raise Refusal("interrupted episode initialization has retained files; no implicit reset")
+    create_file(root / "episode-case.json", content)
+    create_file(order_path, order_bytes)
+    return initialize(root, str(order_path), sha(order_bytes), episode_case=case, case_binding=binding)
 
 
 def motion(model, data, target_x, target_y):
@@ -363,6 +440,8 @@ def act(root, token, expected_generation, target_x, target_y):
         return {"source_kind": SOURCE_KIND, "operation": op, "observation": observation(root, loaded), "replayed": False}
     if unresolved(root, manifest) or manifest["phase"] == "completed":
         raise Refusal("unresolved or completed work order blocks further motion")
+    if action_budget(root, manifest)["remaining"] == 0:
+        raise Refusal("episode admitted-action budget is exhausted")
     if expected_generation != manifest["generation"]:
         raise Refusal("observation generation is stale; observe again")
     op = {"source_kind": SOURCE_KIND, "token": token, "request": request, "phase": "pending",
@@ -400,6 +479,8 @@ def complete(root, token):
         return {"source_kind": SOURCE_KIND, "operation": op, "observation": observation(root, loaded), "replayed": False}
     if unresolved(root, manifest) or manifest["phase"] == "completed":
         raise Refusal("unresolved or already staged work order blocks another completion")
+    if action_budget(root, manifest)["remaining"] == 0:
+        raise Refusal("episode admitted-action budget is exhausted")
     physical = poses(model, data, order)
     if not physical["block_center_in_zone"]:
         raise Refusal("observed block center is not in the work-order zone; no software result was created")

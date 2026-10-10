@@ -27,6 +27,12 @@ SETTINGS = {"width": 640, "height": 360, "vertical_span_m": 0.6, "camera_z_m": 1
 SOURCE_KIND = "mujoco_simulation"
 
 
+class PerceptionError(Refusal):
+    def __init__(self, state, reason):
+        super().__init__(reason)
+        self.state = state
+
+
 def fingerprint():
     return {"wrapper_sha256": body.sha(body.read_bytes(Path(__file__))),
             "schema_sha256": body.sha(body.read_bytes(SCHEMA)), "settings_sha256": body.sha(body.encoded(SETTINGS)),
@@ -35,7 +41,7 @@ def fingerprint():
 
 def binding(root, manifest):
     expected = {"source_kind": SOURCE_KIND, "run_dir": str(root), "fingerprint": fingerprint(),
-                "work_order_sha256": manifest["work_order_sha256"]}
+                "work_order_sha256": manifest["work_order_sha256"], "case_binding": manifest.get("episode_case")}
     path = root / "vision-binding.json"
     if path.exists() or path.is_symlink():
         if body.decoded(body.read_bytes(path)) != expected:
@@ -108,17 +114,29 @@ def wrapper_unresolved(root):
     return any(load_proposal_record(path)["phase"] in {"pending", "unknown"} for path in root.glob("vision-op-*.json"))
 
 
-def calibration():
+def calibration(root=None):
+    case = body.case_for(root) if root is not None else None
+    valid = case is None or case["scene"]["camera_offset_x_m"] == 0
     return {"projection": "orthographic", "width": 640, "height": 360, "vertical_span_m": 0.6,
             "world_frame": "sim_world", "image_x_direction": "world_positive_x", "image_y_direction": "world_negative_y",
             "meters_per_pixel": SETTINGS["vertical_span_m"] / SETTINGS["height"],
-            "image_center_world_xy": [0.0, 0.0], "bbox_convention": "exclusive_max_pixel_edges"}
+            "image_center_world_xy": [0.0, 0.0], "bbox_convention": "exclusive_max_pixel_edges",
+            "valid": valid, "validity_reason": "bound orthographic calibration" if valid else "camera extrinsic changed; calibration is unavailable"}
 
 
 def camera_xml(root):
     tree = ET.fromstring(body.read_bytes(root / "model.xml"))
+    case = body.case_for(root)
+    offset = case["scene"]["camera_offset_x_m"] if case else 0
     ET.SubElement(tree.find("worldbody"), "camera", {"name": "vision_top", "projection": "orthographic",
-                  "fovy": str(SETTINGS["vertical_span_m"]), "pos": "0 0 1", "xyaxes": "1 0 0 0 1 0"})
+                  "fovy": str(SETTINGS["vertical_span_m"]), "pos": f"{offset} 0 1", "xyaxes": "1 0 0 0 1 0"})
+    if case and case["scene"]["occlusion_fraction"] > 0:
+        scene = case["scene"]
+        x, y = scene["block_xy"]
+        width = .07 * scene["occlusion_fraction"]
+        ET.SubElement(tree.find("worldbody"), "geom", {"name": "static_visual_occluder", "type": "box",
+                      "pos": f"{x - .035 + width / 2} {y} 0.16", "size": f"{width / 2} 0.035 0.001",
+                      "contype": "0", "conaffinity": "0", "rgba": "0.04 0.04 0.04 1"})
     return ET.tostring(tree, encoding="unicode")
 
 
@@ -126,6 +144,15 @@ def render_rgb(root, loaded):
     _, order, original_model, original_data = loaded
     render_xml = camera_xml(root)
     model = mujoco.MjModel.from_xml_string(render_xml)
+    case = body.case_for(root)
+    if case:
+        scale = case["scene"]["illumination_scale"]
+        model.light_diffuse[:] *= scale
+        model.light_ambient[:] *= scale
+        model.light_specular[:] *= scale
+        model.vis.headlight.diffuse[:] *= scale
+        model.vis.headlight.ambient[:] *= scale
+        model.vis.headlight.specular[:] *= scale
     zone = order["target_zone"]
     marker = model.geom("inspection_zone")
     marker.pos[:2] = [(zone["x_min"] + zone["x_max"]) / 2, (zone["y_min"] + zone["y_max"]) / 2]
@@ -215,8 +242,10 @@ def components(mask):
 
 def silhouette(mask, name, expected_width, expected_height):
     regions = components(mask)
+    if not regions:
+        raise PerceptionError("unavailable", f"RGB {name} evidence is absent")
     if len(regions) != 1:
-        raise Refusal(f"RGB {name} evidence is absent or ambiguous")
+        raise PerceptionError("ambiguous", f"RGB {name} evidence has multiple plausible regions")
     region = regions[0]
     left, top, right, bottom = region["box"]
     width, height = right - left, bottom - top
@@ -225,7 +254,7 @@ def silhouette(mask, name, expected_width, expected_height):
     if (left <= margin or top <= margin or right >= 640 - margin or bottom >= 360 - margin or
             abs(width - expected_width) > tolerance or abs(height - expected_height) > tolerance or
             region["pixels"] / (width * height) < SETTINGS["min_fill"]):
-        raise Refusal(f"RGB {name} silhouette is incomplete, off-frame or implausible")
+        raise PerceptionError("ambiguous", f"RGB {name} silhouette is incomplete, off-frame or implausible")
     return region
 
 
@@ -246,6 +275,19 @@ def image_world_center(box):
     return [((left + right) / 2 - 320) * scale, (180 - (top + bottom) / 2) * scale]
 
 
+def perception_summary(image, camera_calibration):
+    try:
+        located = locate(image)
+    except PerceptionError as exc:
+        return {"state": exc.state, "method": "color_specific_RGB", "reason": str(exc)}
+    result = {"state": "recognized", "method": "color_specific_RGB", "block_box": located["block"]["box"],
+              "pusher_box": located["pusher"]["box"]}
+    if camera_calibration["valid"]:
+        result.update(block_center_xy=image_world_center(result["block_box"]),
+                      pusher_center_xy=image_world_center(result["pusher_box"]))
+    return result
+
+
 def view(root):
     loaded = body.load(root)
     manifest, order, _, _ = loaded
@@ -263,14 +305,16 @@ def view(root):
                "state_sha256": manifest["state_sha256"], "binding": bind}
     body.utils.persist(receipt_path, pending)
     image, render_model_sha = render_rgb(root, loaded)
-    locate(image)  # Full visibility is an evidence prerequisite, not a task outcome.
     content = body.png_bytes(image)
+    decoded = decode_png(content)
     body.create_file(image_path, content)
+    camera_calibration = calibration(root)
     packet = {"source_kind": SOURCE_KIND, "phase": "ready", "run_dir": str(root), "generation": generation,
               "image_path": str(image_path), "image_sha256": body.sha(content), "state_sha256": manifest["state_sha256"],
-              "binding": bind, "calibration": calibration(), "render_model_sha256": render_model_sha,
+              "binding": bind, "calibration": camera_calibration, "render_model_sha256": render_model_sha,
               "task_intent": {k: order[k] for k in ("order_id", "project", "part_id", "target_zone")},
-              "perception_scope": "color_specific_RGB; current agent supplies proposals", "proposal_schema_path": str(SCHEMA)}
+              "perception_scope": "color_specific_RGB; current agent supplies proposals", "proposal_schema_path": str(SCHEMA),
+              "perception": perception_summary(decoded, camera_calibration), "action_budget": body.action_budget(root, manifest)}
     body.utils.persist(receipt_path, packet)
     return checked_view(root, loaded, packet)
 
@@ -281,9 +325,9 @@ def checked_view(root, loaded, receipt):
         raise Refusal("image intent has no complete receipt; it cannot be rerendered or promoted")
     body.fields(receipt, ("source_kind", "phase", "run_dir", "generation", "image_path", "image_sha256",
                          "state_sha256", "binding", "calibration", "render_model_sha256", "task_intent",
-                         "perception_scope", "proposal_schema_path"), "retained planner image packet")
+                         "perception_scope", "proposal_schema_path", "perception", "action_budget"), "retained planner image packet")
     if (receipt.get("generation") != manifest["generation"] or receipt.get("state_sha256") != manifest["state_sha256"] or
-            receipt.get("binding") != binding(root, manifest) or receipt.get("calibration") != calibration()):
+            receipt.get("binding") != binding(root, manifest) or receipt.get("calibration") != calibration(root)):
         raise Refusal("image generation/state/calibration/source binding is stale or changed")
     if (receipt.get("source_kind") != SOURCE_KIND or receipt.get("run_dir") != str(root) or
             receipt.get("task_intent") != {k: order[k] for k in ("order_id", "project", "part_id", "target_zone")} or
@@ -295,8 +339,13 @@ def checked_view(root, loaded, receipt):
     content = body.read_bytes(image_path)
     if receipt.get("image_path") != str(image_path) or body.sha(content) != receipt.get("image_sha256"):
         raise Refusal("retained image is missing or changed")
-    locate(decode_png(content))
-    return receipt
+    if receipt["perception"] != perception_summary(decode_png(content), receipt["calibration"]):
+        raise Refusal("retained RGB interpretation changed")
+    budget = receipt["action_budget"]
+    body.fields(budget, ("max_actions", "admitted_dispatches", "remaining"), "retained action budget")
+    if type(budget["admitted_dispatches"]) is not int or budget["admitted_dispatches"] < 0:
+        raise Refusal("retained action budget is invalid")
+    return dict(receipt, action_budget=body.action_budget(root, manifest))
 
 
 def schema(proposal, root):
@@ -362,6 +411,49 @@ def public_receipt(record, root=None, manifest=None):
     return result
 
 
+def retain_request(root, proposal, content):
+    path = root / f"vision-request-{body.sha(proposal['token'].encode())}.json"
+    if path.exists() or path.is_symlink():
+        if body.read_bytes(path) != content:
+            raise Refusal("token already has different retained request bytes")
+    else:
+        body.create_file(path, content)
+
+
+def completion_verdict(root, proposal, proposal_sha256, content, receipt, manifest):
+    perception = receipt["perception"]
+    verdict, reason = None, "RGB recognition is unavailable or ambiguous"
+    visual_check = None
+    if not receipt["calibration"]["valid"]:
+        reason = "camera calibration is invalid"
+    elif perception["state"] == "recognized":
+        box = perception["block_box"]
+        center = perception["block_center_xy"]
+        if any(abs(actual - proposed) > SETTINGS["box_tolerance_px"] for actual, proposed in zip(box, proposal["block_box"], strict=True)):
+            verdict, reason = False, "proposed block box differs from RGB silhouette"
+        else:
+            zone, margin = receipt["task_intent"]["target_zone"], SETTINGS["completion_margin_m"]
+            verdict = (zone["x_min"] + margin <= center[0] <= zone["x_max"] - margin and
+                       zone["y_min"] + margin <= center[1] <= zone["y_max"] - margin)
+            reason = "fresh RGB center satisfies the conservative zone" if verdict else "fresh RGB center is outside the conservative zone"
+            visual_check = {"method": "color_specific_RGB", "block_box": box, "image_center_world_xy": center,
+                            "inside_with_margin": verdict}
+    retained = {"source_kind": SOURCE_KIND, "proposal": proposal, "proposal_sha256": proposal_sha256,
+                "binding": receipt["binding"], "case_binding": manifest.get("episode_case"),
+                "generation": proposal["generation"], "state_sha256": receipt["state_sha256"],
+                "image_sha256": receipt["image_sha256"], "visual_verdict": verdict,
+                "perception_state": perception["state"], "calibration_valid": receipt["calibration"]["valid"],
+                "reason": reason, "before_oracle": True}
+    retain_request(root, proposal, content)
+    path = root / f"vision-verdict-{body.sha(proposal['token'].encode())}.json"
+    if path.exists() or path.is_symlink():
+        if body.decoded(body.read_bytes(path)) != retained:
+            raise Refusal("completion token has a different retained visual verdict")
+    else:
+        body.create_file(path, body.encoded(retained))
+    return verdict, reason, visual_check
+
+
 def apply(root, proposal_file, proposal_sha256):
     if not isinstance(proposal_sha256, str) or not body.DIGEST.fullmatch(proposal_sha256):
         raise Refusal("proposal SHA256 must be exact lowercase hexadecimal")
@@ -370,7 +462,7 @@ def apply(root, proposal_file, proposal_sha256):
         raise Refusal("proposal bytes do not match their bound digest")
     proposal = schema(body.decoded(content), root)
     loaded = body.load(root)
-    manifest, order, _, _ = loaded
+    manifest, _order, _, _ = loaded
     binding(root, manifest)
     path = proposal_path(root, proposal["token"])
     if path.exists() or path.is_symlink():
@@ -386,29 +478,34 @@ def apply(root, proposal_file, proposal_sha256):
     receipt = checked_view(root, loaded, body.decoded(body.read_bytes(receipt_path)))
     if receipt["image_sha256"] != proposal["image_sha256"]:
         raise Refusal("proposal names a different image")
+    if proposal["decision"] == "complete":
+        verdict, reason, visual_check = completion_verdict(root, proposal, proposal_sha256, content, receipt, manifest)
+        if verdict is not True:
+            raise Refusal(reason)
+    if body.action_budget(root, manifest)["remaining"] == 0:
+        raise Refusal("episode admitted-action budget is exhausted")
+    if not receipt["calibration"]["valid"]:
+        raise Refusal("invalid camera calibration cannot admit motion or completion")
+    if receipt["perception"]["state"] != "recognized":
+        raise Refusal("unavailable or ambiguous RGB evidence cannot admit an effect")
     located = locate(decode_png(body.read_bytes(image_path)))
     block_box = located["block"]["box"]
     if any(abs(actual - proposed) > SETTINGS["box_tolerance_px"] for actual, proposed in zip(block_box, proposal["block_box"], strict=True)):
         raise Refusal("proposed block box does not match independent RGB silhouette evidence")
     center = image_world_center(block_box)
     pusher = image_world_center(located["pusher"]["box"])
-    visual_check = {"method": "color_specific_RGB", "block_box": block_box, "image_center_world_xy": center}
+    if proposal["decision"] == "move":
+        visual_check = {"method": "color_specific_RGB", "block_box": block_box, "image_center_world_xy": center}
     if proposal["decision"] == "move":
         x, y = proposal["target"]["x"], proposal["target"]["y"]
         forward = x - pusher[0]
         if not SETTINGS["min_forward_m"] <= forward <= SETTINGS["max_forward_m"] or abs(pusher[1]) > SETTINGS["pusher_y_limit_m"]:
             raise Refusal("move must be a bounded forward increment from the RGB pusher estimate")
-    else:
-        zone, margin = order["target_zone"], SETTINGS["completion_margin_m"]
-        if not (zone["x_min"] + margin <= center[0] <= zone["x_max"] - margin and
-                zone["y_min"] + margin <= center[1] <= zone["y_max"] - margin):
-            raise Refusal("fresh RGB block center is outside the conservative inspection zone")
-        visual_check["inside_with_margin"] = True
     record = {"source_kind": SOURCE_KIND, "phase": "pending", "proposal": proposal,
               "proposal_sha256": proposal_sha256, "binding": binding(root, manifest), "visual_check": visual_check}
     body.utils.persist(path, record)
     try:
-        body.create_file(root / f"vision-request-{body.sha(proposal['token'].encode())}.json", content)
+        retain_request(root, proposal, content)
         base_token = "vision-" + body.sha(proposal["token"].encode())
         if proposal["decision"] == "move":
             base = body.act(root, base_token, proposal["generation"], x, y)
