@@ -379,6 +379,11 @@ class Journal:
         op = self.get(op_id)
         return op.history if op is not None else []
 
+    def report_snapshot(self, task: str) -> dict[str, Any]:
+        from .completion import ledger_snapshot
+
+        return ledger_snapshot(self._db, task)
+
     # ---- internals -----------------------------------------------------------------------------
 
     def _tx(self) -> _Tx:

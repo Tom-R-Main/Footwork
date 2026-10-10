@@ -295,6 +295,11 @@ class CapabilityService:
 
     # ---- rendering -----------------------------------------------------------------------------
 
+    def report(self, *, task: str, **claims: Any) -> dict[str, Any]:
+        from .completion import validate_report
+
+        return validate_report(claims, self.journal.report_snapshot(task))
+
     @staticmethod
     def _receipt(op: Operation, *, repeat: bool, note: str | None = None) -> dict[str, Any]:
         if op.state == "final" and op.disposition == "applied":

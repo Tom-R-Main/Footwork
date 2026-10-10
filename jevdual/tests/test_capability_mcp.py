@@ -114,12 +114,17 @@ def test_real_stdio_catalog_errors_status_and_eof_shutdown(tmp_path):
         assert initialized["serverInfo"]["name"] == "footwork-capability"
         send("notifications/initialized", {})
         catalog = send("tools/list", {}, 2)
-        assert [t["name"] for t in catalog["tools"]] == ["bind", "observe", "act", "status"]
+        assert [t["name"] for t in catalog["tools"]] == ["report", "bind", "observe", "act", "status"]
         refusal = send("tools/call", {"name": "act", "arguments": {"text": "x"}}, 3)
         assert refusal["isError"]
         assert json.loads(refusal["content"][0]["text"]) == refusal["structuredContent"]
         status = send("tools/call", {"name": "status", "arguments": {}}, 4)
         assert status["structuredContent"]["unresolved"] == []
+        report = send("tools/call", {"name": "report", "arguments": {
+            "completion": "completed", "operations": [], "persistence": "not_checked"
+        }}, 5)
+        assert not report["structuredContent"]["validation"]["accepted"]
+        assert report["structuredContent"]["operation_completion"] == "not_completed"
         process.stdin.close()
         assert process.wait(timeout=8) == 0
     finally:

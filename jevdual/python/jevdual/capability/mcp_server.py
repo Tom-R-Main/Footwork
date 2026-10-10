@@ -1,4 +1,4 @@
-"""Four-tool MCP stdio facade for one preconfigured local fixture task.
+"""Five-tool MCP stdio facade for one preconfigured local fixture task.
 
 Launch with ``python -m jevdual.capability.mcp_server --scope scope.json
 --journal operations.sqlite``. This registers no host configuration and starts
@@ -29,6 +29,8 @@ class ToolFacade:
 
     async def call(self, name: str, arguments: Any) -> dict[str, Any]:
         args = check_arguments(name, arguments)
+        if name == "report":
+            return self.service.report(task=self.backend.task, **args)
         if name == "status":
             return await self.service.status(task=self.backend.task, **args)
         # One surface owner in this thin process; never queue an append decided
@@ -66,7 +68,7 @@ def create_server(facade: ToolFacade) -> Any:
     from mcp import types
     from mcp.server import Server
 
-    server = Server("footwork-capability", version="0.1.0")
+    server = Server("footwork-capability", version="0.2.0")
 
     async def list_tools(_context: Any, _params: Any) -> Any:
         return types.ListToolsResult(
