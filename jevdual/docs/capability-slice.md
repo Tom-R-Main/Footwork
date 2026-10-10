@@ -20,8 +20,10 @@ SIGKILL/restart cases retained unknown operations and prevented another append
 ([CS3 evidence](../results/capability-slice-20261009/interruption/report.md)). The sixty-session
 [C1 comparison](../results/capability-comparison-20261009/comparison/report.md) found strong
 stale-edit preservation, but failed the clean completion guardrail; its interrupted comparison
-is inconclusive after three untreated empty-field sessions. Fix separator semantics and empty-field
+is inconclusive after three untreated empty-field sessions. C1 required fixing separator semantics and empty-field
 target qualification before widening the slice ([next work](plans/capability-remediation-20261009.md)).
+Those two fixes now pass [six fresh agent content cases](../results/capability-text-repair-20261009/report.md),
+including empty and whitespace-only documents; the original C1 comparison remains unchanged.
 Evidence covers the scoped prototype. Arbitrary apps, saved-file persistence,
 parallel hosts and a packaged public release remain unqualified.
 

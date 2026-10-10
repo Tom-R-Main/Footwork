@@ -31,3 +31,7 @@ Keep planning/model choice in the caller. Maintain a small deterministic executi
 Fix and qualify text semantics and empty-field targeting first. Then measure first-use setup and independently qualify durable reconciliation before widening actions/apps/platforms. Carry exact observations and stale preconditions forward: those provided the clearest live benefit here. Browser/computer adapters should share lifecycle and evidence contracts while expressing unsupported capabilities explicitly.
 
 C1 does not select a new architecture or justify a larger planner/refactor. A new comparison needs a new frozen version, committed predictions/preregistration, the original exclusions visible, and fresh development qualification. No implementation, provider call, public release or global configuration change is performed by this plan.
+
+## Status: 2026-10-09 20:13
+
+Items 1 and 2 are implemented and qualified in `results/capability-text-repair-20261009/report.md`: nineteen real-core scenarios and six fresh actual agent cases pass, with a 1217-pass/26-skip final offline suite. Separator metadata is explicit, payload stays literal, and empty targets require exact AX/insertability/geometry proof. Dependency pins and legacy native behavior remain unchanged. Reference evidence is in `docs/plans/reference-text-repair-20261009.md`. Original C1 stays failed/inconclusive. Durable reconciliation and first-use setup remain separate future packages, and agents' ancillary disk-state assertions remain unsupported.

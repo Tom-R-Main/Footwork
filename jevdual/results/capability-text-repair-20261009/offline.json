@@ -1,0 +1,32 @@
+{
+  "prediction_commit": "22c58bc",
+  "initial_implementation_commit": "50948c6",
+  "qualified_commit": "87d0de2a54327ca5c24e226efefe8c227873e4ad",
+  "baseline": {
+    "failed": 6,
+    "passed": 6,
+    "deselected": 25,
+    "seconds": 0.94
+  },
+  "public_capability_scenarios": 19,
+  "full_suite": {
+    "passed": 1217,
+    "skipped": 26,
+    "seconds": 90.91
+  },
+  "lint": "ruff check python evals tests scripts passed",
+  "logs": {
+    "capability-text-repair-before": {
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-text-repair-before.log",
+      "sha256": "4ec8bd2917158f6226d1d18d33c088908743e28121b947694bfe4e028f02ecb2"
+    },
+    "capability-text-repair-focused-final": {
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-text-repair-focused-final.log",
+      "sha256": "040ecd2f68c66cf36760da014752ee28522578504db3c92fe62cced435106f74"
+    },
+    "capability-text-repair-final-suite": {
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-text-repair-final-suite.log",
+      "sha256": "cf5e6ce1fbf3c6f9be64a35a7f69f0264948cc98acdaf3de475afec4ed0e0241"
+    }
+  }
+}

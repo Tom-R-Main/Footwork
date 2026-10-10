@@ -1,0 +1,21 @@
+{
+  "pre-cleanup": {
+    "owned_window_ids": [
+      29892
+    ],
+    "other_windows": 5,
+    "ax_errors": 0
+  },
+  "cleanup-signal": {
+    "pid": 2710,
+    "signal": "SIGINT",
+    "owned_argv_match": true
+  },
+  "post-cleanup": {
+    "owned_window_ids": [],
+    "other_windows": 5,
+    "ax_errors": 0,
+    "owned_browser_pid_alive": false,
+    "attested_backend_group_survivors": []
+  }
+}

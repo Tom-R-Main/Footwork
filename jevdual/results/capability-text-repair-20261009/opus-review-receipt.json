@@ -1,0 +1,29 @@
+{
+  "reviewed_commit": "50948c6",
+  "model": "claude-opus-5-5",
+  "tools": [],
+  "mcp_servers": [],
+  "terminal_success": true,
+  "cost_usd": 0.324859,
+  "model_usage": {
+    "claude-opus-5-5": {
+      "inputTokens": 2,
+      "outputTokens": 10150,
+      "cacheReadInputTokens": 535,
+      "cacheCreationInputTokens": 15218,
+      "webSearchRequests": 0,
+      "costUSD": 0.324859,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 8351,
+      "canonicalModel": "claude-opus-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    }
+  },
+  "transcript_sha256": "48fa7fca185cacd3ead97e827c7af2a21091fb178bdb197711411411a57f6a65",
+  "prompt_sha256": "727839db0cef7d4914eb0a7e6ed9621d3996b2960b0896cd169f4ba0798b758c",
+  "verdict": "no concrete blockers for scoped live checks",
+  "review_scope": "committed diff; unchanged routines described/tested but not all shown",
+  "adjudication": "Label change is not every append: content-derived labels normalize stably for nonempty fields. Post-review hardening denies frameless offers, adds setter-error and nonterminal whitespace tests, catches pre-host prerequisites and makes prompt guard unconditional."
+}
