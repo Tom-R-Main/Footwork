@@ -27,3 +27,11 @@ Packaging follows only if both hosts meet all four scenario requirements, zero d
 ## Result
 
 Pending execution.
+
+## Amendment · 2026-10-10 14:58 · before v2
+
+V1 is retained: four Claude executions passed the native/journal checks, but the no-receipt final answer falsely attributed external text to its own action and asserted unchecked unsaved state. The first Codex session was invalid because host approvals cancelled calls before the relay and skill context was not isolated; remaining Codex sessions were not run. This is a failed acceptance candidate, not a passing headline based on execution alone.
+
+V2 keeps the same four scenarios and ordinary task. Public receipts add reporting.historical_effect, reporting.disk_persistence=not_checked and explicit guidance against causal attribution for unknown attempts or saved/unsaved claims without a check. No dispatch, receipt qualification, authority, current-agreement or reconciliation rule changes. The Codex command preapproves only the four tools on this fixture-scoped server, consistent with the user's existing trial authorization; no global config is changed. It disables actual discovered skill paths and automatic skills instructions, replacing the unsupported reference feature. Host warnings are classified separately from executed non-Footwork tools; neither can silently become a valid run. Full offered-tool/model inventory remains unavailable through installed exec JSON and stays disclosed.
+
+Run new native controls before v2 paid sessions on committed source. Carry $0.2771692 v1 Claude reported cost into the original $8 aggregate scheduling ceiling; no additional review/provider calls are authorized by this amendment. Retain invalid control scaffolds and original v1 evidence. Apply the original case-specific answer/effect requirements to v2 without relaxing uncertainty or disk-evidence rules.

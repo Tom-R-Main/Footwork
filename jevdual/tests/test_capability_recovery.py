@@ -94,6 +94,38 @@ def test_private_immutable_packet_and_receipt_roundtrip(prepared):
     assert store.read_result(op) == result
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("completed", [False, True])
+@pytest.mark.parametrize("matching_text", [False, True])
+async def test_public_reporting_separates_execution_current_text_and_persistence(
+    prepared, monkeypatch, completed, matching_text
+):
+    from jevdual.capability.service import CapabilityService
+
+    journal, store, op, packet = prepared
+    journal.start(op.id)
+    if completed:
+        store.write_record(op.id, "result", _applied(packet))
+    journal.close()
+    monkeypatch.setattr(journal, "close", lambda: None)
+
+    class CurrentOnly:
+        async def current_recovery(self, recovery):
+            return {"agreement": "yes" if matching_text else "no", "persistence": "not_checked"}
+
+    restarted = Journal(journal.path)
+    try:
+        reply = await CapabilityService(restarted, CurrentOnly()).status(
+            task=op.task, operation=op.id, reconcile=True
+        )
+        assert reply["disposition"] == ("applied" if completed else "unknown")
+        assert reply["current"]["agreement"] == ("yes" if matching_text else "no")
+        assert reply["reporting"]["historical_effect"] == ("applied" if completed else "unknown")
+        assert reply["reporting"]["disk_persistence"] == "not_checked"
+    finally:
+        restarted.close()
+
+
 @pytest.mark.parametrize("field", ["operation_id", "request_digest", "nonce", "packet_digest", "version"])
 def test_receipt_binding_mismatch_is_never_accepted(prepared, field):
     _, store, op, packet = prepared

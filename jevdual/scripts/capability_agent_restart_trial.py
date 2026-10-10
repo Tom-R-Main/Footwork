@@ -185,7 +185,7 @@ def codex_command(server: dict, final: Path) -> list[str]:
         "features.multi_agent_v2": False,
         "features.code_mode": False,
         "tools.update_plan.enabled": False,
-        "features.skip_host_skill_discovery": True,
+        "skills.include_instructions": False,
         "mcp_servers.footwork.command": server["command"],
         "mcp_servers.footwork.args": server["args"],
         "mcp_servers.footwork.env.PYTHONPATH": server["env"]["PYTHONPATH"],
@@ -194,6 +194,23 @@ def codex_command(server: dict, final: Path) -> list[str]:
     }
     for key, val in settings.items():
         cmd += ["-c", key + "=" + json.dumps(val)]
+    # The installed CLI does not support skip_host_skill_discovery. Disable
+    # actual discovered skill identities using the supported skills config.
+    paths = set()
+    for base in (Path.home() / ".codex/skills", Path.home() / ".agents/skills"):
+        if base.exists():
+            for directory in base.iterdir():
+                skill = directory / "SKILL.md"
+                if skill.is_file():
+                    paths.update((str(skill), str(skill.resolve())))
+            paths.update(str(p) for p in base.rglob("SKILL.md"))
+    cache = Path.home() / ".codex/plugins/cache"
+    if cache.exists():
+        paths.update(str(p) for p in cache.rglob("SKILL.md"))
+    entries = ["{path=" + json.dumps(p) + ",enabled=false}" for p in sorted(paths)]
+    cmd += ["-c", "skills.config=[" + ",".join(entries) + "]"]
+    for tool in ("bind", "observe", "act", "status"):
+        cmd += ["-c", f'mcp_servers.footwork.tools.{tool}.approval_mode="approve"']
     return cmd
 
 
@@ -204,7 +221,9 @@ def codex_receipt(root: Path) -> dict:
     items = [e.get("item", {}) for e in events if e.get("type") == "item.completed"]
     calls = [i for i in items if i.get("type") == "mcp_tool_call"]
     outside = [
-        i.get("type") for i in items if i.get("type") not in ("agent_message", "reasoning", "mcp_tool_call")
+        i.get("type")
+        for i in items
+        if i.get("type") not in ("agent_message", "reasoning", "mcp_tool_call", "error")
     ]
     outside += [
         i.get("server")
@@ -213,9 +232,15 @@ def codex_receipt(root: Path) -> dict:
     ]
     usage = [e.get("usage") for e in events if e.get("type") == "turn.completed"]
     errors = [e for e in events if e.get("type") in ("error", "turn.failed")]
+    stderr = (root / "host-stderr.log").read_text()
+    isolation_errors = [i.get("message", "") for i in items if i.get("type") == "error"]
+    isolation_errors += [
+        line for line in stderr.splitlines() if "unknown feature key" in line or "patch rejected" in line
+    ]
     return {
-        "valid_environment": not outside and bool(calls) and bool(usage),
+        "valid_environment": not outside and not isolation_errors and bool(calls) and bool(usage),
         "executed_non_footwork": outside,
+        "isolation_errors": isolation_errors,
         "calls": [i.get("tool") for i in calls],
         "final": (root / "final.txt").read_text() if (root / "final.txt").exists() else None,
         "usage": usage,
@@ -297,6 +322,7 @@ def main() -> int:
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--controls-only", action="store_true")
+    parser.add_argument("--prior-claude-cost", type=float, default=0.0)
     args = parser.parse_args()
     if args.relay:
         cfg = json.loads(args.relay.read_text())
@@ -312,6 +338,8 @@ def main() -> int:
         return 0
     if not args.scope or not args.run_dir:
         parser.error("execution requires scope and run directory")
+    if not math.isfinite(args.prior_claude_cost) or not 0 <= args.prior_claude_cost < 8:
+        parser.error("prior Claude cost must be finite and within the aggregate ceiling")
     from ApplicationServices import AXIsProcessTrusted
     from jevdual.posture import screen_locked
 
@@ -349,6 +377,7 @@ def main() -> int:
         "scope_sha256": hashlib.sha256(scope_path.read_bytes()).hexdigest(),
         "sessions": [],
         "claude_cost_usd": 0.0,
+        "prior_claude_cost_usd": args.prior_claude_cost,
         "stop_reason": None,
         "claim_review_pending": not args.controls_only,
     }
@@ -356,7 +385,7 @@ def main() -> int:
     try:
         for host in hosts:
             for case in CASES:
-                if host == "claude" and summary["claude_cost_usd"] + 2 > 8:
+                if host == "claude" and args.prior_claude_cost + summary["claude_cost_usd"] + 2 > 8:
                     raise RuntimeError("Claude aggregate scheduling reserve exhausted")
                 session = root / (host + "-" + case)
                 session.mkdir(mode=0o700)

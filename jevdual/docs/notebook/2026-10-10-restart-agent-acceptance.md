@@ -45,3 +45,8 @@ Test: first preserve a failing public reporting-contract check on unknown/no-rec
 Predicts: both hosts meet the four case-specific answer/effect requirements, Codex actual calls reach the relay, and no unqualified causal or saved/unsaved assertion is made. Local configuration changes touch only the trial command and its already-authorized four tools.
 Against: either host still falsely claims execution/save state, any caller duplicates input, Codex requires unrelated tools/skills or wider grants, or historical receipt behavior changes.
 Refs: docs/experiments/A1-restart-agent-acceptance.md; python/jevdual/capability/service.py; scripts/capability_agent_restart_trial.py
+
+## AAU4-local · update · 2026-10-10 14:58
+Observed: public receipt reporting baseline v4 fails four checks across receipt/no-receipt and matching/diverged current text; repaired service/recovery/MCP checks pass51 and Ruff passes. The first three baseline scaffolds were invalid due context-manager, teardown and lock misuse; corrected scaffold follows existing journal fixture closeout. All are retained. Durable English strings passed the human-writing hygiene pass with zero edits. CLI command disables518 discovered skill identities and preapproves only the four authorized fixture tools; host execution is still unqualified.
+Next: freeze v2, run four fresh native controls and the missing-boundary rejection, then eight new host sessions with unchanged task and prior cost accounted. AA4 remains open until actual host answers and environment are checked.
+Refs: output/agent-reporting-before.log; output/agent-reporting-before-v2.log; output/agent-reporting-before-v3.log; output/agent-reporting-before-v4.log; output/agent-reporting-after.log; output/reporting-language-hygiene.txt
