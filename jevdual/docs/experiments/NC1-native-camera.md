@@ -28,3 +28,6 @@ Partial result on frozen sources 2bccd45 and 48b33a1: discovery and 18 conforman
 
 ## Amendment · 2026-10-10 14:30
 Live-v1 on 2bccd45 found FFmpeg default 29.970030 fps unsupported; no PNG exists and its ledger remains unknown. Next frozen version will explicitly request device-reported 30 fps and record it as part of the request. Live-v2 is a distinct operation, without altering or replaying live-v1. Original scope and decision rule remain unchanged.
+
+## Amendment · 2026-10-10 14:40
+The user was away during prior attempts and explicitly requested another attempt while present. Live-v3 will use unchanged source 48b33a1 with a 60-second bound, a distinct run directory/token, and the same exact camera and 30 fps mode. Earlier unknown records remain unchanged. This is a new authorized acquisition, not replay or resolution of an earlier outcome.

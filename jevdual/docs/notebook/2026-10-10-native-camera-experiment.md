@@ -38,3 +38,10 @@ Established: an isolated public capture/status CLI, exact local discovery, conse
 Uncertain: live native-frame acquisition, camera permission identity and first-frame delivery; exposure freshness, scene semantics and useful desk workflows remain unqualified.
 Decision: retain the bounded prototype in tools/camera-capture-experiment, leave NC1 open, and hand off the permission observation prerequisite before another distinct live trial. No production native-runtime adoption is supported by these results.
 Refs: results/native-camera-20261010/report.md; docs/experiments/NC1-native-camera.md; 48b33a1
+
+## NC3 · prediction · 2026-10-10 14:40
+Hypothesis: the user being present to answer a first-use prompt, with a 60-second capture bound, allows the unchanged 30 fps route to establish frame acquisition if unattended authorization was the remaining prerequisite.
+Test: the user explicitly requested another attempt after being AFK; preserve prior unknown operations, use a distinct live-v3 run and token, fixed source 48b33a1, and a 60-second bound. Verify any saved PNG independently, then repeat the token and status without new acquisition.
+Predicts: if a prompt was the prerequisite and is allowed, the new operation yields one decoded saved PNG and retained receipt. Otherwise it remains unknown/refused, which does not diagnose permission as the cause.
+Against: authorization is confirmed yet no frame is acquired within the bound, or repeated lookup reopens the camera or promotes missing evidence.
+Refs: results/native-camera-20261010/report.md; tools/camera-capture-experiment/output/live-v3/; 48b33a1
