@@ -77,3 +77,10 @@ Resolves: PR6 = held
 Observed: AXDocument, process-start and file identity changes inside awaited live observation now refuse before AX input. Recovery identity is retained in private validated context and checked at the final native boundary; post-input safe-save metadata remains informational. Independent reviewer reproduced the original defects, inspected remediations and reran309 focused tests with no residual blocking findings; root checked all seven reviewed file hashes. Native baseline8fail/4fail and completion baseline42fail/7fail/12fail/18fail remain in ignored logs; corrected focused checks pass.
 Next: commit reviewed source, full/browser and actual native checks on new freeze, then one PR with CI/bot remediation before merge.
 Refs: output/pr-review-remediation-20261010/independent-review-hashes.json; output/pr-native-preconditions-baseline-v2-20261010.log; output/pr-native-identity-baseline-20261010.log; jevdual/output/pr-review-remediation/completion/; reviewerpr_review
+## PR7 · prediction · 2026-10-10 13:23
+Hypothesis: the restart harness exposes hook.json through exclusive creation before JSON serialization finishes, letting its independent observer parse an empty record. Atomic exclusive publication after serialization removes this race without changing product execution or allowing receipt overwrite.
+Test: deterministic reader during serialization must see no published target, then complete valid JSON; repeat publication must refuse and preserve the first record. Preserve the stopped native attempt and rerun all twelve restart cases on the committed repair, then the three real freshness guards.
+Predicts: current writer fails the visibility assertion; repaired writer passes and all native boundaries remain independently readable.
+Against: partial JSON remains visible, an existing marker is overwritten, or native failure persists after publication repair.
+Refs: output/pr-native-restart-9961eda/delivered/report.json; scripts/capability_restart_trial.py
+
