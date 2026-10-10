@@ -66,3 +66,9 @@ Test: separate installed-native v3, unchanged wheel; retain actual registration/
 Predicts: worker kernel identity matches probe, source imports remain absent, installed server launches the fixed worker module and records one exact append across restart.
 Against: worker uses an unexpected executable/module/packet, installed origin relies on source, custody is unqualified, or effect/record duplicates.
 Refs: output/a2-installed-trial-v2; scripts/capability_installed_trial.py
+
+## HPU3 · update · 2026-10-10 16:06
+Resolves: HP3 = held
+Observed: unchanged wheel installed-native v3 passes: pure module/worker origins and prefix resolve inside owned venv outside source, kernel worker identity matches the same-interpreter probe, registration/cmdline/packet match, actual append and restart-token collection leave one record and exact text. Claude's packaging review has no blocker, with three minor issues: hand-copied doctor requirements, permission attribution and inconsistent server/artifact versions.
+Next: derive doctor requirements and server version from installed distribution metadata, clarify responsible-process permissions, then rebuild a separate wheel and qualify its installed public entry points/native worker. Preserve old artifacts and failed harness directories. HP1 remains open until final artifact checks.
+Refs: output/a2-installed-trial-v3/receipt.json; Claude mailbox1791662699420820000; output/a2-wheel-v1
