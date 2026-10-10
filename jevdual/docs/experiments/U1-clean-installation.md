@@ -17,3 +17,9 @@ Read local reference repos for concrete installation/bootstrap/platform/doctor m
 ## Decision rule
 
 If one declared profile fails dependency resolution, retain the cause and qualify only the passing profile. Repair a bounded setup or packaging defect, then run a fresh version without regrading failed runs. Do not silently replace pinned drivers or discard the complete dependency requirements. A fresh-environment pass can close this local dependency-install boundary; fresh-OS TCC prompts and independent-machine qualification remain unverified. Results belong under results/clean-installation-20261010 with redaction before commit.
+
+## Result
+
+The final2613cff wheel qualifies local fresh dependencies/configured user state on macOS arm64 with Python3.12.6 and3.14.7,115binarypackages per profile. Both native flows pass exact emitted -I server/worker/report launches in planted-shadow working directories, actual runtime context, one-effect restart-token and authoritative report checks. Full local suite1485pass/27skip; cleanup independently verified. See results/clean-installation-20261010/.
+
+Initial flag conflicts, inherited-HOME dependency-only baselines and relative-HOME native failure remain retained. Review uncovered and remediated actual cwd import shadowing. No driver pin, authority, receipt or reporting semantics changed; optional runtime diagnostics remain separate. Existing OS/frameworks/apps/TCC and direct __main__ diagnostic origin are confidence limits, not newly qualified fresh-machine evidence.

@@ -1,0 +1,88 @@
+{
+  "diagnostic": {
+    "returncode": 0,
+    "report": {
+      "platform": "darwin",
+      "supported": true,
+      "runtime": {
+        "python_version": "3.12.6",
+        "python_requirement": ">=3.11,<4.0",
+        "python_compatible": true,
+        "interpreter": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/bin/python",
+        "architecture": "arm64",
+        "distribution": {
+          "version": "0.0.1",
+          "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/lib/python3.12/site-packages"
+        },
+        "loaded_modules": {
+          "jevdual": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+          "jevdual.capability.setup": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/lib/python3.12/site-packages/jevdual/capability/setup.py"
+        }
+      },
+      "dependencies": {},
+      "permissions": {
+        "accessibility": "unavailable",
+        "screen_recording": "unavailable"
+      },
+      "scope": "not_checked",
+      "journal": "not_checked",
+      "warnings": [
+        "Installed distribution metadata or requirement parser unavailable; compatibility is unverified.",
+        "Screen Recording is not qualified. Routes that capture pixels may require it."
+      ],
+      "dependency_metadata": "installed distribution",
+      "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+      "provider_account_required": false,
+      "rust_toolchain_required": false,
+      "blockers": [
+        "dependency_metadata_unavailable",
+        "accessibility_unavailable"
+      ],
+      "prerequisite_status": "blocked",
+      "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+    }
+  },
+  "strict": {
+    "returncode": 1,
+    "report": {
+      "platform": "darwin",
+      "supported": true,
+      "runtime": {
+        "python_version": "3.12.6",
+        "python_requirement": ">=3.11,<4.0",
+        "python_compatible": true,
+        "interpreter": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/bin/python",
+        "architecture": "arm64",
+        "distribution": {
+          "version": "0.0.1",
+          "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/lib/python3.12/site-packages"
+        },
+        "loaded_modules": {
+          "jevdual": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+          "jevdual.capability.setup": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-doctor-bare-v2/venv/lib/python3.12/site-packages/jevdual/capability/setup.py"
+        }
+      },
+      "dependencies": {},
+      "permissions": {
+        "accessibility": "unavailable",
+        "screen_recording": "unavailable"
+      },
+      "scope": "not_checked",
+      "journal": "not_checked",
+      "warnings": [
+        "Installed distribution metadata or requirement parser unavailable; compatibility is unverified.",
+        "Screen Recording is not qualified. Routes that capture pixels may require it."
+      ],
+      "dependency_metadata": "installed distribution",
+      "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+      "provider_account_required": false,
+      "rust_toolchain_required": false,
+      "blockers": [
+        "dependency_metadata_unavailable",
+        "accessibility_unavailable"
+      ],
+      "prerequisite_status": "blocked",
+      "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+    }
+  }
+}

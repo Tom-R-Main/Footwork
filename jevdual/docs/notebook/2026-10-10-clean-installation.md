@@ -42,3 +42,15 @@ Test: installed -I server/worker/report against planted jevdual/psutil/mcp/cua_d
 Predicts: plain -m baseline imports the planted package; generated -I commands use only installed modules even in the shadow cwd, private HOME remains correct and one effect/record plus conservative report semantics hold.
 Against: any planted/source module is used, worker/adapter loses installed dependencies/venv, HOME mismatch persists or launch isolation alters durable effect/recovery/report behavior.
 Refs: python/jevdual/capability/setup.py; python/jevdual/capability/recovery.py; scripts/capability_installed_trial.py
+
+## UIU4 · update · 2026-10-10 17:01
+Resolves: UI1 = held; UI2 = held; UI3 = held; UI4 = held
+Observed: final2613cff artifact fresh v4 profiles pass on3.12.6 and3.14.7,115binarypackages each with separate empty caches/private HOME/XDG/temp, consistency/tags/origins and strict prerequisites. Both actual native v2 profiles pass exact emitted -I command against four planted cwd packages; server/registeredworker contexts and SDK dylib stay in fresh venv/privateHOME, one exact append/record survives restart-token/report. Missing-prereq installed bare wheel default0/strict1; isolated report rejects retainedA1unknown without DB change. Fullsuite1485pass/27skip, Ruffpass, repeatwheelhash matches. Fixture owner exits0 and independent browser/document absence qualify. Claude reviews final native evidence and approves the bounded qualification; direct worker __main__ origin remains a nonblocking diagnostic gap, explicitly separated from installed-parent/probe/invocation evidence.
+Next: close local fresh dependency qualification; independent fresh-OS/TCC journey remains separate. Keep historical artifacts and failed runs; no publication/push/merge/global changes.
+Refs: results/clean-installation-20261010/summary.json; results/clean-installation-20261010/report.md; output/u1-final-full-suite.log; Claude mailbox1791665859056600000
+
+## UIS1 · summary · 2026-10-10 17:01
+Established: two isolated binary dependency installs and real installed native flows pass, with exact launch configuration, private state, strict diagnostics and cwd-shadow remediation independently reviewed. Runtime diagnostics never serve as execution authority.
+Uncertain: fresh OS permission prompts/new physical machine, exhaustive filesystem/network tracing, direct worker __main__ diagnostic origin, arbitrary apps and saved-file/whole-job certification remain unqualified.
+Decision: deliver updated local wheel/guide/results on the clean unmerged branch; preserve earlier A1/A2/U1 failures and profile context. Fresh dependencies are qualified, not a clean OS.
+Refs: results/clean-installation-20261010; docs/capability-packaging.md; 2613cff

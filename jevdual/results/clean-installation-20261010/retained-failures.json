@@ -1,0 +1,16 @@
+{
+  "v1_both_installers": "Invalid uv flags before dependency resolution, retained",
+  "v2_installs": "Dependency-only baseline; HOME inherited. Python3.14.5 and3.12.6 each115 packages",
+  "v3_installs": "Private-state installation baseline on previous U1 artifact, each115 packages",
+  "native_py314_v1": "One confirmed append/restart-token succeeded; actual runtime gate rejects relative HOME. Invalid final qualification; all journal/audit files retained",
+  "v4_installs_and_native_v2": "Final isolated artifact and exact configured launches; positive final qualification",
+  "original_paths": [
+    "output/u1-py314-v1",
+    "output/u1-py312-v1",
+    "output/u1-py314-v2",
+    "output/u1-py312-v2",
+    "output/u1-py314-v3",
+    "output/u1-py312-v3",
+    "output/u1-native-py314-v1"
+  ]
+}
