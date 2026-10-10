@@ -20,3 +20,10 @@ Test: public native capability scenarios and fixed-worker boundary: modify trail
 Predicts: changed exact prefix/role/frame refuses before either caret/input setter; unchanged capability append still inserts once; legacy preview callers retain their existing behavior.
 Against: any setter after changed preconditions, guessed field retarget, duplicate input, or loss of compatibility in legacy native routes.
 Refs: python/jevdual/capability/backend.py; python/jevdual/native.py; tests/test_session_scenarios.py; tests/test_native.py; scripts/capability_restart_trial.py
+
+## PR4 · prediction · 2026-10-10 12:55
+Hypothesis: completion's query-navigation heuristic confers submitted event identity on ordinary links, allowing a nonexistent submission to clear its deterministic floor. Without a trusted form/submission acknowledgement in the receipt, treating this as unsupported can remove that false authority.
+Test: actual completion consumer and floor with a confirmed View report click leading to /report?quantity=27, unrelated query navigation and actual current receipt metadata; historical/fixture source assertions must not become model-invented identity. Baseline before fix; conformance and caller checks after.
+Predicts: generic query navigation contributes neither usable submission evidence nor claimed submitted fields; submit tasks without qualified event evidence remain blocked. Historical frozen runs remain unchanged and their previously supported heuristic is documented as unqualified by the corrected current code.
+Against: querynavigationalone clearsmissing-submission floor, label-only guesses regain authority, or a new unverified receipt field is accepted as causal proof.
+Refs: python/jevdual/completion.py; python/jevdual/session.py; tests/test_completion.py; independent reviewerpr_review finding atc9ba496
