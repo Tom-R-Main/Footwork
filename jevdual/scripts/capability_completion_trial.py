@@ -72,6 +72,12 @@ def main() -> int:
             command = codex_command(config["mcpServers"]["footwork"], session / "final.txt")
             command += [
                 "-c",
+                "features.apps=false",
+                "-c",
+                "include_apps_instructions=false",
+                "-c",
+                "features.skill_search=false",
+                "-c",
                 'mcp_servers.footwork.tools.report.approval_mode="approve"',
                 "--output-schema",
                 str(schema_path),

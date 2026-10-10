@@ -14,6 +14,7 @@ import sqlite3
 import stat
 import time
 from contextlib import closing
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -30,7 +31,12 @@ REPORT_SCHEMA = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "operation": {"type": "string", "minLength": 1, "maxLength": 128},
+                    "operation": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "description": "Exact durable operation ID returned by act/status, e.g. op_123456abcdef. Copy that ID, never put task/action prose here.",
+                    },
                     "disposition": {"type": "string", "enum": list(DISPOSITIONS)},
                 },
                 "required": ["operation", "disposition"],
@@ -83,20 +89,25 @@ def ledger_snapshot(db: sqlite3.Connection, task: str) -> dict[str, Any]:
     # One SELECT is one SQLite snapshot; LIMIT detects overflow, never certifies
     # an incomplete projection or status's last-ten-operations view.
     rows = db.execute(
-        "SELECT id,state,disposition,updated FROM operations WHERE task=? ORDER BY created,id LIMIT ?",
+        "SELECT id,state,disposition,updated,created FROM operations WHERE task=? ORDER BY created,id LIMIT ?",
         (task, MAX_OPERATIONS + 1),
     ).fetchall()
     if len(rows) > MAX_OPERATIONS:
         raise ReportUnavailable("Task ledger exceeds the report bound; no completion certified")
     operations = []
-    for op_id, state, disposition, updated in rows:
+    for op_id, state, disposition, updated, created in rows:
         if state not in ("dispatching", "unknown", "final"):
             raise ReportUnavailable("Unsupported operation state")
         if state == "final" and disposition not in DISPOSITIONS:
             raise ReportUnavailable("Invalid final disposition")
         if not isinstance(op_id, str) or not op_id.strip() or len(op_id) > 128:
             raise ReportUnavailable("Invalid operation identity")
-        if not isinstance(updated, (float, int)) or not math.isfinite(updated):
+        if (
+            not isinstance(updated, (float, int))
+            or not math.isfinite(updated)
+            or not isinstance(created, (float, int))
+            or not math.isfinite(created)
+        ):
             raise ReportUnavailable("Invalid operation revision")
         operations.append(
             {
@@ -104,11 +115,17 @@ def ledger_snapshot(db: sqlite3.Connection, task: str) -> dict[str, Any]:
                 "state": state,
                 "disposition": disposition if state == "final" else "unknown",
                 "updated": updated,
+                "created": created,
             }
         )
     content = {"task": task, "operations": operations}
     digest = hashlib.sha256(json.dumps(content, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-    return {**content, "digest": digest, "as_of": time.time()}
+    span = {
+        "first_created": min((o["created"] for o in operations), default=None),
+        "last_updated": max((o["updated"] for o in operations), default=None),
+        "count": len(operations),
+    }
+    return {**content, "digest": digest, "as_of": time.time(), "ledger_span": span}
 
 
 def validate_report(report: dict[str, Any], snapshot: dict[str, Any]) -> dict[str, Any]:
@@ -146,6 +163,20 @@ def validate_report(report: dict[str, Any], snapshot: dict[str, Any]) -> dict[st
         summary = "No recorded operations; completion cannot be confirmed."
     if not accepted:
         summary = "Host completion report rejected (" + ", ".join(reasons) + "). " + summary
+    if accepted and report["completion"] != "completed":
+        summary += (
+            " Host reports "
+            + report["completion"].replace("_", " ")
+            + "; that broader judgment is not independently certified."
+        )
+    if actual:
+        span = snapshot["ledger_span"]
+        try:
+            start = datetime.fromtimestamp(span["first_created"], UTC).isoformat()
+            end = datetime.fromtimestamp(span["last_updated"], UTC).isoformat()
+        except (ValueError, OverflowError, OSError) as exc:
+            raise ReportUnavailable("Invalid ledger time span") from exc
+        summary += f" Full task ledger: {span['count']} records, {start} through {end}."
     summary += " Current document state and disk persistence are not certified by this report."
     return {
         "schema_version": "1",
@@ -157,6 +188,8 @@ def validate_report(report: dict[str, Any], snapshot: dict[str, Any]) -> dict[st
         "current_state": "not_checked",
         "task": snapshot["task"],
         "snapshot_digest": snapshot["digest"],
+        "ledger_span": snapshot["ledger_span"],
+        "accepted_host_claim": report["completion"] if accepted else None,
         "as_of": snapshot["as_of"],
         "trusted_summary": summary,
     }

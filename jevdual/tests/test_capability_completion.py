@@ -277,3 +277,36 @@ def test_overflow_fails_closed(journal):
         operation(journal, str(i))
     with pytest.raises(ReportUnavailable):
         validate_from_journal(journal.path, "test", report("invented"))
+
+
+def test_deeply_nested_json_returns_unavailable_not_traceback(journal, tmp_path):
+    run = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "jevdual.capability.cli",
+            "report",
+            "--task",
+            "test",
+            "--journal",
+            str(journal.path),
+        ],
+        input="[" * 30000 + "]" * 30000,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=10,
+        cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parents[1] / "python")},
+    )
+    assert run.returncode == 2 and not run.stderr
+    assert json.loads(run.stdout)["operation_completion"] == "unknown"
+
+
+def test_historical_span_and_downgrade_are_visible(journal):
+    op_id = operation(journal, "old")
+    result = validate_from_journal(journal.path, "test", report(op_id, completion="not_completed"))
+    assert result["accepted_host_claim"] == "not_completed"
+    assert result["ledger_span"]["count"] == 1
+    assert "Host reports not completed" in result["trusted_summary"]
+    assert "Full task ledger: 1 records" in result["trusted_summary"]

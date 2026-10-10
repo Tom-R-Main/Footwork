@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
         value = json.loads(raw)
         validated = validate_from_journal(args.journal, args.task, value)
         code = 0 if validated["validation"]["accepted"] else 1
-    except (ReportError, OSError, ValueError):
+    except (ReportError, OSError, ValueError, RecursionError):
         validated, code = unavailable_summary(), 2
     print(validated["trusted_summary"] if args.summary else json.dumps(validated, ensure_ascii=False))
     return code
