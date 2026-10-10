@@ -13,3 +13,16 @@ Test: model-free relay/public MCP controls before paid sessions; require explici
 Predicts: normal controls execute once, receipt/late-edit controls reconcile historical applied, no-receipt control stays unknown despite matching text, and missing boundary fails rather than becoming a pass.
 Against: tools/call is replayed, injection cannot prove its boundary, worker cleanup is guessed from PID alone, host configuration admits unintended activity, or a missed injection is counted as valid.
 Refs: scripts/capability_restart_trial.py; scripts/capability_comparison_relay.py; scripts/capability_host_trial.py
+
+## AAU1 · update · 2026-10-10 14:47
+Observed: d5de5fc control v1 completed clean, then correctly exposed one unknown row after the receipt boundary. The control requested task-wide status with reconcile=true but omitted operation; that API lists history and supplies a next operation-specific status call. The worker receipt, exact independent text, kill and restarted catalog were qualified. No paid host session ran.
+Inferred: the control caller omitted the documented collection step; this is incomplete harness evidence, not a product reconciliation failure.
+Next: correct only the scripted control to collect the operation ID from public task status, then call public operation status; preserve agent prompts without recovery coaching and retain v1.
+Refs: output/agent-acceptance-controls-v1/control-receipt/public.json; output/agent-acceptance-controls-v1/control-receipt/receipt.json
+
+## AA3 · prediction · 2026-10-10 14:47
+Hypothesis: explicitly collecting the single operation identified by task status resolves the control's receipt case to historical applied; later-edit remains applied with current divergence, and missing receipt stays unknown despite matching text.
+Test: fresh control v2 uses task status then the returned operation ID with reconcile=true; repeat the original token only to collect, and include a malformed-target negative control that must reject the missing interruption boundary.
+Predicts: four positive controls meet their unchanged oracle/journal criteria, token collection preserves one row and exact text, and malformed-target control cannot manufacture a qualified interruption.
+Against: operation-specific status cannot recover the qualified receipt, repeat adds an effect/row, matching text resolves without receipt, or an unobserved interruption is accepted.
+Refs: scripts/capability_agent_restart_trial.py; output/agent-acceptance-controls-v1
