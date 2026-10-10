@@ -32,6 +32,9 @@ to an explicit project, repository revision and proposed check. The optional
 [MuJoCo workcell](tools/physical-workcell/README.md) explores a body interface with
 physical-state feedback and a conditional computer work-order update. Simulation results
 remain separate from real-camera and robot qualification.
+Its [image-guided route](tools/physical-workcell/IMAGE_GUIDED.md) supplies calibrated RGB views
+to an agent, accepts frame-bound proposals and requires fresh visual placement evidence before
+the conditional local computer action.
 
 ## Drive it
 

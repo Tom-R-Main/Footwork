@@ -19,3 +19,23 @@ Test: reject forged extra fields and altered perception scope on actual retained
 Predicts: mutated packets refuse without exposing injected fields; valid generated packets still support fresh visual decisions, correction and a separately verified local work order.
 Against: forged oracle fields returned, mutated packets authorize dispatch, or valid image-guided placement cannot complete after hardening.
 Refs: docs/experiments/SIM2-image-guided-workcell.md; tools/physical-workcell/image_guided.py
+
+## SIM2-U2 · update · 2026-10-10 15:58
+Resolves: SIM2 = held
+Observed: the parent AI session viewed six native RGB frames on frozen version f96ac4a and supplied five bounded moves. The frame at generation 4 showed residual horizontal error; its completion was refused, then a smaller image-informed correction produced a fresh accepted visual placement. Post-planning native observation and an independent public Footwork saved-byte check passed. Wrong-object/stale-generation requests refused; repeated motion/completion left all run artifact bytes unchanged.
+Inferred: the agent-facing RGB/control/local-computer workflow supports feedback correction in this known scene without native poses in the planner interface. A single trial does not measure general visual-model quality.
+Next: close SIM2; retain camera/control separation for future scene variation or real-camera calibration experiments.
+Refs: results/image-guided-workcell-20261010/trial-v2.json; results/image-guided-workcell-20261010/report.md
+
+## SIM2A-U1 · update · 2026-10-10 15:58
+Resolves: SIM2A = held
+Observed: the strict packet admission at f96ac4a rejected a forged extra-oracle field through both public view and apply, without returning the injected field or creating effect intents. Scoped conformance also rejected changed perception scope. The fresh parent RGB placement/correction/computer run passed after hardening; dynamics, camera/detector and motion settings were unchanged.
+Inferred: exact cached-packet admission closes the reviewed planner-output gap for this local workflow.
+Next: close the package.
+Refs: results/image-guided-workcell-20261010/packet-admission-negative.json; results/image-guided-workcell-20261010/verification.json
+
+## SIM2-S1 · summary · 2026-10-10 15:58
+Established: actual AI-viewed images and structured decisions drove bounded contact motion, residual-error correction and fresh visual completion, followed by separate native and software verification. Versioned trial evidence is preserved; final scoped conformance and prior SIM1 regressions passed.
+Uncertain: varied lighting/object identity/camera geometry, general vision accuracy, hardware transfer, global access control and unattended model orchestration remain unqualified. The RGB checker is specific to known colored silhouettes; the base SIM1 CLI remains an unguided route.
+Decision: retain image_guided.py as an experimental Footwork body interface, with agent intent, native controller, RGB placement, native oracle and software persistence kept distinct. Do not change production model authority or add Rust without workload evidence.
+Refs: results/image-guided-workcell-20261010/report.md; tools/physical-workcell/IMAGE_GUIDED.md

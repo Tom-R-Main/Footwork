@@ -26,7 +26,9 @@ Decision: adopt only as an experimental image-driven body interface if the compl
 
 ## Result
 
-Pending.
+Held for the bounded agent-driven simulated route. The final version at `f96ac4a` passed a fresh parent trial: six viewed RGB frames, five image-bound moves, a visually short placement, a smaller corrective move and fresh visual completion. The separate post-planning native oracle agreed with the visual placement, and an independent public Footwork check verified the local work-order file. Wrong-object/stale/short-completion and injected packet cases refused; repeated commands left all run artifacts unchanged. The combined scoped suite passed 26 actual-engine/renderer tests. See `results/image-guided-workcell-20261010/report.md`, versioned trial summaries and verification.
+
+This establishes one known-color, calibrated simulation loop driven by the current AI session. It does not establish an unattended model runner, general recognition accuracy, real-camera calibration or hardware transfer. Version 1 is preserved separately; the dated amendment below records the source hardening before the final trial.
 
 ## Amendment · 2026-10-10 15:54
 

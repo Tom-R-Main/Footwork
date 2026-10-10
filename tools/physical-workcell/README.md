@@ -9,6 +9,10 @@ There is no real robot, camera acquisition, learned policy, visual-recognition c
 cloud call or external task creation. State readback comes directly from the native
 simulator. This package is an isolated experiment, rather than a production Footwork adapter.
 
+For RGB-driven agent control, use the separate [image-guided route](IMAGE_GUIDED.md). It keeps
+native poses out of planner packets and adds a fresh visual gate before computer staging.
+The base commands below retain their original native-state behavior.
+
 ## One work order
 
 The package uses pinned `mujoco==3.15.0` in its own ignored `.venv`. The existing Footwork

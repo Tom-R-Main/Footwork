@@ -1,0 +1,16 @@
+{
+  "source_commit": "f96ac4a",
+  "mutated_key": "injected_native_oracle",
+  "public_view": {
+    "source_kind": "mujoco_simulation",
+    "phase": "refused",
+    "reason": "retained planner image packet has invalid fields"
+  },
+  "public_apply": {
+    "source_kind": "mujoco_simulation",
+    "phase": "refused",
+    "reason": "retained planner image packet has invalid fields"
+  },
+  "no_effect_intents_or_dispatch": true,
+  "injected_field_not_returned": true
+}
