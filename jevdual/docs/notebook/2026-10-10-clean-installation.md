@@ -30,3 +30,15 @@ Test: fresh v3 profile installs with actual binary tags/cache-size evidence; exa
 Predicts: no configured dependency/source/home/cache borrow, actual server/worker origins/dylib remain in fresh venv, known browser-use telemetry/cloud sync are disabled, and -O cannot bypass a gate. Diagnostics are separate from authority/receipts and their absence never certifies installation.
 Against: HOME-resident helper/config or source imports are needed, a gate vanishes under optimization, actual running origins disagree with probes, or added diagnostics alter input/recovery/report semantics.
 Refs: scripts/capability_clean_install.py; scripts/capability_installed_trial.py; docs/experiments/U1-clean-installation.md
+
+## UIU3 · update · 2026-10-10 16:50
+Observed: v3 full binary/profile installs pass on Framework3.14.7 and3.12.6 with private state/cache; strict prerequisites pass. Native3.14 v1 executes one applied append plus restart-token collection, then correctly rejects its actual-process HOME evidence: the harness passed a relative isolation-root, so child HOME is relative rather than the intended private absolute directory. Claude reproduced a product cwd-shadowing blocker: generated server and worker -m commands can import planted cwd packages, despite cleared PYTHONPATH. Full current suite1484pass/27skip; that does not cure this launch defect.
+Next: retain nativev1, normalize isolation-root before building env; add -I to generated server/report and worker invocations, plant shadow packages in the native host cwd, freeze/rebuild/requalify separately.
+Refs: output/u1-native-py314-v1/runtime-context; output/u1-py314-v3/receipt.json; output/u1-py312-v3/receipt.json; Claude mailbox1791665246732519000
+
+## UI4 · prediction · 2026-10-10 16:50
+Hypothesis: isolated Python invocations prevent cwd/Python-env shadowing across the actual server, detached worker and authoritative report adapter, preserving venv identity and non-Python private-state settings.
+Test: installed -I server/worker/report against planted jevdual/psutil/mcp/cua_driver cwd packages, with explicit actual-process audit and a positive native append/restart/report oracle; compare plain -m shadow baseline.
+Predicts: plain -m baseline imports the planted package; generated -I commands use only installed modules even in the shadow cwd, private HOME remains correct and one effect/record plus conservative report semantics hold.
+Against: any planted/source module is used, worker/adapter loses installed dependencies/venv, HOME mismatch persists or launch isolation alters durable effect/recovery/report behavior.
+Refs: python/jevdual/capability/setup.py; python/jevdual/capability/recovery.py; scripts/capability_installed_trial.py
