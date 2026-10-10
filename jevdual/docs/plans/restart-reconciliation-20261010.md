@@ -46,3 +46,15 @@ Current identity is deliberately bounded: boot session, application process star
 ## Acceptance and limitations
 
 Required: no input from status/restart; no duplicate launch for a repeated token; no unknown-to-applied transition from text alone; incomplete/delayed execution remains blocked; qualified receipt allows a parent-crash recovery; replacements/malformed records are refused; legacy journal opens safely; private files and durable writes are verified. No success is claimed if live interruption is unreachable. File persistence and broad installation/platform support remain unqualified.
+
+## Amendment · 2026-10-10 12:10 · Claude design review
+
+Adopt P1/R3/D6: a matching qualified completion receipt establishes **historical applied**, even after a later edit, application restart or document replacement. Fresh current agreement (yes/no/unverifiable) is separate and never the gate for that historical result. This supersedes the current-identity/current-text gates above. The worker itself must qualify identity and exact before/after at execution time. Retain the receipt and unknown transition in history. New actions still require fresh targets and exact validation.
+
+Adopt P2: before schema/dispatcher implementation, run a model-free detached-child AX append probe on an owned fixture; measure startup and total append latency. Failure of TCC/AX access blocks this design, rather than producing an apparent pass in mocks.
+
+Adopt P3 with a caveat: a per-attempt flock supplies readonly execution custody; registration also records PID/start-time solely for attested fixture cleanup. An unlocked attempt with no receipt is still unknown after launch admission: a not-yet-scheduled child could run later. Never infer not_sent from absent lock/receipt. Adopt P5: normal and restarted paths consume the same immutable receipt. A worker input_started marker improves diagnostics but absence alone cannot resolve a launched attempt.
+
+Retain D1 as a complementary future option: graceful drain reduces interrupted replies, but does not cover the explicitly authorized parent SIGKILL case. Continue the independent fixed-action dispatcher if the feasibility probe succeeds. Process crash qualification only: neither fsync nor SQLite FULL here claims power-loss protection or universal exactly-once GUI behavior. A worker death before its completion record remains unknown.
+
+Claude source: mailbox messages 1791647977465490000, 1791648203802365000 and 1791648499247640000. Claude also reviewed the earlier C1/text repairs: no blockers; condition-level analysis, non-discriminating interruption fixture and long-document frame changes belong in future comparison/probing, not a rewrite of frozen C1 outcomes.

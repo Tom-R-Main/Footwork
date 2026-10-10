@@ -18,3 +18,7 @@ Model-free checks are primary. Mailbox Claude review is authorized; if unavailab
 ## Result
 
 Appended after qualification.
+
+## Amendment · 2026-10-10 12:10 · before runs
+
+A valid qualified completion receipt resolves **historical applied** even if current identity/content changes afterward. Current agreement is reported separately; this supersedes current-match gating in the original design and expected rules. Add the counterexample: completed receipt followed by external edit must resolve historical applied without changing that edit. Started/no receipt, including identical external text, remains unknown. Before implementation, detached worker feasibility and startup latency are measured on the owned native fixture. Custody uses a per-attempt flock; absence of a lock or input_started marker does not prove a launched worker will never run.
