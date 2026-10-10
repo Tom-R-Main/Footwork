@@ -22,8 +22,6 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal
 
-from browser_use.dom.enhanced_snapshot import _SENSITIVE_AUTOCOMPLETE_PREFIXES, _SENSITIVE_INPUT_TYPES
-
 if TYPE_CHECKING:
     from browser_use.browser.views import BrowserStateSummary
     from browser_use.dom.views import EnhancedDOMTreeNode
@@ -325,6 +323,8 @@ def _is_sensitive_input(tag: str, attrs: dict[str, str]) -> bool:
     """Same rule browser-use applies to live snapshot values; static ``value`` attributes need it too."""
     if tag != "INPUT":
         return False
+    from browser_use.dom.enhanced_snapshot import _SENSITIVE_AUTOCOMPLETE_PREFIXES, _SENSITIVE_INPUT_TYPES
+
     if attrs.get("type", "").lower() in _SENSITIVE_INPUT_TYPES:
         return True
     return attrs.get("autocomplete", "").lower().startswith(_SENSITIVE_AUTOCOMPLETE_PREFIXES)

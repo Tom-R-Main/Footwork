@@ -1,12 +1,12 @@
 # The first Footwork capability slice
 
-This local development slice exposes four MCP tools: `bind`, `observe`, `act`, `status`.
+This local development slice exposes five MCP tools: `bind`, `observe`, `act`, `status`, `report`.
 An existing agent reads a value from a local browser fixture, appends it to a selected
 TextEdit document, and checks exact field content. The host owns the plan. Footwork
 records append intent before dispatch. An independent one-action worker retains completion
 evidence across MCP process death; uncertain attempts stay blocked. `status` never repeats input.
 
-This is a scoped macOS prototype, not a released installable package. Browser and native
+This is a scoped macOS prototype. See [local packaging](capability-packaging.md) for the offline wheel and per-run host setup. Browser and native
 drivers remain at the repository's pinned versions. Live agent acceptance and the raw
 backend comparison have separate preregistrations in
 [the notebook](notebook/2026-10-09-capability-slice.md) and
@@ -29,8 +29,10 @@ including delayed execution and identical external text. This qualification uses
 a fresh agent trial on the new receipt wording and latency is recorded in
 [A1](../results/restart-agent-acceptance-20261010/report.md). On the isolated reporting extension,
 both hosts pass eight selected execution cases, but Codex omits execution uncertainty in one final
-answer; combined answer acceptance is seven of eight. That failure blocks packaging and does not
-change the original C1 or R1 results. The reporting extension remains on the unmerged
+answer; combined answer acceptance is seven of eight. A2 adds an enforced journal validator:
+[four fresh Codex cases](../results/operation-completion-20261010/report.md) pass execution,
+structured-report validation and published-summary checks. The adapter closes that output path;
+interactive host prose remains outside enforcement. Original A1, C1 and R1 results are unchanged. The reporting extension remains on the unmerged
 `codex/restart-agent-acceptance` branch.
 Evidence covers the scoped prototype. Arbitrary apps, saved-file persistence,
 parallel hosts and a packaged public release remain unqualified.
@@ -73,7 +75,7 @@ uv run --no-sync python -m jevdual.capability.mcp_server \
   --journal /absolute/project/run/operations.sqlite
 ```
 
-Run this from `jevdual/`. A Claude Code registration can invoke the environment's Python
+Run this from `jevdual/`. An ephemeral Claude Code configuration for one run can invoke the environment's Python
 directly; the paths below are placeholders to replace before running:
 
 ```json
@@ -91,7 +93,10 @@ directly; the paths below are placeholders to replace before running:
 }
 ```
 
-The prototype does not write the host's global configuration. A temporary MCP config
+Generate a fresh task ID and scope for each new host job; reuse that scope only for reconnects
+and restarts of the same run. Do not register one reusable task scope globally. A deliberately
+reused task reports its entire ledger, including older attempts. The prototype does not write
+the host's global configuration. A temporary MCP config
 under the owned run directory can be passed to a fresh host session. Experiments must
 restrict the session to these tools; an agent using shell/source or other computer-use
 tools has not demonstrated this interface's usability. Provider calls and host configuration
@@ -181,3 +186,39 @@ unreadable and ambiguous fields return no target with an unavailable reason. Off
 `value_exact: true`; a bounded value can still be marked truncated. Readback uses the scoped document,
 AX role and unique field frame because Cua's content-derived labels can change after an empty append.
 This does not qualify disk persistence. Restart evidence has its own [preregistration](experiments/R1-restart-reconciliation.md).
+
+## Completion reports
+
+`report` checks a structured host claim against every operation in the configured task ledger,
+including records older than status's recent list. It never drives the surface or reconciles a
+receipt. Copy the exact `op_...` IDs returned by `act`/`status` into the report; descriptions of
+planned actions are not IDs.
+
+```json
+{
+  "completion": "unknown",
+  "operations": [{"operation": "op_123456abcdef", "disposition": "unknown"}],
+  "persistence": "not_checked"
+}
+```
+
+Unknown or dispatching records prevent confirmed execution; matching current text cannot cure
+that uncertainty. Partial input also prevents operation completion. Refused/not_sent attempts
+remain listed as confirmed no-input attempts and can coexist with a later applied operation.
+At least one applied record is required. Omitted, foreign, duplicate or mismatched IDs and
+unsupported saved/unsaved assertions are rejected. Honest host downgrades are retained as
+uncertified judgments. Reports show the full ledger span and observation time, not a promise
+about future state or the whole job.
+
+A tool alone cannot control a model's final prose. The enforcing host adapter takes journal and
+task from trusted startup configuration, validates the final JSON, and publishes **only**
+`trusted_summary`. Use `footwork-capability report --journal ... --task ... --input ... --summary`
+for this boundary. Exit codes are 0 for an accepted structured claim, 1 for a rejected claim
+with journal evidence, and 2 for malformed/unavailable validation. Exit 0 can correctly report
+unknown; it does not mean the job succeeded. Never fall back to raw host text on failure.
+
+The report CLI reads an existing private database in SQLite read-only mode without journal
+startup recovery or owner takeover. It works with a live owner and retained crash WAL. The
+snapshot is bounded to 256 task records; overflow fails closed. Keep the journal and its
+execution directory private, and retain unresolved operation evidence until an operator has
+resolved the uncertainty.

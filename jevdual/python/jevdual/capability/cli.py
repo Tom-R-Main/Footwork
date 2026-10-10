@@ -27,11 +27,53 @@ def main(argv: list[str] | None = None) -> int:
     report.add_argument(
         "--summary", action="store_true", help="Print only the trusted human-readable summary"
     )
+    config = sub.add_parser("config", help="Create a private per-job run and ephemeral MCP configuration")
+    config.add_argument("--run-dir", type=Path, required=True)
+    config.add_argument("--source-pid", type=int, required=True)
+    config.add_argument("--source-window", type=int, required=True)
+    config.add_argument("--source-url", required=True)
+    config.add_argument("--destination-pid", type=int, required=True)
+    config.add_argument("--destination-window", type=int, required=True)
+    config.add_argument("--document", type=Path, required=True)
+    diagnostics = sub.add_parser(
+        "doctor", help="Read prerequisites without requesting permissions or starting apps"
+    )
+    diagnostics.add_argument("--scope", type=Path)
+    diagnostics.add_argument("--journal", type=Path)
     args = parser.parse_args(argv)
     if args.command == "server":
         from .mcp_server import main as serve
 
         return serve(["--scope", str(args.scope), "--journal", str(args.journal)])
+    if args.command in ("doctor", "config"):
+        from .contracts import CapabilityError
+        from .setup import doctor, make_config
+
+        try:
+            if args.command == "doctor":
+                result = doctor(args.scope, args.journal)
+            else:
+                result = make_config(
+                    args.run_dir,
+                    source_pid=args.source_pid,
+                    source_window=args.source_window,
+                    source_url=args.source_url,
+                    destination_pid=args.destination_pid,
+                    destination_window=args.destination_window,
+                    document=args.document,
+                )
+            print(json.dumps(result, ensure_ascii=False))
+            return 0
+        except (OSError, ValueError, CapabilityError):
+            print(
+                json.dumps(
+                    {
+                        "error": "invalid_configuration",
+                        "message": "Check scope arguments and use a new owned run directory.",
+                    }
+                )
+            )
+            return 2
     try:
         if args.input:
             with args.input.open("rb") as stream:
