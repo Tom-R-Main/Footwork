@@ -38,3 +38,7 @@ The amended scoped process-crash contract passes its development qualification o
 ## Review closure · 2026-10-10 12:45
 
 Claude Opus5.5 independently approved the final evidence in message1791650633854041000 after checking source hashes, all twelve outcomes and repeated-token IDs, busy guards and independent oracle values. Codex signs off the amended scoped contract. R1 closes with the limits and first-use/retention follow-ups recorded in results/restart-reconciliation-20261010/report.md and review.md.
+
+## PR remediation requalification · 2026-10-10 13:16 · before new native runs
+
+Independent combined-PR review reproduced exact content/frame/resource freshness gaps after validation and before native append. Repaired9961eda now retains literal field preconditions and readonly original recovery identity through the final AX insertion guard. Re-run the full twelve-case restart matrix on a fresh owned output fixture and preserve previous8a407f1 outcomes unchanged. Add real MCP checks with an independent fixture actor introducing trailing space/newline or moving the owned window inside NativeBridge live observation; the capability must return not_sent/refused, never insert payload, and repeated token/status must leave the actor's change intact. Actual actor mutation is setup interference, not capability delivery. This checks the already committed PR3/PR6 predictions and does not rerun C1/heldout/provider measurements.
