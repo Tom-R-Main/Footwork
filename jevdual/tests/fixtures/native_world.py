@@ -165,3 +165,126 @@ class World:
         for idx, label in self.relabels.items():
             lines = [re.sub(rf"(\[{idx}\] AXButton) \([^)]*\)", rf"\1 ({label})", ln) for ln in lines]
         return "\n".join(lines)
+
+
+@dataclass
+class TextWorld:
+    """TextEdit at the external Cua/AX boundary; menu parsing and insertion stay real.
+
+    Cua omits an empty value and strips whitespace from a nonempty preview. AX
+    independently reports the full field, including an explicit zero character
+    count when its value is absent. The content-derived label changes on insertion.
+    """
+
+    document: Path
+    content: str = "Invoice report"
+    readable: bool = True
+    character_count: int | None = 0
+    insertable: bool = True
+    secure: bool = False
+    ambiguous: bool = False
+    after_insert: str | None = None
+    extra_field: bool = False
+    frame: tuple[int, int, int, int] = (10, 20, 400, 300)
+    writes: list[tuple[str, Any]] = field(default_factory=list)
+    n: int = 0
+    pid: int = 77
+    window_id: int = 40335
+
+    def install(self, monkeypatch: Any) -> None:
+        import sys
+
+        import cua_driver
+        from jevdual import ax
+        from jevdual.posture import ExecutionPolicy
+
+        monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda: self))
+        monkeypatch.setattr(ExecutionPolicy, "locked", lambda _: False)
+        monkeypatch.setattr(ax, "window_element", lambda pid, wid: self._window(pid, wid))
+        monkeypatch.setattr(ax, "_attr", self._attr)
+        monkeypatch.setattr(ax, "frame_of", lambda _: ax.Frame(*self.frame))
+        monkeypatch.setitem(
+            sys.modules,
+            "ApplicationServices",
+            SimpleNamespace(
+                AXUIElementSetAttributeValue=self._set,
+                AXUIElementIsAttributeSettable=lambda el, name, _: (0, self.insertable),
+                AXValueCreate=lambda kind, value: value,
+                kAXValueCFRangeType=4,
+            ),
+        )
+        monkeypatch.setitem(sys.modules, "Foundation", SimpleNamespace(NSMakeRange=lambda n, m: (n, m)))
+
+    def _window(self, pid: int, wid: int) -> str:
+        assert (pid, wid) == (self.pid, self.window_id)
+        return "window"
+
+    def _attr(self, element: Any, name: str) -> Any:
+        if element == "window":
+            return {
+                "AXDocument": self.document.as_uri(),
+                "AXRole": "AXWindow",
+                "AXChildren": ["body", "duplicate"] if self.ambiguous else ["body"],
+            }.get(name)
+        return {
+            "AXRole": "AXSecureTextField" if self.secure else "AXTextArea",
+            "AXValue": self.content if self.readable and self.content else None,
+            "AXNumberOfCharacters": len(self.content) if self.readable else self.character_count,
+            "AXChildren": [],
+        }.get(name)
+
+    def _set(self, element: Any, name: str, value: Any) -> int:
+        assert element == "body"
+        if not self.insertable:
+            return -25205
+        self.writes.append((name, value))
+        if name == "AXSelectedTextRange":
+            assert value == (len(self.content.encode("utf-16-le")) // 2, 0)
+        if name == "AXSelectedText":
+            assert self.writes[-2][0] == "AXSelectedTextRange"
+            self.content += value
+            if self.after_insert == "role":
+                self.secure = True
+            elif self.after_insert == "frame":
+                self.frame = (110, 20, 400, 300)
+            elif self.after_insert == "ambiguous":
+                self.ambiguous = self.extra_field = True
+        return 0
+
+    async def shutdown(self) -> None:
+        pass
+
+    async def get_window_state(self, inp: Any) -> dict[str, Any]:
+        assert (inp.pid, inp.window_id) == (self.pid, self.window_id)
+        self.n += 1
+        sid = f"s{self.n:08x}"
+        preview = self.content.strip() if self.content else None
+        body: dict[str, Any] = {
+            "element_index": 1,
+            "element_token": f"{sid}:1",
+            "role": "AXSecureTextField" if self.secure else "AXTextArea",
+            "label": preview or "First Text View",
+            "frame": dict(zip(("x", "y", "w", "h"), self.frame, strict=True)),
+            "parent_index": 0,
+            "enabled": True,
+        }
+        if preview is not None:
+            body["value"] = preview
+        elements = [
+            {"element_index": 0, "element_token": f"{sid}:0", "role": "AXWindow"},
+            body,
+        ]
+        if self.extra_field:
+            elements.append(
+                {**body, "element_index": 2, "element_token": f"{sid}:2", "label": "Second Text View"}
+            )
+        return {
+            "snapshot_id": sid,
+            "pid": self.pid,
+            "window_id": self.window_id,
+            "app_name": "TextEdit",
+            "window_title": self.document.name,
+            "elements_complete": True,
+            "tree_markdown": "",
+            "elements": elements,
+        }

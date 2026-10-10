@@ -3,6 +3,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
+from jevdual.ax import AXError
 from jevdual.capability.backend import BoundResource, ScopedBackend
 from jevdual.capability.contracts import CapabilityError
 
@@ -17,10 +18,12 @@ class FakeBridge:
         self.dispatches = 0
         self.effect = "confirmed"
         self.ax = SimpleNamespace(
+            AXError=AXError,
             document_path=lambda *a: self.document,
             Frame=lambda *a: a,
             resolve=lambda *a: self,
             value=lambda el: el.content,
+            can_insert=lambda el: True,
         )
 
     async def observe(self):

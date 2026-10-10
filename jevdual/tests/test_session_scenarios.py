@@ -24,6 +24,161 @@ from jevdual.policy import Decision
 from tests.fixtures.native_world import World
 
 
+@pytest.fixture
+def text_capability(tmp_path, monkeypatch):
+    """Public MCP calls over the actual service/backend/native append route."""
+    from jevdual.capability.backend import ScopedBackend
+    from jevdual.capability.journal import Journal
+    from jevdual.capability.mcp_server import ToolFacade
+    from jevdual.capability.service import CapabilityService
+
+    from tests.fixtures.native_world import TextWorld
+
+    world = TextWorld(tmp_path / "invoice.txt")
+    world.install(monkeypatch)
+    backend = ScopedBackend(
+        {
+            "task": "text-repair-scenario",
+            "source": {"pid": 1, "window_id": 2, "url": "http://127.0.0.1:8000/"},
+            "destination": {
+                "pid": world.pid,
+                "window_id": world.window_id,
+                "document": str(world.document),
+            },
+        }
+    )
+    journal = Journal(tmp_path / "operations.sqlite")
+    yield world, ToolFacade(backend, CapabilityService(journal, backend))
+    journal.close()
+
+
+def _append_target(observation):
+    return next(row for row in observation["elements"] if "append" in row["moves"])
+
+
+async def test_capability_no_newline_explains_separator_then_appends_once(text_capability):
+    world, tools = text_capability
+    observation = await tools.call("bind", {"name": "destination"})
+    row = _append_target(observation)
+    assert row["value"] == "Invoice report"
+    assert row["append_separator"] == "\n"
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["disposition"] == "applied"
+    assert world.content == "Invoice report\n17.25 USD"
+    assert [v for k, v in world.writes if k == "AXSelectedText"] == ["\n17.25 USD"]
+
+
+@pytest.mark.parametrize("prefix", ["Invoice report\n", "Invoice report\n\tkept  \n\n"])
+async def test_capability_keeps_prefix_and_literal_payload_whitespace(text_capability, prefix):
+    world, tools = text_capability
+    world.content = prefix
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    assert row["value"] == prefix and row["append_separator"] == ""
+    payload = "\n  17.25 USD\t  \n"
+    result = await tools.call("act", {"target": row["target"], "text": payload})
+    assert result["disposition"] == "applied" and world.content == prefix + payload
+    assert [v for k, v in world.writes if k == "AXSelectedText"] == [payload]
+
+
+async def test_capability_proven_empty_is_applied_when_driver_label_changes(text_capability):
+    world, tools = text_capability
+    world.content = ""
+    observation = await tools.call("bind", {"name": "destination"})
+    row = _append_target(observation)
+    assert row["label"] == "First Text View" and row["value"] == ""
+    assert row["append_separator"] == ""
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["disposition"] == "applied" and world.content == "17.25 USD"
+    fresh = await tools.call("observe", {"resource": observation["resource"]})
+    assert _append_target(fresh)["label"] == "text area"
+    status = await tools.call("status", {"operation": result["operation_id"]})
+    assert status["disposition"] == "applied"
+    assert len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+
+
+@pytest.mark.parametrize("count", [None, 7])
+async def test_capability_absent_unreadable_value_is_not_assumed_empty(text_capability, count):
+    world, tools = text_capability
+    world.content, world.readable, world.character_count = "", False, count
+    observation = await tools.call("bind", {"name": "destination"})
+    assert all("target" not in row and row["moves"] == [] for row in observation["elements"])
+    assert world.writes == []
+
+
+@pytest.mark.parametrize("guard", ["noninsertable", "secure", "ambiguous"])
+async def test_capability_unqualified_field_never_offers_append(text_capability, guard):
+    world, tools = text_capability
+    if guard == "noninsertable":
+        world.insertable = False
+    else:
+        setattr(world, guard, True)
+    observation = await tools.call("bind", {"name": "destination"})
+    assert all("target" not in row and row["moves"] == [] for row in observation["elements"])
+    assert world.writes == []
+
+
+@pytest.mark.parametrize("change", ["content", "document"])
+async def test_capability_stale_field_or_document_refuses_before_input(text_capability, change):
+    from jevdual.capability.contracts import CapabilityError
+
+    world, tools = text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    if change == "content":
+        world.content += "\nExternal edit"
+    else:
+        world.document = world.document.with_name("different.txt")
+    with pytest.raises(CapabilityError):
+        await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert world.writes == []
+
+
+async def test_capability_same_token_collects_receipt_after_target_expires(text_capability):
+    world, tools = text_capability
+    observed = await tools.call("bind", {"name": "destination"})
+    row = _append_target(observed)
+    arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "one-append"}
+    first = await tools.call("act", arguments)
+    await tools.call("observe", {"resource": observed["resource"]})
+    repeated = await tools.call("act", arguments)
+    status = await tools.call("status", {"client_token": "one-append"})
+    assert first["disposition"] == repeated["disposition"] == status["disposition"] == "applied"
+    assert repeated["repeat"] and repeated["operation_id"] == first["operation_id"]
+    assert world.content == "Invoice report\n17.25 USD"
+    assert len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+
+
+async def test_capability_lost_setter_permission_refuses_before_input(text_capability):
+    from jevdual.capability.contracts import CapabilityError
+
+    world, tools = text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    world.insertable = False
+    with pytest.raises(CapabilityError) as caught:
+        await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert caught.value.code == "not_writable" and world.writes == []
+    assert world.content == "Invoice report"
+
+
+@pytest.mark.parametrize("change", ["role", "frame", "ambiguous"])
+async def test_capability_readback_identity_loss_stays_unknown_without_retry(text_capability, change):
+    from jevdual.capability.contracts import CapabilityError
+
+    world, tools = text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    world.after_insert = change
+    arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "uncertain-append"}
+    result = await tools.call("act", arguments)
+    assert result["disposition"] == "unknown" and world.content == "Invoice report\n17.25 USD"
+    status = await tools.call("status", {"operation": result["operation_id"], "reconcile": True})
+    assert status["disposition"] == "unknown"
+    repeated = await tools.call("act", arguments)
+    assert repeated["repeat"] and repeated["operation_id"] == result["operation_id"]
+    with pytest.raises(CapabilityError) as caught:
+        await tools.call("act", {"target": row["target"], "text": "another append"})
+    assert caught.value.code == "busy"
+    assert len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+
+
 class _Client:
     async def __aenter__(self):
         return self

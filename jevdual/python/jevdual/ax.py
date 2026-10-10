@@ -127,6 +127,21 @@ def value(el: Any) -> str:
     return str(v)
 
 
+def can_insert(el: Any) -> bool:
+    """Read-only qualification for the caret-and-insert route used by ``insert_at_end``.
+
+    A text-area role or readable value alone does not establish editability.
+    Unknown/refused setter capability is not permission to attempt input.
+    """
+    from ApplicationServices import AXUIElementIsAttributeSettable
+
+    for name in ("AXSelectedTextRange", "AXSelectedText"):
+        err, settable = AXUIElementIsAttributeSettable(el, name, None)
+        if err or not settable:
+            return False
+    return True
+
+
 def document_path(pid: int, window_id: int) -> str | None:
     """The file a document window shows (its AXDocument URL as a path), or None when it names none."""
     from urllib.parse import unquote, urlsplit

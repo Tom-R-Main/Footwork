@@ -82,7 +82,11 @@ TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
         },
     },
     "act": {
-        "description": "Append text once using an offered destination target. Returns an operation ID and exact "
+        "description": "Append text once using an offered destination target. The tool adds one newline "
+        "before text only when the existing field is nonempty and lacks a terminal newline; "
+        "the target shows this as append_separator. Pass new content without adding that separator yourself. "
+        "Supplied text is preserved literally, including intentional leading/trailing whitespace. "
+        "Returns an operation ID and exact "
         "readback. Optional client_token must be unique per intended effect; reuse it only to collect or retry "
         "that same operation. Identical repeats return the original operation. After a lost "
         "reply or unknown result call status; do not issue another append to obtain a cleaner receipt.",
@@ -90,7 +94,13 @@ TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
             "type": "object",
             "properties": {
                 "target": {"type": "string", "minLength": 1},
-                "text": {"type": "string", "minLength": 1, "maxLength": 4096},
+                "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096,
+                    "description": "New content, preserved literally. The tool adds the target's "
+                    "append_separator; include a leading newline only if an additional blank line is intended.",
+                },
                 "client_token": {"type": "string", "minLength": 1, "maxLength": 128},
             },
             "required": ["target", "text"],

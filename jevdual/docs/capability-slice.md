@@ -93,7 +93,11 @@ writes follow the mailbox's explicit authorization boundary.
 2. Read the requested value from that observation.
 3. `bind({"name":"destination"})` returns current document content and an append target.
 4. `act({"target":"<offered target>","text":"<source value>"})` records intent, validates
-   the target/content and appends. Optionally include a `client_token` for repeat-safe receipt lookup;
+   the target/content and appends. The target's `append_separator` is added automatically: one newline
+   when the existing field is nonempty and lacks a terminal newline, otherwise an empty string.
+   Pass the new content without supplying that separator yourself. The payload remains literal;
+   a leading newline in `text` deliberately adds an additional blank line. Optionally include a
+   `client_token` for repeat-safe receipt lookup;
    use a new token for each intended effect and reuse it only for that same operation.
 5. Inspect the operation's exact readback. `observe({"resource":"<destination resource>"})`
    independently shows current field content.
@@ -136,3 +140,13 @@ the existing keyword/replacement-only mode and does not qualify those routes as 
 Observations and native append remain outside this specific judgment-required route set.
 The correction is implemented and reproduced through the simulated-Mac CLI scenarios in MJ3.
 This does not qualify a model-free semantic judgment replacement.
+
+## Exact native fields
+
+Destination append targets require an independent exact AX read and writable caret/insertion
+attributes, including a fresh check before dispatch. An absent driver preview never means empty.
+A missing AXValue qualifies as empty only when AXNumberOfCharacters proves zero; readonly,
+unreadable and ambiguous fields return no target with an unavailable reason. Offered values carry
+`value_exact: true`; a bounded value can still be marked truncated. Readback uses the scoped document,
+AX role and unique field frame because Cua's content-derived labels can change after an empty append.
+This does not qualify disk persistence or durable restart reconciliation.

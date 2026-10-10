@@ -26,12 +26,20 @@ class Observations:
         self.targets: dict[str, OfferedTarget] = {}
         self.current: dict[str, str] = {}
 
-    def project(self, resource: str, snapshot: Any, *, writable: bool) -> dict[str, Any]:
+    def project(
+        self,
+        resource: str,
+        snapshot: Any,
+        *,
+        writable: bool,
+        unavailable: dict[int, str] | None = None,
+    ) -> dict[str, Any]:
         # Bound memory: retain only targets from the current observation per resource.
         self.targets = {k: v for k, v in self.targets.items() if v.resource != resource}
         observation = "obs_" + uuid4().hex
         self.current[resource] = observation
         rows = []
+        unavailable = unavailable or {}
         for candidate in snapshot.menu.candidates[:50]:
             row: dict[str, Any] = {"label": candidate.label, "role": candidate.role}
             value = snapshot.values.get(candidate.id, candidate.value)
@@ -49,9 +57,17 @@ class Observations:
                     snapshot.frames.get(candidate.id),
                     snapshot.values[candidate.id],
                 )
-                row.update(target=target, moves=["append"])
+                exact = snapshot.values[candidate.id]
+                row.update(
+                    target=target,
+                    moves=["append"],
+                    value_exact=True,
+                    append_separator="" if not exact or exact.endswith("\n") else "\n",
+                )
             else:
                 row["moves"] = []
+                if candidate.id in unavailable:
+                    row.update(value_exact=False, unavailable_reason=unavailable[candidate.id])
             rows.append(row)
         return {
             "schema_version": "1",
@@ -68,7 +84,8 @@ class Observations:
                 "degraded": bool(snapshot.degraded),
                 "omitted": snapshot.menu.omitted,
             },
-            "next": "Use an offered append target, or observe this resource again for readback."
+            "next": "Pass new content to act; the target's append_separator is added automatically. "
+            "Supplied text stays literal. Observe this resource again for readback."
             if writable
             else "Read the source value from text; bind destination to append it.",
         }

@@ -22,3 +22,17 @@ Test: after committed source and required offline checks, fresh canonical Opus5.
 Predicts: every fixed development case reaches supported exact nonduplicated completion with four offered tools; empty field gets an offered target and verified applied journal, and no-newline case has one separator.
 Against: any required case fails content/claim qualification, any out-of-arm tool is offered/used, a fixture cannot be independently reset/read, or unexplained transport/ownership failure occurs.
 Refs: scripts/capability_host_trial.py; scripts/capability_comparison_trial.py; scripts/capability_fixture.py
+
+## TR1-U1 · update · 2026-10-09 20:00
+Resolves: TR1 = held
+Observed: on prediction commit 22c58bc, the real capability-tool scenarios failed on missing automatic-separator metadata for three payload cases. The repaired observations expose append_separator computed from exact field content, and tool/argument descriptions explain its automatic insertion while preserving literal payload. The focused post-fix suite passed 61 tests in 1.75 seconds, including intentionally leading/trailing whitespace and existing CLI paths. No legacy NativeBridge append rule changed.
+Inferred: the caller-visible contract now agrees with the actual insertion route in these offline scenarios. Fresh host interpretation is still tested under TR3.
+Next: full required checks, committed source and actual host qualification.
+Refs: output/capability-text-repair-before.log; output/capability-text-repair-focused-final.log; tests/test_session_scenarios.py
+
+## TR2-U1 · update · 2026-10-09 20:00
+Resolves: TR2 = held
+Observed: baseline public scenarios also failed to offer a proven empty target, incorrectly offered a noninsertable target, and raised on ambiguous exact resolution. The repair independently reads exact AX value and qualifies both caret/insertion setters before offering a target and again during validation. Known unreadable/noninsertable/ambiguous fields expose no target and an unavailable reason. Secure fields remain non-appendable. Sixteen new real-core scenarios cover empty-to-nonempty label changes, readonly and unreadable values, stale document/content, setter loss, post-send role/frame/ambiguity changes, status/reconcile, and no replay. The focused full subset passed 61 tests.
+Inferred: Cua presentation labels cannot serve as post-insertion field identity. Scoped document, AX role and unique original frame allow legitimate content-derived label changes while retaining tested identity-loss refusals. This is not durable incarnation reconciliation.
+Next: full checks and a real empty TextEdit append through the four-tool external host.
+Refs: output/capability-text-repair-before.log; output/capability-text-repair-focused-final.log; python/jevdual/ax.py:can_insert; tests/fixtures/native_world.py; tests/test_session_scenarios.py

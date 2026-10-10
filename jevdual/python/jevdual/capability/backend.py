@@ -113,30 +113,47 @@ class ScopedBackend:
             raise CapabilityError("lost_identity", "The selected window no longer names the scoped document")
 
     async def observe(self, resource: str) -> dict[str, Any]:
+        from jevdual.ax import AXError
+
         bound = self.bound.get(resource)
         if bound is None:
             raise CapabilityError("resource_unbound", "Bind this resource in the current process first")
         snapshot = await bound.bridge.observe()
+        unavailable: dict[int, str] = {}
         if bound.name == "source":
             if snapshot.menu.url != self.scope["source"]["url"]:
                 raise CapabilityError("outside_scope", "The source navigated away from the scoped fixture")
         else:
             await self._document_identity(bound.bridge, snapshot)
-            # Read exact AX values rather than the driver's whitespace-trimmed preview.
+            # The driver's preview can omit empty/whitespace-only values. Resolve
+            # independently, then qualify the actual insertion route. Absence is
+            # never converted to empty, and previews never confer write authority.
             for candidate in snapshot.menu.candidates:
-                if "append" in candidate.operations and candidate.id in snapshot.values:
-                    snapshot.values[candidate.id] = await self._value(bound.bridge, snapshot, candidate.id)
+                if "append" in candidate.operations:
+                    snapshot.values.pop(candidate.id, None)
+                    try:
+                        snapshot.values[candidate.id] = await self._value(
+                            bound.bridge, snapshot, candidate.id, require_insertable=True
+                        )
+                    except AXError as exc:
+                        unavailable[candidate.id] = exc.reason
         bound.snapshot = snapshot
-        return self.observations.project(resource, snapshot, writable=bound.name == "destination")
+        return self.observations.project(
+            resource, snapshot, writable=bound.name == "destination", unavailable=unavailable
+        )
 
     @staticmethod
-    async def _value(bridge: Any, snapshot: Any, candidate_id: int) -> str:
+    async def _value(
+        bridge: Any, snapshot: Any, candidate_id: int, *, require_insertable: bool = False
+    ) -> str:
         ax = bridge.ax
         frame = snapshot.frames.get(candidate_id)
         role = snapshot.ax_roles.get(candidate_id, "AXTextArea")
 
         def read() -> str:
             element = ax.resolve(bridge.pid, bridge.window_id, role, ax.Frame(*frame) if frame else None)
+            if require_insertable and not ax.can_insert(element):
+                raise ax.AXError("not_writable", "The field does not support exact caret-and-insert input")
             return ax.value(element)
 
         return await asyncio.to_thread(read)
@@ -147,6 +164,8 @@ class ScopedBackend:
     async def validate(
         self, resource: str, observation: str, target: str | None, move: str, args: dict[str, Any]
     ) -> Validated:
+        from jevdual.ax import AXError
+
         if not target or move != "append" or set(args) != {"text"}:
             raise CapabilityError("unsupported_move", "The thin slice only appends to an offered destination")
         text = args["text"]
@@ -169,7 +188,12 @@ class ScopedBackend:
             or fresh.frames.get(candidate.id) != offered.frame
         ):
             raise CapabilityError("stale_target", "Destination target changed; observe again. Nothing sent.")
-        before = await self._value(bound.bridge, fresh, candidate.id)
+        try:
+            before = await self._value(bound.bridge, fresh, candidate.id, require_insertable=True)
+        except AXError as exc:
+            raise CapabilityError(
+                exc.reason, "Destination cannot be qualified for append; observe again. Nothing sent."
+            ) from exc
         if before != offered.value:
             raise CapabilityError(
                 "precondition_changed", "Destination content changed; observe again. Nothing sent."
@@ -233,7 +257,11 @@ class ScopedBackend:
             c
             for c in snapshot.menu.candidates
             if original is not None
-            and (c.role, c.label) == (original.role, original.label)
+            # Cua derives the presentation label from the current value. An
+            # empty/whitespace field becomes "text area" after insertion. Bind
+            # readback to the scoped document, AX role and unique original frame.
+            and c.role == original.role
+            and snapshot.ax_roles.get(c.id) == context["snapshot"].ax_roles.get(original.id)
             and snapshot.frames.get(c.id) == context["snapshot"].frames.get(original.id)
         ]
         if len(matches) != 1:
