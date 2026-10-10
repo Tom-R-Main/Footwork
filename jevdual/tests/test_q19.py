@@ -3,6 +3,7 @@ and fails a wrong one, before any driving. Fixture submissions go through the re
 
 from __future__ import annotations
 
+import sys
 import urllib.parse
 import urllib.request
 
@@ -49,6 +50,7 @@ def test_answer_oracles(tid, tmp_path):
     assert not q19.check(t, answer=wrong, gets={}, scratch=tmp_path).ok
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="macOS computer-name oracle requires scutil")
 def test_the_computer_name_oracle_reads_the_machine(tmp_path):
     import subprocess
 

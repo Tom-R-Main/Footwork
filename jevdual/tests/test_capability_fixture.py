@@ -18,6 +18,7 @@ def fixture_module():
     return module
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="macOS Accessibility readiness gate requires ApplicationServices")
 def test_locked_fixture_refuses_before_creating_files(monkeypatch, tmp_path):
     import ApplicationServices
     from jevdual import posture
