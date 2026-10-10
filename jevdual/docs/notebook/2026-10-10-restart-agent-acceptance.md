@@ -68,3 +68,8 @@ Test: independent cancellation controls for idle and active request state, then 
 Predicts: idle cancellation records explicit orderly shutdown; active cancellation still records invalid; Codex's four cases qualify actual execution and truthful answers if its public behavior supports recovery.
 Against: an aborted active request can pass, a detached owner is left active, runtime reply/receipt semantics change, or Codex still cannot recover or misreports unknown/current/save facts.
 Refs: scripts/capability_agent_restart_trial.py; output/agent-acceptance-hosts-v2/codex-clean/relay/events.jsonl
+
+## AAU7-local · update · 2026-10-10 15:09
+Observed: actual SIGTERM baseline v2 fails idle cancellation and passes active-call cancellation. Corrected actual two-case controls plus seven existing relay tests pass9, with spawned child PIDs absent; Ruff passes. Initial helper import failure is invalid and retained. The fix catches cancellation separately after qualified backend closeout and retains invalid for active requests or unfinished cleanup. Product service/native/dispatcher source is unchanged from08f4cf8; no new Claude session is scheduled.
+Next: commit the narrow harness fix, run fresh native controls, then Codex-only v3 four-case trial. Keep original v1/v2 Codex receipts invalid and bind carried Claude evidence by matching product/task hashes.
+Refs: output/agent-cancel-before.log; output/agent-cancel-before-v2.log; output/agent-cancel-after.log; tests/test_capability_agent_restart_trial.py

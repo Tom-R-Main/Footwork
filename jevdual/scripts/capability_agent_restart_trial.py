@@ -35,6 +35,15 @@ def write(path: Path, data) -> None:
 
 
 class AcceptanceRelay(Relay):
+    cancelled_during_request = False
+
+    async def handle(self, msg: dict) -> None:
+        try:
+            await super().handle(msg)
+        except asyncio.CancelledError:
+            self.cancelled_during_request = "method" in msg and msg.get("id") is not None
+            raise
+
     async def spawn(self) -> None:
         # The first server alone uses the already-qualified private R1 boundary.
         original = self.cfg["argv"]
@@ -323,13 +332,21 @@ def main() -> int:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--controls-only", action="store_true")
     parser.add_argument("--prior-claude-cost", type=float, default=0.0)
+    parser.add_argument("--hosts", choices=("both", "claude", "codex"), default="both")
     args = parser.parse_args()
     if args.relay:
         cfg = json.loads(args.relay.read_text())
         relay = AcceptanceRelay(cfg, args.relay.parent)
         try:
             asyncio.run(relay.run())
-        except (Exception, asyncio.CancelledError) as exc:
+        except asyncio.CancelledError:
+            if relay.cancelled_during_request or relay.proc is None or relay.proc.returncode is None:
+                relay.event(
+                    "invalid", reason="cancellation interrupted an active request or unqualified cleanup"
+                )
+                raise
+            relay.event("idle_shutdown", owned_backend_stopped=True)
+        except Exception as exc:
             relay.event("invalid", reason=str(exc)[:200])
             raise
         return 0
@@ -381,7 +398,9 @@ def main() -> int:
         "stop_reason": None,
         "claim_review_pending": not args.controls_only,
     }
-    hosts = ["control"] if args.controls_only else ["claude", "codex"]
+    hosts = (
+        ["control"] if args.controls_only else (["claude", "codex"] if args.hosts == "both" else [args.hosts])
+    )
     try:
         for host in hosts:
             for case in CASES:
