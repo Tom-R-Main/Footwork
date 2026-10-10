@@ -106,7 +106,7 @@ def create_server(facade: ToolFacade) -> Any:
 async def serve(scope: dict[str, Any], journal_path: Path) -> None:
     from mcp.server.stdio import stdio_server
 
-    backend = ScopedBackend(scope)
+    backend = ScopedBackend(scope, durable=True)
     journal = Journal(journal_path)
     facade = ToolFacade(backend, CapabilityService(journal, backend))
     server = create_server(facade)

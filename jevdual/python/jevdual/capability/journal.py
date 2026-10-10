@@ -53,7 +53,9 @@ CREATE TABLE IF NOT EXISTS operations (
     resolved_by TEXT,
     history TEXT NOT NULL DEFAULT '[]',
     created REAL NOT NULL,
-    updated REAL NOT NULL
+    updated REAL NOT NULL,
+    recovery TEXT,
+    execution_stage TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS operations_token ON operations (task, client_token)
     WHERE client_token IS NOT NULL;
@@ -131,6 +133,8 @@ class Operation:
     history: list[dict[str, Any]]
     created: float
     updated: float
+    recovery: dict[str, Any] | None = None
+    execution_stage: str | None = None
 
     @property
     def unresolved(self) -> bool:
@@ -142,6 +146,10 @@ class Operation:
         d["evidence"] = json.loads(d["evidence"] or "{}")
         d["args"] = json.loads(d["args"] or "{}")
         d["history"] = json.loads(d["history"] or "[]")
+        try:
+            d["recovery"] = json.loads(d["recovery"]) if d.get("recovery") else None
+        except json.JSONDecodeError:
+            d["recovery"] = {"invalid": True}  # preserve blocking; never confer execution authority
         return cls(**d)
 
 
@@ -163,6 +171,10 @@ class Journal:
                 self._db.execute("PRAGMA journal_mode=WAL")
                 self._db.execute("PRAGMA synchronous=FULL")
                 self._db.executescript(_SCHEMA)
+                columns = {row[1] for row in self._db.execute("PRAGMA table_info(operations)")}
+                for name in ("recovery", "execution_stage"):
+                    if name not in columns:
+                        self._db.execute(f"ALTER TABLE operations ADD COLUMN {name} TEXT")
                 for side in ("-wal", "-shm"):
                     _private(Path(str(self.path) + side), create=False)
                 self._recover()
@@ -193,6 +205,24 @@ class Journal:
                     (time.time(), op_id),
                 )
                 self._event(db, op_id, "recovered_unknown", {})
+                current = self._get(db, op_id)
+                if current.recovery is not None and current.execution_stage == "prepared":
+                    from .recovery import packet_for
+
+                    try:
+                        packet_for(current)
+                    except (ValueError, TypeError, KeyError):
+                        continue  # unsupported envelopes never acquire no-send authority
+                    db.execute(
+                        "UPDATE operations SET state='final', disposition='not_sent', phase='not_sent', "
+                        "resolved_by='recovery', evidence=?, error=NULL, updated=? WHERE id=?",
+                        (
+                            json.dumps({"recovery": "prepared_only", "input_admitted": False}),
+                            time.time(),
+                            op_id,
+                        ),
+                    )
+                    self._event(db, op_id, "resolve", {"disposition": "not_sent", "by": "recovery"})
 
     def begin(
         self,
@@ -204,6 +234,7 @@ class Journal:
         move: str,
         args: dict[str, Any],
         client_token: str | None,
+        recovery: dict[str, Any] | None = None,
     ) -> tuple[Operation, bool]:
         """Commit the intent for one dispatch. Returns ``(operation, created)``.
 
@@ -214,6 +245,10 @@ class Journal:
         digest = request_digest(
             task=task, resource=resource, observation=observation, target=target, move=move, args=args
         )
+        if recovery is not None:
+            from .recovery import validate_recovery
+
+            validate_recovery(recovery)
         with self._tx() as db:
             if client_token is not None:
                 prior = self._by_token(db, task, client_token)
@@ -232,8 +267,8 @@ class Journal:
             op_id = "op_" + uuid.uuid4().hex[:12]
             db.execute(
                 "INSERT INTO operations (id, task, resource, observation, target, move, args, request_digest, "
-                "client_token, state, created, updated) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'dispatching', ?, ?)",
+                "client_token, state, created, updated, recovery, execution_stage) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'dispatching', ?, ?, ?, ?)",
                 (
                     op_id,
                     task,
@@ -246,10 +281,24 @@ class Journal:
                     client_token,
                     now,
                     now,
+                    json.dumps(recovery) if recovery is not None else None,
+                    "prepared" if recovery is not None else None,
                 ),
             )
             self._event(db, op_id, "intent", {"args_digest": digest})
             return self._get(db, op_id), True
+
+    def start(self, op_id: str) -> Operation:
+        """Commit launch admission before spawning; this transition is never retried."""
+        with self._tx() as db:
+            current = self._get(db, op_id)
+            if current.state != "dispatching" or current.execution_stage != "prepared":
+                raise JournalError("attempt is not prepared for launch")
+            db.execute(
+                "UPDATE operations SET execution_stage='started', updated=? WHERE id=?", (time.time(), op_id)
+            )
+            self._event(db, op_id, "dispatch_started", {})
+            return self._get(db, op_id)
 
     def finish(
         self,
@@ -280,7 +329,8 @@ class Journal:
         *,
         disposition: Disposition,
         evidence: dict[str, Any],
-        by: Literal["readback", "operator"],
+        by: Literal["readback", "operator", "execution", "recovery"],
+        phase: Phase | None = None,
     ) -> Operation:
         """Turn an ``unknown`` into a known disposition on new evidence. The unknown stays in the history."""
         if disposition == "unknown":
@@ -290,10 +340,14 @@ class Journal:
             if current.state != "unknown":
                 raise JournalError(f"operation {op_id} is {current.state}, not unknown")
             merged = {**current.evidence, "resolution": evidence}
+            if by == "execution" and "readback" in evidence:
+                merged["readback"] = evidence[
+                    "readback"
+                ]  # stable historical receipt summary for existing callers
             db.execute(
                 "UPDATE operations SET state = 'final', disposition = ?, evidence = ?, resolved_by = ?, "
-                "updated = ? WHERE id = ?",
-                (disposition, json.dumps(merged, default=str), by, time.time(), op_id),
+                "phase = COALESCE(?, phase), updated = ? WHERE id = ?",
+                (disposition, json.dumps(merged, default=str), by, phase, time.time(), op_id),
             )
             self._event(db, op_id, "resolve", {"disposition": disposition, "by": by})
             return self._get(db, op_id)

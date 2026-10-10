@@ -1,26 +1,10 @@
-"""The operation service behind the capability tools: the dispatch sequence for ``act`` and ``status``.
+"""Governed append and status: write intent before input, never replay uncertainty.
 
-``act`` runs one governed append. Steps, in order:
-
-1. A known client token returns its stored record, even after its observation has expired.
-2. Busy check: the resource is mid-dispatch here, or has an unresolved operation in the journal.
-3. ``backend.validate`` (pre-send; a refusal here sends nothing and is not journaled).
-4. ``journal.begin`` commits the intent as ``dispatching``.
-5. ``backend.dispatch``.
-6. ``backend.readback``.
-7. ``journal.finish``.
-
-The reply is rendered from the journal row, never from the backend's prose.
-
-Only affirmative evidence makes an outcome known. A dispatch that raised, or reported an ambiguous phase,
-is ``unknown`` unless the readback shows the intended effect. A sent append that the readback does not
-show is also ``unknown``: it may still land. ``status`` never redispatches. It reconciles an unknown by
-readback only while this process still holds the original validated request and the backend says the
-resource is the same incarnation. After a restart that context is gone, so the operation stays unknown
-until someone inspects the document.
-
-``backend.readback`` reports ``{"outcome": ...}`` with one of ``applied``, ``absent``, ``partial``,
-``duplicate`` or ``indeterminate``, plus its evidence fields.
+The native MCP route executes one immutable packet in an independent process.
+Both normal and restart calls consume its qualified private completion receipt.
+Historical execution, current agreement and worker custody are distinct facts.
+Started attempts without completion stay blocked, including matching text. A
+legacy backend can reconcile only while its original process context survives.
 """
 
 from __future__ import annotations
@@ -30,6 +14,7 @@ from typing import Any
 
 from jevdual.capability.contracts import Backend, CapabilityError, Disposition, Phase, Validated
 from jevdual.capability.journal import Busy, Journal, JournalError, Operation, TokenConflict, request_digest
+from jevdual.capability.recovery import ExecutionStore
 
 SCHEMA_VERSION = "1"
 PHASES = ("not_sent", "sent", "ambiguous")
@@ -46,9 +31,10 @@ def _from_readback(phase: Phase, readback: dict[str, Any]) -> Disposition:
 
 
 class CapabilityService:
-    def __init__(self, journal: Journal, backend: Backend) -> None:
+    def __init__(self, journal: Journal, backend: Backend, *, executor: ExecutionStore | None = None) -> None:
         self.journal = journal
         self.backend = backend
+        self.executor = executor or ExecutionStore(journal.path)
         self._in_flight: set[str] = set()
         #: validated requests of this process's unknown operations, the only basis for a readback reconcile
         self._validated: dict[str, Validated] = {}
@@ -81,6 +67,11 @@ class CapabilityService:
         self._in_flight.add(resource)
         try:
             validated = await self.backend.validate(resource, observation, target, move, args)
+            recovery = (
+                await self.backend.prepare_recovery(validated)
+                if getattr(self.backend, "durable", False)
+                else None
+            )
             try:
                 op, created = self.journal.begin(
                     task=task,
@@ -90,6 +81,7 @@ class CapabilityService:
                     move=move,
                     args=args,
                     client_token=client_token,
+                    recovery=recovery,
                 )
             except (Busy, TokenConflict) as exc:
                 raise CapabilityError(exc.code, str(exc), exc.op_id) from None
@@ -100,6 +92,8 @@ class CapabilityService:
             self._in_flight.discard(resource)
 
     async def _dispatch(self, op: Operation, validated: Validated) -> Operation:
+        if op.recovery is not None:
+            return await self._durable_dispatch(op)
         try:
             outcome = await self.backend.dispatch(validated)
         except CapabilityError as exc:
@@ -174,6 +168,42 @@ class CapabilityService:
             error=outcome.error,
         )
 
+    async def _durable_dispatch(self, op: Operation) -> Operation:
+        try:
+            self.executor.prepare(op)
+            op = self.journal.start(op.id)
+        except Exception as exc:  # noqa: BLE001 - no launch before successful storage admission
+            return self.journal.finish(
+                op.id,
+                disposition="not_sent",
+                phase="not_sent",
+                evidence={"input_admitted": False},
+                error=f"Preparation failed ({type(exc).__name__})",
+            )
+        try:
+            result = await self.executor.execute(op)
+        except asyncio.CancelledError:
+            self.journal.finish(
+                op.id,
+                disposition="unknown",
+                phase="ambiguous",
+                evidence={"execution": "await_cancelled"},
+                error="Detached execution may continue",
+            )
+            raise
+        except Exception as exc:  # noqa: BLE001 - launch/transport failure cannot prove no effect
+            result = None
+            error = f"Execution receipt unavailable ({type(exc).__name__})"
+        else:
+            error = "No qualified execution receipt" if result is None else result["error"]
+        return self.journal.finish(
+            op.id,
+            disposition=result["disposition"] if result else "unknown",
+            phase=result["phase"] if result else "ambiguous",
+            evidence=self._execution_evidence(result) if result else {"execution": "unconfirmed"},
+            error=error,
+        )
+
     async def status(
         self,
         *,
@@ -202,9 +232,37 @@ class CapabilityService:
         note = None
         if reconcile and op.state == "unknown":
             op, note = await self._reconcile(op)
-        return self._receipt(op, repeat=False, note=note)
+        receipt = self._receipt(op, repeat=False, note=note)
+        if reconcile and op.recovery is not None:
+            try:
+                receipt["current"] = await self.backend.current_recovery(op.recovery)
+            except Exception as exc:  # noqa: BLE001 - optional current observation, not historical disposition
+                receipt["current"] = {"agreement": "unverifiable", "reason": type(exc).__name__}
+        return receipt
 
     async def _reconcile(self, op: Operation) -> tuple[Operation, str]:
+        if op.recovery is not None:
+            try:
+                result = self.executor.read_result(op)
+                if result is not None and result["disposition"] != "unknown":
+                    resolved = self.journal.resolve(
+                        op.id,
+                        disposition=result["disposition"],
+                        evidence=self._execution_evidence(result),
+                        by="execution",
+                        phase=result["phase"],
+                    )
+                    return (
+                        resolved,
+                        "Resolved from retained execution evidence; current agreement is separate.",
+                    )
+                custody = self.executor.custody(op)
+                return (
+                    op,
+                    f"No qualified completion; execution custody is {custody}. The attempt stays unknown.",
+                )
+            except Exception as exc:  # noqa: BLE001 - invalid recovery evidence stays blocked
+                return op, f"Recovery evidence unavailable ({type(exc).__name__}); the attempt stays unknown."
         validated = self._validated.get(op.id)
         if validated is None or not self.backend.same_incarnation(op.resource):
             return (
@@ -227,16 +285,36 @@ class CapabilityService:
         self._validated.pop(op.id, None)
         return resolved, f"Resolved by readback as {disposition}."
 
+    @staticmethod
+    def _execution_evidence(result: dict[str, Any]) -> dict[str, Any]:
+        evidence = {"execution_receipt": result}
+        readback = result["evidence"].get("readback")
+        if isinstance(readback, dict):
+            evidence["readback"] = {**readback, "outcome": result["disposition"], "historical": True}
+        return evidence
+
     # ---- rendering -----------------------------------------------------------------------------
 
     @staticmethod
     def _receipt(op: Operation, *, repeat: bool, note: str | None = None) -> dict[str, Any]:
         if op.state == "final" and op.disposition == "applied":
-            summary = "Appended once; readback confirms the text."
+            summary = (
+                "Historical append confirmed by retained execution evidence; current agreement is separate."
+                if op.recovery
+                else "Appended once; readback confirms the text."
+            )
             next_step: dict[str, Any] | None = None
         elif op.state == "final":
             summary = f"Finished as {op.disposition}" + (f": {op.error}" if op.error else ".")
-            next_step = None
+            next_step = (
+                {
+                    "tool": "observe",
+                    "resource": op.resource,
+                    "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action.",
+                }
+                if op.disposition in {"not_sent", "refused"}
+                else None
+            )
         else:
             summary = (
                 f"Outcome unknown for {op.id}. Do not append again; call status with this operation "

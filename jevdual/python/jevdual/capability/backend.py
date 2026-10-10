@@ -27,8 +27,9 @@ class BoundResource:
 
 
 class ScopedBackend:
-    def __init__(self, scope: dict[str, Any]) -> None:
+    def __init__(self, scope: dict[str, Any], *, durable: bool = False) -> None:
         self._check_scope(scope)
+        self.durable = durable
         self.scope = scope
         self.task = scope["task"]
         self.observations = Observations()
@@ -278,6 +279,63 @@ class ScopedBackend:
             "expected": expected,
             "persistence": "not_checked",
         }
+
+    async def prepare_recovery(self, validated: Validated) -> dict[str, Any]:
+        from .recovery import make_recovery, native_identity
+
+        context = validated.context
+        snapshot, cid = context["snapshot"], context["candidate_id"]
+        try:
+            identity = await asyncio.to_thread(native_identity, self.scope)
+            await self._document_identity(context["bridge"], snapshot)
+            return make_recovery(
+                self.scope,
+                identity,
+                snapshot.ax_roles[cid],
+                snapshot.frames[cid],
+                context["before"],
+                context["expected"],
+            )
+        except Exception as exc:  # unsupported durable identity is a pre-send refusal
+            raise CapabilityError(
+                "recovery_unavailable", "Native restart identity cannot be qualified; nothing sent"
+            ) from exc
+
+    async def current_recovery(self, recovery: dict[str, Any]) -> dict[str, Any]:
+        """Read current agreement only; this never confers historical execution authority."""
+        from .recovery import digest, fingerprint, native_identity, same_native_identity, validate_recovery
+
+        try:
+            validate_recovery(recovery)
+            if digest(self.scope) != recovery["scope_digest"]:
+                return {"agreement": "unverifiable", "reason": "scope_changed"}
+            identity = await asyncio.to_thread(native_identity, self.scope)
+            if not same_native_identity(identity, recovery["identity"]):
+                return {"agreement": "unverifiable", "reason": "identity_changed"}
+            from jevdual import ax
+
+            def read() -> str:
+                spec = self.scope["destination"]
+                if ax.document_path(spec["pid"], spec["window_id"]) != identity["document"]:
+                    raise ValueError("document changed")
+                field = recovery["field"]
+                expected_frame = ax.Frame(*field["frame"])
+                element = ax.resolve(spec["pid"], spec["window_id"], field["role"], expected_frame)
+                if ax.frame_of(element) != expected_frame:
+                    raise ValueError("field frame changed")
+                return ax.value(element)
+
+            got = fingerprint(await asyncio.to_thread(read))
+            if not same_native_identity(await asyncio.to_thread(native_identity, self.scope), identity):
+                return {"agreement": "unverifiable", "reason": "identity_changed"}
+            return {
+                "agreement": "yes" if got == recovery["expected"] else "no",
+                "value": got,
+                "disk_identity_changed": identity != recovery["identity"],
+                "persistence": "not_checked",
+            }
+        except Exception as exc:  # noqa: BLE001 - current readback cannot invalidate historical completion
+            return {"agreement": "unverifiable", "reason": type(exc).__name__}
 
     def same_incarnation(self, resource: str) -> bool:
         return resource in self.bound

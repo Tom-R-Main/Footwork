@@ -109,7 +109,7 @@ TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
     },
     "status": {
         "description": "Read an operation or find this task's unresolved operations after a lost reply/restart. "
-        "reconcile requests readback only when original resource/attempt identity is retained. Never repeats input. "
+        "reconcile collects retained execution evidence and reports current agreement separately. Never repeats input. "
         "An unknown outcome blocks conflicting appends and may require an operator to inspect the document.",
         "inputSchema": {
             "type": "object",

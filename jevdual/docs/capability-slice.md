@@ -3,8 +3,8 @@
 This local development slice exposes four MCP tools: `bind`, `observe`, `act`, `status`.
 An existing agent reads a value from a local browser fixture, appends it to a selected
 TextEdit document, and checks exact field content. The host owns the plan. Footwork
-records append intent before dispatch and retains an unknown operation after process
-death. It never repeats input through `status`.
+records append intent before dispatch. An independent one-action worker retains completion
+evidence across MCP process death; uncertain attempts stay blocked. `status` never repeats input.
 
 This is a scoped macOS prototype, not a released installable package. Browser and native
 drivers remain at the repository's pinned versions. Live agent acceptance and the raw
@@ -119,16 +119,37 @@ text or target while reusing a token refuses the request. If a reply is lost, ca
 before deciding to send another append. Unknown operations block further append to the same
 logical native window, including after rebind/restart.
 
-`status({"operation":"<operation ID>","reconcile":true})` only reads back an attempt whose
-original execution context and live binding are retained. After process death those identities
-are lost: status retains `unknown` and asks the operator to inspect. A guessed reattachment
-does not settle it. The first slice intentionally favors a truthful stop over blind replay.
+`status({"operation":"<operation ID>","reconcile":true})` collects the original worker's
+private completion receipt. A matching, qualified receipt confirms the historical append,
+including after the MCP server restarts. The reply's `current.agreement` separately says
+`yes`, `no` or `unverifiable` about the scoped field now. A later edit changes that current
+fact; it does not erase the historical append or cause another input.
+
+An intent prepared without launch admission recovers as `not_sent`. A started attempt with
+no qualified receipt remains `unknown`, even if current text matches the expected value.
+The worker may still be running, or may have died between input and recording its result.
+A repeated token returns the same attempt and never launches another worker. Legacy journal
+rows without recovery evidence remain conservative after restart.
+
+The MCP server launches one detached, fixed-action worker per admitted append. It binds only
+the destination, checks the original exact prefix and native identity, inserts once and
+records its exact readback. Worker files live beside the journal in an owner-only
+`<journal>.executions` directory; keep that directory with the database. It contains the
+scoped path and payload, with hashes and lengths of the prior/expected document rather than
+another full copy. Status only retrieves records and reads current AX state.
+
+The parent waits up to 35 seconds. A timeout or cancelled caller leaves the attempt unknown;
+execution may continue and status can collect its eventual receipt. The worker has a separate
+25-second deadline and fences out later input before reporting a pre-input timeout as
+`not_sent`. After input admission, a timeout stays unknown. Closing the MCP server does not
+cancel the detached worker. These records qualify process-crash recovery, not power-loss
+protection. A worker crash before its receipt still requires inspection.
 
 Only one process may own a journal. A second startup returns `journal_in_use`; concurrent
 surface calls return `busy` rather than queueing a stale append. SQLite and the GUI do not
 share a transaction, so this is not an exactly-once GUI guarantee.
 
-State/arguments/readback remain local to the fixture's journal. Use non-secret fixtures and
+State/arguments/readback remain local to the fixture's journal and execution directory. Use non-secret fixtures and
 private run directories. EOF shuts down the server's driver sessions; it does not close the
 externally owned browser or TextEdit document.
 
@@ -151,4 +172,4 @@ A missing AXValue qualifies as empty only when AXNumberOfCharacters proves zero;
 unreadable and ambiguous fields return no target with an unavailable reason. Offered values carry
 `value_exact: true`; a bounded value can still be marked truncated. Readback uses the scoped document,
 AX role and unique field frame because Cua's content-derived labels can change after an empty append.
-This does not qualify disk persistence or durable restart reconciliation.
+This does not qualify disk persistence. Restart evidence has its own [preregistration](experiments/R1-restart-reconciliation.md).

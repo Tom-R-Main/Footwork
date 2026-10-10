@@ -210,6 +210,235 @@ async def test_capability_restart_without_durable_execution_evidence_stays_unkno
         restarted_journal.close()
 
 
+@pytest.fixture
+def durable_text_capability(text_capability, monkeypatch):
+    """Only launch and OS identity are simulated; the fixed worker runs unchanged."""
+    import asyncio
+
+    from jevdual.capability import execution_worker, recovery
+
+    world, tools = text_capability
+    tools.backend.durable = True
+    identity = {"boot": "test-boot", "pid": world.pid, "start": "0x1.0p0", "document": str(world.document),
+                "device": 1, "inode": 2}
+    monkeypatch.setattr(recovery, "native_identity", lambda scope: dict(identity))
+    monkeypatch.setattr(execution_worker, "native_identity", lambda scope: dict(identity))
+    launches = []
+
+    class Process:
+        def __init__(self, task):
+            self.task = task
+
+        def poll(self):
+            return self.task.result() if self.task.done() else None
+
+    def launch(op):
+        launches.append(op.id)
+        packet = tools.service.executor.directory(op.id) / "packet.json"
+        return Process(asyncio.create_task(execution_worker.run(packet)))
+
+    monkeypatch.setattr(tools.service.executor, "_launch", launch)
+    return world, tools, identity, launches
+
+
+async def _reopened_capability(tools, monkeypatch):
+    from jevdual.capability.backend import ScopedBackend
+    from jevdual.capability.journal import Journal
+    from jevdual.capability.mcp_server import ToolFacade
+    from jevdual.capability.service import CapabilityService
+
+    journal = tools.service.journal
+    journal.close()
+    monkeypatch.setattr(journal, "close", lambda: None)
+    fresh_journal = Journal(journal.path)
+    backend = ScopedBackend(tools.backend.scope, durable=True)
+    return ToolFacade(backend, CapabilityService(fresh_journal, backend))
+
+
+@pytest.mark.parametrize("change", ["none", "content", "document", "process", "role", "frame", "ambiguous"])
+async def test_capability_durable_receipt_recovers_historical_applied_after_restart(durable_text_capability, monkeypatch, change):
+    world, tools, identity, launches = durable_text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "durable-lost-reply"}
+    journal = tools.service.journal
+    original_finish = journal.finish
+
+    def final_commit_loss(*args, **kwargs):
+        raise RuntimeError("simulated loss after durable worker receipt")
+
+    monkeypatch.setattr(journal, "finish", final_commit_loss)
+    with pytest.raises(RuntimeError, match="after durable worker receipt"):
+        await tools.call("act", arguments)
+    monkeypatch.setattr(journal, "finish", original_finish)
+    assert world.content == "Invoice report\n17.25 USD" and len(launches) == 1
+    if change == "content":
+        world.content += "\nLater user edit"
+    elif change == "document":
+        world.document = world.document.with_name("replacement.txt")
+    elif change == "process":
+        identity["start"] = "0x2.0p0"
+    elif change == "role":
+        world.secure = True
+    elif change == "frame":
+        world.frame = (110, 20, 400, 300)
+    elif change == "ambiguous":
+        world.ambiguous = True
+    restarted = await _reopened_capability(tools, monkeypatch)
+    try:
+        status = await restarted.call("status", {"client_token": arguments["client_token"], "reconcile": True})
+        assert status["disposition"] == "applied" and status["resolved_by"] == "execution"
+        assert status["evidence"]["readback"]["passed"] is True
+        assert status["evidence"]["readback"]["historical"] is True
+        retained = restarted.service.journal.get(status["operation_id"])
+        assert retained.evidence["readback"]["passed"] is True
+        expected_agreement = "yes" if change == "none" else "no" if change == "content" else "unverifiable"
+        assert status["current"]["agreement"] == expected_agreement
+        repeated = await restarted.call("act", arguments)
+        assert repeated["repeat"] and repeated["operation_id"] == status["operation_id"]
+        assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+    finally:
+        await restarted.backend.close()
+        restarted.service.journal.close()
+
+
+async def test_capability_started_no_receipt_rejects_matching_external_text(durable_text_capability, monkeypatch):
+    world, tools, _, launches = durable_text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+
+    class DeadProcess:
+        def poll(self):
+            return 1
+
+    def launch_without_receipt(op):
+        launches.append(op.id)
+        return DeadProcess()
+
+    monkeypatch.setattr(tools.service.executor, "_launch", launch_without_receipt)
+    arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "no-receipt"}
+    first = await tools.call("act", arguments)
+    assert first["disposition"] == "unknown" and world.writes == []
+    world.content = "Invoice report\n17.25 USD"  # a different actor creates the exact expected value
+    restarted = await _reopened_capability(tools, monkeypatch)
+    try:
+        status = await restarted.call("status", {"client_token": "no-receipt", "reconcile": True})
+        assert status["disposition"] == "unknown" and status["current"]["agreement"] == "yes"
+        assert (await restarted.call("act", arguments))["repeat"]
+        current = await restarted.call("bind", {"name": "destination"})
+        from jevdual.capability.contracts import CapabilityError
+
+        with pytest.raises(CapabilityError) as caught:
+            await restarted.call("act", {"target": _append_target(current)["target"], "text": "17.25 USD"})
+        assert caught.value.code == "busy" and len(launches) == 1 and world.writes == []
+    finally:
+        await restarted.backend.close()
+        restarted.service.journal.close()
+
+
+@pytest.mark.parametrize("boundary", ["prepare", "start"])
+async def test_capability_durable_storage_admission_failure_never_launches(durable_text_capability, monkeypatch, boundary):
+    world, tools, _, launches = durable_text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+
+    def fail_admission(*args, **kwargs):
+        raise OSError("simulated durable storage failure")
+
+    owner = tools.service.executor if boundary == "prepare" else tools.service.journal
+    monkeypatch.setattr(owner, boundary, fail_admission)
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["disposition"] == "not_sent" and result["phase"] == "not_sent"
+    assert launches == [] and world.writes == [] and world.content == "Invoice report"
+
+
+async def test_capability_second_worker_claim_cannot_replay_packet(durable_text_capability):
+    from jevdual.capability.execution_worker import run
+
+    world, tools, _, launches = durable_text_capability
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["disposition"] == "applied"
+    assert result["evidence"]["readback"]["passed"] is True
+    assert tools.service.journal.get(result["operation_id"]).evidence["readback"]["passed"] is True
+    packet_path = tools.service.executor.directory(result["operation_id"]) / "packet.json"
+    assert await run(packet_path) == 2
+    assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+
+
+async def test_capability_worker_readback_refusal_after_input_remains_unknown(durable_text_capability, monkeypatch):
+    from jevdual.capability.backend import ScopedBackend
+    from jevdual.capability.contracts import CapabilityError
+
+    world, tools, _, launches = durable_text_capability
+    original_readback = ScopedBackend.readback
+
+    async def lose_readback(self, validated):
+        await original_readback(self, validated)
+        raise CapabilityError("lost_identity", "simulated post-input readback loss")
+
+    monkeypatch.setattr(ScopedBackend, "readback", lose_readback)
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["disposition"] == "unknown" and result["phase"] == "ambiguous"
+    assert world.content == "Invoice report\n17.25 USD"
+    status = await tools.call("status", {"operation": result["operation_id"], "reconcile": True})
+    assert status["disposition"] == "unknown" and status["current"]["agreement"] == "yes"
+    assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+
+
+async def test_capability_input_marker_storage_failure_proves_no_input(durable_text_capability, monkeypatch):
+    from jevdual.capability.recovery import ExecutionStore
+
+    world, tools, _, launches = durable_text_capability
+    original_write = ExecutionStore.write_record
+
+    def fail_input_marker(store, op_id, name, value):
+        if name == "input_started":
+            raise OSError("simulated input-marker persistence failure")
+        return original_write(store, op_id, name, value)
+
+    monkeypatch.setattr(ExecutionStore, "write_record", fail_input_marker)
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
+    assert result["disposition"] == "not_sent" and result["phase"] == "not_sent"
+    assert world.content == "Invoice report" and world.writes == [] and len(launches) == 1
+
+
+async def test_capability_cancelled_parent_does_not_cancel_effect_owner(durable_text_capability, monkeypatch):
+    import asyncio
+
+    from jevdual.capability.backend import ScopedBackend
+
+    world, tools, _, launches = durable_text_capability
+    original_dispatch = ScopedBackend.dispatch
+    entered, release = asyncio.Event(), asyncio.Event()
+
+    async def delayed_dispatch(self, validated):
+        entered.set()
+        await release.wait()
+        return await original_dispatch(self, validated)
+
+    monkeypatch.setattr(ScopedBackend, "dispatch", delayed_dispatch)
+    row = _append_target(await tools.call("bind", {"name": "destination"}))
+    arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "delayed-owner"}
+    pending = asyncio.create_task(tools.call("act", arguments))
+    await asyncio.wait_for(entered.wait(), 3)
+    pending.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await pending
+    retained = tools.service.journal.by_token(tools.backend.task, "delayed-owner")
+    assert tools.service.executor.custody(retained) == "active"
+    before = await tools.call("status", {"client_token": "delayed-owner", "reconcile": True})
+    assert before["disposition"] == "unknown" and before["current"]["agreement"] == "no"
+    assert (await tools.call("act", arguments))["repeat"] and len(launches) == 1
+    release.set()
+    deadline = asyncio.get_running_loop().time() + 3
+    while tools.service.executor.read_result(retained) is None:
+        assert asyncio.get_running_loop().time() < deadline
+        await asyncio.sleep(0.01)
+    after = await tools.call("status", {"client_token": "delayed-owner", "reconcile": True})
+    assert after["disposition"] == "applied" and after["current"]["agreement"] == "yes"
+    assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+
+
 @pytest.mark.parametrize("change", ["role", "frame", "ambiguous"])
 async def test_capability_readback_identity_loss_stays_unknown_without_retry(text_capability, change):
     from jevdual.capability.contracts import CapabilityError

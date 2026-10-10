@@ -39,3 +39,9 @@ Observed: first public durable scenario pass found current_recovery accepted a m
 Changes: prereg/plan amended before safe-save/deadline tests; strict file identity before input, live document/process/field after, disk metadata informational; synchronized watchdog admission fence; bounded parent wait. Generic readback CapabilityError after input must remain unknown, covered by worker scenarios.
 Next: challenge these corrections and controlled real native/MCP interruption phases, then final Claude review.
 Refs: /Users/thomasmain/projects/footwork/output/capability-recovery-public-dev-v1.log; /Users/thomasmain/projects/footwork/output/capability-recovery-public-dev-v2.log; mailbox 1791649305616318000-claude-codex.md
+
+## RRU4 · update · 2026-10-10 12:31
+Observed: focused native/recovery coverage includes actual fixed worker execution over simulated Mac boundaries; both real subprocess watchdog cases pass after correcting the synthetic frame mismatch (the initial after-input case refused before reaching its deadline). Deliberately moving invoked before the input_started write fails the no-input storage-failure test; removing the post-dispatch CapabilityError guard fails the uncertainty test. Original worker source hash was restored exactly after both mutations. Caller audit found the existing host verifier reads top-level evidence.readback.passed; normal/recovered results now preserve that historical summary without editing frozen C1/host runners.
+Inferred: the critical branch tests discriminate plausible false no-send changes. This does not qualify a hung real TextEdit process or power loss.
+Next: freeze source/harness, full checks, real owned MCP/native interruptions and final Claude review.
+Refs: results/restart-reconciliation-20261010/mutations.json; /Users/thomasmain/projects/footwork/output/capability-recovery-public-dev-v4.log; tests/test_session_scenarios.py; tests/test_capability_recovery.py
