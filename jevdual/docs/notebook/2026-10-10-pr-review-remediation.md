@@ -34,3 +34,10 @@ Test: completion/floor scenarios save then edit at equal or regressed timestamps
 Predicts: later possible edits limit save/current-field support by ordered records; known other-source and no-send actions preserve; changed ID+label does not keep stale same-source value usable.
 Against: stale save clears saved floor, old same-source fieldvalue remains authority after remapped edit, or any query/label guess is promoted to causal event evidence.
 Refs: python/jevdual/completion.py; tests/test_completion.py; same-reviewer delta feedback pr_review
+
+## PR6 · prediction · 2026-10-10 13:07
+Hypothesis: a scope/recovery identity check before awaited NativeBridge live observation can be invalidated before the exact field guard; carrying the original readonly identity validation to the final insertion boundary refuses document/process/file replacement without confusing post-input autosave with pre-input authorization.
+Test: actual public capability and fixed-worker scenarios replace AXDocument while live observation awaits; remap kernel-process or disk identity while the role/frame/content stay identical. Before fix retain failing no-input assertions. Normal append and restart matrix remain controls; exact precondition/geometry tests also remain.
+Predicts: final append guard checks canonical AXDocument and the worker's qualified original identity before any setter, with missing/changed/unsupported facts producing known no-send; existing after-input safe-save treatment remains informational.
+Against: replacement field receives any input, a live-remapped resource is guessed, readonly status replays an attempt, or legitimate unchanged resource fails.
+Refs: python/jevdual/native.py; python/jevdual/capability/backend.py; python/jevdual/capability/execution_worker.py; tests/test_session_scenarios.py; same-reviewer pr_review delta reproducer
