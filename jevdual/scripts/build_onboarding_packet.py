@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import zipfile
 from pathlib import Path
@@ -27,8 +28,13 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def inventory(wheel: Path) -> dict[str, bytes]:
+def inventory(wheel: Path, source_commit: str | None = None) -> dict[str, bytes]:
     verify_wheel(wheel, PROJECT / "jevdual")
+    source_commit = (
+        source_commit or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True).strip()
+    )
+    if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
+        raise ValueError("A full immutable source commit is required")
     sources = {
         "footwork/LICENSE": PROJECT / "LICENSE",
         "footwork/README.md": PROJECT / "jevdual/docs/independent-onboarding.md",
@@ -41,14 +47,26 @@ def inventory(wheel: Path) -> dict[str, bytes]:
     )
     files = {}
     for name, path in sources.items():
-        if path.is_symlink() or not path.is_file():
-            raise ValueError("Packet source must be a regular nonsymlink file")
-        files[name] = path.read_bytes()
+        if path == wheel:
+            if path.is_symlink() or not path.is_file():
+                raise ValueError("Wheel must be a regular nonsymlink file")
+            files[name] = path.read_bytes()
+            continue
+        relative = path.relative_to(PROJECT).as_posix()
+        entry = subprocess.check_output(
+            ["git", "ls-tree", source_commit, "--", relative],
+            cwd=PROJECT,
+            stderr=subprocess.PIPE,
+            text=True,
+        ).split()
+        if len(entry) != 4 or entry[0] not in ("100644", "100755") or entry[1] != "blob":
+            raise ValueError("Frozen packet source must be a regular file")
+        files[name] = subprocess.check_output(
+            ["git", "show", source_commit + ":" + relative], cwd=PROJECT, stderr=subprocess.PIPE
+        )
     manifest = {
         "schema_version": "1",
-        "source_commit": subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True
-        ).strip(),
+        "source_commit": source_commit,
         "wheel_sha256": sha(wheel.read_bytes()),
         "qualification": "not_performed",
         "automatic_execution": False,
@@ -58,8 +76,8 @@ def inventory(wheel: Path) -> dict[str, bytes]:
     return files
 
 
-def verify(packet: Path, wheel: Path) -> dict:
-    expected = inventory(wheel)
+def verify(packet: Path, wheel: Path, source_commit: str | None = None) -> dict:
+    expected = inventory(wheel, source_commit)
     with zipfile.ZipFile(packet) as archive:
         names = archive.namelist()
         if len(names) != len(set(names)) or set(names) != set(expected):
@@ -71,7 +89,12 @@ def verify(packet: Path, wheel: Path) -> dict:
         for name, digest in manifest["members"].items():
             if sha(archive.read(name)) != digest:
                 raise ValueError("Packet manifest digest differs")
-    return {"verified": True, "members": len(expected), "sha256": sha(packet.read_bytes())}
+    return {
+        "verified": True,
+        "members": len(expected),
+        "sha256": sha(packet.read_bytes()),
+        "source_commit": manifest["source_commit"],
+    }
 
 
 def build(wheel: Path, output: Path) -> Path:
@@ -88,7 +111,7 @@ def build(wheel: Path, output: Path) -> Path:
             info.create_system = 3
             info.external_attr = 0o100644 << 16
             archive.writestr(info, data)
-    verify(packet, wheel)
+    verify(packet, wheel, json.loads(files["footwork/MANIFEST.json"])["source_commit"])
     return packet
 
 
@@ -98,10 +121,13 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--output", type=Path)
     group.add_argument("--verify", type=Path)
+    parser.add_argument("--source-commit", help="Expected frozen commit for verification after later commits")
     args = parser.parse_args()
+    if args.output and args.source_commit:
+        parser.error("Builds record HEAD; --source-commit is for verification only")
     wheel = args.wheel.resolve()
     packet = args.verify or build(wheel, args.output)
-    print(json.dumps({"packet": str(packet.resolve()), **verify(packet, wheel)}))
+    print(json.dumps({"packet": str(packet.resolve()), **verify(packet, wheel, args.source_commit)}))
     return 0
 
 

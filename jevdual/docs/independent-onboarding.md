@@ -1,12 +1,14 @@
 # Independent first-use qualification
 
-This packet prepares U2; it is not a passed first-use result. It contains the reviewed standalone wheel, MIT license and qualification helpers, with hashes in MANIFEST.json. No code runs automatically. Product processes load the installed wheel; helper code supplies the fixture and independent oracle. The full Footwork runtime source, development environment, provider credentials and evaluation results are absent.
+This packet prepares U2; it is not a passed first-use result. It contains the reviewed standalone wheel, MIT license and qualification helpers, with hashes in MANIFEST.json. No code runs automatically. Product processes load Python runtime files from the installed wheel; helper code supplies the fixture and independent oracle. A runtime source checkout, development environment, provider credentials and evaluation results are absent.
 
 Use an independently provisioned Mac or a new SIP-enabled macOS guest with a visible logged-in session. A pregranted CI runner or cloned granted seed cannot establish the initial permission transition. Record the actual environment and launch host; do not reset this MacBook's permissions to simulate a fresh machine.
 
 ## Verify and install
 
 Compare the archive SHA256 with its accompanying preparation report before extracting. The manifest identifies the source commit and hashes every payload member. Work inside the extracted footwork directory. Provision compatible Python and uv through their normal installers on the independent environment; the packet does not install them or macOS.
+
+The guest also needs TextEdit and Google Chrome at /Applications/Google Chrome.app, the executable used by the frozen fixture helper. Record the browser version and provision it through its normal installer before fixture execution. Keep its test profile unsigned-in. Missing Chrome is a browser prerequisite failure, not a permission denial.
 
 Open an interactive guest Terminal and define the packet directory:
 

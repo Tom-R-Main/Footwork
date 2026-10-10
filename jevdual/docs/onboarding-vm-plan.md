@@ -1,8 +1,8 @@
 # Disposable macOS environment plan
 
-The current Mac is arm64, macOS26.5.1/build25F80, with24GiB installed memory. On2026-10-10, its project volume had only7.9GiB available. Neither lume nor tart was on PATH. No hypervisor, restore image or guest was installed by this preparation.
+The current Mac is arm64, macOS 26.5.1/build 25F80, with 24 GiB installed memory. On 2026-10-10, its project volume had only 7.9 GiB available. Neither lume nor tart was on PATH. No hypervisor, restore image or guest was installed by this preparation.
 
-A spare independently provisioned Mac is the shortest qualification route. For a local guest, select an approved storage directory with adequate physical capacity before installation or image download. Lume's [quickstart](https://cua.ai/docs/lume/quickstart) calls for about50GB free disk and8GB free memory; installed memory is not evidence of free memory. Our initial proposed guest allocation is4CPU/8GBRAM/64GB virtual disk, subject to current host availability. Do not place it in the reference repository corpus.
+A spare independently provisioned Mac is the shortest qualification route. For a local guest, select an approved storage directory with adequate physical capacity before installation or image download. Lume's [quickstart](https://cua.ai/docs/lume/quickstart) calls for about 50 GB free disk and 8 GB free memory; installed memory is not evidence of free memory. Our initial proposed guest allocation is 4 CPUs, 8 GB RAM and 64 GB virtual disk, subject to current host availability. Do not place it in the reference repository corpus.
 
 Use a fresh Apple restore image with its selected version, URL and SHA256 recorded. Create an ungranted SIP-enabled guest; verify SIP inside it. The local Cua reference separates granted golden-image regressions from its SIP-on permission-flow lane. Its pregranted seed, permission seeding helpers and SIP-off base do not establish our first-use baseline.
 
