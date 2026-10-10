@@ -26,3 +26,7 @@ A valid qualified completion receipt resolves **historical applied** even if cur
 ## Amendment · 2026-10-10 12:23 · before safe-save/deadline tests
 
 Strict inode/device matching applies before input. After input and in current AX agreement, boot/process start/document path plus qualified field suffice; autosave metadata is retained separately. Add a post-input safe-save identity case and pre-input same-path inode replacement refusal. Add bounded parent wait and a synchronized worker self-deadline: timeout before admission reports not_sent only if later admission is fenced out; timeout after input admission reports unknown. A deadline must not be confused with stopped OS delivery.
+
+## Amendment · 2026-10-10 12:27 · deadline ordering before qualification
+
+Worker deadline is 25 seconds; parent wait is 35 seconds. The separate bounds allow a worker timeout receipt to arrive before the caller wait expires. They replace the earlier equal 30-second values, are recorded starting settings rather than tuned test thresholds, and preserve unknown on any remaining launch/transport gap. Refused as well as not_sent receipts direct callers to observe again and use a new token for a newly intended action; repeating an old token only retrieves its refusal. Live results record unexpected identity_changed refusals rather than retrying them away.
