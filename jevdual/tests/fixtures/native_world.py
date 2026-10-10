@@ -181,11 +181,12 @@ class TextWorld:
     readable: bool = True
     character_count: int | None = 0
     insertable: bool = True
+    setter_error: int = 0
     secure: bool = False
     ambiguous: bool = False
     after_insert: str | None = None
     extra_field: bool = False
-    frame: tuple[int, int, int, int] = (10, 20, 400, 300)
+    frame: tuple[int, int, int, int] | None = (10, 20, 400, 300)
     writes: list[tuple[str, Any]] = field(default_factory=list)
     n: int = 0
     pid: int = 77
@@ -202,13 +203,16 @@ class TextWorld:
         monkeypatch.setattr(ExecutionPolicy, "locked", lambda _: False)
         monkeypatch.setattr(ax, "window_element", lambda pid, wid: self._window(pid, wid))
         monkeypatch.setattr(ax, "_attr", self._attr)
-        monkeypatch.setattr(ax, "frame_of", lambda _: ax.Frame(*self.frame))
+        monkeypatch.setattr(ax, "frame_of", lambda _: ax.Frame(*self.frame) if self.frame else None)
         monkeypatch.setitem(
             sys.modules,
             "ApplicationServices",
             SimpleNamespace(
                 AXUIElementSetAttributeValue=self._set,
-                AXUIElementIsAttributeSettable=lambda el, name, _: (0, self.insertable),
+                AXUIElementIsAttributeSettable=lambda el, name, _: (
+                    self.setter_error if name == "AXSelectedText" else 0,
+                    self.insertable,
+                ),
                 AXValueCreate=lambda kind, value: value,
                 kAXValueCFRangeType=4,
             ),
@@ -264,12 +268,13 @@ class TextWorld:
             "element_token": f"{sid}:1",
             "role": "AXSecureTextField" if self.secure else "AXTextArea",
             "label": preview or "First Text View",
-            "frame": dict(zip(("x", "y", "w", "h"), self.frame, strict=True)),
             "parent_index": 0,
             "enabled": True,
         }
         if preview is not None:
             body["value"] = preview
+        if self.frame is not None:
+            body["frame"] = dict(zip(("x", "y", "w", "h"), self.frame, strict=True))
         elements = [
             {"element_index": 0, "element_token": f"{sid}:0", "role": "AXWindow"},
             body,

@@ -68,16 +68,19 @@ async def test_capability_no_newline_explains_separator_then_appends_once(text_c
     assert [v for k, v in world.writes if k == "AXSelectedText"] == ["\n17.25 USD"]
 
 
-@pytest.mark.parametrize("prefix", ["Invoice report\n", "Invoice report\n\tkept  \n\n"])
-async def test_capability_keeps_prefix_and_literal_payload_whitespace(text_capability, prefix):
+@pytest.mark.parametrize(
+    ("prefix", "separator"),
+    [("Invoice report\n", ""), ("Invoice report\n\tkept  \n\n", ""), ("  \t", "\n")],
+)
+async def test_capability_keeps_prefix_and_literal_payload_whitespace(text_capability, prefix, separator):
     world, tools = text_capability
     world.content = prefix
     row = _append_target(await tools.call("bind", {"name": "destination"}))
-    assert row["value"] == prefix and row["append_separator"] == ""
+    assert row["value"] == prefix and row["append_separator"] == separator
     payload = "\n  17.25 USD\t  \n"
     result = await tools.call("act", {"target": row["target"], "text": payload})
-    assert result["disposition"] == "applied" and world.content == prefix + payload
-    assert [v for k, v in world.writes if k == "AXSelectedText"] == [payload]
+    assert result["disposition"] == "applied" and world.content == prefix + separator + payload
+    assert [v for k, v in world.writes if k == "AXSelectedText"] == [separator + payload]
 
 
 async def test_capability_proven_empty_is_applied_when_driver_label_changes(text_capability):
@@ -105,11 +108,15 @@ async def test_capability_absent_unreadable_value_is_not_assumed_empty(text_capa
     assert world.writes == []
 
 
-@pytest.mark.parametrize("guard", ["noninsertable", "secure", "ambiguous"])
+@pytest.mark.parametrize("guard", ["noninsertable", "secure", "ambiguous", "setter_error", "frameless"])
 async def test_capability_unqualified_field_never_offers_append(text_capability, guard):
     world, tools = text_capability
     if guard == "noninsertable":
         world.insertable = False
+    elif guard == "setter_error":
+        world.setter_error = -25205
+    elif guard == "frameless":
+        world.frame = None
     else:
         setattr(world, guard, True)
     observation = await tools.call("bind", {"name": "destination"})

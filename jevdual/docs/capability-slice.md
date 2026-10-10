@@ -143,8 +143,8 @@ This does not qualify a model-free semantic judgment replacement.
 
 ## Exact native fields
 
-Destination append targets require an independent exact AX read and writable caret/insertion
-attributes, including a fresh check before dispatch. An absent driver preview never means empty.
+Destination append targets require an observed field frame, an independent exact AX read and
+writable caret/insertion attributes, including a fresh check before dispatch. An absent driver preview never means empty.
 A missing AXValue qualifies as empty only when AXNumberOfCharacters proves zero; readonly,
 unreadable and ambiguous fields return no target with an unavailable reason. Offered values carry
 `value_exact: true`; a bounded value can still be marked truncated. Readback uses the scoped document,

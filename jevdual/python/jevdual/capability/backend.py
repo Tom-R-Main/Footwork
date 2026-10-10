@@ -151,6 +151,8 @@ class ScopedBackend:
         role = snapshot.ax_roles.get(candidate_id, "AXTextArea")
 
         def read() -> str:
+            if require_insertable and frame is None:
+                raise ax.AXError("target_geometry_unavailable", "Append requires the observed field frame")
             element = ax.resolve(bridge.pid, bridge.window_id, role, ax.Frame(*frame) if frame else None)
             if require_insertable and not ax.can_insert(element):
                 raise ax.AXError("not_writable", "The field does not support exact caret-and-insert input")

@@ -32,7 +32,7 @@ CASES = (
     ("empty", "", "17.25 USD"),
     ("preserved-whitespace", "Invoice report\n\tkept  \n\n", "Invoice report\n\tkept  \n\n17.25 USD"),
     ("intentional-blank-line", "Invoice report", "Invoice report\n\n17.25 USD"),
-    ("whitespace-only", " \t\n\n", " \t\n\n17.25 USD"),
+    ("whitespace-only", "  \t", "  \t\n17.25 USD"),
 )
 CEILING = 8.0
 
@@ -44,7 +44,8 @@ def task_prompt(scope: dict, case_id: str) -> str:
             "If the document is nonempty and does not end with a newline, separate the append "
             "with one newline; otherwise insert the total directly at the end."
         )
-        assert original in request, "shared task wording changed; requalify this prompt"
+        if original not in request:
+            raise RuntimeError("shared task wording changed; requalify this prompt")
         request = request.replace(
             original,
             "Put the total on a new line, separated from the existing "
@@ -114,9 +115,14 @@ def main() -> None:
             break
         session = root / case_id
         session.mkdir(mode=0o700)
-        ax_reset_text(dst["pid"], dst["document"], prefix)
-        if screen_locked() or ax_document_text(dst["pid"], dst["document"]) != prefix:
+        try:
+            request = task_prompt(scope, case_id)
+            ax_reset_text(dst["pid"], dst["document"], prefix)
+            if screen_locked() or ax_document_text(dst["pid"], dst["document"]) != prefix:
+                raise OracleError("fixture reset or desktop posture could not be qualified")
+        except (OracleError, RuntimeError) as exc:
             summary["stop_reason"] = "fixture_prerequisite"
+            summary["prerequisite_error"] = type(exc).__name__ + ": " + str(exc)[:160]
             break
         task = {"stratum": "clean", "prefix": prefix, "stale_prefix": prefix}
         cfg, tools, disallowed = config_for("footwork", session, scope_path, {}, "", task)
@@ -124,7 +130,6 @@ def main() -> None:
         config.write_text(json.dumps(cfg, indent=2))
         command = host_command(config, tools, disallowed)
         (session / "command.json").write_text(json.dumps(command, indent=2))
-        request = task_prompt(scope, case_id)
         (session / "prompt.txt").write_text(request)
         start = time.monotonic()
         code, timed_out = run_host(command, request, session)
