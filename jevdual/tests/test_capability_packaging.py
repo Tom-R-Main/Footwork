@@ -49,6 +49,7 @@ def test_wheel_reproducible_inventory_record_and_install_origin(tmp_path):
         )
         metadata = archive.read("jevdual-0.0.1.dist-info/METADATA").decode()
         assert "Requires-Dist: mcp==2.1.1" in metadata
+        assert "Requires-Dist: packaging>=25,<27" in metadata
         assert "Requires-Dist: cua-driver==0.28.2" in metadata
         assert "Requires-Dist: browser-use==0.13.10" in metadata
         assert "License-File: LICENSE" in metadata

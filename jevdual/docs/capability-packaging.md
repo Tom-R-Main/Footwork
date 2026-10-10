@@ -36,7 +36,7 @@ uv --no-config venv --python /absolute/python3 /absolute/owned/venv
 uv --no-config pip install --python /absolute/owned/venv/bin/python \
   --default-index https://pypi.org/simple --only-binary :all: \
   /absolute/owned/artifacts/jevdual-0.0.1-py3-none-any.whl
-/absolute/owned/venv/bin/footwork-capability doctor --strict
+/absolute/owned/venv/bin/python -I -m jevdual.capability.cli doctor --strict
 ~~~
 
 This installation fetches dependencies. Binary-only mode refuses missing wheels instead of compiling them. The [fresh-install qualification](../results/clean-installation-20261010/report.md) covers macOS arm64 with Python 3.12.6 and 3.14.7; broader Python metadata does not qualify every version or architecture. Existing Chrome, TextEdit, macOS frameworks and permissions remain prerequisites.
@@ -58,7 +58,7 @@ uv pip install --offline --no-deps --python /absolute/owned/venv/bin/python /abs
 
 `--no-deps` installs the artifact alone. It does not prove that a fresh machine can resolve every dependency offline. A consumer needs a compatible Python environment, the declared dependencies, native macOS frameworks, an existing browser fixture and TextEdit document, and applicable Accessibility and Screen Recording permissions. `doctor` reports versions and existing permission status for its process; it never requests permissions, opens settings, starts apps or creates a journal. Run doctor from the same host or terminal that will launch the server: macOS may attribute permissions differently across hosts. Treat a bind accessibility error as authoritative even if another process's doctor reported granted. Missing prerequisites remain the caller's responsibility.
 
-Run consumer checks outside the checkout with `PYTHONPATH` unset so repository files cannot satisfy missing installed modules. The entry point and `python -I -m jevdual.capability.cli` use the same implementation. Detached execution uses that interpreter to launch the installed `jevdual.capability.execution_worker` module.
+Run consumer checks outside the checkout. The console entry point shares the CLI implementation but does not enable Python isolation; `PYTHONPATH` and user site packages can still affect it. Automation and host adapters should use the generated `python -I -m jevdual.capability.cli` commands. The console entry point is for interactive use. Detached execution also uses isolation mode with that interpreter to launch the installed `jevdual.capability.execution_worker` module.
 
 ## Create one configuration per job
 
@@ -85,7 +85,7 @@ Check a run without taking journal ownership:
   --journal /absolute/owned/job-run/operations.sqlite
 ```
 
-Diagnostics report whether the configured document and processes exist; window identity is checked at bind. If the task already has operations, diagnostics warn that the full history belongs in its completion report. A read-only ledger check never performs startup recovery or dispatches input. Doctor parses the installed distribution's requirements when the optional `packaging` parser is available; otherwise it reports dependency compatibility as unverified.
+Diagnostics report whether the configured document and processes exist; window identity is checked at bind. If the task already has operations, diagnostics warn that the full history belongs in its completion report. A read-only ledger check never performs startup recovery or dispatches input. Doctor uses the declared `packaging` dependency to parse the installed distribution's requirements. Missing metadata or parser makes compatibility unverified and blocks strict prerequisites.
 
 ## Enforce the completion adapter
 
