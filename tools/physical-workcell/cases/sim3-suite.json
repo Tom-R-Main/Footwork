@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "case_id": "ordinary-a",
+      "group": "ordinary",
+      "file": "ordinary-a.json"
+    },
+    {
+      "case_id": "ordinary-b",
+      "group": "ordinary",
+      "file": "ordinary-b.json"
+    },
+    {
+      "case_id": "ordinary-c",
+      "group": "ordinary",
+      "file": "ordinary-c.json"
+    },
+    {
+      "case_id": "low-light",
+      "group": "challenge",
+      "file": "low-light.json"
+    },
+    {
+      "case_id": "occlusion",
+      "group": "challenge",
+      "file": "occlusion.json"
+    },
+    {
+      "case_id": "camera-shift",
+      "group": "challenge",
+      "file": "camera-shift.json"
+    }
+  ]
+}
