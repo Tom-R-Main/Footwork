@@ -27,3 +27,10 @@ Test: actual completion consumer and floor with a confirmed View report click le
 Predicts: generic query navigation contributes neither usable submission evidence nor claimed submitted fields; submit tasks without qualified event evidence remain blocked. Historical frozen runs remain unchanged and their previously supported heuristic is documented as unqualified by the corrected current code.
 Against: querynavigationalone clearsmissing-submission floor, label-only guesses regain authority, or a new unverified receipt field is accepted as causal proof.
 Refs: python/jevdual/completion.py; python/jevdual/session.py; tests/test_completion.py; independent reviewerpr_review finding atc9ba496
+
+## PR5 · prediction · 2026-10-10 13:03
+Hypothesis: saved current-state effects have the same supersession defect because their branch still relies on wall-clock time and omits potentially delivered paste hotkeys. Session record order plus conservative same-surface possible-edit detection invalidates stale save evidence without changing the historical record. Differing presentation labels/IDs are also insufficient to prove different field incarnations.
+Test: completion/floor scenarios save then edit at equal or regressed timestamps, save then uncertain paste hotkey, no-send/refused/other-source controls; field edit that changes both ID and presentation label in the same source. Baseline then bounded helper reuse.
+Predicts: later possible edits limit save/current-field support by ordered records; known other-source and no-send actions preserve; changed ID+label does not keep stale same-source value usable.
+Against: stale save clears saved floor, old same-source fieldvalue remains authority after remapped edit, or any query/label guess is promoted to causal event evidence.
+Refs: python/jevdual/completion.py; tests/test_completion.py; same-reviewer delta feedback pr_review
