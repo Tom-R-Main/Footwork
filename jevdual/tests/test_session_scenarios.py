@@ -166,6 +166,50 @@ async def test_capability_lost_setter_permission_refuses_before_input(text_capab
     assert world.content == "Invoice report"
 
 
+async def test_capability_restart_without_durable_execution_evidence_stays_unknown(text_capability, monkeypatch):
+    """Baseline: a completed append whose final journal write dies loses its local evidence."""
+    from jevdual.capability.backend import ScopedBackend
+    from jevdual.capability.contracts import CapabilityError
+    from jevdual.capability.journal import Journal
+    from jevdual.capability.mcp_server import ToolFacade
+    from jevdual.capability.service import CapabilityService
+
+    world, tools = text_capability
+    observed = await tools.call("bind", {"name": "destination"})
+    row = _append_target(observed)
+    journal = tools.service.journal
+    original_finish = journal.finish
+
+    def fail_final_write(*args, **kwargs):
+        raise RuntimeError("simulated process loss at final journal write")
+
+    monkeypatch.setattr(journal, "finish", fail_final_write)
+    with pytest.raises(RuntimeError, match="simulated process loss"):
+        await tools.call("act", {"target": row["target"], "text": "17.25 USD", "client_token": "lost-reply"})
+    monkeypatch.setattr(journal, "finish", original_finish)
+    assert world.content == "Invoice report\n17.25 USD"
+    assert len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+    journal.close()
+    # This fixture normally owns close; the simulated restart already released it.
+    monkeypatch.setattr(journal, "close", lambda: None)
+    restarted_backend = ScopedBackend(tools.backend.scope)
+    restarted_journal = Journal(journal.path)
+    restarted = ToolFacade(restarted_backend, CapabilityService(restarted_journal, restarted_backend))
+    try:
+        current = await restarted.call("bind", {"name": "destination"})
+        assert _append_target(current)["value"] == world.content
+        status = await restarted.call("status", {"client_token": "lost-reply", "reconcile": True})
+        assert status["disposition"] == "unknown"
+        assert "No retained resource identity" in status["note"]
+        with pytest.raises(CapabilityError) as caught:
+            await restarted.call("act", {"target": _append_target(current)["target"], "text": "17.25 USD"})
+        assert caught.value.code == "busy"
+        assert len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
+    finally:
+        await restarted_backend.close()
+        restarted_journal.close()
+
+
 @pytest.mark.parametrize("change", ["role", "frame", "ambiguous"])
 async def test_capability_readback_identity_loss_stays_unknown_without_retry(text_capability, change):
     from jevdual.capability.contracts import CapabilityError
