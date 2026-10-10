@@ -122,3 +122,14 @@ Predicts: authentic frozen cases load without runtime regeneration and altered m
 Against: mutated corpus passes, supported-platform probes silently disappear, or Linux failures persist.
 Refs: output/pr-ci-failure-38072093984.log; evals/d2_visual.py; scripts/redact_results.py; tests/test_capability_fixture.py; tests/test_q19.py
 
+## PRU9 · update · 2026-10-10 13:45
+Resolves: PR9 = held
+Observed: Synthetic leak baseline failed fifteen tests, with three additional failures for unnamed lowercase32-character tokens before the broader rule. Corrected metadata and actual persisted JSON/JSONL omit the tested credential paths and raw inventory summaries; root and the same independent reviewer each passed97Nodechecks. Local PageAssets schema supplied the six-kind counter allowlist. Source fixes are committed95be91f; dependency-free Node checks now run in activeCI.
+Next: push consolidated fixes, resolve addressed bot threads, and check fresh remoteCI before merge.
+Refs: results/pr-review-remediation-20261010/ci-remediation.json; results/pr-review-remediation-20261010/ci-review.md; PR1 bot threads PRRT_kwDOUjL4E86rGQ-v and PRRT_kwDOUjL4E86rGQ-x
+
+## PRU10-local · update · 2026-10-10 13:45
+Observed: First LinuxCI failed14tests. D2 runtime-regeneration control failed before pinned authored-corpus validation; altered labels/context/PNG still refuse and focused34pass after repair. Missing-hardware-probe baseline failed2tests; corrected focused36pass1skip. Rootfull1428pass26skip and Ruffpass; same reviewer found no actionable delta findings and all twelve reviewed hashes match. Frozen research artifacts and qualified native product source unchanged.
+Inferred: Different host rendering changes the generated manifest despite equal Pillow12.3.0 versions. The immutable authored manifest and exact PNG hashes provide the stable corpus authority; fresh LinuxCI remains the integration gate.
+Next: do not merge until fresh LinuxCI confirms the corrected path; append its observed outcome to resolvePR10.
+Refs: commits33fdf1f and14fb64f; results/pr-review-remediation-20261010/ci-remediation.json; results/pr-review-remediation-20261010/ci-review.md; output/pr-ci-failure-38072093984.log

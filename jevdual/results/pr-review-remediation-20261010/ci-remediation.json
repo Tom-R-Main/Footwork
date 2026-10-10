@@ -1,0 +1,63 @@
+{
+  "code_commit": "14fb64fb8c2cb58674fb8bb01d09f94c9cfa89b7",
+  "pr": "https://github.com/Tom-R-Main/Footwork/pull/1",
+  "initial_ci": {
+    "run": 38072093984,
+    "conclusion": "failure",
+    "python_failed": 14,
+    "python_passed": 1389,
+    "skipped": 26,
+    "deselected": 12,
+    "causes": [
+      "frozen manifest runtime-regeneration mismatch",
+      "ApplicationServices unavailable on Linux",
+      "system_profiler unavailable on Linux",
+      "scutil unavailable on Linux"
+    ]
+  },
+  "bot_threads": [
+    "PRRT_kwDOUjL4E86rGQ-v",
+    "PRRT_kwDOUjL4E86rGQ-x"
+  ],
+  "root_python_full": {
+    "passed": 1428,
+    "skipped": 26,
+    "seconds": 97.24,
+    "log": "output/pr-full-suite-ci-remediation.log"
+  },
+  "root_node": {
+    "passed": 97,
+    "failed": 0,
+    "log": "output/pr-node-final-20261010.log"
+  },
+  "independent": {
+    "d2_passed": 34,
+    "portability_passed": 36,
+    "portability_skipped": 1,
+    "node_passed": 97,
+    "checked_hashes": {
+      "jevdual/evals/d2_visual.py": "89d7ca6cf58a389a702cfe6fb4dc92f7d6bb8005426744e061d7c64e34cd9505",
+      "jevdual/tests/test_d2_visual.py": "743c25c8560f413665c8736a08f8ad459aa072c25d2711e88f6b51661a380393",
+      "jevdual/evals/visual/d2/manifest.json": "62534be3c0114d951d8b76cd75749081bf171c8d4684a5d444c1b6bc7d1d60bc",
+      "jevdual/scripts/redact_results.py": "7a6bdce13c6862e64acae247251c6c9034cf88bb445b8989352830bfd269be51",
+      "jevdual/tests/test_evals_runner.py": "05ac5eb32285d04cef35a9b91f7d7c452d059d05712c0f6797071287ee6cee33",
+      "jevdual/tests/test_capability_fixture.py": "1b82e53698fe2404d658a7590425b00846977e157d89baac5bf4cfe0ca87644b",
+      "jevdual/tests/test_q19.py": "e02580f4cd5163f9c49dc599772d10875f7d95df9e1fee608839be2c932a6514",
+      "tools/browser-inspection/redaction.mjs": "12c5d953914c556d808afe279da287248371276a7fe95f3259dbc2a6fa68f163",
+      "tools/browser-inspection/redaction.test.mjs": "2b0c2def88f2bd4cf6ec97c920dcb4475b18f600a997e7f6730e2b505003405b",
+      "tools/browser-inspection/frontend.mjs": "b24ab5044c6d283c89cf839b3254a77b254bd88e142d43817063be86e8f12469",
+      "tools/browser-inspection/frontend.test.mjs": "722d86f171781a59b287afdb0c8d15e1b412e3b7f39db72ff42cf436e9833ff6",
+      ".github/workflows/ci.yml": "b66154d5c925fe6f16b3aaeecef8d4bf8128ba37d092433ac03c0346689b772a"
+    },
+    "same_context": true
+  },
+  "baseline_logs": [
+    "output/pr-d2-before.log",
+    "output/redact-platform-before.log",
+    "jevdual/output/pr-review-remediation/browser-inspection/baseline.log",
+    "jevdual/output/pr-review-remediation/browser-inspection/unnamed-token-baseline.log"
+  ],
+  "remaining_gate": "fresh remote Linux CI; addressed bot thread resolution; final authorized merge",
+  "native_code_unchanged": true,
+  "frozen_research_unchanged": true
+}
