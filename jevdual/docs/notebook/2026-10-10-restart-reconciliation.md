@@ -33,3 +33,9 @@ Observed: detached owned child 17255, its own process group, appended once with 
 Inferred: existing Accessibility authorization works for a detached child on this host. Fresh binding costs dominate startup; this is a latency tradeoff, not evidence for broad platform/TCC support.
 Next: implement immutable operation-bound receipt consumption and independent fixed-action worker; qualify process boundaries and counterexamples.
 Refs: /Users/thomasmain/projects/footwork/output/restart-detached-20261010/report.json; scripts/capability_restart_probe.py; /Users/thomasmain/projects/footwork/output/capability-restart-baseline-v2.log; tests/test_session_scenarios.py; dcc0ed4
+
+## RRU3 · update · 2026-10-10 12:23
+Observed: first public durable scenario pass found current_recovery accepted a moved sole field because ax.resolve ignores frame when only one role candidate exists; explicit exact frame qualification fixes the failing scenario. Claude independently identified NSDocument safe-save inode instability and missing worker deadline. The parent deadline had already landed during his snapshot review; worker deadline was still absent.
+Changes: prereg/plan amended before safe-save/deadline tests; strict file identity before input, live document/process/field after, disk metadata informational; synchronized watchdog admission fence; bounded parent wait. Generic readback CapabilityError after input must remain unknown, covered by worker scenarios.
+Next: challenge these corrections and controlled real native/MCP interruption phases, then final Claude review.
+Refs: /Users/thomasmain/projects/footwork/output/capability-recovery-public-dev-v1.log; /Users/thomasmain/projects/footwork/output/capability-recovery-public-dev-v2.log; mailbox 1791649305616318000-claude-codex.md

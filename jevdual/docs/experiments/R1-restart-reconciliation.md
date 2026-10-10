@@ -22,3 +22,7 @@ Appended after qualification.
 ## Amendment · 2026-10-10 12:10 · before runs
 
 A valid qualified completion receipt resolves **historical applied** even if current identity/content changes afterward. Current agreement is reported separately; this supersedes current-match gating in the original design and expected rules. Add the counterexample: completed receipt followed by external edit must resolve historical applied without changing that edit. Started/no receipt, including identical external text, remains unknown. Before implementation, detached worker feasibility and startup latency are measured on the owned native fixture. Custody uses a per-attempt flock; absence of a lock or input_started marker does not prove a launched worker will never run.
+
+## Amendment · 2026-10-10 12:23 · before safe-save/deadline tests
+
+Strict inode/device matching applies before input. After input and in current AX agreement, boot/process start/document path plus qualified field suffice; autosave metadata is retained separately. Add a post-input safe-save identity case and pre-input same-path inode replacement refusal. Add bounded parent wait and a synchronized worker self-deadline: timeout before admission reports not_sent only if later admission is fenced out; timeout after input admission reports unknown. A deadline must not be confused with stopped OS delivery.
