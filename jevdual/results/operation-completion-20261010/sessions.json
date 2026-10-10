@@ -1,0 +1,643 @@
+{
+  "v1": {
+    "codex-clean": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "observe",
+          "report"
+        ],
+        "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"Appended 17.25 USD to the specified TextEdit document. The source showed \u201cInvoice total: 17.25 USD\u201d; the operation was confirmed\", \"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 222084,
+            "cached_input_tokens": 195968,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 795,
+            "reasoning_output_tokens": 215
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD",
+        "oracle_expected": "Invoice report\n17.25 USD",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_630e6cd7c672",
+            "state": "final",
+            "disposition": "applied",
+            "phase": "sent",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "clean",
+        "raw_report_accepted": false,
+        "adapter_pass": true,
+        "elapsed_seconds": 41.23788433300797
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": false,
+          "reasons": [
+            "operation_set_mismatch",
+            "disposition_mismatch"
+          ]
+        },
+        "operation_completion": "completed",
+        "operations": [
+          {
+            "operation": "op_630e6cd7c672",
+            "state": "final",
+            "disposition": "applied",
+            "updated": 1791661783.001824
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "d3501cf3a9361af4d72e3c13112e2ec0b2c5e6d00549c3581f3cb2ef6e828d25",
+        "as_of": 1791661790.597813,
+        "trusted_summary": "Host completion report rejected (operation_set_mismatch, disposition_mismatch). 1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "36ebca53d8a8c4f01f072a87d5ebb570ec175df7e6287062e0b86e2fe3ece614"
+    },
+    "codex-later_edit": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "status",
+          "observe",
+          "bind",
+          "report"
+        ],
+        "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"Appended exactly \u201c17.25 USD\u201d to native pid 73067, window_id 31381; retained execution evidence and exact field readback confirm \"\n ,\"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 250469,
+            "cached_input_tokens": 231296,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1147,
+            "reasoning_output_tokens": 349
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD\nExternal note: preserve this edit.",
+        "oracle_expected": "Invoice report\n17.25 USD\nExternal note: preserve this edit.",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_e83300bca309",
+            "state": "final",
+            "disposition": "applied",
+            "phase": "sent",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "later_edit",
+        "raw_report_accepted": false,
+        "adapter_pass": true,
+        "elapsed_seconds": 68.14558795897756
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": false,
+          "reasons": [
+            "operation_set_mismatch",
+            "disposition_mismatch"
+          ]
+        },
+        "operation_completion": "completed",
+        "operations": [
+          {
+            "operation": "op_e83300bca309",
+            "state": "final",
+            "disposition": "applied",
+            "updated": 1791661861.507574
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "70339e52904875d74be911c5ece814db0528f13882254612d395aacb34f95e41",
+        "as_of": 1791661887.607775,
+        "trusted_summary": "Host completion report rejected (operation_set_mismatch, disposition_mismatch). 1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "d5d78fe400bb4ae70525839a4c7ae043fd2d84d7572c2155962dbee137860736"
+    },
+    "codex-no_receipt": {
+      "receipt": {
+        "valid_environment": false,
+        "executed_non_footwork": [
+          "list_mcp_resources",
+          "search_service.web_run"
+        ],
+        "isolation_errors": [],
+        "calls": [
+          "list_mcp_resources",
+          "search_service.web_run"
+        ],
+        "final": "{\"completion\":\"not_completed\",\"operations\":[{\"operation\":\"Read the invoice total from http://127.0.0.1:53682/\",\"disposition\":\"partial\"},{\"operation\":\"Append the total to TextEdit pid 73067, window_id 31381\",\"disposition\":\"not_sent\"},{\"operation\":\"Verify the resulting document\",\"disposition\":\"not_sent\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 218337,
+            "cached_input_tokens": 182528,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 966,
+            "reasoning_output_tokens": 420
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n",
+        "oracle_expected": "Invoice report\n17.25 USD",
+        "oracle_stable": true,
+        "journal": [],
+        "owned_worker_finished": false,
+        "valid_injection": false,
+        "injection_errors": [],
+        "execution_pass": false,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "no_receipt",
+        "raw_report_accepted": false,
+        "adapter_pass": false,
+        "elapsed_seconds": 50.695247625000775
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": false,
+          "reasons": [
+            "operation_set_mismatch"
+          ]
+        },
+        "operation_completion": "not_completed",
+        "operations": [],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "9b75a8d1ddb878474dbfb52eef097203de3251efdb835a71e3c9e0b818e9bd39",
+        "as_of": 1791661938.4534981,
+        "trusted_summary": "Host completion report rejected (operation_set_mismatch). No recorded operations; completion cannot be confirmed. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "fe9d4f88174544d0bbf5ac7f9d20130203dc76ec4176a71dcb468129d291e6a6"
+    },
+    "codex-receipt": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "status",
+          "report"
+        ],
+        "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"Appended exactly \u201c17.25 USD\u201d to TextEdit pid 73067, window_id 31381. Retained execution evidence and exact field readback both\u786e\u8ba4\",\"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 160694,
+            "cached_input_tokens": 135552,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 773,
+            "reasoning_output_tokens": 183
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD",
+        "oracle_expected": "Invoice report\n17.25 USD",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_307cb18361ba",
+            "state": "final",
+            "disposition": "applied",
+            "phase": "sent",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "receipt",
+        "raw_report_accepted": false,
+        "adapter_pass": true,
+        "elapsed_seconds": 28.691083000041544
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": false,
+          "reasons": [
+            "operation_set_mismatch",
+            "disposition_mismatch"
+          ]
+        },
+        "operation_completion": "completed",
+        "operations": [
+          {
+            "operation": "op_307cb18361ba",
+            "state": "final",
+            "disposition": "applied",
+            "updated": 1791661813.547515
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "7405a365651a8cdc31fbdd075ac2c6b2421a2a31513c59f0822a4657c7c50aba",
+        "as_of": 1791661819.3761961,
+        "trusted_summary": "Host completion report rejected (operation_set_mismatch, disposition_mismatch). 1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "1a5223460b555392af8a837712d67730254c0c19a4fd780b9a1af977d00da9ca"
+    }
+  },
+  "v2": {
+    "codex-clean": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "observe",
+          "report"
+        ],
+        "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"op_a683a32fa18a\",\"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 85744,
+            "cached_input_tokens": 69888,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 597,
+            "reasoning_output_tokens": 186
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD",
+        "oracle_expected": "Invoice report\n17.25 USD",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_a683a32fa18a",
+            "state": "final",
+            "disposition": "applied",
+            "phase": "sent",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "clean",
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "elapsed_seconds": 21.61788645805791
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": true,
+          "reasons": []
+        },
+        "operation_completion": "completed",
+        "operations": [
+          {
+            "operation": "op_a683a32fa18a",
+            "state": "final",
+            "disposition": "applied",
+            "updated": 1791662054.7716439,
+            "created": 1791662053.651673
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "828ad78ce12ad76f7271b8ed5300f852e58b923edcf433a8f7bb989a871db923",
+        "ledger_span": {
+          "first_created": 1791662053.651673,
+          "last_updated": 1791662054.7716439,
+          "count": 1
+        },
+        "accepted_host_claim": "completed",
+        "as_of": 1791662062.9341,
+        "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-10T19:54:13.651673+00:00 through 2026-10-10T19:54:14.771644+00:00. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "82833c237157a23bd374f23bd3210ee2e3cc6b64a1b39dabda58bc0337f2340b"
+    },
+    "codex-later_edit": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "status",
+          "bind",
+          "report"
+        ],
+        "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"op_48966f92e159\",\"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 101086,
+            "cached_input_tokens": 92544,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 869,
+            "reasoning_output_tokens": 397
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD\nExternal note: preserve this edit.",
+        "oracle_expected": "Invoice report\n17.25 USD\nExternal note: preserve this edit.",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_48966f92e159",
+            "state": "final",
+            "disposition": "applied",
+            "phase": "sent",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "later_edit",
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "elapsed_seconds": 26.890604124986567
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": true,
+          "reasons": []
+        },
+        "operation_completion": "completed",
+        "operations": [
+          {
+            "operation": "op_48966f92e159",
+            "state": "final",
+            "disposition": "applied",
+            "updated": 1791662110.076546,
+            "created": 1791662107.022614
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "8e2f81cc32bee31ac0cefda344f5a34067a5e833073541ce7bb3218fb33753fe",
+        "ledger_span": {
+          "first_created": 1791662107.022614,
+          "last_updated": 1791662110.076546,
+          "count": 1
+        },
+        "accepted_host_claim": "completed",
+        "as_of": 1791662118.4965189,
+        "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-10T19:55:07.022614+00:00 through 2026-10-10T19:55:10.076546+00:00. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "a3b8489da966a282fd1f0249f07c6dc37c5345bfbd02b30ca043a111e986a64c"
+    },
+    "codex-no_receipt": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "status",
+          "status",
+          "bind",
+          "report"
+        ],
+        "final": "{\"completion\":\"unknown\",\"operations\":[{\"operation\":\"op_10729619f93c\",\"disposition\":\"unknown\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 98657,
+            "cached_input_tokens": 82816,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 772,
+            "reasoning_output_tokens": 299
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD",
+        "oracle_expected": "Invoice report\n17.25 USD",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_10729619f93c",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "no_receipt",
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "elapsed_seconds": 26.92249616701156
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": true,
+          "reasons": []
+        },
+        "operation_completion": "unknown",
+        "operations": [
+          {
+            "operation": "op_10729619f93c",
+            "state": "unknown",
+            "disposition": "unknown",
+            "updated": 1791662134.358746,
+            "created": 1791662133.125939
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "534e66765bf5bd02352389a1aa25c3cd72c1363f8bbd9843ce82058efaaa967c",
+        "ledger_span": {
+          "first_created": 1791662133.125939,
+          "last_updated": 1791662134.358746,
+          "count": 1
+        },
+        "accepted_host_claim": "unknown",
+        "as_of": 1791662145.591447,
+        "trusted_summary": "Execution remains unknown. Matching text cannot confirm the attempted append; do not append again. Host reports unknown; that broader judgment is not independently certified. Full task ledger: 1 records, 2026-10-10T19:55:33.125939+00:00 through 2026-10-10T19:55:34.358746+00:00. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "9102263713e351f4514cc06ca8425a7da244989488c2fedf73c1befe520450cd"
+    },
+    "codex-receipt": {
+      "receipt": {
+        "valid_environment": true,
+        "executed_non_footwork": [],
+        "isolation_errors": [],
+        "calls": [
+          "bind",
+          "bind",
+          "act",
+          "status",
+          "report"
+        ],
+        "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"op_526e3f21a38f\",\"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+        "usage": [
+          {
+            "input_tokens": 84242,
+            "cached_input_tokens": 68608,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 657,
+            "reasoning_output_tokens": 209
+          }
+        ],
+        "result_is_error": false,
+        "model_requested": "installed CLI default",
+        "model_reported": null,
+        "cost_usd": null,
+        "isolation_limit": "Exec JSON does not attest complete offered tool inventory/model; actual executed calls are audited.",
+        "oracle_actual": "Invoice report\n17.25 USD",
+        "oracle_expected": "Invoice report\n17.25 USD",
+        "oracle_stable": true,
+        "journal": [
+          {
+            "id": "op_526e3f21a38f",
+            "state": "final",
+            "disposition": "applied",
+            "phase": "sent",
+            "execution_stage": "started"
+          }
+        ],
+        "owned_worker_finished": true,
+        "valid_injection": true,
+        "injection_errors": [],
+        "execution_pass": true,
+        "claim_review": null,
+        "returncode": 0,
+        "timed_out": false,
+        "case": "receipt",
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "elapsed_seconds": 28.469507166999392
+      },
+      "validated": {
+        "schema_version": "1",
+        "scope": "all_admitted_task_operations",
+        "validation": {
+          "accepted": true,
+          "reasons": []
+        },
+        "operation_completion": "completed",
+        "operations": [
+          {
+            "operation": "op_526e3f21a38f",
+            "state": "final",
+            "disposition": "applied",
+            "updated": 1791662086.324045,
+            "created": 1791662083.400449
+          }
+        ],
+        "persistence": "not_checked",
+        "current_state": "not_checked",
+        "task": "a2-fixture-v1",
+        "snapshot_digest": "d9965b538ed28ae86633efa76f75408bbe46644a64d765986f24b15455f90032",
+        "ledger_span": {
+          "first_created": 1791662083.400449,
+          "last_updated": 1791662086.324045,
+          "count": 1
+        },
+        "accepted_host_claim": "completed",
+        "as_of": 1791662091.500896,
+        "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-10T19:54:43.400449+00:00 through 2026-10-10T19:54:46.324045+00:00. Current document state and disk persistence are not certified by this report."
+      },
+      "raw_final_sha256": "6339cf7a3d72003fb55fa53dd312d96793b47aa069ad893f3e2a725fedf1d724"
+    }
+  }
+}

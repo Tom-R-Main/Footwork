@@ -1,0 +1,170 @@
+{
+  "v2": {
+    "commit": "e7a5d9b14ec888d0e1d99c7ec1608679765d5364",
+    "scope_sha256": "f689f0b039df7e861462039b0facbb3c3497abd6f3e7865d3ae7e59860ab56ce",
+    "sessions": [
+      {
+        "case": "clean",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 85744,
+            "cached_input_tokens": 69888,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 597,
+            "reasoning_output_tokens": 186
+          }
+        ]
+      },
+      {
+        "case": "receipt",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 84242,
+            "cached_input_tokens": 68608,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 657,
+            "reasoning_output_tokens": 209
+          }
+        ]
+      },
+      {
+        "case": "later_edit",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 101086,
+            "cached_input_tokens": 92544,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 869,
+            "reasoning_output_tokens": 397
+          }
+        ]
+      },
+      {
+        "case": "no_receipt",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": true,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 98657,
+            "cached_input_tokens": 82816,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 772,
+            "reasoning_output_tokens": 299
+          }
+        ]
+      }
+    ],
+    "stop_reason": null,
+    "limits": "Codex default subscription model; offered inventory and exact model unavailable. Only selected executed tools audited. Published summary enforced by adapter; interactive prose is not."
+  },
+  "v1_retained": {
+    "commit": "7449164a2161d45a38e3229b30e7a194e6d8634d",
+    "scope_sha256": "f689f0b039df7e861462039b0facbb3c3497abd6f3e7865d3ae7e59860ab56ce",
+    "sessions": [
+      {
+        "case": "clean",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": false,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 222084,
+            "cached_input_tokens": 195968,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 795,
+            "reasoning_output_tokens": 215
+          }
+        ]
+      },
+      {
+        "case": "receipt",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": false,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 160694,
+            "cached_input_tokens": 135552,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 773,
+            "reasoning_output_tokens": 183
+          }
+        ]
+      },
+      {
+        "case": "later_edit",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": true,
+        "valid_environment": true,
+        "raw_report_accepted": false,
+        "adapter_pass": true,
+        "usage": [
+          {
+            "input_tokens": 250469,
+            "cached_input_tokens": 231296,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1147,
+            "reasoning_output_tokens": 349
+          }
+        ]
+      },
+      {
+        "case": "no_receipt",
+        "returncode": 0,
+        "timed_out": false,
+        "execution_pass": false,
+        "valid_environment": false,
+        "raw_report_accepted": false,
+        "adapter_pass": false,
+        "usage": [
+          {
+            "input_tokens": 218337,
+            "cached_input_tokens": 182528,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 966,
+            "reasoning_output_tokens": 420
+          }
+        ]
+      }
+    ],
+    "stop_reason": "qualified execution/adapter gate failed; no regrade or retry",
+    "limits": "Codex default subscription model; offered inventory and exact model unavailable. Only selected executed tools audited. Published summary enforced by adapter; interactive prose is not."
+  },
+  "gate": {
+    "execution": 4,
+    "raw_report_accepted": 4,
+    "published_adapter": 4,
+    "scheduled": 4
+  },
+  "prior_claude_cost_usd": 0.548364,
+  "additional_claude_paid_calls": 0
+}

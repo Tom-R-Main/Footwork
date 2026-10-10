@@ -29,3 +29,9 @@ A task identifies one durable host run, not a reusable job name. Packaging gener
 ## Amendment · 2026-10-10 15:53 · invalid host isolation v1
 
 Retain v1's three qualified cases and invalid no_receipt session without regrading. Run a separate v2 with explicit features.apps=false, include_apps_instructions=false and features.skill_search=false, which the installed CLI and local codex-cli source expose. Add operation-ID schema descriptions; task and independent oracle stay unchanged. Fix the reviewed bounded-input RecursionError path, show full-task ledger time span and accepted host downgrades. Native packaging gate still requires four qualified sessions and safe enforced output.
+
+## Result · completion gate
+
+Frozen e7a5d9b v2 qualifies execution4/4, raw structured report validation4/4 and enforced summaries4/4 on the owned browser/TextEdit fixture. The original frozen7449164 v1 retains three qualified executions whose final reports contained action prose in the ID field, and one invalid connector-tool session that never exercised no-receipt. V2 adds explicit apps/skill-search isolation and an exact-ID schema description; it is a separate development run, not a regrade. See results/operation-completion-20261010/.
+
+These trials qualify adapter plumbing and selected tool use. They do not prove all offered tools were isolated, identify the exact CLI default model, or enforce interactive host prose. The original A1 answer result remains7/8. Packaging is now open within the bounded macOS fixture scope.

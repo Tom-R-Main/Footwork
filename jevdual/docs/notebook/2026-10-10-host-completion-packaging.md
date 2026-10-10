@@ -35,3 +35,9 @@ Test: separate frozen A2v2 four-case native run; retain v1, audit every selected
 Predicts: four sessions execute only the five scoped Footwork tools, no_receipt actually reaches its private interruption boundary, and the adapter reports unknown without duplicate input. Raw report acceptance is measured separately and is not promised.
 Against: any external selected call, unqualified injection/worker cleanup, unsafe summary or changed scenario oracle.
 Refs: local codex-cli core/src/config/mod.rs apps_enabled; installed codex features list; scripts/capability_completion_trial.py
+
+## HCU4 · update · 2026-10-10 15:57
+Resolves: HC1 = held; HC2 = held
+Observed: frozen e7a5d9b native v2 qualifies all four unchanged cases: execution4/4, raw structured reports accepted4/4, enforced summaries4/4. No-receipt records unknown with matching text and no second append; receipt/later-edit collect historical applied while preserving the external note. Selected calls are only the five Footwork tools. V1 remains three qualified executions with rejected raw reports and one invalid connector-leak session. Claude independently checked and approved the three code remediations.
+Next: implement the preregistered HP1 offline package, then qualify installed CLI/transport/detached worker outside source. HP1 remains open.
+Refs: results/operation-completion-20261010/summary.json; results/operation-completion-20261010/sessions.json; Claude mailbox1791662060412492000
