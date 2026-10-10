@@ -40,6 +40,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     diagnostics.add_argument("--scope", type=Path)
     diagnostics.add_argument("--journal", type=Path)
+    diagnostics.add_argument("--strict", action="store_true", help="Exit 1 when prerequisites are blocked")
     args = parser.parse_args(argv)
     if args.command == "server":
         from .mcp_server import main as serve
@@ -63,6 +64,8 @@ def main(argv: list[str] | None = None) -> int:
                     document=args.document,
                 )
             print(json.dumps(result, ensure_ascii=False))
+            if args.command == "doctor" and args.strict and result["prerequisite_status"] == "blocked":
+                return 1
             return 0
         except (OSError, ValueError, CapabilityError):
             print(

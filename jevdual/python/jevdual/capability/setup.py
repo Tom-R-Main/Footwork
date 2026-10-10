@@ -5,10 +5,12 @@ from __future__ import annotations
 import importlib.metadata
 import json
 import os
+import platform
 import re
 import stat
 import sys
 from pathlib import Path
+from types import ModuleType
 from uuid import uuid4
 
 from .backend import ScopedBackend
@@ -48,6 +50,13 @@ def make_config(
     executable = str(Path(sys.executable).absolute())
     server = {
         "command": executable,
+        "env": {
+            "PYTHONPATH": "",
+            "PYTHONHOME": "",
+            "PYTHONNOUSERSITE": "1",
+            "ANONYMIZED_TELEMETRY": "false",
+            "BROWSER_USE_CLOUD_SYNC": "false",
+        },
         "args": [
             "-m",
             "jevdual.capability.cli",
@@ -131,15 +140,50 @@ def _compatible(version: str, requirement: str) -> bool:
     return True
 
 
+def _distribution_provenance(name: str) -> dict:
+    try:
+        installed = importlib.metadata.distribution(name)
+        return {
+            "version": installed.version,
+            "location": str(Path(installed.locate_file("")).absolute()),
+        }
+    except importlib.metadata.PackageNotFoundError:
+        return {"version": None, "location": None}
+
+
 def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> dict:
+    """Probe prerequisites only; met prerequisites do not qualify a native resource."""
     dependencies = {}
     warnings = []
+    blockers = []
+
+    def block(code: str) -> None:
+        if code not in blockers:
+            blockers.append(code)
+
+    installed = _distribution_provenance("jevdual")
+    python_requirement = None
+    python_compatible = "unparsed"
+    try:
+        distribution = importlib.metadata.distribution("jevdual")
+        python_requirement = distribution.metadata.get("Requires-Python")
+        if python_requirement and all(
+            re.fullmatch(r"(?:==|>=|<)\d+(?:\.\d+)*", clause) for clause in python_requirement.split(",")
+        ):
+            python_compatible = _compatible(platform.python_version(), python_requirement)
+            if not python_compatible:
+                block("python_incompatible")
+        else:
+            block("python_requirement_unparsed")
+    except importlib.metadata.PackageNotFoundError:
+        block("dependency_metadata_unavailable")
     try:
         from packaging.requirements import InvalidRequirement, Requirement
 
         declared = importlib.metadata.requires("jevdual")
-        if declared is None:
+        if not declared:
             warnings.append("Installed distribution has no dependency metadata; compatibility is unverified.")
+            block("dependency_metadata_unavailable")
         for declaration in declared or []:
             try:
                 required = Requirement(declaration)
@@ -157,26 +201,60 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
                 try:
                     version = importlib.metadata.version(name)
                     compatibility = _compatible(version, requirement) if understood else "unparsed"
+                    if compatibility is False:
+                        block("dependency_incompatible")
                 except importlib.metadata.PackageNotFoundError:
                     version, compatibility = None, False
+                    block("dependency_missing")
                 dependencies[name] = {
                     "version": version,
                     "requirement": requirement,
                     "compatible": compatibility,
+                    "location": _distribution_provenance(name)["location"],
                 }
                 if not understood:
-                    warnings.append(f"Dependency requirement is unparsed: {declaration}")
-            except InvalidRequirement:
-                warnings.append(f"Dependency requirement is unparsed: {declaration}")
+                    block("dependency_unparsed")
+                    warnings.append(f"Dependency requirement is unparsed: {name}")
+            except (InvalidRequirement, ValueError):
+                block("dependency_unparsed")
+                warnings.append("A dependency requirement is unparsed; compatibility is unverified.")
     except (ImportError, importlib.metadata.PackageNotFoundError):
+        block("dependency_metadata_unavailable")
         warnings.append(
             "Installed distribution metadata or requirement parser unavailable; compatibility is unverified."
         )
+    permissions = permission_status()
+    if sys.platform != "darwin":
+        block("platform_unsupported")
+    elif permissions.get("accessibility") != "granted":
+        block(
+            "accessibility_not_granted"
+            if permissions.get("accessibility") == "not_granted"
+            else "accessibility_unavailable"
+        )
+    if sys.platform == "darwin" and permissions.get("screen_recording") != "granted":
+        warnings.append("Screen Recording is not qualified. Routes that capture pixels may require it.")
+    loaded_modules = {}
+    for name in ("jevdual", "jevdual.capability.setup", "psutil", "ApplicationServices", "Quartz"):
+        module = sys.modules.get(name)
+        location = vars(module).get("__file__") if isinstance(module, ModuleType) else None
+        if location:
+            loaded_modules[name] = str(Path(location).absolute())
     result = {
         "platform": sys.platform,
         "supported": sys.platform == "darwin",
+        "runtime": {
+            "python_version": platform.python_version(),
+            "python_requirement": python_requirement,
+            "python_compatible": python_compatible,
+            # Do not resolve the venv symlink into its base interpreter.
+            "interpreter": str(Path(sys.executable).absolute()),
+            "architecture": platform.machine(),
+            "distribution": installed,
+            "loaded_modules": loaded_modules,
+        },
         "dependencies": dependencies,
-        "permissions": permission_status(),
+        "permissions": permissions,
         "scope": "not_checked",
         "journal": "not_checked",
         "warnings": warnings,
@@ -195,21 +273,31 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
             scope = json.loads(raw)
             ScopedBackend._check_scope(scope)
             doc = Path(scope["destination"]["document"])
+            try:
+                document = doc.lstat()
+                document_exists = stat.S_ISREG(document.st_mode) and document.st_uid == os.getuid()
+            except OSError:
+                document_exists = False
             result["scope"] = {
                 "valid": True,
-                "document_exists": doc.is_file(),
+                "document_exists": document_exists,
                 "window_identity": "checked_at_bind",
             }
+            if not document_exists:
+                block("scope_document_unavailable")
             import psutil
 
             result["scope"]["pids_exist"] = all(
                 psutil.pid_exists(scope[name]["pid"]) for name in ("source", "destination")
             )
+            if not result["scope"]["pids_exist"]:
+                block("scope_pids_unavailable")
         except (OSError, ValueError, ImportError, RecursionError, CapabilityError):
             result["scope"] = {"valid": False}
             scope = None
+            block("scope_invalid")
     if journal_path:
-        if not journal_path.exists():
+        if not os.path.lexists(journal_path):
             result["journal"] = "not_created"
         elif scope:
             try:
@@ -223,12 +311,21 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
                     "operations": count,
                     "operation_completion": checked["operation_completion"],
                 }
+                if checked["operation_completion"] == "unknown":
+                    block("journal_unknown_operations")
                 if count:
                     result["warnings"].append(
                         "This task already has operation history. Reuse only for the same job; report its full ledger. Start a fresh run for a new job."
                     )
             except (ReportError, OSError):
                 result["journal"] = "unavailable"
+                block("journal_unavailable")
         else:
             result["journal"] = "scope_required"
+            block("journal_scope_required")
+    result["blockers"] = blockers
+    result["prerequisite_status"] = "blocked" if blockers else "met"
+    result["qualification"] = (
+        "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+    )
     return result

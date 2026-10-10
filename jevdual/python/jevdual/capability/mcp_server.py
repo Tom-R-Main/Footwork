@@ -19,6 +19,7 @@ from typing import Any
 from .backend import ScopedBackend
 from .contracts import TOOL_SCHEMAS, CapabilityError, check_arguments
 from .journal import Journal, JournalError
+from .runtime import emit_runtime_audit
 from .service import CapabilityService
 
 
@@ -41,7 +42,9 @@ class ToolFacade:
         self._surface_busy = True
         try:
             if name == "bind":
-                return await self.backend.bind(args["name"])
+                result = await self.backend.bind(args["name"])
+                emit_runtime_audit("server")
+                return result
             if name == "observe":
                 return await self.backend.observe(args["resource"])
             token = args.get("client_token")
@@ -117,6 +120,7 @@ async def serve(scope: dict[str, Any], journal_path: Path) -> None:
     journal = Journal(journal_path)
     facade = ToolFacade(backend, CapabilityService(journal, backend))
     server = create_server(facade)
+    emit_runtime_audit("server")
     try:
         async with stdio_server() as (read_stream, write_stream):
             await server.run(read_stream, write_stream, server.create_initialization_options())
