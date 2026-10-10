@@ -1,0 +1,31 @@
+<mujoco model="footwork_contact_workcell">
+  <compiler angle="radian"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast"/>
+  <visual><global offwidth="640" offheight="360"/></visual>
+  <default>
+    <geom friction="0.5 0.005 0.0001" solref="0.01 1"/>
+    <joint damping="0.5"/>
+  </default>
+  <worldbody>
+    <light pos="0 -0.4 1" dir="0 0 -1"/>
+    <camera name="overview" pos="0 -0.75 0.65" xyaxes="1 0 0 0 0.65 0.75"/>
+    <geom name="table" type="plane" size="0.6 0.35 0.02" rgba="0.16 0.18 0.22 1"/>
+    <geom name="inspection_zone" type="box" pos="0.22 0 0.001" size="0.04 0.08 0.001"
+          contype="0" conaffinity="0" rgba="0.2 0.7 0.4 0.4"/>
+    <body name="block" pos="-0.12 0 0.0351">
+      <freejoint name="block_free"/>
+      <geom name="block_geom" type="box" size="0.035 0.035 0.035" mass="0.15" rgba="0.95 0.55 0.15 1"/>
+    </body>
+    <body name="pusher" pos="-0.3 0 0.06">
+      <joint name="pusher_x" type="slide" axis="1 0 0" range="-0.04 0.48"/>
+      <joint name="pusher_y" type="slide" axis="0 1 0" range="-0.15 0.15"/>
+      <geom name="pusher_geom" type="box" size="0.02 0.07 0.05" mass="0.3" rgba="0.3 0.6 0.95 1"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="x_position" joint="pusher_x" kp="150" kv="15"
+              ctrllimited="true" ctrlrange="-0.04 0.48" forcelimited="true" forcerange="-4 4"/>
+    <position name="y_position" joint="pusher_y" kp="150" kv="15"
+              ctrllimited="true" ctrlrange="-0.15 0.15" forcelimited="true" forcerange="-4 4"/>
+  </actuator>
+</mujoco>
