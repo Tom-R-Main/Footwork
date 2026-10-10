@@ -216,6 +216,14 @@ def test_doctor_bounded_or_recursive_scope_is_unavailable(tmp_path):
 def test_dependency_ranges_detect_incompatible_versions(monkeypatch):
     from jevdual.capability import setup
 
+    # Model the installed artifact's metadata, independent of this development
+    # environment's older editable distribution (which lacks direct MCP).
+    monkeypatch.setattr(
+        setup.importlib.metadata,
+        "requires",
+        lambda name: ["typesafe-sdk>=0.7,<1", "orjson>=3.10", "mcp==2.1.1"],
+    )
+
     monkeypatch.setattr(
         setup.importlib.metadata, "version", lambda name: "99.0" if name == "typesafe-sdk" else "0.1"
     )

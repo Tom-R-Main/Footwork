@@ -11,7 +11,6 @@ import json
 import os
 import subprocess
 import threading
-import uuid
 from pathlib import Path
 
 import psutil
@@ -46,7 +45,7 @@ class InstalledServer(Server):
         )
         self.next_id, self._buf = 1, b""
         try:
-            self.request(
+            self.initialized = self.request(
                 "initialize",
                 {
                     "protocolVersion": "2025-06-18",
@@ -70,6 +69,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--python", type=Path, required=True)
     parser.add_argument("--scope", type=Path, required=True)
+    parser.add_argument("--journal", type=Path)
     parser.add_argument("--run-dir", type=Path, required=True)
     args = parser.parse_args()
     root = args.run_dir.resolve()
@@ -88,9 +88,9 @@ def main() -> int:
             str(python),
             "-c",
             (
-                "import json,sys,os,psutil,jevdual,jevdual.capability.execution_worker as w;"
+                "import json,sys,os,psutil,importlib.metadata,jevdual,jevdual.capability.execution_worker as w;"
                 "from jevdual._native import BACKEND;"
-                'print(json.dumps({"python":sys.executable,"prefix":sys.prefix,"kernel_executable":psutil.Process(os.getpid()).exe(),"kernel_argv0":psutil.Process(os.getpid()).cmdline()[0],"package":jevdual.__file__,"worker":w.__file__,"backend":BACKEND,"sys_path":sys.path}))'
+                'print(json.dumps({"artifact_version":importlib.metadata.version("jevdual"),"python":sys.executable,"prefix":sys.prefix,"kernel_executable":psutil.Process(os.getpid()).exe(),"kernel_argv0":psutil.Process(os.getpid()).cmdline()[0],"package":jevdual.__file__,"worker":w.__file__,"backend":BACKEND,"sys_path":sys.path}))'
             ),
         ],
         env=env,
@@ -107,11 +107,11 @@ def main() -> int:
     assert Path(origins["prefix"]) == python.parent.parent
     assert not any(p.endswith("footwork/jevdual/python") for p in origins["sys_path"])
     scope = json.loads(args.scope.read_text())
-    scope["task"] = "installed-" + uuid.uuid4().hex
     scope_path = root / "scope.json"
     scope_path.write_text(json.dumps(scope))
     scope_path.chmod(0o600)
-    journal = root / "operations.sqlite"
+    journal = args.journal.resolve() if args.journal else root / "operations.sqlite"
+    assert journal.is_relative_to(PROJECT / "output") and not journal.exists()
     dst = scope["destination"]
     ax_reset_text(dst["pid"], dst["document"], PREFIX)
     assert ax_document_text(dst["pid"], dst["document"]) == PREFIX
@@ -143,7 +143,9 @@ def main() -> int:
     watcher.start()
     client = None
     try:
-        client = InstalledServer(python, scope_path, journal, root / "server-stderr.log", cwd, env)
+        client = InstalledServer(python, args.scope.resolve(), journal, root / "server-stderr.log", cwd, env)
+        assert client.initialized["serverInfo"]["version"] == origins["artifact_version"]
+        initialized = client.initialized
         catalog = client.request("tools/list", {})
         assert {t["name"] for t in catalog["tools"]} == {"bind", "observe", "act", "status", "report"}
         source = client.tool("bind", {"name": "source"})
@@ -165,7 +167,7 @@ def main() -> int:
         report = client.tool("report", claims)
         assert report["validation"]["accepted"]
         client.stop()
-        client = InstalledServer(python, scope_path, journal, root / "server-stderr.log", cwd, env)
+        client = InstalledServer(python, args.scope.resolve(), journal, root / "server-stderr.log", cwd, env)
         repeat = client.tool("act", arguments)
         assert repeat["operation_id"] == operation and repeat["disposition"] == "applied"
         client.stop()
@@ -204,6 +206,7 @@ def main() -> int:
                 ["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True
             ).strip(),
             "origins": origins,
+            "initialized": initialized,
             "worker_proofs": worker_proofs,
             "action": action,
             "repeat": repeat,
