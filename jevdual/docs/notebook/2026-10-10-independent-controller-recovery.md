@@ -52,3 +52,23 @@ Test: new owned supplemental episode and real native-step wrapper that calls the
 Predicts: native-step marker identifies the killed PID before SIGKILL; restart remains unknown with no extra generation/dispatch, old-incarnation effects refuse and all owned processes exit.
 Against: trace cannot identify actual step completion, changes native inputs/outputs, kill occurs before marker, replay or fabricated execution/stop history, changed frozen source or leaked owned resources.
 Refs: docs/experiments/SIM4-independent-controller-recovery.md; tools/physical-workcell/output/s4audit/06-running-kill/events.json
+
+## SIM4-U6 · update · 2026-10-10 18:33
+Resolves: SIM4R = held
+Observed: frozen 5713173 passed 68 scoped tests and Ruff. Nine independent public-service response/history checks passed; the fresh supplemental crash probe closes the native-progress gap for the required during-motion kill. All eight required lifecycle scenarios are supported, including conservative unknown/blocked outcomes. Parent read-only scoring checked retained cancellation state/velocity, real contact fulfillment, saved original artifact bytes and unchanged native generations on replay attempts; run-file hashes were unchanged. Deliberate current-artifact tamper remains a retained negative result. All diagnostic processes exited and automatic sockets were removed.
+Inferred: the corrected isolated controller supports caller-independent execution, truthful simulated cancellation and exact-receipt recovery for these selected cases. Small diagnostics, controlled saved-record faults and observation-only timing instrumentation do not establish broad reliability, power-loss/hardware recovery or AI planning value.
+Next: close SIM4 with its failed first implementation and complete evidence limits; separately preregister versioned application fulfillment before adding a real software workflow.
+Refs: results/independent-controller-20261010/report.md; qualification.json; checks.json; source-freeze.json; development-attempts.json; 5713173
+
+## SIM4-U7 · update · 2026-10-10 18:33
+Resolves: SIM4P = held
+Observed: a new supplemental episode forwarded the original native mj_step inputs/return unchanged and recorded its first completed call from the motion worker (PID 11039) before SIGKILL. Restart used the uninstrumented frozen source, a new incarnation and unknown history. Same-ID submission returned that unknown without another native generation; stale-incarnation cancellation refused. Marker, commands, source/driver hashes and cleanup are retained.
+Inferred: this provides explicit native execution-before-death evidence absent from the original timed running-kill trial, without identifying any unretained final pose. Tracing adds observation overhead and is disclosed.
+Next: retain both probes and do not promote the first timed trial into direct native-progress evidence.
+Refs: tools/physical-workcell/output/s4parent/supplemental-verification.json; results/independent-controller-20261010/qualification.json; 578d73d
+
+## SIM4-S1 · summary · 2026-10-10 18:33
+Established: independent process ownership, exact image-bound operation identity and incarnation admission, reconnectable history without duplicate effects, native held-command cancellation with retained stop evidence, conservative restart and history/current-state separation. All eight selected lifecycle scenarios are supported; 68 scoped tests and Ruff passed. Initial recovery/binding/shutdown defects and observation-driver mistakes are preserved.
+Uncertain: hardware/power-loss/realtime guarantees, general perception, every lower-layer interruption window, application identity and fulfillment, production capability-service governance, and measured AI value. Screensaver/sleep behavior was not tested; no visible desktop was required.
+Decision: adopt the controller under tools/physical-workcell, retain Python/native MuJoCo and the deterministic RGB movement helper, and make versioned application handoff the next separate experiment.
+Refs: results/independent-controller-20261010/report.md; qualification.json; docs/experiments/SIM4-independent-controller-recovery.md; 5713173

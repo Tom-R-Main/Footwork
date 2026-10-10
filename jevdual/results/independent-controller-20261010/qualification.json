@@ -1,0 +1,178 @@
+{
+  "source_commit": "57131732d548556d6c2687175e629422c1ae2686",
+  "public_diagnostics": {
+    "attempted": 9,
+    "response_history_checks_passed": 9,
+    "raw_private_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/verification.json",
+    "sha256": "dc855a06d7d622377dce27ba375973a4e6618c16d3ed14454b32565ca992e2a3",
+    "driver_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/driver.py",
+    "driver_sha256": "c91a6bae5d866f6ddc53b74b38fcba35dac43e8a3acb56dc25be18243d67f455",
+    "scenarios": [
+      {
+        "case_id": "01-disconnect",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/01-disconnect/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "02-active",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/02-active/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "03-queued-cancel",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/03-queued-cancel/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "04-running-cancel",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/04-running-cancel/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "05-lost-controller-record",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/05-lost-controller-record/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "06-running-kill",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/06-running-kill/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "07-scene-without-history",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/07-scene-without-history/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "08-fulfillment",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/08-fulfillment/events.json",
+        "passed": true
+      },
+      {
+        "case_id": "09-admission-negatives",
+        "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/09-admission-negatives/events.json",
+        "passed": true
+      }
+    ]
+  },
+  "supplemental_native_step_crash": {
+    "attempted": 1,
+    "classification": "Supplemental actual process fault with observation-only real native-step tracing",
+    "cleanup": {
+      "all_owned_processes_exited": true,
+      "automatic_socket_remaining": false,
+      "kind": "cleanup",
+      "owned_processes": [
+        {
+          "exit_code": -9,
+          "pid": 11039
+        },
+        {
+          "exit_code": 0,
+          "pid": 11049
+        }
+      ],
+      "time_unix": 1791671435.950979
+    },
+    "declared_limit": "Observed first native step only; no unretained final pose or actual hardware recovery claim",
+    "driver_sha256": "29bc280eb848b7ecee7646458ed84544e6187223c481d8d235b7cebc3f2fd2aa",
+    "events_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4parent/10-confirmed-native-kill/events.json",
+    "frozen_runtime_commit": "5713173",
+    "kill_event": {
+      "kind": "live_process_signal",
+      "pid": 11039,
+      "signal": "SIGKILL",
+      "time_unix": 1791671435.1098812
+    },
+    "native_state_sha256": {
+      "state-000000.json": "75efe776a84f3d408c1afbbedaacf4458bb57353a8ba16a82a5434a7f81d458f"
+    },
+    "native_step_proof": {
+      "caller_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/workcell.py",
+      "caller_function": "motion",
+      "native_inputs_outputs_modified": false,
+      "original_native_step_returned": true,
+      "pid": 11039,
+      "thread": "native-controller-operation",
+      "time_unix": 1791671435.105224
+    },
+    "passed": true,
+    "prediction_commit": "578d73d",
+    "recovered_status": {
+      "accepted_at": 1791671435.084705,
+      "accepted_incarnation": "f53490f373c745bf8b684658ffd87685",
+      "active_operation_id": null,
+      "cancel_requested": false,
+      "controller_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4parent/10-confirmed-native-kill/c",
+      "current_health": "blocked",
+      "current_incarnation": "863316e3053f44b28757f533b25fc3fd",
+      "finished_at": 1791671435.210648,
+      "historical_outcome": "unknown",
+      "image_generation": 0,
+      "operation_id": "confirmed-kill",
+      "phase": "unknown",
+      "pid": 11049,
+      "proposal_sha256": "8eb20509c915d7f1fe506df1cfc1e6dabe8ed7f2f3abd94963176ef0206beec0",
+      "reason": "no exact terminal image/native receipt; unfinished work will not replay",
+      "reconciled": false,
+      "replayed": false,
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4parent/10-confirmed-native-kill/r",
+      "source_kind": "mujoco_simulation"
+    }
+  },
+  "parent_read_only_scoring": {
+    "unchanged_run_file_hashes": true,
+    "disconnect_single_native_effect": true,
+    "queued_cancel_no_native_effect": true,
+    "running_cancel_exact_retained_state_and_velocity_verified": true,
+    "running_cancel_native_steps_before_cancel": 156,
+    "running_cancel_settle_steps": 500,
+    "independent_native_velocity_readback": {
+      "block_linear_m_s": 1.4834374904384974e-10,
+      "block_angular_rad_s": 3.572847576536275e-09,
+      "pusher_m_s": 4.0626940998161883e-07
+    },
+    "satisfied_scene_without_history_stays_unknown": true,
+    "fulfillment_native_condition": true,
+    "historical_original_order_exact_byte_check": {
+      "command": [
+        "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/footwork",
+        "check-artifact",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/08-fulfillment/original-order.json",
+        "--expected-file",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/08-fulfillment/r/expected-order.json",
+        "--expected-sha256",
+        "f0da7633fe1c3691bc91abe270769c61d669514a4702771895fb356c67206b06"
+      ],
+      "exit_code": 0,
+      "result": {
+        "claims": [
+          "current_artifact_byte_equality"
+        ],
+        "detail": "current bytes equal the digest-bound expected source",
+        "expected_bytes": 1260,
+        "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/08-fulfillment/r/expected-order.json",
+        "expected_sha256": "f0da7633fe1c3691bc91abe270769c61d669514a4702771895fb356c67206b06",
+        "limit_bytes": 1048576,
+        "observed_bytes": 1260,
+        "observed_sha256": "f0da7633fe1c3691bc91abe270769c61d669514a4702771895fb356c67206b06",
+        "ok": true,
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s4audit/08-fulfillment/original-order.json",
+        "source_sha256": "f0da7633fe1c3691bc91abe270769c61d669514a4702771895fb356c67206b06"
+      }
+    },
+    "current_fulfillment_file_intentionally_tampered_and_blocked": true,
+    "killed_runs_generation_zero_no_terminal_native_receipt_or_replay": true
+  },
+  "required_lifecycle_scenarios_qualified": 8,
+  "required_lifecycle_scenarios_total": 8,
+  "all_owned_processes_exited": true,
+  "frozen_hashes_unchanged": true,
+  "limits": [
+    "Controlled lost-controller-record and missing-history faults are offline retained-file perturbations, not live write-window crashes.",
+    "During killed motion, native progress is timed from public running status; no native pose inspection guides decisions. Parent separate scoring can inspect private history.",
+    "Process-fault durability only; no machine/power-loss, real hardware or application handoff qualification.",
+    "Original running-kill trial alone does not prove a native step; supplemental observation-only tracing closes that required evidence gap.",
+    "Historical original-order bytes were checked after the explicit current-artifact tamper; current tampered bytes are not claimed correct."
+  ]
+}

@@ -42,6 +42,8 @@ record all twelve attempted episodes and their limits.
 The [independent controller](tools/physical-workcell/CONTROLLER.md) owns a simulated episode
 in a separate process, with reconnectable operation status, cancellation evidence and
 conservative receipt-based restart recovery.
+[SIM4 results](jevdual/results/independent-controller-20261010/report.md) record disconnect,
+cancellation and crash trials, retained failures and the boundary of supported recovery.
 
 ## Drive it
 

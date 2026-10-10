@@ -1,0 +1,6 @@
+{
+  "command": "uv run python -m evals.notebook docs/notebook --check",
+  "exit_code": 0,
+  "summary": "344 entries, 116 predictions: 82 held, 23 failed, 10 inconclusive, 1 open",
+  "errors": ""
+}

@@ -70,4 +70,20 @@ promotion remain separate subsequent packages.
 
 ## Result
 
-Pending.
+Frozen runtime 5713173 passed 68 scoped tests and Ruff. Nine independent public-service
+checks plus a separately preregistered native-step observation probe support all eight
+required lifecycle scenarios. Caller loss did not repeat effects; cancellation retained
+verified simulated stop evidence; restart reconciled intact lower receipts and kept missing
+history unknown. Deliberate current-artifact tamper preserved historical staging while
+blocking new effects. All owned trial processes exited and sockets were removed.
+
+The first development implementation failed targeted recovery/binding/ownership checks;
+those failures and the corrected prediction are retained. The original timed crash trial
+did not prove native stepping; a fresh supplemental case confirmed a real native step
+before SIGKILL without changing source/dynamics. Controlled record/history/timing faults
+are distinguished from live disconnect and kill. This is process-level simulation evidence,
+not hardware, power-loss, AI superiority or application-workflow qualification.
+
+See [report and complete limits](../../results/independent-controller-20261010/report.md),
+[qualified evidence](../../results/independent-controller-20261010/qualification.json) and
+the engineering notebook for failed and revised predictions.

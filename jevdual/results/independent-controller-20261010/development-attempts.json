@@ -1,0 +1,133 @@
+{
+  "initial_socket_driver_attempt": {
+    "command": "tools/physical-workcell/.venv/bin/python -m unittest discover -s tools/physical-workcell -p test_controller.py -v",
+    "runner_exit_code": 130,
+    "completed_failures": 9,
+    "interrupted_test": "test_queued_cancellation_does_not_dispatch_or_increment_generation",
+    "cause": "test helper expected control/controller.sock; service publishes hashed socket path in controller-binding.json",
+    "no_goals_submitted": true,
+    "test_source_sha256": "ce706968173ca29ba85030306e928da5d8605253062dbea73aed98f21ba9575c",
+    "records": [
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4100d0f/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_changed_case_and_malformed_controller_binding_refuse_reuse",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4260d7a/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_exact_lower_receipt_reconciles_lost_controller_final_write",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c43cc3ed/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_malformed_id_digest_and_stale_proposal_refuse_without_effect",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c451f0a7/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_image_feedback_contact_and_conditional_saved_json",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c45d0483/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_accepted_undispatched_restart_never_replays_and_old_incarnation_refuses",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4627383/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_lifetime_excludes_second_owner_and_legacy_cli",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c464b5b7/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_controller_death_after_cancel_request_never_claims_verified_stop",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4b8b1af/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_active_return_reports_busy_without_native_pose",
+        "passed": false,
+        "public_reply_count": 0
+      },
+      {
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4e6418a/conformance.json",
+        "test_id": "test_controller.ControllerProcessTests.test_late_cancellation_preserves_terminal_effect",
+        "passed": false,
+        "public_reply_count": 0
+      }
+    ]
+  },
+  "development_attempts": [
+    {
+      "kind": "development_process_conformance_with_harness_enum_mismatch",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-process-run-v2/unittest.log",
+      "sha256": "550f311d2340a40feb85dfb103e65ca916bf61845e3657321220da9caf6d9f86",
+      "summary": [
+        "Ran 15 tests in 27.435s",
+        "FAILED (failures=1)"
+      ]
+    },
+    {
+      "kind": "product_recovery_failure_before_fix",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-unknown-fallback-before-fix/unittest.log",
+      "sha256": "4f1e16df0b1e44323773b8ac61beb59e41e29b4b197d42fe7fc64802280003d2",
+      "summary": [
+        "Ran 1 test in 1.487s",
+        "FAILED (failures=1)"
+      ]
+    },
+    {
+      "kind": "product_binding_failure_before_fix",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-live-binding-before-fix/unittest.log",
+      "sha256": "4c8f20707c38fed9a8d1ce2710ac844a718dc6303836d49c9ee4d718b3113b8e",
+      "summary": [
+        "Ran 1 test in 0.732s",
+        "FAILED (failures=1)"
+      ]
+    },
+    {
+      "kind": "development_process_conformance",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-process-run-v3/unittest.log",
+      "sha256": "ab7b4e384f5a4ac093ae05c5a8fb135aeb886db436d9b44efa9765cf51c3310b",
+      "summary": [
+        "Ran 17 tests in 30.871s",
+        "OK"
+      ]
+    },
+    {
+      "kind": "targeted_final_recovery_and_artifact_checks",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-final-focused/unittest.log",
+      "sha256": "fe7c8144fdf8963440f862402b450460be7f054e5de7847264e3d0f6a479e8be",
+      "summary": [
+        "Ran 3 tests in 9.797s",
+        "OK"
+      ]
+    },
+    {
+      "kind": "product_ownership_failure_before_fix_with_timing_fault",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-shutdown-before-fix/unittest.log",
+      "sha256": "801bb031e5c18bcd9b61012083ad519a304f9c8d8e978e8659d29c1e13193f89",
+      "summary": [
+        "Ran 1 test in 3.400s",
+        "FAILED (failures=1)"
+      ]
+    },
+    {
+      "kind": "targeted_ownership_check_after_fix_with_timing_fault",
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/c4-shutdown-after-fix/unittest.log",
+      "sha256": "627705ff66652c1879bd9771dbc3a779f64be5565da923657fbe95455e02a28e",
+      "summary": [
+        "Ran 1 test in 1.536s",
+        "OK"
+      ]
+    }
+  ],
+  "limits": "Development repetitions are separate from frozen diagnostic denominators. Controlled journal/timing faults are not native-stop or power-loss qualifications."
+}

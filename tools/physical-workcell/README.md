@@ -19,6 +19,7 @@ covers varied ordinary jobs and lighting, occlusion and calibration challenges.
 The [independent controller](CONTROLLER.md) adds a separately running owner for an initialized
 episode. Clients can submit, disconnect, read status and request cancellation; retained
 execution history stays separate from current state and stop evidence.
+See [SIM4 evidence and limits](../../jevdual/results/independent-controller-20261010/report.md).
 
 ## One work order
 
