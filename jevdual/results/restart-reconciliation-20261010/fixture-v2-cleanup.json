@@ -1,0 +1,9 @@
+{
+  "owned_window_gone": true,
+  "ax_reason": "window_missing",
+  "owned_browser_gone": true,
+  "remaining_native_window_ids": [
+    30464
+  ],
+  "other_window_identities_preserved": false
+}

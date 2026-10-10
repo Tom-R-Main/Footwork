@@ -1,0 +1,1911 @@
+{
+  "valid": true,
+  "cases_requested": [
+    "prepared",
+    "started",
+    "delivered",
+    "receipt",
+    "final",
+    "delayed",
+    "worker_death",
+    "late_identical",
+    "later_edit",
+    "corrupt_receipt",
+    "file_replacement",
+    "delayed_identical"
+  ],
+  "cases": [
+    {
+      "case": "prepared",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "prepared",
+        "pid": 34365,
+        "monotonic": 910513.637598833
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_830410020fd4",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "prepared"
+        }
+      ],
+      "registration_at_boundary": null,
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_830410020fd4",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent.",
+        "repeat": false,
+        "evidence": {
+          "recovery": "prepared_only",
+          "input_admitted": false
+        },
+        "client_token": "r1-prepared",
+        "resolved_by": "recovery",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30464",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_830410020fd4",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent.",
+        "repeat": true,
+        "evidence": {
+          "recovery": "prepared_only",
+          "input_admitted": false
+        },
+        "client_token": "r1-prepared",
+        "resolved_by": "recovery",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30464",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "started",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "started",
+        "pid": 34409,
+        "monotonic": 910515.255718458
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_2e0a894ec71f",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": null,
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_2e0a894ec71f",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_2e0a894ec71f. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-started",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_2e0a894ec71f",
+          "reconcile": true
+        },
+        "note": "No qualified completion; execution custody is unattested. The attempt stays unknown.",
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_2e0a894ec71f",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_2e0a894ec71f. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-started",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_2e0a894ec71f",
+          "reconcile": true
+        }
+      },
+      "conflicting_append": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_2e0a894ec71f on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_2e0a894ec71f"
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "delivered",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "native_dispatch_return_held",
+        "pid": 34556,
+        "monotonic": 910519.922236916
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_4d3fde9a402b",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "75f084e60d1442d8bc1d1f846d92f290",
+        "operation_id": "op_4d3fde9a402b",
+        "packet_digest": "6780c25e88f44fa1a5669d7205fc680bca6160aba6bb2e53500faab738aa26db",
+        "pgid": 34556,
+        "pid": 34556,
+        "request_digest": "4515f0427090c995f783a0b95a77226525154e1c9abaf0cfe7aa7712c8b07c9f",
+        "start": "0x1.ab29a5d28c90cp+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_4d3fde9a402b",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": false,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "75f084e60d1442d8bc1d1f846d92f290",
+              "operation_id": "op_4d3fde9a402b",
+              "packet_digest": "6780c25e88f44fa1a5669d7205fc680bca6160aba6bb2e53500faab738aa26db",
+              "phase": "sent",
+              "request_digest": "4515f0427090c995f783a0b95a77226525154e1c9abaf0cfe7aa7712c8b07c9f",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-delivered",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "note": "Resolved from retained execution evidence; current agreement is separate.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_4d3fde9a402b",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": true,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "75f084e60d1442d8bc1d1f846d92f290",
+              "operation_id": "op_4d3fde9a402b",
+              "packet_digest": "6780c25e88f44fa1a5669d7205fc680bca6160aba6bb2e53500faab738aa26db",
+              "phase": "sent",
+              "request_digest": "4515f0427090c995f783a0b95a77226525154e1c9abaf0cfe7aa7712c8b07c9f",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-delivered",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution"
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "receipt",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "durable_result_held",
+        "pid": 35934,
+        "monotonic": 910524.887936833
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_8d0363dcab16",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "846952599ccd41489cd45b238fb3140d",
+        "operation_id": "op_8d0363dcab16",
+        "packet_digest": "bd1474025e1160fc1dd9244bd6a6e4a075bb67db0356734a770480e1b75fa7f8",
+        "pgid": 35934,
+        "pid": 35934,
+        "request_digest": "0df0837dd2794a4fae5fb7d01d30f66dc4963bd4f1a472b441060931805bcba0",
+        "start": "0x1.ab29a5e3e89b1p+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_8d0363dcab16",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": false,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "846952599ccd41489cd45b238fb3140d",
+              "operation_id": "op_8d0363dcab16",
+              "packet_digest": "bd1474025e1160fc1dd9244bd6a6e4a075bb67db0356734a770480e1b75fa7f8",
+              "phase": "sent",
+              "request_digest": "0df0837dd2794a4fae5fb7d01d30f66dc4963bd4f1a472b441060931805bcba0",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-receipt",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "note": "Resolved from retained execution evidence; current agreement is separate.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_8d0363dcab16",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": true,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "846952599ccd41489cd45b238fb3140d",
+              "operation_id": "op_8d0363dcab16",
+              "packet_digest": "bd1474025e1160fc1dd9244bd6a6e4a075bb67db0356734a770480e1b75fa7f8",
+              "phase": "sent",
+              "request_digest": "0df0837dd2794a4fae5fb7d01d30f66dc4963bd4f1a472b441060931805bcba0",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-receipt",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution"
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "final",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "final",
+        "pid": 36281,
+        "monotonic": 910528.97967575
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_5dfe5c1d9ae5",
+          "state": "final",
+          "disposition": "applied",
+          "phase": "sent",
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": null,
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_5dfe5c1d9ae5",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "applied",
+            "error": null,
+            "evidence": {
+              "after": {
+                "length": 24,
+                "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+              },
+              "before": {
+                "length": 15,
+                "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+              },
+              "driver_effect": "confirmed",
+              "identity": {
+                "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                "device": 16777232,
+                "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                "inode": 348101435,
+                "pid": 73067,
+                "start": "0x1.aaf07762cecccp+30"
+              },
+              "identity_after": {
+                "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                "device": 16777232,
+                "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                "inode": 348101435,
+                "pid": 73067,
+                "start": "0x1.aaf07762cecccp+30"
+              },
+              "readback": {
+                "kind": "exact_field_readback",
+                "passed": true,
+                "persistence": "not_checked"
+              }
+            },
+            "nonce": "97b1f30da22945ce8ad9d7152736e552",
+            "operation_id": "op_5dfe5c1d9ae5",
+            "packet_digest": "2c606974fdb484606bdb271685627a5340a42b8057c551c2c9963d78b8cc9d2f",
+            "phase": "sent",
+            "request_digest": "18d6cfb4b16b87c1387f37efb416e53b99442954a97c6cb0d04c3c97bdb45c84",
+            "version": 1
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-final",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_5dfe5c1d9ae5",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": true,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "applied",
+            "error": null,
+            "evidence": {
+              "after": {
+                "length": 24,
+                "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+              },
+              "before": {
+                "length": 15,
+                "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+              },
+              "driver_effect": "confirmed",
+              "identity": {
+                "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                "device": 16777232,
+                "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                "inode": 348101435,
+                "pid": 73067,
+                "start": "0x1.aaf07762cecccp+30"
+              },
+              "identity_after": {
+                "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                "device": 16777232,
+                "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                "inode": 348101435,
+                "pid": 73067,
+                "start": "0x1.aaf07762cecccp+30"
+              },
+              "readback": {
+                "kind": "exact_field_readback",
+                "passed": true,
+                "persistence": "not_checked"
+              }
+            },
+            "nonce": "97b1f30da22945ce8ad9d7152736e552",
+            "operation_id": "op_5dfe5c1d9ae5",
+            "packet_digest": "2c606974fdb484606bdb271685627a5340a42b8057c551c2c9963d78b8cc9d2f",
+            "phase": "sent",
+            "request_digest": "18d6cfb4b16b87c1387f37efb416e53b99442954a97c6cb0d04c3c97bdb45c84",
+            "version": 1
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-final"
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "delayed",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "before_native_dispatch",
+        "pid": 36702,
+        "monotonic": 910532.51951125
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_3eb2625e5f32",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "2b8d7404d75e4e3c8574400e0d51b85f",
+        "operation_id": "op_3eb2625e5f32",
+        "packet_digest": "04eb61ba351c3c3caf0f5663ae64fd149aaf485e785b35c68de4aa306b25539c",
+        "pgid": 36702,
+        "pid": 36702,
+        "request_digest": "d90d141a86522a1951af9da758ff55becf7deed4575182e8a545cd2c8dfb5913",
+        "start": "0x1.ab29a6066ef80p+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_3eb2625e5f32",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_3eb2625e5f32. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-delayed",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_3eb2625e5f32",
+          "reconcile": true
+        },
+        "note": "No qualified completion; execution custody is active. The attempt stays unknown.",
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_3eb2625e5f32",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_3eb2625e5f32. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-delayed",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_3eb2625e5f32",
+          "reconcile": true
+        }
+      },
+      "pending_custody": {
+        "nonce": "2b8d7404d75e4e3c8574400e0d51b85f",
+        "operation_id": "op_3eb2625e5f32",
+        "packet_digest": "04eb61ba351c3c3caf0f5663ae64fd149aaf485e785b35c68de4aa306b25539c",
+        "pgid": 36702,
+        "pid": 36702,
+        "request_digest": "d90d141a86522a1951af9da758ff55becf7deed4575182e8a545cd2c8dfb5913",
+        "start": "0x1.ab29a6066ef80p+30",
+        "version": 1
+      },
+      "pending_conflict": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_3eb2625e5f32 on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_3eb2625e5f32"
+        }
+      },
+      "worker_finished": true,
+      "status_after_release": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_3eb2625e5f32",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": false,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "2b8d7404d75e4e3c8574400e0d51b85f",
+              "operation_id": "op_3eb2625e5f32",
+              "packet_digest": "04eb61ba351c3c3caf0f5663ae64fd149aaf485e785b35c68de4aa306b25539c",
+              "phase": "sent",
+              "request_digest": "d90d141a86522a1951af9da758ff55becf7deed4575182e8a545cd2c8dfb5913",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-delayed",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "note": "Resolved from retained execution evidence; current agreement is separate.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "worker_death",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "before_native_dispatch",
+        "pid": 36827,
+        "monotonic": 910537.307739208
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_bfa219eb790c",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "8771acba5b1f4795a25c21f4e92601a3",
+        "operation_id": "op_bfa219eb790c",
+        "packet_digest": "34ee445735c5a16b4acd3488cd26d8ab996f23be09aff3c54b545d98bf28bee0",
+        "pgid": 36827,
+        "pid": 36827,
+        "request_digest": "05e5036b7a6903f79ef669cf4aad7064d3f137885c0adea2978252b81a03f683",
+        "start": "0x1.ab29a61992b99p+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "worker_retired": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_bfa219eb790c",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_bfa219eb790c. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-worker_death",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_bfa219eb790c",
+          "reconcile": true
+        },
+        "note": "No qualified completion; execution custody is unattested. The attempt stays unknown.",
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_bfa219eb790c",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_bfa219eb790c. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-worker_death",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_bfa219eb790c",
+          "reconcile": true
+        }
+      },
+      "conflicting_append": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_bfa219eb790c on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_bfa219eb790c"
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "late_identical",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "before_native_dispatch",
+        "pid": 36926,
+        "monotonic": 910541.3856825
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_9f6a73ae05f2",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "65ddc2d051834a8d99792dd13ceaa2e5",
+        "operation_id": "op_9f6a73ae05f2",
+        "packet_digest": "cef083b4c92277fa21e68e34f08858f61c35753cfdafaae9a379de00080f9e0f",
+        "pgid": 36926,
+        "pid": 36926,
+        "request_digest": "d0fde6f25666c340ba017fd333d94fad270668c3a8d22c29489d62fbc7ca387c",
+        "start": "0x1.ab29a629d9e2cp+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "worker_retired": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_9f6a73ae05f2",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_9f6a73ae05f2. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-late_identical",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_9f6a73ae05f2",
+          "reconcile": true
+        },
+        "note": "No qualified completion; execution custody is unattested. The attempt stays unknown.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_9f6a73ae05f2",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_9f6a73ae05f2. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-late_identical",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_9f6a73ae05f2",
+          "reconcile": true
+        }
+      },
+      "conflicting_append": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_9f6a73ae05f2 on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_9f6a73ae05f2"
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "later_edit",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD\nExternal note: preserve this edit."
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD\nExternal note: preserve this edit."
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD\nExternal note: preserve this edit."
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD\nExternal note: preserve this edit."
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "durable_result_held",
+        "pid": 37025,
+        "monotonic": 910546.101535375
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_377111d3fee5",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "081a5df5f713443d9ac47e74fdbd5282",
+        "operation_id": "op_377111d3fee5",
+        "packet_digest": "8dfbdd704eac1fe7ef7da57cd0810b18f9ce7f264071dbf48fedeebc7e3e709d",
+        "pgid": 37025,
+        "pid": 37025,
+        "request_digest": "ba4d9f72a2ffd60b20f0291479b7ce6cec6cf3560f609064fa8de72950c02f61",
+        "start": "0x1.ab29a63aaac8ep+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_377111d3fee5",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": false,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "081a5df5f713443d9ac47e74fdbd5282",
+              "operation_id": "op_377111d3fee5",
+              "packet_digest": "8dfbdd704eac1fe7ef7da57cd0810b18f9ce7f264071dbf48fedeebc7e3e709d",
+              "phase": "sent",
+              "request_digest": "ba4d9f72a2ffd60b20f0291479b7ce6cec6cf3560f609064fa8de72950c02f61",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-later_edit",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "note": "Resolved from retained execution evidence; current agreement is separate.",
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "846503cb98800b41c63e358f27d1ff9f6f9e42a3f43ce642c8c1d022ac8f1540",
+            "length": 59
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_377111d3fee5",
+        "disposition": "applied",
+        "state": "final",
+        "phase": "sent",
+        "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+        "repeat": true,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "applied",
+              "error": null,
+              "evidence": {
+                "after": {
+                  "length": 24,
+                  "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+                },
+                "before": {
+                  "length": 15,
+                  "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+                },
+                "driver_effect": "confirmed",
+                "identity": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "identity_after": {
+                  "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+                  "device": 16777232,
+                  "document": "/Users/thomasmain/projects/footwork/output/restart-fixture-20261010-v2/restart-fixture-20261010-v2-invoice.txt",
+                  "inode": 348101435,
+                  "pid": 73067,
+                  "start": "0x1.aaf07762cecccp+30"
+                },
+                "readback": {
+                  "kind": "exact_field_readback",
+                  "passed": true,
+                  "persistence": "not_checked"
+                }
+              },
+              "nonce": "081a5df5f713443d9ac47e74fdbd5282",
+              "operation_id": "op_377111d3fee5",
+              "packet_digest": "8dfbdd704eac1fe7ef7da57cd0810b18f9ce7f264071dbf48fedeebc7e3e709d",
+              "phase": "sent",
+              "request_digest": "ba4d9f72a2ffd60b20f0291479b7ce6cec6cf3560f609064fa8de72950c02f61",
+              "version": 1
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked",
+              "outcome": "applied",
+              "historical": true
+            }
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked",
+            "outcome": "applied",
+            "historical": true
+          }
+        },
+        "client_token": "r1-later_edit",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution"
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "corrupt_receipt",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "durable_result_held",
+        "pid": 37148,
+        "monotonic": 910550.104059875
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_030d0f89fdc5",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "f29efd5c93c84964b98ff2a74721c2e6",
+        "operation_id": "op_030d0f89fdc5",
+        "packet_digest": "27764f9bb152f3344a066c959651bc3f65015815d3ea83e1b528f8914eb477e4",
+        "pgid": 37148,
+        "pid": 37148,
+        "request_digest": "03987b0eb33187cb90a3f23d495c10bee0e436240f70485da917e3ff79d6893c",
+        "start": "0x1.ab29a64a6ef0fp+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_030d0f89fdc5",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_030d0f89fdc5. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-corrupt_receipt",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_030d0f89fdc5",
+          "reconcile": true
+        },
+        "note": "Recovery evidence unavailable (RecoveryError); the attempt stays unknown.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_030d0f89fdc5",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_030d0f89fdc5. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-corrupt_receipt",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_030d0f89fdc5",
+          "reconcile": true
+        }
+      },
+      "conflicting_append": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_030d0f89fdc5 on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_030d0f89fdc5"
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "file_replacement",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "before_native_identity",
+        "pid": 37264,
+        "monotonic": 910553.119418791
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_549f247f4213",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "53ec1ed0b14b46e890c21446d679323a",
+        "operation_id": "op_549f247f4213",
+        "packet_digest": "5753e5a4c55cb02036a855d279b1b318ef020167b32093e4ad553dc1b2e8dfd3",
+        "pgid": 37264,
+        "pid": 37264,
+        "request_digest": "b05ba98b2e81ddd6f026c009a70ddf0b47ad98ce5fe306e7f29181ea9984490c",
+        "start": "0x1.ab29a65daf59dp+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "file_replaced": true,
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_549f247f4213",
+        "disposition": "refused",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as refused: process ended during dispatch",
+        "repeat": false,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "refused",
+              "error": "identity_changed",
+              "evidence": {
+                "refusal": "identity_changed"
+              },
+              "nonce": "53ec1ed0b14b46e890c21446d679323a",
+              "operation_id": "op_549f247f4213",
+              "packet_digest": "5753e5a4c55cb02036a855d279b1b318ef020167b32093e4ad553dc1b2e8dfd3",
+              "phase": "not_sent",
+              "request_digest": "b05ba98b2e81ddd6f026c009a70ddf0b47ad98ce5fe306e7f29181ea9984490c",
+              "version": 1
+            }
+          }
+        },
+        "client_token": "r1-file_replacement",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30464",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "note": "Resolved from retained execution evidence; current agreement is separate.",
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": true,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_549f247f4213",
+        "disposition": "refused",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as refused: process ended during dispatch",
+        "repeat": true,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "refused",
+              "error": "identity_changed",
+              "evidence": {
+                "refusal": "identity_changed"
+              },
+              "nonce": "53ec1ed0b14b46e890c21446d679323a",
+              "operation_id": "op_549f247f4213",
+              "packet_digest": "5753e5a4c55cb02036a855d279b1b318ef020167b32093e4ad553dc1b2e8dfd3",
+              "phase": "not_sent",
+              "request_digest": "b05ba98b2e81ddd6f026c009a70ddf0b47ad98ce5fe306e7f29181ea9984490c",
+              "version": 1
+            }
+          }
+        },
+        "client_token": "r1-file_replacement",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30464",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "delayed_identical",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n17.25 USD"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n17.25 USD"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "before_native_dispatch",
+        "pid": 37309,
+        "monotonic": 910556.460296666
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_cdbc257194f0",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": {
+        "nonce": "1cf9cc8e6e0e4d42b1a1c29d3adeb2a2",
+        "operation_id": "op_cdbc257194f0",
+        "packet_digest": "32a65024cfd0d0cb21646556c65b0604120605ad1f647f846bd6b3b91986801a",
+        "pgid": 37309,
+        "pid": 37309,
+        "request_digest": "5d14f8891fc82319788cad397d03cb236aad58ca3e3b754655c41195005b15f4",
+        "start": "0x1.ab29a6666f566p+30",
+        "version": 1
+      },
+      "unread_reply": "",
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_cdbc257194f0",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_cdbc257194f0. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-delayed_identical",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_cdbc257194f0",
+          "reconcile": true
+        },
+        "note": "No qualified completion; execution custody is active. The attempt stays unknown.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_cdbc257194f0",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_cdbc257194f0. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-delayed_identical",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_cdbc257194f0",
+          "reconcile": true
+        }
+      },
+      "pending_custody": {
+        "nonce": "1cf9cc8e6e0e4d42b1a1c29d3adeb2a2",
+        "operation_id": "op_cdbc257194f0",
+        "packet_digest": "32a65024cfd0d0cb21646556c65b0604120605ad1f647f846bd6b3b91986801a",
+        "pgid": 37309,
+        "pid": 37309,
+        "request_digest": "5d14f8891fc82319788cad397d03cb236aad58ca3e3b754655c41195005b15f4",
+        "start": "0x1.ab29a6666f566p+30",
+        "version": 1
+      },
+      "pending_conflict": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_cdbc257194f0 on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_cdbc257194f0"
+        }
+      },
+      "worker_finished": true,
+      "status_after_release": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_cdbc257194f0",
+        "disposition": "refused",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as refused: process ended during dispatch",
+        "repeat": false,
+        "evidence": {
+          "resolution": {
+            "execution_receipt": {
+              "disposition": "refused",
+              "error": "precondition_changed",
+              "evidence": {
+                "refusal": "precondition_changed"
+              },
+              "nonce": "1cf9cc8e6e0e4d42b1a1c29d3adeb2a2",
+              "operation_id": "op_cdbc257194f0",
+              "packet_digest": "32a65024cfd0d0cb21646556c65b0604120605ad1f647f846bd6b3b91986801a",
+              "phase": "not_sent",
+              "request_digest": "5d14f8891fc82319788cad397d03cb236aad58ca3e3b754655c41195005b15f4",
+              "version": 1
+            }
+          }
+        },
+        "client_token": "r1-delayed_identical",
+        "error": "process ended during dispatch",
+        "resolved_by": "execution",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30464",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "note": "Resolved from retained execution evidence; current agreement is separate.",
+        "current": {
+          "agreement": "yes",
+          "value": {
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee",
+            "length": 24
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "worker_cleanup": true
+    }
+  ]
+}

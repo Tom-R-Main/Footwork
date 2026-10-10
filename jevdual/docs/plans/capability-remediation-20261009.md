@@ -35,3 +35,7 @@ C1 does not select a new architecture or justify a larger planner/refactor. A ne
 ## Status: 2026-10-09 20:13
 
 Items 1 and 2 are implemented and qualified in `results/capability-text-repair-20261009/report.md`: nineteen real-core scenarios and six fresh actual agent cases pass, with a 1217-pass/26-skip final offline suite. Separator metadata is explicit, payload stays literal, and empty targets require exact AX/insertability/geometry proof. Dependency pins and legacy native behavior remain unchanged. Reference evidence is in `docs/plans/reference-text-repair-20261009.md`. Original C1 stays failed/inconclusive. Durable reconciliation and first-use setup remain separate future packages, and agents' ancillary disk-state assertions remain unsupported.
+
+## Status: 2026-10-10 12:43
+
+Item3 now has a separately preregistered implementation and native process-crash qualification in `results/restart-reconciliation-20261010/report.md` (frozen8a407f1). Private independent execution receipts support historical recovery; started/no receipt remains unknown. Twelve actual native/MCP cases and the1265pass/26skip suite pass, with original v1 fixture failure retained. Original C1 and heldout outcomes remain unchanged. Item4, installation/doctor/first-use agent experience, remains next; new receipt wording/latency has not been qualified with a fresh agent.

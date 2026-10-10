@@ -30,3 +30,11 @@ Strict inode/device matching applies before input. After input and in current AX
 ## Amendment · 2026-10-10 12:27 · deadline ordering before qualification
 
 Worker deadline is 25 seconds; parent wait is 35 seconds. The separate bounds allow a worker timeout receipt to arrive before the caller wait expires. They replace the earlier equal 30-second values, are recorded starting settings rather than tuned test thresholds, and preserve unknown on any remaining launch/transport gap. Refused as well as not_sent receipts direct callers to observe again and use a new token for a newly intended action; repeating an old token only retrieves its refusal. Live results record unexpected identity_changed refusals rather than retrying them away.
+
+## Result · 2026-10-10 12:43
+
+The amended scoped process-crash contract passes its development qualification on frozen 8a407f1: 1265 tests passed, 26 skipped; twelve actual native/MCP cases passed on fresh v2; two causal-branch mutations rejected. Initial native v1 passed ten cases then stopped at a fixture-location guard before replacement; it remains invalid and retained. Detached feasibility total2.217seconds; no matched in-process overhead estimate. All owned workers/windows/browser resources are cleaned. Supplementary unrelated-window preservation was not measured by a valid before/after inventory. Claude Opus5.5 implementation review reports no blockers, conditional on final evidence review. Exact outcomes, corrections, source hashes and limits: results/restart-reconciliation-20261010/report.md. This does not qualify power loss, saved-file persistence, OS-call interior kill timing, other apps/platforms, a new agent usability trial or a public release.
+
+## Review closure · 2026-10-10 12:45
+
+Claude Opus5.5 independently approved the final evidence in message1791650633854041000 after checking source hashes, all twelve outcomes and repeated-token IDs, busy guards and independent oracle values. Codex signs off the amended scoped contract. R1 closes with the limits and first-use/retention follow-ups recorded in results/restart-reconciliation-20261010/report.md and review.md.

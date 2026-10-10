@@ -1,0 +1,50 @@
+{
+  "scope": "/Users/thomasmain/projects/footwork/jevdual/results/restart-reconciliation-20261010/fixture/scope.json",
+  "text": "17.25 USD",
+  "timeout_s": 30,
+  "pid": 17255,
+  "spawn_started_monotonic": 909180.968178083,
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_s": 2.217003667028621,
+  "child": {
+    "child_started_monotonic": 909181.019363791,
+    "pid": 17255,
+    "imported_monotonic": 909181.025566291,
+    "imports_s": 0.006202499964274466,
+    "process_identity": {
+      "pid": 17255,
+      "pgid": 17255,
+      "start_lstart": "Sat Oct 10 12:13:47 2026"
+    },
+    "bound_monotonic": 909182.245425583,
+    "validated_monotonic": 909182.522967625,
+    "dispatched_monotonic": 909182.827838375,
+    "readback_monotonic": 909183.138302,
+    "phase": "sent",
+    "effect_hint": "confirmed",
+    "readback": {
+      "outcome": "applied",
+      "kind": "exact_field_readback",
+      "passed": true,
+      "actual": "Invoice report\n17.25 USD",
+      "expected": "Invoice report\n17.25 USD",
+      "persistence": "not_checked"
+    },
+    "valid": true,
+    "finished_monotonic": 909183.138523083
+  },
+  "spawn_to_imports_s": 0.05738820799160749,
+  "spawn_to_dispatch_s": 1.859660292044282,
+  "oracle": {
+    "before": "Invoice report\n",
+    "separator": "",
+    "expected": "Invoice report\n17.25 USD",
+    "actual": "Invoice report\n17.25 USD",
+    "passed": true
+  },
+  "valid": true,
+  "source_commit": "6589ff1",
+  "probe_commit": "dcc0ed4",
+  "qualification": "detached AX feasibility only"
+}

@@ -24,6 +24,9 @@ is inconclusive after three untreated empty-field sessions. C1 required fixing s
 target qualification before widening the slice ([next work](plans/capability-remediation-20261009.md)).
 Those two fixes now pass [six fresh agent content cases](../results/capability-text-repair-20261009/report.md),
 including empty and whitespace-only documents; the original C1 comparison remains unchanged.
+Restart reconciliation now passes [twelve actual MCP/native process-crash cases](../results/restart-reconciliation-20261010/report.md),
+including delayed execution and identical external text. This qualification uses a scripted MCP caller;
+a fresh agent trial on the new receipt wording and latency remains future work.
 Evidence covers the scoped prototype. Arbitrary apps, saved-file persistence,
 parallel hosts and a packaged public release remain unqualified.
 

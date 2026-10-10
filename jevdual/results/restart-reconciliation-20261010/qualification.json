@@ -1,0 +1,35 @@
+{
+  "implementation_commit": "8a407f1",
+  "notebook_before_v2": "320c3b0",
+  "source_hashes": {
+    "jevdual/python/jevdual/capability/recovery.py": "944f845f919ce933c2895f138fff4c344d99dec54cdf6f82b55116bda730433f",
+    "jevdual/python/jevdual/capability/execution_worker.py": "951884a30cb7acb22ac16fff024e47e60441c1d4086b4f682134bd4193c4a884",
+    "jevdual/python/jevdual/capability/journal.py": "a0017bf32478caca9372080b04e3ebf828c8690d877304f43b6474ba317cb25c",
+    "jevdual/python/jevdual/capability/backend.py": "745713ef83f262c7acc8cf70c66df94e9980b4dc1002f93ceb4e4c2667531634",
+    "jevdual/python/jevdual/capability/service.py": "54ad82f8f1eabf0a018848e30d9af0ae1937ebf0133d67a7cd7b438516aad9e5",
+    "jevdual/python/jevdual/capability/contracts.py": "e17e08d23694227ae6c7e190504c118ed7b941975e7ae4d0cace0cc861cf9417",
+    "jevdual/python/jevdual/capability/mcp_server.py": "dd990ee41cfda3a07a372a66c62e63c817ac25d7458158f4d1cbc529e47cf911",
+    "jevdual/scripts/capability_restart_trial.py": "43329414de0ff47b065cb46d034cb508f5e23b8096c2476764046929205e65e7"
+  },
+  "live_case_count": 12,
+  "initial_v1_valid": false,
+  "v2_valid": true,
+  "deadline_timing": {
+    "delayed": {
+      "worker_start_epoch": 1791650177.608368,
+      "first_release_birth_epoch": 1791650180.1280472,
+      "estimated_start_to_release_s": 2.519679307937622,
+      "clock": "kernel process start and APFS file birth wall time"
+    },
+    "delayed_identical": {
+      "worker_start_epoch": 1791650201.608728,
+      "first_release_birth_epoch": 1791650204.095533,
+      "estimated_start_to_release_s": 2.486804962158203,
+      "clock": "kernel process start and APFS file birth wall time"
+    }
+  },
+  "owned_window_sheets_after_matrix": 0,
+  "unexpected_identity_refusals": 0,
+  "model_runs": 0,
+  "codex_cli_model_spend_usd": 0
+}

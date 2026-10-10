@@ -58,3 +58,28 @@ Test: fresh owned output fixture, unchanged 8a407f1, full twelve-case actual MCP
 Predicts: file_replacement reaches the replacement and worker strict pre-input identity guard refuses with no append; delayed_identical also runs and stays unknown while active, then known refusal after its exact guard rejects the changed field. Other ten rules remain as observed in v1.
 Against: same placement guard rejects output fixture, required stage remains unreachable, any incorrect applied/no-send result, external edit overwritten or input repeated during collection.
 Refs: docs/experiments/R1-restart-reconciliation.md; scripts/capability_restart_trial.py
+
+## RRU6 · update · 2026-10-10 12:42
+Resolves: RR1 = held; RR2 = held; RR4 = held
+Observed: frozen 8a407f1 full suite1265passed26skipped, ruff/lock checks pass. Fresh owned v2 real MCP/native matrix12/12passes, including both v1-unreached counterexamples. Status/repeatedtokens do not add input; unknown blocks, valid receipts recover historical applied, external edits preserved. Live delay durations approximately2.52/2.49seconds, zero unexpected identity refusals, final owned window sheets zero. Exact ownedwindows/browsergone and allworkerscleaned. A supplementary on-screen window comparison failed as the visibility set changed when the owned window closed; unrelated-window preservation remains unverified rather than inferred from that inventory.
+Inferred: RR1/RR2 hold for the amended bounded contract and the tested controlled dispatch boundaries; no OS-call interior timing, power-loss, file persistence, general app or new-agent usability claim follows. RR4 fixture placement diagnosis holds.
+Next: Claude final evidence sign-off, sanitized result commit and package handoff.
+Refs: results/restart-reconciliation-20261010/report.md; native-v1.json; native-v2.json; qualification.json; checks.json; mutations.json; fixture-v2-cleanup-correction.json
+
+## RRU7 · update · 2026-10-10 12:43
+Resolves: RR2 = held
+Observed: RRU6 used multiple resolutions in one field; the notebook parser resolved only RR1. This separate entry resolves RR2 on the same frozen twelve-case actual native/MCP evidence, with controlled native return holds and limits recorded in the report. Owned fixture and worker cleanup is verified; the supplementary unrelated-window comparison is explicitly unverified.
+Next: final Claude evidence sign-off.
+Refs: results/restart-reconciliation-20261010/native-v2.json; report.md; fixture-v2-cleanup-correction.json
+
+## RRU8 · update · 2026-10-10 12:43
+Resolves: RR4 = held
+Observed: the fresh output fixture made both previously unattempted replacement and delayed-identical cases reachable on unchanged 8a407f1. Full twelve-case v2 passes. V1 invalid fixture placement is retained.
+Next: final Claude evidence sign-off.
+Refs: results/restart-reconciliation-20261010/native-v1.json; native-v2.json; report.md
+
+## RRS1 · summary · 2026-10-10 12:45
+Established: amended scoped native process-crash reconciliation implemented on8a407f1 and independently approved by Claude Opus5.5. Prepared-only recovers not_sent; retained qualified receipts recover historical applied; pending/dead/malformed no-receipt attempts remain unknown despite matching current text. Four tools unchanged, no collection/status replay. Full1265pass/26skip suite, 48 new recovery/native/subprocess tests, two rejected mutations, and twelve actual MCP/native cases pass. All owned fixture/worker resources cleaned. Failed v1 fixture placement, deadline fixture, moved-frame scenario and supplementary cleanup observer remain retained/disclosed.
+Uncertain: no synchronized kill inside AXSelectedText; no power-loss, saved-file, arbitrary-app/platform/parallel-host or hostile-owner guarantee. Unrelated window preservation was not measured by a valid before/after inventory. Fresh-agent receipt wording/latency, strict pre-input autosave refusals in general use and execution-directory retention require a separate package.
+Decision: close R1 on its amended bounded criteria with both writers signing off. Keep original C1/heldout data unchanged. Next is first-use setup/doctor and fresh-agent usability before widening actions/apps; no push or public release.
+Refs: results/restart-reconciliation-20261010/report.md; review.md; qualification.json; checks.json; native-v1.json; native-v2.json; mutations.json; mailbox1791650633854041000-claude-codex.md; 8a407f1

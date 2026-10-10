@@ -1,0 +1,18 @@
+{
+  "original_sha256": "951884a30cb7acb22ac16fff024e47e60441c1d4086b4f682134bd4193c4a884",
+  "restored_sha256": "951884a30cb7acb22ac16fff024e47e60441c1d4086b4f682134bd4193c4a884",
+  "mutations": [
+    {
+      "mutation": "invoked-before-marker",
+      "test": "input_marker_storage_failure_proves_no_input",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "mutation": "drop-post-dispatch-guard",
+      "test": "worker_readback_refusal_after_input_remains_unknown",
+      "exit_code": 1,
+      "rejected": true
+    }
+  ]
+}
