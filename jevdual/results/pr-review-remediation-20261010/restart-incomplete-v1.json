@@ -1,0 +1,240 @@
+{
+  "valid": false,
+  "cases_requested": [
+    "prepared",
+    "started",
+    "delivered",
+    "receipt",
+    "final",
+    "delayed",
+    "worker_death",
+    "late_identical",
+    "later_edit",
+    "corrupt_receipt",
+    "file_replacement",
+    "delayed_identical"
+  ],
+  "cases": [
+    {
+      "case": "prepared",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "prepared",
+        "pid": 415,
+        "monotonic": 913052.510282083
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_9c67e992640c",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "prepared"
+        }
+      ],
+      "registration_at_boundary": null,
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_9c67e992640c",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent.",
+        "repeat": false,
+        "evidence": {
+          "recovery": "prepared_only",
+          "input_admitted": false
+        },
+        "client_token": "r1-prepared",
+        "resolved_by": "recovery",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_9c67e992640c",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent.",
+        "repeat": true,
+        "evidence": {
+          "recovery": "prepared_only",
+          "input_admitted": false
+        },
+        "client_token": "r1-prepared",
+        "resolved_by": "recovery",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "started",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_parent_kill",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_collection",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "final",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "hook": {
+        "name": "started",
+        "pid": 545,
+        "monotonic": 913055.279939791
+      },
+      "journal_at_boundary": [
+        {
+          "id": "op_1d8908b2987f",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "execution_stage": "started"
+        }
+      ],
+      "registration_at_boundary": null,
+      "unread_reply": "",
+      "worker_finished": true,
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_1d8908b2987f",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_1d8908b2987f. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "r1-started",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_1d8908b2987f",
+          "reconcile": true
+        },
+        "note": "No qualified completion; execution custody is unattested. The attempt stays unknown.",
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339",
+            "length": 15
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_1d8908b2987f",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_1d8908b2987f. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": true,
+        "evidence": {},
+        "client_token": "r1-started",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_1d8908b2987f",
+          "reconcile": true
+        }
+      },
+      "conflicting_append": {
+        "is_error": true,
+        "schema_version": "1",
+        "error": {
+          "code": "busy",
+          "message": "operation op_1d8908b2987f on this resource is unresolved; inspect it with status first",
+          "operation_id": "op_1d8908b2987f"
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "delivered",
+      "expected": "Invoice report\n17.25 USD",
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": false,
+      "act_submitted": true,
+      "error_type": "JSONDecodeError",
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "worker_cleanup": true
+    }
+  ]
+}

@@ -91,3 +91,20 @@ Predicts: actor reports actual changed field geometry within its fixed deadline;
 Against: no actual field geometry change, any input after a qualified changed frame, or a deadline timeout promoted to success.
 Refs: output/pr-native-guards-4fb9a95/window_move/report.json; scripts/capability_dispatch_guard_trial.py
 
+## PRU7 · update · 2026-10-10 13:29
+Resolves: PR7 = held
+Observed: Deterministic publication baseline failed one visibility assertion, repaired checks pass three tests. Fresh full actual MCP/native restart matrix passed twelve cases on4fb9a95; stopped earlier run retained. The observer reads fully published markers without overwriting immutable records.
+Next: include sanitized evidence in the combined PR and check remote CI before authorized merge.
+Refs: output/restart-publication-before.log; output/restart-publication-after.log; results/pr-review-remediation-20261010/restart-incomplete-v1.json; results/pr-review-remediation-20261010/restart-v2.json
+
+## PRU8 · update · 2026-10-10 13:29
+Resolves: PR8 = held
+Observed: Delayed geometry helper baseline failed three controls; final delayed/unchanged/absent/late controls pass four tests. Fresh complete three-case native guard matrix passed on023ec2f, with actual changed geometry observed before original live dispatch, no append and unchanged independent exact readback through status and repeat. First invalid actor run retained. Owned fixture/browser exited and exact TextEdit window is absent.
+Next: include sanitized evidence in the combined PR and check remote CI before authorized merge.
+Refs: output/dispatch-geometry-before.log; output/dispatch-geometry-after-v2.log; results/pr-review-remediation-20261010/guards-invalid-v1.json; results/pr-review-remediation-20261010/guards-v2.json; results/pr-review-remediation-20261010/fixture-cleanup.json
+
+## PRS · summary · 2026-10-10 13:29
+Established: Nine independent review findings are remediated in content-bound source; full1408pass26skip, browser12pass, independent309pass, Node78pass, Rust19pass and final real restart12/12 and nativeguard3/3 qualification. Two harness failures preserved and repaired with predictions committed before resolving tests. No provider default changes or new paid evaluations. Local source is checked; remoteCI/merge remain pending.
+Uncertain: Broad arbitrary-app capability and general installation readiness; disk persistence, power loss and exactly-once GUI effects; exhaustive validation of the large historical research corpus. These remain outside the qualified slice.
+Decision: Land one combined PR after remote CI and review threads clear, using merge commit to preserve preregistration chronology and source hashes; preserve unrelated sealed authoring worktrees.
+Refs: results/pr-review-remediation-20261010/report.md; results/pr-review-remediation-20261010/review.md; docs/plans/reference-restart-reconciliation-20261010.md

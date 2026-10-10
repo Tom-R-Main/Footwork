@@ -1,0 +1,9 @@
+{
+  "jevdual/python/jevdual/capability/backend.py": "4ef489e5e28ac378043efbd081a537eba519b2fe6d4b5c29ae61fcdc9d744c0a",
+  "jevdual/python/jevdual/capability/execution_worker.py": "0c0d00e3858d336bd14e588e9a22fd5ec0ec4fb959ba5942cb6adf10489fbb73",
+  "jevdual/python/jevdual/native.py": "d89afbedcf592ef8fe0e699d11c273c4c45df4a2c9039922c77e5907ffd33bfd",
+  "jevdual/python/jevdual/completion.py": "f1a83212e279acba7c2e8cd9bbac981797c17035467a1a7f16e88c1f36921d0e",
+  "jevdual/tests/test_capability_backend.py": "ada3dbf5b6fa151f021105e3113fb9dba31cde383f58e13418b3ad5e7ee3c3be",
+  "jevdual/tests/test_completion.py": "e525d967af96a64d7c0958ad700579db69f265306cae5de38e164f4e84c3f3b8",
+  "jevdual/tests/test_session_scenarios.py": "d5fbcaa707e9022a5a6ecee2cff071ca4e50dd47efe15c224178b25437136b7e"
+}

@@ -1,0 +1,13 @@
+{
+  "fixture_pid": 96842,
+  "fixture_start": 1791652608.093192,
+  "browser_pid": 96846,
+  "browser_start": 1791652608.352797,
+  "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+  "window_id": 30866,
+  "fixture_gone": true,
+  "browser_gone": true,
+  "owned_document_closed": true,
+  "window_observation": "window_missing",
+  "valid": true
+}
