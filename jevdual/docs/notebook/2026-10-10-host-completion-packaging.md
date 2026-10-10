@@ -53,3 +53,16 @@ Test: compare installed package/worker origins against normalized owned venv roo
 Predicts: no source path appears in child import search, pure fallback is selected, installed interpreter launches the real detached worker, one exact append and repeat-token restart produce one journal record.
 Against: normalized paths still point outside the installed environment, source is needed or any duplicate effect/record occurs.
 Refs: scripts/capability_installed_trial.py; output/a2-installed-trial-v1
+
+## HPU2 · update · 2026-10-10 16:05
+Resolves: HP2 = held
+Observed: lexical-normalized origin guard passes and installed v2 performs one applied append plus same-token collection after restart, with the actual worker registered/observed. The last harness assertion rejects kernel argv0: macOS exposes the framework Python.app executable, whereas sys.executable/import origins retain the owned venv. This is an observation mismatch, not a second effect. All original run files remain retained; wheel bytes are unchanged.
+Next: compare worker kernel executable/argv0 to a probe launched through the same owned venv, additionally record Python prefix/module origins and retain worker evidence even on harness failure. Native qualification remains open.
+Refs: output/a2-installed-trial-v2/origin-probe.json; output/a2-installed-trial-v2/operations.sqlite.executions; scripts/capability_installed_trial.py
+
+## HP3 · prediction · 2026-10-10 16:05
+Hypothesis: comparing the actual macOS kernel identity to the same-interpreter probe, while checking installed prefix/module origins and inherited -m resolution, qualifies the detached worker without assuming argv0 equals the venv symlink.
+Test: separate installed-native v3, unchanged wheel; retain actual registration/cmdline/kernel identity, one-effect/repeated-token journal and independent AX oracle.
+Predicts: worker kernel identity matches probe, source imports remain absent, installed server launches the fixed worker module and records one exact append across restart.
+Against: worker uses an unexpected executable/module/packet, installed origin relies on source, custody is unqualified, or effect/record duplicates.
+Refs: output/a2-installed-trial-v2; scripts/capability_installed_trial.py
