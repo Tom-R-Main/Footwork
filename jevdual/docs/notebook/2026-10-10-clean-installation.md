@@ -18,3 +18,15 @@ Test: public doctor with missing/incompatible dependency or permission/platform/
 Predicts: strict mode refuses incomplete/unknown prerequisites, normal diagnostics retain their behavior, no resource/input/permission/journal mutation occurs, and prerequisite status never certifies window identity, effects or job completion.
 Against: false prerequisite-met output, strict mode accepts a blocker or doctor starts apps/requests permissions/reconciles; startup is checked with a reconstructed command instead of emitted configuration.
 Refs: docs/experiments/U1-clean-installation.md; python/jevdual/capability/setup.py; local Cua structured probe mechanism and open-codex-computer-use startup probe
+
+## UIU2 · update · 2026-10-10 16:41
+Observed: v2 binary installs pass on actual Python3.14.5 and3.12.6, each115packages, consistency checks and fresh-site import probes pass. /opt/homebrew/bin/python3 is3.14.5; the shell default is a different Framework3.14.7 interpreter. These runs isolate dependencies but still inherit HOME. A bare/no-deps installed doctor reports missing AX and unverified deps with exit0, confirming a need for opt-in strict prerequisites. Claude identifies HOME/config/telemetry inheritance, actual-process origin gaps and optimization-stripped asserts.
+Next: retain v2 as dependency-only baseline, add private HOME/XDG/temp and explicit checks independent of -O, capture actual server/worker import context through optional private diagnostics, disable known browser-use telemetry/cloud-sync in generated host config, and qualify a fresh version including the real shell-default3.14.7 profile.
+Refs: output/u1-py314-v2/receipt.json; output/u1-py312-v2/receipt.json; output/u1-doctor-bare-v1/receipt.json; Claude mailbox1791664577072686000
+
+## UI3 · prediction · 2026-10-10 16:41
+Hypothesis: explicit private HOME/XDG/temp environments, no-optimization-dependent gates and runtime context emitted by the actual installed server/worker remove the borrowing paths exposed by the initial harness.
+Test: fresh v3 profile installs with actual binary tags/cache-size evidence; exact generated command runs under private environment and private opt-in runtime audit; optimized negative guard test and installed native postconditions.
+Predicts: no configured dependency/source/home/cache borrow, actual server/worker origins/dylib remain in fresh venv, known browser-use telemetry/cloud sync are disabled, and -O cannot bypass a gate. Diagnostics are separate from authority/receipts and their absence never certifies installation.
+Against: HOME-resident helper/config or source imports are needed, a gate vanishes under optimization, actual running origins disagree with probes, or added diagnostics alter input/recovery/report semantics.
+Refs: scripts/capability_clean_install.py; scripts/capability_installed_trial.py; docs/experiments/U1-clean-installation.md
