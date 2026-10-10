@@ -390,6 +390,9 @@ def public_receipt(record, root=None, manifest=None):
         result["contact_statistics"] = {key: record["contact_statistics"][key] for key in
             ("native_steps", "pusher_block_contact_samples", "max_axis_actuator_force_n", "command_speed_limit_m_s")
             if key in record["contact_statistics"]}
+        for key in ("cancellation_requested", "stop_verified", "target_trajectory_completed", "stop_evidence"):
+            if key in record["contact_statistics"]:
+                result["contact_statistics"][key] = record["contact_statistics"][key]
     if isinstance(record.get("visual_check"), dict):
         result["historical_visual_check"] = {key: record["visual_check"][key] for key in
             ("method", "block_box", "image_center_world_xy", "inside_with_margin") if key in record["visual_check"]}
@@ -454,7 +457,7 @@ def completion_verdict(root, proposal, proposal_sha256, content, receipt, manife
     return verdict, reason, visual_check
 
 
-def apply(root, proposal_file, proposal_sha256):
+def apply(root, proposal_file, proposal_sha256, *, motion_control=None):
     if not isinstance(proposal_sha256, str) or not body.DIGEST.fullmatch(proposal_sha256):
         raise Refusal("proposal SHA256 must be exact lowercase hexadecimal")
     content = body.read_bytes(Path(proposal_file))
@@ -508,7 +511,8 @@ def apply(root, proposal_file, proposal_sha256):
         retain_request(root, proposal, content)
         base_token = "vision-" + body.sha(proposal["token"].encode())
         if proposal["decision"] == "move":
-            base = body.act(root, base_token, proposal["generation"], x, y)
+            base = (body.act(root, base_token, proposal["generation"], x, y) if motion_control is None else
+                    body.act(root, base_token, proposal["generation"], x, y, motion_control=motion_control))
             record["command"] = dict(proposal["target"])
             record["contact_statistics"] = base["operation"].get("controller_evidence", {})
         else:

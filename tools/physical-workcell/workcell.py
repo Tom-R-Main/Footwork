@@ -397,7 +397,7 @@ def initialize_episode(root, case_file, case_sha256):
     return initialize(root, str(order_path), sha(order_bytes), episode_case=case, case_binding=binding)
 
 
-def motion(model, data, target_x, target_y):
+def motion(model, data, target_x, target_y, *, motion_control=None):
     target = np.array([target_x - CONTROLLER["pusher_origin_x"], target_y])
     start = data.ctrl.copy()
     steps = max(1, math.ceil(float(np.linalg.norm(target - start)) / (CONTROLLER["speed_m_s"] * CONTROLLER["timestep_s"])))
@@ -407,23 +407,65 @@ def motion(model, data, target_x, target_y):
     push_ids = {model.geom("block_geom").id, model.geom("pusher_geom").id}
     contacts, max_force = 0, 0.0
     started = time.monotonic()
+    cancelled, advancing_steps, native_steps = False, 0, 0
+    pace = number(motion_control.get("pace_s", 0)) if motion_control else 0
+    if not 0 <= pace <= .003 or (motion_control and not callable(motion_control.get("cancel_requested"))):
+        raise Refusal("motion cancellation/pacing hook is invalid")
     for step in range(steps + settle):
         if time.monotonic() - started > CONTROLLER["wall_timeout_s"]:
             raise Refusal("native motion exceeded bounded wall time")
+        if motion_control and motion_control["cancel_requested"]():
+            cancelled = True
+            break
         data.ctrl[:] = start + (target - start) * min(1, (step + 1) / steps)
+        advancing_steps = min(step + 1, steps)
         mujoco.mj_step(model, data)
+        native_steps += 1
+        if pace:
+            time.sleep(pace)
         if not np.isfinite(data.qpos).all() or not np.isfinite(data.qvel).all():
             raise Refusal("native dynamics became nonfinite")
         max_force = max(max_force, float(np.max(np.abs(data.actuator_force))))
         if max_force > CONTROLLER["force_limit_n_per_axis"] + 1e-8:
             raise Refusal("native actuator exceeded its force envelope")
         contacts += sum({int(contact.geom1), int(contact.geom2)} == push_ids for contact in data.contact)
+    steps_before_cancel = native_steps if cancelled else None
+    if cancelled:
+        # Hold the last actuator command. Never assign qpos/qvel or teleport a body.
+        for _ in range(settle):
+            if time.monotonic() - started > CONTROLLER["wall_timeout_s"]:
+                raise Refusal("cancel settling exceeded bounded native wall time")
+            mujoco.mj_step(model, data)
+            native_steps += 1
+            if pace:
+                time.sleep(pace)
+            if not np.isfinite(data.qpos).all() or not np.isfinite(data.qvel).all():
+                raise Refusal("native cancellation dynamics became nonfinite")
+            max_force = max(max_force, float(np.max(np.abs(data.actuator_force))))
+            if max_force > CONTROLLER["force_limit_n_per_axis"] + 1e-8:
+                raise Refusal("native cancel settling exceeded its force envelope")
+            contacts += sum({int(contact.geom1), int(contact.geom2)} == push_ids for contact in data.contact)
     mujoco.mj_forward(model, data)
-    return {"native_steps": steps + settle, "pusher_block_contact_samples": contacts,
-            "max_axis_actuator_force_n": max_force, "command_speed_limit_m_s": CONTROLLER["speed_m_s"]}
+    result = {"native_steps": native_steps, "pusher_block_contact_samples": contacts,
+              "max_axis_actuator_force_n": max_force, "command_speed_limit_m_s": CONTROLLER["speed_m_s"]}
+    if motion_control:
+        start_dof = model.jnt_dofadr[model.joint("block_free").id]
+        linear = float(np.max(np.abs(data.qvel[start_dof:start_dof + 3])))
+        angular = float(np.max(np.abs(data.qvel[start_dof + 3:start_dof + 6])))
+        pusher_velocity = max(abs(float(data.qvel[model.jnt_dofadr[model.joint(name).id]]))
+                              for name in ("pusher_x", "pusher_y"))
+        result.update(cancellation_requested=cancelled, target_trajectory_completed=advancing_steps == steps,
+                      stop_verified=(linear <= .002 and angular <= .02 and pusher_velocity <= .002) if cancelled else None,
+                      stop_evidence={"block_linear_velocity_max_m_s": linear,
+                                     "block_angular_velocity_max_rad_s": angular,
+                                     "pusher_velocity_max_m_s": pusher_velocity,
+                                     "linear_velocity_limit_m_s": .002, "angular_velocity_limit_rad_s": .02,
+                                     "held_actuator_command": data.ctrl.tolist(), "settle_steps": settle,
+                                     "native_steps_before_cancel": steps_before_cancel} if cancelled else None)
+    return result
 
 
-def act(root, token, expected_generation, target_x, target_y):
+def act(root, token, expected_generation, target_x, target_y, *, motion_control=None):
     x, y = number(target_x), number(target_y)
     if not CONTROLLER["x_min"] <= x <= CONTROLLER["x_max"] or not CONTROLLER["y_min"] <= y <= CONTROLLER["y_max"]:
         raise Refusal("pusher target is outside the admitted workspace")
@@ -450,7 +492,10 @@ def act(root, token, expected_generation, target_x, target_y):
     try:
         manifest["phase"] = "acting"
         utils.persist(root / "manifest.json", manifest)
-        evidence = motion(model, data, x, y)
+        evidence = motion(model, data, x, y) if motion_control is None else motion(model, data, x, y, motion_control=motion_control)
+        op["controller_evidence"] = evidence
+        if evidence.get("cancellation_requested") and evidence.get("stop_verified") is not True:
+            raise Refusal("native cancellation has no verified stop")
         generation = manifest["generation"] + 1
         state_sha = save_state(root, model, data, generation)
         manifest.update(phase="ready", generation=generation, state_sha256=state_sha)

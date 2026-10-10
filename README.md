@@ -39,6 +39,9 @@ The [repeatable episode interface](tools/physical-workcell/EPISODES.md) binds va
 retains images when perception fails, and compares fresh-agent decisions with a deterministic
 RGB controller. [SIM3 results](jevdual/results/repeatable-work-orders-20261010/report.md)
 record all twelve attempted episodes and their limits.
+The [independent controller](tools/physical-workcell/CONTROLLER.md) owns a simulated episode
+in a separate process, with reconnectable operation status, cancellation evidence and
+conservative receipt-based restart recovery.
 
 ## Drive it
 

@@ -16,6 +16,9 @@ For independently specified cases, readiness checks, a deterministic RGB baselin
 separate participant declarations and scoring, use the [episode interface](EPISODES.md).
 Its [measured comparison](../../jevdual/results/repeatable-work-orders-20261010/report.md)
 covers varied ordinary jobs and lighting, occlusion and calibration challenges.
+The [independent controller](CONTROLLER.md) adds a separately running owner for an initialized
+episode. Clients can submit, disconnect, read status and request cancellation; retained
+execution history stays separate from current state and stop evidence.
 
 ## One work order
 
