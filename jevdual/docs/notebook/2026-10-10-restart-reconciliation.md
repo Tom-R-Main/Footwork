@@ -45,3 +45,16 @@ Observed: focused native/recovery coverage includes actual fixed worker executio
 Inferred: the critical branch tests discriminate plausible false no-send changes. This does not qualify a hung real TextEdit process or power loss.
 Next: freeze source/harness, full checks, real owned MCP/native interruptions and final Claude review.
 Refs: results/restart-reconciliation-20261010/mutations.json; /Users/thomasmain/projects/footwork/output/capability-recovery-public-dev-v4.log; tests/test_session_scenarios.py; tests/test_capability_recovery.py
+
+## RRU5 · update · 2026-10-10 12:35
+Observed: frozen 8a407f1 native/MCP v1 passed the first ten cases. The file_replacement case stopped before replacement because the fixture was created in results while that trial safety guard permits replacement only inside project output. delayed_identical was not attempted because the runner stops on an invalid case. No product failure or replacement input occurred; original v1 remains retained.
+Inferred: the fixture placement violates a harness prerequisite, not the restart contract. RR2 remains open; v1 does not satisfy the full required matrix.
+Next: close only the owned v1 fixture, create a new owned fixture inside permitted output, and rerun all twelve cases without product/harness source changes or retries of individual cases.
+Refs: /Users/thomasmain/projects/footwork/output/restart-native-20261010-v1/summary.json; scripts/capability_restart_trial.py; 8a407f1
+
+## RR4 · prediction · 2026-10-10 12:35
+Hypothesis: v1 replacement stopped solely because the owned fixture path was outside the harness replacement boundary; recreating the fixture in permitted project output will make the same unchanged frozen matrix reachable.
+Test: fresh owned output fixture, unchanged 8a407f1, full twelve-case actual MCP/native matrix v2; preserve v1, cleanup and source hashes.
+Predicts: file_replacement reaches the replacement and worker strict pre-input identity guard refuses with no append; delayed_identical also runs and stays unknown while active, then known refusal after its exact guard rejects the changed field. Other ten rules remain as observed in v1.
+Against: same placement guard rejects output fixture, required stage remains unreachable, any incorrect applied/no-send result, external edit overwritten or input repeated during collection.
+Refs: docs/experiments/R1-restart-reconciliation.md; scripts/capability_restart_trial.py
