@@ -279,13 +279,17 @@ def checked_view(root, loaded, receipt):
     manifest, order = loaded[:2]
     if not isinstance(receipt, dict) or receipt.get("phase") != "ready":
         raise Refusal("image intent has no complete receipt; it cannot be rerendered or promoted")
+    body.fields(receipt, ("source_kind", "phase", "run_dir", "generation", "image_path", "image_sha256",
+                         "state_sha256", "binding", "calibration", "render_model_sha256", "task_intent",
+                         "perception_scope", "proposal_schema_path"), "retained planner image packet")
     if (receipt.get("generation") != manifest["generation"] or receipt.get("state_sha256") != manifest["state_sha256"] or
             receipt.get("binding") != binding(root, manifest) or receipt.get("calibration") != calibration()):
         raise Refusal("image generation/state/calibration/source binding is stale or changed")
     if (receipt.get("source_kind") != SOURCE_KIND or receipt.get("run_dir") != str(root) or
             receipt.get("task_intent") != {k: order[k] for k in ("order_id", "project", "part_id", "target_zone")} or
             receipt.get("proposal_schema_path") != str(SCHEMA) or
-            receipt.get("render_model_sha256") != body.sha(camera_xml(root).encode())):
+            receipt.get("render_model_sha256") != body.sha(camera_xml(root).encode()) or
+            receipt.get("perception_scope") != "color_specific_RGB; current agent supplies proposals"):
         raise Refusal("retained planner task/run/render metadata changed")
     image_path, _ = image_paths(root, manifest["generation"])
     content = body.read_bytes(image_path)
