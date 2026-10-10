@@ -56,3 +56,15 @@ Observed: frozen08f4cf8 full suite passes1433 with27skips. Controls-v3 stopped b
 Inferred: this is an unavailable prerequisite snapshot with unverified cause, not evidence against the reporting change.
 Next: run unchanged-source controls in a fresh directory on fixture-v2, then v2 host sessions only if all controls qualify. Retain the empty/inconclusive v3 and original v1 outcomes.
 Refs: output/agent-acceptance-full-tests.log; output/agent-acceptance-controls-v3/summary.json; output/agent-acceptance-fixture-v1/scope.json; output/agent-acceptance-fixture-v2
+
+## AAU6 · update · 2026-10-10 15:05
+Observed: v2 Claude passes all four execution cases and final-answer review; unknown/external text is now explicitly unconfirmed, later edits are preserved, and saved/unsaved state is not asserted. Reported v2 Claude cost0.2711948. Codex clean reaches all four tools, has no unrelated calls/isolation errors, one applied operation and exact text with a truthful final. It is invalid because the harness catches idle SIGTERM-driven asyncio cancellation after normal closeout and emits an empty invalid event. V2 stops; remaining Codex cases did not run. Native controls-v4 pass all four plus missing-boundary rejection. Fixture-v1 browser/document absence is independently verified.
+Next: correct only idle-vs-active cancellation classification and run new Codex-only v3 plus controls; retain unaffected Claude v2 evidence because service/dispatcher and task are unchanged and its relays had no cancellation event. Keep both original Codex clean samples as invalid, without regrading.
+Refs: output/agent-acceptance-hosts-v2; output/agent-acceptance-controls-v4/summary.json; output/agent-acceptance-fixture-v1/cleanup.json
+
+## AA5 · prediction · 2026-10-10 15:05
+Hypothesis: tracking an in-flight request lets the relay distinguish normal host shutdown while idle from cancellation that interrupts a call; treating only the former as orderly closeout repairs Codex qualification without masking missed effects or injections.
+Test: independent cancellation controls for idle and active request state, then unchanged product/task Codex-only v3 four-case trial. Retain4Claudev2 sessions bound to identical product hashes; no extra Claude spending or rewritten original receipts.
+Predicts: idle cancellation records explicit orderly shutdown; active cancellation still records invalid; Codex's four cases qualify actual execution and truthful answers if its public behavior supports recovery.
+Against: an aborted active request can pass, a detached owner is left active, runtime reply/receipt semantics change, or Codex still cannot recover or misreports unknown/current/save facts.
+Refs: scripts/capability_agent_restart_trial.py; output/agent-acceptance-hosts-v2/codex-clean/relay/events.jsonl
