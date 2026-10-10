@@ -1,0 +1,43 @@
+{
+ "dir": "results/q19-frozen/D11-replace-word/doc",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 3714,
+ "task": "Replace colour with color and save",
+ "requirements": [],
+ "authorized": [
+  "Save"
+ ],
+ "answer_expected": false,
+ "step": 2,
+ "status": "open",
+ "memory": [
+  "step 1: type(text area) text='The color of the sky.\\nA color chart.\\n' -> confirmed",
+  "step 2: hotkey(cmd+s) -> partial"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "d11.txt",
+ "last_page_text": "\u2014\nd11.txt\nThe color of the sky.\nA color chart.",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "The color of the sky.\nA color chart.",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

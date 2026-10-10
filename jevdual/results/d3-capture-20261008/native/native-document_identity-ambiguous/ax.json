@@ -1,0 +1,107 @@
+[
+  {
+    "AXRole": "AXWindow",
+    "AXTitle": "D3 run-owned visual fixture",
+    "bounds": [
+      50.0,
+      434.0,
+      660.0,
+      468.0
+    ]
+  },
+  {
+    "AXRole": "AXStaticText",
+    "AXValue": "Select the document matching the reference cover.",
+    "bounds": [
+      71.0,
+      473.0,
+      618.0,
+      42.0
+    ]
+  },
+  {
+    "AXRole": "AXImage",
+    "AXDescription": "Document previews",
+    "bounds": [
+      69.0,
+      523.0,
+      622.0,
+      318.0
+    ]
+  },
+  {
+    "AXRole": "AXButton",
+    "AXTitle": "Select Candidate A",
+    "bounds": [
+      76.0,
+      859.0,
+      178.0,
+      22.0
+    ]
+  },
+  {
+    "AXRole": "AXButton",
+    "AXTitle": "Select Candidate B",
+    "bounds": [
+      276.0,
+      859.0,
+      178.0,
+      22.0
+    ]
+  },
+  {
+    "AXRole": "AXButton",
+    "bounds": [
+      58.0,
+      441.0,
+      12.0,
+      14.0
+    ]
+  },
+  {
+    "AXRole": "AXButton",
+    "bounds": [
+      98.0,
+      441.0,
+      12.0,
+      14.0
+    ]
+  },
+  {
+    "AXRole": "AXGroup",
+    "bounds": [
+      97.0,
+      440.0,
+      14.0,
+      16.0
+    ]
+  },
+  {
+    "AXRole": "AXGroup",
+    "bounds": [
+      97.0,
+      440.0,
+      14.0,
+      16.0
+    ]
+  },
+  {
+    "AXRole": "AXButton",
+    "bounds": [
+      78.0,
+      441.0,
+      12.0,
+      14.0
+    ]
+  },
+  {
+    "AXRole": "AXStaticText",
+    "AXValue": "D3 run-owned visual fixture",
+    "bounds": [
+      288.0,
+      439.0,
+      184.0,
+      16.0
+    ]
+  }
+]

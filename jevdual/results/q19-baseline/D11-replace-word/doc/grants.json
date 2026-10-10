@@ -1,0 +1,15 @@
+[
+ {
+  "id": "1cfb48ca",
+  "op": "type",
+  "location": "file:///Users/thomasmain/footwork-pilot/q19/q19-baseline/D11-replace-word/d11.txt",
+  "element_role": "textbox",
+  "element_label": "text area",
+  "arguments_sha": "f90e769b5bfcabf2528ea74f4f1e2169fff35ee1669886e433ca9af6a66dad81",
+  "value_sha": "4defedff5edf224e18508379327e2cb49ca1f8480408c19ec05896ce480a72e9",
+  "uses_left": 0,
+  "issued_step": 0,
+  "issued_at": 1790639938.087937,
+  "selection": []
+ }
+]

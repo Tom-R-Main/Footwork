@@ -1,0 +1,19 @@
+{
+ "TOTAL": {
+  "name": "TOTAL",
+  "text": "56",
+  "surface": "native",
+  "app": "Calculator",
+  "location": "app://Calculator",
+  "title": "Calculator",
+  "element_id": -1,
+  "element_label": "8\u00d77\n56",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-model/H09-browser-to-calculator/calc",
+  "taken_at": 1790666056.330442,
+  "surroundings": "8\u00d77 / 56",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

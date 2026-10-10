@@ -1,0 +1,22 @@
+{
+  "frozen_module_hash_mismatches": [],
+  "all_60_valid_environment": true,
+  "out_of_arm_calls": 0,
+  "all_60_backends_retired": true,
+  "current_attested_backend_group_survivors": [],
+  "qualified_kills": 21,
+  "all_kills_returncode_minus_9": true,
+  "all_kill_watchers_detected_field_change": true,
+  "qualified_interrupted_footwork_journal_states": [
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown"
+  ],
+  "journal_verification_method": "read-only SQLite query after terminal host; nine qualified interrupted Footwork sessions"
+}

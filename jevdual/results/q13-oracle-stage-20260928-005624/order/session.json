@@ -1,0 +1,156 @@
+{
+ "dir": "results/q13-oracle-stage-20260928-005624/order",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 977,
+ "task": "Read the order reference",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'Thank you. Your order number is KB-20260921.' as @ref"
+ ],
+ "last_url": "http://127.0.0.1:57308/order-confirmed.html",
+ "last_title": "Order confirmed",
+ "last_page_text": "|\nOrder confirmed\nThank you. Your order number is KB-20260921.\n|",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Home",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Search",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Catalog",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Contact",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Announcements",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Sign in",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Checkout",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Article",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Home",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 22,
+   "label": "Tracking",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-df93c346-448d-47c5-92b7-052c5f0987c7",
+ "secret_names": []
+}

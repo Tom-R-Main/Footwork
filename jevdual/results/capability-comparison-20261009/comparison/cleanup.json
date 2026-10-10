@@ -1,0 +1,24 @@
+{
+  "before": {
+    "phase": "before_cleanup",
+    "owned_window_ids": [
+      29664
+    ],
+    "other_windows": 5,
+    "ax_errors": 0
+  },
+  "signal": {
+    "pid": 86293,
+    "signal": "SIGINT",
+    "owned_argv_match": true
+  },
+  "after": {
+    "phase": "after_cleanup",
+    "owned_window_ids": [],
+    "other_windows": 5,
+    "ax_errors": 0,
+    "owned_browser_pid_alive": false,
+    "owned_profile_browser_survivors": []
+  },
+  "private_root": "/Users/thomasmain/projects/footwork/output/capability-comparison-20261009-live"
+}

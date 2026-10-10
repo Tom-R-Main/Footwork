@@ -178,6 +178,18 @@ class FakeAX:
     def raise_window(self, pid, window_id):
         self.raised = [*getattr(self, "raised", []), (pid, window_id)]
 
+    bar: tuple | None = None  # the bound window's title-bar point; None: covered
+    click_keys: bool = False  # a click there makes the bound window key
+    clicks: tuple = ()
+
+    def title_bar_point(self, pid, window_id):
+        return self.bar
+
+    def click_at(self, x, y):
+        self.clicks = (*self.clicks, (x, y))
+        if self.click_keys:
+            self.focused = 2
+
     def press_menu(self, pid, path):
         if self.menu_error:
             raise self.AXError(self.menu_error, "no such item")
@@ -312,7 +324,8 @@ def test_foreground_receipt_reports_front_app_not_restored():
     """Promise: a foreground step records the front app before and after; a change is reported, never
     hidden and never fought (the bridge does not re-activate anything)."""
     d = FakeDriver(doc_snapshot("hello"))
-    b = bridge_for(d, "foreground_permitted", fronts=(77, 88))
+    # 77 in front before, the bound app (pid 1) while the chord is sent, 88 after
+    b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 88), ax=FakeAX("hello"))
     nm = run(b.observe())
     eff = run(b.hotkey(nm, ["cmd", "s"]))
     assert eff.foreground["front_before"] == 77 and eff.foreground["front_after"] == 88
@@ -644,3 +657,89 @@ def test_web_field_with_text_is_selected_first_under_the_posture():
     nm = run(b.observe())
     eff = run(b.act(nm, "type", 7, "Ada"))
     assert eff.error_code == "requires_foreground" and not eff.dispatched and "type_text" not in d.names()
+
+
+def test_a_locked_screen_refuses_every_delivery_and_observation(monkeypatch):
+    """G4 (2026-09-26): a run kept deciding and pressing keys for 25 steps against a locked screen."""
+    import asyncio
+
+    from jevdual import posture
+    from jevdual.native import NativeBridge, NativeBridgeError
+    from jevdual.posture import ExecutionPolicy
+
+    monkeypatch.setattr(posture, "screen_locked", lambda: True)
+    policy = ExecutionPolicy("exclusive_desktop")
+    for delivery in ("background", "foreground", "desktop"):
+        r = policy.permits(delivery)  # type: ignore[arg-type]
+        assert r is not None and r.code == "screen_locked"
+    bridge = NativeBridge(FakeDriver(), pid=1, window_id=2, policy=policy)
+    with pytest.raises(NativeBridgeError) as exc:
+        asyncio.run(bridge.observe())
+    assert exc.value.reason == "screen_locked"
+
+
+def test_a_chord_is_not_sent_when_the_bound_window_is_not_key():
+    """Q19 R1: a Command-S dispatched to one TextEdit document saved another, the app's key window. A chord
+    now goes out only once the bound window is key; otherwise nothing is sent and the reason is named."""
+    d = FakeDriver(doc_snapshot("hello"))
+    ax = FakeAX("hello")
+    ax.focused = 9  # another document is the key window and stays so
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    nm = run(b.observe())
+    eff = run(b.hotkey(nm, ["cmd", "s"]))
+    assert eff.dispatched is False and eff.error_code == "not_key"
+    assert "hotkey" not in d.names()
+
+
+def test_the_bound_window_is_raised_after_the_app_is_activated():
+    """Q19: raising first and activating after let the app re-key its previous window, so the bound
+    TextEdit document never became key and every save was refused not_key."""
+    order: list[str] = []
+    ax = FakeAX("hello")
+    ax.raise_window = lambda pid, wid: order.append("raise")
+    d = FakeDriver(doc_snapshot("hello"))
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    act = b.policy._activity()
+    act.activate = lambda pid: (order.append("activate"), True)[1]
+    run(b._front())
+    assert order == ["activate", "raise"]
+
+
+def test_a_title_bar_click_makes_the_bound_window_key_when_ax_cannot():
+    """Q19 U48: TextEdit reorders its windows on an AX raise but keeps another document key until real
+    input. One click on the bound window's title bar (hit-tested ours) makes it key, then the chord goes."""
+    d = FakeDriver(doc_snapshot("hello"))
+    ax = FakeAX("hello")
+    ax.focused, ax.bar, ax.click_keys = 9, (300.0, 172.0), True
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    nm = run(b.observe())
+    eff = run(b.hotkey(nm, ["cmd", "s"]))
+    assert ax.clicks == ((300.0, 172.0),)
+    assert "hotkey" in d.names() and eff.error_code != "not_key"
+
+
+def test_no_click_when_the_title_bar_is_covered_and_none_when_already_key():
+    """R6: the click lands only where a hit test says the bound window is; covered, nothing is clicked or
+    sent and the reason says so. A window already key is never clicked."""
+    d = FakeDriver(doc_snapshot("hello"))
+    ax = FakeAX("hello")
+    ax.focused = 9
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    eff = run(b.hotkey(run(b.observe()), ["cmd", "s"]))
+    assert eff.error_code == "not_key" and "covered" in eff.summary and ax.clicks == ()
+    assert "hotkey" not in d.names()
+    ax2 = FakeAX("hello")
+    ax2.bar = (1.0, 1.0)
+    d2 = FakeDriver(doc_snapshot("hello"))
+    b2 = bridge_for(d2, "foreground_permitted", fronts=(1,), ax=ax2)
+    run(b2.hotkey(run(b2.observe()), ["cmd", "s"]))
+    assert ax2.clicks == () and "hotkey" in d2.names()
+
+
+def test_a_click_that_does_not_key_the_window_still_refuses():
+    d = FakeDriver(doc_snapshot("hello"))
+    ax = FakeAX("hello")
+    ax.focused, ax.bar = 9, (300.0, 172.0)
+    b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
+    eff = run(b.hotkey(run(b.observe()), ["cmd", "s"]))
+    assert len(ax.clicks) == 1 and eff.error_code == "not_key" and "hotkey" not in d.names()

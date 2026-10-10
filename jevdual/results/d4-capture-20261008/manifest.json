@@ -1,0 +1,3438 @@
+{
+  "cases": [
+    {
+      "id": "G01",
+      "layout": 0,
+      "variant": "supported",
+      "expected": true,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:05.586022+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 110.0,
+        "y": 130.0,
+        "observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": true,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 0,
+        "variant": "supported"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-00-original.png"
+        ],
+        "marked_full": [
+          "case-00-marked.png"
+        ],
+        "target_region": [
+          "case-00-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-00-original.png",
+          "image_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:05.586022+00:00",
+          "revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 38.801792077720165,
+            "extraction": 4.508540965616703,
+            "encode": 0.23466593120247126
+          }
+        },
+        "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+        "source_html_sha256": "993cf453272c2cd3786dfb8dc5f76b7063ec8f111cf7fde62c0ba20b8079cf1a",
+        "arms": {
+          "original_full": {
+            "path": "case-00-original.png",
+            "sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 38.801792077720165,
+            "encode_ms": 0.23466593120247126,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "source_observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-00-marked.png",
+            "sha256": "944b4c5b37a871edde54cbc2ca803e67a368d60d0c8f3b285ebc9ec76b715245",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:05.665689+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 24.290625005960464,
+            "encode_ms": 0.3031250089406967,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "source_observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-00-region.png",
+            "sha256": "1cca5bf8cc082668bd660b3d38d424897c0546079adfa7542d366fc0465404d1",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:05.629554+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 24.801791994832456,
+            "encode_ms": 8.695625001564622,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 3600,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "source_observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 83.16475001629442,
+        "annotation_ms": 0.6269579753279686,
+        "extraction_ms": 4.508540965616703,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G02",
+      "layout": 0,
+      "variant": "near_miss",
+      "expected": false,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-b to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:05.759489+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4\", \"target_id\": \"tool-b\", \"x\": 210.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-b",
+        "bounds": {
+          "x": 180,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 210.0,
+        "y": 130.0,
+        "observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": false,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 0,
+        "variant": "near_miss"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-01-original.png"
+        ],
+        "marked_full": [
+          "case-01-marked.png"
+        ],
+        "target_region": [
+          "case-01-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-01-original.png",
+          "image_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:05.759489+00:00",
+          "revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 28.417708002962172,
+            "extraction": 0.9209999116137624,
+            "encode": 0.39249996189028025
+          }
+        },
+        "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+        "source_html_sha256": "993cf453272c2cd3786dfb8dc5f76b7063ec8f111cf7fde62c0ba20b8079cf1a",
+        "arms": {
+          "original_full": {
+            "path": "case-01-original.png",
+            "sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 28.417708002962172,
+            "encode_ms": 0.39249996189028025,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "source_observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+            "offered_target_id": "tool-b"
+          },
+          "marked_full": {
+            "path": "case-01-marked.png",
+            "sha256": "9ceb0d47fdb8586038e427db69103c979588566f4524f5f7a9970ca955b14e98",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:05.822333+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 32.24525006953627,
+            "encode_ms": 0.24291605222970247,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "source_observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+            "offered_target_id": "tool-b"
+          },
+          "target_region": {
+            "path": "case-01-region.png",
+            "sha256": "890725363c91caedd8df7636abb9100521896b5d3614b3b5980f6b713d34d062",
+            "clip": {
+              "x": 180,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:05.789237+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 30.586334061808884,
+            "encode_ms": 0.3281659446656704,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 3600,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+            "source_observation_revision": "ffc293043452c46884ef413148a9ca2aded1f408dd1113d4407e0ec44bb79ed4",
+            "offered_target_id": "tool-b"
+          }
+        },
+        "setup_ms": 68.63566592801362,
+        "annotation_ms": 0.5414170445874333,
+        "extraction_ms": 0.9209999116137624,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G03",
+      "layout": 0,
+      "variant": "ambiguous",
+      "expected": null,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:05.925658+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 110.0,
+        "y": 130.0,
+        "observation_revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": null,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": true
+      },
+      "recipe": {
+        "layout": 0,
+        "variant": "ambiguous"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-02-original.png"
+        ],
+        "marked_full": [
+          "case-02-marked.png"
+        ],
+        "target_region": [
+          "case-02-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-02-original.png",
+          "image_sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:05.925658+00:00",
+          "revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 45.74379196856171,
+            "extraction": 0.9882089216262102,
+            "encode": 0.22849999368190765
+          }
+        },
+        "source_frame_sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+        "source_html_sha256": "d0a7868709f0716675bba48024fa246454d61fec0aff06ca3ffe48bf0d4e2a9f",
+        "arms": {
+          "original_full": {
+            "path": "case-02-original.png",
+            "sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 45.74379196856171,
+            "encode_ms": 0.22849999368190765,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+            "source_observation_revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-02-marked.png",
+            "sha256": "de692fa53ebb479ebd5e81d545e70848e63e0c4283d4be9cac6c8b4f66aa7c32",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.039659+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 65.03545795567334,
+            "encode_ms": 0.5897909868508577,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+            "source_observation_revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-02-region.png",
+            "sha256": "41bc08eca96ba066ad480098ceddd9af33adc17a6560339bc8b85e72ff28ea80",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:05.972632+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 63.733458053320646,
+            "encode_ms": 0.499167013913393,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 2,
+              "pixels": 3600,
+              "max_channel_delta": 16,
+              "rmse": 0.37712361663282534
+            },
+            "source_frame_sha256": "60366d44017dbcee8213d3c451c65fced473c0eddb0d2bbc1810ad723589cea6",
+            "source_observation_revision": "93278957a6e9768448c1c7c708e4c101122cba65685284d19959c424172b50c9",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 70.17716707196087,
+        "annotation_ms": 0.5671249236911535,
+        "extraction_ms": 0.9882089216262102,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G04",
+      "layout": 1,
+      "variant": "supported",
+      "expected": true,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:06.176614+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d\", \"target_id\": \"tool-a\", \"x\": 210.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 180,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 210.0,
+        "y": 130.0,
+        "observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": true,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 1,
+        "variant": "supported"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-03-original.png"
+        ],
+        "marked_full": [
+          "case-03-marked.png"
+        ],
+        "target_region": [
+          "case-03-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-03-original.png",
+          "image_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:06.176614+00:00",
+          "revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 48.007957986555994,
+            "extraction": 1.3390000676736236,
+            "encode": 0.2988750347867608
+          }
+        },
+        "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+        "source_html_sha256": "f2057bc0cc7e35a46382171634c8f628a6e4bc615dee053ecfb6013f049c939f",
+        "arms": {
+          "original_full": {
+            "path": "case-03-original.png",
+            "sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 48.007957986555994,
+            "encode_ms": 0.2988750347867608,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "source_observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-03-marked.png",
+            "sha256": "735a7489960ef0492da129432e1a85b25c6edae174a72d32f3f49aab43221a4b",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.288535+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 67.44599994271994,
+            "encode_ms": 0.40187500417232513,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "source_observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-03-region.png",
+            "sha256": "1cca5bf8cc082668bd660b3d38d424897c0546079adfa7542d366fc0465404d1",
+            "clip": {
+              "x": 180,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.226276+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 58.407707954756916,
+            "encode_ms": 0.5920419935137033,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 3600,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "source_observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 70.53216709755361,
+        "annotation_ms": 1.6155840130522847,
+        "extraction_ms": 1.3390000676736236,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G05",
+      "layout": 1,
+      "variant": "near_miss",
+      "expected": false,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-b to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:06.423509+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d\", \"target_id\": \"tool-b\", \"x\": 110.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-b",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 110.0,
+        "y": 130.0,
+        "observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": false,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 1,
+        "variant": "near_miss"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-04-original.png"
+        ],
+        "marked_full": [
+          "case-04-marked.png"
+        ],
+        "target_region": [
+          "case-04-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-04-original.png",
+          "image_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:06.423509+00:00",
+          "revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 47.887332970276475,
+            "extraction": 1.1170419165864587,
+            "encode": 0.3244580002501607
+          }
+        },
+        "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+        "source_html_sha256": "f2057bc0cc7e35a46382171634c8f628a6e4bc615dee053ecfb6013f049c939f",
+        "arms": {
+          "original_full": {
+            "path": "case-04-original.png",
+            "sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 47.887332970276475,
+            "encode_ms": 0.3244580002501607,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "source_observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+            "offered_target_id": "tool-b"
+          },
+          "marked_full": {
+            "path": "case-04-marked.png",
+            "sha256": "da5349e2f956483f91d057bdafaadf18cd7303aef906b430ab1b2aacad64ebe8",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.539229+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 67.36295798327774,
+            "encode_ms": 0.3392910584807396,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "source_observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+            "offered_target_id": "tool-b"
+          },
+          "target_region": {
+            "path": "case-04-region.png",
+            "sha256": "890725363c91caedd8df7636abb9100521896b5d3614b3b5980f6b713d34d062",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.472859+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 62.26137501653284,
+            "encode_ms": 0.7362080505117774,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 3600,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "3b1558349b881c3af0cbcdd19493f75cbda56314d6e5e458423bdafd442fe74b",
+            "source_observation_revision": "b348515a4555e3f74e16b6f7f919c9bd7ca48d1730a16025ff262be011546e0d",
+            "offered_target_id": "tool-b"
+          }
+        },
+        "setup_ms": 66.39791710767895,
+        "annotation_ms": 0.7590410532429814,
+        "extraction_ms": 1.1170419165864587,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G06",
+      "layout": 1,
+      "variant": "ambiguous",
+      "expected": null,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:06.675799+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d\", \"target_id\": \"tool-a\", \"x\": 210.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 180,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 210.0,
+        "y": 130.0,
+        "observation_revision": "87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": null,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": true
+      },
+      "recipe": {
+        "layout": 1,
+        "variant": "ambiguous"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-05-original.png"
+        ],
+        "marked_full": [
+          "case-05-marked.png"
+        ],
+        "target_region": [
+          "case-05-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-05-original.png",
+          "image_sha256": "15df5a953c939d233fabb36acfd55786e84e2bda1f29c0d03cd22a3c4a84f038",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:06.675799+00:00",
+          "revision": "87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 48.12404199037701,
+            "extraction": 1.1082080891355872,
+            "encode": 0.3642080118879676
+          }
+        },
+        "source_frame_sha256": "15df5a953c939d233fabb36acfd55786e84e2bda1f29c0d03cd22a3c4a84f038",
+        "source_html_sha256": "aa7b17dd59271b3d2ddb328b2dfa992565a60d87a2aa2f408f778dccbb78728d",
+        "arms": {
+          "original_full": {
+            "path": "case-05-original.png",
+            "sha256": "15df5a953c939d233fabb36acfd55786e84e2bda1f29c0d03cd22a3c4a84f038",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 48.12404199037701,
+            "encode_ms": 0.3642080118879676,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "15df5a953c939d233fabb36acfd55786e84e2bda1f29c0d03cd22a3c4a84f038",
+            "source_observation_revision": "87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-05-marked.png",
+            "sha256": "182c6696c60a880972a6e4fdc5aaaffbd988e2192bb0a7fd8d4ffb83688f8f67",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.793904+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 59.72816701978445,
+            "encode_ms": 0.34737493842840195,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "15df5a953c939d233fabb36acfd55786e84e2bda1f29c0d03cd22a3c4a84f038",
+            "source_observation_revision": "87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-05-region.png",
+            "sha256": "4bba01affe09ad5f214e576ef24ca981a0283aa2609f32641e70863758e5a7da",
+            "clip": {
+              "x": 180,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.725418+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 63.068208983168006,
+            "encode_ms": 0.39141601882874966,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 10,
+              "pixels": 3600,
+              "max_channel_delta": 16,
+              "rmse": 0.38005847503304596
+            },
+            "source_frame_sha256": "15df5a953c939d233fabb36acfd55786e84e2bda1f29c0d03cd22a3c4a84f038",
+            "source_observation_revision": "87590e049db7840ea9e3845665201e33fc7b3b2d9ec97a3a57cbac5c8c56df0d",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 68.27449996490031,
+        "annotation_ms": 2.912707976065576,
+        "extraction_ms": 1.1082080891355872,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G07",
+      "layout": 2,
+      "variant": "supported",
+      "expected": true,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:06.924260+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4\", \"target_id\": \"tool-a\", \"x\": 125.0, \"y\": 145.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 90,
+          "height": 90
+        },
+        "x": 125.0,
+        "y": 145.0,
+        "observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": true,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 2,
+        "variant": "supported"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-06-original.png"
+        ],
+        "marked_full": [
+          "case-06-marked.png"
+        ],
+        "target_region": [
+          "case-06-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-06-original.png",
+          "image_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:06.924260+00:00",
+          "revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 90,
+                  "height": 90
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 90,
+                  "height": 90
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 47.27212502621114,
+            "extraction": 1.1284169740974903,
+            "encode": 0.2547500189393759
+          }
+        },
+        "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+        "source_html_sha256": "1358acddc16e6bd7afdfeac6334797ce1131ea038d1afd1e6634ad2793212d5c",
+        "arms": {
+          "original_full": {
+            "path": "case-06-original.png",
+            "sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 47.27212502621114,
+            "encode_ms": 0.2547500189393759,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "source_observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-06-marked.png",
+            "sha256": "46edbb29c62821857cdfd5b90eaadc2db614293e5c18bb090d586d6a3b1b449c",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.046054+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 58.523999992758036,
+            "encode_ms": 0.32312492839992046,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "source_observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-06-region.png",
+            "sha256": "03119eaf9f22d475f20ec456c7bfd35faca202e8537461b3b3931568c8349153",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 90,
+              "height": 90
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:06.972933+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              90,
+              90
+            ],
+            "capture_ms": 67.92858289554715,
+            "encode_ms": 0.46704092528671026,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 8100,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "source_observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 69.6469999384135,
+        "annotation_ms": 0.6010410143062472,
+        "extraction_ms": 1.1284169740974903,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G08",
+      "layout": 2,
+      "variant": "near_miss",
+      "expected": false,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-b to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:07.174616+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4\"}], \"offered_proposal\": {\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 180, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4\", \"target_id\": \"tool-b\", \"x\": 225.0, \"y\": 145.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-b",
+        "bounds": {
+          "x": 180,
+          "y": 100,
+          "width": 90,
+          "height": 90
+        },
+        "x": 225.0,
+        "y": 145.0,
+        "observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": false,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 2,
+        "variant": "near_miss"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-07-original.png"
+        ],
+        "marked_full": [
+          "case-07-marked.png"
+        ],
+        "target_region": [
+          "case-07-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-07-original.png",
+          "image_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:07.174616+00:00",
+          "revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 90,
+                  "height": 90
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 90,
+                  "height": 90
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 48.648083000443876,
+            "extraction": 1.1325000086799264,
+            "encode": 0.3124169306829572
+          }
+        },
+        "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+        "source_html_sha256": "1358acddc16e6bd7afdfeac6334797ce1131ea038d1afd1e6634ad2793212d5c",
+        "arms": {
+          "original_full": {
+            "path": "case-07-original.png",
+            "sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 48.648083000443876,
+            "encode_ms": 0.3124169306829572,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "source_observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+            "offered_target_id": "tool-b"
+          },
+          "marked_full": {
+            "path": "case-07-marked.png",
+            "sha256": "1235bd055cc3e83bd0f210b8a052c5c3977487b5d13faa8b070f4570e68c40f7",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.292434+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 64.21250000130385,
+            "encode_ms": 1.076500047929585,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "source_observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+            "offered_target_id": "tool-b"
+          },
+          "target_region": {
+            "path": "case-07-region.png",
+            "sha256": "ffbae512641140cd8f5bd1ac39abc75be99044ae3ea3373aa23d6dbce59db0e4",
+            "clip": {
+              "x": 180,
+              "y": 100,
+              "width": 90,
+              "height": 90
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.224729+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              90,
+              90
+            ],
+            "capture_ms": 63.27225000131875,
+            "encode_ms": 0.4178329836577177,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 1,
+              "pixels": 8100,
+              "max_channel_delta": 1,
+              "rmse": 0.011111111111111112
+            },
+            "source_frame_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+            "source_observation_revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+            "offered_target_id": "tool-b"
+          }
+        },
+        "setup_ms": 69.1458749352023,
+        "annotation_ms": 0.7734170649200678,
+        "extraction_ms": 1.1325000086799264,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G09",
+      "layout": 2,
+      "variant": "ambiguous",
+      "expected": null,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:07.421149+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9\"}], \"offered_proposal\": {\"bounds\": {\"height\": 90, \"width\": 90, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9\", \"target_id\": \"tool-a\", \"x\": 125.0, \"y\": 145.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 90,
+          "height": 90
+        },
+        "x": 125.0,
+        "y": 145.0,
+        "observation_revision": "a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": null,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": true
+      },
+      "recipe": {
+        "layout": 2,
+        "variant": "ambiguous"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-08-original.png"
+        ],
+        "marked_full": [
+          "case-08-marked.png"
+        ],
+        "target_region": [
+          "case-08-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-08-original.png",
+          "image_sha256": "dc4cd0a4c5aef09e1c3ac44868a9061aa5aa464750af30a21e564b4b946eabe2",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:07.421149+00:00",
+          "revision": "a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 90,
+                  "height": 90
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 90,
+                  "height": 90
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 50.14545901212841,
+            "extraction": 7.092833053320646,
+            "encode": 0.24154200218617916
+          }
+        },
+        "source_frame_sha256": "dc4cd0a4c5aef09e1c3ac44868a9061aa5aa464750af30a21e564b4b946eabe2",
+        "source_html_sha256": "9438b8e2b51ce81cf0752b64b4ce31132516dd39b665380f1534a5131f449fc7",
+        "arms": {
+          "original_full": {
+            "path": "case-08-original.png",
+            "sha256": "dc4cd0a4c5aef09e1c3ac44868a9061aa5aa464750af30a21e564b4b946eabe2",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 50.14545901212841,
+            "encode_ms": 0.24154200218617916,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "dc4cd0a4c5aef09e1c3ac44868a9061aa5aa464750af30a21e564b4b946eabe2",
+            "source_observation_revision": "a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-08-marked.png",
+            "sha256": "82cc444a3f55e21174981bcd510303e1bdd05721d2bdfe80c0db3d6becca1e5a",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.540274+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 63.83750005625188,
+            "encode_ms": 0.22695900406688452,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "dc4cd0a4c5aef09e1c3ac44868a9061aa5aa464750af30a21e564b4b946eabe2",
+            "source_observation_revision": "a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-08-region.png",
+            "sha256": "6b738573c9f641cf07d842c125116540a1efeba53ca28dac91512bca2e614998",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 90,
+              "height": 90
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.478645+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              90,
+              90
+            ],
+            "capture_ms": 57.74641700554639,
+            "encode_ms": 0.4681670106947422,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 56,
+              "pixels": 8100,
+              "max_channel_delta": 56,
+              "rmse": 3.1033235867293336
+            },
+            "source_frame_sha256": "dc4cd0a4c5aef09e1c3ac44868a9061aa5aa464750af30a21e564b4b946eabe2",
+            "source_observation_revision": "a1d992749bf17e67564b5cace09361665b33affbeeafb630714444b29040b9e9",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 62.593874987214804,
+        "annotation_ms": 0.6315000355243683,
+        "extraction_ms": 7.092833053320646,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G10",
+      "layout": 3,
+      "variant": "supported",
+      "expected": true,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:07.680392+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 110.0,
+        "y": 130.0,
+        "observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": true,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 3,
+        "variant": "supported"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-09-original.png"
+        ],
+        "marked_full": [
+          "case-09-marked.png"
+        ],
+        "target_region": [
+          "case-09-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-09-original.png",
+          "image_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:07.680392+00:00",
+          "revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 39.84800004400313,
+            "extraction": 1.1136659886687994,
+            "encode": 0.23337500169873238
+          }
+        },
+        "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+        "source_html_sha256": "bb24ac5d73b4ce5b0456c38269e9ec3a58d35471efc41f45166acdc251fb73b8",
+        "arms": {
+          "original_full": {
+            "path": "case-09-original.png",
+            "sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 39.84800004400313,
+            "encode_ms": 0.23337500169873238,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "source_observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-09-marked.png",
+            "sha256": "b7932d7850a71dd1202b052b9fa997e4fd90a0e911e259d1315ed333fda46753",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.792403+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 63.517707982100546,
+            "encode_ms": 0.2797500928863883,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "source_observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-09-region.png",
+            "sha256": "8f5547a8c39b6536bae8bb2d70058795e68882be1267969b4bbea0878ca17e87",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.721601+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 65.81908301450312,
+            "encode_ms": 0.38595800288021564,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 3600,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "source_observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 75.23204199969769,
+        "annotation_ms": 2.9336248990148306,
+        "extraction_ms": 1.1136659886687994,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G11",
+      "layout": 3,
+      "variant": "near_miss",
+      "expected": false,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-b to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:07.927483+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1\", \"target_id\": \"tool-b\", \"x\": 210.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-b",
+        "bounds": {
+          "x": 180,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 210.0,
+        "y": 130.0,
+        "observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": false,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": false
+      },
+      "recipe": {
+        "layout": 3,
+        "variant": "near_miss"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-10-original.png"
+        ],
+        "marked_full": [
+          "case-10-marked.png"
+        ],
+        "target_region": [
+          "case-10-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-10-original.png",
+          "image_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:07.927483+00:00",
+          "revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 44.73916697315872,
+            "extraction": 1.0460000485181808,
+            "encode": 0.2594580873847008
+          }
+        },
+        "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+        "source_html_sha256": "bb24ac5d73b4ce5b0456c38269e9ec3a58d35471efc41f45166acdc251fb73b8",
+        "arms": {
+          "original_full": {
+            "path": "case-10-original.png",
+            "sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 44.73916697315872,
+            "encode_ms": 0.2594580873847008,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "source_observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+            "offered_target_id": "tool-b"
+          },
+          "marked_full": {
+            "path": "case-10-marked.png",
+            "sha256": "703afd265cc8759af703e2f232b6695b64088f1cfb9d2a3742053238caf23105",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:08.040753+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 64.84862498473376,
+            "encode_ms": 0.31558400951325893,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "source_observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+            "offered_target_id": "tool-b"
+          },
+          "target_region": {
+            "path": "case-10-region.png",
+            "sha256": "e0284d5b64c66e2d65a4a8d089171807d22061ba0aca5df379167aee57d70a43",
+            "clip": {
+              "x": 180,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:07.973543+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 63.8719160342589,
+            "encode_ms": 0.26445905677974224,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 0,
+              "pixels": 3600,
+              "max_channel_delta": 0,
+              "rmse": 0.0
+            },
+            "source_frame_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+            "source_observation_revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+            "offered_target_id": "tool-b"
+          }
+        },
+        "setup_ms": 70.41295897215605,
+        "annotation_ms": 1.4635410625487566,
+        "extraction_ms": 1.0460000485181808,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    },
+    {
+      "id": "G12",
+      "layout": 3,
+      "variant": "ambiguous",
+      "expected": null,
+      "surface": "browser_fixture",
+      "question": "Does the visible evidence support clicking supplied target tool-a to activate Crop? True only when its visible icon or accessible label identifies Crop. False when it identifies a different tool. If its meaning cannot be resolved, remain uncertain.",
+      "text": "{\"current_revision\": \"dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d\", \"observations_in_time_order\": [{\"ax\": [{\"name\": \"Image editor\", \"properties\": [{\"name\": \"level\", \"value\": {\"type\": \"integer\", \"value\": 1}}], \"role\": \"heading\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [{\"name\": \"invalid\", \"value\": {\"type\": \"token\", \"value\": \"false\"}}, {\"name\": \"focusable\", \"value\": {\"type\": \"booleanOrUndefined\", \"value\": true}}], \"role\": \"button\", \"value\": null}, {\"name\": \"\", \"properties\": [], \"role\": \"paragraph\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"StaticText\", \"value\": null}, {\"name\": \"Image editor\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"Choose the crop tool.\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}, {\"name\": \"No action yet\", \"properties\": [], \"role\": \"InlineTextBox\", \"value\": null}], \"captured_at\": \"2026-10-08T20:37:08.171120+00:00\", \"dom\": {\"elements\": [{\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-a\"}, {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 180, \"y\": 100}, \"disabled\": false, \"hidden\": false, \"name\": \"\", \"role\": \"button\", \"target_id\": \"tool-b\"}], \"rendered_text\": \"Image editor\\n\\nChoose the crop tool.\\n\\nNo action yet\"}, \"revision\": \"dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d\"}], \"offered_proposal\": {\"bounds\": {\"height\": 60, \"width\": 60, \"x\": 80, \"y\": 100}, \"browser_target_id\": \"59E514EAEC4B770F85221FFCD53A5E62\", \"kind\": \"click\", \"observation_revision\": \"dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d\", \"target_id\": \"tool-a\", \"x\": 110.0, \"y\": 130.0}}",
+      "proposal": {
+        "kind": "click",
+        "target_id": "tool-a",
+        "bounds": {
+          "x": 80,
+          "y": 100,
+          "width": 60,
+          "height": 60
+        },
+        "x": 110.0,
+        "y": 130.0,
+        "observation_revision": "dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d",
+        "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62"
+      },
+      "oracle": {
+        "expected": null,
+        "intended_mode": "crop",
+        "target_modes": {
+          "tool-a": "crop",
+          "tool-b": "rotate"
+        },
+        "ambiguous_icon": true
+      },
+      "recipe": {
+        "layout": 3,
+        "variant": "ambiguous"
+      },
+      "images_by_arm": {
+        "original_full": [
+          "case-11-original.png"
+        ],
+        "marked_full": [
+          "case-11-marked.png"
+        ],
+        "target_region": [
+          "case-11-region.png"
+        ]
+      },
+      "capture": {
+        "observation": {
+          "image": "case-11-original.png",
+          "image_sha256": "43897b6c103c86fe7a1a535b8823cf7ccf29e881dbe126f1898bf5958afdd8b8",
+          "dimensions": [
+            640,
+            360
+          ],
+          "captured_at": "2026-10-08T20:37:08.171120+00:00",
+          "revision": "dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d",
+          "target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+          "process_id": 20780,
+          "dom": {
+            "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+            "elements": [
+              {
+                "target_id": "tool-a",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 80,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              },
+              {
+                "target_id": "tool-b",
+                "role": "button",
+                "name": "",
+                "disabled": false,
+                "hidden": false,
+                "bounds": {
+                  "x": 180,
+                  "y": 100,
+                  "width": 60,
+                  "height": 60
+                }
+              }
+            ]
+          },
+          "ax": [
+            {
+              "role": "heading",
+              "name": "Image editor",
+              "value": null,
+              "properties": [
+                {
+                  "name": "level",
+                  "value": {
+                    "type": "integer",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "button",
+              "name": "",
+              "value": null,
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "name": "",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "StaticText",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Image editor",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "Choose the crop tool.",
+              "value": null,
+              "properties": []
+            },
+            {
+              "role": "InlineTextBox",
+              "name": "No action yet",
+              "value": null,
+              "properties": []
+            }
+          ],
+          "phases_ms": {
+            "capture": 51.27545795403421,
+            "extraction": 1.0339590953662992,
+            "encode": 0.2589590149000287
+          }
+        },
+        "source_frame_sha256": "43897b6c103c86fe7a1a535b8823cf7ccf29e881dbe126f1898bf5958afdd8b8",
+        "source_html_sha256": "96dd47203e7e200c8171031623d07f22620c83ebc297031f45e1cbd6bae5e409",
+        "arms": {
+          "original_full": {
+            "path": "case-11-original.png",
+            "sha256": "43897b6c103c86fe7a1a535b8823cf7ccf29e881dbe126f1898bf5958afdd8b8",
+            "dimensions": [
+              640,
+              360
+            ],
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "capture_ms": 51.27545795403421,
+            "encode_ms": 0.2589590149000287,
+            "method": "unmodified full-frame CDP PNG",
+            "source_frame_sha256": "43897b6c103c86fe7a1a535b8823cf7ccf29e881dbe126f1898bf5958afdd8b8",
+            "source_observation_revision": "dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d",
+            "offered_target_id": "tool-a"
+          },
+          "marked_full": {
+            "path": "case-11-marked.png",
+            "sha256": "816ae96244c4943e27014c8473e82da4e7c48cd07855094ef36c79e2a60bc87f",
+            "clip": {
+              "x": 0,
+              "y": 0,
+              "width": 640,
+              "height": 360
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:08.292996+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              640,
+              360
+            ],
+            "capture_ms": 62.68712505698204,
+            "encode_ms": 0.3025420010089874,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_frame_sha256": "43897b6c103c86fe7a1a535b8823cf7ccf29e881dbe126f1898bf5958afdd8b8",
+            "source_observation_revision": "dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d",
+            "offered_target_id": "tool-a"
+          },
+          "target_region": {
+            "path": "case-11-region.png",
+            "sha256": "41bc08eca96ba066ad480098ceddd9af33adc17a6560339bc8b85e72ff28ea80",
+            "clip": {
+              "x": 80,
+              "y": 100,
+              "width": 60,
+              "height": 60
+            },
+            "scale": 1,
+            "captured_at": "2026-10-08T20:37:08.223705+00:00",
+            "browser_target_id": "59E514EAEC4B770F85221FFCD53A5E62",
+            "process_id": 20780,
+            "dimensions": [
+              60,
+              60
+            ],
+            "capture_ms": 63.68866702541709,
+            "encode_ms": 0.31645793933421373,
+            "method": "direct CDP Page.captureScreenshot; unmodified PNG",
+            "source_region_difference": {
+              "different_pixels": 2,
+              "pixels": 3600,
+              "max_channel_delta": 16,
+              "rmse": 0.37712361663282534
+            },
+            "source_frame_sha256": "43897b6c103c86fe7a1a535b8823cf7ccf29e881dbe126f1898bf5958afdd8b8",
+            "source_observation_revision": "dcf3639af11717c1d3e363de673e6b481d89383fd6b68bfa7a46c84c3ce4f30d",
+            "offered_target_id": "tool-a"
+          }
+        },
+        "setup_ms": 64.65304200537503,
+        "annotation_ms": 3.567958017811179,
+        "extraction_ms": 1.0339590953662992,
+        "transform": "DOM target-ID/bbox inspector; direct CDP target clip; no bitmap editing"
+      }
+    }
+  ],
+  "seed": 10082029,
+  "scope": "authored browser target grounding"
+}

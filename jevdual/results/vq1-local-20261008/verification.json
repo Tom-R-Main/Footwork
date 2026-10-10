@@ -1,0 +1,121 @@
+{
+  "source_commit": "4037830cb67f5a0656e1c4627b8d5955592cc56b",
+  "source_sha256": {
+    "evals/visual_qualification/runner.py": "785270e1817bdcd9c92fc6528e5bac7dcb927448586405ef3efaae40b17d0495",
+    "evals/visual_qualification/scoring.py": "7b7b5664d5f232489799a07d776c748015cb8b0de79c2a0360fc543df7288dd1",
+    "evals/visual_qualification/__init__.py": "ab0193f03ddf64d23ef561b0034d35162cea2558b9e4e94c98c84ff201024210",
+    "evals/visual_qualification/timing.py": "2c30d27c3004caa07eaedc8d30c86dc4e4e7ffbe8a12b7f1cae5078a4775b233",
+    "evals/visual_qualification/__main__.py": "c65a63dee530c565b7642ba6bf095afb6f2d8556f63c3d79707b0a7debfde2df",
+    "evals/visual_qualification/corpus.py": "6af2387ce02e7f89a7d6b6c02e0a2375560e73b624963dec1e9d43da8e01a84f",
+    "evals/visual_qualification/fixtures.py": "72b3720ac2afdd12ac16ebb1e39193bcf6aed2ea1068503484b03a161b25bd93",
+    "python/jevdual/visual_decisions.py": "c7133e3119cbe5f0432a5f9cfe5d81d2dc69a40e4e431b6e9e412599dcf7a3be",
+    "python/jevdual/visual_checks.py": "206e9c32b42ac58c56e6634a19e8760fb829589222f583ae1467acc3f9cc1e20",
+    "python/jevdual/visual_evidence.py": "efcb024135838e6d0472714ae3ccc18ab7392c20ea5bff6f2a6d384d83874534",
+    "python/jevdual/decisions.py": "7609fd432acd257e28fce6109e6383ae9444f3ea7c249da481e8b3d8f8295bc3",
+    "python/jevdual/policy.py": "3fe6514f595bb1d2747e552928e158c1c5d22f1d7dcf76142fc4be2f635abad3"
+  },
+  "dependency_versions": {
+    "httpx": "0.28.1",
+    "typesafe-sdk": "0.7.0",
+    "Pillow": "12.3.0"
+  },
+  "corpus_sha256": "8e9e59a84ca73c91db98465d75267bd73519647ba73c324b8646d0fcc394e281",
+  "protocol_sha256": "274525c95e999074b7760fd537899503ce3fe750641431705d613ccae58bd1ae",
+  "schedule_sha256": "82916e1ed55b1e57e1ec91d8fc6b966aa386a76a8c7eec22be2b5e5be3307463",
+  "offline_schedule_slots": 96,
+  "mock_image_requests": 48,
+  "mock_text_callbacks": 48,
+  "recount_matches": true,
+  "changed_asset_refused": true,
+  "paid_calls": 0,
+  "network_access": "MockTransport only; ordinary HTTP regression forbidden",
+  "capture_scope": "authored PNGs with placeholder native IDs; no live app observation",
+  "workflow_timing": "unavailable; evidence replay only",
+  "execution_authority": false,
+  "qualification": false,
+  "cli_commands": [
+    {
+      "argv": [
+        "seed",
+        "--out",
+        "runs/vq1-local-20261008/guard-corpus"
+      ],
+      "exit": 0,
+      "stdout": "{\"manifest\": \"runs/vq1-local-20261008/guard-corpus/manifest.json\", \"cases\": 24, \"split\": \"development\", \"qualification_eligible\": false}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "preflight",
+        "--corpus",
+        "evals/visual/vq1/development"
+      ],
+      "exit": 0,
+      "stdout": "{\"cases\": 24, \"corpus_sha256\": \"8e9e59a84ca73c91db98465d75267bd73519647ba73c324b8646d0fcc394e281\", \"eligibility\": {\"eligible\": false, \"reasons\": [\"development_only\", \"development_reference_required\", \"independent_adjudication_required\", \"independent_real_required\"]}}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "freeze",
+        "--corpus",
+        "runs/vq1-local-20261008/guard-corpus",
+        "--protocol",
+        "runs/vq1-local-20261008/guard-corpus/protocol.json",
+        "--out",
+        "runs/vq1-local-20261008/guard-freeze"
+      ],
+      "exit": 0,
+      "stdout": "{\"scheduled_attempts\": 96, \"mode\": \"not_started\"}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "preflight",
+        "--corpus",
+        "runs/vq1-local-20261008/guard-corpus"
+      ],
+      "exit": 4,
+      "stdout": "{\"status\": \"refused\", \"reason\": \"asset_hash_changed\"}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "seed",
+        "--out",
+        "runs/vq1-local-20261008/guard-corpus"
+      ],
+      "exit": 4,
+      "stdout": "{\"status\": \"refused\", \"reason\": \"invalid_or_changed_qualification_artifact\"}",
+      "stderr": ""
+    }
+  ],
+  "artifacts": {
+    "runs/vq1-local-20261008/attempt1/frozen.json": "0956d315bf4e162bfc4616413f90b28d6b0010852f71ed7074ccc3a2081ca8c7",
+    "runs/vq1-local-20261008/attempt1/started.json": "e921c8e5924ee326885d4fea3a1f0646315d4a914534666c64053f68f836b9ac",
+    "runs/vq1-local-20261008/attempt1/budget.json": "bb3e380a0829b29f510cde00d5dc2f9603a76377846861d52f2470f9b27c0df0",
+    "runs/vq1-local-20261008/attempt1/attempts.jsonl": "3b018638275df39031bc38346e766aa1f51e5d20976733a99ce3409eae70144f",
+    "runs/vq1-local-20261008/attempt1/summary.json": "8da8a0332a4b6d7ddc1bc7e35c4e9012abb00db0da0cd23069d2038af8ceb014",
+    "runs/vq1-local-20261008/attempt1/closed.json": "2786c9023a0a29704df4c6208d34e4dfe54633f71b8f05479af3cfdc36e441e7"
+  },
+  "checks": {
+    "full_suite": {
+      "command": ".venv/bin/pytest -q",
+      "passed": 1143,
+      "skipped": 26,
+      "elapsed_s": 85.54,
+      "exit": 0
+    },
+    "new_tests_collected": 112,
+    "independent_recheck": {
+      "passed": 109,
+      "elapsed_s": 10.92,
+      "scope": "before final start/close correspondence hardening; inherited session model, no model diversity"
+    },
+    "final_metadata_regressions": {
+      "passed": 4,
+      "elapsed_s": 7.44
+    },
+    "ruff": "passed",
+    "notebook": "passed"
+  }
+}

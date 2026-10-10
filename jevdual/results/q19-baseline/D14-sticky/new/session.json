@@ -1,0 +1,79 @@
+{
+ "dir": "results/q19-baseline/D14-sticky/new",
+ "app": "Stickies",
+ "pid": 93351,
+ "window_id": 3204,
+ "task": "Type footwork D14 into the new note",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: type(_NS:153) text='footwork D14' -> confirmed"
+ ],
+ "last_url": "app://Stickies",
+ "last_title": "footwork D14",
+ "last_page_text": "footwork D14",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "close",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "zoom",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "collapse",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "footwork D14",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000003",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

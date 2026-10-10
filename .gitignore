@@ -13,3 +13,9 @@
 *.pyc
 .DS_Store
 /external/
+
+# Local capability trial scratch; qualification summaries live in results/.
+/jevdual/output/
+
+# Owned restart fixture/profile scratch; sanitized qualification lives beside it.
+/jevdual/results/restart-reconciliation-20261010/fixture/

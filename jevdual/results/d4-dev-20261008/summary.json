@@ -1,0 +1,141 @@
+{
+  "attempts": 108,
+  "scheduled": 108,
+  "complete": true,
+  "arms": {
+    "original_full": {
+      "correct_replays": 15,
+      "all_three_correct": [
+        "G01",
+        "G02",
+        "G07",
+        "G10",
+        "G11"
+      ],
+      "supported_all_three": [
+        "G01",
+        "G07",
+        "G10"
+      ],
+      "invalid_confident_positive": [
+        "G05"
+      ],
+      "ambiguous_all_three": [],
+      "ambiguous_conservative_false_replays": 12,
+      "wrong_effects": [
+        "G05"
+      ],
+      "coverage_errors": [],
+      "errors": 0,
+      "refusals": 0,
+      "request_timing": {
+        "n": 36,
+        "median_ms": 188.8958960189484,
+        "p95_ms": 385.6986250029877
+      },
+      "capture_to_judgment_estimate": {
+        "n": 36,
+        "median_ms": 237.04056290443987,
+        "p95_ms": 426.89366603735834
+      },
+      "execution_timing": {
+        "n": 12,
+        "median_ms": 648.184729507193,
+        "p95_ms": 846.969333011657
+      }
+    },
+    "marked_full": {
+      "correct_replays": 27,
+      "all_three_correct": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G07",
+        "G08",
+        "G10",
+        "G11"
+      ],
+      "supported_all_three": [
+        "G01",
+        "G04",
+        "G07",
+        "G10"
+      ],
+      "invalid_confident_positive": [],
+      "ambiguous_all_three": [
+        "G03"
+      ],
+      "ambiguous_conservative_false_replays": 9,
+      "wrong_effects": [],
+      "coverage_errors": [],
+      "errors": 0,
+      "refusals": 0,
+      "request_timing": {
+        "n": 36,
+        "median_ms": 192.27347907144576,
+        "p95_ms": 282.3535829083994
+      },
+      "capture_to_judgment_estimate": {
+        "n": 36,
+        "median_ms": 302.13866609847173,
+        "p95_ms": 395.5064576584846
+      },
+      "execution_timing": {
+        "n": 12,
+        "median_ms": 665.3828540001996,
+        "p95_ms": 816.4854999631643
+      }
+    },
+    "target_region": {
+      "correct_replays": 33,
+      "all_three_correct": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12"
+      ],
+      "supported_all_three": [
+        "G01",
+        "G04",
+        "G07",
+        "G10"
+      ],
+      "invalid_confident_positive": [],
+      "ambiguous_all_three": [
+        "G03",
+        "G06",
+        "G09",
+        "G12"
+      ],
+      "ambiguous_conservative_false_replays": 0,
+      "wrong_effects": [],
+      "coverage_errors": [],
+      "errors": 0,
+      "refusals": 0,
+      "request_timing": {
+        "n": 36,
+        "median_ms": 185.18556252820417,
+        "p95_ms": 715.3308329870924
+      },
+      "capture_to_judgment_estimate": {
+        "n": 36,
+        "median_ms": 297.13993810582906,
+        "p95_ms": 775.9765408700332
+      },
+      "execution_timing": {
+        "n": 12,
+        "median_ms": 666.8583744904026,
+        "p95_ms": 1069.4704999914393
+      }
+    }
+  }
+}

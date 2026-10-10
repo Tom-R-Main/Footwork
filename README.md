@@ -17,6 +17,11 @@ The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the pro
 from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
 
+Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
+timestamped evidence through an existing tab/CDP adapter. They are dependency-free ESM helpers,
+separate from the Python driver and verification gates. Their contract is tested offline; live
+capture fidelity must be calibrated on the selected browser.
+
 ## Drive it
 
 ```sh
@@ -28,12 +33,34 @@ footwork done "624"              # the verifier judges the claim against the win
 ```
 
 Also `do type | append | key | hotkey | menu | scroll | enter`, `status`, and `footwork run` for the whole
-loop with Jev as System 1 and an LLM as System 2 on escalation. Nothing dispatches on an id from an older
+loop: by default the measured **guarded** arm (an LLM decides every step behind the guard), or `--arm dual`
+for Jev as System 1 with the LLM on escalation. Nothing dispatches on an id from an older
 observation; text comes from the task or from named secrets (`{NAME}` read from `$FOOTWORK_SECRET_NAME`,
 never printed); `--authorize "<label>"` names the one change the operator approved. Sessions default to
 `background_only`: the person's front app, pointer and keyboard are left alone (`--mode` grants more).
 `start --browser` drives footwork's own Chrome profile through the Driver's DevTools route instead of the
 accessibility tree. Needs macOS with Accessibility granted to the process that runs it, and a TypeSafe key.
+
+For private visual inspection, use a numeric ID from the current native observation:
+
+```sh
+footwork inspect-target 12 --operation click --postcondition "The selected editor enters crop mode"
+```
+
+This records a fresh window PNG, target-bound manifest and static HTML preview under the session's
+`inspection/` directory. The preview outlines the offered target over the unchanged original image
+and displays the operation and required postcondition. It makes no model calls, executes no action
+and does not verify the stated effect.
+Sessions that have handled secrets withhold screenshots before capture. Missing or unqualified
+capture geometry, truncated observations and changed target identities refuse inspection.
+Native AX projections may be partial: the manifest records that limit, and label-based inspection
+requires a complete observation. Browser inspection through this command is not yet qualified.
+
+`footwork visual-check --request request.json --session SESSION` prepares one native advisory
+document/reference or crop/subject check. It records the original capture and a structured receipt.
+Explicit `--provider decisions --disclose` enables one bounded provider request using an existing
+key; the default contacts no provider. Visual answers grant no action or completion authority.
+See [visual check inputs, limits and escalation](jevdual/docs/visual-checks.md).
 
 Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
 Calculator 48 × 13 in 30 s (System 1 proposed every step at p ≥ 0.94, verifier accept 0.98); TextEdit
@@ -68,8 +95,10 @@ three same-code runs ([`results/q9-live-dev.md`](jevdual/results/q9-live-dev.md)
 
 What that says, in order of how sure we are:
 
-- **The guard is the product.** Zero false completions on every split and run, on these predicates, at
-  about two Jev calls per task, and at the LLM's own cost. The LLM alone deletes the account when asked to
+- **The guard is the product.** Zero false completions on the guarded arm on every split and run, on these
+  predicates, at about two Jev calls per task, and at the LLM's own cost. The guard is not infallible: in
+  the Q8 run the dual arm clicked an authorized Delete twice and the verifier accepted it
+  ([`results/q8-consent.md`](jevdual/results/q8-consent.md), the one false completion). The LLM alone deletes the account when asked to
   reach a page, and its own judge marks that a success.
 - **Jev acting saves driver work, not money yet.** Dual makes 23 to 29% fewer driver requests than the
   guarded arm across two same-night samples and runs its own steps at a median 1.4 s against 15.7 s for an
@@ -77,24 +106,31 @@ What that says, in order of how sure we are:
   live sites, and dual matches stock's cost only on the fixture heldout so far.
 - **System 2 delegating bounded subgoals to Jev did not pay** in three measurements
   ([`Q9`](jevdual/docs/experiments/Q9.md)): more cost, no more completions. The executor reached 5 of 30
-  assignments; an audit then found software defects behind most of those failures, fixed in the tree and
-  not yet re-measured. Delegation stays available as a tool, off by default.
+  assignments; an audit then found software defects behind most of those failures, and the repaired build
+  was measured again ([`results/q9e-delegate-fixed.md`](jevdual/results/q9e-delegate-fixed.md)): 36
+  verified against 41 for the same-day guarded arm, $0.644 against $0.424, 3 of 27 assignments reached.
+  Delegation stays available as a tool, off by default.
 - **Declaring the contract to the driver did not pay** ([`Q11`](jevdual/docs/experiments/Q11.md)): model
-  requests rose 21% per task with completions unchanged. Receipts for every action
-  ([`Q12`](jevdual/docs/experiments/Q12.md)) are the next test and are running now.
+  requests rose 21% per task with completions unchanged. Neither did receipts for every action
+  ([`Q12`](jevdual/docs/experiments/Q12.md), [`results/q12-live-dev.md`](jevdual/results/q12-live-dev.md)):
+  repeated no-op clicks fell 18% but requests per unit of progress did not move (−0.02 [−0.14, +0.10], over
+  the 53 tasks with some progress in both arms), and verified passes fell by 4 pooled. Receipts are kept as
+  an honesty measure, not as a saving; the input defect they exposed is fixed first.
 
 ### Native apps and a shared machine
 
-- **The arbiter's calibration transfers from DOM menus to accessibility-tree menus**
+- **The arbiter's target confidence ranks wrong System 1 steps on accessibility-tree menus**
   ([`Q10`](jevdual/docs/experiments/Q10.md), [`results/q10-native-dev.md`](jevdual/results/q10-native-dev.md)):
-  target-confidence AUROC for a wrong System 1 step is 0.90 [0.85, 0.94] on Calculator and TextEdit, against
-  0.80 on the web. After verifier and task fixes, dual is within one task of guarded (13 against 15 of 18,
+  AUROC 0.90 [0.85, 0.94] on Calculator and TextEdit, against 0.80 on the web. That is a ranking result on
+  two apps, whose agreed wrong steps come from two tasks; it is not a calibrated probability, and it does
+  not yet say anything about unfamiliar apps. After verifier and task fixes, dual is within one task of guarded (13 against 15 of 18,
   [`results/q10b-native-dev.md`](jevdual/results/q10b-native-dev.md)); the gap is one repeated-sequence task.
   Native stays experimental.
 - **A session runs beside a person without taking their work, input or focus**
   ([`Q15`](jevdual/docs/experiments/Q15.md)): 15 of 15 coexistence cases passed every check (another app,
   another document of the same process, a foreground step beside an idle or moving person, a conflicting
-  edit). `background_only` is the default; `foreground_permitted` holds the front for 36 to 65 ms and only
+  edit). In none of three attempts did the person's move overlap a foreground step, so that race is covered
+  by a unit test, not a live one. `background_only` is the default; `foreground_permitted` holds the front for 36 to 65 ms and only
   after 3 s of idle.
 
 ## How it works
@@ -187,11 +223,15 @@ verifier and no S1 policy; see `evals/runner.py` (`guarded` arm) for the exact w
 
 Research code with a working product core. The guard and the reactive dual loop are measured on the
 browser; the native arm and the operator session are measured on a small native split and a coexistence
-suite and stay experimental. Delegation and evidence selection are off by default. Open, in order
-([`plan`](jevdual/docs/plans/legible-harness.md)): receipts (Q12, running), a narrower contract declaration
-(Q11b), native readback and the repeated-sequence rule, one contract across browser and native (Q13), and
-whether the browser should go through the accessibility tree too (Q14). Calibration claims wait on the human
-audit sheets. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change.
+suite and stay experimental. Delegation and evidence selection are off by default. The
+[status audit of 2026-09-26](jevdual/results/status-audit-20260926/README.md) reproduced five contract
+breaks offline (operator sessions following the active browser tab, field receipts that overstate, a secret
+in a receipt, the browser path continuing when its destructive judgment fails, short documents replaced
+unpaused). Open, in order ([`plan`](jevdual/docs/plans/next-work.md)): those fixes, authorization parity
+across routes, the input loss after navigation, then receipts again (Q12b), verifier evidence and recovery,
+a narrower declaration (Q11b), and one contract across browser and native (Q13). Whether the browser should
+go through the accessibility tree too (Q14) has a working route but no comparison yet. Calibration claims
+wait on the human audit sheets. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change.
 
 ## Credits
 

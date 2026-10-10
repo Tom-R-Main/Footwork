@@ -1,0 +1,8 @@
+{"t": 1790665318.8184419, "surface": "image", "args": ["start", "Read the pixel height of h08-poster.png", "--app", "Preview", "--window", "h08-poster.png", "--mode", "foreground_permitted"], "exit": 0, "s": 1.66}
+{"t": 1790665324.5977778, "surface": "image", "args": ["look"], "exit": 0, "s": 0.85}
+{"t": 1790665334.692139, "surface": "image", "args": ["do", "menu", "Tools > Show Inspector"], "exit": 0, "s": 3.64}
+{"t": 1790665341.020038, "surface": "image", "args": ["read", "--match", "\\d+ \u00d7 (\\d+) pixels", "--as", "height"], "exit": 0, "s": 0.81}
+{"t": 1790665343.686493, "surface": "request", "args": ["start", "Submit one cutting request", "--browser", "--url", "http://127.0.0.1:8767/q19h-cutting.html", "--authorize", "Submit cutting request"], "exit": 0, "s": 2.58}
+{"t": 1790665351.594149, "surface": "request", "args": ["do", "type", "Reference", "Poster H08"], "exit": 0, "s": 1.66}
+{"t": 1790665353.322588, "surface": "request", "args": ["do", "type", "Quantity", "@height", "--from", "results/q19-heldout-operator/H08-image-to-request/image"], "exit": 0, "s": 1.65}
+{"t": 1790665355.0734, "surface": "request", "args": ["do", "click", "Submit cutting request"], "exit": 0, "s": 1.67}

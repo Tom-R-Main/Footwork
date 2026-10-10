@@ -26,6 +26,9 @@ jobs:
         run: uv sync
       - name: Lint
         run: uv run ruff check python evals tests scripts
+      - name: Browser inspection tests (no dependencies)
+        working-directory: .
+        run: node --test tools/browser-inspection/*.test.mjs tools/inspection-experiments/*.test.mjs tools/inspection-transport/*.test.mjs
       - name: Rust checks
         run: |
           cargo fmt --all --check

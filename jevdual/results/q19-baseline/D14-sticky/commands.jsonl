@@ -1,0 +1,5 @@
+{"t": 1790640069.60765, "surface": "st", "args": ["start", "New sticky with footwork D14", "--app", "Stickies", "--mode", "foreground_permitted"], "exit": 0, "s": 1.67}
+{"t": 1790640080.095545, "surface": "st", "args": ["do", "hotkey", "cmd", "n", "--no-judge"], "exit": 0, "s": 2.14}
+{"t": 1790640087.752764, "surface": "new", "args": ["start", "Type footwork D14 into the new note", "--app", "Stickies", "--window", "Untitled", "--mode", "foreground_permitted"], "exit": 0, "s": 1.43}
+{"t": 1790640088.56272, "surface": "new", "args": ["do", "type", "text area", "footwork D14"], "exit": 4, "s": 0.72}
+{"t": 1790640099.829368, "surface": "new", "args": ["do", "type", "4", "footwork D14"], "exit": 0, "s": 3.13}

@@ -85,7 +85,9 @@ async def main() -> int:
     lines.append("| rep | case | passed | failed checks |")
     lines.append("|---|---|---|---|")
     for r in rows:
-        bad = ", ".join(k for k, v in r["checks"].items() if not v) or ("error: " + r["error"] if r["error"] else "")
+        bad = ", ".join(k for k, v in r["checks"].items() if not v) or (
+            "error: " + r["error"] if r["error"] else ""
+        )
         lines.append(f"| {r['rep']} | {r['case']} | {'yes' if r['passed'] else 'no'} | {bad} |")
     (out / "summary.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))

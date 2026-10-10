@@ -1,0 +1,17 @@
+{
+ "query": {
+  "name": "query",
+  "text": "quarterly report",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "notes.txt",
+  "element_id": -1,
+  "element_label": "Next search: quarterly report",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q13-oracle-stage-20260928-010142/notes",
+  "taken_at": 1790571757.462999
+ }
+}

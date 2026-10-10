@@ -1,0 +1,17 @@
+{
+ "RESULT": {
+  "name": "RESULT",
+  "text": "0 results for \"quarterly report\"",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:60480/search.html?q=quarterly+report",
+  "title": "Search",
+  "element_id": -1,
+  "element_label": "0 results for \"quarterly report\"",
+  "element_role": "text",
+  "part": "match",
+  "step": 2,
+  "session": "results/q13-20260928/task3-r1/web",
+  "taken_at": 1790573902.612122
+ }
+}

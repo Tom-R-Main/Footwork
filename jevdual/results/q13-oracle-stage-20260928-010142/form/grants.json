@@ -1,0 +1,28 @@
+[
+ {
+  "id": "d2558e80",
+  "op": "click",
+  "location": "http://127.0.0.1:57989/form.html",
+  "element_role": "button",
+  "element_label": "Send message",
+  "arguments_sha": null,
+  "value_sha": null,
+  "uses_left": 0,
+  "issued_step": 3,
+  "issued_at": 1790571739.2748191,
+  "selection": []
+ },
+ {
+  "id": "7218d5c3",
+  "op": "click",
+  "location": "http://127.0.0.1:57989/form.html",
+  "element_role": "button",
+  "element_label": "Send message",
+  "arguments_sha": null,
+  "value_sha": null,
+  "uses_left": 0,
+  "issued_step": 8,
+  "issued_at": 1790571749.31042,
+  "selection": []
+ }
+]

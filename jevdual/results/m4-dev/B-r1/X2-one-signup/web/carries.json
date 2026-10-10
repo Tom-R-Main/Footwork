@@ -1,0 +1,53 @@
+{
+ "ROTA": {
+  "name": "ROTA",
+  "text": "Ada Byron",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-signup.html",
+  "title": "Volunteer rota",
+  "element_id": 14,
+  "element_label": "Ada Byron",
+  "element_role": "statictext",
+  "part": "label",
+  "step": 6,
+  "session": "results/m4-dev/B-r1/X2-one-signup/web",
+  "taken_at": 1790677142.845373,
+  "surroundings": "",
+  "occurrence": ""
+ },
+ "ENTRY": {
+  "name": "ENTRY",
+  "text": "Ada Byron",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-signup.html",
+  "title": "Volunteer rota",
+  "element_id": -1,
+  "element_label": "Ada Byron",
+  "element_role": "text",
+  "part": "match",
+  "step": 6,
+  "session": "results/m4-dev/B-r1/X2-one-signup/web",
+  "taken_at": 1790677185.605796,
+  "surroundings": "Local simulation: no real sign-up. / Name / Team / Ada Byron",
+  "occurrence": "match 1 of 1 on the page"
+ },
+ "DETAIL": {
+  "name": "DETAIL",
+  "text": "generic",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-signup.html",
+  "title": "Volunteer rota",
+  "element_id": 12,
+  "element_label": "generic",
+  "element_role": "generic",
+  "part": "label",
+  "step": 6,
+  "session": "results/m4-dev/B-r1/X2-one-signup/web",
+  "taken_at": 1790677202.9675038,
+  "surroundings": "",
+  "occurrence": ""
+ }
+}

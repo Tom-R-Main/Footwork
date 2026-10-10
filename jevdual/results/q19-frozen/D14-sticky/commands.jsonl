@@ -1,0 +1,4 @@
+{"t": 1790641620.3454201, "surface": "st", "args": ["start", "New sticky", "--app", "Stickies", "--window", "Make a note", "--mode", "foreground_permitted"], "exit": 0, "s": 1.63}
+{"t": 1790641623.669311, "surface": "st", "args": ["do", "hotkey", "cmd", "n", "--no-judge"], "exit": 0, "s": 3.23}
+{"t": 1790641626.2264771, "surface": "new", "args": ["start", "Type into the new note", "--app", "Stickies", "--window", "Untitled", "--mode", "foreground_permitted"], "exit": 0, "s": 1.44}
+{"t": 1790641636.7208478, "surface": "new", "args": ["do", "type", "4", "footwork D14"], "exit": 0, "s": 3.11}

@@ -1,0 +1,201 @@
+{
+ "dir": "results/q13-20260928/task3-r2/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 977,
+ "task": "Search the shop for the text after 'Next search:' in the TextEdit note notes-3-2-015035.txt.",
+ "requirements": [
+  "The shop's search results page is shown for the note's query"
+ ],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 2,
+ "status": "done",
+ "memory": [
+  "step 1: type(Search products) text=@QUERY (from native app://TextEdit) -> confirmed",
+  "step 2: click(Search) -> confirmed",
+  "step 3: done refused (answer carries no fact found on the page (0 unsupported, rest narrative); comple)",
+  "step 2: read [-1] '0 results for \"quarterly report\"' as @RESULT",
+  "step 3: done accepted"
+ ],
+ "last_url": "http://127.0.0.1:60480/search.html?q=quarterly+report",
+ "last_title": "Search",
+ "last_page_text": "|\nSearch\nSearch products\n0 results for \"quarterly report\"\n|\nquarterly report",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Home",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Search",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Catalog",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Contact",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Announcements",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Sign in",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Checkout",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Article",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Search products",
+   "role": "searchbox",
+   "operations": [
+    "type"
+   ],
+   "value": "quarterly report",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "Search",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 25,
+   "label": "Tracking",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 27,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 28,
+   "label": "quarterly report",
+   "role": "statictext",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-325d2c1a-a834-4ca5-b0ba-bd44d6048171",
+ "secret_names": []
+}

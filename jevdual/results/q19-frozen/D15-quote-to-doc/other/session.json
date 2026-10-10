@@ -1,0 +1,40 @@
+{
+ "dir": "results/q19-frozen/D15-quote-to-doc/other",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 3715,
+ "task": "Close the other document",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: hotkey(cmd+w) -> suspected_noop"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "other.txt",
+ "last_page_text": "other.txt\nother document",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "other document",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

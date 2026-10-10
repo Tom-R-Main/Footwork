@@ -7,9 +7,12 @@ costs fewer requests than a 25-step grind, and neither is progress. Two views th
 
 * requests split by ``terminal_mode`` (done_claimed, done_stopped, unverified, paused, cap, error),
   per arm, so a burden difference can be read next to the way the runs ended;
-* requests per checkpoint reached, over the tasks that declare checkpoints (multistep tasks), with a
-  paired bootstrap interval against ``--vs`` in the same run directory. Progress counts the
-  checkpoint URLs visited plus one for a passed predicate.
+* requests per unit of progress, with a paired bootstrap interval against ``--vs`` in the same run
+  directory. Progress counts the checkpoint URLs visited plus one for a passed predicate, so a task
+  that declares no checkpoints contributes only its predicate. The ratio is conditional: it covers
+  the tasks with some progress in both arms, and the output names that population, how many of its
+  tasks declare checkpoints (rows from 2026-09-26 on), the tasks excluded for zero progress, and
+  all-task verified passes, so the ratio is never read alone (status audit, 2026-09-26).
 
 Repeats of a task are averaged before pairing, as in ``evals.paired``.
 """
@@ -50,7 +53,7 @@ def by_mode(rows: list[dict[str, Any]]) -> dict[str, dict[str, dict[str, float]]
 
 
 def progress_rows(rows: list[dict[str, Any]], arm: str) -> dict[str, dict[str, float]]:
-    """task -> {requests, progress} averaged over repeats, tasks with checkpoints only."""
+    """task -> {requests, progress, declared} averaged over repeats; every row that records progress."""
     groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in rows:
         if r["arm"] == arm and "checkpoints_reached" in r:
@@ -61,6 +64,9 @@ def progress_rows(rows: list[dict[str, Any]], arm: str) -> dict[str, dict[str, f
         out[t] = {
             "requests": statistics.mean(float(r.get("llm_requests", 0)) for r in rs),
             "progress": statistics.mean(prog),
+            "declared": max(
+                (r["checkpoints_declared"] for r in rs if "checkpoints_declared" in r), default=-1
+            ),
         }
     return out
 
@@ -81,7 +87,15 @@ def per_progress(a: dict[str, dict[str, float]], b: dict[str, dict[str, float]])
         "ci95": (lo, hi),
         "no_progress_a": sorted(t for t in common if a[t]["progress"] == 0),
         "no_progress_b": sorted(t for t in common if b[t]["progress"] == 0),
+        "common": len(common),
+        "declaring": sum(1 for t in both if a[t].get("declared", -1) > 0),
+        "declared_known": all(a[t].get("declared", -1) >= 0 for t in both),
     }
+
+
+def _verified(rows: list[dict[str, Any]], arm: str) -> str:
+    rs = [r for r in rows if r["arm"] == arm]
+    return f"{sum(1 for r in rs if r['passed'] and r.get('success') is True)}/{len(rs)}"
 
 
 def render(rows: list[dict[str, Any]], vs: str | None) -> str:
@@ -99,7 +113,10 @@ def render(rows: list[dict[str, Any]], vs: str | None) -> str:
             cells.append(f"{c['runs']:.0f} runs, {c['mean_requests']:.1f} req" if c else "")
         lines.append(f"| {arm} | " + " | ".join(cells) + " |")
     if vs:
-        lines += ["", f"# Requests per unit of progress, paired against `{vs}` (tasks with checkpoints)\n"]
+        lines += [
+            "",
+            f"# Requests per unit of progress, paired against `{vs}` (tasks with progress in both arms)\n",
+        ]
         a = progress_rows(rows, vs)
         lines.append("| arm | tasks | requests per progress (vs) | (arm) | mean Δ | 95% CI |")
         lines.append("|---|---|---|---|---|---|")
@@ -111,6 +128,15 @@ def render(rows: list[dict[str, Any]], vs: str | None) -> str:
             lines.append(
                 f"| {arm} | {p['tasks']} | {p['a_requests_per_progress']:.2f} | {p['b_requests_per_progress']:.2f} "
                 f"| {p['mean_diff']:+.2f} | [{lo:+.2f}, {hi:+.2f}] |"
+            )
+            declaring = (
+                f"{p['declaring']} declare checkpoints"
+                if p["declared_known"]
+                else "checkpoint count not recorded"
+            )
+            lines.append(
+                f"  population: {p['tasks']} of {p['common']} tasks with some progress in both arms ({declaring}); "
+                f"verified passes, all tasks: {vs} {_verified(rows, vs)}, {arm} {_verified(rows, arm)}"
             )
             if p["no_progress_b"] or p["no_progress_a"]:
                 lines.append(

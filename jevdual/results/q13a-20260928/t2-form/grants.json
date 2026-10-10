@@ -1,0 +1,15 @@
+[
+ {
+  "id": "ce8b99f1",
+  "op": "click",
+  "location": "http://127.0.0.1:8766/form.html",
+  "element_role": "button",
+  "element_label": "Send message",
+  "arguments_sha": null,
+  "value_sha": null,
+  "uses_left": 0,
+  "issued_step": 3,
+  "issued_at": 1790573008.31201,
+  "selection": []
+ }
+]

@@ -1,0 +1,1678 @@
+{
+ "dir": "results/q19-heldout-model/H01-png-name/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "On the PNG home site, report the full name represented by PNG.",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "done",
+ "memory": [
+  "step 0: read [-1] 'Portable Network Graphics' as @PNGNAME",
+  "step 1: done accepted"
+ ],
+ "last_url": "https://www.libpng.org/pub/png/",
+ "last_title": "PNG (Portable Network Graphics) Home Site",
+ "last_page_text": "If you're using a\nWindows\nversion of\nNetscape Navigator\nand want to print this page (and still be able to read it), click on the\npng-printable\nlink at the very bottom of this page.\nPortable Network Graphics\nAn Open, Extensible Image Format with Lossless Compression\n(Not Related to Papua New Guinea, the Pawnee National Grassland, the Professional Numismatists Guild or the \"Pack 'N' Go\" format)\n(\nNot\nRelated to Papua New Guinea, the Pawnee National Grassland,\nthe Professional Numismatists Guild or the \"Pack 'N' Go\" format)\nWelcome to the PNG Home Site, maintained by\n. Our hero likes to speak of himself in the third person, but don't let that put you off; this is intended to be a mostly serious set of reference pages for locating information, applications and programming code related to the 31-year-old PNG image format.\nCanonical URL:\n(California, USA)\nNote that the PNG home site has moved four times since 1995 (though the URL has changed only three times, and hopefully never again). The current site is hosted by the excellent folks at\n.\nThe PNG web site is organized into four basic categories of information (blue and white headings below), not counting the separate\n(covering PNG's animated and lossy cousins). A\nto the 110+ pages is available, but the basics are summarized here.\nThe\nbelow is worth reading both for general background and for a summary of PNG's main features, but most non-programmers will probably find the\n, the\n, and perhaps the\nto be of the greatest interest and utility. The\n, on the other hand, are no longer particularly important (or maintained), insofar as virtually every image-related application has supported PNG natively--and well--for more than a decade. They too are now historical in nature.\n(\nrecommended for new visitors\n)\n(\nrecommended for new visitors\n)\n(\nrecommended for new visitors\n)\n(and a\n)\n(includes\nmailing lists\n)\n(\n)\n(also\n)\nPNG Programming Information:\nPNG Images:\n(also\n)\n(includes links to screenshots)",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "General Information",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "[PNG: 800x600 colored-balls logo]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "Programming Resources",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 16,
+   "label": "Images",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 17,
+   "label": "Animation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 18,
+   "label": "[PNG: 800x600 colored-balls logo]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 19,
+   "label": "FAQ",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 20,
+   "label": "Greg Roelofs",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 35,
+   "label": "[download libpng]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 36,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 37,
+   "label": "[cover]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 38,
+   "label": "[images]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 39,
+   "label": "[Valid HTML 4.0]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 53,
+   "label": "[Yahoo! Search]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 54,
+   "label": "[Yahoo! Search]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 55,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 56,
+   "label": "Search",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 57,
+   "label": "Search this site",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 58,
+   "label": "Search the web",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 59,
+   "label": "[download libpng]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 60,
+   "label": "http://www.libpng.org/pub/png/",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 61,
+   "label": "SourceForge",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 62,
+   "label": "[primary site hosted by SourceForge]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 63,
+   "label": "[primary site hosted by SourceForge]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 64,
+   "label": "MNG site",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 65,
+   "label": "complete site map",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 66,
+   "label": "informal history",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 67,
+   "label": "basic introduction",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 68,
+   "label": "FAQ",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 69,
+   "label": "longer history",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 70,
+   "label": "PNG-supporting application lists",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 71,
+   "label": "A Basic Introduction to PNG Features",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 72,
+   "label": "Current Status of PNG",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 73,
+   "label": "Frequently Asked Questions",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 74,
+   "label": "An Informal History of PNG",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 75,
+   "label": "More Detailed History",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 76,
+   "label": "News of the PNG Development Group",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 77,
+   "label": "Links to Other PNG Resources",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 78,
+   "label": "[cover]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 79,
+   "label": "PNG Technical Documentation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 80,
+   "label": "PNG Specification and Extensions",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 81,
+   "label": "latest version",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 82,
+   "label": "zlib Technical Documentation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 83,
+   "label": "zlib",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 84,
+   "label": "Technical Documentation",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 85,
+   "label": "MNG / JNG Technical Documentation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 86,
+   "label": "PNG: The Definitive Guide and Related Books",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 87,
+   "label": "PNG: The Definitive Guide",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 88,
+   "label": "and Related Books",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 89,
+   "label": "Applications with PNG Support",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 90,
+   "label": "Browsers",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 91,
+   "label": "Image Viewers",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 92,
+   "label": "Image Editors",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 93,
+   "label": "Image Converters",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 94,
+   "label": "3D Applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 95,
+   "label": "VRML Browsers",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 96,
+   "label": "Games / Entertainment",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 97,
+   "label": "Office / Business Applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 98,
+   "label": "Scientific / Graphing Applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 99,
+   "label": "Miscellaneous Applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 100,
+   "label": "Hardware with PNG Support",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 101,
+   "label": "PNG-supporting Libraries and Toolkits",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 102,
+   "label": "libpng home page",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 103,
+   "label": "libpng",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 104,
+   "label": "home page",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 105,
+   "label": "zlib home page",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 106,
+   "label": "zlib",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 107,
+   "label": "home page",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 108,
+   "label": "libmng home page",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 109,
+   "label": "libmng",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 110,
+   "label": "home page",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 111,
+   "label": "PNG Source Code",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 112,
+   "label": "[images]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 113,
+   "label": "Willem van Schaik's Test Suite of PNG Icons",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 114,
+   "label": "Greg's Test Suite of PNG Textures for VRML",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 115,
+   "label": "Ray-traced PNG Interlacing Demo",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 116,
+   "label": "JPEG version",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 117,
+   "label": "Miscellaneous Transparent PNGs using IMG Tags",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 118,
+   "label": "Miscellaneous Transparent PNGs using OBJECT Tags",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 119,
+   "label": "strict HTML 4.0 version",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 120,
+   "label": "Miscellaneous 32-bit RGBA PNGs",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 121,
+   "label": "Icicles",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 122,
+   "label": "Redbrush flower",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 123,
+   "label": "Magnolia tree",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 124,
+   "label": "Horned Owl",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 125,
+   "label": "Browser Gamma-Correction Test",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 126,
+   "label": "Browser Color-Correction Test",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 127,
+   "label": "Links to Other PNG Resources",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 128,
+   "label": "Multiple-image Network Graphics (MNG) Home Site",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 129,
+   "label": "spiffier features",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 130,
+   "label": "majorly gnarly two-dimensional interlacing scheme",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 131,
+   "label": "free and complete reference implementation with full source code",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 132,
+   "label": "Basic Introduction to PNG Features",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 133,
+   "label": "July 1995 issue",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 134,
+   "label": "Dr. Dobb's Journal",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 135,
+   "label": "Lee Crocker",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 136,
+   "label": "PNG: The Definitive Guide",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 137,
+   "label": "Portable Network Graphics Specification",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 138,
+   "label": "Portable Network Graphics",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 139,
+   "label": "Specification",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 140,
+   "label": "W3C",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 141,
+   "label": "PNG documentation page",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 142,
+   "label": "PNG page",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 143,
+   "label": "press release",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 144,
+   "label": "10 May 1999",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 145,
+   "label": "VRML97",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 146,
+   "label": "3 March 2004",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 147,
+   "label": "PNG Second Edition",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 148,
+   "label": "UK profile",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 149,
+   "label": "Multimedia Home Platform",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 150,
+   "label": "Home Audio-Video Interoperability",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 151,
+   "label": "MNG",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 152,
+   "label": "free reference library",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 153,
+   "label": "applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 154,
+   "label": "programming tools",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 155,
+   "label": "[PNG (apps) now!]",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 156,
+   "label": "[PNG (apps) now!]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 157,
+   "label": "General Information",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 158,
+   "label": "Applications",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 159,
+   "label": "Programming Resources",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 160,
+   "label": "Images",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 161,
+   "label": "Animation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 162,
+   "label": "[Valid HTML 4.0]",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 163,
+   "label": "Greg Roelofs",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 164,
+   "label": "contact",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 165,
+   "label": "png-printable.html",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-931cebd5-67f2-446c-aac8-4b15b79492cd",
+ "secret_names": []
+}

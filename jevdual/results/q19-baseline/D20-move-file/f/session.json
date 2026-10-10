@@ -1,0 +1,301 @@
+{
+ "dir": "results/q19-baseline/D20-move-file/f",
+ "app": "Finder",
+ "pid": 652,
+ "window_id": 3240,
+ "task": "Move d20.txt into archive",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: menu(Edit > Copy \u201cd20.txt\u201d) -> refused"
+ ],
+ "last_url": "app://Finder",
+ "last_title": "D20-move-file",
+ "last_page_text": "Recents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\nName\nDate Modified\nSize\nKind\nToday at 8:05 PM\n--\nFolder\nToday at 8:05 PM\n8 bytes\nPlain Text\n2 items, 24.9 GB available\nD20-move-file\narchive\nd20.txt",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "sidebar",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 29,
+   "label": "Eject",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 59,
+   "label": "list view",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 62,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "archive",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 63,
+   "label": "NSOutlineViewDisclosureButtonKey",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 65,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "d20.txt",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 66,
+   "label": "Name",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 67,
+   "label": "Date Modified",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 68,
+   "label": "Size",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 69,
+   "label": "Kind",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 71,
+   "label": "icon view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 72,
+   "label": "list view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "section": null
+  },
+  {
+   "id": 73,
+   "label": "column view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 74,
+   "label": "gallery view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 75,
+   "label": "Group",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 76,
+   "label": "Action",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 77,
+   "label": "Search",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 81,
+   "label": "D20-move-file",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 322,
+   "label": "Crusader Kings II",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 323,
+   "label": "Documents",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 324,
+   "label": "External SSD",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

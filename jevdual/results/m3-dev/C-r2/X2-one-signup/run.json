@@ -1,0 +1,100 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.93) [274 ms]: complete p=0.93, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Fill name field",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Name"
+   },
+   "exit": 0,
+   "output": "note: the window changed since your last look (title changed to 'Volunteer rota'); ids below are from the fresh observation\ndestructive judgment: p=0.08 on 'Name'\ndispatched click(Name): driver says unverifiable in 0.2s\nreceipt: Receipt for click(Name): suspected no-op (no change: same URL /m3-signup.html, no elements added, removed or changed, text unchanged).\nGoogle Chrome (footwork): 'Volunteer rota'\n5 elements:\n  [   0] textbox    'Name'\n  [   1] textbox    'Team'\n  [   2] button     'Sign up'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\npage text (67 chars):\nVolunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam",
+   "ms": 6762.974458004464,
+   "input_tokens": 826,
+   "output_tokens": 316
+  },
+  {
+   "step": 2,
+   "note": "Type name into Name field",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "type",
+    "target": "Name",
+    "text": "Ada Byron"
+   },
+   "exit": 0,
+   "output": "dispatched type(Name) text='Ada Byron': driver says unverifiable in 0.1s\nreceipt: Receipt for type(Name) text='Ada Byron': confirmed ('Name' now holds 'Ada Byron').\nGoogle Chrome (footwork): 'Volunteer rota'\n6 elements:\n  [   1] textbox    'Name' = 'Ada Byron'\n  [   2] textbox    'Team'\n  [   3] button     'Sign up'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\n  [  14] statictext 'Ada Byron'\npage text (77 chars):\nVolunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam\nAda Byron",
+   "ms": 7466.877124999883,
+   "input_tokens": 824,
+   "output_tokens": 318
+  },
+  {
+   "step": 3,
+   "note": "Enter team Blue",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "type",
+    "target": "Team",
+    "text": "Blue"
+   },
+   "exit": 0,
+   "output": "dispatched type(Team) text='Blue': driver says unverifiable in 0.1s\nreceipt: Receipt for type(Team) text='Blue': confirmed ('Team' now holds 'Blue').\nGoogle Chrome (footwork): 'Volunteer rota'\n7 elements:\n  [   1] textbox    'Team' = 'Blue'\n  [   2] textbox    'Name' = 'Ada Byron'\n  [   3] button     'Sign up'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\n  [  14] statictext 'Ada Byron'\n  [  15] statictext 'Blue'\npage text (82 chars):\nVolunteer rota sign-up\nLocal simulation: no real sign-up.\nName\nTeam\nBlue\nAda Byron",
+   "ms": 5095.477208000375,
+   "input_tokens": 834,
+   "output_tokens": 237
+  },
+  {
+   "step": 4,
+   "note": "Submit the completed sign-up form",
+   "action": {
+    "name": "do",
+    "surface": "web",
+    "op": "click",
+    "target": "Sign up"
+   },
+   "exit": 0,
+   "output": "dispatched click(Sign up): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Sign up): confirmed (navigated to /m3-signup-done.html?name=Ada+Byron&team=Blue; 1 elements added, 6 removed, 0 changed).\nGoogle Chrome (footwork): 'Volunteer rota'\n1 elements:\n  [   0] link       'Back to the rota'\npage text (54 chars):\nSign-up recorded\nThank you. The rota has your sign-up.",
+   "ms": 2843.687790998956,
+   "input_tokens": 885,
+   "output_tokens": 73
+  },
+  {
+   "step": 5,
+   "note": "Read confirmation text to carry into done",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "(Sign-up recorded)",
+    "as": "RESULT"
+   },
+   "exit": 0,
+   "output": "carried @RESULT = 'Sign-up recorded', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue (text 'Sign-up recorded', its match) at step 4 of session results/m3-dev/C-r2/X2-one-signup/web",
+   "ms": 9961.274291999871,
+   "input_tokens": 887,
+   "output_tokens": 506
+  },
+  {
+   "step": 6,
+   "note": "Sign-up confirmed, finishing task",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@RESULT"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.93) [274 ms]: complete p=0.93, max unmet p=0.00\naccepted. session closed.",
+   "ms": 4427.977125000325,
+   "input_tokens": 991,
+   "output_tokens": 215
+  }
+ ],
+ "answer": "Sign-up recorded",
+ "input_tokens": 5247,
+ "output_tokens": 1665
+}

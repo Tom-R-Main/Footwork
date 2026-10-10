@@ -1,0 +1,28 @@
+# Native advisory visual checks
+
+## VC1 · prediction · 2026-10-08 18:57
+Question: can a narrow visual request/result service preserve source and observation identity through the operator CLI and native System Two handoff without granting execution authority?
+Hypothesis: immutable question-oriented evidence, explicit role routing, request-generation invalidation and a persisted one-call reservation make native visual inspection useful without changing current Jev or dispatch paths.
+Test: implement plan Units 1–4 with two advisory predicate families; exercise real CLI against task-owned native UI and a local Decisions-contract endpoint, plus stateful scenarios for disclosure, unsupported browser, source mutation, deadlines, late replies, refused/invalid responses and stale handoffs. No paid provider calls or new keys.
+Predicts: both input families yield bound advisory receipts; no action or grant is emitted; invalid/withheld/stale evidence cannot produce a consumable positive; duplicate calls and unknown usage retain bounded reservations; System Two receives identity and explicit absent pixel capability.
+Against: any provider call before disclosure validation, stale/changed resource or generation admitted, recovery budget reset by new wording/IDs, action authority from probability, implicit remote image visibility or a fabricated native capture.
+Refs: docs/visual-system-one-plan.md; python/jevdual/session.py; python/jevdual/visual_evidence.py; python/jevdual/desktop_s2.py
+
+## U-VCBOUNDARY · update · 2026-10-08 19:15
+Observed: Independent source review reproduced a valid printed receipt after the source changed during provider cleanup; the real CLI scenario failed before final reconciliation and passed after it. A two-call ledger regression also failed when only caller resource metadata changed, then passed after canonical appearance dedup excluded aliases/revisions/ownership. The native System Two packet initially omitted target/question association; it now carries the redacted criterion, target and resource/crop context. Independent recheck confirms all three corrections, including preserved refusal status and erased historical probabilities.
+Inferred: Transport-time validation alone cannot certify the caller's output, and caller-declared metadata cannot earn another appearance judgment. Boundary checks belong at final consumption and at the persisted workflow reservation.
+Next: Freeze source and exercise actual native CLI/Cua input variants against an owned loopback contract endpoint; keep VC1 open until that proof. No paid API request or action authority was introduced.
+Refs: tests/test_visual_native.py; tests/test_visual_decisions.py; python/jevdual/visual_native.py; python/jevdual/visual_decisions.py; python/jevdual/desktop_s2.py
+
+## U-VCPROOF · update · 2026-10-08 19:22
+Resolves: VC1 = held
+Observed: Frozen native advisory source 82aef06 passes 1023 offline tests with 26 skipped, plus Ruff/notebook checks. Actual CLI/Cua verification on separate task-owned document-preview and crop AppKit scenes passes twelve selected scenarios per run and six loopback requests. Captures and receipts decode/read back; source/generation changes invalidate, refusals/timeouts omit probability, unknown usage stays reserved and duplicate calls do not dispatch. Action sentinels, fixture outcomes and grant readback show zero execution/authority. Native System Two's actual message builder retains typed question association and explicit absent pixels. Parent rechecks source/image hashes and owned-process cleanup.
+Inferred: VC1 holds for the implemented advisory protocol and native integration mechanics after recorded boundary fixes, not independent visual accuracy, live pixel freshness, calibrated admission or autonomous recovery. The client is opt-in; ordinary Jev/action routes stay unchanged.
+Next: Preserve proof and document the capability. Independent real-app cases/provider qualification and reviewed execution remain separate packages; no current default activation is justified.
+Refs: results/visual-checks-native-20261008/report.md; results/visual-checks-native-20261008/evidence1/verification.json; results/visual-checks-native-20261008/checks.json; scripts/verify_visual_checks.py; 82aef06
+
+## S-VCPACKAGE · summary · 2026-10-08 19:22
+Established: Built and checked explicit native visual request/evidence/result contracts, two advisory families, bounded production image adapter, private operator CLI and structured native System Two handoff. Preregistered prediction precedes implementation checks; independent context review found and closed stale-output, metadata-retry and question-association defects. Product/source/proof and repeatable verification are retained.
+Uncertain: Real OpenAI behavior/performance through the new adapter, independent perception quality/calibration, application discovery, complete System Two recovery, qualified live visual preconditions, browser capture and actual crop/save execution remain unavailable. Fixed loopback probabilities are not accuracy evidence.
+Decision: Complete the local native advisory package, preserving Jev text roles and all existing authorization/admission settings. Explicit workflow/operator requests invoke vision; no automatic missing-evidence classifier or visual action gate. No paid calls, key creation, dependency change, heldout run, PR, push or deployment. Unrelated refactor planning files remain untouched.
+Refs: docs/visual-checks.md; docs/visual-system-one-plan.md; results/visual-checks-native-20261008/report.md; python/jevdual/visual_native.py; python/jevdual/visual_decisions.py

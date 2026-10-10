@@ -1,0 +1,1 @@
+stopped: two saves failed (receipts true); the operator closed the window, ending the attempt

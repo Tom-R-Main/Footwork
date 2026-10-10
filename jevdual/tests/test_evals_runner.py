@@ -320,6 +320,39 @@ def test_redact_results_keeps_task_ids_intact(tmp_path):
     assert row["task_id"] == victim.id and secret not in row["answer"] and "[REDACTED" in row["answer"]
 
 
+@pytest.mark.parametrize("platform", ["linux", "darwin"])
+def test_redact_results_without_mac_hardware_probe_still_scrubs_task_secrets(tmp_path, monkeypatch, platform):
+    import runpy
+    import subprocess
+    import sys
+    from types import SimpleNamespace
+
+    from evals.tasks import schema
+
+    secret = "synthetic-task-secret-value"
+    monkeypatch.setattr(schema, "load_all", lambda: {"dev": [SimpleNamespace(id="fixture", secrets={"token": secret})]})
+    monkeypatch.setattr(sys, "platform", platform)
+    probes = []
+
+    def missing_hardware_probe(argv, **kwargs):
+        probes.append(argv)
+        assert argv == ["system_profiler", "SPHardwareDataType"]
+        raise FileNotFoundError("synthetic unavailable macOS hardware probe")
+
+    monkeypatch.setattr(subprocess, "run", missing_hardware_probe)
+    run = tmp_path / "run"
+    run.mkdir()
+    path = run / "results.json"
+    path.write_text(json.dumps({"task_id": "fixture", "answer": secret}))
+    monkeypatch.setattr(sys, "argv", ["redact_results", str(run)])
+    script = Path(__file__).resolve().parents[1] / "scripts/redact_results.py"
+    runpy.run_path(str(script), run_name="__main__")
+    result = json.loads(path.read_text())
+    assert result["task_id"] == "fixture" and secret not in result["answer"]
+    assert "[REDACTED" in result["answer"]
+    assert len(probes) == (1 if platform == "darwin" else 0)
+
+
 def test_cli_builds_a_policy_factory_for_every_policy_arm():
     """Q11 smoke: the CLI once listed the arms by hand and the new guarded arms crashed with
     "needs a policy_factory". Every arm except stock and scripted needs the factory."""

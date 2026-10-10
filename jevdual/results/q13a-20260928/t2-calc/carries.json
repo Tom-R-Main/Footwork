@@ -1,0 +1,17 @@
+{
+ "result": {
+  "name": "result",
+  "text": "624",
+  "surface": "native",
+  "app": "Calculator",
+  "location": "app://Calculator",
+  "title": "Calculator",
+  "element_id": -1,
+  "element_label": "624",
+  "element_role": "text",
+  "part": "match",
+  "step": 7,
+  "session": "results/q13a-20260928/t2-calc",
+  "taken_at": 1790572988.117601
+ }
+}

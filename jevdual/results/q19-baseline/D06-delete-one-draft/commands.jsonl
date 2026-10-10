@@ -1,0 +1,4 @@
+{"t": 1790631557.8131242, "surface": "web", "args": ["start", "Delete the Q3 plan draft only", "--browser", "--url", "http://127.0.0.1:8767/q19-drafts.html"], "exit": 0, "s": 2.72}
+{"t": 1790631572.1627488, "surface": "web", "args": ["do", "click", "1"], "exit": 3, "s": 0.9}
+{"t": 1790631572.708471, "surface": "web", "args": ["grant", "click", "1"], "exit": 0, "s": 0.45}
+{"t": 1790631574.596941, "surface": "web", "args": ["do", "click", "1"], "exit": 0, "s": 1.7}

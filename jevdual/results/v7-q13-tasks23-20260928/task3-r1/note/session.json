@@ -1,0 +1,45 @@
+{
+ "dir": "results/v7-q13-tasks23-20260928/task3-r1/note",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 2004,
+ "task": "Search the shop for the text after 'Next search:' in the TextEdit note notes-3-1-023007.txt.",
+ "requirements": [
+  "The value read is the text after 'Next search:'"
+ ],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'Next search: quarterly report' as @QUERY",
+  "step 1: done refused (answer carries no fact found on the page (0 unsupported, rest narrative); comple)",
+  "step 1: done refused (answer carries no fact found on the page (0 unsupported, rest narrative); comple)",
+  "step 1: done refused (1 unsupported claim(s) dropped; uncertain: complete p=0.54, max unmet p=0.49)"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "notes-3-1-023007.txt",
+ "last_page_text": "notes-3-1-023007.txt\nNext search: quarterly report",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Next search: quarterly report",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

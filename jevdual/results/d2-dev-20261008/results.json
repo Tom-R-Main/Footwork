@@ -1,0 +1,6842 @@
+[
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+    "body_bytes": 354,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 198,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 198
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 463.53,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 463.6,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.98e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 354,
+      "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+      "input_tokens": 198
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "7d432cbb07812d086e9e3d0f1b3424129f0da41ffa0d106042670b14ee73835b",
+    "body_bytes": 13143,
+    "image_sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 335,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 335
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 354.24,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 354.28,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.35e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13143,
+      "request_sha256": "7d432cbb07812d086e9e3d0f1b3424129f0da41ffa0d106042670b14ee73835b",
+      "input_tokens": 335
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+    "body_bytes": 478,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 352,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 267.06,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4784000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 478,
+      "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+      "input_tokens": 352
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "ec7ac4954909c033f6a1de194ed02eb1019d4188327708cc22711a9a45238d37",
+    "body_bytes": 13253,
+    "image_sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 349,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 349
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 176.52,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 176.55,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.49e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13253,
+      "request_sha256": "ec7ac4954909c033f6a1de194ed02eb1019d4188327708cc22711a9a45238d37",
+      "input_tokens": 349
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+    "body_bytes": 354,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 198,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 198
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 140.49,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 140.53,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.98e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 354,
+      "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+      "input_tokens": 198
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+    "body_bytes": 478,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 352,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 155.02,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4784000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 478,
+      "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+      "input_tokens": 352
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "6f0f34731b73ff1c1f7ea01b2c1a8db8225674a5968f8def0559b8ce41b65414",
+    "body_bytes": 17607,
+    "image_sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.01
+        }
+      ],
+      "usage": {
+        "input_tokens": 335,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 335
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 161.75,
+    "native_probability": 0.01,
+    "band": "false",
+    "latency_ms": 161.78,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.35e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 17607,
+      "request_sha256": "6f0f34731b73ff1c1f7ea01b2c1a8db8225674a5968f8def0559b8ce41b65414",
+      "input_tokens": 335
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "7cd3a3fdafb6f60e994b8ca98dde688a7bf97ef37b955bfbedfd593563621eb2",
+    "body_bytes": 17717,
+    "image_sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 349,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 349
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 166.59,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 166.61,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.49e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 17717,
+      "request_sha256": "7cd3a3fdafb6f60e994b8ca98dde688a7bf97ef37b955bfbedfd593563621eb2",
+      "input_tokens": 349
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+    "body_bytes": 478,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 352,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.54
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.54,
+    "band": "unknown",
+    "latency_ms": 136.36,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4784000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 478,
+      "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+      "input_tokens": 352
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+    "body_bytes": 354,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 198,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 198
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 142.47,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 142.52,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.98e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 354,
+      "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+      "input_tokens": 198
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "ec7ac4954909c033f6a1de194ed02eb1019d4188327708cc22711a9a45238d37",
+    "body_bytes": 13253,
+    "image_sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 349,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 349
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 182.06,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 182.07,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.49e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13253,
+      "request_sha256": "ec7ac4954909c033f6a1de194ed02eb1019d4188327708cc22711a9a45238d37",
+      "input_tokens": 349
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "7d432cbb07812d086e9e3d0f1b3424129f0da41ffa0d106042670b14ee73835b",
+    "body_bytes": 13143,
+    "image_sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 335,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 335
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 126.62,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 126.63,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.35e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13143,
+      "request_sha256": "7d432cbb07812d086e9e3d0f1b3424129f0da41ffa0d106042670b14ee73835b",
+      "input_tokens": 335
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+    "body_bytes": 354,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 198,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 198
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 115.54,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 115.58,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.98e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 354,
+      "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+      "input_tokens": 198
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "6f0f34731b73ff1c1f7ea01b2c1a8db8225674a5968f8def0559b8ce41b65414",
+    "body_bytes": 17607,
+    "image_sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.01
+        }
+      ],
+      "usage": {
+        "input_tokens": 335,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 335
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 122.32,
+    "native_probability": 0.01,
+    "band": "false",
+    "latency_ms": 122.34,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.35e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 17607,
+      "request_sha256": "6f0f34731b73ff1c1f7ea01b2c1a8db8225674a5968f8def0559b8ce41b65414",
+      "input_tokens": 335
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "7cd3a3fdafb6f60e994b8ca98dde688a7bf97ef37b955bfbedfd593563621eb2",
+    "body_bytes": 17717,
+    "image_sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 349,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 349
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 145.68,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 145.69,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.49e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 17717,
+      "request_sha256": "7cd3a3fdafb6f60e994b8ca98dde688a7bf97ef37b955bfbedfd593563621eb2",
+      "input_tokens": 349
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+    "body_bytes": 478,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 352,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.54
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.54,
+    "band": "unknown",
+    "latency_ms": 129.98,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4784000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 478,
+      "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+      "input_tokens": 352
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+    "body_bytes": 354,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 198,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 198
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 313.19,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 313.24,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.98e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 354,
+      "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+      "input_tokens": 198
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "ec7ac4954909c033f6a1de194ed02eb1019d4188327708cc22711a9a45238d37",
+    "body_bytes": 13253,
+    "image_sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 349,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 349
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 183.49,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 183.51,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.49e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13253,
+      "request_sha256": "ec7ac4954909c033f6a1de194ed02eb1019d4188327708cc22711a9a45238d37",
+      "input_tokens": 349
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+    "body_bytes": 478,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 352,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 127.65,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4784000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 478,
+      "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+      "input_tokens": 352
+    }
+  },
+  {
+    "id": "f06",
+    "category": "modal_occlusion",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "7d432cbb07812d086e9e3d0f1b3424129f0da41ffa0d106042670b14ee73835b",
+    "body_bytes": 13143,
+    "image_sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 335,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 335
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 137.31,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 137.34,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.35e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13143,
+      "request_sha256": "7d432cbb07812d086e9e3d0f1b3424129f0da41ffa0d106042670b14ee73835b",
+      "input_tokens": 335
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "6f0f34731b73ff1c1f7ea01b2c1a8db8225674a5968f8def0559b8ce41b65414",
+    "body_bytes": 17607,
+    "image_sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.01
+        }
+      ],
+      "usage": {
+        "input_tokens": 335,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 335
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 125.76,
+    "native_probability": 0.01,
+    "band": "false",
+    "latency_ms": 125.78,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.35e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 17607,
+      "request_sha256": "6f0f34731b73ff1c1f7ea01b2c1a8db8225674a5968f8def0559b8ce41b65414",
+      "input_tokens": 335
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+    "body_bytes": 354,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 198,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 198
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 149.12,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 149.15,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.98e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 354,
+      "request_sha256": "786c4d3c3f6088d25e0678a83ad3a52e9aefe6a2f2867a7ddcec6643dc611b92",
+      "input_tokens": 198
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "7cd3a3fdafb6f60e994b8ca98dde688a7bf97ef37b955bfbedfd593563621eb2",
+    "body_bytes": 17717,
+    "image_sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 349,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 349
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 126.95,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 126.96,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.49e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 17717,
+      "request_sha256": "7cd3a3fdafb6f60e994b8ca98dde688a7bf97ef37b955bfbedfd593563621eb2",
+      "input_tokens": 349
+    }
+  },
+  {
+    "id": "f07",
+    "category": "modal_occlusion",
+    "expected": false,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+    "body_bytes": 478,
+    "image_sha256": null,
+    "prompt_sha256": "2d68023399f9a9cc9adb424ea0f7ceed57dcb5df13fad1502279ce1eed0cd405",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 352,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.54
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.54,
+    "band": "unknown",
+    "latency_ms": 126.84,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4784000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 478,
+      "request_sha256": "3af9b760bef6e0b90a70b6c13e0f4fed1a6a7a84116be77a6b08ba173d54dcaa",
+      "input_tokens": 352
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "6588f8d3ec386494ba195d2957731d32c189b06c9fceb576515bf5f3d78199db",
+    "body_bytes": 13277,
+    "image_sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 339,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 339
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 138.19,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 138.22,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.39e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13277,
+      "request_sha256": "6588f8d3ec386494ba195d2957731d32c189b06c9fceb576515bf5f3d78199db",
+      "input_tokens": 339
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+    "body_bytes": 438,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 147.94,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4364e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 438,
+      "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+    "body_bytes": 314,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 188,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 188
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 565.52,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 565.58,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.88e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 314,
+      "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+      "input_tokens": 188
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "f77ae451a84affefacb13f0255161fa0b40542a0cde7952ac7924af513f3e350",
+    "body_bytes": 13197,
+    "image_sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 331,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 331
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 134.02,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 134.03,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.31e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13197,
+      "request_sha256": "f77ae451a84affefacb13f0255161fa0b40542a0cde7952ac7924af513f3e350",
+      "input_tokens": 331
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "0eb6f8d0eb570eab3c181a0df4e9cfb880299dd8fc766abfb1622293ab7f71af",
+    "body_bytes": 13261,
+    "image_sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 339,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 339
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 141.27,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 141.3,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.39e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13261,
+      "request_sha256": "0eb6f8d0eb570eab3c181a0df4e9cfb880299dd8fc766abfb1622293ab7f71af",
+      "input_tokens": 339
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+    "body_bytes": 438,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 121.94,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4364e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 438,
+      "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+    "body_bytes": 314,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 188,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 188
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 156.04,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 156.11,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.88e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 314,
+      "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+      "input_tokens": 188
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "7e1c0c3b2c141a7c568e0c100c18c3b5d05c2addda98fa778da07ad86151e88e",
+    "body_bytes": 13181,
+    "image_sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 331,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 331
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 235.0,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 235.01,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.31e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13181,
+      "request_sha256": "7e1c0c3b2c141a7c568e0c100c18c3b5d05c2addda98fa778da07ad86151e88e",
+      "input_tokens": 331
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+    "body_bytes": 438,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 117.75,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4364e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 438,
+      "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "6588f8d3ec386494ba195d2957731d32c189b06c9fceb576515bf5f3d78199db",
+    "body_bytes": 13277,
+    "image_sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 339,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 339
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 159.63,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 159.66,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.39e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13277,
+      "request_sha256": "6588f8d3ec386494ba195d2957731d32c189b06c9fceb576515bf5f3d78199db",
+      "input_tokens": 339
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+    "body_bytes": 314,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 188,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 188
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 686.63,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 686.66,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.88e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 314,
+      "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+      "input_tokens": 188
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "f77ae451a84affefacb13f0255161fa0b40542a0cde7952ac7924af513f3e350",
+    "body_bytes": 13197,
+    "image_sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 331,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 331
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 178.96,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 178.98,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.31e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13197,
+      "request_sha256": "f77ae451a84affefacb13f0255161fa0b40542a0cde7952ac7924af513f3e350",
+      "input_tokens": 331
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+    "body_bytes": 438,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 126.38,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4364e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 438,
+      "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "7e1c0c3b2c141a7c568e0c100c18c3b5d05c2addda98fa778da07ad86151e88e",
+    "body_bytes": 13181,
+    "image_sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 331,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 331
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 162.21,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 162.24,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.31e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13181,
+      "request_sha256": "7e1c0c3b2c141a7c568e0c100c18c3b5d05c2addda98fa778da07ad86151e88e",
+      "input_tokens": 331
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+    "body_bytes": 314,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 188,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 188
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 371.51,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 371.57,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.88e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 314,
+      "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+      "input_tokens": 188
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "0eb6f8d0eb570eab3c181a0df4e9cfb880299dd8fc766abfb1622293ab7f71af",
+    "body_bytes": 13261,
+    "image_sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 339,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 339
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 179.78,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 179.81,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.39e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13261,
+      "request_sha256": "0eb6f8d0eb570eab3c181a0df4e9cfb880299dd8fc766abfb1622293ab7f71af",
+      "input_tokens": 339
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "0eb6f8d0eb570eab3c181a0df4e9cfb880299dd8fc766abfb1622293ab7f71af",
+    "body_bytes": 13261,
+    "image_sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 339,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 339
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 164.39,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 164.41,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.39e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13261,
+      "request_sha256": "0eb6f8d0eb570eab3c181a0df4e9cfb880299dd8fc766abfb1622293ab7f71af",
+      "input_tokens": 339
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+    "body_bytes": 438,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 131.91,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4364e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 438,
+      "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "7e1c0c3b2c141a7c568e0c100c18c3b5d05c2addda98fa778da07ad86151e88e",
+    "body_bytes": 13181,
+    "image_sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 331,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 331
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 120.57,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 120.59,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.31e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13181,
+      "request_sha256": "7e1c0c3b2c141a7c568e0c100c18c3b5d05c2addda98fa778da07ad86151e88e",
+      "input_tokens": 331
+    }
+  },
+  {
+    "id": "f03",
+    "category": "radio",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+    "body_bytes": 314,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 188,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 188
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 127.73,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 127.76,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.88e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 314,
+      "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+      "input_tokens": 188
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "f77ae451a84affefacb13f0255161fa0b40542a0cde7952ac7924af513f3e350",
+    "body_bytes": 13197,
+    "image_sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 331,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 331
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 157.62,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 157.63,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.31e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13197,
+      "request_sha256": "f77ae451a84affefacb13f0255161fa0b40542a0cde7952ac7924af513f3e350",
+      "input_tokens": 331
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "6588f8d3ec386494ba195d2957731d32c189b06c9fceb576515bf5f3d78199db",
+    "body_bytes": 13277,
+    "image_sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 339,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 339
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 124.67,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 124.68,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.39e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 13277,
+      "request_sha256": "6588f8d3ec386494ba195d2957731d32c189b06c9fceb576515bf5f3d78199db",
+      "input_tokens": 339
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+    "body_bytes": 438,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 133.23,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4364e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 438,
+      "request_sha256": "feaa46a149e03cf1687a7bddd0d201829aed91da7f7d5d59fec4762fe4601ca8",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f02",
+    "category": "radio",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+    "body_bytes": 314,
+    "image_sha256": null,
+    "prompt_sha256": "17fa3a96a8385c17260a515e4a45fc096e8084b53718aba6dd98ade4ac6a825b",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 188,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 188
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 148.11,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 148.16,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.88e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 314,
+      "request_sha256": "559f598d9d23ba4afefe9080d2389acc783d04db83eecb74f08738503b20780e",
+      "input_tokens": 188
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+    "body_bytes": 352,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 192,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 192
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 126.41,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 126.49,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.9200000000000003e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 352,
+      "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+      "input_tokens": 192
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+    "body_bytes": 463,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 343,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 162.71,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4406e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 463,
+      "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "70788f3baef12f409096a42ce824257b626ed6582418f91c1f3e94d25b4f32e9",
+    "body_bytes": 14735,
+    "image_sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 343,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 343
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 962.29,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 962.33,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.430000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14735,
+      "request_sha256": "70788f3baef12f409096a42ce824257b626ed6582418f91c1f3e94d25b4f32e9",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "95f38091b9704e5be252be963ccddb8712d3a08f9dc1d482384b079f9af207c0",
+    "body_bytes": 14648,
+    "image_sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 146.63,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 146.66,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14648,
+      "request_sha256": "95f38091b9704e5be252be963ccddb8712d3a08f9dc1d482384b079f9af207c0",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "11ae765c083956718e607c82e70e24413dd4aa6711d07b200539728c398b6640",
+    "body_bytes": 14648,
+    "image_sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 284.72,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 284.74,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14648,
+      "request_sha256": "11ae765c083956718e607c82e70e24413dd4aa6711d07b200539728c398b6640",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+    "body_bytes": 352,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 192,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 192
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 280.55,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 280.59,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.9200000000000003e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 352,
+      "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+      "input_tokens": 192
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+    "body_bytes": 463,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 343,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 133.6,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4406e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 463,
+      "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "4c7b8a548c7ffd40b54918621c8e713c2bce84cc9a1d01c8c3d3d903b9049fa2",
+    "body_bytes": 14735,
+    "image_sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 343,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 343
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 145.76,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 145.85,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.430000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14735,
+      "request_sha256": "4c7b8a548c7ffd40b54918621c8e713c2bce84cc9a1d01c8c3d3d903b9049fa2",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+    "body_bytes": 352,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 192,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 192
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 632.29,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 632.33,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.9200000000000003e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 352,
+      "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+      "input_tokens": 192
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "11ae765c083956718e607c82e70e24413dd4aa6711d07b200539728c398b6640",
+    "body_bytes": 14648,
+    "image_sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 138.07,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 138.09,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14648,
+      "request_sha256": "11ae765c083956718e607c82e70e24413dd4aa6711d07b200539728c398b6640",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+    "body_bytes": 463,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 343,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 159.03,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4406e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 463,
+      "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "4c7b8a548c7ffd40b54918621c8e713c2bce84cc9a1d01c8c3d3d903b9049fa2",
+    "body_bytes": 14735,
+    "image_sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 343,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 343
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 390.08,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 390.11,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.430000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14735,
+      "request_sha256": "4c7b8a548c7ffd40b54918621c8e713c2bce84cc9a1d01c8c3d3d903b9049fa2",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "95f38091b9704e5be252be963ccddb8712d3a08f9dc1d482384b079f9af207c0",
+    "body_bytes": 14648,
+    "image_sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 214.05,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 214.07,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14648,
+      "request_sha256": "95f38091b9704e5be252be963ccddb8712d3a08f9dc1d482384b079f9af207c0",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+    "body_bytes": 463,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 343,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.55
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.55,
+    "band": "unknown",
+    "latency_ms": 123.37,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4406e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 463,
+      "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "70788f3baef12f409096a42ce824257b626ed6582418f91c1f3e94d25b4f32e9",
+    "body_bytes": 14735,
+    "image_sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 343,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 343
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 184.73,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 184.75,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.430000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14735,
+      "request_sha256": "70788f3baef12f409096a42ce824257b626ed6582418f91c1f3e94d25b4f32e9",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+    "body_bytes": 352,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 192,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 192
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 126.4,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 126.44,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.9200000000000003e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 352,
+      "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+      "input_tokens": 192
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+    "body_bytes": 463,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 343,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 129.23,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4406e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 463,
+      "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "70788f3baef12f409096a42ce824257b626ed6582418f91c1f3e94d25b4f32e9",
+    "body_bytes": 14735,
+    "image_sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 343,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 343
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 138.66,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 138.68,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.430000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14735,
+      "request_sha256": "70788f3baef12f409096a42ce824257b626ed6582418f91c1f3e94d25b4f32e9",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "95f38091b9704e5be252be963ccddb8712d3a08f9dc1d482384b079f9af207c0",
+    "body_bytes": 14648,
+    "image_sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 142.64,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 142.66,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14648,
+      "request_sha256": "95f38091b9704e5be252be963ccddb8712d3a08f9dc1d482384b079f9af207c0",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f05",
+    "category": "color_status",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+    "body_bytes": 352,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 192,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 192
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 112.26,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 112.31,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.9200000000000003e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 352,
+      "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+      "input_tokens": 192
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+    "body_bytes": 352,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 192,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 192
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 119.24,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 119.3,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.9200000000000003e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 352,
+      "request_sha256": "17bdc1c6bf545e73d67cb1f42c5dc24ceea9941f294a99015e13a915a608a572",
+      "input_tokens": 192
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "11ae765c083956718e607c82e70e24413dd4aa6711d07b200539728c398b6640",
+    "body_bytes": 14648,
+    "image_sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 277.75,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 277.77,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14648,
+      "request_sha256": "11ae765c083956718e607c82e70e24413dd4aa6711d07b200539728c398b6640",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+    "body_bytes": 463,
+    "image_sha256": null,
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 343,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.56
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.56,
+    "band": "unknown",
+    "latency_ms": 138.17,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4406e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 463,
+      "request_sha256": "142b3274fe5a60cdd0efe333daadb488f137850e7fa3d9d993fa32baf60c5308",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f04",
+    "category": "color_status",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "4c7b8a548c7ffd40b54918621c8e713c2bce84cc9a1d01c8c3d3d903b9049fa2",
+    "body_bytes": 14735,
+    "image_sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "prompt_sha256": "5e74cf6776bf959eb7f1dc5999427517aaab8b074738357fd39ca3f641ed1d79",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 343,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 343
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 150.52,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 150.57,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.430000000000001e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 14735,
+      "request_sha256": "4c7b8a548c7ffd40b54918621c8e713c2bce84cc9a1d01c8c3d3d903b9049fa2",
+      "input_tokens": 343
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+    "body_bytes": 441,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 371,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.51
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.51,
+    "band": "unknown",
+    "latency_ms": 143.92,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.5582e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 441,
+      "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+      "input_tokens": 371
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "2b0c1c373a29a9d8ee0856eb58b9756cf92b62a65e8589b89269330175b4fb40",
+    "body_bytes": 9088,
+    "image_sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 356,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 356
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 531.87,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 531.96,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.5600000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9088,
+      "request_sha256": "2b0c1c373a29a9d8ee0856eb58b9756cf92b62a65e8589b89269330175b4fb40",
+      "input_tokens": 356
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+    "body_bytes": 329,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 205,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 205
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 162.72,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 162.78,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 2.05e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 329,
+      "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+      "input_tokens": 205
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "b62306dd8dd40fde0434d15839a8c1edf7366eb51d44256f83d7d59cdbb78a47",
+    "body_bytes": 8994,
+    "image_sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 342,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 342
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 128.6,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 128.63,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.4200000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 8994,
+      "request_sha256": "b62306dd8dd40fde0434d15839a8c1edf7366eb51d44256f83d7d59cdbb78a47",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "b340d7e0db54cfc4f30c667e68b9762f5da2c5f19dacc1de069976353922b4b5",
+    "body_bytes": 9128,
+    "image_sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 356,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 356
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 181.94,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 181.96,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.5600000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9128,
+      "request_sha256": "b340d7e0db54cfc4f30c667e68b9762f5da2c5f19dacc1de069976353922b4b5",
+      "input_tokens": 356
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "3a6bd63d9ab929f4b69c19f123e96f2246a8c23c46c9ac3fe9884de31d2a1a4f",
+    "body_bytes": 9034,
+    "image_sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.87
+        }
+      ],
+      "usage": {
+        "input_tokens": 342,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 342
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 181.44,
+    "native_probability": 0.87,
+    "band": "true",
+    "latency_ms": 181.46,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.4200000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9034,
+      "request_sha256": "3a6bd63d9ab929f4b69c19f123e96f2246a8c23c46c9ac3fe9884de31d2a1a4f",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+    "body_bytes": 329,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 205,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 205
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 153.14,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 153.19,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 2.05e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 329,
+      "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+      "input_tokens": 205
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+    "body_bytes": 441,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 371,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.51
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.51,
+    "band": "unknown",
+    "latency_ms": 116.21,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.5582e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 441,
+      "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+      "input_tokens": 371
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "b340d7e0db54cfc4f30c667e68b9762f5da2c5f19dacc1de069976353922b4b5",
+    "body_bytes": 9128,
+    "image_sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 356,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 356
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 169.73,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 169.77,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.5600000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9128,
+      "request_sha256": "b340d7e0db54cfc4f30c667e68b9762f5da2c5f19dacc1de069976353922b4b5",
+      "input_tokens": 356
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+    "body_bytes": 441,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 371,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.51
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.51,
+    "band": "unknown",
+    "latency_ms": 110.06,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.5582e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 441,
+      "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+      "input_tokens": 371
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "3a6bd63d9ab929f4b69c19f123e96f2246a8c23c46c9ac3fe9884de31d2a1a4f",
+    "body_bytes": 9034,
+    "image_sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.87
+        }
+      ],
+      "usage": {
+        "input_tokens": 342,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 342
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 205.94,
+    "native_probability": 0.87,
+    "band": "true",
+    "latency_ms": 205.98,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.4200000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9034,
+      "request_sha256": "3a6bd63d9ab929f4b69c19f123e96f2246a8c23c46c9ac3fe9884de31d2a1a4f",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+    "body_bytes": 329,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 205,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 205
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 144.35,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 144.4,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 2.05e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 329,
+      "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+      "input_tokens": 205
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+    "body_bytes": 329,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 205,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 205
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 155.6,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 155.71,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 2.05e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 329,
+      "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+      "input_tokens": 205
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+    "body_bytes": 441,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 371,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.52
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 122.96,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.5582e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 441,
+      "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+      "input_tokens": 371
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "b62306dd8dd40fde0434d15839a8c1edf7366eb51d44256f83d7d59cdbb78a47",
+    "body_bytes": 8994,
+    "image_sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 342,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 342
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 272.37,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 272.47,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.4200000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 8994,
+      "request_sha256": "b62306dd8dd40fde0434d15839a8c1edf7366eb51d44256f83d7d59cdbb78a47",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "2b0c1c373a29a9d8ee0856eb58b9756cf92b62a65e8589b89269330175b4fb40",
+    "body_bytes": 9088,
+    "image_sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 356,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 356
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 142.97,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 143.01,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.5600000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9088,
+      "request_sha256": "2b0c1c373a29a9d8ee0856eb58b9756cf92b62a65e8589b89269330175b4fb40",
+      "input_tokens": 356
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+    "body_bytes": 441,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 371,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.52
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 110.86,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.5582e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 441,
+      "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+      "input_tokens": 371
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "3a6bd63d9ab929f4b69c19f123e96f2246a8c23c46c9ac3fe9884de31d2a1a4f",
+    "body_bytes": 9034,
+    "image_sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.87
+        }
+      ],
+      "usage": {
+        "input_tokens": 342,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 342
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 191.17,
+    "native_probability": 0.87,
+    "band": "true",
+    "latency_ms": 191.2,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.4200000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9034,
+      "request_sha256": "3a6bd63d9ab929f4b69c19f123e96f2246a8c23c46c9ac3fe9884de31d2a1a4f",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+    "body_bytes": 329,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 205,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 205
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 127.49,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 127.55,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 2.05e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 329,
+      "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+      "input_tokens": 205
+    }
+  },
+  {
+    "id": "f08",
+    "category": "bar_height",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "b340d7e0db54cfc4f30c667e68b9762f5da2c5f19dacc1de069976353922b4b5",
+    "body_bytes": 9128,
+    "image_sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 356,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 356
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 122.97,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 122.99,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.5600000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9128,
+      "request_sha256": "b340d7e0db54cfc4f30c667e68b9762f5da2c5f19dacc1de069976353922b4b5",
+      "input_tokens": 356
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+    "body_bytes": 441,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 371,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.52
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 152.58,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.5582e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 441,
+      "request_sha256": "f4091f1ea8e8a0e85d2ad5d4d8bde28192ddad6210845fccedb11b5c229c1dbb",
+      "input_tokens": 371
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "2b0c1c373a29a9d8ee0856eb58b9756cf92b62a65e8589b89269330175b4fb40",
+    "body_bytes": 9088,
+    "image_sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 356,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 356
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 171.24,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 171.28,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.5600000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 9088,
+      "request_sha256": "2b0c1c373a29a9d8ee0856eb58b9756cf92b62a65e8589b89269330175b4fb40",
+      "input_tokens": 356
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+    "body_bytes": 329,
+    "image_sha256": null,
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.5
+        }
+      ],
+      "usage": {
+        "input_tokens": 205,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 205
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 208.83,
+    "native_probability": 0.5,
+    "band": "unknown",
+    "latency_ms": 208.96,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 2.05e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 329,
+      "request_sha256": "5affbcb0d9b0ea87f729800c0f5970eb2a8d5516712ed9b9630b042c444e3b01",
+      "input_tokens": 205
+    }
+  },
+  {
+    "id": "f09",
+    "category": "bar_height",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "b62306dd8dd40fde0434d15839a8c1edf7366eb51d44256f83d7d59cdbb78a47",
+    "body_bytes": 8994,
+    "image_sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "prompt_sha256": "fc8750d783d5d4e80f971158b4558615bbb5dab7fc14e2a8b305134da6b057f3",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 342,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 342
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 243.85,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 243.92,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.4200000000000005e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 8994,
+      "request_sha256": "b62306dd8dd40fde0434d15839a8c1edf7366eb51d44256f83d7d59cdbb78a47",
+      "input_tokens": 342
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+    "body_bytes": 440,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 357,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.72
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.72,
+    "band": "unknown",
+    "latency_ms": 121.52,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4994e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 440,
+      "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+      "input_tokens": 357
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "0a04ab8fb64f258264d0cc4eeadbd711694c498c001cdc14bb567184c5303248",
+    "body_bytes": 10804,
+    "image_sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 346
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 253.48,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 253.56,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.46e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10804,
+      "request_sha256": "0a04ab8fb64f258264d0cc4eeadbd711694c498c001cdc14bb567184c5303248",
+      "input_tokens": 346
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+    "body_bytes": 313,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.52
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 195
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 157.33,
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 157.44,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.95e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 313,
+      "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+      "input_tokens": 195
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "b1b2e248b2aacdae57ccb14c3f1343def807ffcad346b87a1b447d43843d6d07",
+    "body_bytes": 10712,
+    "image_sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 137.81,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 137.82,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10712,
+      "request_sha256": "b1b2e248b2aacdae57ccb14c3f1343def807ffcad346b87a1b447d43843d6d07",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+    "body_bytes": 313,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.52
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 195
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 211.33,
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 211.36,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.95e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 313,
+      "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+      "input_tokens": 195
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+    "body_bytes": 440,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 357,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.72
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.72,
+    "band": "unknown",
+    "latency_ms": 215.43,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4994e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 440,
+      "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+      "input_tokens": 357
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "e58e366f5908b8681cdd1f11756d6ade2c751f978eec8f937a168f1cd75381e1",
+    "body_bytes": 10776,
+    "image_sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 346
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 747.51,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 747.53,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.46e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10776,
+      "request_sha256": "e58e366f5908b8681cdd1f11756d6ade2c751f978eec8f937a168f1cd75381e1",
+      "input_tokens": 346
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "6aed836174b58c1778d5734c4013ae0915e66000caa8a29cf20976375c183ec5",
+    "body_bytes": 10684,
+    "image_sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 165.38,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 165.39,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10684,
+      "request_sha256": "6aed836174b58c1778d5734c4013ae0915e66000caa8a29cf20976375c183ec5",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+    "body_bytes": 313,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.52
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 195
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 233.34,
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 233.39,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.95e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 313,
+      "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+      "input_tokens": 195
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "b1b2e248b2aacdae57ccb14c3f1343def807ffcad346b87a1b447d43843d6d07",
+    "body_bytes": 10712,
+    "image_sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 141.6,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 141.65,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10712,
+      "request_sha256": "b1b2e248b2aacdae57ccb14c3f1343def807ffcad346b87a1b447d43843d6d07",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "0a04ab8fb64f258264d0cc4eeadbd711694c498c001cdc14bb567184c5303248",
+    "body_bytes": 10804,
+    "image_sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 346
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 173.42,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 173.45,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.46e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10804,
+      "request_sha256": "0a04ab8fb64f258264d0cc4eeadbd711694c498c001cdc14bb567184c5303248",
+      "input_tokens": 346
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+    "body_bytes": 440,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 357,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.72
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.72,
+    "band": "unknown",
+    "latency_ms": 109.89,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4994e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 440,
+      "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+      "input_tokens": 357
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "e58e366f5908b8681cdd1f11756d6ade2c751f978eec8f937a168f1cd75381e1",
+    "body_bytes": 10776,
+    "image_sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 346
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 131.84,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 131.87,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.46e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10776,
+      "request_sha256": "e58e366f5908b8681cdd1f11756d6ade2c751f978eec8f937a168f1cd75381e1",
+      "input_tokens": 346
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "6aed836174b58c1778d5734c4013ae0915e66000caa8a29cf20976375c183ec5",
+    "body_bytes": 10684,
+    "image_sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 191.1,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 191.13,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10684,
+      "request_sha256": "6aed836174b58c1778d5734c4013ae0915e66000caa8a29cf20976375c183ec5",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+    "body_bytes": 440,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 357,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.73
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.73,
+    "band": "unknown",
+    "latency_ms": 133.16,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4994e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 440,
+      "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+      "input_tokens": 357
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+    "body_bytes": 313,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.52
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 195
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 130.5,
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 130.56,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.95e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 313,
+      "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+      "input_tokens": 195
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "6aed836174b58c1778d5734c4013ae0915e66000caa8a29cf20976375c183ec5",
+    "body_bytes": 10684,
+    "image_sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 193.3,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 193.31,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10684,
+      "request_sha256": "6aed836174b58c1778d5734c4013ae0915e66000caa8a29cf20976375c183ec5",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "e58e366f5908b8681cdd1f11756d6ade2c751f978eec8f937a168f1cd75381e1",
+    "body_bytes": 10776,
+    "image_sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 346
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 175.49,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 175.51,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.46e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10776,
+      "request_sha256": "e58e366f5908b8681cdd1f11756d6ade2c751f978eec8f937a168f1cd75381e1",
+      "input_tokens": 346
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+    "body_bytes": 440,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 357,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.71
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.71,
+    "band": "unknown",
+    "latency_ms": 136.41,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4994e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 440,
+      "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+      "input_tokens": 357
+    }
+  },
+  {
+    "id": "f10",
+    "category": "padlock",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+    "body_bytes": 313,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.52
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 195
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 133.19,
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 133.26,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.95e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 313,
+      "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+      "input_tokens": 195
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "0a04ab8fb64f258264d0cc4eeadbd711694c498c001cdc14bb567184c5303248",
+    "body_bytes": 10804,
+    "image_sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 346
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 169.8,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 169.83,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.46e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10804,
+      "request_sha256": "0a04ab8fb64f258264d0cc4eeadbd711694c498c001cdc14bb567184c5303248",
+      "input_tokens": 346
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "b1b2e248b2aacdae57ccb14c3f1343def807ffcad346b87a1b447d43843d6d07",
+    "body_bytes": 10712,
+    "image_sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 334,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 227.84,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 227.89,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.34e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 10712,
+      "request_sha256": "b1b2e248b2aacdae57ccb14c3f1343def807ffcad346b87a1b447d43843d6d07",
+      "input_tokens": 334
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+    "body_bytes": 313,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.52
+        }
+      ],
+      "usage": {
+        "input_tokens": 195,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 195
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 158.26,
+    "native_probability": 0.52,
+    "band": "unknown",
+    "latency_ms": 158.36,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.95e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 313,
+      "request_sha256": "9b056aece520342c980565d2603fe3bf08a037afa6f8a167673bbf10b56f86bc",
+      "input_tokens": 195
+    }
+  },
+  {
+    "id": "f11",
+    "category": "padlock",
+    "expected": false,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+    "body_bytes": 440,
+    "image_sha256": null,
+    "prompt_sha256": "e3d4eb66952a96fdcee937a2c7dcd85c1c4252dc103e58341415d609568cac1d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 357,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.72
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.72,
+    "band": "unknown",
+    "latency_ms": 159.98,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.4994e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 440,
+      "request_sha256": "1bfe089abd16ddff2b6a541d4faa359666e52cc5c65ffaf92af8ff242f7813ad",
+      "input_tokens": 357
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "0946a80415dc2445d00f0be036755394ff9bf3622b9c9a3285e9a22e2a1c5427",
+    "body_bytes": 11771,
+    "image_sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 332,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 332
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 131.88,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 131.98,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.32e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11771,
+      "request_sha256": "0946a80415dc2445d00f0be036755394ff9bf3622b9c9a3285e9a22e2a1c5427",
+      "input_tokens": 332
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "35a0288685a0d02fa23060d86108f94821fcc534517df3646a01c16da707767e",
+    "body_bytes": 11687,
+    "image_sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 325,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 325
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 193.23,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 193.29,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.25e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11687,
+      "request_sha256": "35a0288685a0d02fa23060d86108f94821fcc534517df3646a01c16da707767e",
+      "input_tokens": 325
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+    "body_bytes": 280,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "error": {
+      "type": "DecisionsError",
+      "code": "refusal",
+      "http_status": null
+    },
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "refusal",
+          "name": "visible_state"
+        }
+      ],
+      "usage": {
+        "input_tokens": 12,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12
+      }
+    },
+    "latency_ms": 180.41,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.2000000000000002e-06,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 280,
+      "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+      "input_tokens": 12
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+    "body_bytes": 364,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.45
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.45,
+    "band": "unknown",
+    "latency_ms": 146.27,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.3818000000000002e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 364,
+      "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+      "input_tokens": 329
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_image",
+    "request_sha256": "96de37a2434f00afce03796c75ca556c9670466b4644bf9efc9a8e023160f6c9",
+    "body_bytes": 11855,
+    "image_sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 325,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 325
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 221.62,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 221.64,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.25e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11855,
+      "request_sha256": "96de37a2434f00afce03796c75ca556c9670466b4644bf9efc9a8e023160f6c9",
+      "input_tokens": 325
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_text",
+    "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+    "body_bytes": 280,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "error": {
+      "type": "DecisionsError",
+      "code": "refusal",
+      "http_status": null
+    },
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "refusal",
+          "name": "visible_state"
+        }
+      ],
+      "usage": {
+        "input_tokens": 12,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12
+      }
+    },
+    "latency_ms": 122.01,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.2000000000000002e-06,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 280,
+      "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+      "input_tokens": 12
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 0,
+    "arm": "jev_text",
+    "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+    "body_bytes": 364,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.45
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.45,
+    "band": "unknown",
+    "latency_ms": 151.04,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.3818000000000002e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 364,
+      "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+      "input_tokens": 329
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 0,
+    "arm": "decisions_combined",
+    "request_sha256": "0793bfa973b11aa82933286d2a1cd6aea97f87669123eab637cff872eb625f93",
+    "body_bytes": 11939,
+    "image_sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 332,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 332
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 571.45,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 571.47,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.32e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11939,
+      "request_sha256": "0793bfa973b11aa82933286d2a1cd6aea97f87669123eab637cff872eb625f93",
+      "input_tokens": 332
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "0946a80415dc2445d00f0be036755394ff9bf3622b9c9a3285e9a22e2a1c5427",
+    "body_bytes": 11771,
+    "image_sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 332,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 332
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 352.21,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 352.22,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.32e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11771,
+      "request_sha256": "0946a80415dc2445d00f0be036755394ff9bf3622b9c9a3285e9a22e2a1c5427",
+      "input_tokens": 332
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+    "body_bytes": 280,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "error": {
+      "type": "DecisionsError",
+      "code": "refusal",
+      "http_status": null
+    },
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "refusal",
+          "name": "visible_state"
+        }
+      ],
+      "usage": {
+        "input_tokens": 12,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12
+      }
+    },
+    "latency_ms": 208.17,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.2000000000000002e-06,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 280,
+      "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+      "input_tokens": 12
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "35a0288685a0d02fa23060d86108f94821fcc534517df3646a01c16da707767e",
+    "body_bytes": 11687,
+    "image_sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 325,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 325
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 649.99,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 650.06,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.25e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11687,
+      "request_sha256": "35a0288685a0d02fa23060d86108f94821fcc534517df3646a01c16da707767e",
+      "input_tokens": 325
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+    "body_bytes": 364,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.46
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.46,
+    "band": "unknown",
+    "latency_ms": 156.52,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.3818000000000002e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 364,
+      "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+      "input_tokens": 329
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_image",
+    "request_sha256": "96de37a2434f00afce03796c75ca556c9670466b4644bf9efc9a8e023160f6c9",
+    "body_bytes": 11855,
+    "image_sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 325,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 325
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 178.86,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 178.9,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.25e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11855,
+      "request_sha256": "96de37a2434f00afce03796c75ca556c9670466b4644bf9efc9a8e023160f6c9",
+      "input_tokens": 325
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 1,
+    "arm": "jev_text",
+    "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+    "body_bytes": 364,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.46
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.46,
+    "band": "unknown",
+    "latency_ms": 195.49,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.3818000000000002e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 364,
+      "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+      "input_tokens": 329
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_text",
+    "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+    "body_bytes": 280,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "error": {
+      "type": "DecisionsError",
+      "code": "refusal",
+      "http_status": null
+    },
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "refusal",
+          "name": "visible_state"
+        }
+      ],
+      "usage": {
+        "input_tokens": 12,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12
+      }
+    },
+    "latency_ms": 127.86,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.2000000000000002e-06,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 280,
+      "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+      "input_tokens": 12
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 1,
+    "arm": "decisions_combined",
+    "request_sha256": "0793bfa973b11aa82933286d2a1cd6aea97f87669123eab637cff872eb625f93",
+    "body_bytes": 11939,
+    "image_sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 332,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 332
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 332.25,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 332.31,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.32e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11939,
+      "request_sha256": "0793bfa973b11aa82933286d2a1cd6aea97f87669123eab637cff872eb625f93",
+      "input_tokens": 332
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+    "body_bytes": 364,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.46
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.46,
+    "band": "unknown",
+    "latency_ms": 139.81,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.3818000000000002e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 364,
+      "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+      "input_tokens": 329
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "0946a80415dc2445d00f0be036755394ff9bf3622b9c9a3285e9a22e2a1c5427",
+    "body_bytes": 11771,
+    "image_sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 332,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 332
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 148.94,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 149.02,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.32e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11771,
+      "request_sha256": "0946a80415dc2445d00f0be036755394ff9bf3622b9c9a3285e9a22e2a1c5427",
+      "input_tokens": 332
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "35a0288685a0d02fa23060d86108f94821fcc534517df3646a01c16da707767e",
+    "body_bytes": 11687,
+    "image_sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 0.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 325,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 325
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 160.32,
+    "native_probability": 0.0,
+    "band": "false",
+    "latency_ms": 160.35,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.25e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11687,
+      "request_sha256": "35a0288685a0d02fa23060d86108f94821fcc534517df3646a01c16da707767e",
+      "input_tokens": 325
+    }
+  },
+  {
+    "id": "f01",
+    "category": "checkbox",
+    "expected": false,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+    "body_bytes": 280,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "error": {
+      "type": "DecisionsError",
+      "code": "refusal",
+      "http_status": null
+    },
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "refusal",
+          "name": "visible_state"
+        }
+      ],
+      "usage": {
+        "input_tokens": 12,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12
+      }
+    },
+    "latency_ms": 301.87,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.2000000000000002e-06,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 280,
+      "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+      "input_tokens": 12
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_combined",
+    "request_sha256": "0793bfa973b11aa82933286d2a1cd6aea97f87669123eab637cff872eb625f93",
+    "body_bytes": 11939,
+    "image_sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 332,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 332
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 424.53,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 424.57,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.32e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11939,
+      "request_sha256": "0793bfa973b11aa82933286d2a1cd6aea97f87669123eab637cff872eb625f93",
+      "input_tokens": 332
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_text",
+    "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+    "body_bytes": 280,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "error": {
+      "type": "DecisionsError",
+      "code": "refusal",
+      "http_status": null
+    },
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "refusal",
+          "name": "visible_state"
+        }
+      ],
+      "usage": {
+        "input_tokens": 12,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12
+      }
+    },
+    "latency_ms": 163.85,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 1.2000000000000002e-06,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 280,
+      "request_sha256": "107077bc05126ce2dd30133a6d3fb6739e84d28df6ad8764821595c16fb980af",
+      "input_tokens": 12
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 2,
+    "arm": "decisions_image",
+    "request_sha256": "96de37a2434f00afce03796c75ca556c9670466b4644bf9efc9a8e023160f6c9",
+    "body_bytes": 11855,
+    "image_sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": true,
+    "native_response": {
+      "model": "gpt-6-luna",
+      "answers": [
+        {
+          "type": "predicate",
+          "name": "visible_state",
+          "probability": 1.0
+        }
+      ],
+      "usage": {
+        "input_tokens": 325,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 325
+      }
+    },
+    "native_model": "gpt-6-luna",
+    "transport_latency_ms": 178.73,
+    "native_probability": 1.0,
+    "band": "true",
+    "latency_ms": 178.76,
+    "budget": {
+      "provider": "decisions",
+      "reserved_usd": 0.0064,
+      "charged_upper_usd": 3.25e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 11855,
+      "request_sha256": "96de37a2434f00afce03796c75ca556c9670466b4644bf9efc9a8e023160f6c9",
+      "input_tokens": 325
+    }
+  },
+  {
+    "id": "f00",
+    "category": "checkbox",
+    "expected": true,
+    "repeat": 2,
+    "arm": "jev_text",
+    "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+    "body_bytes": 364,
+    "image_sha256": null,
+    "prompt_sha256": "b20c9dd30abefb95fcc40441bca910673d2933ffdb2cb9f405e46e153cf7601d",
+    "correct": false,
+    "native_response": {
+      "model": "jev-1.13.0",
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 21
+      },
+      "answers": {
+        "visible_state": {
+          "type": "noul",
+          "noul": 0.46
+        }
+      }
+    },
+    "native_model": "jev-1.13.0",
+    "native_probability": 0.46,
+    "band": "unknown",
+    "latency_ms": 124.18,
+    "budget": {
+      "provider": "jev",
+      "reserved_usd": 0.002688,
+      "charged_upper_usd": 1.3818000000000002e-05,
+      "usage_known": true,
+      "input_tokens_upper": 64000,
+      "question_count": 1,
+      "body_bytes": 364,
+      "request_sha256": "e19e8a8e2acbcce0d26123b531d51e7d536edb3eab543312c22d213bdf7d06b4",
+      "input_tokens": 329
+    }
+  }
+]

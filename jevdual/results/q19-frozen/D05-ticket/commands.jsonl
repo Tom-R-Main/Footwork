@@ -1,0 +1,4 @@
+{"t": 1790641367.048227, "surface": "web", "args": ["start", "Open a ticket", "--browser", "--url", "http://127.0.0.1:8767/q19-ticket.html"], "exit": 0, "s": 2.56}
+{"t": 1790641368.750518, "surface": "web", "args": ["do", "type", "Subject", "Printer jam"], "exit": 0, "s": 1.62}
+{"t": 1790641370.4296992, "surface": "web", "args": ["do", "type", "Amount", "2"], "exit": 0, "s": 1.59}
+{"t": 1790641372.494169, "surface": "web", "args": ["do", "click", "Open ticket"], "exit": 0, "s": 1.98}

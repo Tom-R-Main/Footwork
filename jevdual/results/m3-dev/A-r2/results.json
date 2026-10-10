@@ -1,0 +1,93 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 23519,
+  "output_tokens": 6146,
+  "cost_usd": 0.0035811000000000007,
+  "wall_s": 151.5,
+  "t_oracle": 1790672881.3311841,
+  "arm": {
+   "recovery": false,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "5 submissions to /m3-signup-done.html, not one",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 22964,
+  "output_tokens": 10284,
+  "cost_usd": 0.0043532,
+  "wall_s": 225.7,
+  "t_oracle": 1790673107.0470989,
+  "arm": {
+   "recovery": false,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    },
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    },
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    },
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    },
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ },
+ {
+  "task": "X3-unreserved-washers",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.51) [286 ms]: uncertain: complete p=0.51, max unmet p=0.00",
+  "answer": "60",
+  "oracle_ok": true,
+  "oracle": "answer contains '60'",
+  "outcome": "unaccepted_effect_present",
+  "steps": 4,
+  "input_tokens": 3194,
+  "output_tokens": 1024,
+  "cost_usd": 0.0005242000000000001,
+  "wall_s": 24.1,
+  "t_oracle": 1790673131.153934,
+  "arm": {
+   "recovery": false,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": []
+  }
+ }
+]

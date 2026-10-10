@@ -1,0 +1,297 @@
+{
+  "recorded_at": "2026-10-09T14:55:53.107355-04:00",
+  "scope": "Read-only source/design review, not runtime qualification. Hashes identify full files containing reviewed excerpts.",
+  "footwork_head": "92bc87469afa57cd811a332e1a5c7e1eca828fb1",
+  "references": [
+    {
+      "name": "chrome-devtools-mcp",
+      "path": "/Volumes/External SSD/referencerepos/chrome-devtools-mcp",
+      "head": "f08dbe152502d66e75fa07fb2588dc0feb42bc20",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/chrome-devtools-mcp/LICENSE",
+      "files": [
+        {
+          "path": "src/BrowserManager.ts",
+          "sha256": "deb4d91ca7e78fcb19f20bbf5850d2287a6a8d5eeb95450351325a60b7369a14"
+        },
+        {
+          "path": "src/ToolHandler.ts",
+          "sha256": "ca601d876841a62eb4d9c1d1e4159edebfb85f1e5e93b856e5c04498cb561504"
+        },
+        {
+          "path": "src/McpResponse.ts",
+          "sha256": "3a2cedc62e87e579e0669c007818d33f14cf6310a884985c0c1cc2805cb0726f"
+        },
+        {
+          "path": "src/tools/slim/tools.ts",
+          "sha256": "17d35ec0e6b06fb0f82e320c1c6976c843b03997209b7531ae00460812b9978a"
+        }
+      ],
+      "license_sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    },
+    {
+      "name": "modelcontextprotocol",
+      "path": "/Volumes/External SSD/referencerepos/modelcontextprotocol",
+      "head": "c518f7a927cff918bce35d3522fcdb046d264d7c",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/modelcontextprotocol/LICENSE",
+      "files": [
+        {
+          "path": "docs/specification/2026-07-28/basic/transports/stdio.mdx",
+          "sha256": "6fd49766c40dc093d1f5993ab584bad0a06cbb496c2d3019c50f8fe3c8171e57"
+        },
+        {
+          "path": "docs/specification/2026-07-28/server/tools.mdx",
+          "sha256": "ed550806a58eb7744b858fb9f26001aa5e55dac9e2babe88317cc81d9d4c490d"
+        }
+      ],
+      "license_sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+    },
+    {
+      "name": "browser-use",
+      "path": "/Volumes/External SSD/referencerepos/browser-use",
+      "head": "c75e8476e26d18b7617643bc2ae082fae8eae431",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/browser-use/LICENSE",
+      "files": [
+        {
+          "path": "browser_use/mcp/server.py",
+          "sha256": "696aee232f331ca215bb6e5ed21d5400dda1e4e530a6af6ade923e928acb2bd3"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "5a61c6cc0b66c5e51972c7deeabefe00cf9a8127d7408bdbf3e573bdaf582f87"
+        }
+      ],
+      "license_sha256": "135c57671b0ee957669b05a0ca00cc06f645496d351e2e732832c6e276da9a5e"
+    },
+    {
+      "name": "arc-cua",
+      "path": "/Volumes/External SSD/referencerepos/arc-cua",
+      "head": "6b353039111c08c2c64c5229083606941e364eaf",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/arc-cua/LICENSE",
+      "files": [
+        {
+          "path": "src/arc_cua/mcp_server.py",
+          "sha256": "e61f4f78995d252845116a78fac5ce0594086ed6e83200793e8e553dd204e4e0"
+        }
+      ],
+      "license_sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
+    },
+    {
+      "name": "devtools-protocol",
+      "path": "/Volumes/External SSD/referencerepos/devtools-protocol",
+      "head": "8033bef7599713ae32b8777386fcbd82a7e612ed",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/devtools-protocol/LICENSE",
+      "files": [
+        {
+          "path": "pdl/domains/Target.pdl",
+          "sha256": "136ca4a240e64aa727e0b261cbe7ac853748154aaa8c4a86fe818d7c522535d6"
+        },
+        {
+          "path": "pdl/domains/Page.pdl",
+          "sha256": "489ed38df75a9a91c268594d5f66e70f47df7f305e8e534f44ff60d84796ff55"
+        },
+        {
+          "path": "pdl/domains/Input.pdl",
+          "sha256": "5bbc6e23eb17a009da540792bd5f647567e9c81f919081059dff5274a1c66e3d"
+        }
+      ],
+      "license_sha256": "7a209dd1b94cabdb5ea9c6f9164b9546ffa5daaa671e7767d49510db055f5c51"
+    },
+    {
+      "name": "open-computer-use",
+      "path": "/Volumes/External SSD/referencerepos/open-computer-use",
+      "head": "610bac85d242b2fdf43fbe36bce2348658a2d4c9",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/open-computer-use/LICENSE",
+      "files": [
+        {
+          "path": "os_computer_use/sandbox_agent.py",
+          "sha256": "689b2c1dfcd5a4b15fbb076c73a7e50456552e879712fbc7ae815d4ef74f2e6f"
+        },
+        {
+          "path": "README.md",
+          "sha256": "5ef533102ffbd847273c11f1139c8a84b6c38d92182abe55e64c902e23fbd13e"
+        }
+      ],
+      "license_sha256": "46c828e30f9c217b84ed1843aa08ee79658347042680c6d328f69f6da15fc4ce"
+    },
+    {
+      "name": "open-codex-computer-use",
+      "path": "/Volumes/External SSD/referencerepos/open-codex-computer-use",
+      "head": "83a521e546102564efd002f61a6763912081e5c7",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/open-codex-computer-use/LICENSE",
+      "files": [
+        {
+          "path": "scripts/npm/build-packages.mjs",
+          "sha256": "0a06998c4fe83b8f03d7d3a55e77395c7c4c5a62b093dada05cd7bd75057ad3b"
+        },
+        {
+          "path": "scripts/install-config-helper.mjs",
+          "sha256": "eb48a6cad180edb3d23171a9b95c4931c2bd11bb66abf9510085fbc0dde44848"
+        },
+        {
+          "path": "scripts/tests/install-dsh-mcp.test.sh",
+          "sha256": "f9393dfcba0aa1ba77af4004ec10437c8b2c3bcb590fd1b567903811857d4c78"
+        },
+        {
+          "path": "packages/OpenComputerUseKit/Sources/OpenComputerUseKit/MCPServer.swift",
+          "sha256": "9b5fdfef1e3a1aeda73c619279dc7095fe11f09582d09373b9e82c82cb7d44ed"
+        },
+        {
+          "path": "README.md",
+          "sha256": "31e3c7e8152ed4540792f2092183fa36410e3eb5dde2d2900c84c8eb4f408c94"
+        }
+      ],
+      "license_sha256": "0fdb775e00e6fdde23984b4f1184cd13c34135caac1e714ad489141c239704bc"
+    },
+    {
+      "name": "opencode",
+      "path": "/Volumes/External SSD/referencerepos/opencode",
+      "head": "388406238bd5ca15564a762840a2362c3a45bd9c",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/opencode/LICENSE",
+      "files": [
+        {
+          "path": "packages/opencode/src/mcp/catalog.ts",
+          "sha256": "1123ce304cd647e0945aa98743f411a69988f6dde63867aea78b74c72a5abe11"
+        },
+        {
+          "path": "packages/opencode/src/mcp/index.ts",
+          "sha256": "82c459309dfd005d25daecfabc1007d807d4bee23f6078434974277938a1c026"
+        },
+        {
+          "path": "packages/opencode/src/tool/code-mode.ts",
+          "sha256": "9a95ddba2ea9ef15c9276ee07cf88bf729b11ade6619ed03c5c8690b46e402aa"
+        }
+      ],
+      "license_sha256": "625f0f619133f89bbbb2abe37369613dfa1885eba1e50d02170deb62bb42cb6b"
+    },
+    {
+      "name": "mcp-rust-sdk",
+      "path": "/Volumes/External SSD/referencerepos/mcp-rust-sdk",
+      "head": "4048ac40e958fb1a7d614617a2ae8d26666ee2fa",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/mcp-rust-sdk/LICENSE",
+      "files": [
+        {
+          "path": "crates/rmcp/src/model.rs",
+          "sha256": "b0e808e9f325235e3a19ba1a8b95feec5226b57bf243d02d3dcce81f4c3df63a"
+        },
+        {
+          "path": "crates/rmcp/src/transport/io.rs",
+          "sha256": "86cbe078a7c03964340570d8940ca6a3276cf7c8056dbd4d64a9f654a7fa077f"
+        },
+        {
+          "path": "examples/servers/src/counter_stdio.rs",
+          "sha256": "3301f66d40308259d33e75da591f7bd1a4716488fb8784644a9de86b843a6d51"
+        }
+      ],
+      "license_sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+    },
+    {
+      "name": "hermes-agent",
+      "path": "/Volumes/External SSD/referencerepos/hermes-agent",
+      "head": "38880bd2f1e90dbc9a1aeec03af62539ee64719a",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/hermes-agent/LICENSE",
+      "files": [
+        {
+          "path": "tools/mcp_tool_handlers.py",
+          "sha256": "e84ac240ea983e998813960be5f9bc6ab56e9ed74208c701560998df631d4c2e"
+        },
+        {
+          "path": "tools/mcp_tool_content.py",
+          "sha256": "520e709346ac6ca09819b2f198ea51b53f55b6d161ab91186054c25e270d5649"
+        },
+        {
+          "path": "tools/mcp_tool_transport.py",
+          "sha256": "c384d222f26ed8e27fbf7055d02c0a5fe503fa49e7c9ce96f715bfb9f2c28265"
+        }
+      ],
+      "license_sha256": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6"
+    },
+    {
+      "name": "codex-cli",
+      "path": "/Volumes/External SSD/referencerepos/codex-cli",
+      "head": "47b80571f0d6587060a580c47f6af0cfaefb0d5c",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/codex-cli/LICENSE",
+      "files": [
+        {
+          "path": "codex-rs/rmcp-client/src/protocol_mode.rs",
+          "sha256": "c472aa882c4c66a1d5b1459d4836a1ed507e1c9ecbb86b63b22c7444f0b62cd1"
+        },
+        {
+          "path": "codex-rs/core/src/mcp_tool_call.rs",
+          "sha256": "98d4a44c6f3be8aaf6adec42c5fefba5f56e31f30407321fab78e527fbbd4ca8"
+        },
+        {
+          "path": "codex-rs/config/src/mcp_types.rs",
+          "sha256": "9e4f9013a9a93185378a7ede284d3e9a68a7006c8ec4b2718e418a4867d4bb0b"
+        }
+      ],
+      "license_sha256": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc"
+    },
+    {
+      "name": "cua",
+      "path": "/Volumes/External SSD/referencerepos/cua",
+      "head": "9994fc2e41a87808514cdaa0b62f9e20bfc235db",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/cua/LICENSE.md",
+      "files": [
+        {
+          "path": "libs/cua-driver/README.md",
+          "sha256": "392421d396c93a94defdec92be97ecb76ca9fa713f050dbaa4c345a82c684b88"
+        },
+        {
+          "path": "libs/cua-driver/docs/mcp-protocol-and-skills.md",
+          "sha256": "1ac96fb101c7a4982c5fe9ef64c3bb58f60af0e814e8c88c3da0eeeb2fa989d1"
+        },
+        {
+          "path": "libs/cua-driver/rust/crates/cua-driver-core/src/mcp_wire.rs",
+          "sha256": "a9579e27b91048b7d650e2725ad53b8f029b0c4525895b0997d65e538c41650c"
+        },
+        {
+          "path": "libs/cua-driver/rust/crates/cua-driver-core/src/mcp_result.rs",
+          "sha256": "c54702c6a26eb5a7c8aeadd8a9d2f30d295b6f33034408f725b718761c657ee9"
+        }
+      ],
+      "license_sha256": "c0779290c1d4783169aa3dbfb55feb505e563ef8a004bbf55298ceffcfbda8d9"
+    },
+    {
+      "name": "deepseek-harness",
+      "path": "/Volumes/External SSD/referencerepos/deepseek-harness",
+      "head": "d743267388641bc76f17c45ce8b4c231aed1d32c",
+      "working_tree_clean": true,
+      "license_file": "/Volumes/External SSD/referencerepos/deepseek-harness/LICENSE",
+      "files": [
+        {
+          "path": "packages/mcp/mcp-client/src/tools.ts",
+          "sha256": "59203150bda479a990afcdaf60483a35a836887926892e1074e02d0294c01af9"
+        },
+        {
+          "path": "packages/mcp/mcp-client/src/connection.ts",
+          "sha256": "06dc1b3a1297b8b23f6ac5c44f3ba6740716c76db71c28cfb8f14d6c0340030e"
+        },
+        {
+          "path": "packages/mcp/mcp-client/src/transport.ts",
+          "sha256": "6f3fca685af3d5654c476e95db24e1245dc1fa021a0bd7f477ce4ad997e1c8f6"
+        },
+        {
+          "path": "packages/experimental/computer-use-cua-driver-mcp/src/index.ts",
+          "sha256": "ea02b511f7711de93ee0163b666f7f0e860801de844d783f37cbc3f3030cd2f3"
+        },
+        {
+          "path": "packages/experimental/browser-use-chrome-devtools-mcp/src/index.ts",
+          "sha256": "a44090eb6cf5d316cdaabf9bc3ac1c1ad6004dabb28a7360dc02ec9e87ece4f3"
+        }
+      ],
+      "license_sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be"
+    }
+  ]
+}

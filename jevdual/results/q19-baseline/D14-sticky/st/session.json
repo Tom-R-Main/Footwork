@@ -1,0 +1,40 @@
+{
+ "dir": "results/q19-baseline/D14-sticky/st",
+ "app": "Stickies",
+ "pid": 93351,
+ "window_id": 3195,
+ "task": "New sticky with footwork D14",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: hotkey(cmd+n) -> suspected_noop"
+ ],
+ "last_url": "app://Stickies",
+ "last_title": "It\u2019s easy to customize your notes.\u2026",
+ "last_page_text": "It\u2019s easy to customize your notes.\n\nMake your notes stand out and get noticed.\n\n\u2022 Format text using different fonts and font sizes\n\u2022 Add emphasis with bold and italic text styles or color.\n\u2022 Include graphics \ufffc .\n\nStickies has lots of other great features, including a spell checker, import and export features, and other ways to arrange and customize your notes. Plus, you\u2019ll find a \u201cMake New Sticky Note\u201d service in many applications.\n\nLook in Help to find out more about using Stickies.",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "It\u2019s easy to customize your notes.\n\nMake your notes stand out and get noticed.\n\n\u2022 Format text using different fonts and font sizes\n\u2022 Add emphasis with bold and italic text styles or color.\n\u2022 Include graphics \ufffc .\n\nStickies has lots of other great features, including a spell checker, import and export features, and other ways to arrange and customize your notes. Plus, you\u2019ll find a \u201cMake New Sticky Note\u201d service in many applications.\n\nLook in Help to find out more about using \u2026",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

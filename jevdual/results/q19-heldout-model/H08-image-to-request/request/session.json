@@ -1,0 +1,91 @@
+{
+ "dir": "results/q19-heldout-model/H08-image-to-request/request",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Read the pixel height of h08-poster.png in Preview. Submit one scratch cutting request in the browser with reference \"Poster H08\" and that height as the quantity. This local request is authorized. (The scratch folder is /Users/thomasmain/footwork-pilot/q19/q19-heldout-model/H08-image-to-request.)",
+ "requirements": [],
+ "authorized": [
+  "Submit cutting request"
+ ],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [],
+ "last_url": "http://127.0.0.1:8768/q19h-cutting.html",
+ "last_title": "Scratch request recorded",
+ "last_page_text": "Scratch cutting request\nLocal simulation: no real order, payment or message.\nReference\nQuantity",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Reference",
+   "role": "textbox",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Quantity",
+   "role": "textbox",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Submit cutting request",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 12,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "generic",
+   "role": "generic",
+   "operations": [
+    "type"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-b1dcc29f-b57e-42ea-9fa4-820c2796e457",
+ "secret_names": []
+}

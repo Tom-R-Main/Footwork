@@ -107,6 +107,12 @@ class SystemTwo:
     async def step(self, agent: NativeAgent, nm: NativeMenu, reason: str, out: StepOutcome) -> None: ...
 
 
+#: package I: the bounded arm's floor on the gap between the chosen target and the next (Jev probabilities)
+BOUNDED_MARGIN = 0.20
+#: operations System 1 may finish on the bounded arm: no composed text, no choice left open
+BOUNDED_OPERATIONS = ("click", "enter", "type", "append")
+
+
 class NativeAgent:
     def __init__(
         self,
@@ -128,6 +134,7 @@ class NativeAgent:
         gate: Callable[[NativeMenu, Candidate], Awaitable[str | None] | str | None] | None = None,
         s1_enabled: bool = True,
         authorizer: Authorizer | None = None,
+        bounded: bool = False,
     ):
         self.bridge = bridge
         self.policy = policy
@@ -151,6 +158,13 @@ class NativeAgent:
             self.authorizer.extra = gate
         #: False is the guarded arm: System 2 decides every step behind the same gate, System 1 is never asked
         self.s1_enabled = s1_enabled
+        #: package I, the bounded arm: System 1 acts only when the action is fixed (a unique target, no
+        #: composed text, no authority needed) and its receipt must come back confirmed; after any
+        #: mismatch System 2 owns every step until one of its own steps is confirmed
+        self.bounded = bounded
+        self.s2_owner = False
+        self.bounded_margin = BOUNDED_MARGIN
+        self.handovers: list[dict[str, Any]] = []
         if text_source is None:
             from jevdual.text import TextSource, helper_from_env, placeholder_from_store
 
@@ -195,6 +209,44 @@ class NativeAgent:
         if self.secrets is not None:
             nm = dataclasses.replace(nm, menu=redact_menu(nm.menu, self.secrets.redactor()))
         return nm, (time.perf_counter() - t0) * 1000
+
+    async def check_visual(self, request: Any, provider: Any, ledger: Any, *,
+                           is_current: Callable[[], bool] | None = None):
+        """Explicit advisory service call; never invoked by the normal action policy.
+
+        The caller supplies a request from capture_request and a workflow guard for
+        source/reference revision and generation. The guard is retained for handoff.
+        Snapshot equality here is request correlation, not a live pixel precondition.
+        """
+        from jevdual.visual_checks import VisualCheckResult
+
+        def current() -> bool:
+            nm = self.bridge.last
+            try:
+                return (self.secrets is None and nm is not None
+                        and nm.snapshot_id == request.evidence.capture.observation_id
+                        and nm.pid == request.evidence.capture.surface.pid
+                        and nm.window_id == request.evidence.capture.surface.window_id
+                        and is_current is not None and is_current() is True)
+            except Exception:  # noqa: BLE001 - unavailable source validity cannot keep a positive
+                return False
+
+        if self.secrets is not None or is_current is None or not current():
+            result = VisualCheckResult(
+                request.request_id, request.evidence.digest, request.generation, request.role,
+                "unavailable", reason=("pixels_withheld" if self.secrets is not None else
+                                       "source_current_unavailable" if is_current is None else "generation_changed"),
+                request_digest=request.digest,
+            )
+        else:
+            result = await provider.check(request, ledger, is_current=current)
+        if result.status == "valid" and (not current() or not result.is_current(
+            request, now=time.monotonic(), current_generation=request.generation,
+        )):
+            result = dataclasses.replace(result, status="invalidated", p=None, reason="generation_changed_or_expired")
+        self.visual_check = (request, result)
+        self.visual_check_current = current
+        return result
 
     def context(self, step: int) -> StepContext:
         lines = self.memory[-self.recent_window :]
@@ -283,6 +335,41 @@ class NativeAgent:
             return verdict.band, verdict.reason
         return await self.verifier.judge_done(self, nm.menu, answer)
 
+    def _hand_to_s2(self, step: int, why: str) -> None:
+        if self.bounded and not self.s2_owner:
+            self.s2_owner = True
+            self.handovers.append({"step": step, "to": "s2", "why": why[:160]})
+
+    def _hand_to_s1(self, step: int, why: str) -> None:
+        if self.bounded and self.s2_owner:
+            self.s2_owner = False
+            self.handovers.append({"step": step, "to": "s1", "why": why[:160]})
+
+    async def _bounded_check(
+        self, nm: NativeMenu, decision: Any, target: Candidate
+    ) -> tuple[str | None, str | None]:
+        """``(reason to escalate, text)`` for the bounded arm: None when the action is fixed."""
+        probs = sorted((p for p in (decision.target_probabilities or {}).values()), reverse=True)
+        top = probs[0] if probs else 0.0
+        second = probs[1] if len(probs) > 1 else 0.0
+        if top - second < self.bounded_margin:
+            return f"bounded: target not unique ({top:.2f} against {second:.2f})", None
+        if decision.operation not in BOUNDED_OPERATIONS:
+            return f"bounded: {decision.operation} is not a fixed action", None
+        text = None
+        if decision.operation in ("type", "append"):
+            from jevdual.text import literal_from_task
+
+            text = literal_from_task(self.task, target)
+            if text is None:
+                return f"bounded: {decision.operation} would need composed text", None
+        hit = await self.authorizer.check(
+            nm, action_for(decision.operation, nm, "s1", target=target, text=text), task=self.task
+        )
+        if hit:
+            return f"bounded: needs authority ({hit[:80]})", None
+        return None, text
+
     async def s1_step(self, step: int, nm: NativeMenu, out: StepOutcome) -> Verdict:
         """System 1 decides and, when the arbiter allows, acts. Returns the verdict; ``out`` carries
         the decision, verification, executed action and effect."""
@@ -322,6 +409,10 @@ class NativeAgent:
             return out.verdict
 
         verdict = self.arbiter.judge(decision, nm.menu, ctx, self)
+        if self.bounded and verdict.kind == "retry_alternate":
+            # an alternate target is a guess, not a fixed action
+            out.verdict = Verdict("escalate", f"bounded: no alternate targets ({verdict.reason})")
+            return out.verdict
         if verdict.kind == "retry_alternate" and decision.alternates:
             decision = dataclasses.replace(
                 decision, target=decision.alternates[0], alternates=decision.alternates[1:]
@@ -339,6 +430,13 @@ class NativeAgent:
             return out.verdict
 
         text: str | None = None
+        if self.bounded:
+            why, text = await self._bounded_check(nm, decision, target)
+            if why:
+                out.verdict = Verdict("escalate", why)
+                return out.verdict
+            await self.execute(nm, decision.operation, target, text, out)
+            return out.verdict
         if decision.operation in ("type", "append", "select"):
             try:
                 text = await self._text_for(target, nm)
@@ -459,6 +557,11 @@ class NativeAgent:
                     return NativeRun("error", "no System 1 and no System 2", self.steps, None, nm)
                 verdict = Verdict("escalate", "guarded arm: System 2 decides every step")
                 out.verdict = verdict
+            elif self.bounded and self.s2_owner:
+                verdict = Verdict(
+                    "escalate", "bounded: System 2 owns recovery until one of its steps is confirmed"
+                )
+                out.verdict = verdict
             else:
                 verdict = await self.s1_step(step, nm, out)
             self.step_systems[step] = "s1"
@@ -466,8 +569,14 @@ class NativeAgent:
                 self._write(out, nm)
                 return NativeRun("done", verdict.reason, self.steps, out.answer, nm)
             if verdict.kind == "act":
+                eff = getattr(out.effect, "effect", None)
+                if eff != "confirmed":
+                    # the fixed action did not do what it was fixed to do: System 2 takes over
+                    self._hand_to_s2(step, f"S1 receipt {eff or 'missing'}")
                 self._write(out, nm)
                 continue
+            if verdict.kind != "confirm":
+                self._hand_to_s2(step, verdict.reason)
             if verdict.kind == "confirm":
                 # a pause is a pause: System 2 never takes over a step the boundary refused
                 self._write(out, nm)
@@ -483,6 +592,9 @@ class NativeAgent:
             t0 = time.perf_counter()
             await self.s2.step(self, nm, verdict.reason, out)
             out.llm_ms = (time.perf_counter() - t0) * 1000
+            if getattr(out.effect, "effect", None) == "confirmed":
+                # the named progress condition: one of System 2's own steps confirmed
+                self._hand_to_s1(step, "S2 receipt confirmed")
             self._write(out, nm)
             if out.is_done:
                 return NativeRun("done", "System 2 done", self.steps, out.answer, nm)

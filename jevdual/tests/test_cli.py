@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from jevdual.cli import _paused_label, _secrets, _split, build_parser
+from jevdual.cli import _paused_label, _secrets, _split, build_parser, run_arm
 
 
 def test_run_arguments_have_the_operator_defaults():
@@ -12,6 +12,14 @@ def test_run_arguments_have_the_operator_defaults():
     assert args.task == "Do the thing" and args.app == "Calculator"
     assert _split(args.require, ";") == ("a", "b") and _split(args.authorize, ",") == ("Save", "Confirm")
     assert args.steps == 20 and not args.no_s2 and args.url is None and args.out is None
+
+
+def test_run_defaults_to_the_measured_guarded_arm_and_names_the_others():
+    p = build_parser()
+    base = ["run", "t", "--app", "Calculator"]
+    assert run_arm(p.parse_args(base)) == "guarded"
+    assert run_arm(p.parse_args([*base, "--arm", "dual"])) == "dual"
+    assert run_arm(p.parse_args([*base, "--no-s2"])) == "s1_only"
 
 
 def test_paused_reason_names_the_label_to_authorize():

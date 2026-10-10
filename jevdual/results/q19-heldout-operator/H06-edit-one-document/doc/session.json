@@ -1,0 +1,44 @@
+{
+ "dir": "results/q19-heldout-operator/H06-edit-one-document/doc",
+ "app": "TextEdit",
+ "pid": 63305,
+ "window_id": 4205,
+ "task": "Replace Batch amber with Batch cobalt and save",
+ "requirements": [],
+ "authorized": [
+  "replace",
+  "Save"
+ ],
+ "answer_expected": false,
+ "step": 2,
+ "status": "open",
+ "memory": [
+  "step 1: type(text area) text='Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9\\n' -> confirmed",
+  "step 2: hotkey(cmd+s) -> confirmed"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "h06-labels.txt",
+ "last_page_text": "h06-labels.txt\nBatch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

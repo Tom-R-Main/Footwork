@@ -1,0 +1,249 @@
+{
+ "dir": "results/q19-baseline/D12-save-new/new",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 3169,
+ "task": "Type Draft D12 and save as d12.txt",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: hotkey(cmd+s) -> unverifiable"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "Untitled",
+ "last_page_text": "Untitled\n12",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "First Text View",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": null,
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 18,
+   "label": "bold",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 19,
+   "label": "italic",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 20,
+   "label": "underline",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 21,
+   "label": "strikethrough",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 22,
+   "label": "text color",
+   "role": "colorwell",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 23,
+   "label": "text background color",
+   "role": "colorwell",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 24,
+   "label": "typeface",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": "Helvetica",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 25,
+   "label": "style",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": "Regular",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 26,
+   "label": "font size",
+   "role": "combobox",
+   "operations": [
+    "type",
+    "click"
+   ],
+   "value": "12",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 27,
+   "label": "font size",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 28,
+   "label": "align left",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "section": null
+  },
+  {
+   "id": 29,
+   "label": "align center",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 30,
+   "label": "align right",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 31,
+   "label": "fully justify",
+   "role": "checkbox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 32,
+   "label": "list style",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 33,
+   "label": "line spacing",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": "1.0",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

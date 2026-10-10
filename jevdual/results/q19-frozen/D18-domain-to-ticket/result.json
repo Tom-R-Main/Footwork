@@ -1,0 +1,16 @@
+{
+ "task": "D18-domain-to-ticket",
+ "oracle_ok": true,
+ "oracle": "one submission to /q19-ticket-done.html with {'subject': 'example.com', 'amount': '1'}",
+ "answer": null,
+ "commands": 6,
+ "wall_s": 11.2,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

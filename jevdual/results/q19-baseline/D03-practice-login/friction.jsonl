@@ -1,0 +1,2 @@
+{"t": 1790631516.4659991, "kind": "contradicted", "text": "typing {PTA} into Password read 'partial (holds {secret}, not the text typed)' while the password was right (the login succeeded): the receipt compared the scrubbed field with the secret"}
+{"t": 1790631528.1880891, "kind": "contradicted", "text": "verifier left the correct, quoted answer uncertain (complete 0.78) on the page that shows it"}

@@ -1,0 +1,56 @@
+{
+  "cases": 24,
+  "conformance_gaps": [],
+  "positive_paths": [
+    {
+      "id": "B01",
+      "executable_path_verified": true
+    },
+    {
+      "id": "B04",
+      "executable_path_verified": true
+    },
+    {
+      "id": "B05",
+      "executable_path_verified": true
+    },
+    {
+      "id": "B08",
+      "executable_path_verified": true
+    },
+    {
+      "id": "B09",
+      "executable_path_verified": true
+    },
+    {
+      "id": "B12",
+      "executable_path_verified": true
+    },
+    {
+      "id": "native-document_identity-supported",
+      "executable_path_verified": true
+    },
+    {
+      "id": "native-document_identity-text_control",
+      "executable_path_verified": true
+    },
+    {
+      "id": "native-crop_boundary-supported",
+      "executable_path_verified": true
+    },
+    {
+      "id": "native-crop_boundary-text_control",
+      "executable_path_verified": true
+    },
+    {
+      "id": "native-export_finalizing-supported",
+      "executable_path_verified": true
+    },
+    {
+      "id": "native-export_finalizing-text_control",
+      "executable_path_verified": true
+    }
+  ],
+  "all_conformance_verified": true,
+  "scope": "authored captures and reconstructed one-step fixture checks; not an autonomous real-app journey"
+}

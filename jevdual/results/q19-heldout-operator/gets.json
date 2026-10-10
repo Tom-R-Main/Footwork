@@ -1,0 +1,17 @@
+{
+ "/q19h-reservation-deleted.html": [
+  {
+   "reservation": "QH-204"
+  }
+ ],
+ "/q19h-cutting-done.html": [
+  {
+   "reference": "Poster H08",
+   "quantity": "318"
+  },
+  {
+   "reference": "QUIET-83",
+   "quantity": "27"
+  }
+ ]
+}

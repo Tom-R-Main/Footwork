@@ -1,0 +1,150 @@
+# Package E, prediction V2: done claims labelled correct or incorrect before scoring, on synthetic pages.
+# `expect` is what a verifier should do with the done: accept a correct one, reject an incorrect one.
+# Pages are short copies of the live pages the tasks come from; prices are written as saucedemo renders
+# them to the menu ("$ 9.99", two text nodes).
+
+pages:
+  inventory:
+    url: https://www.saucedemo.com/inventory.html
+    title: Swag Labs
+    text: |
+      Swag Labs
+      Products
+      Sauce Labs Backpack
+      carry.allTheThings() with the sleek, streamlined Sly Pack.
+      $ 29.99
+      Add to cart
+      Sauce Labs Bike Light
+      A red light isn't the desired state in testing but it sure helps when riding your bike at night.
+      $ 9.99
+      Add to cart
+      Sauce Labs Bolt T-Shirt
+      Get your testing superhero on with the Sauce Labs bolt T-shirt.
+      $ 15.99
+      Add to cart
+  sorted:
+    url: https://www.saucedemo.com/inventory.html
+    title: Swag Labs
+    text: |
+      Swag Labs
+      Products
+      Price (low to high)
+      Sauce Labs Onesie
+      $ 7.99
+      Add to cart
+      Sauce Labs Bike Light
+      $ 9.99
+      Add to cart
+      Sauce Labs Bolt T-Shirt
+      $ 15.99
+      Add to cart
+  form:
+    url: https://httpbin.org/forms/post
+    title: httpbin forms
+    text: |
+      Customer name:
+      Telephone:
+      E-mail address:
+      Pizza Size
+      Submit order
+    fields:
+      - {label: Customer name, value: Alan Turing}
+      - {label: Telephone, value: "5550000000"}
+      - {label: E-mail address, value: alan@example.com}
+  rust:
+    url: https://en.wikipedia.org/wiki/Rust_(programming_language)
+    title: Rust (programming language) - Wikipedia
+    text: |
+      Rust (programming language)
+      Paradigms: Multi-paradigm
+      First appeared: January 20, 2012
+      Stable release: 1.90.0
+      Rust began as a personal project in 2006. Rust 1.0, the first stable release, was published in May 2015.
+  overview:
+    url: https://www.saucedemo.com/checkout-step-two.html
+    title: Swag Labs
+    text: |
+      Checkout: Overview
+      Sauce Labs Backpack
+      $ 29.99
+      Item total: $ 29.99
+      Tax: $ 2.40
+      Total: $ 32.39
+      Cancel
+      Finish
+  complete:
+    url: https://www.saucedemo.com/checkout-complete.html
+    title: Swag Labs
+    text: |
+      Checkout: Complete!
+      Thank you for your order!
+      Your order has been dispatched, and will arrive just as fast as the pony can get there!
+      Back Home
+  cart:
+    url: https://www.saucedemo.com/cart.html
+    title: Swag Labs
+    text: |
+      Your Cart
+      Sauce Labs Backpack
+      $ 29.99
+      Continue Shopping
+      Checkout
+
+cases:
+  # ---- correct dones: a verifier should accept
+  - {id: A1-split-price, page: inventory, expect: accept, answer_expected: true,
+     task: "What does the Sauce Labs Bike Light cost?", requirements: [Bike Light price reported],
+     answer: 'The price of "Sauce Labs Bike Light" is $9.99.'}
+  - {id: A2-status-label, page: inventory, expect: accept, answer_expected: true,
+     task: "What does the Sauce Labs Bike Light cost?", requirements: [Bike Light price reported],
+     answer: 'UNVERIFIED: Sauce Labs Bike Light price: $9.99.'}
+  - {id: A3-commentary-aside, page: inventory, expect: accept, answer_expected: true,
+     task: "What does the Sauce Labs Bike Light cost?", requirements: [Bike Light price reported],
+     answer: 'The Sauce Labs Bike Light price: $9.99 (as shown on the inventory page).'}
+  - {id: A4-field-value, page: form, expect: accept, answer_expected: false,
+     task: "Fill the customer name with Alan Turing and do not submit.", requirements: [Customer name filled with Alan Turing, Form not submitted],
+     answer: 'Customer name: Alan Turing. The form was not submitted.'}
+  - {id: A5-year, page: rust, expect: accept, answer_expected: true,
+     task: "Using Wikipedia, find the year the Rust programming language first appeared.", requirements: [Relevant Wikipedia article opened, Year reported],
+     answer: 'Rust first appeared in 2012 ("First appeared: January 20, 2012").'}
+  - {id: A6-quote, page: complete, expect: accept, answer_expected: false,
+     task: "Place the practice order for the backpack.", requirements: [Order confirmation shown],
+     answer: 'The page shows "Thank you for your order!"'}
+  - {id: A7-cheapest, page: sorted, expect: accept, answer_expected: true,
+     task: "Sort by price and report the cheapest product and its price.", requirements: [Sorted by price low to high, Cheapest product reported],
+     answer: 'The cheapest item is "Sauce Labs Onesie" at $7.99.'}
+  - {id: A8-navigation, page: cart, expect: accept, answer_expected: false,
+     task: "Open the cart.", requirements: [Cart page open],
+     answer: 'Opened the cart.'}
+
+  # ---- incorrect dones: a verifier should reject
+  - {id: R1-wrong-product-price, page: inventory, expect: reject, answer_expected: true,
+     task: "What does the Sauce Labs Backpack cost?", requirements: [Backpack price reported],
+     answer: 'The price of "Sauce Labs Backpack" is $9.99.'}
+  - {id: R2-wrong-field, page: form, expect: reject, answer_expected: true,
+     task: "What telephone number is in the form?", requirements: [Telephone number reported],
+     answer: 'Telephone: Alan Turing.'}
+  - {id: R3-unsupported-qualification, page: inventory, expect: reject, answer_expected: true,
+     task: "What does the Sauce Labs Bike Light cost including tax and shipping?", requirements: [Bike Light price with tax and shipping reported],
+     answer: 'The Sauce Labs Bike Light costs $9.99 including tax and free shipping.'}
+  - {id: R4-true-fact-wrong-task, page: inventory, expect: reject, answer_expected: true,
+     task: "What does the Sauce Labs Bolt T-Shirt cost?", requirements: [Bolt T-Shirt price reported],
+     answer: 'The price of "Sauce Labs Bike Light" is $9.99.'}
+  - {id: R5-fact-in-aside, page: inventory, expect: reject, answer_expected: true,
+     task: "What does the Sauce Labs Bike Light cost with shipping?", requirements: [Bike Light price with shipping reported],
+     answer: 'Price: $9.99 (shipping $50).'}
+  - {id: R6-fabricated-number, page: inventory, expect: reject, answer_expected: true,
+     task: "What does the Sauce Labs Bike Light cost?", requirements: [Bike Light price reported],
+     answer: 'The Sauce Labs Bike Light costs $8.99.'}
+  - {id: R7-wrong-year-on-page, page: rust, expect: reject, answer_expected: true,
+     task: "Using Wikipedia, find the year the Rust programming language first appeared.", requirements: [Relevant Wikipedia article opened, Year reported],
+     answer: 'Rust first appeared in 2015.'}
+  - {id: R8-order-not-placed, page: overview, expect: reject, answer_expected: false,
+     task: "Place the practice order for the backpack.", requirements: [Order confirmation shown],
+     answer: 'Order placed. Total: $32.39.'}
+  - {id: R9-stale-total, page: cart, expect: reject, answer_expected: true,
+     task: "Report the cart total including tax.", requirements: [Total with tax reported],
+     answer: 'Cart total: $32.39.'}
+  - {id: R10-wrong-cheapest, page: sorted, expect: reject, answer_expected: true,
+     task: "Sort by price and report the cheapest product and its price.", requirements: [Sorted by price low to high, Cheapest product reported],
+     answer: 'The cheapest item is "Sauce Labs Bike Light" at $9.99.'}

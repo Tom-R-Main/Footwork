@@ -1,0 +1,4 @@
+{"t": 1790664601.945035, "surface": "web", "args": ["start", "Report the full name represented by PNG", "--browser", "--url", "https://www.libpng.org/pub/png/"], "exit": 0, "s": 3.81}
+{"t": 1790664608.2848141, "surface": "web", "args": ["read", "--match", "PNG \\(([^)]+)\\)", "--as", "name"], "exit": 4, "s": 0.51}
+{"t": 1790664613.318767, "surface": "web", "args": ["look", "--text", "1500"], "exit": 0, "s": 0.45}
+{"t": 1790664621.98173, "surface": "web", "args": ["done", "The page title 'PNG (Portable Network Graphics) Home Site' gives PNG's full name: Portable Network Graphics."], "exit": 0, "s": 0.87}

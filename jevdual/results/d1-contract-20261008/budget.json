@@ -1,0 +1,23 @@
+{
+  "cap_usd": 5,
+  "prior_cost_upper_usd": 0,
+  "reserved_or_usage_upper_usd": 3.9200000000000004e-05,
+  "prices_per_million": {
+    "jev": 0.042,
+    "decisions": 0.1
+  },
+  "input_reservation_per_question": 64000,
+  "attempts": [
+    {
+      "provider": "decisions",
+      "reserved_usd": 0.0192,
+      "charged_upper_usd": 3.9200000000000004e-05,
+      "usage_known": true,
+      "input_tokens_upper": 192000,
+      "question_count": 3,
+      "body_bytes": 559,
+      "request_sha256": "1b7bd4a21894625a955417e0fac772d4698ec24cc47ef659d0974d9970b600c9",
+      "input_tokens": 392
+    }
+  ]
+}

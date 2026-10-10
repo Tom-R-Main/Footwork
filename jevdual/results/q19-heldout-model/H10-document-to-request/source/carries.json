@@ -1,0 +1,36 @@
+{
+ "REF": {
+  "name": "REF",
+  "text": "QUIET-83",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "h10-job.txt",
+  "element_id": -1,
+  "element_label": "Reference: QUIET-83",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-model/H10-document-to-request/source",
+  "taken_at": 1790667038.9078999,
+  "surroundings": "h10-job.txt / Cancelled request: RUSH-17, quantity 4 / Active request / Reference: QUIET-83 / Quantity: 27",
+  "occurrence": "match 1 of 1 on the page"
+ },
+ "QTY": {
+  "name": "QTY",
+  "text": "27",
+  "surface": "native",
+  "app": "TextEdit",
+  "location": "app://TextEdit",
+  "title": "h10-job.txt",
+  "element_id": -1,
+  "element_label": "Quantity: 27",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-model/H10-document-to-request/source",
+  "taken_at": 1790667063.9951549,
+  "surroundings": "Cancelled request: RUSH-17, quantity 4 / Active request / Reference: QUIET-83 / Quantity: 27",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

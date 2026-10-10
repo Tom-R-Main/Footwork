@@ -1,0 +1,39 @@
+{
+  "type_accepts_substring_instead_of_exact_value": {
+    "effect": "confirmed",
+    "exact_match": false
+  },
+  "append_can_confirm_preexisting_text_without_new_insertion": {
+    "effect": "confirmed"
+  },
+  "field_receipt_overrides_refusal": {
+    "effect": "confirmed",
+    "error": "requires_foreground"
+  },
+  "secret_placeholder_in_nonpassword_field": {
+    "synthetic_value_in_receipt": true,
+    "effect": "confirmed"
+  },
+  "browser_use_judge_failure": {
+    "pause_returned": false,
+    "dispatch_performed": false
+  },
+  "short_document_replacement": {
+    "original_characters": 12,
+    "pause_returned": false,
+    "dispatch_performed": false
+  },
+  "browser_session_rebind_after_active_tab_switch": {
+    "fake_dispatches": [
+      {
+        "tool": "browser_click",
+        "tab_id": "tab-A"
+      },
+      {
+        "tool": "browser_click",
+        "tab_id": "tab-B"
+      }
+    ],
+    "persisted_tab_identity": false
+  }
+}

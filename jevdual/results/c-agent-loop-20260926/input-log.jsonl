@@ -1,0 +1,278 @@
+{"run": "ls-add-backpack-cart/guarded/0", "step": 0, "t": 1790442770.918, "kind": "listen", "origin": 1790442770593, "sid": "C48BC468", "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 0, "t": 1790442775.383, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 6, "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 0, "t": 1790442775.498, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 0, "t": 1790442775.581, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 0, "t": 1790442775.623, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442776.205, "kind": "page", "origin": 1790442770593, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 4906], ["click", true, "login-button", 756, 326, 4989]]}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442776.206, "kind": "listen", "origin": 1790442770593, "sid": "C48BC468", "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442784.318, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442784.427, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442784.508, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442784.51, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442785.166, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442785.274, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442785.356, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 2, "t": 1790442785.357, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 3, "t": 1790442785.99, "kind": "page", "origin": 1790442770593, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 3, "t": 1790442785.99, "kind": "listen", "origin": 1790442770593, "sid": "C48BC468", "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 3, "t": 1790442797.015, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 3, "t": 1790442797.133, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 3, "t": 1790442797.215, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 3, "t": 1790442797.217, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 4, "t": 1790442797.802, "kind": "page", "origin": 1790442770593, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 4, "t": 1790442797.802, "kind": "listen", "origin": 1790442770593, "sid": "C48BC468", "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 4, "t": 1790442804.95, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 4, "t": 1790442805.057, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 4, "t": 1790442805.139, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "C48BC468"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 4, "t": 1790442805.14, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 5, "t": 1790442805.725, "kind": "page", "origin": 1790442770593, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 5, "t": 1790442805.726, "kind": "listen", "origin": 1790442770593, "sid": "C48BC468", "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 6, "t": 1790442812.041, "kind": "page", "origin": 1790442770593, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/0", "step": 6, "t": 1790442812.042, "kind": "listen", "origin": 1790442770593, "sid": "C48BC468", "target": "4CFAD7C9"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 0, "t": 1790442833.728, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 0, "t": 1790442838.29, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 6, "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 0, "t": 1790442838.41, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 0, "t": 1790442838.493, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 0, "t": 1790442838.526, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442839.102, "kind": "page", "origin": 1790442833400, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 5011], ["click", true, "login-button", 756, 326, 5094]]}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442839.102, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442844.714, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442844.821, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442844.902, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442844.903, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442845.56, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442845.666, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442845.748, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 2, "t": 1790442845.749, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 3, "t": 1790442846.33, "kind": "page", "origin": 1790442833400, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 3, "t": 1790442846.33, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 3, "t": 1790442860.817, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 3, "t": 1790442860.928, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 3, "t": 1790442861.01, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 3, "t": 1790442861.014, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 4, "t": 1790442861.604, "kind": "page", "origin": 1790442833400, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 4, "t": 1790442861.605, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 4, "t": 1790442875.219, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 4, "t": 1790442875.325, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 4, "t": 1790442875.408, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 4, "t": 1790442875.409, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 5, "t": 1790442876.004, "kind": "page", "origin": 1790442833400, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 5, "t": 1790442876.005, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 5, "t": 1790442883.641, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 5, "t": 1790442883.749, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 5, "t": 1790442883.831, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DD4A9127"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 5, "t": 1790442883.832, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 6, "t": 1790442884.412, "kind": "page", "origin": 1790442833400, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 6, "t": 1790442884.412, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 7, "t": 1790442891.13, "kind": "page", "origin": 1790442833400, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/1", "step": 7, "t": 1790442891.131, "kind": "listen", "origin": 1790442833400, "sid": "DD4A9127", "target": "2A26C0E0"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 0, "t": 1790442911.496, "kind": "listen", "origin": 1790442911169.4, "sid": "DBE0A333", "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 0, "t": 1790442916.244, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 6, "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 0, "t": 1790442916.355, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 0, "t": 1790442916.437, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 0, "t": 1790442916.471, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442917.052, "kind": "page", "origin": 1790442911169.4, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 5186], ["click", true, "login-button", 756, 326, 5268]]}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442917.052, "kind": "listen", "origin": 1790442911169.4, "sid": "DBE0A333", "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442925.528, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442925.635, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442925.716, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442925.718, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442926.373, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442926.49, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442926.572, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 2, "t": 1790442926.574, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 3, "t": 1790442927.159, "kind": "page", "origin": 1790442911169.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 3, "t": 1790442927.16, "kind": "listen", "origin": 1790442911169.4, "sid": "DBE0A333", "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 3, "t": 1790442937.766, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 3, "t": 1790442937.872, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 3, "t": 1790442937.954, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 3, "t": 1790442937.955, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 4, "t": 1790442938.557, "kind": "page", "origin": 1790442911169.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 4, "t": 1790442938.558, "kind": "listen", "origin": 1790442911169.4, "sid": "DBE0A333", "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 4, "t": 1790442946.063, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 4, "t": 1790442946.171, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 4, "t": 1790442946.253, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "DBE0A333"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 4, "t": 1790442946.256, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 5, "t": 1790442946.838, "kind": "page", "origin": 1790442911169.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 5, "t": 1790442946.839, "kind": "listen", "origin": 1790442911169.4, "sid": "DBE0A333", "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 6, "t": 1790442956.57, "kind": "page", "origin": 1790442911169.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/2", "step": 6, "t": 1790442956.57, "kind": "listen", "origin": 1790442911169.4, "sid": "DBE0A333", "target": "AE2DFB71"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 0, "t": 1790442974.697, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 2, "t": 1790442978.071, "kind": "page", "origin": 1790442974363.9, "url": "/", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 2, "t": 1790442978.075, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 2, "t": 1790442984.568, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 8, "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 2, "t": 1790442984.685, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 2, "t": 1790442984.768, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 2, "t": 1790442984.809, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790442985.391, "kind": "page", "origin": 1790442974363.9, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 10322], ["click", true, "login-button", 756, 326, 10405]]}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790442985.391, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443003.205, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443003.326, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443003.41, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443003.413, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443004.07, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443004.176, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443004.263, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 3, "t": 1790443004.264, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 4, "t": 1790443004.855, "kind": "page", "origin": 1790442974363.9, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 4, "t": 1790443004.855, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 4, "t": 1790443016.619, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 4, "t": 1790443016.725, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 4, "t": 1790443016.807, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 4, "t": 1790443016.808, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 5, "t": 1790443017.39, "kind": "page", "origin": 1790442974363.9, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 5, "t": 1790443017.39, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 5, "t": 1790443024.707, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 5, "t": 1790443024.815, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 5, "t": 1790443024.896, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "822D189C"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 5, "t": 1790443024.897, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 6, "t": 1790443025.483, "kind": "page", "origin": 1790442974363.9, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 6, "t": 1790443025.484, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 7, "t": 1790443031.86, "kind": "page", "origin": 1790442974363.9, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/3", "step": 7, "t": 1790443031.86, "kind": "listen", "origin": 1790442974363.9, "sid": "822D189C", "target": "70FE8374"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 0, "t": 1790443050.391, "kind": "listen", "origin": 1790443050064.1, "sid": "2AEFAB12", "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 0, "t": 1790443054.765, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 8, "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 0, "t": 1790443054.892, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 0, "t": 1790443054.975, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 0, "t": 1790443054.984, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443055.562, "kind": "page", "origin": 1790443050064.1, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 4829], ["click", true, "login-button", 756, 326, 4912]]}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443055.563, "kind": "listen", "origin": 1790443050064.1, "sid": "2AEFAB12", "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443076.122, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443076.231, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443076.312, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443076.314, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443076.97, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443077.077, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443077.159, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 2, "t": 1790443077.161, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 3, "t": 1790443077.764, "kind": "page", "origin": 1790443050064.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 3, "t": 1790443077.765, "kind": "listen", "origin": 1790443050064.1, "sid": "2AEFAB12", "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 3, "t": 1790443094.138, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 3, "t": 1790443094.243, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 3, "t": 1790443094.324, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 3, "t": 1790443094.325, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 4, "t": 1790443094.907, "kind": "page", "origin": 1790443050064.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 4, "t": 1790443094.908, "kind": "listen", "origin": 1790443050064.1, "sid": "2AEFAB12", "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 4, "t": 1790443099.493, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 4, "t": 1790443099.608, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 4, "t": 1790443099.689, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2AEFAB12"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 4, "t": 1790443099.691, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 5, "t": 1790443100.28, "kind": "page", "origin": 1790443050064.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 5, "t": 1790443100.281, "kind": "listen", "origin": 1790443050064.1, "sid": "2AEFAB12", "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 6, "t": 1790443110.456, "kind": "page", "origin": 1790443050064.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/4", "step": 6, "t": 1790443110.457, "kind": "listen", "origin": 1790443050064.1, "sid": "2AEFAB12", "target": "A95E0EB4"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 0, "t": 1790443129.548, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 0, "t": 1790443133.704, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 6, "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 0, "t": 1790443133.816, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 0, "t": 1790443133.899, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 0, "t": 1790443133.907, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 2, "t": 1790443134.483, "kind": "page", "origin": 1790443129237.4, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 4580], ["click", true, "login-button", 756, 326, 4663]]}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 2, "t": 1790443134.483, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 2, "t": 1790443140.745, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 2, "t": 1790443140.851, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 2, "t": 1790443140.933, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 2, "t": 1790443140.935, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 3, "t": 1790443141.517, "kind": "page", "origin": 1790443129237.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 3, "t": 1790443141.518, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 3, "t": 1790443152.677, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 3, "t": 1790443152.783, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 3, "t": 1790443152.864, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 3, "t": 1790443152.865, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 4, "t": 1790443153.449, "kind": "page", "origin": 1790443129237.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 4, "t": 1790443153.449, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 4, "t": 1790443166.174, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 4, "t": 1790443166.278, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 4, "t": 1790443166.359, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 4, "t": 1790443166.361, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 5, "t": 1790443166.944, "kind": "page", "origin": 1790443129237.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 5, "t": 1790443166.945, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 5, "t": 1790443178.992, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 5, "t": 1790443179.098, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 5, "t": 1790443179.179, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "081076AF"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 5, "t": 1790443179.18, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 6, "t": 1790443179.761, "kind": "page", "origin": 1790443129237.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 6, "t": 1790443179.762, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 7, "t": 1790443189.024, "kind": "page", "origin": 1790443129237.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/5", "step": 7, "t": 1790443189.025, "kind": "listen", "origin": 1790443129237.4, "sid": "081076AF", "target": "1DD30AFC"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 0, "t": 1790443209.154, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 0, "t": 1790443213.582, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 8, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 0, "t": 1790443213.701, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 0, "t": 1790443213.783, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 0, "t": 1790443213.823, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443214.403, "kind": "page", "origin": 1790443208831.1, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 4870], ["click", true, "login-button", 756, 326, 4952]]}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443214.403, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443220.912, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.017, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.098, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.101, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.755, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.86, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.942, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 2, "t": 1790443221.943, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443222.523, "kind": "page", "origin": 1790443208831.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443222.523, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443232.577, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443232.682, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443232.764, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443232.765, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443233.419, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443233.524, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443233.606, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 3, "t": 1790443233.606, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 4, "t": 1790443234.188, "kind": "page", "origin": 1790443208831.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 4, "t": 1790443234.188, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 4, "t": 1790443239.976, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 4, "t": 1790443240.082, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 4, "t": 1790443240.164, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 4, "t": 1790443240.165, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 5, "t": 1790443240.76, "kind": "page", "origin": 1790443208831.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 5, "t": 1790443240.76, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 5, "t": 1790443247.242, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 5, "t": 1790443247.346, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 5, "t": 1790443247.427, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "847682BA"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 5, "t": 1790443247.428, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 6, "t": 1790443248.007, "kind": "page", "origin": 1790443208831.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 6, "t": 1790443248.008, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 7, "t": 1790443258.322, "kind": "page", "origin": 1790443208831.1, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/6", "step": 7, "t": 1790443258.322, "kind": "listen", "origin": 1790443208831.1, "sid": "847682BA", "target": "21B20BAE"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 0, "t": 1790443277.602, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 0, "t": 1790443283.042, "kind": "click_target", "tag": "input", "id": "login-button", "backend": 8, "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 0, "t": 1790443283.157, "kind": "sent", "type": "mousePressed", "x": 756, "y": 326, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 0, "t": 1790443283.24, "kind": "sent", "type": "mouseReleased", "x": 756, "y": 326, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 0, "t": 1790443283.273, "kind": "click_returned", "value": {"click_x": 756.0, "click_y": 326.5}}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443283.861, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": [["mousedown", true, "login-button", 756, 326, 5876], ["click", true, "login-button", 756, 326, 5959]]}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443283.862, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443293.106, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443293.213, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443293.295, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443293.297, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443293.952, "kind": "click_target", "tag": "a", "id": "", "backend": 130, "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443294.058, "kind": "sent", "type": "mousePressed", "x": 1472, "y": 30, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443294.14, "kind": "sent", "type": "mouseReleased", "x": 1472, "y": 30, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 2, "t": 1790443294.141, "kind": "click_returned", "value": {"click_x": 1472.0, "click_y": 30.0}}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 3, "t": 1790443294.731, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 3, "t": 1790443294.731, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 3, "t": 1790443303.539, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 3, "t": 1790443303.646, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 3, "t": 1790443303.727, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 3, "t": 1790443303.728, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 4, "t": 1790443304.321, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 4, "t": 1790443304.322, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 4, "t": 1790443321.76, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 4, "t": 1790443321.865, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 4, "t": 1790443321.947, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 4, "t": 1790443321.949, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 5, "t": 1790443322.541, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 5, "t": 1790443322.541, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 6, "t": 1790443330.364, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 6, "t": 1790443330.364, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 7, "t": 1790443356.702, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 7, "t": 1790443356.703, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 7, "t": 1790443364.983, "kind": "click_target", "tag": "button", "id": "add-to-cart-sauce-labs-backpack", "backend": 165, "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 7, "t": 1790443365.092, "kind": "sent", "type": "mousePressed", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 7, "t": 1790443365.173, "kind": "sent", "type": "mouseReleased", "x": 616, "y": 356, "sid": "2948215B"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 7, "t": 1790443365.175, "kind": "click_returned", "value": {"click_x": 616.0, "click_y": 356.0}}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 8, "t": 1790443365.773, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 8, "t": 1790443365.773, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 9, "t": 1790443375.452, "kind": "page", "origin": 1790443277282.4, "url": "/inventory.html", "badge": "", "events": []}
+{"run": "ls-add-backpack-cart/guarded/7", "step": 9, "t": 1790443375.453, "kind": "listen", "origin": 1790443277282.4, "sid": "2948215B", "target": "DA9D2D09"}

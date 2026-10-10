@@ -1,0 +1,78 @@
+{
+  "family": "export_finalizing",
+  "variant": "supported",
+  "expected": true,
+  "question": {
+    "instructions": "Does the current observed export state support reporting that export has completed and the output is available?"
+  },
+  "proposal": {
+    "action": "report_complete",
+    "target_label": "Finish export"
+  },
+  "oracle": {
+    "phase": "complete",
+    "positive_label": "Finish export",
+    "output_content": "D3 fixture exported content\n"
+  },
+  "id": "native-export_finalizing-supported",
+  "surface": "native_fixture",
+  "text": "[{\"AXRole\": \"AXWindow\", \"AXTitle\": \"D3 run-owned visual fixture\", \"bounds\": [50.0, 434.0, 660.0, 468.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"Export progress: 100%\", \"bounds\": [71.0, 473.0, 618.0, 42.0]}, {\"AXRole\": \"AXImage\", \"AXDescription\": \"Task canvas\", \"bounds\": [69.0, 523.0, 622.0, 318.0]}, {\"AXRole\": \"AXButton\", \"AXTitle\": \"Finish export\", \"bounds\": [76.0, 859.0, 178.0, 22.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [58.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [98.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXGroup\", \"bounds\": [97.0, 440.0, 14.0, 16.0]}, {\"AXRole\": \"AXButton\", \"bounds\": [78.0, 441.0, 12.0, 14.0]}, {\"AXRole\": \"AXStaticText\", \"AXValue\": \"D3 run-owned visual fixture\", \"bounds\": [288.0, 439.0, 184.0, 16.0]}]\nmacOS Vision OCR (visible screenshot text, not hidden file contents):\n[{\"text\": \"D3 run-owned visual fixture\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.36363636708333325, 0.9572649574786325, 0.27575757575757576, 0.02564102564102566]}, {\"text\": \"Export progress: 100%\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.033333335454545414, 0.8803418805555555, 0.21212121212121213, 0.02991452991452992]}, {\"text\": \"Export\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.08181818106060608, 0.6965811970085469, 0.05151515151515153, 0.025641025641025772]}, {\"text\": \"100%\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.45151515242424245, 0.5555555558404559, 0.054545454545454564, 0.02564102564102555]}, {\"text\": \"Export complete\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.08787878595959601, 0.4273504272079772, 0.11515151515151516, 0.02564102564102566]}, {\"text\": \"Finish export\", \"confidence\": 1.0, \"normalized_bounds_bottom_left\": [0.11818181674242428, 0.05555555534188039, 0.11515151515151517, 0.02564102564102566]}]",
+  "images": [
+    "native-export_finalizing-supported/capture.png"
+  ],
+  "capture": {
+    "pid": 84942,
+    "window_id": 27483,
+    "timestamp": "2026-10-08T19:33:15.877365+00:00",
+    "revision": 1,
+    "sha256": "1210b8a8d58dad6dd17a4e6097c27be56090b5cec1d6401d88e757acc8653bb9",
+    "raw_capture_sha256": "0d1e35923bb9776100113226dbb12d5774a2841fe257b5ade5f948ec564b9cd8",
+    "encoding": "256-color indexed PNG; exact Cua Driver raw PNG retained separately",
+    "dimensions": [
+      660,
+      468
+    ],
+    "images": [
+      {
+        "path": "native-export_finalizing-supported/capture.png",
+        "sha256": "1210b8a8d58dad6dd17a4e6097c27be56090b5cec1d6401d88e757acc8653bb9",
+        "dimensions": [
+          660,
+          468
+        ]
+      }
+    ],
+    "capture_ms": 324.8490010155365,
+    "screenshot_ms": 213.80933409091085,
+    "phase_total_ms": 324.8490010155365,
+    "encoding_rmse": 0.21636861136043428,
+    "encoding_max_channel_delta": 21,
+    "extraction_ms": 12.904291972517967,
+    "encoding_ms": 13.152541941963136,
+    "ocr": "macOS Vision VNRecognizeTextRequest; all returned lines retained with confidence and normalized bounds",
+    "ocr_ms": 84.98283301014453,
+    "ax_nodes": 10,
+    "ax_truncated": false,
+    "text_sources": [
+      "native AX tree",
+      "macOS Vision OCR of bound-window screenshot"
+    ],
+    "source": "Cua Driver bound AppKit window + direct native AX tree",
+    "posture": "background_only"
+  },
+  "conformance": {
+    "scripted_proposal_choice": "positive",
+    "negative_proposal_dispatched": false,
+    "effect_existed_before": false,
+    "positive_trajectory": {
+      "dispatched": true,
+      "route": "background_accessibility",
+      "error_code": 0,
+      "target_label": "Finish export"
+    },
+    "postcondition": true,
+    "dispatch_readback_ms": 113.0848330212757,
+    "fresh_readback_observed": true,
+    "scope": "scripted conformance; not provider-driven dispatch"
+  }
+}

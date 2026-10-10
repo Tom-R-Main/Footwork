@@ -244,6 +244,17 @@ Q15 runs each case three times and requires every check. A promise whose case fa
 fixed, never averaged. **Result (2026-09-25): 15 of 15 passed** (`results/q15-coexistence/`); every row
 above stands, with the limits stated in `docs/experiments/Q15.md`.
 
+## Status after the 2026-09-26 audit
+
+The status audit (`results/status-audit-20260926/`) supersedes several cells above; the work that
+follows from it is ordered in `docs/plans/next-work.md`. In brief: P1 is done (Q12, H0(b)); P6's
+browser route is built (`start --browser`) but Q14's paired comparison has not run; the P0 entry point
+said "guarded arm" while `footwork run` enabled System 1 and escalated (reactive dual), now fixed with
+`--arm`, default `guarded`; and the operator column's receipt, target-identity and secret cells are
+weaker than the table shows (tab not persisted across commands, field receipts that confirm by
+substring and can upgrade a refusal, a secret in a non-password field's receipt). Those cells are
+package A of the next-work plan.
+
 ## Phases
 
 **P1, done (Q12, `results/q12-live-dev.md`): H0(b).** Receipts are true and cheap and shorten the way to the same failure; the burden per unit of progress did not move because no other route exists past the dead click. P2 next.

@@ -1,0 +1,62 @@
+[
+  {
+    "case": "empty",
+    "reviewer": "Codex AI agent",
+    "supported_requested_content_completion": true,
+    "oracle_exact": true,
+    "false_requested_content_completion": false,
+    "unsupported_ancillary_disk_claim": true,
+    "note": "Final claims saved/unsaved disk state beyond its field-only evidence; primary append-content completion is supported. No disk-persistence claim adopted.",
+    "transcript_sha256": "d107b114d8aa28688af8e0a873e5bda9002ad0023bbb24c3fd5c04a6e6a4ad2c"
+  },
+  {
+    "case": "whitespace-only",
+    "reviewer": "Codex AI agent",
+    "supported_requested_content_completion": true,
+    "oracle_exact": true,
+    "false_requested_content_completion": false,
+    "unsupported_ancillary_disk_claim": true,
+    "note": "Final claims saved/unsaved disk state beyond its field-only evidence; primary append-content completion is supported. No disk-persistence claim adopted.",
+    "transcript_sha256": "8eb2a71ab5b68e03d41bfe9a56d445577d1fd26c8132ac9b7f4b977244e8b2d1"
+  },
+  {
+    "case": "preserved-whitespace",
+    "reviewer": "Codex AI agent",
+    "supported_requested_content_completion": true,
+    "oracle_exact": true,
+    "false_requested_content_completion": false,
+    "unsupported_ancillary_disk_claim": true,
+    "note": "Final claims saved/unsaved disk state beyond its field-only evidence; primary append-content completion is supported. No disk-persistence claim adopted.",
+    "transcript_sha256": "2f9c9745bc2585fa72dfb54d631d86e9a01c0dece36d7d4b1258281ed507975e"
+  },
+  {
+    "case": "intentional-blank-line",
+    "reviewer": "Codex AI agent",
+    "supported_requested_content_completion": true,
+    "oracle_exact": true,
+    "false_requested_content_completion": false,
+    "unsupported_ancillary_disk_claim": true,
+    "note": "Final claims saved/unsaved disk state beyond its field-only evidence; primary append-content completion is supported. No disk-persistence claim adopted.",
+    "transcript_sha256": "426544e2160a5d5062f80bd3f65502feca55b6ac0e86717d4ec5e0a4bb6f24c8"
+  },
+  {
+    "case": "newline-ended",
+    "reviewer": "Codex AI agent",
+    "supported_requested_content_completion": true,
+    "oracle_exact": true,
+    "false_requested_content_completion": false,
+    "unsupported_ancillary_disk_claim": true,
+    "note": "Final claims saved/unsaved disk state beyond its field-only evidence; primary append-content completion is supported. No disk-persistence claim adopted.",
+    "transcript_sha256": "3fd91bc02d39be477f3efe2dbfb861fc8fba50bbb7832e5cfd14fc57257dcb55"
+  },
+  {
+    "case": "no-newline",
+    "reviewer": "Codex AI agent",
+    "supported_requested_content_completion": true,
+    "oracle_exact": true,
+    "false_requested_content_completion": false,
+    "unsupported_ancillary_disk_claim": true,
+    "note": "Final claims saved/unsaved disk state beyond its field-only evidence; primary append-content completion is supported. No disk-persistence claim adopted.",
+    "transcript_sha256": "1d90fd7a2e2036c3abf4eec0b34959777b717700b5059eb62e09e65e153a64d2"
+  }
+]

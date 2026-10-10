@@ -1,0 +1,1 @@
+{"t": 1790641687.5536242, "kind": "dead_end", "text": "saves refused not_key while other.txt was open; closing other.txt through footwork (cmd+w) also changed nothing; stopped with the value appended but unsaved; other.txt unchanged"}

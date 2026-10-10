@@ -1,0 +1,66 @@
+{
+ "status": "done_unverified",
+ "reason": "verifier: verify (complete p=0.63) [203 ms]: uncertain: complete p=0.63, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read unreserved washer count",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "C2 \u2014 washers: (\\d+)",
+    "as": "WASHERS"
+   },
+   "exit": 0,
+   "output": "carried @WASHERS = '60', read from browser Google Chrome (footwork) at http://127.0.0.1:8768/m3-parts.html (text 'Bin C2 \u2014 washers: 60', its match) at step 0 of session results/m3-dev/C-r2/X3-unreserved-washers/web",
+   "ms": 6257.497540995246,
+   "input_tokens": 796,
+   "output_tokens": 422
+  },
+  {
+   "step": 2,
+   "note": "Report unreserved washers count",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@WASHERS"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.65) [246 ms]: uncertain: complete p=0.65, max unmet p=0.00",
+   "ms": 3681.2410000129603,
+   "input_tokens": 914,
+   "output_tokens": 202
+  },
+  {
+   "step": 3,
+   "note": "Report unreserved washers using carried value",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@WASHERS"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.59) [312 ms]: uncertain: complete p=0.59, max unmet p=0.00",
+   "ms": 4715.599167000619,
+   "input_tokens": 961,
+   "output_tokens": 311
+  },
+  {
+   "step": 4,
+   "note": "Report carried unreserved washer count",
+   "action": {
+    "name": "done",
+    "surface": "web",
+    "answer": "@WASHERS"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.63) [203 ms]: uncertain: complete p=0.63, max unmet p=0.00",
+   "ms": 3434.3268329976127,
+   "input_tokens": 1008,
+   "output_tokens": 178
+  }
+ ],
+ "answer": "60",
+ "input_tokens": 3679,
+ "output_tokens": 1113
+}

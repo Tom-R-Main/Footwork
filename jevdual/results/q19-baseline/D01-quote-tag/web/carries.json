@@ -1,0 +1,19 @@
+{
+ "author": {
+  "name": "author",
+  "text": "Andr\u00e9 Gide",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "https://quotes.toscrape.com/tag/love/page/1/",
+  "title": "Quotes to Scrape",
+  "element_id": -1,
+  "element_label": "by\nAndr\u00e9 Gide",
+  "element_role": "text",
+  "part": "match",
+  "step": 1,
+  "session": "results/q19-baseline/D01-quote-tag/web",
+  "taken_at": 1790631419.25489,
+  "surroundings": "Viewing tag: love / Viewing tag: / \u201cIt is better to be hated for what you are than to be loved for what you are not.\u201d / by / Andr\u00e9 Gide / Tags:",
+  "occurrence": "match 1 of 10 on the page"
+ }
+}

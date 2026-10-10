@@ -1,0 +1,1 @@
+stopped: the Save dialog is not reachable in the observation; the new document stays unsaved

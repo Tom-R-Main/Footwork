@@ -1,0 +1,767 @@
+{
+ "dir": "results/q19-heldout-operator/H04-hardware-cores/hw",
+ "app": "System Information",
+ "pid": 92095,
+ "window_id": 4154,
+ "task": "Report the total number of CPU cores",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "done",
+ "memory": [
+  "step 0: read [-1] 'Total Number of Cores: 12 (8 Performance and 4 Efficiency)' as @cores",
+  "step 1: done accepted"
+ ],
+ "last_url": "app://System Information",
+ "last_title": "MacBook Pro",
+ "last_page_text": "MacBook Pro (2)\nHardware\nMacBook Pro\nATA\nApple Pay\nAudio\nBluetooth\nCamera\nCard Reader\nController\nDiagnostics\nDisc Burning\nEthernet\nFibre Channel\nGraphics/Displays\nMemory\nNVMExpress\nPCI\nParallel SCSI\nPower\nPrinters\nSAS\nSATA\nSPI\nStorage\nThunderbolt/USB4\nUSB\nNetwork\nFirewall\nLocations\nVolumes\nWi-Fi\nSoftware\nAccessibility\nApplications\nDeveloper\nDisabled Software\nExtensions\nFonts\nFrameworks\nInstallations\nLanguage & Region\nLogs\nManaged Client\nPreference Panes\nPrinter Software\nProfiles\nRaw Support\nRosetta Software\nSmartCards\nStartup Items\nSync Services\nHardware Overview:\n\nModel Name: MacBook Pro\nModel Identifier: Mac16,8\nModel Number: MX2H3LL/A\nChip: Apple M4 Pro\nTotal Number of Cores: 12 (8 Performance and 4 Efficiency)\nMemory: 24 GB\nSystem Firmware Version: 18000.120.36\nOS Loader Version: 18000.120.36\nSerial Number (system): [REDACTED:secret_2]\nHardware UUID: [REDACTED:secret_1]\nProvisioning UDID: [REDACTED:secret_0]\nActivation Lock Status: Disabled",
+ "last_candidates": [
+  {
+   "id": 2,
+   "label": "1",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Hardware",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ATA",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Apple Pay",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Audio",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 11,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Bluetooth",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Camera",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Card Reader",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 17,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Controller",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 19,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Diagnostics",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 21,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Disc Burning",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 23,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Ethernet",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 25,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Fibre Channel",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 27,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Graphics/Displays",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 29,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Memory",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 31,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "NVMExpress",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 33,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "PCI",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 35,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Parallel SCSI",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 37,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Power",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 39,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Printers",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 41,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SAS",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 43,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SATA",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 45,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SPI",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 47,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Storage",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 49,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thunderbolt/USB4",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 51,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "USB",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 54,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Network",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 56,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Firewall",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 58,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Locations",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 60,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Volumes",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 62,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Wi-Fi",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 65,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Software",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 67,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Accessibility",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 69,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Applications",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 71,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Developer",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 73,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Disabled Software",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 75,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Extensions",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 77,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Fonts",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 79,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Frameworks",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 81,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Installations",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 83,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Language & Region",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 85,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Logs",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 87,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Managed Client",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 89,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Preference Panes",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 91,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Printer Software",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 93,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Profiles",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 95,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Raw Support",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 97,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Rosetta Software",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 99,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SmartCards",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 101,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Startup Items",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 103,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Sync Services",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 108,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Hardware Overview:\n\nModel Name: MacBook Pro\nModel Identifier: Mac16,8\nModel Number: MX2H3LL/A\nChip: Apple M4 Pro\nTotal Number of Cores: 12 (8 Performance and 4 Efficiency)\nMemory: 24 GB\nSystem Firmware Version: 18000.120.36\nOS Loader Version: 18000.120.36\nSerial Number (system): [REDACTED:secret_2]\nHardware UUID: [REDACTED:secret_1]\nProvisioning UDID: [REDACTED:secret_0]\nActivation Lock Status: Disabled",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 109,
+   "label": "path",
+   "role": "list",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

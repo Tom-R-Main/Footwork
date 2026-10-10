@@ -1,0 +1,16 @@
+{
+ "task": "D12-save-new",
+ "oracle_ok": false,
+ "oracle": "d12.txt does not exist",
+ "answer": null,
+ "commands": 6,
+ "wall_s": 19.1,
+ "friction": 2,
+ "friction_by_kind": {
+  "misread": 1,
+  "retry": 0,
+  "dead_end": 1,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

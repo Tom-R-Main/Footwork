@@ -1,0 +1,4 @@
+{"t": 1790664936.94241, "surface": "hw", "args": ["start", "Report the total number of CPU cores", "--app", "System Information", "--mode", "foreground_permitted"], "exit": 0, "s": 1.87}
+{"t": 1790664944.9988108, "surface": "hw", "args": ["read", "--match", "Total Number of Cores: (\\d+)", "--as", "cores"], "exit": 0, "s": 0.84}
+{"t": 1790664945.284398, "surface": "hw", "args": ["done", "The Mac has @cores CPU cores (Total Number of Cores in the Hardware Overview).", "--from", "results/q19-heldout-operator/H04-hardware-cores/hw"], "exit": 2, "s": 0.2}
+{"t": 1790664953.8664021, "surface": "hw", "args": ["done", "The Mac has 12 CPU cores: 'Total Number of Cores: 12 (8 Performance and 4 Efficiency)'."], "exit": 0, "s": 1.16}

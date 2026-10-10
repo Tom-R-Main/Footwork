@@ -1,0 +1,142 @@
+{
+  "attempts": 108,
+  "arms": {
+    "original_full": {
+      "correct_replays": 15,
+      "all_three_correct": [
+        "G01",
+        "G02",
+        "G07",
+        "G10",
+        "G11"
+      ],
+      "invalid_accepted_cases": [
+        "G05"
+      ],
+      "supported_all_three": [
+        "G01",
+        "G07",
+        "G10"
+      ],
+      "ambiguous_bands": {
+        "true": 0,
+        "false": 12,
+        "unknown": 0
+      },
+      "wrong_effects": [
+        "G05"
+      ],
+      "original_counterexample_probabilities": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_tokens": 42471,
+      "cost_usd": 0.0042471,
+      "request_timing": {
+        "n": 36,
+        "median_ms": 188.8958960189484,
+        "p95_ms": 385.6986250029877
+      },
+      "capture_to_judgment_estimate": {
+        "n": 36,
+        "median_ms": 237.04056290443987,
+        "p95_ms": 426.89366603735834
+      }
+    },
+    "marked_full": {
+      "correct_replays": 27,
+      "all_three_correct": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G07",
+        "G08",
+        "G10",
+        "G11"
+      ],
+      "invalid_accepted_cases": [],
+      "supported_all_three": [
+        "G01",
+        "G04",
+        "G07",
+        "G10"
+      ],
+      "ambiguous_bands": {
+        "true": 0,
+        "false": 9,
+        "unknown": 3
+      },
+      "wrong_effects": [],
+      "original_counterexample_probabilities": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_tokens": 42471,
+      "cost_usd": 0.0042471,
+      "request_timing": {
+        "n": 36,
+        "median_ms": 192.27347907144576,
+        "p95_ms": 282.3535829083994
+      },
+      "capture_to_judgment_estimate": {
+        "n": 36,
+        "median_ms": 302.13866609847173,
+        "p95_ms": 395.5064576584846
+      }
+    },
+    "target_region": {
+      "correct_replays": 33,
+      "all_three_correct": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12"
+      ],
+      "invalid_accepted_cases": [],
+      "supported_all_three": [
+        "G01",
+        "G04",
+        "G07",
+        "G10"
+      ],
+      "ambiguous_bands": {
+        "true": 0,
+        "false": 0,
+        "unknown": 12
+      },
+      "wrong_effects": [],
+      "original_counterexample_probabilities": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_tokens": 34020,
+      "cost_usd": 0.003402,
+      "request_timing": {
+        "n": 36,
+        "median_ms": 185.18556252820417,
+        "p95_ms": 715.3308329870924
+      },
+      "capture_to_judgment_estimate": {
+        "n": 36,
+        "median_ms": 297.13993810582906,
+        "p95_ms": 775.9765408700332
+      }
+    }
+  },
+  "d4_cost_usd": 0.011896200000000001,
+  "cumulative_reported_estimate_usd": 0.087013922,
+  "cumulative_upper_usd": 0.227813922,
+  "verdict": "inconclusive_original_failure_did_not_reproduce"
+}

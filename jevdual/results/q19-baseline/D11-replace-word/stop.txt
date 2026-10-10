@@ -1,0 +1,1 @@
+stopped: the edit is in the window but no save reached the file (window not key); every receipt said so

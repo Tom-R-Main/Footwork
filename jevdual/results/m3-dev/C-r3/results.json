@@ -1,0 +1,77 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "stopped",
+  "reason": "[unavailable] Field survey archive page states: 'Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.' Therefore survey.zip cannot be downloaded.",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 19,
+  "input_tokens": 25778,
+  "output_tokens": 7833,
+  "cost_usd": 0.0041443999999999995,
+  "wall_s": 295.6,
+  "t_oracle": 1790674566.9381251,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.93) [237 ms]: complete p=0.93, max unmet p=0.00",
+  "answer": "Sign-up recorded for Ada Byron Blue",
+  "oracle_ok": true,
+  "oracle": "one submission to /m3-signup-done.html with {'name': 'Ada Byron', 'team': 'Blue'}",
+  "outcome": "proven",
+  "steps": 4,
+  "input_tokens": 3328,
+  "output_tokens": 868,
+  "cost_usd": 0.0005064,
+  "wall_s": 108.9,
+  "t_oracle": 1790674675.8551612,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ },
+ {
+  "task": "X3-unreserved-washers",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.68) [251 ms]: uncertain: complete p=0.68, max unmet p=0.00",
+  "answer": "60",
+  "oracle_ok": true,
+  "oracle": "answer contains '60'",
+  "outcome": "unaccepted_effect_present",
+  "steps": 4,
+  "input_tokens": 3707,
+  "output_tokens": 994,
+  "cost_usd": 0.0005695,
+  "wall_s": 86.2,
+  "t_oracle": 1790674761.987013,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": []
+  }
+ }
+]

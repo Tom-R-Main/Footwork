@@ -1,0 +1,3 @@
+{"t": 1790641321.595574, "surface": "web", "args": ["start", "Find the author of the first quote tagged love", "--browser", "--url", "https://quotes.toscrape.com/tag/love/"], "exit": 0, "s": 3.01}
+{"t": 1790641322.096462, "surface": "web", "args": ["read", "--match", "(?m)^by\\n(.+)$", "--as", "author"], "exit": 0, "s": 0.42}
+{"t": 1790641323.102793, "surface": "web", "args": ["done", "The first quote tagged love is by Andr\u00e9 Gide."], "exit": 0, "s": 0.92}

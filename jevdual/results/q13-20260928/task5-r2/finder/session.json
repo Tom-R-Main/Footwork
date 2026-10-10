@@ -1,0 +1,291 @@
+{
+ "dir": "results/q13-20260928/task5-r2/finder",
+ "app": "Finder",
+ "pid": 652,
+ "window_id": 1604,
+ "task": "Rename draft.txt in the Finder folder rename-5-2-015317 to the order number shown on the shop's order page, keeping .txt.",
+ "requirements": [
+  "draft.txt is renamed to the order number with .txt"
+ ],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 16,
+ "status": "open",
+ "memory": [
+  "step 1: click(draft.txt) -> confirmed",
+  "step 2: enter(draft.txt) -> refused",
+  "step 3: key(enter) -> confirmed",
+  "step 4: hotkey(cmd+a) -> suspected_noop",
+  "step 5: type(textbox) text='@ORDER.txt' -> refused",
+  "step 6: click(textbox) -> refused",
+  "step 7: type(textbox) text='@ORDER.txt' -> refused",
+  "step 8: click(draft.txt) -> suspected_noop",
+  "step 9: click(draft.txt) -> suspected_noop",
+  "step 10: click(Group) -> suspected_noop",
+  "step 11: enter(draft.txt) -> refused",
+  "step 12: type(draft.txt) text='@ORDER.txt' -> refused",
+  "step 13: key(Enter) -> refused",
+  "step 14: click(textbox) -> refused",
+  "step 15: click(rename-5-2-015317) -> suspected_noop",
+  "step 16: type(textbox) text='@ORDER.txt' -> refused"
+ ],
+ "last_url": "app://Finder",
+ "last_title": "rename-5-2-015317",
+ "last_page_text": "Recents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.92 GB available\nrename-5-2-015317\ndraft.txt",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "draft.txt",
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "sidebar",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 29,
+   "label": "Eject",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 59,
+   "label": "icon view",
+   "role": "list",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 60,
+   "label": "draft.txt",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": true,
+   "section": null
+  },
+  {
+   "id": 61,
+   "label": "resize icon",
+   "role": "slider",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 63,
+   "label": "icon view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "section": null
+  },
+  {
+   "id": 64,
+   "label": "list view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 65,
+   "label": "column view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 66,
+   "label": "gallery view",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": false,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 67,
+   "label": "Group",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 68,
+   "label": "Share",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 69,
+   "label": "Add Tags",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 70,
+   "label": "Action",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 71,
+   "label": "Search",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 75,
+   "label": "rename-5-2-015317",
+   "role": "statictext",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 395,
+   "label": "Crusader Kings II",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 396,
+   "label": "Documents",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 397,
+   "label": "External SSD",
+   "role": "file",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000003",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

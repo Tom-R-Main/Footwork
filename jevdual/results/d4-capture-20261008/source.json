@@ -1,0 +1,8 @@
+{
+  "commit": "9fd1575bccb0230454680e6a537a36d6b6448061",
+  "source_sha256": {
+    "evals/d4_target_grounding.py": "1d83d8dc65604e1a0b552996cc50871d79512133ef28563a532550099b5c0053",
+    "evals/d3_browser.py": "7bfc3f068702476afbc9b8f54101858023560effdf5ccf8c22ea9a2ef7dfe1c8",
+    "python/jevdual/visual_evidence.py": "efcb024135838e6d0472714ae3ccc18ab7392c20ea5bff6f2a6d384d83874534"
+  }
+}

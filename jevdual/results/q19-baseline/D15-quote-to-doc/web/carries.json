@@ -1,0 +1,19 @@
+{
+ "author": {
+  "name": "author",
+  "text": "Albert Einstein",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "https://quotes.toscrape.com/",
+  "title": "Quotes to Scrape",
+  "element_id": -1,
+  "element_label": "by\nAlbert Einstein",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-baseline/D15-quote-to-doc/web",
+  "taken_at": 1790640119.073051,
+  "surroundings": "Quotes to Scrape / \u201cThe world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.\u201d / by / Albert Einstein / Tags:",
+  "occurrence": "match 1 of 10 on the page"
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "result": {
+  "name": "result",
+  "text": "1,024",
+  "surface": "native",
+  "app": "Calculator",
+  "location": "app://Calculator",
+  "title": "Calculator",
+  "element_id": -1,
+  "element_label": "1,024",
+  "element_role": "text",
+  "part": "match",
+  "step": 28,
+  "session": "results/q19-baseline/D08-calc-power/calc",
+  "taken_at": 1790639822.8355641,
+  "surroundings": "512\u00d72 / 1,024",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

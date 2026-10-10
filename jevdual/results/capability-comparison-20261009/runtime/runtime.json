@@ -1,0 +1,51 @@
+{
+  "release": "chrome-devtools-mcp@1.10.1",
+  "reference_sha_prefix": "f08dbe152502",
+  "release_is_reference_byte_identity": false,
+  "resolved": {
+    "version": "1.10.1",
+    "resolved": "https://registry.npmjs.org/chrome-devtools-mcp/-/chrome-devtools-mcp-1.10.1.tgz",
+    "integrity": "sha512-Klw6HWDqHC/XS1JwZldd2r49aUhbUJN9m9Mvcx4SEueIPXtzuQX+QelxAViobv8YUkDZ7HWDrmViR6LeYK0wAw==",
+    "license": "Apache-2.0",
+    "bin": {
+      "chrome-devtools": "build/src/bin/chrome-devtools.js",
+      "chrome-devtools-mcp": "build/src/bin/chrome-devtools-mcp.js"
+    },
+    "engines": {
+      "node": "^20.19.0 || ^22.12.0 || >=23"
+    },
+    "peerDependencies": {
+      "@blackwell-systems/gcf": "^2.2.2",
+      "@toon-format/toon": "^4.1.0"
+    },
+    "peerDependenciesMeta": {
+      "@blackwell-systems/gcf": {
+        "optional": true
+      },
+      "@toon-format/toon": {
+        "optional": true
+      }
+    }
+  },
+  "node": "/opt/homebrew/bin/node",
+  "node_version": "v26.5.1",
+  "npm_version": "11.17.0",
+  "cli": "/Users/thomasmain/projects/footwork/output/capability-baseline-20261009/node_modules/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js",
+  "cli_sha256": "9f380d06e1ac05b257e27e708c0cc4b4ba190e285ed6eb6c8aa50978d98a12c5",
+  "lock_sha256": "89ea9eac89df80380318475c81ccc99dd6507ff9c076cf1210fb79072f62bec7",
+  "lifecycle_scripts": false,
+  "global_install": false,
+  "command": [
+    "/opt/homebrew/bin/npm",
+    "install",
+    "--prefix",
+    "/Users/thomasmain/projects/footwork/output/capability-baseline-20261009",
+    "--save-exact",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund",
+    "--cache",
+    "/Users/thomasmain/projects/footwork/output/capability-baseline-20261009/npm-cache",
+    "chrome-devtools-mcp@1.10.1"
+  ]
+}

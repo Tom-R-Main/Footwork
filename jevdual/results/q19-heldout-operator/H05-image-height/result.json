@@ -1,0 +1,20 @@
+{
+ "task": "H05-image-height",
+ "t_oracle": 1790665004.723826,
+ "oracle_ok": true,
+ "oracle": "answer contains '542'",
+ "answer": "The image is 542 pixels high (Image Size '938 \u00d7 542 pixels'; 938 is the width).",
+ "commands": 4,
+ "wall_s": 21.9,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {
+  "h05-panel.png": "1f8d186079dd24d31a8539713d814a4f0ce2dcf709f35b00248b5b98899515d8"
+ }
+}

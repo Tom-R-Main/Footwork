@@ -1,0 +1,9 @@
+# Agent capability product direction
+
+Design-only continuation of the architecture review. No new experiment or runtime change.
+
+## S-ACD1 · summary · 2026-10-09 14:41
+Established: The user chose an MIT-licensed capability system that other agents configure with minimal effort and call to abstract browser/native use. Current repository/package license files and metadata already state MIT. Updated the decision brief to select H4 as product direction and wrote a scoped tool/setup/packaging contract: host-owned planning; Footwork-owned governed operations/evidence/recovery; MCP stdio, SDK and JSON CLI over a common service. Read current native visual-qualification handoff; its machinery remains distinct from independent perception/adoption evidence.
+Uncertain: Minimal-install packaging, actual MCP/host integration, model-free qualified route coverage, driver identity/recovery and platform permission flow remain unimplemented/unverified. Required unavailable judgment cannot be silently skipped. The specific October 9 product brief has not received a new Opus review. Root MIT licensing does not relicense third-party components.
+Decision: Proceed in design toward H4 with agent ergonomics as a primary acceptance requirement. Keep internal library organization and resource verification subordinate to that boundary, preserve qualified Jev/driver settings and current advisory visual limits, and evaluate bounded routines rather than defaulting to a second general-purpose agent. No install, host configuration write, runtime change, provider call, heldout run, commit, push or deployment.
+Refs: docs/plans/agent-superpowers-product-20261009.md; docs/plans/architecture-decision-brief-20261008.md; docs/plans/five-architecture-hypotheses-v2-20261008.md; docs/notebook/2026-10-08-architecture-hypotheses.md; docs/notebook/2026-10-08-visual-qualification.md; ../LICENSE; LICENSE; pyproject.toml

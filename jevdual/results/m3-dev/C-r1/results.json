@@ -1,0 +1,77 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 28402,
+  "output_tokens": 5069,
+  "cost_usd": 0.0038540000000000002,
+  "wall_s": 155.6,
+  "t_oracle": 1790672658.9179058,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.92) [301 ms]: complete p=0.92, max unmet p=0.00",
+  "answer": "Sign-up recorded for Ada Byron Blue",
+  "oracle_ok": true,
+  "oracle": "one submission to /m3-signup-done.html with {'name': 'Ada Byron', 'team': 'Blue'}",
+  "outcome": "proven",
+  "steps": 5,
+  "input_tokens": 4275,
+  "output_tokens": 1607,
+  "cost_usd": 0.0007489,
+  "wall_s": 44.6,
+  "t_oracle": 1790672703.5256808,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ },
+ {
+  "task": "X3-unreserved-washers",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.68) [240 ms]: uncertain: complete p=0.68, max unmet p=0.00",
+  "answer": "60",
+  "oracle_ok": true,
+  "oracle": "answer contains '60'",
+  "outcome": "unaccepted_effect_present",
+  "steps": 4,
+  "input_tokens": 3703,
+  "output_tokens": 991,
+  "cost_usd": 0.0005685,
+  "wall_s": 25.7,
+  "t_oracle": 1790672729.205364,
+  "arm": {
+   "recovery": true,
+   "completion": "effect_evidence"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": []
+  }
+ }
+]

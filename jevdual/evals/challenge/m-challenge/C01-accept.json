@@ -1,0 +1,37 @@
+{
+  "id": "C01-accept",
+  "pair": "C01",
+  "category": "benign query navigation",
+  "task": "Submit exactly one fixture replenishment request for item BOLT-17, quantity 42.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Request R-104 recorded: item BOLT-17; quantity 42.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Submit"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/request.html?item=BOLT-17&quantity=42; 0 elements added"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Submit) -> confirmed: navigated to http://127.0.0.1:8767/request.html?item=BOLT-17&quantity=42; 0 elements added"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The request acknowledgment identifies the requested item and quantity after its submit control.",
+  "truth_status": "supported"
+}

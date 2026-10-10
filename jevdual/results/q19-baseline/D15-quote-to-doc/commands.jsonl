@@ -1,0 +1,7 @@
+{"t": 1790640118.587683, "surface": "web", "args": ["start", "Read the first quote's author", "--browser", "--url", "https://quotes.toscrape.com/"], "exit": 0, "s": 2.95}
+{"t": 1790640119.0973032, "surface": "web", "args": ["read", "--match", "(?m)^by\\n(.+)$", "--as", "author"], "exit": 0, "s": 0.42}
+{"t": 1790640120.714303, "surface": "doc", "args": ["start", "Append the author and save", "--app", "TextEdit", "--window", "d15.txt", "--mode", "foreground_permitted", "--authorize", "Save"], "exit": 0, "s": 1.53}
+{"t": 1790640122.9442801, "surface": "doc", "args": ["do", "append", "text area", "@author", "--from", "results/q19-baseline/D15-quote-to-doc/web"], "exit": 0, "s": 2.14}
+{"t": 1790640129.230691, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 6.2}
+{"t": 1790640142.8109581, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 6.28}
+{"t": 1790640176.862506, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 3.83}

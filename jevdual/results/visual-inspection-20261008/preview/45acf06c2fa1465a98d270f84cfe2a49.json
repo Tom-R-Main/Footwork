@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "inspection_only": true,
+  "surface": {
+    "kind": "native",
+    "pid": 19424,
+    "window_id": 28043,
+    "tab_id": null
+  },
+  "observation_id": "s00000002",
+  "captured_at": "2026-10-08T20:32:07.797660+00:00",
+  "image": {
+    "sha256": "c795d58e99212b3be8dd82386ec0446556db265c63d949bbde17f274f748e1c6",
+    "width": 1320,
+    "height": 936,
+    "scale_x": 2.0,
+    "scale_y": 2.0
+  },
+  "viewport": {
+    "x": 50.0,
+    "y": 434.0,
+    "width": 660.0,
+    "height": 468.0
+  },
+  "target": {
+    "id": "1",
+    "token": "s00000002:1",
+    "bounds": {
+      "x": 76.0,
+      "y": 859.0,
+      "width": 178.0,
+      "height": 22.0
+    },
+    "operation": "click",
+    "postcondition": "The crop preserves the entire subject",
+    "pixel_bounds": [
+      52,
+      850,
+      408,
+      894
+    ]
+  },
+  "binding_sha256": "914f14f08c0a862f3c051fe9a8a3ef92998315460c896f048a79ca379b4c8479",
+  "inspection": {
+    "screenshot": "45acf06c2fa1465a98d270f84cfe2a49.png",
+    "preview": "45acf06c2fa1465a98d270f84cfe2a49.html",
+    "elements_complete": false,
+    "driver_reported_scale": 2.0,
+    "target_label": "Apply proposed crop",
+    "authority": "read-only evidence; no model judgment, dispatch, consent or verified postcondition",
+    "coverage_warning": "AX projection proves this observed target's presence, not absence or global label uniqueness"
+  }
+}

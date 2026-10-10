@@ -1,0 +1,81 @@
+{
+  "commit": "87d0de2a54327ca5c24e226efefe8c227873e4ad",
+  "developmental": true,
+  "C1_retry": false,
+  "module_hashes": {
+    "jevdual/scripts/capability_text_qualification.py": "3a968d55104b602f0c3a26f0ec05bfa49936dc407dd6ce49b252263c3b9d1349",
+    "jevdual/uv.lock": "a5db0e76bd23b1483270ff2756be7d4b34a7a909bd3a449dc453b51d78ab2b3d",
+    "jevdual/python/jevdual/capability/__init__.py": "884c16358ba194d7017e55d98d8a801193f29836a4d6faf579c1c080e31b659d",
+    "jevdual/python/jevdual/capability/backend.py": "e2327ea27ebbf98347eb9064ed5a99653d432a03ff9ffc6cd79218945822c8f7",
+    "jevdual/python/jevdual/capability/contracts.py": "e3d288d5e0d17e9d0758c6b84ecb7d748e727cbfd4f2467630011811fd651177",
+    "jevdual/python/jevdual/capability/journal.py": "8b65d579e96e6d8c8de38da5bf6f20f7eaa441145acef2d48438a135f3d5691a",
+    "jevdual/python/jevdual/capability/mcp_server.py": "a5df8bc40a5108cefe470c744e16839fc3211832b2427174d2490d937fed7f70",
+    "jevdual/python/jevdual/capability/observations.py": "b9fd6aa61dd584557e1721926349272531345781c5817497fa08673ae377e7bf",
+    "jevdual/python/jevdual/capability/service.py": "55cfeb315108466c1ef83e6d018fd288c2c82da12010c229a9d698349e595542",
+    "jevdual/python/jevdual/ax.py": "dc8c21d022e575d66debec19a578848266b8d15b2b102b68c36dea826bdd3f75",
+    "jevdual/python/jevdual/native.py": "7ebfa295960a2b143be7d9f28324c13cfa8f1a5808f9c42cfa53f6cfb96bd650",
+    "jevdual/scripts/capability_comparison_trial.py": "59391a03048ccff8454f28888b988c415cdd41558b3c01ddf587f893562b6ffb",
+    "jevdual/scripts/capability_comparison_relay.py": "a92cb945260de1444643be2cdb4e2758a4a37166485129d1a39f0b0b99a76c65",
+    "jevdual/scripts/capability_host_trial.py": "6a4413c34bea59732f9a597bd37a609708ed0d50cc974759de5dab4e8f939e14"
+  },
+  "scope_sha256": "64cec389f5e7b7dc17cff5061208c8884345411cc4f66bed65c4196199bee472",
+  "sessions": [
+    {
+      "case": "newline-ended",
+      "oracle_exact": true,
+      "one_applied": true,
+      "harness_invalid": false,
+      "cost_usd": 0.0580018
+    },
+    {
+      "case": "no-newline",
+      "oracle_exact": true,
+      "one_applied": true,
+      "harness_invalid": false,
+      "cost_usd": 0.0455072
+    },
+    {
+      "case": "empty",
+      "oracle_exact": true,
+      "one_applied": true,
+      "harness_invalid": false,
+      "cost_usd": 0.052331
+    },
+    {
+      "case": "preserved-whitespace",
+      "oracle_exact": true,
+      "one_applied": true,
+      "harness_invalid": false,
+      "cost_usd": 0.046282
+    },
+    {
+      "case": "intentional-blank-line",
+      "oracle_exact": true,
+      "one_applied": true,
+      "harness_invalid": false,
+      "cost_usd": 0.0479812
+    },
+    {
+      "case": "whitespace-only",
+      "oracle_exact": true,
+      "one_applied": true,
+      "harness_invalid": false,
+      "cost_usd": 0.048815
+    }
+  ],
+  "cost_usd": 0.29891819999999997,
+  "prior_cost_usd": 0.324859,
+  "budget_upper_bound_usd": 0.6237772000000001,
+  "stop_reason": null,
+  "claim_review_pending": false,
+  "supported_completions": 6,
+  "duplicates": 0,
+  "unsupported_ancillary_disk_claim_cases": 6,
+  "host_reported_model_cost_usd": 0.29891819999999997,
+  "review_reported_model_cost_usd": 0.324859,
+  "total_reported_model_cost_usd": 0.6237771999999999,
+  "cost_basis": "CLI-reported list-basis estimates, not invoice evidence",
+  "scope": "six developmental native TextEdit field-content tasks, not a new C1 comparison",
+  "private_run": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1",
+  "private_summary_sha256": "998a3f75e85e609b4623ed43d61087c76f9e34fd3ced80e65caea934269053f2"
+}

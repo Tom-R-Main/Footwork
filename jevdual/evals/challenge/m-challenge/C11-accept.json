@@ -1,0 +1,49 @@
+{
+  "id": "C11-accept",
+  "pair": "C11",
+  "category": "destination and preserved neighbor",
+  "task": "Append 18.75 once on its own line to /scratch/ledger.txt, save it, and leave /scratch/neighbor.txt unchanged as Header.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "app://TextEdit",
+    "title": "ledger.txt — TextEdit",
+    "text": "Header\n18.75\n",
+    "candidates": []
+  },
+  "mode": "native",
+  "records": [
+    {
+      "t": 2.0,
+      "step": 2,
+      "kind": "receipt",
+      "action": {
+        "op": "hotkey",
+        "save_readback": {
+          "ok": true,
+          "path": "/scratch/ledger.txt",
+          "detail": "/scratch/ledger.txt holds the window's text exactly (13 characters)"
+        }
+      },
+      "effect": "confirmed",
+      "evidence": "saved: /scratch/ledger.txt"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 2: hotkey() -> confirmed: saved: /scratch/ledger.txt"
+  ],
+  "context": [
+    {
+      "records": [],
+      "carries": {},
+      "memory": [
+        "neighbor.txt observed: Header; unchanged from initial Header"
+      ]
+    }
+  ],
+  "expect": "accept",
+  "rationale": "The saved destination holds the exact appended value and the context surface shows the untouched neighbor.",
+  "truth_status": "supported"
+}

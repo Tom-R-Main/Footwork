@@ -1,0 +1,2 @@
+{"t": 1790631571.1692748, "kind": "misread", "text": "three identical 'Delete draft' links, no row context in the observation; chose [1] for 'Q3 plan' from the page text's order, an inference"}
+{"t": 1790631572.800941, "kind": "contradicted", "text": "DEFECT: the grant binds role and label ('link Delete draft'), which all three drafts' links share; it would clear deleting any of them, not only Q3 plan"}

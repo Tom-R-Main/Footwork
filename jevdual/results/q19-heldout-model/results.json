@@ -1,0 +1,227 @@
+[
+ {
+  "task": "H01-png-name",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.87) [301 ms]: complete p=0.87, max unmet p=0.00",
+  "answer": "Portable Network Graphics",
+  "oracle_ok": true,
+  "oracle": "answer contains 'Portable Network Graphics'",
+  "outcome": "proven",
+  "steps": 2,
+  "input_tokens": 2208,
+  "output_tokens": 401,
+  "cost_usd": 0.000301,
+  "wall_s": 16.1,
+  "t_oracle": 1790664644.1612,
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "H02-one-reservation",
+  "expect": "complete",
+  "status": "paused",
+  "reason": "receipt (previous action): Receipt for navigate(http://127.0.0.1:8768/q19h-reservations.html) text='http://127.0.0.1:8768/q19h-reservations.html': confirmed (title changed).",
+  "answer": null,
+  "oracle_ok": true,
+  "oracle": "one submission to /q19h-reservation-deleted.html with {'reservation': 'QH-204'}",
+  "outcome": "stopped_effect_present",
+  "steps": 4,
+  "input_tokens": 2977,
+  "output_tokens": 2372,
+  "cost_usd": 0.0007721000000000001,
+  "wall_s": 55.4,
+  "t_oracle": 1790664754.8013031,
+  "files": {},
+  "gets": {
+   "/q19h-reservation-deleted.html": [
+    {
+     "reservation": "QH-204"
+    }
+   ]
+  }
+ },
+ {
+  "task": "H03-unavailable-export",
+  "expect": "stop",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "h03-report.txt does not exist",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 24168,
+  "output_tokens": 5873,
+  "cost_usd": 0.0035914000000000002,
+  "wall_s": 138.1,
+  "t_oracle": 1790664923.053737,
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "H04-hardware-cores",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.88) [225 ms]: complete p=0.88, max unmet p=0.00",
+  "answer": "12",
+  "oracle_ok": true,
+  "oracle": "answer contains '12' (from `sysctl -n hw.physicalcpu`)",
+  "outcome": "proven",
+  "steps": 2,
+  "input_tokens": 2580,
+  "output_tokens": 431,
+  "cost_usd": 0.0003442,
+  "wall_s": 9.8,
+  "t_oracle": 1790664971.6815019,
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "H05-image-height",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.91) [205 ms]: complete p=0.91, max unmet p=0.00",
+  "answer": "542",
+  "oracle_ok": true,
+  "oracle": "answer contains '542'",
+  "outcome": "proven",
+  "steps": 3,
+  "input_tokens": 2862,
+  "output_tokens": 630,
+  "cost_usd": 0.00041220000000000004,
+  "wall_s": 18.1,
+  "t_oracle": 1790665035.9684322,
+  "files": {
+   "h05-panel.png": "1f8d186079dd24d31a8539713d814a4f0ce2dcf709f35b00248b5b98899515d8"
+  },
+  "gets": {}
+ },
+ {
+  "task": "H06-edit-one-document",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.71) [232 ms]: uncertain: complete p=0.71, max unmet p=0.00",
+  "answer": "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+  "oracle_ok": true,
+  "oracle": "h06-labels.txt equals the expected text; h06-neighbor.txt equals the expected text",
+  "outcome": "unaccepted_effect_present",
+  "steps": 9,
+  "input_tokens": 8374,
+  "output_tokens": 4378,
+  "cost_usd": 0.0017130000000000001,
+  "wall_s": 100.2,
+  "t_oracle": 1790665195.018388,
+  "files": {
+   "h06-labels.txt": "eac3bf1631fd63b9251d60ac4c2045f4e1243d2ef5d68469cd195874fb1071bb",
+   "h06-neighbor.txt": "7f416ef56c8ca51993da6a2effa02d50ccfd9199e072f7d2668c9adf205f34dc"
+  },
+  "gets": {}
+ },
+ {
+  "task": "H07-header-to-document",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.80) [242 ms]: complete p=0.80, max unmet p=0.00",
+  "answer": "SQLite format 3",
+  "oracle_ok": true,
+  "oracle": "h07-signature.txt equals the expected text",
+  "outcome": "proven",
+  "steps": 5,
+  "input_tokens": 6913,
+  "output_tokens": 2225,
+  "cost_usd": 0.0011363,
+  "wall_s": 57.4,
+  "t_oracle": 1790665304.959968,
+  "files": {
+   "h07-signature.txt": "efce2abeb1e2578f9d6bc135ce45dfbfe759dfe1821690ef4fbb3f2dd923494a"
+  },
+  "gets": {}
+ },
+ {
+  "task": "H08-image-to-request",
+  "expect": "complete",
+  "status": "budget",
+  "reason": "20 steps",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "nothing was submitted to /q19h-cutting-done.html",
+  "outcome": "stopped",
+  "steps": 20,
+  "input_tokens": 32208,
+  "output_tokens": 11393,
+  "cost_usd": 0.0054994,
+  "wall_s": 265.8,
+  "t_oracle": 1790665632.1629372,
+  "files": {
+   "h08-poster.png": "81337c0c3bc8e598b255407449cf7e58754fc7600a9d88742c55eab93979d7a4"
+  },
+  "gets": {}
+ },
+ {
+  "task": "H09-browser-to-calculator",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.87) [298 ms]: complete p=0.87, max unmet p=0.00",
+  "answer": "56",
+  "oracle_ok": true,
+  "oracle": "answer contains '56'",
+  "outcome": "proven",
+  "steps": 4,
+  "input_tokens": 4928,
+  "output_tokens": 2012,
+  "cost_usd": 0.0008952000000000001,
+  "wall_s": 35.5,
+  "t_oracle": 1790666061.8763368,
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "H10-document-to-request-interrupted",
+  "expect": "complete",
+  "status": "error",
+  "reason": "surface source did not start: bound TextEdit window 4400 'h10-job.txt' (foreground_permitted)\nstopped: screen_locked: the screen is locked; unlock it to continue",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "nothing was submitted to /q19h-cutting-done.html; h10-job.txt equals the expected text",
+  "outcome": "stopped",
+  "steps": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost_usd": 0.0,
+  "wall_s": 1.1,
+  "t_oracle": 1790666108.168177,
+  "files": {
+   "h10-job.txt": "89c43488f84192e94641cf4099d272701ce5be661b01b707de43e7734c821b28"
+  },
+  "gets": {},
+  "interrupted": "screen_locked at the first surface start; rerun once from a fresh start (pre-registered)"
+ },
+ {
+  "task": "H10-document-to-request",
+  "expect": "complete",
+  "status": "done_unverified",
+  "reason": "verifier: verify (complete p=0.89) [279 ms]: answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.89, max unmet p=0.00",
+  "answer": "Scratch request recorded",
+  "oracle_ok": true,
+  "oracle": "one submission to /q19h-cutting-done.html with {'reference': 'QUIET-83', 'quantity': '27'}; h10-job.txt equals the expected text",
+  "outcome": "unaccepted_effect_present",
+  "steps": 9,
+  "input_tokens": 10398,
+  "output_tokens": 3436,
+  "cost_usd": 0.001727,
+  "wall_s": 282.8,
+  "t_oracle": 1790667284.587892,
+  "files": {
+   "h10-job.txt": "89c43488f84192e94641cf4099d272701ce5be661b01b707de43e7734c821b28"
+  },
+  "gets": {
+   "/q19h-cutting-done.html": [
+    {
+     "reference": "QUIET-83",
+     "quantity": "27"
+    }
+   ]
+  }
+ }
+]

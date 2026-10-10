@@ -1,0 +1,56 @@
+# Q19 held-back adjudication (2026-09-29). One entry per raw attempt; the raw records are not edited.
+# Summaries (`uv run python scripts/q19_summary.py`) read this file and the raw logs, never results.json's
+# `outcome` field alone.
+#
+# eligibility: eligible | contaminated | superseded (then `superseded_by`)
+# outcome:
+#   completed_verified          the oracle confirms, and the run holds evidence for the requested effect (basis)
+#   effect_correct_unaccepted   the oracle confirms; the driver's done was refused
+#   effect_correct_not_claimed  the oracle confirms; the run ended without a done (a pause or stop after it)
+#   truthful_stop               no effect; the stop's stated reason is the actual one
+#   stop_without_reason         no effect; the run ended on its budget or an error without a reason
+#   unsupported_claim           an accepted done, confirmed receipt or stop message the oracle contradicts
+# basis (completed_verified only):
+#   accepted_done        the verifier accepted a done
+#   save_readback        the save receipt read the intended file equal to the window's text
+#   submission_receipt   the submit receipt shows navigation to the result with the intended fields in its URL
+# Known edits to raw records: model results.json's row for the interrupted H10 was renamed by hand
+# (task id suffixed "-interrupted", field "interrupted" added) when it was set aside; its run.json is original.
+# Operator result.json files for H02 and H09 were written before those tasks' last commands and notes:
+# counts come from commands.jsonl and friction.jsonl.
+
+attempts:
+  # ---- operator (Claude Code as System 2, footwork commands only; it had seen the oracles, see Q19.md)
+  - {id: op/H01, driver: operator, task: H01-png-name, raw: results/q19-heldout-operator/H01-png-name, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [web/session.jsonl]}
+  - {id: op/H02, driver: operator, task: H02-one-reservation, raw: results/q19-heldout-operator/H02-one-reservation, eligibility: eligible, outcome: completed_verified, basis: submission_receipt,
+     reason: "three dones refused on a fact-less result page; the click receipt names the deleted page with reservation=QH-204", evidence: [web/session.jsonl, friction.jsonl]}
+  - {id: op/H03, driver: operator, task: H03-unavailable-export, raw: results/q19-heldout-operator/H03-unavailable-export, eligibility: eligible, outcome: truthful_stop,
+     reason: "stop quoted the page: 'Status: export unavailable ... There is no download available'", evidence: [result.json]}
+  - {id: op/H04, driver: operator, task: H04-hardware-cores, raw: results/q19-heldout-operator/H04-hardware-cores, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [hw/session.jsonl]}
+  - {id: op/H05, driver: operator, task: H05-image-height, raw: results/q19-heldout-operator/H05-image-height, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [image/session.jsonl]}
+  - {id: op/H06, driver: operator, task: H06-edit-one-document, raw: results/q19-heldout-operator/H06-edit-one-document, eligibility: eligible, outcome: completed_verified, basis: save_readback, evidence: [doc/session.jsonl]}
+  - {id: op/H07, driver: operator, task: H07-header-to-document, raw: results/q19-heldout-operator/H07-header-to-document, eligibility: eligible, outcome: completed_verified, basis: save_readback, evidence: [doc/session.jsonl]}
+  - {id: op/H08, driver: operator, task: H08-image-to-request, raw: results/q19-heldout-operator/H08-image-to-request, eligibility: eligible, outcome: completed_verified, basis: submission_receipt, evidence: [request/session.jsonl]}
+  - {id: op/H09, driver: operator, task: H09-browser-to-calculator, raw: results/q19-heldout-operator/H09-browser-to-calculator, eligibility: eligible, outcome: completed_verified, basis: accepted_done,
+     reason: "the first computation read 2×8×7 = 112 (a pending 2× from an unreset Calculator); redone after All Clear; the oracle was read after a refused done, the accepted done came after", evidence: [calc/session.jsonl, friction.jsonl]}
+  - {id: op/H10, driver: operator, task: H10-document-to-request, raw: results/q19-heldout-operator/H10-document-to-request, eligibility: eligible, outcome: completed_verified, basis: submission_receipt, evidence: [request/session.jsonl]}
+
+  # ---- model (Muse Spark through jevdual.crossloop, at most 20 steps)
+  - {id: model/H01, driver: model, task: H01-png-name, raw: results/q19-heldout-model/H01-png-name, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [run.json]}
+  - {id: model/H02, driver: model, task: H02-one-reservation, raw: results/q19-heldout-model/H02-one-reservation, eligibility: eligible, outcome: effect_correct_not_claimed,
+     reason: "deleted QH-204 (confirmed), navigated back, then tried to navigate to the deletion URL again; paused by the grant check; never attempted done", evidence: [run.json]}
+  - {id: model/H03, driver: model, task: H03-unavailable-export, raw: results/q19-heldout-model/H03-unavailable-export, eligibility: eligible, outcome: stop_without_reason,
+     reason: "20 steps alternating between the portal and the site root despite the page's 'export unavailable'", evidence: [run.json]}
+  - {id: model/H04, driver: model, task: H04-hardware-cores, raw: results/q19-heldout-model/H04-hardware-cores, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [run.json]}
+  - {id: model/H05, driver: model, task: H05-image-height, raw: results/q19-heldout-model/H05-image-height, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [run.json]}
+  - {id: model/H06, driver: model, task: H06-edit-one-document, raw: results/q19-heldout-model/H06-edit-one-document, eligibility: eligible, outcome: effect_correct_unaccepted,
+     reason: "three dones at complete p 0.69-0.71 with no unmet requirement: overall-judgment uncertainty", evidence: [run.json]}
+  - {id: model/H07, driver: model, task: H07-header-to-document, raw: results/q19-heldout-model/H07-header-to-document, eligibility: eligible, outcome: completed_verified, basis: accepted_done, evidence: [run.json]}
+  - {id: model/H08, driver: model, task: H08-image-to-request, raw: results/q19-heldout-model/H08-image-to-request, eligibility: eligible, outcome: stop_without_reason,
+     reason: "entered Preview's Adjust Size sheet and repeated actions inside it until the budget; image unchanged", evidence: [run.json]}
+  - {id: model/H09, driver: model, task: H09-browser-to-calculator, raw: results/q19-heldout-model/H09-browser-to-calculator, eligibility: contaminated, outcome: completed_verified, basis: accepted_done,
+     reason: "the start state showed the operator's 8×7 = 56; the model read it and computed nothing (setup opened Calculator without resetting it)", evidence: [run.json]}
+  - {id: model/H10a, driver: model, task: H10-document-to-request, raw: results/q19-heldout-model/H10-document-to-request-interrupted, eligibility: superseded, superseded_by: model/H10, outcome: stop_without_reason,
+     reason: "screen locked at the first surface start; nothing sent; rerun once as pre-registered", evidence: [run.json]}
+  - {id: model/H10, driver: model, task: H10-document-to-request, raw: results/q19-heldout-model/H10-document-to-request, eligibility: eligible, outcome: effect_correct_unaccepted,
+     reason: "the claim check refused 'QUIET-83 27' (values absent from the confirmation page) and the page heading (no fact)", evidence: [run.json]}

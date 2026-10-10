@@ -1,0 +1,15 @@
+{
+  "implementation_commit": "8a407f1",
+  "pytest": {
+    "passed": 1265,
+    "skipped": 26,
+    "elapsed_s": 94.67,
+    "exit_code": 0,
+    "raw_log": "output/restart-full-suite-20261010.log",
+    "log_sha256": "59eabf7e7177152f1092c5025927298fbc6310c390f70afce41ccbc4149c38c1"
+  },
+  "ruff": "passed",
+  "uv_lock_check_offline": "passed",
+  "focused_new_recovery_and_public_cases": 48,
+  "mutation_checks_rejected": 2
+}

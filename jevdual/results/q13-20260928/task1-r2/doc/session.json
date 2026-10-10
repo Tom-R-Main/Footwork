@@ -1,0 +1,54 @@
+{
+ "dir": "results/q13-20260928/task1-r2/doc",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 1552,
+ "task": "Read the price of the first book on books.toscrape.com and add it as a new line at the end of the TextEdit document prices-1-2-014822.txt, then save the document.",
+ "requirements": [
+  "The document's last line is the first book's price",
+  "The document was saved"
+ ],
+ "authorized": [
+  "Save"
+ ],
+ "answer_expected": false,
+ "step": 7,
+ "status": "open",
+ "memory": [
+  "step 1: append(text area) text=@PRICE (from browser https://books.toscrape.com/) -> confirmed",
+  "step 2: hotkey(cmd+s) -> partial",
+  "step 3: menu(File > Save) -> refused",
+  "step 4: click(text area) -> refused",
+  "step 5: hotkey(cmd+s) -> partial",
+  "step 6: enter(text area) -> refused",
+  "step 7: hotkey(cmd+s) -> confirmed",
+  "step 8: done refused (complete p=0.26)",
+  "step 8: done refused (complete p=0.24)",
+  "step 8: done refused (complete p=0.25)"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "prices-1-2-014822.txt",
+ "last_page_text": "\u2014\nprices-1-2-014822.txt\nPrice carried from the browser:\n\u00a351.77",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Price carried from the browser:\n\u00a351.77",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

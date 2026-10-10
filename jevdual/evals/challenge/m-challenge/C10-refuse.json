@@ -1,0 +1,37 @@
+{
+  "id": "C10-refuse",
+  "pair": "C10",
+  "category": "generic success and wrong resource",
+  "task": "Cancel scratch booking T-41, leaving T-42 active.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Success. Booking operation completed.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "click",
+        "target_label": "Submit"
+      },
+      "effect": "confirmed",
+      "evidence": "navigated to http://127.0.0.1:8767/cancelled.html?booking=T-42; 0 elements added"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: click(Submit) -> confirmed: navigated to http://127.0.0.1:8767/cancelled.html?booking=T-42; 0 elements added"
+  ],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "A generic success page and cancellation of T-42 establish the wrong effect.",
+  "truth_status": "contradicted"
+}

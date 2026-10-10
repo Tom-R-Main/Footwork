@@ -35,8 +35,8 @@ from evals.report import TaskResult, write_results
 
 log = logging.getLogger("evals.native")
 
-Arm = Literal["s1_only", "dual", "guarded"]
-ARMS: tuple[Arm, ...] = ("s1_only", "dual", "guarded")
+Arm = Literal["s1_only", "dual", "guarded", "bounded"]
+ARMS: tuple[Arm, ...] = ("s1_only", "dual", "guarded", "bounded")
 BACKEND = "cua-driver"
 JEV_USD_PER_MTOK = 0.042
 JEV_TOKENS_PER_CALL = 2400
@@ -259,6 +259,7 @@ async def run_task(
     steps = s1 = s2 = llm_calls = jev_calls = 0
     llm_in = llm_out = jev_tokens = 0
     gate_judgments = 0
+    handovers = 0
     final_text = ""
     try:
         pid, window_id, _title = await launch(driver, task, tmp)
@@ -289,7 +290,7 @@ async def run_task(
             store = SecretStore({f"app://{task.app}": dict(task.secrets)}) if task.secrets else None
             policy = deps.policy_factory(task)
             verifier = deps.verifier_factory(task)
-            system_two = deps.s2_factory(task, verifier) if arm in ("dual", "guarded") else None
+            system_two = deps.s2_factory(task, verifier) if arm in ("dual", "guarded", "bounded") else None
             redactor = store.redactor() if store is not None else None
             with TraceWriter(trace_path, redactor=redactor) as trace:
                 trace.write(
@@ -328,6 +329,7 @@ async def run_task(
                         ),
                     ),
                     s1_enabled=(arm != "guarded"),
+                    bounded=(arm == "bounded"),
                 )
                 run = await agent.run()
             steps = len(agent.steps)
@@ -335,6 +337,7 @@ async def run_task(
             s2 = sum(1 for o in agent.steps if o.system == "s2")
             llm_calls = getattr(agent.s2, "calls", 0) if agent.s2 is not None else 0
             gate_judgments = len(agent.authorizer.judgments)
+            handovers = len(getattr(agent, "handovers", []))
             jev_calls = agent.jev_calls
             jev_tokens = sum((o.decision.request_tokens or 0) for o in agent.steps if o.decision is not None)
             llm_in = sum(o.llm_input_tokens for o in agent.steps)
@@ -374,6 +377,10 @@ async def run_task(
         jev_cost_usd=jev_cost,
         wall_s=wall,
         is_done=is_done,
+        # the claimed completion the report's verified pass reads: a done the verifier accepted (an
+        # accepted native done ends the run without an error); unset, every native report printed 0
+        # verified passes (Q17)
+        success=bool(is_done and not error and not paused),
         final_url=f"app://{task.app}",
         answer=answer,
         error=error,
@@ -381,6 +388,7 @@ async def run_task(
         trace_path=str(trace_path),
         paused=paused,
         gate_judgments=gate_judgments,
+        handovers=handovers,
     )
 
 

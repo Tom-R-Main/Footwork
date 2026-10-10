@@ -1,0 +1,19 @@
+{
+ "product": {
+  "name": "product",
+  "text": "391",
+  "surface": "native",
+  "app": "Calculator",
+  "location": "app://Calculator",
+  "title": "Calculator",
+  "element_id": -1,
+  "element_label": "391",
+  "element_role": "text",
+  "part": "match",
+  "step": 7,
+  "session": "results/q19-frozen/D16-calc-to-ticket/calc",
+  "taken_at": 1790641714.166816,
+  "surroundings": "17\u00d723 / 391",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

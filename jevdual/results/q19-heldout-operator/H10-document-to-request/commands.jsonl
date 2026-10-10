@@ -1,0 +1,7 @@
+{"t": 1790666079.868809, "surface": "source", "args": ["start", "Read the active request", "--app", "TextEdit", "--window", "h10-job.txt", "--mode", "foreground_permitted"], "exit": 0, "s": 1.8}
+{"t": 1790666087.899765, "surface": "source", "args": ["read", "--match", "Active request\\s+Reference: (\\S+)", "--as", "ref"], "exit": 0, "s": 0.84}
+{"t": 1790666088.73615, "surface": "source", "args": ["read", "--match", "Active request\\s+Reference: \\S+\\s+Quantity: (\\d+)", "--as", "qty"], "exit": 0, "s": 0.75}
+{"t": 1790666091.477789, "surface": "request", "args": ["start", "Submit one cutting request", "--browser", "--url", "http://127.0.0.1:8767/q19h-cutting.html", "--authorize", "Submit cutting request"], "exit": 0, "s": 2.65}
+{"t": 1790666093.237813, "surface": "request", "args": ["do", "type", "Reference", "@ref", "--from", "results/q19-heldout-operator/H10-document-to-request/source"], "exit": 0, "s": 1.67}
+{"t": 1790666094.983947, "surface": "request", "args": ["do", "type", "Quantity", "@qty", "--from", "results/q19-heldout-operator/H10-document-to-request/source"], "exit": 0, "s": 1.66}
+{"t": 1790666097.010001, "surface": "request", "args": ["do", "click", "Submit cutting request"], "exit": 0, "s": 1.92}

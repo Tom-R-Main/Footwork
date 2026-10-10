@@ -1,0 +1,178 @@
+{
+  "surface": "browser_fixture",
+  "accepted": true,
+  "dispatched": true,
+  "guard_reason": "scope_and_binding_pass",
+  "goal_met": true,
+  "effect_changed": true,
+  "wrong_effect": false,
+  "before": {
+    "mode": "none"
+  },
+  "after": {
+    "mode": "crop"
+  },
+  "current_observation": {
+    "image": "current.png",
+    "image_sha256": "12076f869fda902092ff1603007c79100ab9cdd00b29bc0a4d23c81659b76b4c",
+    "dimensions": [
+      640,
+      360
+    ],
+    "captured_at": "2026-10-08T19:35:01.013266+00:00",
+    "revision": "52ac729a013935e2d5a2724e04f69123feee2898aae038f74e34d82850d56bf9",
+    "target_id": "BE5DC1BD0AC5E3E08CF37FFB3205F956",
+    "process_id": 85942,
+    "dom": {
+      "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+      "elements": [
+        {
+          "target_id": "tool-a",
+          "role": "button",
+          "name": "Crop",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 80,
+            "y": 100,
+            "width": 60,
+            "height": 60
+          }
+        },
+        {
+          "target_id": "tool-b",
+          "role": "button",
+          "name": "Rotate",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 180,
+            "y": 100,
+            "width": 60,
+            "height": 60
+          }
+        }
+      ]
+    },
+    "ax": [
+      {
+        "role": "heading",
+        "name": "Image editor",
+        "value": null,
+        "properties": [
+          {
+            "name": "level",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "button",
+        "name": "Crop",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "button",
+        "name": "Rotate",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Image editor",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Choose the crop tool.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Image editor",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Choose the crop tool.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      }
+    ],
+    "phases_ms": {
+      "capture": 46.43625009339303,
+      "extraction": 2.335999975912273,
+      "encode": 0.32779097091406584
+    }
+  },
+  "reconstruction_content_matches": true,
+  "phases_ms": {
+    "dispatch": 5.888374987989664,
+    "setup_capture": 553.783957962878,
+    "validation": 0.0237500062212348,
+    "readback": 0.18708303105086088,
+    "total": 560.2356669260189
+  },
+  "evaluation": "oracle used only in independent goal/effect check"
+}

@@ -1,0 +1,19 @@
+{
+ "VAL": {
+  "name": "VAL",
+  "text": "156",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:56665/msealed-c-chain-4.html",
+  "title": "Equipment directory 5",
+  "element_id": -1,
+  "element_label": "Module G-32 nominal output: 156 watts. Peak output: 201 watts.",
+  "element_role": "text",
+  "part": "match",
+  "step": 4,
+  "session": "/Users/thomasmain/.codex/worktrees/m-independent-authoring/footwork/jevdual/results/m-independent-challenge-live/CL02-multihop/web",
+  "taken_at": 1790712940.33784,
+  "surroundings": "Equipment directory 5 / Module G-32 nominal output: 156 watts. Peak output: 201 watts.",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

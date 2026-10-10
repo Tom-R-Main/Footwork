@@ -1,0 +1,32 @@
+{
+ "dir": "results/q19-heldout-model/H10-document-to-request/request",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Read the active request's reference and quantity in h10-job.txt in TextEdit and transfer them to one scratch cutting request in the browser. Ignore the cancelled request and leave the source file unchanged. This local request is authorized. (The scratch folder is /Users/thomasmain/footwork-pilot/q19/q19-heldout-model/H10-document-to-request.)",
+ "requirements": [],
+ "authorized": [
+  "Submit cutting request"
+ ],
+ "answer_expected": false,
+ "step": 3,
+ "status": "open",
+ "memory": [
+  "step 1: type(Reference) text=@REF (from native app://TextEdit) -> confirmed",
+  "step 2: type(Quantity) text=@QTY (from native app://TextEdit) -> confirmed",
+  "step 3: click(Submit cutting request) -> confirmed",
+  "step 4: done refused (answer carries no fact found on the page (1 unsupported, rest narrative); comple)",
+  "step 4: done refused (answer carries no fact found on the page (1 unsupported, rest narrative); comple)",
+  "step 4: done refused (answer carries no fact found on the page (0 unsupported, rest narrative); comple)"
+ ],
+ "last_url": "http://127.0.0.1:8768/q19h-cutting-done.html?reference=QUIET-83&quantity=27",
+ "last_title": "Scratch request recorded",
+ "last_page_text": "Scratch request recorded\nThe local service has recorded your cutting request.",
+ "last_candidates": [],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-aefd0e35-037c-4112-be0a-96d16bc80475",
+ "secret_names": []
+}

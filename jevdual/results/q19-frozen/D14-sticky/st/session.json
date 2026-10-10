@@ -1,0 +1,40 @@
+{
+ "dir": "results/q19-frozen/D14-sticky/st",
+ "app": "Stickies",
+ "pid": 62587,
+ "window_id": 3732,
+ "task": "New sticky",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: hotkey(cmd+n) -> confirmed"
+ ],
+ "last_url": "app://Stickies",
+ "last_title": "Make a note of it!\u2026",
+ "last_page_text": "Make a note of it!\n\nStickies lets you keep notes (like these) on your desktop. Use a Stickies note to jot down reminders, lists, or other information. You can also use notes to store frequently used text or graphics.\n\n\u2022 To close this note, click the close button.\n\n\u2022 To collapse this note, double click the title bar.\n\nYour current notes appear when you open Stickies.",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Make a note of it!\n\nStickies lets you keep notes (like these) on your desktop. Use a Stickies note to jot down reminders, lists, or other information. You can also use notes to store frequently used text or graphics.\n\n\u2022 To close this note, click the close button.\n\n\u2022 To collapse this note, double click the title bar.\n\nYour current notes appear when you open Stickies.",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

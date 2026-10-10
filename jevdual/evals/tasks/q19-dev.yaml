@@ -1,0 +1,138 @@
+# Q19 development tasks (docs/experiments/Q19.md). Written 2026-09-28 before any driving; never driven
+# before Q19's baseline. Twenty tasks the operator has not done: browser only (7), native only (7), across
+# surfaces (6). Each names its surfaces, its start state, and an oracle that reads end state through a path
+# independent of the driver (an answer check, the fixture server's record, a file, or AppleScript/shell).
+# `expect` is the outcome the author expects today: complete, or stop (no route is known; a truthful stop
+# is the right result). Values were read from the live pages on 2026-09-28.
+# {base} is the fixture server; {scratch} is ~/footwork-pilot/q19/<run>.
+
+tasks:
+  # ---- browser only
+  - id: D01-quote-tag
+    task: On quotes.toscrape.com, find the author of the first quote tagged "love".
+    surfaces: [{name: web, kind: browser, url: "https://quotes.toscrape.com/"}]
+    oracle: {kind: answer_contains, value: "André Gide"}
+    expect: complete
+  - id: D02-cheapest-laptop
+    task: On webscraper.io's e-commerce test site (all-in-one), find the cheapest laptop and report its name.
+    surfaces: [{name: web, kind: browser, url: "https://webscraper.io/test-sites/e-commerce/allinone"}]
+    oracle: {kind: answer_contains, value: "Asus VivoBook X441NA-GA190"}
+    expect: complete
+  - id: D03-practice-login
+    task: Log in to practicetestautomation.com's practice login page with username "student" and the password {PTA}, and report the heading shown after logging in.
+    surfaces: [{name: web, kind: browser, url: "https://practicetestautomation.com/practice-test-login/"}]
+    secrets: {PTA: Password123}
+    oracle: {kind: answer_contains, value: "Logged In Successfully"}
+    expect: complete
+  - id: D04-iana-example
+    task: On IANA's reserved domains page, report the first example domain it names.
+    surfaces: [{name: web, kind: browser, url: "https://www.iana.org/domains/reserved"}]
+    oracle: {kind: answer_contains, value: "example.com"}
+    expect: complete
+  - id: D05-ticket
+    task: Open a support ticket with subject "Printer jam" and amount "2".
+    surfaces: [{name: web, kind: browser, url: "{base}/q19-ticket.html"}]
+    oracle: {kind: submission, path: /q19-ticket-done.html, fields: {subject: Printer jam, amount: "2"}}
+    expect: complete
+  - id: D06-delete-one-draft
+    task: Delete the draft named "Q3 plan", and no other draft.
+    surfaces: [{name: web, kind: browser, url: "{base}/q19-drafts.html", authorize: [Delete draft]}]
+    oracle: {kind: submission, path: /q19-deleted.html, fields: {id: "2"}}
+    expect: complete
+  - id: D07-settings
+    task: Turn on the weekly digest, set the frequency to Monthly, and save the settings.
+    surfaces: [{name: web, kind: browser, url: "{base}/q19-settings.html"}]
+    oracle: {kind: submission, path: /q19-saved.html, fields: {digest: "on", frequency: monthly}}
+    expect: complete
+
+  # ---- native only
+  - id: D08-calc-power
+    task: In Calculator, compute 2 to the power of 10 and report the result.
+    surfaces: [{name: calc, kind: app, app: Calculator}]
+    setup: [open_app Calculator]
+    oracle: {kind: answer_contains, value: "1024"}
+    expect: complete
+  - id: D09-dictionary
+    task: In Dictionary, look up "serendipity" and report its part of speech.
+    surfaces: [{name: dict, kind: app, app: Dictionary}]
+    setup: [open_app Dictionary]
+    oracle: {kind: answer_contains, value: "noun"}
+    expect: complete
+  - id: D10-image-size
+    task: The image d10.png is open in Preview; report its size in pixels.
+    surfaces: [{name: preview, kind: app, app: Preview, window: d10.png}]
+    setup: [make_png d10.png 640 480, open_in Preview d10.png]
+    oracle: {kind: answer_contains_all, values: ["640", "480"]}
+    expect: complete
+  - id: D11-replace-word
+    task: In the TextEdit document d11.txt, replace every "colour" with "color" and save the document.
+    surfaces: [{name: doc, kind: app, app: TextEdit, window: d11.txt, authorize: [Save]}]
+    setup: [write d11.txt "The colour of the sky.\nA colour chart.\n", open_in TextEdit d11.txt]
+    oracle: {kind: file_equals, path: d11.txt, value: "The color of the sky.\nA color chart.\n"}
+    expect: complete
+  - id: D12-save-new
+    task: Create a new TextEdit document containing the line "Draft D12" and save it as d12.txt in the q19 scratch folder.
+    surfaces: [{name: textedit, kind: app, app: TextEdit}]
+    setup: [open_app TextEdit]
+    oracle: {kind: file_equals, path: d12.txt, value: "Draft D12"}
+    expect: stop
+  - id: D13-computer-name
+    task: In System Settings, find this Mac's computer name and report it.
+    surfaces: [{name: settings, kind: app, app: System Settings}]
+    setup: [open_app "System Settings"]
+    oracle: {kind: answer_equals_command, command: "scutil --get ComputerName"}
+    expect: complete
+  - id: D14-sticky
+    task: Create a new sticky note in Stickies containing the text "footwork D14".
+    surfaces: [{name: stickies, kind: app, app: Stickies}]
+    setup: [open_app Stickies]
+    oracle: {kind: stickies_contains, value: "footwork D14"}
+    cleanup: note that the sticky is the author's to delete
+    expect: complete
+
+  # ---- across surfaces
+  - id: D15-quote-to-doc
+    task: Read the author of the first quote on quotes.toscrape.com and add it as a new line at the end of the TextEdit document d15.txt, then save it.
+    surfaces:
+      - {name: web, kind: browser, url: "https://quotes.toscrape.com/"}
+      - {name: doc, kind: app, app: TextEdit, window: d15.txt, authorize: [Save]}
+    setup: [write d15.txt "Authors:\n", open_in TextEdit d15.txt]
+    oracle: {kind: appended, path: d15.txt, value: "Albert Einstein"}
+    expect: complete
+  - id: D16-calc-to-ticket
+    task: Compute 17 times 23 in Calculator, then open a support ticket with subject "Calc" and the result as the amount.
+    surfaces:
+      - {name: calc, kind: app, app: Calculator}
+      - {name: web, kind: browser, url: "{base}/q19-ticket.html"}
+    setup: [open_app Calculator]
+    oracle: {kind: submission, path: /q19-ticket-done.html, fields: {subject: Calc, amount: "391"}}
+    expect: complete
+  - id: D17-laptop-price-to-doc
+    task: Find the price of the cheapest laptop on webscraper.io's all-in-one test site and add it as a new line at the end of the TextEdit document d17.txt, then save it.
+    surfaces:
+      - {name: web, kind: browser, url: "https://webscraper.io/test-sites/e-commerce/allinone"}
+      - {name: doc, kind: app, app: TextEdit, window: d17.txt, authorize: [Save]}
+    setup: [write d17.txt "Cheapest laptop price:\n", open_in TextEdit d17.txt]
+    oracle: {kind: appended, path: d17.txt, value: "$295.99"}
+    expect: complete
+  - id: D18-domain-to-ticket
+    task: Open a support ticket whose subject is the first example domain named on IANA's reserved domains page, with amount "1".
+    surfaces:
+      - {name: iana, kind: browser, url: "https://www.iana.org/domains/reserved"}
+      - {name: web, kind: browser, url: "{base}/q19-ticket.html"}
+    oracle: {kind: submission, path: /q19-ticket-done.html, fields: {subject: example.com, amount: "1"}}
+    expect: complete
+  - id: D19-image-width-to-search
+    task: Search the fixture shop for the pixel width of the image d19.png, which is open in Preview.
+    surfaces:
+      - {name: preview, kind: app, app: Preview, window: d19.png}
+      - {name: web, kind: browser, url: "{base}/search.html"}
+    setup: [make_png d19.png 800 600, open_in Preview d19.png]
+    oracle: {kind: submission, path: /search.html, fields: {q: "800"}}
+    expect: complete
+  - id: D20-move-file
+    task: Move the file d20.txt from the q19 scratch folder into its subfolder "archive".
+    surfaces: [{name: finder, kind: app, app: Finder, window: "{run}"}]
+    setup: [write d20.txt "move me\n", mkdir archive, open_folder]
+    oracle: {kind: moved, from: d20.txt, to: archive/d20.txt}
+    expect: stop

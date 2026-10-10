@@ -1,0 +1,30 @@
+{
+ "dir": "results/q19-heldout-operator/H02-one-reservation/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Delete only reservation QH-204",
+ "requirements": [],
+ "authorized": [
+  "Delete reservation QH-204"
+ ],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: click(Delete reservation QH-204) -> confirmed",
+  "step 2: done refused (answer carries no fact found on the page (1 unsupported, rest narrative); comple)",
+  "step 2: done refused (answer carries no fact found on the page (1 unsupported, rest narrative); comple)",
+  "step 2: done refused (answer carries no fact found on the page (0 unsupported, rest narrative); comple)"
+ ],
+ "last_url": "http://127.0.0.1:8767/q19h-reservation-deleted.html?reservation=QH-204",
+ "last_title": "Scratch cancellation recorded",
+ "last_page_text": "Scratch cancellation recorded\nThe local service has recorded the requested reservation cancellation.",
+ "last_candidates": [],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-add50f70-d2fb-4ba9-9725-ecfa8bf01031",
+ "secret_names": []
+}

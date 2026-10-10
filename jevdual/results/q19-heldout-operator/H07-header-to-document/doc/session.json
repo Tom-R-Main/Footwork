@@ -1,0 +1,43 @@
+{
+ "dir": "results/q19-heldout-operator/H07-header-to-document/doc",
+ "app": "TextEdit",
+ "pid": 63305,
+ "window_id": 4243,
+ "task": "Append the header as a new line and save",
+ "requirements": [],
+ "authorized": [
+  "Save"
+ ],
+ "answer_expected": false,
+ "step": 2,
+ "status": "open",
+ "memory": [
+  "step 1: append(text area) text=@hdr (from browser https://www.sqlite.org/fileformat.html#magic_header_string) -> confirmed",
+  "step 2: hotkey(cmd+s) -> confirmed"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "h07-signature.txt",
+ "last_page_text": "h07-signature.txt\nDatabase signature:\nSQLite format 3",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Database signature:\nSQLite format 3",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

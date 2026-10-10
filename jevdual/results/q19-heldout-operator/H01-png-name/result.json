@@ -1,0 +1,18 @@
+{
+ "task": "H01-png-name",
+ "t_oracle": 1790664623.0737019,
+ "oracle_ok": true,
+ "oracle": "answer contains 'Portable Network Graphics'",
+ "answer": "The page title 'PNG (Portable Network Graphics) Home Site' gives PNG's full name: Portable Network Graphics.",
+ "commands": 4,
+ "wall_s": 23.9,
+ "friction": 1,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 1,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {}
+}

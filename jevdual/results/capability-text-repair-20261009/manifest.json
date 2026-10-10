@@ -1,0 +1,32 @@
+[
+  [
+    "newline-ended",
+    "Invoice report\n",
+    "Invoice report\n17.25 USD"
+  ],
+  [
+    "no-newline",
+    "Invoice report",
+    "Invoice report\n17.25 USD"
+  ],
+  [
+    "empty",
+    "",
+    "17.25 USD"
+  ],
+  [
+    "preserved-whitespace",
+    "Invoice report\n\tkept  \n\n",
+    "Invoice report\n\tkept  \n\n17.25 USD"
+  ],
+  [
+    "intentional-blank-line",
+    "Invoice report",
+    "Invoice report\n\n17.25 USD"
+  ],
+  [
+    "whitespace-only",
+    "  \t",
+    "  \t\n17.25 USD"
+  ]
+]

@@ -1,0 +1,9 @@
+dispatched menu(File > Save): driver says confirmed in 2.0s
+receipt: Receipt for menu(File > Save): confirmed (saved: /Users/thomasmain/footwork-pilot/transfer-20260927-160046.txt holds the window's text exactly (38 characters)).
+TextEdit: 'transfer-20260927-160046.txt'  [elements_incomplete 1]
+1 elements:
+  [   1] textbox    'text area' = 'Price carried from the browser:\n£51.77'
+page text (67 chars):
+transfer-20260927-160046.txt
+Price carried from the browser:
+£51.77

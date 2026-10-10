@@ -1,0 +1,17 @@
+{
+ "price": {
+  "name": "price",
+  "text": "\u00a351.77",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "https://books.toscrape.com/",
+  "title": "All products | Books to Scrape - Sandbox",
+  "element_id": -1,
+  "element_label": "\u00a351.77",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/g-pilot-20260927-155808-clean/browser",
+  "taken_at": 1790539092.3772259
+ }
+}

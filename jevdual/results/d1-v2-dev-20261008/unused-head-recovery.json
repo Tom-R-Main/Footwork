@@ -1,0 +1,921 @@
+{
+  "classification": "post-hoc exploratory dependency-aware consumption; primary metrics unchanged",
+  "measured_commit": "b02e72a7e63faecfef7f45f9be2a4d1ae30dc71d",
+  "provider_requests": 0,
+  "fabricated_answer_values": 0,
+  "replay_source_sha256": {
+    "results/d1-v2-dev-20261008/unused-head-recovery.py": "5b4231d6f284517656dba7a3314b981226c24b6ff5b5a6426ffbc47e0813b9f1",
+    "evals/d1_compare.py": "d1e99f3f57ca15b852ff6229be1becd50dd67c3b38766f0ebfd7b507f894cb4a",
+    "python/jevdual/decisions.py": "7609fd432acd257e28fce6109e6383ae9444f3ea7c249da481e8b3d8f8295bc3",
+    "python/jevdual/policy.py": "3fe6514f595bb1d2747e552928e158c1c5d22f1d7dcf76142fc4be2f635abad3",
+    "python/jevdual/arbiter.py": "5cc8b2e4a1a36c56a60af6b262a682eae1d597bb2cbd28bb3f5649338f716273"
+  },
+  "input_sha256": {
+    "results.json": "9fa8591e95698909212a15ec248efd867217c9577c9155dcab7b247193c374a5",
+    "shared-inputs.json": "577dfc93eef31f6dbb473b14f9ecca1c0845ab9d133f256a40643f6e7116b1ff",
+    "started.json": "96ed8bff407e00b09ba37a254d0d53b6394b3553e1dcb4a6dc9c7aa1653b72a0",
+    "summary.json": "7e0bafb652cdd96a46366f0f60ccbb5df90eacd2301cbc8963e4e4908fb89f7d"
+  },
+  "primary": {
+    "correct_replays": 78,
+    "all_three_correct_cases": 26,
+    "errors": 9
+  },
+  "exploratory": {
+    "recovered_replays": 9,
+    "correct_replays": 87,
+    "all_three_correct_cases": 29,
+    "recovered_admitted_replays": 0
+  },
+  "recovered": [
+    {
+      "id": "R1-A06",
+      "repeat": 0,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "cb76fc89101181299ee227f4138ef244f3fc66aaad9511f5a5672a41d4233433",
+      "original_logical_questions_sha256": "a484495de7bab224a7d10860b8577366e0015d7a64ae2d85191240f3cb139f94",
+      "original_baseline_body_sha256": "4fec6f17156bc47f60d455d08872ddd8e51f5fa00d40c372d843cb27bb9d5f4b",
+      "original_candidate_body_sha256": "8c73957424e66b4bce4bdfed169bde35916546344d5b3a2db1546444305dcd69",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "back",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.0
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.0
+            },
+            {
+              "value": "back",
+              "probability": 1.0
+            },
+            {
+              "value": "wait",
+              "probability": 0.0
+            },
+            {
+              "value": "done",
+              "probability": 0.0
+            },
+            {
+              "value": "blocked",
+              "probability": 0.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.0
+        }
+      ],
+      "operation": "back",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "back_on_first_step: back on first step"
+    },
+    {
+      "id": "R1-A06",
+      "repeat": 1,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "cb76fc89101181299ee227f4138ef244f3fc66aaad9511f5a5672a41d4233433",
+      "original_logical_questions_sha256": "a484495de7bab224a7d10860b8577366e0015d7a64ae2d85191240f3cb139f94",
+      "original_baseline_body_sha256": "4fec6f17156bc47f60d455d08872ddd8e51f5fa00d40c372d843cb27bb9d5f4b",
+      "original_candidate_body_sha256": "8c73957424e66b4bce4bdfed169bde35916546344d5b3a2db1546444305dcd69",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "back",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.0
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.0
+            },
+            {
+              "value": "back",
+              "probability": 1.0
+            },
+            {
+              "value": "wait",
+              "probability": 0.0
+            },
+            {
+              "value": "done",
+              "probability": 0.0
+            },
+            {
+              "value": "blocked",
+              "probability": 0.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.0
+        }
+      ],
+      "operation": "back",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "back_on_first_step: back on first step"
+    },
+    {
+      "id": "R1-A06",
+      "repeat": 2,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "cb76fc89101181299ee227f4138ef244f3fc66aaad9511f5a5672a41d4233433",
+      "original_logical_questions_sha256": "a484495de7bab224a7d10860b8577366e0015d7a64ae2d85191240f3cb139f94",
+      "original_baseline_body_sha256": "4fec6f17156bc47f60d455d08872ddd8e51f5fa00d40c372d843cb27bb9d5f4b",
+      "original_candidate_body_sha256": "8c73957424e66b4bce4bdfed169bde35916546344d5b3a2db1546444305dcd69",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "back",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.0
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.0
+            },
+            {
+              "value": "back",
+              "probability": 1.0
+            },
+            {
+              "value": "wait",
+              "probability": 0.0
+            },
+            {
+              "value": "done",
+              "probability": 0.0
+            },
+            {
+              "value": "blocked",
+              "probability": 0.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.0
+        }
+      ],
+      "operation": "back",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "back_on_first_step: back on first step"
+    },
+    {
+      "id": "R1-A26",
+      "repeat": 0,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "3b8e940ae9acdf451c75f99e9d4d82160cd44b4cac8a6a47c559ba82f75c4a26",
+      "original_logical_questions_sha256": "ad4b3a0f6873e4058007810642a6fdd6997f929a1aa9a38ff80516689bd05165",
+      "original_baseline_body_sha256": "1eb74f6437717af9e632523ca9fa82f217840828bd4c7c0ec9301d7fc0632e89",
+      "original_candidate_body_sha256": "e1d3383f1b374bb4edbb233b6e299bac572c88662044cb08426e945cd0feb887",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target",
+        "enter_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "blocked",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.14
+            },
+            {
+              "value": "enter",
+              "probability": 0.07
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.01
+            },
+            {
+              "value": "back",
+              "probability": 0.01
+            },
+            {
+              "value": "wait",
+              "probability": 0.01
+            },
+            {
+              "value": "done",
+              "probability": 0.01
+            },
+            {
+              "value": "blocked",
+              "probability": 0.75
+            }
+          ],
+          "confidence": 0.71
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.03
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.82
+        }
+      ],
+      "operation": "blocked",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "blocked: no offered operation can make progress"
+    },
+    {
+      "id": "R1-A26",
+      "repeat": 1,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "3b8e940ae9acdf451c75f99e9d4d82160cd44b4cac8a6a47c559ba82f75c4a26",
+      "original_logical_questions_sha256": "ad4b3a0f6873e4058007810642a6fdd6997f929a1aa9a38ff80516689bd05165",
+      "original_baseline_body_sha256": "1eb74f6437717af9e632523ca9fa82f217840828bd4c7c0ec9301d7fc0632e89",
+      "original_candidate_body_sha256": "e1d3383f1b374bb4edbb233b6e299bac572c88662044cb08426e945cd0feb887",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target",
+        "enter_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "blocked",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.14
+            },
+            {
+              "value": "enter",
+              "probability": 0.07
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.01
+            },
+            {
+              "value": "back",
+              "probability": 0.01
+            },
+            {
+              "value": "wait",
+              "probability": 0.01
+            },
+            {
+              "value": "done",
+              "probability": 0.01
+            },
+            {
+              "value": "blocked",
+              "probability": 0.75
+            }
+          ],
+          "confidence": 0.71
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.03
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.82
+        }
+      ],
+      "operation": "blocked",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "blocked: no offered operation can make progress"
+    },
+    {
+      "id": "R1-A26",
+      "repeat": 2,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "3b8e940ae9acdf451c75f99e9d4d82160cd44b4cac8a6a47c559ba82f75c4a26",
+      "original_logical_questions_sha256": "ad4b3a0f6873e4058007810642a6fdd6997f929a1aa9a38ff80516689bd05165",
+      "original_baseline_body_sha256": "1eb74f6437717af9e632523ca9fa82f217840828bd4c7c0ec9301d7fc0632e89",
+      "original_candidate_body_sha256": "e1d3383f1b374bb4edbb233b6e299bac572c88662044cb08426e945cd0feb887",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target",
+        "enter_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "blocked",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.14
+            },
+            {
+              "value": "enter",
+              "probability": 0.07
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.01
+            },
+            {
+              "value": "back",
+              "probability": 0.01
+            },
+            {
+              "value": "wait",
+              "probability": 0.01
+            },
+            {
+              "value": "done",
+              "probability": 0.01
+            },
+            {
+              "value": "blocked",
+              "probability": 0.75
+            }
+          ],
+          "confidence": 0.71
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.03
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.82
+        }
+      ],
+      "operation": "blocked",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "blocked: no offered operation can make progress"
+    },
+    {
+      "id": "R1-A09",
+      "repeat": 0,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "5ef5112d3e2f6d2945ee2e70f49fd807698de042a020a4836f02e105abc2385b",
+      "original_logical_questions_sha256": "dba1cdabbb85e0319322b2d826324cf913c020f4bb918e09cd4894efa09ac589",
+      "original_baseline_body_sha256": "b54db4e4ccc2259aa17728e2f140f954496b87cf6813ff0d6c95215a3901166d",
+      "original_candidate_body_sha256": "837acc46dcbcf262068801feb2de6cadeeab6242df39fda942e5f78af1e9dd77",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "blocked",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.0
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.0
+            },
+            {
+              "value": "back",
+              "probability": 0.0
+            },
+            {
+              "value": "wait",
+              "probability": 0.0
+            },
+            {
+              "value": "done",
+              "probability": 0.0
+            },
+            {
+              "value": "blocked",
+              "probability": 1.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.01
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.24
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.52
+        }
+      ],
+      "operation": "blocked",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "blocked: no offered operation can make progress"
+    },
+    {
+      "id": "R1-A09",
+      "repeat": 1,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "5ef5112d3e2f6d2945ee2e70f49fd807698de042a020a4836f02e105abc2385b",
+      "original_logical_questions_sha256": "dba1cdabbb85e0319322b2d826324cf913c020f4bb918e09cd4894efa09ac589",
+      "original_baseline_body_sha256": "b54db4e4ccc2259aa17728e2f140f954496b87cf6813ff0d6c95215a3901166d",
+      "original_candidate_body_sha256": "837acc46dcbcf262068801feb2de6cadeeab6242df39fda942e5f78af1e9dd77",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "blocked",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.0
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.0
+            },
+            {
+              "value": "back",
+              "probability": 0.0
+            },
+            {
+              "value": "wait",
+              "probability": 0.0
+            },
+            {
+              "value": "done",
+              "probability": 0.0
+            },
+            {
+              "value": "blocked",
+              "probability": 1.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.01
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.24
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.52
+        }
+      ],
+      "operation": "blocked",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "blocked: no offered operation can make progress"
+    },
+    {
+      "id": "R1-A09",
+      "repeat": 2,
+      "original_error": {
+        "type": "DecisionsError",
+        "http_status": null,
+        "code": "refusal"
+      },
+      "original_state_sha256": "5ef5112d3e2f6d2945ee2e70f49fd807698de042a020a4836f02e105abc2385b",
+      "original_logical_questions_sha256": "dba1cdabbb85e0319322b2d826324cf913c020f4bb918e09cd4894efa09ac589",
+      "original_baseline_body_sha256": "b54db4e4ccc2259aa17728e2f140f954496b87cf6813ff0d6c95215a3901166d",
+      "original_candidate_body_sha256": "837acc46dcbcf262068801feb2de6cadeeab6242df39fda942e5f78af1e9dd77",
+      "original_request_replay_verified": true,
+      "removed_refused_names": [
+        "click_target"
+      ],
+      "retained_head_names": [
+        "operation",
+        "goal_done",
+        "stuck",
+        "destructive",
+        "login_required",
+        "bot_check",
+        "needs_reasoning"
+      ],
+      "retained_heads_validated": true,
+      "retained_native_answers": [
+        {
+          "type": "choice",
+          "name": "operation",
+          "choice": "blocked",
+          "probabilities": [
+            {
+              "value": "click",
+              "probability": 0.0
+            },
+            {
+              "value": "scroll_page",
+              "probability": 0.0
+            },
+            {
+              "value": "back",
+              "probability": 0.0
+            },
+            {
+              "value": "wait",
+              "probability": 0.0
+            },
+            {
+              "value": "done",
+              "probability": 0.0
+            },
+            {
+              "value": "blocked",
+              "probability": 1.0
+            }
+          ],
+          "confidence": 1.0
+        },
+        {
+          "type": "predicate",
+          "name": "goal_done",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "stuck",
+          "probability": 0.01
+        },
+        {
+          "type": "predicate",
+          "name": "destructive",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "login_required",
+          "probability": 0.24
+        },
+        {
+          "type": "predicate",
+          "name": "bot_check",
+          "probability": 0.0
+        },
+        {
+          "type": "predicate",
+          "name": "needs_reasoning",
+          "probability": 0.52
+        }
+      ],
+      "operation": "blocked",
+      "target_id": null,
+      "exact_pair_correct": true,
+      "admitted": false,
+      "arbiter_kind": "escalate",
+      "escalation_reason": "blocked: no offered operation can make progress"
+    }
+  ],
+  "limitation": "This changes refusal consumption after observing results. It is not preregistered validation, does not alter primary counts, and proves no live dispatch behavior."
+}

@@ -1,0 +1,16 @@
+{
+ "task": "D13-computer-name",
+ "oracle_ok": true,
+ "oracle": "answer contains 'MacBook Pro (2)' (from `scutil --get ComputerName`)",
+ "answer": "This Mac is named \"MacBook Pro (2)\".",
+ "commands": 11,
+ "wall_s": 48.8,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

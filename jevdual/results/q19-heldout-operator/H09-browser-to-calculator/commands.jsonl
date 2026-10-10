@@ -1,0 +1,21 @@
+{"t": 1790665783.210451, "surface": "board", "args": ["start", "Read the active Larch batch", "--browser", "--url", "http://127.0.0.1:8767/q19h-batches.html"], "exit": 0, "s": 2.71}
+{"t": 1790665789.928899, "surface": "board", "args": ["read", "--match", "Larch\\s+Tray count: (\\d+)", "--as", "trays"], "exit": 0, "s": 0.48}
+{"t": 1790665790.4212658, "surface": "board", "args": ["read", "--match", "Larch\\s+Tray count: \\d+\\s+Pieces per tray: (\\d+)", "--as", "pieces"], "exit": 0, "s": 0.4}
+{"t": 1790665794.805529, "surface": "calc", "args": ["start", "Compute trays times pieces", "--app", "Calculator", "--mode", "foreground_permitted"], "exit": 0, "s": 4.3}
+{"t": 1790665813.182621, "surface": "calc", "args": ["do", "click", "Clear"], "exit": 0, "s": 11.35}
+{"t": 1790665825.2911549, "surface": "calc", "args": ["do", "click", "label:8"], "exit": 0, "s": 11.99}
+{"t": 1790665838.409825, "surface": "calc", "args": ["do", "click", "Multiply"], "exit": 0, "s": 12.99}
+{"t": 1790665852.1703098, "surface": "calc", "args": ["do", "click", "label:7"], "exit": 0, "s": 13.63}
+{"t": 1790665869.5132, "surface": "calc", "args": ["do", "click", "Equals"], "exit": 0, "s": 17.15}
+{"t": 1790665874.8351119, "surface": "calc", "args": ["look"], "exit": 0, "s": 5.21}
+{"t": 1790665890.691919, "surface": "calc", "args": ["look", "--text", "200"], "exit": 0, "s": 4.3}
+{"t": 1790665904.418915, "surface": "calc", "args": ["look"], "exit": 0, "s": 3.7}
+{"t": 1790665917.142226, "surface": "calc", "args": ["do", "click", "All Clear"], "exit": 0, "s": 12.63}
+{"t": 1790665929.59998, "surface": "calc", "args": ["do", "click", "label:8"], "exit": 0, "s": 12.33}
+{"t": 1790665942.024776, "surface": "calc", "args": ["do", "click", "Multiply"], "exit": 0, "s": 12.29}
+{"t": 1790665954.723031, "surface": "calc", "args": ["do", "click", "label:7"], "exit": 0, "s": 12.57}
+{"t": 1790665967.405649, "surface": "calc", "args": ["do", "click", "Equals"], "exit": 0, "s": 12.55}
+{"t": 1790665971.2400079, "surface": "calc", "args": ["look", "--text", "60"], "exit": 0, "s": 3.73}
+{"t": 1790665985.436456, "surface": "calc", "args": ["read", "--match", "^8\u00d77\\s+(\\d+)", "--as", "total"], "exit": 0, "s": 3.77}
+{"t": 1790665989.51981, "surface": "calc", "args": ["done", "The active Larch batch has 56 pieces: Calculator shows 8\u00d77 = 56 (8 trays of 7 pieces).", "--context-from", "results/q19-heldout-operator/H09-browser-to-calculator/board"], "exit": 5, "s": 3.98}
+{"t": 1790666002.596566, "surface": "calc", "args": ["done", "56", "--context-from", "results/q19-heldout-operator/H09-browser-to-calculator/board"], "exit": 0, "s": 4.31}

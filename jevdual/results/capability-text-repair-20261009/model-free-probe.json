@@ -1,0 +1,10 @@
+{
+  "source_commit": "50948c6",
+  "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-model-free-20261009/receipt.json",
+  "sha256": "074cfe2562ea6b4f8e029638909ad6535399c9042b16fdb992ffdf5208e194a2",
+  "provider_calls": 0,
+  "offered_targets": 1,
+  "oracle_exact": true,
+  "disposition": "applied",
+  "persistence": "not_checked"
+}

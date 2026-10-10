@@ -1,0 +1,160 @@
+{
+  "frozen_commit": "c7c418c7a118fca1b86b7de653668f45478e0bc7",
+  "developmental": true,
+  "heldout": false,
+  "scheduled_sessions": 60,
+  "finished_sessions": 60,
+  "scheduled_pairs": 30,
+  "finished_pairs": 30,
+  "qualified_sessions": 57,
+  "excluded_sessions": [
+    "b07-footwork",
+    "b13-footwork",
+    "b29-footwork"
+  ],
+  "claim_review_complete": true,
+  "decision_eligible": false,
+  "formal_decision": "inconclusive: 3 interrupted Footwork treatments not applied; thresholds not prorated",
+  "engineering_decision": "stop and diagnose clean guardrail: Footwork 6/12 versus raw 9/12; fix separator contract and empty-field target qualification before expanding the API",
+  "counts": [
+    {
+      "arm": "footwork",
+      "stratum": "clean",
+      "scheduled": 12,
+      "qualified": 12,
+      "outcomes": {
+        "Completed": 6,
+        "Wrong": 3,
+        "Correct stop": 3
+      },
+      "false_completions": 0,
+      "duplicates": 0,
+      "model_cost_usd_all_scheduled": 0.594257,
+      "host_wall_seconds_all_scheduled": 187.96337921079248,
+      "cost_usd_per_verified_completion": 0.09904283333333334,
+      "host_wall_seconds_per_verified_completion": 31.327229868465412
+    },
+    {
+      "arm": "footwork",
+      "stratum": "interrupted",
+      "scheduled": 12,
+      "qualified": 9,
+      "outcomes": {
+        "Completed": 6,
+        "Wrong": 3,
+        "Excluded": 3
+      },
+      "false_completions": 0,
+      "duplicates": 0,
+      "model_cost_usd_all_scheduled": 0.7771928,
+      "host_wall_seconds_all_scheduled": 252.0616943341447,
+      "cost_usd_per_verified_completion": 0.12953213333333333,
+      "host_wall_seconds_per_verified_completion": 42.01028238902412
+    },
+    {
+      "arm": "footwork",
+      "stratum": "stale",
+      "scheduled": 6,
+      "qualified": 6,
+      "outcomes": {
+        "Completed": 6
+      },
+      "false_completions": 0,
+      "duplicates": 0,
+      "model_cost_usd_all_scheduled": 0.3740676,
+      "host_wall_seconds_all_scheduled": 114.97740024910308,
+      "cost_usd_per_verified_completion": 0.0623446,
+      "host_wall_seconds_per_verified_completion": 19.16290004151718
+    },
+    {
+      "arm": "raw",
+      "stratum": "clean",
+      "scheduled": 12,
+      "qualified": 12,
+      "outcomes": {
+        "Completed": 9,
+        "Wrong": 3
+      },
+      "false_completions": 3,
+      "duplicates": 0,
+      "model_cost_usd_all_scheduled": 4.2919112,
+      "host_wall_seconds_all_scheduled": 301.84841049974784,
+      "cost_usd_per_verified_completion": 0.4768790222222223,
+      "host_wall_seconds_per_verified_completion": 33.53871227774976
+    },
+    {
+      "arm": "raw",
+      "stratum": "interrupted",
+      "scheduled": 12,
+      "qualified": 12,
+      "outcomes": {
+        "Completed": 9,
+        "Wrong": 3
+      },
+      "false_completions": 3,
+      "duplicates": 0,
+      "model_cost_usd_all_scheduled": 3.775314,
+      "host_wall_seconds_all_scheduled": 341.4921802483732,
+      "cost_usd_per_verified_completion": 0.4194793333333333,
+      "host_wall_seconds_per_verified_completion": 37.94357558315258
+    },
+    {
+      "arm": "raw",
+      "stratum": "stale",
+      "scheduled": 6,
+      "qualified": 6,
+      "outcomes": {
+        "Wrong": 6
+      },
+      "false_completions": 6,
+      "duplicates": 0,
+      "model_cost_usd_all_scheduled": 2.0553242000000003,
+      "host_wall_seconds_all_scheduled": 148.14895833225455,
+      "cost_usd_per_verified_completion": null,
+      "host_wall_seconds_per_verified_completion": null
+    }
+  ],
+  "matched_qualified_interrupted_pairs": {
+    "pairs": 9,
+    "footwork_completed": 6,
+    "raw_completed": 6,
+    "descriptive_only": true
+  },
+  "model_cost_usd_measured": 11.868066800000001,
+  "model_cost_usd_qualification_and_initial_reviews": 2.6628026,
+  "model_cost_usd_final_scoring_review": 1.414871,
+  "model_cost_usd_total": 15.9457404,
+  "cost_basis": "CLI reported list-basis estimates; not invoice/billing evidence",
+  "budget_ceiling_usd": 30,
+  "review_cli_budget_usd": 1,
+  "review_reported_cost_exceeded_cli_cap": true,
+  "module_hashes": {
+    "jevdual/scripts/capability_comparison_trial.py": "59391a03048ccff8454f28888b988c415cdd41558b3c01ddf587f893562b6ffb",
+    "jevdual/scripts/capability_comparison_relay.py": "a92cb945260de1444643be2cdb4e2758a4a37166485129d1a39f0b0b99a76c65",
+    "jevdual/scripts/capability_host_trial.py": "6a4413c34bea59732f9a597bd37a609708ed0d50cc974759de5dab4e8f939e14",
+    "jevdual/scripts/capability_baseline_probe.py": "0196b7d66970ed181a1d589e970da5e0bbf4651944ce9c78156c3a1b5dde69ac",
+    "jevdual/uv.lock": "a5db0e76bd23b1483270ff2756be7d4b34a7a909bd3a449dc453b51d78ab2b3d",
+    "jevdual/python/jevdual/capability/__init__.py": "884c16358ba194d7017e55d98d8a801193f29836a4d6faf579c1c080e31b659d",
+    "jevdual/python/jevdual/capability/backend.py": "0c212f18f30b811de1047ec5821c01eda6578ab8eafd9d1c7bf723a0ee63ce5c",
+    "jevdual/python/jevdual/capability/contracts.py": "efddf7417900520908873ce4c99f2336880cd4dc3061450af1d759372cef56bc",
+    "jevdual/python/jevdual/capability/journal.py": "8b65d579e96e6d8c8de38da5bf6f20f7eaa441145acef2d48438a135f3d5691a",
+    "jevdual/python/jevdual/capability/mcp_server.py": "a5df8bc40a5108cefe470c744e16839fc3211832b2427174d2490d937fed7f70",
+    "jevdual/python/jevdual/capability/observations.py": "c77e4a2a17353e4a12798aac3c153494a4915cf7b745d405415a08e05af0fa92",
+    "jevdual/python/jevdual/capability/service.py": "55cfeb315108466c1ef83e6d018fd288c2c82da12010c229a9d698349e595542",
+    "jevdual/python/jevdual/native.py": "7ebfa295960a2b143be7d9f28324c13cfa8f1a5808f9c42cfa53f6cfb96bd650",
+    "jevdual/python/jevdual/ax.py": "28e3a905f4ffc2cf92797cbffa9b9ee3b534fa98632069e9df4c257196437784",
+    "jevdual/python/jevdual/browser_driver.py": "85fe8bef3e4699866b433b8a37f3805f93f858f6c10e8d3ea7565495b9d7d091"
+  },
+  "package_versions": {
+    "mcp": "2.1.1",
+    "cua-driver": "0.28.2",
+    "browser-use": "0.13.10"
+  },
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "stop_reason": null,
+  "summary_private_path": "/Users/thomasmain/projects/footwork/output/capability-comparison-c1-20261009-v1/summary.json",
+  "summary_sha256": "34a8f81924d57e20fc5e0ef208018fe99849a53324bbe77249dc0f3ddd620117",
+  "schedule_sha256": "be20ea0176ba1a7d5194823c1b6cf6e20f60fc63256098293e88362495d6cd4d",
+  "recorded_at": "2026-10-09T19:24:40.873323-04:00"
+}

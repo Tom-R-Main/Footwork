@@ -1,0 +1,23 @@
+{
+  "id": "C16-refuse",
+  "pair": "C16",
+  "category": "answer calibration exclusion",
+  "task": "Report the number of unreserved caps, excluding caps already reserved.",
+  "requirements": [],
+  "answer_expected": true,
+  "answer": "Caps: 64 unreserved",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Caps reserved: 64. Caps unreserved: 37. Plugs unreserved: 37.",
+    "candidates": []
+  },
+  "mode": "browser",
+  "records": [],
+  "carries": {},
+  "memory": [],
+  "context": [],
+  "expect": "refuse",
+  "rationale": "The reserved row answers the opposite qualifier despite being present on the page.",
+  "truth_status": "contradicted"
+}

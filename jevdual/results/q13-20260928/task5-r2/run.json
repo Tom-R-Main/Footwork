@@ -1,0 +1,319 @@
+{
+ "status": "budget",
+ "reason": "20 steps",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read order number from page",
+   "action": {
+    "name": "read",
+    "surface": "web",
+    "match": "(KB-\\d+)",
+    "as": "ORDER"
+   },
+   "exit": 0,
+   "output": "carried @ORDER = 'KB-20260921', read from browser Google Chrome (footwork) at http://127.0.0.1:60480/order-confirmed.html (text 'Thank you. Your order number is KB-20260921.', its match) at step 0 of session results/q13-20260928/task5-r2/web",
+   "ms": 2382.102958001269,
+   "input_tokens": 1172,
+   "output_tokens": 108
+  },
+  {
+   "step": 2,
+   "note": "Select draft.txt to begin rename",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "draft.txt"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'draft.txt'\ndispatched click(draft.txt): driver says confirmed in 2.0s\nreceipt: Receipt for click(draft.txt): confirmed (2 elements added, 0 removed, 1 changed).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n18 elements:\n  [   1] tree       'sidebar'\n  [  28] button     'Eject'\n  [  58] list       'icon view'\n  [  59] file       'draft.txt'\n  [  60] slider     'resize icon'\n  [  62] radio      'icon view' checked=True\n  [  63] radio      'list view' checked=False\n  [  64] radio      'column view' checked=False\n  [  65] radio      'gallery view' checked=False\n  [  66] button     'Group'\n  [  67] button     'Share'\n  [  68] button     'Add Tags'\n  [  69] button     'Action'\n  [  70] button     'Search'\n  [  74] statictext 'rename-5-2-015317'\n  [ 389] file       'Crusader Kings II'\n  [ 390] file       'Documents'\n  [ 391] file       'External SSD'\npage text (284 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.96 GB available\nrename-5-2-015317",
+   "ms": 8208.309208001083,
+   "input_tokens": 1282,
+   "output_tokens": 249
+  },
+  {
+   "step": 3,
+   "note": "Select file and press Enter to rename",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "enter",
+    "target": "draft.txt"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.20 on 'confirm the default button'\ndispatched enter(draft.txt): driver says not dispatched (unknown_operation: 'enter' is not offered on [59] 'draft.txt' (file)) in 0.0s\nreceipt: Receipt for enter(draft.txt): refused (not applied: unknown_operation: 'enter' is not offered on [59] 'draft.txt' (file); page unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n18 elements:\n  [   1] tree       'sidebar'\n  [  28] button     'Eject'\n  [  58] list       'icon view'\n  [  59] file       'draft.txt'\n  [  60] slider     'resize icon'\n  [  62] radio      'icon view' checked=True\n  [  63] radio      'list view' checked=False\n  [  64] radio      'column view' checked=False\n  [  65] radio      'gallery view' checked=False\n  [  66] button     'Group'\n  [  67] button     'Share'\n  [  68] button     'Add Tags'\n  [  69] button     'Action'\n  [  70] button     'Search'\n  [  74] statictext 'rename-5-2-015317'\n  [ 389] file       'Crusader Kings II'\n  [ 390] file       'Documents'\n  [ 391] file       'External SSD'\npage text (284 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.96 GB available\nrename-5-2-015317",
+   "ms": 6318.722750000234,
+   "input_tokens": 1338,
+   "output_tokens": 292
+  },
+  {
+   "step": 4,
+   "note": "Initiate rename via Enter key",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "key",
+    "target": "draft.txt",
+    "keys": [
+     "enter"
+    ]
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.23 on 'confirm the default button'\ndispatched key(enter): driver says unverifiable in 0.2s\nreceipt: Receipt for key(enter): confirmed (1 elements added, 0 removed, 0 changed).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.96 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 7286.393625001438,
+   "input_tokens": 1428,
+   "output_tokens": 379
+  },
+  {
+   "step": 5,
+   "note": "Select current filename to replace it",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "hotkey",
+    "target": "textbox",
+    "keys": [
+     "cmd",
+     "a"
+    ]
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.19 on 'cmd+a'\ndispatched hotkey(cmd+a): driver says unverifiable in 1.2s\nreceipt: Receipt for hotkey(cmd+a): suspected no-op (no change: same URL , no elements added, removed or changed, text unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.96 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 7905.115958999886,
+   "input_tokens": 1446,
+   "output_tokens": 371
+  },
+  {
+   "step": 6,
+   "note": "Rename textbox to order number",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "type",
+    "target": "textbox",
+    "text": "@ORDER.txt"
+   },
+   "exit": 0,
+   "output": "dispatched type(textbox) text='@ORDER.txt': driver says refused (driver refused: element_outside_target_window Background input refused (element_outside_target_window): the addressed element could not be proven) in 0.3s\nreceipt: Receipt for type(textbox) text='@ORDER.txt': refused (not applied: driver refused: element_outside_target_window Background input refused (element_outside_target_window): the addressed el).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.96 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 5838.55845799917,
+   "input_tokens": 1498,
+   "output_tokens": 239
+  },
+  {
+   "step": 7,
+   "note": "Focus rename textbox",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "textbox"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'textbox'\ndispatched click(textbox): driver says not dispatched (unknown_operation: 'click' is not offered on [0] 'textbox' (textbox)) in 0.0s\nreceipt: Receipt for click(textbox): refused (not applied: unknown_operation: 'click' is not offered on [0] 'textbox' (textbox); page unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 6391.428499999165,
+   "input_tokens": 1581,
+   "output_tokens": 287
+  },
+  {
+   "step": 8,
+   "note": "Refresh Finder view to focus rename field",
+   "action": {
+    "name": "look",
+    "surface": "finder"
+   },
+   "exit": 0,
+   "output": "Finder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.94 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 10815.857625000717,
+   "input_tokens": 1625,
+   "output_tokens": 672
+  },
+  {
+   "step": 9,
+   "note": "Attempt rename by typing order value into edit field",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "type",
+    "target": "0",
+    "text": "@ORDER.txt"
+   },
+   "exit": 0,
+   "output": "dispatched type(textbox) text='@ORDER.txt': driver says refused (driver refused: element_outside_target_window Background input refused (element_outside_target_window): the addressed element could not be proven) in 0.3s\nreceipt: Receipt for type(textbox) text='@ORDER.txt': refused (not applied: driver refused: element_outside_target_window Background input refused (element_outside_target_window): the addressed el).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 9163.596583999606,
+   "input_tokens": 1610,
+   "output_tokens": 527
+  },
+  {
+   "step": 10,
+   "note": "Focus Finder window to allow rename typing",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "draft.txt"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'draft.txt'\ndispatched click(draft.txt): driver says confirmed in 1.4s\nreceipt: Receipt for click(draft.txt): suspected no-op (no change: same URL , no elements added, removed or changed, text unchanged). The driver reported the press as delivered.\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 9097.945083000013,
+   "input_tokens": 1756,
+   "output_tokens": 377
+  },
+  {
+   "step": 11,
+   "note": "Try focusing Finder via file element",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "60"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'draft.txt'\ndispatched click(draft.txt): driver says confirmed in 1.5s\nreceipt: Receipt for click(draft.txt): suspected no-op (no change: same URL , no elements added, removed or changed, text unchanged). The driver reported the press as delivered.\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.94 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 14208.423957999912,
+   "input_tokens": 1788,
+   "output_tokens": 795
+  },
+  {
+   "step": 12,
+   "note": "Focus Finder window to enable rename typing",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": 67
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.03 on 'Group'\ndispatched click(Group): driver says unverifiable in 1.4s\nreceipt: Receipt for click(Group): suspected no-op (no change: same URL , no elements added, removed or changed, text unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  79] button     'Share'\n  [  80] button     'Add Tags'\n  [  81] button     'Action'\n  [  82] button     'Search'\n  [  86] statictext 'rename-5-2-015317'\n  [ 406] file       'Crusader Kings II'\n  [ 407] file       'Documents'\n  [ 408] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 15150.8825410001,
+   "input_tokens": 1756,
+   "output_tokens": 832
+  },
+  {
+   "step": 13,
+   "note": "Try key-based typing to replace selected name",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "key",
+    "text": "@ORDER.txt"
+   },
+   "exit": 1,
+   "output": "key needs a key name, e.g. key Down, key cmd Down",
+   "ms": 20860.37291700086,
+   "input_tokens": 1749,
+   "output_tokens": 1598
+  },
+  {
+   "step": 14,
+   "note": "Need fresh Finder state before rename",
+   "action": {
+    "name": "look",
+    "surface": "finder"
+   },
+   "exit": 0,
+   "output": "Finder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  79] button     'Share'\n  [  80] button     'Add Tags'\n  [  81] button     'Action'\n  [  82] button     'Search'\n  [  86] statictext 'rename-5-2-015317'\n  [ 406] file       'Crusader Kings II'\n  [ 407] file       'Documents'\n  [ 408] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 17247.65004099936,
+   "input_tokens": 1321,
+   "output_tokens": 1394
+  },
+  {
+   "step": 15,
+   "note": "Try Enter to start rename",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "enter",
+    "target": "draft.txt"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.20 on 'confirm the default button'\ndispatched enter(draft.txt): driver says not dispatched (unknown_operation: 'enter' is not offered on [60] 'draft.txt' (file)) in 0.0s\nreceipt: Receipt for enter(draft.txt): refused (not applied: unknown_operation: 'enter' is not offered on [60] 'draft.txt' (file); page unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  79] button     'Share'\n  [  80] button     'Add Tags'\n  [  81] button     'Action'\n  [  82] button     'Search'\n  [  86] statictext 'rename-5-2-015317'\n  [ 406] file       'Crusader Kings II'\n  [ 407] file       'Documents'\n  [ 408] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 7402.810125000542,
+   "input_tokens": 1703,
+   "output_tokens": 339
+  },
+  {
+   "step": 16,
+   "note": "Try typing new name into file element",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "type",
+    "target": "60",
+    "text": "@ORDER.txt"
+   },
+   "exit": 0,
+   "output": "dispatched type(draft.txt) text='@ORDER.txt': driver says not dispatched (unknown_operation: 'type' is not offered on [60] 'draft.txt' (file)) in 0.0s\nreceipt: Receipt for type(draft.txt) text='@ORDER.txt': refused (not applied: unknown_operation: 'type' is not offered on [60] 'draft.txt' (file)).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  79] button     'Share'\n  [  80] button     'Add Tags'\n  [  81] button     'Action'\n  [  82] button     'Search'\n  [  86] statictext 'rename-5-2-015317'\n  [ 406] file       'Crusader Kings II'\n  [ 407] file       'Documents'\n  [ 408] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.93 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 13728.541083999517,
+   "input_tokens": 1802,
+   "output_tokens": 923
+  },
+  {
+   "step": 17,
+   "note": "Select file and press Enter to start rename",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "key",
+    "target": "60",
+    "keys": [
+     "Enter"
+    ]
+   },
+   "exit": 0,
+   "output": "ructive judgment: p=0.21 on 'confirm the default button'\ndispatched key(Enter): driver says refused (driver refused: delivery_failed foreground (front app restored); press_key delivery failed: exact target window did not become focus) in 1.6s\nreceipt: Receipt for key(Enter): refused (not applied: driver refused: delivery_failed foreground (front app restored); press_key delivery failed: exact target window did not ; page unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.92 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 14384.246083000107,
+   "input_tokens": 1795,
+   "output_tokens": 769
+  },
+  {
+   "step": 18,
+   "note": "Focus rename textbox to enable typing",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "0"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.05 on 'textbox'\ndispatched click(textbox): driver says not dispatched (unknown_operation: 'click' is not offered on [0] 'textbox' (textbox)) in 0.0s\nreceipt: Receipt for click(textbox): refused (not applied: unknown_operation: 'click' is not offered on [0] 'textbox' (textbox); page unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.92 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 6996.779625000272,
+   "input_tokens": 1808,
+   "output_tokens": 326
+  },
+  {
+   "step": 19,
+   "note": "Focus Finder window to enable rename",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "click",
+    "target": "rename-5-2-015317"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.04 on 'rename-5-2-015317'\ndispatched click(rename-5-2-015317): driver says unverifiable in 1.4s\nreceipt: Receipt for click(rename-5-2-015317): suspected no-op (no change: same URL , no elements added, removed or changed, text unchanged).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.92 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 12766.249040998446,
+   "input_tokens": 1778,
+   "output_tokens": 626
+  },
+  {
+   "step": 20,
+   "note": "Try typing order name into rename textbox",
+   "action": {
+    "name": "do",
+    "surface": "finder",
+    "op": "type",
+    "target": "0",
+    "text": "@ORDER.txt"
+   },
+   "exit": 0,
+   "output": "dispatched type(textbox) text='@ORDER.txt': driver says refused (driver refused: element_outside_target_window Background input refused (element_outside_target_window): the addressed element could not be proven) in 0.3s\nreceipt: Receipt for type(textbox) text='@ORDER.txt': refused (not applied: driver refused: element_outside_target_window Background input refused (element_outside_target_window): the addressed el).\nFinder: 'rename-5-2-015317'  [elements_incomplete 1]\n19 elements:\n  [   0] textbox    'textbox' = 'draft.txt'\n  [   2] tree       'sidebar'\n  [  29] button     'Eject'\n  [  59] list       'icon view'\n  [  60] file       'draft.txt'\n  [  61] slider     'resize icon'\n  [  63] radio      'icon view' checked=True\n  [  64] radio      'list view' checked=False\n  [  65] radio      'column view' checked=False\n  [  66] radio      'gallery view' checked=False\n  [  67] button     'Group'\n  [  68] button     'Share'\n  [  69] button     'Add Tags'\n  [  70] button     'Action'\n  [  71] button     'Search'\n  [  75] statictext 'rename-5-2-015317'\n  [ 395] file       'Crusader Kings II'\n  [ 396] file       'Documents'\n  [ 397] file       'External SSD'\npage text (294 chars):\nRecents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\n1 of 1 selected, 63.92 GB available\nrename-5-2-015317\ndraft.txt",
+   "ms": 10461.445124999955,
+   "input_tokens": 1771,
+   "output_tokens": 659
+  }
+ ],
+ "answer": null,
+ "input_tokens": 32007,
+ "output_tokens": 11762
+}

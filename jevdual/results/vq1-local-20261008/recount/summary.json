@@ -1,0 +1,776 @@
+{
+  "version": 1,
+  "experiment": "VQ1",
+  "mode": "mock",
+  "corpus_sha256": "8e9e59a84ca73c91db98465d75267bd73519647ba73c324b8646d0fcc394e281",
+  "execution_authority": false,
+  "expected_attempts": 96,
+  "observed_attempts": 96,
+  "complete": true,
+  "missing_attempts": [],
+  "corpus_eligibility": {
+    "eligible": false,
+    "reasons": [
+      "development_only",
+      "development_reference_required",
+      "independent_adjudication_required",
+      "independent_real_required"
+    ]
+  },
+  "families": {
+    "document_reference_match": {
+      "jev_text": {
+        "expected_attempts": 24,
+        "observed_attempts": 24,
+        "status_counts": {
+          "budget_exhausted": 0,
+          "error": 0,
+          "interrupted": 0,
+          "invalid_response": 0,
+          "invalidated": 0,
+          "not_run": 0,
+          "refusal": 0,
+          "timeout": 0,
+          "unavailable": 0,
+          "valid": 24
+        },
+        "measurement_errors": 0,
+        "negative": {
+          "source_groups": 3,
+          "endorsed_groups": 0,
+          "rate": 0.0,
+          "one_sided_upper": 0.6315968501359612,
+          "confidence": 0.95
+        },
+        "positive": {
+          "source_groups": 3,
+          "supported_groups": 0,
+          "coverage": 0.0,
+          "one_sided_lower": 0.0,
+          "false_rejected_groups": 0
+        },
+        "ambiguous": {
+          "source_groups": 3,
+          "epistemic_abstention_groups": 3,
+          "epistemic_coverage": 1.0,
+          "one_sided_lower": 0.36840314986403877,
+          "safe_nonendorsement_groups": 3,
+          "safe_nonendorsement_coverage": 1.0,
+          "endorsed_groups": 0
+        },
+        "calibration": {
+          "denominator": 18,
+          "unit": "valid_determinate_attempt",
+          "brier": 0.25,
+          "bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 18,
+              "mean_p": 0.5,
+              "positive_rate": 0.6666666666666666
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            }
+          ]
+        },
+        "timing": {
+          "attempts": 24,
+          "scheduled_rows": 24,
+          "expected_attempts": 24,
+          "scopes": {
+            "evidence_replay": 24,
+            "workflow": 0
+          },
+          "all_attempt_elapsed_ms": [
+            172.18308290466666,
+            170.45199999120086,
+            193.10433405917138,
+            230.37516698241234,
+            168.69279101956636,
+            167.51649999059737,
+            165.8774169627577,
+            247.62150004971772,
+            168.55750000104308,
+            173.0445419671014,
+            164.019790943712,
+            172.40558296907693,
+            175.3181250533089,
+            162.2398750623688,
+            164.87575008068234,
+            218.95016601774842,
+            161.3187090260908,
+            167.15499991551042,
+            171.6456669382751,
+            164.86837493721396,
+            171.58354097045958,
+            187.37099994905293,
+            164.50375004205853,
+            190.58070797473192
+          ],
+          "all_attempt_median_ms": 171.01777048083022,
+          "all_attempt_p95_ms": 230.37516698241234,
+          "verified_successes": 0,
+          "verified_success_coverage": 0.0,
+          "verified_success_median_ms": null,
+          "verified_success_p95_ms": null,
+          "mean_interventions": null,
+          "complete_workflow_measurements": false
+        },
+        "quality": {
+          "qualified": false,
+          "reasons": [
+            "corpus_ineligible",
+            "provider_measurement_unavailable",
+            "false_endorsement_bound",
+            "positive_coverage",
+            "positive_coverage_bound",
+            "ambiguous_epistemic_bound"
+          ]
+        },
+        "speed": {
+          "qualified": false,
+          "reasons": [
+            "provider_measurement_unavailable",
+            "complete_workflow_measurements_unavailable",
+            "paired_success_latency",
+            "verified_completion_coverage",
+            "intervention_burden"
+          ],
+          "paired_verified_successes": 0,
+          "paired_p95_ratio": null,
+          "ratio_basis": "same_case_replay_verified_success_pairs"
+        },
+        "qualified": false
+      },
+      "decisions_visual": {
+        "expected_attempts": 24,
+        "observed_attempts": 24,
+        "status_counts": {
+          "budget_exhausted": 0,
+          "error": 0,
+          "interrupted": 0,
+          "invalid_response": 0,
+          "invalidated": 0,
+          "not_run": 0,
+          "refusal": 0,
+          "timeout": 0,
+          "unavailable": 0,
+          "valid": 24
+        },
+        "measurement_errors": 0,
+        "negative": {
+          "source_groups": 3,
+          "endorsed_groups": 0,
+          "rate": 0.0,
+          "one_sided_upper": 0.6315968501359612,
+          "confidence": 0.95
+        },
+        "positive": {
+          "source_groups": 3,
+          "supported_groups": 0,
+          "coverage": 0.0,
+          "one_sided_lower": 0.0,
+          "false_rejected_groups": 0
+        },
+        "ambiguous": {
+          "source_groups": 3,
+          "epistemic_abstention_groups": 3,
+          "epistemic_coverage": 1.0,
+          "one_sided_lower": 0.36840314986403877,
+          "safe_nonendorsement_groups": 3,
+          "safe_nonendorsement_coverage": 1.0,
+          "endorsed_groups": 0
+        },
+        "calibration": {
+          "denominator": 18,
+          "unit": "valid_determinate_attempt",
+          "brier": 0.25,
+          "bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 18,
+              "mean_p": 0.5,
+              "positive_rate": 0.6666666666666666
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            }
+          ]
+        },
+        "timing": {
+          "attempts": 24,
+          "scheduled_rows": 24,
+          "expected_attempts": 24,
+          "scopes": {
+            "evidence_replay": 24,
+            "workflow": 0
+          },
+          "all_attempt_elapsed_ms": [
+            170.19033303949982,
+            180.01025007106364,
+            165.7117500435561,
+            162.75133390445262,
+            161.99708299245685,
+            168.5852500377223,
+            164.16712501086295,
+            170.24912498891354,
+            178.04270808119327,
+            169.96416705660522,
+            162.73887502029538,
+            167.5038340035826,
+            183.1177920103073,
+            166.88704199623317,
+            168.87750010937452,
+            168.9160419628024,
+            170.85766699165106,
+            165.50983290653676,
+            171.29466694314033,
+            164.52770808245987,
+            170.73529097251594,
+            190.9706660080701,
+            175.283084041439,
+            177.2007088875398
+          ],
+          "all_attempt_median_ms": 169.44010450970381,
+          "all_attempt_p95_ms": 183.1177920103073,
+          "verified_successes": 0,
+          "verified_success_coverage": 0.0,
+          "verified_success_median_ms": null,
+          "verified_success_p95_ms": null,
+          "mean_interventions": null,
+          "complete_workflow_measurements": false
+        },
+        "quality": {
+          "qualified": false,
+          "reasons": [
+            "corpus_ineligible",
+            "provider_measurement_unavailable",
+            "false_endorsement_bound",
+            "positive_coverage",
+            "positive_coverage_bound",
+            "ambiguous_epistemic_bound"
+          ]
+        },
+        "speed": {
+          "qualified": false,
+          "reasons": [
+            "provider_measurement_unavailable",
+            "complete_workflow_measurements_unavailable",
+            "paired_success_latency",
+            "verified_completion_coverage",
+            "intervention_burden"
+          ],
+          "paired_verified_successes": 0,
+          "paired_p95_ratio": null,
+          "ratio_basis": "same_case_replay_verified_success_pairs"
+        },
+        "qualified": false
+      }
+    },
+    "crop_subject_containment": {
+      "jev_text": {
+        "expected_attempts": 24,
+        "observed_attempts": 24,
+        "status_counts": {
+          "budget_exhausted": 0,
+          "error": 0,
+          "interrupted": 0,
+          "invalid_response": 0,
+          "invalidated": 0,
+          "not_run": 0,
+          "refusal": 0,
+          "timeout": 0,
+          "unavailable": 0,
+          "valid": 24
+        },
+        "measurement_errors": 0,
+        "negative": {
+          "source_groups": 3,
+          "endorsed_groups": 0,
+          "rate": 0.0,
+          "one_sided_upper": 0.6315968501359612,
+          "confidence": 0.95
+        },
+        "positive": {
+          "source_groups": 3,
+          "supported_groups": 0,
+          "coverage": 0.0,
+          "one_sided_lower": 0.0,
+          "false_rejected_groups": 0
+        },
+        "ambiguous": {
+          "source_groups": 3,
+          "epistemic_abstention_groups": 3,
+          "epistemic_coverage": 1.0,
+          "one_sided_lower": 0.36840314986403877,
+          "safe_nonendorsement_groups": 3,
+          "safe_nonendorsement_coverage": 1.0,
+          "endorsed_groups": 0
+        },
+        "calibration": {
+          "denominator": 18,
+          "unit": "valid_determinate_attempt",
+          "brier": 0.25,
+          "bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 18,
+              "mean_p": 0.5,
+              "positive_rate": 0.6666666666666666
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            }
+          ]
+        },
+        "timing": {
+          "attempts": 24,
+          "scheduled_rows": 24,
+          "expected_attempts": 24,
+          "scopes": {
+            "evidence_replay": 24,
+            "workflow": 0
+          },
+          "all_attempt_elapsed_ms": [
+            174.02008397039026,
+            172.7026249282062,
+            173.2161670224741,
+            180.49395794514567,
+            166.35154199320823,
+            176.30016605835408,
+            213.81716593168676,
+            180.73512497358024,
+            167.77812503278255,
+            171.9187080161646,
+            168.9505419926718,
+            170.29758298303932,
+            175.9907091036439,
+            183.23116702958941,
+            174.7183339903131,
+            193.76449997071177,
+            205.12554107699543,
+            177.8503330424428,
+            171.54458397999406,
+            170.48170801717788,
+            185.50775002222508,
+            174.2752919672057,
+            182.25204199552536,
+            173.80266706459224
+          ],
+          "all_attempt_median_ms": 174.4968129787594,
+          "all_attempt_p95_ms": 205.12554107699543,
+          "verified_successes": 0,
+          "verified_success_coverage": 0.0,
+          "verified_success_median_ms": null,
+          "verified_success_p95_ms": null,
+          "mean_interventions": null,
+          "complete_workflow_measurements": false
+        },
+        "quality": {
+          "qualified": false,
+          "reasons": [
+            "corpus_ineligible",
+            "provider_measurement_unavailable",
+            "false_endorsement_bound",
+            "positive_coverage",
+            "positive_coverage_bound",
+            "ambiguous_epistemic_bound"
+          ]
+        },
+        "speed": {
+          "qualified": false,
+          "reasons": [
+            "provider_measurement_unavailable",
+            "complete_workflow_measurements_unavailable",
+            "paired_success_latency",
+            "verified_completion_coverage",
+            "intervention_burden"
+          ],
+          "paired_verified_successes": 0,
+          "paired_p95_ratio": null,
+          "ratio_basis": "same_case_replay_verified_success_pairs"
+        },
+        "qualified": false
+      },
+      "decisions_visual": {
+        "expected_attempts": 24,
+        "observed_attempts": 24,
+        "status_counts": {
+          "budget_exhausted": 0,
+          "error": 0,
+          "interrupted": 0,
+          "invalid_response": 0,
+          "invalidated": 0,
+          "not_run": 0,
+          "refusal": 0,
+          "timeout": 0,
+          "unavailable": 0,
+          "valid": 24
+        },
+        "measurement_errors": 0,
+        "negative": {
+          "source_groups": 3,
+          "endorsed_groups": 0,
+          "rate": 0.0,
+          "one_sided_upper": 0.6315968501359612,
+          "confidence": 0.95
+        },
+        "positive": {
+          "source_groups": 3,
+          "supported_groups": 0,
+          "coverage": 0.0,
+          "one_sided_lower": 0.0,
+          "false_rejected_groups": 0
+        },
+        "ambiguous": {
+          "source_groups": 3,
+          "epistemic_abstention_groups": 3,
+          "epistemic_coverage": 1.0,
+          "one_sided_lower": 0.36840314986403877,
+          "safe_nonendorsement_groups": 3,
+          "safe_nonendorsement_coverage": 1.0,
+          "endorsed_groups": 0
+        },
+        "calibration": {
+          "denominator": 18,
+          "unit": "valid_determinate_attempt",
+          "brier": 0.25,
+          "bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 18,
+              "mean_p": 0.5,
+              "positive_rate": 0.6666666666666666
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 0,
+              "mean_p": null,
+              "positive_rate": null
+            }
+          ]
+        },
+        "timing": {
+          "attempts": 24,
+          "scheduled_rows": 24,
+          "expected_attempts": 24,
+          "scopes": {
+            "evidence_replay": 24,
+            "workflow": 0
+          },
+          "all_attempt_elapsed_ms": [
+            187.21512507181615,
+            182.63195804320276,
+            177.51741700340062,
+            172.8719579987228,
+            172.0857499167323,
+            169.22954202163965,
+            168.9987079007551,
+            171.78462503943592,
+            180.64700008835644,
+            165.3633340029046,
+            167.20845899544656,
+            171.45862500183284,
+            171.38462502043694,
+            172.62700002174824,
+            167.7522499812767,
+            170.35991593729705,
+            175.16454204451293,
+            170.52820802200586,
+            180.9493750333786,
+            171.47808300796896,
+            170.9189579123631,
+            168.1673750281334,
+            170.02158309333026,
+            182.3478750884533
+          ],
+          "all_attempt_median_ms": 171.4683540049009,
+          "all_attempt_p95_ms": 182.63195804320276,
+          "verified_successes": 0,
+          "verified_success_coverage": 0.0,
+          "verified_success_median_ms": null,
+          "verified_success_p95_ms": null,
+          "mean_interventions": null,
+          "complete_workflow_measurements": false
+        },
+        "quality": {
+          "qualified": false,
+          "reasons": [
+            "corpus_ineligible",
+            "provider_measurement_unavailable",
+            "false_endorsement_bound",
+            "positive_coverage",
+            "positive_coverage_bound",
+            "ambiguous_epistemic_bound"
+          ]
+        },
+        "speed": {
+          "qualified": false,
+          "reasons": [
+            "provider_measurement_unavailable",
+            "complete_workflow_measurements_unavailable",
+            "paired_success_latency",
+            "verified_completion_coverage",
+            "intervention_burden"
+          ],
+          "paired_verified_successes": 0,
+          "paired_p95_ratio": null,
+          "ratio_basis": "same_case_replay_verified_success_pairs"
+        },
+        "qualified": false
+      }
+    }
+  },
+  "cost": {
+    "known_upper_usd_sum": 0.0,
+    "unknown_upper_attempts": 0,
+    "unknown_usage_attempts": 0
+  },
+  "limits": [
+    "Source independence and representativeness are declared, not statistically established.",
+    "Calibration uses related attempts descriptively; risk bounds use source groups.",
+    "Qualification never grants execution authority."
+  ]
+}

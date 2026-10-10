@@ -1,0 +1,3 @@
+{"t": 1790631387.5996659, "kind": "dead_end", "text": "footwork's Chrome was running with no on-screen window; start stopped (named) and no footwork command opens a window; opened one by shell as setup"}
+{"t": 1790631411.7677052, "kind": "retry", "text": "guessed the page text's shape for a read pattern without seeing it; the read's refusal says the pattern is absent but not what the text near the expected place looks like"}
+{"t": 1790631430.714178, "kind": "contradicted", "text": "verifier refused a correct answer: 'by Andr\u00e9 Gide' has no atom (unquoted name), so it read as no fact"}

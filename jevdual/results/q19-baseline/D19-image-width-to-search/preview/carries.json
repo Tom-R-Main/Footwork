@@ -1,0 +1,19 @@
+{
+ "width": {
+  "name": "width",
+  "text": "800",
+  "surface": "native",
+  "app": "Preview",
+  "location": "app://Preview",
+  "title": "d19.png",
+  "element_id": -1,
+  "element_label": "800 \u00d7 600 pixels",
+  "element_role": "text",
+  "part": "match",
+  "step": 1,
+  "session": "results/q19-baseline/D19-image-width-to-search/preview",
+  "taken_at": 1790640314.152365,
+  "surroundings": "Modification Date / Sep 28, 2026 at 8:05 PM / Image Size / 800 \u00d7 600 pixels / Image DPI / 72 pixels/inch",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

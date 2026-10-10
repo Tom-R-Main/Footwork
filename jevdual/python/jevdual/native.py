@@ -29,8 +29,12 @@ import asyncio
 import dataclasses
 import json
 import logging
+import math
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from jevdual.menu import Candidate, Menu, MenuBudget, Operation, estimate_tokens
@@ -112,6 +116,56 @@ def _get(obj: Any, key: str, default: Any = None) -> Any:
 
 
 @dataclass(frozen=True)
+class NativeVisualCapture:
+    """Geometry supplied with the same explicit bound-window capture, not action authority."""
+
+    path: str
+    captured_at: str
+    viewport: tuple[float, float, float, float]
+    width: int
+    height: int
+    reported_scale: float | None
+
+
+def _visual_capture(snapshot: Any, requested_path: str) -> tuple[NativeVisualCapture | None, str | None]:
+    """Refuse geometry that the Driver did not bind to this exact PNG request."""
+    if _get(snapshot, "screenshot_frame_valid") is not True:
+        return None, "capture_frame_unverified"
+    actual_path = _get(snapshot, "screenshot_file_path")
+    if not actual_path or Path(str(actual_path)).resolve() != Path(requested_path).resolve():
+        return None, "capture_path_mismatch"
+    if not Path(requested_path).is_file():
+        return None, "capture_png_missing"
+    bounds = _get(snapshot, "window_bounds")
+    if bounds is None:
+        return None, "capture_viewport_missing"
+    try:
+        viewport = tuple(float(_get(bounds, name)) for name in ("x", "y", "width", "height"))
+        width, height = int(_get(snapshot, "screenshot_width")), int(_get(snapshot, "screenshot_height"))
+        scale = _get(snapshot, "screenshot_scale")
+        scale = float(scale) if scale is not None else None
+        if (
+            not all(math.isfinite(value) for value in viewport)
+            or viewport[2] <= 0
+            or viewport[3] <= 0
+            or width <= 0
+            or height <= 0
+            or (scale is not None and (not math.isfinite(scale) or scale <= 0))
+        ):
+            return None, "capture_geometry_invalid"
+        return NativeVisualCapture(
+            str(Path(requested_path).resolve()),
+            datetime.now(UTC).isoformat(),
+            viewport,
+            width,
+            height,
+            scale,
+        ), None
+    except (TypeError, ValueError):
+        return None, "capture_geometry_missing"
+
+
+@dataclass(frozen=True)
 class NativeMenu:
     """A menu plus what is needed to act on it: the token behind each id and the snapshot it came from."""
 
@@ -133,6 +187,8 @@ class NativeMenu:
     ax_roles: dict[int, str] = field(default_factory=dict)
     #: ids of elements inside web content (an AXWebArea ancestor): WebKit ignores AXValue writes there
     web: frozenset[int] = frozenset()
+    visual_capture: NativeVisualCapture | None = None
+    visual_capture_error: str | None = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -452,6 +508,8 @@ class NativeEffect:
     driver_delivery: str | None = None
     dispatched: bool = True
     foreground: dict[str, Any] | None = None
+    #: package G: after a save, the file the window names read against its text (``save_readback``)
+    readback: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -529,6 +587,17 @@ def _norm_tail(s: str) -> str:
     return s.rstrip()
 
 
+@dataclass(frozen=True)
+class AppendPrecondition:
+    """An exact AX baseline for callers that have independently qualified a field."""
+
+    value: str
+    role: str
+    frame: tuple[float, float, float, float]
+    document: str | None = None
+    resource_check: Callable[[], bool] | None = field(default=None, repr=False, compare=False)
+
+
 class NativeBridge:
     """Observe one native window through the Driver and execute menu decisions against it.
 
@@ -579,6 +648,9 @@ class NativeBridge:
     ) -> NativeMenu:
         from cua_driver import GetWindowStateInput
 
+        if self.policy.locked():
+            # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
+            raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
         snap = await self.driver.get_window_state(
             GetWindowStateInput(
                 pid=self.pid,
@@ -594,6 +666,9 @@ class NativeBridge:
             )
         )
         self.last = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
+        if screenshot_path is not None:
+            capture, error = _visual_capture(snap, screenshot_path)
+            self.last = dataclasses.replace(self.last, visual_capture=capture, visual_capture_error=error)
         return self.last
 
     def _target(self) -> Any:
@@ -743,7 +818,14 @@ class NativeBridge:
             return dataclasses.replace(eff, evidence=(*eff.evidence, f"background: {AMBIGUITY}"))
         return eff
 
-    async def _append(self, nm: NativeMenu, id: int, cand: Candidate, text: str) -> NativeEffect:
+    async def _append(
+        self,
+        nm: NativeMenu,
+        id: int,
+        cand: Candidate,
+        text: str,
+        precondition: AppendPrecondition | None = None,
+    ) -> NativeEffect:
         """Insert at the end of the exact value through AX and require ``after == before + inserted``.
         Nothing is rebuilt from a preview; a value that no longer matches the decision is refused before
         writing."""
@@ -751,9 +833,42 @@ class NativeBridge:
         frame = nm.frames.get(id)
         ax = self.ax
         try:
+            if precondition is not None and (role != precondition.role or frame != precondition.frame):
+                return self._not_sent(
+                    "append",
+                    id,
+                    cand.label,
+                    "target_changed",
+                    "the original field role or frame changed; nothing written",
+                    "background",
+                )
             el = ax.resolve(self.pid, self.window_id, role, ax.Frame(*frame) if frame else None)
+            if precondition is not None:
+                if ax.frame_of(el) != ax.Frame(*precondition.frame):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "target_changed",
+                        "the original field frame changed; nothing written",
+                        "background",
+                    )
+                if not ax.can_insert(el):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "not_writable",
+                        "exact insertion is no longer available; nothing written",
+                        "background",
+                    )
             exact = ax.value(el)
-            if _norm_tail(exact) != _norm_tail(nm.values.get(id, "")):
+            changed = (
+                exact != precondition.value
+                if precondition is not None
+                else _norm_tail(exact) != _norm_tail(nm.values.get(id, ""))
+            )
+            if changed:
                 return self._not_sent(
                     "append",
                     id,
@@ -762,6 +877,39 @@ class NativeBridge:
                     "the field holds different text than when the step was decided; nothing written",
                     "background",
                 )
+            if precondition is not None:
+                # The higher-level adapter supplies a trusted readonly check of
+                # process/file identity. It runs after live observation and field reads.
+                if precondition.resource_check is not None and not precondition.resource_check():
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "lost_identity",
+                        "the original resource changed; nothing written",
+                        "background",
+                    )
+                document = ax.document_path(self.pid, self.window_id)
+                if precondition.document is not None and (
+                    not document or Path(document).resolve() != Path(precondition.document).resolve()
+                ):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "lost_identity",
+                        "the original document changed; nothing written",
+                        "background",
+                    )
+                if ax.frame_of(el) != ax.Frame(*precondition.frame) or not ax.can_insert(el):
+                    return self._not_sent(
+                        "append",
+                        id,
+                        cand.label,
+                        "target_changed",
+                        "the original field changed; nothing written",
+                        "background",
+                    )
             sep = "" if exact == "" or exact.endswith("\n") else "\n"
             before, after = ax.insert_at_end(el, sep + text, expect=exact)
         except ax.AXError as exc:
@@ -879,9 +1027,21 @@ class NativeBridge:
             )
         )
 
-    async def act(self, nm: NativeMenu, operation: str, id: int, text: str | None = None) -> NativeEffect:
+    async def act(
+        self,
+        nm: NativeMenu,
+        operation: str,
+        id: int,
+        text: str | None = None,
+        *,
+        append_precondition: AppendPrecondition | None = None,
+    ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
+        if append_precondition is not None and operation != "append":
+            raise NativeBridgeError(
+                "unknown_operation", "An exact append precondition only applies to append"
+            )
         cand, token = self._require_fresh(nm, id)
         if operation not in cand.operations:
             raise NativeBridgeError(
@@ -901,7 +1061,7 @@ class NativeBridge:
         label = cand.label
         if operation == "append":
             assert text is not None
-            return await self._append(nm, id, cand, text)
+            return await self._append(nm, id, cand, text, append_precondition)
         if operation in ("enter",):
             return await self._key_route("enter", id, label, "return", [], token)
         if operation == "hover":
@@ -977,8 +1137,40 @@ class NativeBridge:
         """Explicit foreground escalation: the bound window made its app's key window through AX, then the
         app activated by exact pid (the Driver's bring_to_front took 1.2 s to return while the front was
         already ours, and resolves apps by bundle)."""
-        self.ax.raise_window(self.pid, self.window_id)
+        # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
+        # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)
         await asyncio.to_thread(self.policy._activity().activate, self.pid)
+        self.ax.raise_window(self.pid, self.window_id)
+
+    async def _front_and_key(self) -> None:
+        """Front the bound window and wait until it is its app's key window, or refuse: a menu item or a chord
+        acts on the key window, so if that is another window nothing is sent (Q19: a Command-S dispatched to
+        one TextEdit document saved another)."""
+        await self._front()
+        act = self.policy._activity()
+
+        async def keyed() -> bool:
+            for _ in range(30):
+                if act.frontmost_pid() == self.pid and self.ax.focused_window_id(self.pid) == self.window_id:
+                    return True
+                await asyncio.sleep(0.02)
+            return False
+
+        if await keyed():
+            return
+        # some apps (TextEdit) reorder their windows on a programmatic raise but change the key window only
+        # on real input: one click on the bound window's own title bar, where a hit test says it is ours
+        # (Q19 U48, R6); this step already has the posture's foreground permission
+        point = await asyncio.to_thread(self.ax.title_bar_point, self.pid, self.window_id)
+        if point is None:
+            raise NativeBridgeError(
+                "not_key",
+                "the bound window did not become the key window and its title bar is covered; not pressed",
+            )
+        await asyncio.to_thread(self.ax.click_at, *point)
+        if await keyed():
+            return
+        raise NativeBridgeError("not_key", "the bound window did not become the key window; not pressed")
 
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
         """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and
@@ -997,13 +1189,29 @@ class NativeBridge:
         }
         if self.session:
             args["session"] = self.session
-        return await self._foreground(
-            "hotkey",
-            -1,
-            label,
-            lambda: self.driver.call_tool("hotkey", json.dumps(args)),
-            why=f"hotkey {label} (a menu key-equivalent)",
-        )
+
+        async def call() -> Any:
+            await self._front_and_key()
+            return await self.driver.call_tool("hotkey", json.dumps(args))
+
+        eff = await self._foreground("hotkey", -1, label, call, why=f"hotkey {label} (a menu key-equivalent)")
+        if eff.error_code in _MENU_NOT_PRESSED:
+            eff = dataclasses.replace(eff, dispatched=False)
+        return await self._after_save(eff, keys=keys)
+
+    async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
+        if not is_save(keys, path) or not eff.dispatched or eff.effect == "refused":
+            return eff
+        # the app writes the file after the menu action returns; in G5 four of six first Command-S
+        # readbacks at 0.5 s read "differs" and the File > Save right after read "saved", so the disk is
+        # polled for up to 3 s before a save is called partial
+        rb: dict[str, Any] = {}
+        for _ in range(6):
+            await asyncio.sleep(0.5)
+            rb = save_readback(self.ax, self.pid, self.window_id)
+            if rb.get("ok") is not False:
+                break
+        return with_save_readback(eff, rb)
 
     async def menu(self, nm: NativeMenu, path: list[str]) -> NativeEffect:
         """Invoke an application menu item by path (``["File", "Save"]``). A menu action goes to the app's
@@ -1020,18 +1228,7 @@ class NativeBridge:
         ax = self.ax
 
         async def call() -> Any:
-            await self._front()
-            act = self.policy._activity()
-            ready = False
-            for _ in range(30):
-                if act.frontmost_pid() == self.pid and ax.focused_window_id(self.pid) == self.window_id:
-                    ready = True
-                    break
-                await asyncio.sleep(0.02)
-            if not ready:
-                raise NativeBridgeError(
-                    "not_key", "the bound window did not become the key window; not pressed"
-                )
+            await self._front_and_key()
             try:
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:
@@ -1052,7 +1249,8 @@ class NativeBridge:
         if eff.error_code in _MENU_NOT_PRESSED:
             # the window took the front but nothing was pressed: say so
             eff = dataclasses.replace(eff, dispatched=False)
-        return dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
+        eff = dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
+        return await self._after_save(eff, path=path)
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of
@@ -1073,6 +1271,61 @@ class NativeBridge:
         ver = getattr(res, "verification", None)
         status = _enum_name(getattr(ver, "status", None)) or "unknown"
         return status, str(getattr(res, "text", "") or "")
+
+
+def is_save(keys: list[str] | tuple[str, ...] = (), path: list[str] | tuple[str, ...] = ()) -> bool:
+    """Command-S, or a menu path ending in Save."""
+    if keys:
+        return {k.casefold() for k in keys} in ({"cmd", "s"}, {"command", "s"})
+    return bool(path) and path[-1].strip().casefold() == "save"
+
+
+def save_readback(ax: Any, pid: int, window_id: int) -> dict[str, Any]:
+    """After a save: the file the window names (AXDocument) against the window's exact text. A save
+    changes nothing a window diff sees, and the Driver reports a chord as ``unverifiable``, so without
+    this the verifier cannot tell a saved document from an unsaved one (Q17: every failure on dual and
+    guarded was a saved append the verifier would not accept). ``ok`` is True, False or None (no file,
+    not one text area, unreadable)."""
+    from pathlib import Path
+
+    try:
+        path = ax.document_path(pid, window_id)
+        values = ax.text_area_values(pid, window_id)
+    except Exception as exc:  # noqa: BLE001 - no readback is an honest "unverifiable"
+        return {"ok": None, "detail": f"could not read the window: {exc}"[:160]}
+    if not path:
+        return {"ok": None, "detail": "the window names no file (unsaved document)"}
+    if len(values) != 1:
+        return {"ok": None, "path": path, "detail": f"the window has {len(values)} text areas"}
+    try:
+        disk = Path(path).read_text()
+    except (OSError, UnicodeDecodeError) as exc:
+        return {"ok": None, "path": path, "detail": f"{path} is not readable as text: {exc}"[:160]}
+    shown = values[0]
+    if disk == shown:
+        return {
+            "ok": True,
+            "path": path,
+            "detail": f"{path} holds the window's text exactly ({len(disk)} characters)",
+        }
+    at = next(
+        (i for i, (a, b) in enumerate(zip(disk, shown, strict=False)) if a != b), min(len(disk), len(shown))
+    )
+    return {"ok": False, "path": path, "detail": f"{path} differs from the window's text at character {at}"}
+
+
+def with_save_readback(eff: NativeEffect, rb: dict[str, Any]) -> NativeEffect:
+    """The save's effect read from the disk: confirmed, partial, or unverifiable, with the reason."""
+    word = {True: "confirmed", False: "partial"}.get(rb.get("ok"), "unverifiable")
+    prefix = {True: "saved", False: "save not confirmed"}.get(rb.get("ok"), "save unverifiable")
+    return dataclasses.replace(
+        eff,
+        effect=word,
+        evidence=(*eff.evidence, f"save_readback: {rb['detail']}"),
+        # the foreground report stays first: a save does not erase "front app not restored"
+        summary=f"{eff.summary}; {prefix}: {rb['detail']}" if eff.summary else f"{prefix}: {rb['detail']}",
+        readback=rb,
+    )
 
 
 async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -> tuple[int, int, str]:

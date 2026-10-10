@@ -43,6 +43,12 @@ SESSION_LABEL = "footwork"
 _TEXT_ROLES = {"textbox", "searchbox", "inputtime", "inputdate", "combobox", "spinbutton"}
 
 
+def _page_key(url: str) -> str:
+    """A page's identity for binding: the URL without its fragment or a trailing slash."""
+    base = url.split("#", 1)[0]
+    return base.removesuffix("/")
+
+
 def chrome_pid() -> int | None:
     """The pid of the Chrome footwork launched (by its profile directory), or None."""
     out = subprocess.run(
@@ -274,7 +280,12 @@ class BrowserBridge:
         out.setdefault("_is_error", bool(getattr(r, "is_error", False)))
         return out
 
-    async def attach(self) -> dict[str, Any]:
+    async def attach(self, *, tab_id: str | None = None, expect_url: str | None = None) -> dict[str, Any]:
+        """Bind the window's browser target. With ``expect_url`` (the page a session last observed) the
+        bridge binds the one tab showing that page, and refuses when none or several do. The Driver's tab
+        ids are handles for one connection, new on every command (the Q13 oracle stage, 2026-09-28), so a
+        session cannot carry them across commands. ``tab_id`` binds a handle within one connection.
+        Without either, it takes the active tab (a new session)."""
         prep = await self._tool(
             "browser_prepare",
             {"pid": self.pid, "window_id": self.window_id, "strategy": {"kind": "existing_profile"}},
@@ -290,6 +301,29 @@ class BrowserBridge:
             )
         self.target_id = bound["target_id"]
         tabs = bound.get("tabs") or []
+        if expect_url:
+            want = _page_key(expect_url)
+            same = [t for t in tabs if _page_key(str(t.get("url") or "")) == want]
+            if not same:
+                raise RuntimeError(
+                    f"the session's page {expect_url} is no longer open in this window; nothing dispatched. "
+                    "Start a new session on the tab you want."
+                )
+            if len(same) > 1:
+                raise RuntimeError(
+                    f"{len(same)} tabs show the session's page {expect_url}; cannot tell which is the session's; "
+                    "nothing dispatched. Close the others or start a new session."
+                )
+            self.tab_id = same[0]["tab_id"]
+            return bound
+        if tab_id is not None:
+            if not any(t.get("tab_id") == tab_id for t in tabs):
+                raise RuntimeError(
+                    f"the session's tab {tab_id} is no longer in this window; nothing dispatched. "
+                    "Start a new session on the tab you want."
+                )
+            self.tab_id = tab_id
+            return bound
         active = next((t for t in tabs if t.get("active")), tabs[0] if tabs else None)
         if active is None:
             raise RuntimeError("bound target has no tab")
@@ -374,7 +408,15 @@ class BrowserBridge:
                 {**base, "ref": ref, "text": text or "", "mode": "insert_text", "replace": needs_replace},
             )
         else:
-            raise RuntimeError(f"browser mode has no {operation!r} operation (click, type, append, navigate)")
+            hint = (
+                "; content beyond this observation cannot be scrolled into view here, so an answer from "
+                "it covers only what the observation shows"
+                if operation == "scroll"
+                else ""
+            )
+            raise RuntimeError(
+                f"browser mode has no {operation!r} operation (click, type, append, navigate){hint}"
+            )
         self.last = None
         return self._effect(out, operation, id, c.label)
 
@@ -409,7 +451,27 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
     driver = configured_driver(pid)
     wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
     if not wins.windows:
-        raise RuntimeError("footwork's Chrome has no on-screen window")
+        # Q19 R4: Chrome running with every window closed; open one in footwork's profile rather than stop
+        await asyncio.to_thread(
+            subprocess.run,
+            [
+                "open",
+                "-na",
+                "Google Chrome",
+                "--args",
+                f"--user-data-dir={PROFILE_DIR}",
+                "--new-window",
+                url or "about:blank",
+            ],
+            check=False,
+        )
+        for _ in range(20):
+            await asyncio.sleep(0.5)
+            wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+            if wins.windows:
+                break
+    if not wins.windows:
+        raise RuntimeError("footwork's Chrome has no on-screen window, and opening one did not show one")
     w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
     bridge = BrowserBridge(driver, pid, w.window_id, policy=policy)
     await bridge.attach()

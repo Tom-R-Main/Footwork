@@ -1,0 +1,5 @@
+{"t": 1790664656.0781472, "surface": "web", "args": ["start", "Delete only reservation QH-204", "--browser", "--url", "http://127.0.0.1:8767/q19h-reservations.html", "--authorize", "Delete reservation QH-204"], "exit": 0, "s": 2.62}
+{"t": 1790664665.528215, "surface": "web", "args": ["do", "click", "Delete reservation QH-204"], "exit": 0, "s": 1.68}
+{"t": 1790664671.952225, "surface": "web", "args": ["done", "Reservation QH-204 (Cedar room) was deleted: the page now reads 'Scratch cancellation recorded'; QH-203 and QH-205 were not touched."], "exit": 5, "s": 0.82}
+{"t": 1790664682.1092942, "surface": "web", "args": ["done", "Deleted QH-204 only; the page says 'Scratch cancellation recorded'."], "exit": 5, "s": 0.74}
+{"t": 1790664689.250985, "surface": "web", "args": ["done", "Scratch cancellation recorded"], "exit": 5, "s": 0.73}

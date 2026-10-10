@@ -1,0 +1,19 @@
+{
+ "PNGNAME": {
+  "name": "PNGNAME",
+  "text": "Portable Network Graphics",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "https://www.libpng.org/pub/png/",
+  "title": "PNG (Portable Network Graphics) Home Site",
+  "element_id": -1,
+  "element_label": "Portable Network Graphics",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-model/H01-png-name/web",
+  "taken_at": 1790664637.125358,
+  "surroundings": "and want to print this page (and still be able to read it), click on the / png-printable / link at the very bottom of this page. / Portable Network Graphics / An Open, Extensible Image Format with Lossless Compression / (Not Related to Papu",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

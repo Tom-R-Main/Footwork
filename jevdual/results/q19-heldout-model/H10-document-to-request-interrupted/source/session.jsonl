@@ -1,0 +1,2 @@
+{"t": 1790666108.061781, "step": 0, "kind": "start", "task": "Read the active request's reference and quantity in h10-job.txt in TextEdit and transfer them to one scratch cutting request in the browser. Ignore the cancelled request and leave the source file unchanged. This local request is authorized. (The scratch folder is /Users/thomasmain/footwork-pilot/q19/q19-heldout-model/H10-document-to-request.)", "requirements": [], "app": "TextEdit"}
+{"t": 1790666108.139922, "kind": "stopped", "reason": "screen_locked", "message": "the screen is locked; unlock it to continue"}

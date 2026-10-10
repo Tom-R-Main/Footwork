@@ -1,0 +1,34 @@
+{
+  "commit": "023ec2f7a207aa133530170f17df12de2f409699",
+  "source_sha256": {
+    "jevdual/scripts/capability_dispatch_guard_trial.py": "43afcfe8ceba7b0e23f1b4a59a45898bdc3adf0979b8774cc5cd645799e3f56e",
+    "jevdual/python/jevdual/native.py": "d89afbedcf592ef8fe0e699d11c273c4c45df4a2c9039922c77e5907ffd33bfd",
+    "jevdual/python/jevdual/capability/service.py": "54ad82f8f1eabf0a018848e30d9af0ae1937ebf0133d67a7cd7b438516aad9e5",
+    "jevdual/python/jevdual/capability/backend.py": "4ef489e5e28ac378043efbd081a537eba519b2fe6d4b5c29ae61fcdc9d744c0a",
+    "jevdual/python/jevdual/capability/journal.py": "a0017bf32478caca9372080b04e3ebf828c8690d877304f43b6474ba317cb25c",
+    "jevdual/python/jevdual/capability/recovery.py": "944f845f919ce933c2895f138fff4c344d99dec54cdf6f82b55116bda730433f",
+    "jevdual/python/jevdual/capability/observations.py": "b9fd6aa61dd584557e1721926349272531345781c5817497fa08673ae377e7bf",
+    "jevdual/python/jevdual/capability/__init__.py": "884c16358ba194d7017e55d98d8a801193f29836a4d6faf579c1c080e31b659d",
+    "jevdual/python/jevdual/capability/execution_worker.py": "0c0d00e3858d336bd14e588e9a22fd5ec0ec4fb959ba5942cb6adf10489fbb73",
+    "jevdual/python/jevdual/capability/contracts.py": "e17e08d23694227ae6c7e190504c118ed7b941975e7ae4d0cace0cc861cf9417",
+    "jevdual/python/jevdual/capability/mcp_server.py": "dd990ee41cfda3a07a372a66c62e63c817ac25d7458158f4d1cbc529e47cf911"
+  },
+  "scope": {
+    "task": "pr-native-fixture-20261010",
+    "source": {
+      "pid": 96846,
+      "window_id": 30868,
+      "url": "http://127.0.0.1:52695/"
+    },
+    "destination": {
+      "pid": 73067,
+      "window_id": 30866,
+      "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+    }
+  },
+  "cases": [
+    "suffix_space",
+    "suffix_newline",
+    "window_move"
+  ]
+}

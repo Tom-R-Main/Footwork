@@ -1,0 +1,44 @@
+{
+ "dir": "results/m4-dev/C-r1/X2-one-signup/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Sign up once for the volunteer rota with name \"Ada Byron\" and team \"Blue\". This sign-up is authorized.",
+ "requirements": [],
+ "authorized": [
+  "Sign up"
+ ],
+ "answer_expected": false,
+ "step": 3,
+ "status": "done",
+ "memory": [
+  "step 1: type(Name) text='Ada Byron' -> confirmed",
+  "step 2: type(Team) text='Blue' -> confirmed",
+  "step 3: click(Sign up) -> confirmed",
+  "step 4: done accepted"
+ ],
+ "last_url": "http://127.0.0.1:8768/m3-signup-done.html?name=Ada+Byron&team=Blue",
+ "last_title": "Sign-up recorded",
+ "last_page_text": "Sign-up recorded\nThank you. The rota has your sign-up.",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Back to the rota",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-b59f4fa9-1b2f-4751-b4b5-a9ef0744fc03",
+ "secret_names": []
+}

@@ -1,0 +1,9 @@
+{
+  "cases": 12,
+  "conformance_passed": 12,
+  "surface": "authored_browser_fixture",
+  "dimensions": [
+    640,
+    360
+  ]
+}

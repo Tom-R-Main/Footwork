@@ -1,0 +1,1 @@
+stopped: no route sets the Frequency select in browser mode; not saved

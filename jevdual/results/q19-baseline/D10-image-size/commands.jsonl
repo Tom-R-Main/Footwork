@@ -1,0 +1,5 @@
+{"t": 1790639901.2975628, "surface": "preview", "args": ["start", "Report the image size", "--app", "Preview", "--window", "d10.png", "--mode", "foreground_permitted"], "exit": 0, "s": 1.71}
+{"t": 1790639911.155518, "surface": "preview", "args": ["do", "menu", "Tools > Show Inspector"], "exit": 0, "s": 3.8}
+{"t": 1790639912.050355, "surface": "preview", "args": ["look", "--text", "800"], "exit": 0, "s": 0.8}
+{"t": 1790639921.763548, "surface": "preview", "args": ["read", "--match", "(\\d+ \u00d7 \\d+) pixels", "--as", "size"], "exit": 0, "s": 0.91}
+{"t": 1790639922.9680052, "surface": "preview", "args": ["done", "d10.png is \"640 \u00d7 480 pixels\"."], "exit": 0, "s": 1.11}

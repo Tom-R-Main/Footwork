@@ -1,0 +1,175 @@
+{
+  "accepted_by_model": true,
+  "dispatched": true,
+  "guard_reason": "scope_and_binding_pass",
+  "goal_met": true,
+  "wrong_effect": false,
+  "before": {
+    "mode": "none"
+  },
+  "after": {
+    "mode": "crop"
+  },
+  "content_matches": true,
+  "current_observation": {
+    "image": "current.png",
+    "image_sha256": "831558d8a169cf0134310a2b9232eb4765d0c1c4c0fdcc6a79cff6e419e50b00",
+    "dimensions": [
+      640,
+      360
+    ],
+    "captured_at": "2026-10-08T20:41:45.641358+00:00",
+    "revision": "d34c05f483d1d2b1b5c4378179136a2fcd53ce511c2c3d77dad970c13ecc40f4",
+    "target_id": "0E691ECB3A541114C0BE7FC123B1FBCD",
+    "process_id": 22092,
+    "dom": {
+      "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+      "elements": [
+        {
+          "target_id": "tool-a",
+          "role": "button",
+          "name": "",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 80,
+            "y": 100,
+            "width": 90,
+            "height": 90
+          }
+        },
+        {
+          "target_id": "tool-b",
+          "role": "button",
+          "name": "",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 180,
+            "y": 100,
+            "width": 90,
+            "height": 90
+          }
+        }
+      ]
+    },
+    "ax": [
+      {
+        "role": "heading",
+        "name": "Image editor",
+        "value": null,
+        "properties": [
+          {
+            "name": "level",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "button",
+        "name": "",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "button",
+        "name": "",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Image editor",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Choose the crop tool.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Image editor",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Choose the crop tool.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      }
+    ],
+    "phases_ms": {
+      "capture": 40.000207955017686,
+      "extraction": 2.3073330521583557,
+      "encode": 0.25004101917147636
+    }
+  },
+  "phases_ms": {
+    "setup_capture": 601.9582919543609,
+    "validation": 0.01454097218811512,
+    "dispatch": 1.1250420939177275,
+    "readback": 0.16379100270569324,
+    "total": 603.4503339324147
+  }
+}

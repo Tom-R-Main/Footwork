@@ -1,0 +1,43 @@
+{
+  "product_commit": "9961eda",
+  "restart_run_commit": "4fb9a95",
+  "guard_run_commit": "023ec2f",
+  "full_python": {
+    "passed": 1408,
+    "skipped": 26,
+    "log": "output/pr-full-suite-9961eda.log"
+  },
+  "browser": {
+    "passed": 12,
+    "log": "output/pr-browser-tests-20261010.log"
+  },
+  "focused_root": {
+    "passed": 300
+  },
+  "focused_independent": {
+    "passed": 309
+  },
+  "additional_harness_and_notebook": {
+    "passed": 12,
+    "harness_cases": 7,
+    "notebook_cases": 5
+  },
+  "node": {
+    "passed": 78,
+    "log": "output/pr-node-tests-20261010.log"
+  },
+  "rust": {
+    "tests_passed": 19,
+    "fmt": "passed",
+    "clippy": "passed",
+    "offline": true
+  },
+  "ruff": "passed",
+  "notebook": "passed",
+  "reviewed_content_matches": true,
+  "restart_cases": 12,
+  "native_guard_cases": 3,
+  "fixture_cleanup": true,
+  "remote_ci": "pending PR",
+  "merge": "pending"
+}

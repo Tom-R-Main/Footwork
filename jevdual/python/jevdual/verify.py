@@ -67,14 +67,25 @@ class VerifyPolicy:
     answer_required: float = 0.60
     reject_unmet: float = 0.70
     reject_complete: float = 0.30
+    #: Package E (Q16): "page" is the claim check as Q12 ran it; "page_and_fields" strips a leading
+    #: status label ("UNVERIFIED:") and parenthetical asides before taking atoms, treats a clause of
+    #: more than six words after a colon as narrative, and also looks for atoms in the values of
+    #: the page's non-secret form fields, which innerText leaves out; a space between a currency sign
+    #: and its digits in the page text is closed ("$ 9.99" reads "$9.99"). Since 2026-09-27 it also shows
+    #: Jev the field values and applies the no-fact rule only to tasks that ask for an answer.
+    #: Default since 2026-09-27 (Q16c, results/q16c.md); "page" is Q12 to Q16's check, kept to reproduce them.
+    claim_evidence: str = "page_and_fields"
 
 
 @dataclass(frozen=True)
 class ClaimCheck:
     claim: str
-    grade: str  # exact | normalized | none
+    grade: str  # exact | normalized | none | narrative
     start: int
     end: int
+    #: where the evidence was found: "page" (visible text), "field" (a form field's value) or "evidence"
+    #: (a value the session's own effect evidence establishes, jevdual.completion)
+    source: str = "page"
 
     @property
     def supported(self) -> bool:
@@ -106,8 +117,11 @@ class Verdict:
             "complete": round(self.complete, 3),
             "unmet_effective": {k: round(v, 3) for k, v in self.unmet_effective.items()},
             "unmet": {k: round(v, 3) for k, v in self.unmet.items()},
-            "claims": [c.grade for c in self.claims],
+            "claims": [c.grade if c.source == "page" else f"{c.grade}:{c.source}" for c in self.claims],
             "unsupported": len(self.unsupported_claims),
+            # package E: which claims failed, so a rejection can be audited from the trace (redacted by
+            # the trace writer)
+            "unsupported_claims": [c[:160] for c in self.unsupported_claims],
             "reason": self.reason,
         }
 
@@ -130,16 +144,45 @@ _NUMBER_RE = re.compile(
 _AFTER_COLON_RE = re.compile(r":\s*([^:;]{2,160})$")
 
 
-def extract_atoms(sentence: str) -> list[str]:
+#: package E: saucedemo renders "$<!-- -->9.99" and the serializer reads "$ 9.99"
+_CURRENCY_GAP_RE = re.compile(r"([$€£¥])\s+(?=\d)")
+
+
+def close_currency_gaps(text: str) -> str:
+    return _CURRENCY_GAP_RE.sub(r"\1", text)
+
+
+_STATUS_LABEL_RE = re.compile(r"^\s*(?:[-*•]\s*)?[A-Z][A-Z _-]{2,}:\s*")
+_ASIDE_RE = re.compile(r"\s*\([^()]*\)")
+#: package E: a value after a colon is a value only up to this many words; longer is a clause
+MAX_VALUE_WORDS = 6
+
+
+def clean_claim(sentence: str) -> str:
+    """Package E: drop a leading status label ("UNVERIFIED:", "RESULT:") and parenthetical asides,
+    which are about the claim, not facts in it."""
+    return _ASIDE_RE.sub("", _STATUS_LABEL_RE.sub("", sentence)).strip()
+
+
+def extract_atoms(sentence: str, *, strict: bool = False) -> list[str]:
     """The evidence-bearing pieces of a sentence: quoted spans, numbers with units or currency,
     and the value after a trailing colon. Narrative words are not evidence and are not atoms.
-    URLs are stripped first; page innerText never contains them."""
-    text = _URL_RE.sub(" ", sentence)
+    URLs are stripped first; page innerText never contains them. ``strict`` (package E) cleans the
+    sentence first and keeps a value after a colon only when it has at most ``MAX_VALUE_WORDS`` words."""
+    text = _URL_RE.sub(" ", clean_claim(sentence) if strict else sentence)
     atoms: list[str] = [m.group(1).strip() for m in _QUOTED_RE.finditer(text)]
     atoms += [m.group(0).strip() for m in _NUMBER_RE.finditer(text)]
+    if strict:
+        # an aside is dropped from the value it follows, not from the check: quoted text and numbers
+        # inside it are claims too ("Price: $9.99 (shipping $50)"; secondary audit 2026-09-27)
+        for aside in _ASIDE_RE.findall(_URL_RE.sub(" ", sentence)):
+            atoms += [m.group(1).strip() for m in _QUOTED_RE.finditer(aside)]
+            atoms += [m.group(0).strip() for m in _NUMBER_RE.finditer(aside)]
     tail = _AFTER_COLON_RE.search(text)
     if tail:
-        atoms.append(tail.group(1).strip().rstrip("."))
+        value = tail.group(1).strip().rstrip(".")
+        if not strict or len(value.split()) <= MAX_VALUE_WORDS:
+            atoms.append(value)
     seen: set[str] = set()
     out = []
     for a in atoms:
@@ -150,35 +193,92 @@ def extract_atoms(sentence: str) -> list[str]:
     return out
 
 
-def check_claims(answer: str | None, page_text: str) -> list[ClaimCheck]:
+def check_claims(
+    answer: str | None,
+    page_text: str,
+    *,
+    field_text: str = "",
+    strict: bool = False,
+    carried: tuple[str, ...] = (),
+    evidence: tuple[str, ...] = (),
+) -> list[ClaimCheck]:
     """Grade each sentence by its atoms.
 
     A sentence with no atoms is narrative (grade ``narrative``): kept, never counted as
     evidence. A sentence with atoms is supported only if every atom is found in the page
-    text (exact or normalized); the sentence's grade is its worst atom's grade.
+    text (exact or normalized); the sentence's grade is its worst atom's grade. ``field_text``
+    (package E) is the page's form field values: an atom not in the visible text but in a field is
+    found there, and the sentence's source says so. ``strict`` is :func:`extract_atoms`'s.
     """
     if not answer:
         return []
     sentences = split_claims(answer)
     if not sentences:
         return []
-    per_sentence = [extract_atoms(sn) for sn in sentences]
+    per_sentence = [extract_atoms(sn, strict=strict) for sn in sentences]
+    # Q19 R4: a value the harness carried is a fact with a recorded source, quoted or not ("by André Gide")
+    per_sentence = [
+        atoms + [v for v in (*carried, *evidence) if v and v in sn and v not in atoms]
+        for sn, atoms in zip(sentences, per_sentence, strict=True)
+    ]
+    # M1: a value the session's own evidence establishes (a submitted field, a read-back field, a carried
+    # read) is supported by that evidence when the final page no longer shows it
+    held = {v.casefold() for v in evidence if v}
+    if strict:
+        page_text, field_text = close_currency_gaps(page_text), close_currency_gaps(field_text)
     flat = [a for atoms in per_sentence for a in atoms]
-    results = {}
+    results: dict[str, dict[str, Any]] = {}
+    field_results: dict[str, dict[str, Any]] = {}
     if flat:
         matcher = native_or_pure("evidence_match")
         for r in matcher(flat, page_text):
             results.setdefault(r["claim"], r)
+        missing = [a for a in flat if results.get(a, {}).get("grade", "none") == "none"]
+        if field_text and missing:
+            for r in matcher(missing, field_text):
+                field_results.setdefault(r["claim"], r)
     out: list[ClaimCheck] = []
     order = {"exact": 0, "normalized": 1, "none": 2}
     for sn, atoms in zip(sentences, per_sentence, strict=True):
         if not atoms:
             out.append(ClaimCheck(sn, "narrative", -1, -1))
             continue
-        graded = [results.get(a, {"grade": "none", "start": -1, "end": -1}) for a in atoms]
+        graded = []
+        from_field = False
+        from_evidence = False
+        for a in atoms:
+            g = results.get(a, {"grade": "none", "start": -1, "end": -1})
+            if g["grade"] == "none" and field_results.get(a, {}).get("grade", "none") != "none":
+                g = {**field_results[a], "start": -1, "end": -1}
+                from_field = True
+            if g["grade"] == "none" and _held(a, sn, held):
+                g = {"grade": "exact", "start": -1, "end": -1}
+                from_evidence = True
+            graded.append(g)
         worst = max(graded, key=lambda g: order.get(g["grade"], 2))
-        out.append(ClaimCheck(sn, worst["grade"], worst.get("start", -1), worst.get("end", -1)))
+        source = "page"
+        if worst["grade"] != "none" and from_evidence:
+            source = "evidence"
+        elif worst["grade"] != "none" and from_field:
+            source = "field"
+        out.append(ClaimCheck(sn, worst["grade"], worst.get("start", -1), worst.get("end", -1), source))
     return out
+
+
+def _held(atom: str, sentence: str, held: set[str]) -> bool:
+    """An atom is held by evidence when it is an evidence value, or part of one the sentence states
+    whole ("83" of "QUIET-83" in "QUIET-83 27")."""
+    a, sn = atom.strip(".,;:!?").casefold(), sentence.casefold()
+    return bool(a) and any(a == v or (a in v and v in sn) for v in held)
+
+
+def field_values(menu: Menu) -> str:
+    """Package E: the values of the page's non-secret form fields, one per line, as ``label: value``."""
+    lines = []
+    for c in menu.candidates:
+        if c.value and (c.input_type or "").lower() != "password":
+            lines.append(f"{c.label}: {c.value}")
+    return "\n".join(lines)
 
 
 _IDENTIFIER = re.compile(r"\b(?:[A-Za-z]+[A-Z][A-Za-z0-9]*|[A-Za-z]+_[A-Za-z0-9_]+|[A-Z][a-z]{3,})\b")
@@ -391,10 +491,21 @@ class Verifier:
         trajectory: list[dict[str, Any]] | None = None,
         ledger: Ledger | None = None,
         answer_matters: bool = True,
+        carried: tuple[str, ...] = (),
+        effects: tuple[Any, ...] | None = None,
     ) -> Verdict:
         ask_kinds = ledger is not None and not ledger.kinds and bool(requirements)
         questions = self.build_questions(requirements, ask_kinds=ask_kinds)
         state = self.build_state(task, requirements, menu, answer, trajectory)
+        if effects:
+            # M1: what this run's own records establish about the requested effect, each with its kind,
+            # step and limits, apart from the memory lines of the trajectory
+            state["evidence"] = [e.line() for e in effects]
+        strict = self.policy.claim_evidence == "page_and_fields"
+        if strict and (fields := field_values(menu)):
+            # the form's values are part of what the page shows; innerText leaves them out, so Jev judged
+            # a filled form unfilled (claims audit A4, 2026-09-27)
+            state["page"]["fields"] = fields
         started = time.perf_counter()
         response = await _call_client(self.client, state, questions, model=self.model, retry=self.retry)
         latency = (time.perf_counter() - started) * 1000
@@ -434,14 +545,27 @@ class Verifier:
         if answer_expected:
             answer_required = max(answer_required, 1.0)
 
-        claims = check_claims(answer, menu.full_text or menu.page_text)
+        claims = check_claims(
+            answer,
+            menu.full_text or menu.page_text,
+            field_text=field_values(menu) if strict else "",
+            strict=strict,
+            carried=carried,
+            evidence=tuple(v for e in effects or () if e.usable for v in e.values),
+        )
         unsupported = tuple(c.claim for c in claims if not c.supported)
         supported_answer: str | None = None
         if claims:
             kept = [c.claim for c in claims if c.supported]
             evidence = [c for c in claims if c.is_evidence]
             supported_answer = " ".join(kept) if evidence else None
-            if not evidence and band == "accept":
+            # strict: a done that states no fact at all ("Opened the cart.") needs none on a task that asks
+            # no answer (claims audit A8); a done that states a fact the page lacks is demoted whatever
+            # the task (test_confidently_wrong_done_cannot_accept_without_evidence caught the looser
+            # rule at adoption: "45 metres" passed when Jev judged the task not to ask for an answer)
+            states_facts = any(c.grade != "narrative" for c in claims)
+            needs_fact = not strict or states_facts or answer_required >= self.policy.answer_required
+            if not evidence and band == "accept" and needs_fact:
                 band = "verify"
                 reason = f"answer carries no fact found on the page ({len(unsupported)} unsupported, rest narrative); {reason}"
             elif unsupported:
@@ -457,6 +581,15 @@ class Verifier:
             reason = (
                 f"task asks for an answer (answer_required={answer_required:.2f}) and none is given; {reason}"
             )
+
+        if effects is not None and band == "accept":
+            # M2: a deterministic floor under Jev's judgment, from this run's own records
+            from jevdual.completion import floor
+
+            why = floor(task, effects, answer_bearing=answer_required >= self.policy.answer_required)
+            if why:
+                band = "verify"
+                reason = f"{why}; {reason}"
 
         verdict = Verdict(
             band=band,

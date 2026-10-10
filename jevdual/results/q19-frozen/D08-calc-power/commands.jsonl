@@ -1,0 +1,16 @@
+{"t": 1790641409.846132, "surface": "calc", "args": ["start", "Compute 2 to the 10th", "--app", "Calculator", "--mode", "foreground_permitted"], "exit": 0, "s": 1.47}
+{"t": 1790641413.025964, "surface": "calc", "args": ["do", "click", "All Clear", "--no-judge"], "exit": 0, "s": 3.09}
+{"t": 1790641416.249859, "surface": "calc", "args": ["do", "click", "label:2", "--no-judge"], "exit": 0, "s": 3.13}
+{"t": 1790641419.4613628, "surface": "calc", "args": ["do", "click", "Multiply", "--no-judge"], "exit": 0, "s": 3.12}
+{"t": 1790641422.712523, "surface": "calc", "args": ["do", "click", "label:2", "--no-judge"], "exit": 0, "s": 3.16}
+{"t": 1790641425.9058828, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.1}
+{"t": 1790641429.051002, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.05}
+{"t": 1790641432.2528052, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.12}
+{"t": 1790641435.451715, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.11}
+{"t": 1790641438.580129, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.04}
+{"t": 1790641441.798888, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.13}
+{"t": 1790641445.0226188, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.13}
+{"t": 1790641448.1824908, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.07}
+{"t": 1790641451.3641841, "surface": "calc", "args": ["do", "click", "Equals", "--no-judge"], "exit": 0, "s": 3.09}
+{"t": 1790641452.1566641, "surface": "calc", "args": ["read", "--match", "(?m)^\\W*([\\d,]+)\\W*$", "--as", "result"], "exit": 0, "s": 0.7}
+{"t": 1790641453.180419, "surface": "calc", "args": ["done", "2 to the power of 10 is 1024 (Calculator shows 1,024)."], "exit": 0, "s": 0.93}

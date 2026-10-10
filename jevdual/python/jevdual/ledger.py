@@ -90,6 +90,9 @@ def trajectory_from_agent(
         }
         if receipt is not None:
             entry["effect"] = red(receipt.evidence)[:160]
+            # package D: the verifier learns an input never arrived only when it did not
+            if getattr(receipt, "delivery", None) in ("not_delivered", "by_script"):
+                entry["input"] = receipt.delivery
         memory = getattr(model_output, "memory", None)
         if memory:
             entry["note"] = red(str(memory))[:200]

@@ -1,0 +1,11 @@
+dispatched menu(File > Save): driver says not sent (human_active: menu File > Save (a menu acts on the key window) needs the foreground and the person gave input 0.2s ago (needs 3s idle); yielding) in 0.0s
+receipt: Receipt for menu(File > Save): refused (not applied: human_active: menu File > Save (a menu acts on the key window) needs the foreground and the person gave input 0.2s ago (; page unchanged).
+TextEdit: 'transfer-20260927-160114.txt'  [elements_incomplete 1]
+1 elements:
+  [   1] textbox    'text area' = 'Price carried from the browser:\n£51.77\n£51.77'
+page text (76 chars):
+—
+transfer-20260927-160114.txt
+Price carried from the browser:
+£51.77
+£51.77

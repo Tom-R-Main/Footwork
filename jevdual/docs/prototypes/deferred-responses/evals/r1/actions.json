@@ -1,0 +1,1467 @@
+[
+  {
+    "id": "R1-A01",
+    "category": "direct_navigation",
+    "surface": "browser",
+    "state": {
+      "task": "Open the public pricing page.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Product site",
+        "text": "The Pricing link opens the pricing page. Careers and Contact open other pages."
+      },
+      "elements": [
+        {
+          "id": 10,
+          "label": "Pricing",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 11,
+          "label": "Careers",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 12,
+          "label": "Contact",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The named navigation destination is offered explicitly."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 10
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The named navigation destination is offered explicitly."
+  },
+  {
+    "id": "R1-A02",
+    "category": "search_entry",
+    "surface": "browser",
+    "state": {
+      "task": "Enter delivery policy into the document search field.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Document library",
+        "text": "The search field is empty; Filter by owner narrows the current list."
+      },
+      "elements": [
+        {
+          "id": 20,
+          "label": "Search documents",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append",
+            "enter"
+          ]
+        },
+        {
+          "id": 21,
+          "label": "Filter by owner",
+          "role": "combobox",
+          "operations": [
+            "select"
+          ]
+        },
+        {
+          "id": 22,
+          "label": "New document",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Either replacement or append fills an empty field; no search submission is requested."
+    },
+    "expected_pairs": [
+      {
+        "operation": "type",
+        "target": 20
+      },
+      {
+        "operation": "append",
+        "target": 20
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Either replacement or append fills an empty field; no search submission is requested."
+  },
+  {
+    "id": "R1-A03",
+    "category": "local_selection",
+    "surface": "browser",
+    "state": {
+      "task": "Set the temporary results language filter to French.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Search results",
+        "text": "Language filter controls the current read-only results; Account language changes a saved account preference."
+      },
+      "elements": [
+        {
+          "id": 30,
+          "label": "Results language",
+          "role": "combobox",
+          "operations": [
+            "select"
+          ]
+        },
+        {
+          "id": 31,
+          "label": "Account language",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 32,
+          "label": "Sort by date",
+          "role": "combobox",
+          "operations": [
+            "select"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The results filter is the requested control."
+    },
+    "expected_pairs": [
+      {
+        "operation": "select",
+        "target": 30
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The results filter is the requested control."
+  },
+  {
+    "id": "R1-A04",
+    "category": "tooltip",
+    "surface": "browser",
+    "state": {
+      "task": "Reveal the explanation of the retention metric.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Metrics",
+        "text": "The Retention label has a hover tooltip. Retention settings opens an unrelated settings page."
+      },
+      "elements": [
+        {
+          "id": 40,
+          "label": "Retention",
+          "role": "text",
+          "operations": [
+            "hover"
+          ]
+        },
+        {
+          "id": 41,
+          "label": "Retention settings",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 42,
+          "label": "Revenue",
+          "role": "text",
+          "operations": [
+            "hover"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Hovering the named metric reveals its explanation."
+    },
+    "expected_pairs": [
+      {
+        "operation": "hover",
+        "target": 40
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Hovering the named metric reveals its explanation."
+  },
+  {
+    "id": "R1-A05",
+    "category": "page_scroll",
+    "surface": "browser",
+    "state": {
+      "task": "Read the next section below the current viewport.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Long guide",
+        "text": "The introduction fills the viewport. Installation is below the fold. No dedicated scroll container is present."
+      },
+      "elements": [
+        {
+          "id": 50,
+          "label": "Contents",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 51,
+          "label": "Print",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The next section is reached by scrolling the page."
+    },
+    "expected_pairs": [
+      {
+        "operation": "scroll_page",
+        "target": null
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The next section is reached by scrolling the page."
+  },
+  {
+    "id": "R1-A06",
+    "category": "back_navigation",
+    "surface": "browser",
+    "state": {
+      "task": "Go back to the list you just came from.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Read-only case details",
+        "text": "This is a read-only detail page. The browser history immediately previous entry is the case list; no list link is offered."
+      },
+      "elements": [
+        {
+          "id": 60,
+          "label": "Help",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 61,
+          "label": "Related case",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [
+        "Opened this case from the case list"
+      ],
+      "notes": "Browser Back returns to the specified preceding list."
+    },
+    "expected_pairs": [
+      {
+        "operation": "back",
+        "target": null
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Browser Back returns to the specified preceding list."
+  },
+  {
+    "id": "R1-A07",
+    "category": "loading_wait",
+    "surface": "browser",
+    "state": {
+      "task": "Read the report once it has loaded.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Report loading",
+        "text": "The report is still loading. Data and filters are disabled. Wait for loading to finish."
+      },
+      "elements": [
+        {
+          "id": 70,
+          "label": "Disabled report filter",
+          "role": "combobox",
+          "operations": []
+        }
+      ],
+      "recent_actions": [],
+      "notes": "There is no useful targeted action during the explicit loading state."
+    },
+    "expected_pairs": [
+      {
+        "operation": "wait",
+        "target": null
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "There is no useful targeted action during the explicit loading state."
+  },
+  {
+    "id": "R1-A08",
+    "category": "task_complete",
+    "surface": "browser",
+    "state": {
+      "task": "Find the support closing time.",
+      "requirements": [
+        "Closing time has been read and recorded"
+      ],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Support hours",
+        "text": "Support closes at 17:00. The requested closing time has already been read and recorded in the task answer."
+      },
+      "elements": [
+        {
+          "id": 80,
+          "label": "Contact sales",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 81,
+          "label": "Other locations",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The observation explicitly states that the narrow lookup is complete."
+    },
+    "expected_pairs": [
+      {
+        "operation": "done",
+        "target": null
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The observation explicitly states that the narrow lookup is complete."
+  },
+  {
+    "id": "R1-A09",
+    "category": "unavailable_target",
+    "surface": "browser",
+    "state": {
+      "task": "Open the archived invoice.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Invoice access",
+        "text": "Archive access is unavailable to this account. The page offers no archive link or request-access control."
+      },
+      "elements": [
+        {
+          "id": 90,
+          "label": "Current invoices",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 91,
+          "label": "Help",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The required target is unavailable; unrelated links do not progress this task."
+    },
+    "expected_pairs": [
+      {
+        "operation": "blocked",
+        "target": null
+      }
+    ],
+    "expect_abstain": true,
+    "rationale": "The required target is unavailable; unrelated links do not progress this task."
+  },
+  {
+    "id": "R1-A10",
+    "category": "needs_reasoning",
+    "surface": "browser",
+    "state": {
+      "task": "Determine which of these three plans has the lowest effective monthly cost including the annual discount.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Plan comparison",
+        "text": "Basic is $12 monthly. Standard is $100 annually. Team is $8 monthly plus $30 yearly setup. No total or comparison is displayed."
+      },
+      "elements": [
+        {
+          "id": 100,
+          "label": "Basic details",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 101,
+          "label": "Standard details",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 102,
+          "label": "Team details",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Selecting a winner requires arithmetic reasoning before any bounded UI action; the action policy should hand off."
+    },
+    "expected_pairs": [
+      {
+        "operation": "blocked",
+        "target": null
+      }
+    ],
+    "expect_abstain": true,
+    "rationale": "Selecting a winner requires arithmetic reasoning before any bounded UI action; the action policy should hand off."
+  },
+  {
+    "id": "R1-A11",
+    "category": "ambiguous_target",
+    "surface": "browser",
+    "state": {
+      "task": "Open Morgan's account details.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Accounts",
+        "text": "Two rows both show Morgan. No email, organization or other identifying context is visible."
+      },
+      "elements": [
+        {
+          "id": 110,
+          "label": "Morgan",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 111,
+          "label": "Morgan",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 112,
+          "label": "Alex",
+          "role": "link",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The observation does not identify which Morgan the user means."
+    },
+    "expected_pairs": [
+      {
+        "operation": "blocked",
+        "target": null
+      }
+    ],
+    "expect_abstain": true,
+    "rationale": "The observation does not identify which Morgan the user means."
+  },
+  {
+    "id": "R1-A12",
+    "category": "submit_search",
+    "surface": "browser",
+    "state": {
+      "task": "Run the current read-only search for warranty.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Help center",
+        "text": "The Search help field contains warranty. Enter and the Search button both run this read-only query."
+      },
+      "elements": [
+        {
+          "id": 120,
+          "label": "Search help",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append",
+            "enter"
+          ]
+        },
+        {
+          "id": 121,
+          "label": "Search",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 122,
+          "label": "Clear",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Both offered routes submit the same intended read-only search."
+    },
+    "expected_pairs": [
+      {
+        "operation": "enter",
+        "target": 120
+      },
+      {
+        "operation": "click",
+        "target": 121
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Both offered routes submit the same intended read-only search."
+  },
+  {
+    "id": "R1-A13",
+    "category": "container_scroll",
+    "surface": "browser",
+    "state": {
+      "task": "Reveal older entries inside the activity panel.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Activity dashboard",
+        "text": "The activity panel is independently scrollable. Scrolling the outer page does not scroll panel entries."
+      },
+      "elements": [
+        {
+          "id": 130,
+          "label": "Activity panel",
+          "role": "region",
+          "operations": [
+            "scroll"
+          ]
+        },
+        {
+          "id": 131,
+          "label": "Announcements panel",
+          "role": "region",
+          "operations": [
+            "scroll"
+          ]
+        },
+        {
+          "id": 132,
+          "label": "Export",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Only the named container holds the older entries."
+    },
+    "expected_pairs": [
+      {
+        "operation": "scroll",
+        "target": 130
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Only the named container holds the older entries."
+  },
+  {
+    "id": "R1-A14",
+    "category": "detail_expand",
+    "surface": "browser",
+    "state": {
+      "task": "Expand the answer about cancellation timing.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "FAQ",
+        "text": "Cancellation timing and Refund timing are separate collapsed questions."
+      },
+      "elements": [
+        {
+          "id": 140,
+          "label": "Cancellation timing",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 141,
+          "label": "Refund timing",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 142,
+          "label": "Cancel subscription",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The task asks for a FAQ answer, and the matching expand control is offered."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 140
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The task asks for a FAQ answer, and the matching expand control is offered."
+  },
+  {
+    "id": "R1-A15",
+    "category": "read_only_tab",
+    "surface": "browser",
+    "state": {
+      "task": "Show the order's delivery history.",
+      "requirements": [],
+      "page": {
+        "url": "https://workbench.example.test/app",
+        "title": "Order 25",
+        "text": "Delivery history is a tab containing read-only events. Payment history is another tab."
+      },
+      "elements": [
+        {
+          "id": 150,
+          "label": "Delivery history",
+          "role": "tab",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 151,
+          "label": "Payment history",
+          "role": "tab",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 152,
+          "label": "Edit address",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The requested history tab is identified without further reasoning."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 150
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The requested history tab is identified without further reasoning."
+  },
+  {
+    "id": "R1-A16",
+    "category": "native_open",
+    "surface": "native",
+    "state": {
+      "task": "Open the local agenda.txt file.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "File browser",
+        "text": "The directory contains agenda.txt, budget.csv and notes.txt. Each row opens the named file."
+      },
+      "elements": [
+        {
+          "id": 160,
+          "label": "agenda.txt",
+          "role": "row",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 161,
+          "label": "budget.csv",
+          "role": "row",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 162,
+          "label": "notes.txt",
+          "role": "row",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Either activation route opens the uniquely named requested file."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 160
+      },
+      {
+        "operation": "enter",
+        "target": 160
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Either activation route opens the uniquely named requested file."
+  },
+  {
+    "id": "R1-A17",
+    "category": "native_replace",
+    "surface": "native",
+    "state": {
+      "task": "Replace the draft title with Weekly review.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Draft editor",
+        "text": "Title currently says Untitled. Type replaces the title; append extends it. Body is a separate field."
+      },
+      "elements": [
+        {
+          "id": 170,
+          "label": "Title",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 171,
+          "label": "Body",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 172,
+          "label": "Preview",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Replacement is explicitly requested for the title, and appending would retain unwanted text."
+    },
+    "expected_pairs": [
+      {
+        "operation": "type",
+        "target": 170
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Replacement is explicitly requested for the title, and appending would retain unwanted text."
+  },
+  {
+    "id": "R1-A18",
+    "category": "native_append",
+    "surface": "native",
+    "state": {
+      "task": "Append Call Jordan tomorrow to the note body without replacing existing text.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Notes",
+        "text": "Body contains an existing paragraph. Append adds at the end; type replaces its content."
+      },
+      "elements": [
+        {
+          "id": 180,
+          "label": "Body",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 181,
+          "label": "Title",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 182,
+          "label": "Search notes",
+          "role": "textbox",
+          "operations": [
+            "type"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The named append operation preserves the existing body as requested."
+    },
+    "expected_pairs": [
+      {
+        "operation": "append",
+        "target": 180
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The named append operation preserves the existing body as requested."
+  },
+  {
+    "id": "R1-A19",
+    "category": "native_menu",
+    "surface": "native",
+    "state": {
+      "task": "Open the View menu.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Desktop document",
+        "text": "The menu bar has File, Edit and View. No submenu is currently open."
+      },
+      "elements": [
+        {
+          "id": 190,
+          "label": "File",
+          "role": "menuitem",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 191,
+          "label": "Edit",
+          "role": "menuitem",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 192,
+          "label": "View",
+          "role": "menuitem",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The task names the offered menu directly."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 192
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The task names the offered menu directly."
+  },
+  {
+    "id": "R1-A20",
+    "category": "native_enter",
+    "surface": "native",
+    "state": {
+      "task": "Calculate the already-entered expression by pressing equals.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Calculator",
+        "text": "The display contains 6 × 7. The Equals button evaluates it; Clear erases it."
+      },
+      "elements": [
+        {
+          "id": 200,
+          "label": "Equals",
+          "role": "button",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 201,
+          "label": "Clear",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 202,
+          "label": "Multiply",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Both activation routes evaluate the prepared expression; choosing operands is unnecessary."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 200
+      },
+      {
+        "operation": "enter",
+        "target": 200
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Both activation routes evaluate the prepared expression; choosing operands is unnecessary."
+  },
+  {
+    "id": "R1-A21",
+    "category": "native_find",
+    "surface": "native",
+    "state": {
+      "task": "Enter renewal in the open Find field.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Text editor find bar",
+        "text": "Find is empty. Replace edits document text; the search field only finds existing text."
+      },
+      "elements": [
+        {
+          "id": 210,
+          "label": "Find",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append",
+            "enter"
+          ]
+        },
+        {
+          "id": 211,
+          "label": "Replace",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 212,
+          "label": "Replace all",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The named empty lookup field can be populated by either text entry operation."
+    },
+    "expected_pairs": [
+      {
+        "operation": "type",
+        "target": 210
+      },
+      {
+        "operation": "append",
+        "target": 210
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The named empty lookup field can be populated by either text entry operation."
+  },
+  {
+    "id": "R1-A22",
+    "category": "native_focus",
+    "surface": "native",
+    "state": {
+      "task": "Switch to the already-open Calendar window.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Desktop window list",
+        "text": "Calendar, Mail and Notes are running. Clicking a window name focuses that window."
+      },
+      "elements": [
+        {
+          "id": 220,
+          "label": "Calendar",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 221,
+          "label": "Mail",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 222,
+          "label": "Notes",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The requested window is uniquely offered."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 220
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The requested window is uniquely offered."
+  },
+  {
+    "id": "R1-A23",
+    "category": "native_wait",
+    "surface": "native",
+    "state": {
+      "task": "Wait until the existing print preview has finished rendering.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Print preview",
+        "text": "Preview rendering is in progress. The preview is unavailable and its controls are disabled."
+      },
+      "elements": [
+        {
+          "id": 230,
+          "label": "Disabled page selector",
+          "role": "combobox",
+          "operations": []
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The task explicitly requires waiting for the current preview operation."
+    },
+    "expected_pairs": [
+      {
+        "operation": "wait",
+        "target": null
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The task explicitly requires waiting for the current preview operation."
+  },
+  {
+    "id": "R1-A24",
+    "category": "native_done",
+    "surface": "native",
+    "state": {
+      "task": "Read the displayed local time.",
+      "requirements": [
+        "Displayed time read and recorded"
+      ],
+      "page": {
+        "url": "native://desktop",
+        "title": "Clock",
+        "text": "Clock reads 10:15. The task answer already records 10:15; no further action is required."
+      },
+      "elements": [
+        {
+          "id": 240,
+          "label": "Alarm settings",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 241,
+          "label": "Timer",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The explicit observed task state is complete."
+    },
+    "expected_pairs": [
+      {
+        "operation": "done",
+        "target": null
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The explicit observed task state is complete."
+  },
+  {
+    "id": "R1-A25",
+    "category": "native_missing_target",
+    "surface": "native",
+    "state": {
+      "task": "Open meeting.pdf from this folder.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "File browser",
+        "text": "This folder shows only agenda.txt and budget.csv. meeting.pdf is absent; no other folder or search control is offered."
+      },
+      "elements": [
+        {
+          "id": 250,
+          "label": "agenda.txt",
+          "role": "row",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 251,
+          "label": "budget.csv",
+          "role": "row",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Opening a different file cannot satisfy the absent requested file task."
+    },
+    "expected_pairs": [
+      {
+        "operation": "blocked",
+        "target": null
+      }
+    ],
+    "expect_abstain": true,
+    "rationale": "Opening a different file cannot satisfy the absent requested file task."
+  },
+  {
+    "id": "R1-A26",
+    "category": "native_ambiguous_target",
+    "surface": "native",
+    "state": {
+      "task": "Activate the Save control for the selected document.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Accessibility view",
+        "text": "Two independent document windows expose controls labelled Save. Window identity and selection information are unavailable."
+      },
+      "elements": [
+        {
+          "id": 260,
+          "label": "Save",
+          "role": "button",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 261,
+          "label": "Save",
+          "role": "button",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The observation cannot bind either Save control to the selected document."
+    },
+    "expected_pairs": [
+      {
+        "operation": "blocked",
+        "target": null
+      }
+    ],
+    "expect_abstain": true,
+    "rationale": "The observation cannot bind either Save control to the selected document."
+  },
+  {
+    "id": "R1-A27",
+    "category": "native_needs_reasoning",
+    "surface": "native",
+    "state": {
+      "task": "Decide whether this expense fits the remaining budget after tax.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Budget worksheet",
+        "text": "Remaining budget is $73. Item price is $69 with 8% tax. No after-tax total is displayed. The visible buttons record decisions."
+      },
+      "elements": [
+        {
+          "id": 270,
+          "label": "Approve",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 271,
+          "label": "Decline",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 272,
+          "label": "Help",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The decision needs arithmetic before a bounded action can choose the appropriate control."
+    },
+    "expected_pairs": [
+      {
+        "operation": "blocked",
+        "target": null
+      }
+    ],
+    "expect_abstain": true,
+    "rationale": "The decision needs arithmetic before a bounded action can choose the appropriate control."
+  },
+  {
+    "id": "R1-A28",
+    "category": "native_read_panel",
+    "surface": "native",
+    "state": {
+      "task": "Show the selected image's metadata.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Image inspector",
+        "text": "The selected image has Details and Adjustments tabs. Details shows dimensions and format; Adjustments edits appearance."
+      },
+      "elements": [
+        {
+          "id": 280,
+          "label": "Details",
+          "role": "tab",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 281,
+          "label": "Adjustments",
+          "role": "tab",
+          "operations": [
+            "click"
+          ]
+        },
+        {
+          "id": 282,
+          "label": "Export",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The named information is on the read-only Details tab."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 280
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The named information is on the read-only Details tab."
+  },
+  {
+    "id": "R1-A29",
+    "category": "native_dialog_cancel",
+    "surface": "native",
+    "state": {
+      "task": "Dismiss this font preview dialog with Cancel.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Font preview dialog",
+        "text": "Cancel closes this temporary preview. Apply persists the chosen font setting."
+      },
+      "elements": [
+        {
+          "id": 290,
+          "label": "Cancel",
+          "role": "button",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 291,
+          "label": "Apply",
+          "role": "button",
+          "operations": [
+            "click",
+            "enter"
+          ]
+        },
+        {
+          "id": 292,
+          "label": "Font name",
+          "role": "textbox",
+          "operations": [
+            "type"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "The explicit dismissal request matches Cancel via either activation route."
+    },
+    "expected_pairs": [
+      {
+        "operation": "click",
+        "target": 290
+      },
+      {
+        "operation": "enter",
+        "target": 290
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "The explicit dismissal request matches Cancel via either activation route."
+  },
+  {
+    "id": "R1-A30",
+    "category": "native_empty_entry",
+    "surface": "native",
+    "state": {
+      "task": "Enter 25 in the empty calculator input.",
+      "requirements": [],
+      "page": {
+        "url": "native://desktop",
+        "title": "Calculator entry",
+        "text": "The value input is empty. History search is a separate text field; Clear resets the calculator."
+      },
+      "elements": [
+        {
+          "id": 300,
+          "label": "Value input",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 301,
+          "label": "History search",
+          "role": "textbox",
+          "operations": [
+            "type",
+            "append"
+          ]
+        },
+        {
+          "id": 302,
+          "label": "Clear",
+          "role": "button",
+          "operations": [
+            "click"
+          ]
+        }
+      ],
+      "recent_actions": [],
+      "notes": "Either entry operation supplies the value to the uniquely identified empty calculator field."
+    },
+    "expected_pairs": [
+      {
+        "operation": "type",
+        "target": 300
+      },
+      {
+        "operation": "append",
+        "target": 300
+      }
+    ],
+    "expect_abstain": false,
+    "rationale": "Either entry operation supplies the value to the uniquely identified empty calculator field."
+  }
+]

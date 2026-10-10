@@ -1,0 +1,188 @@
+{
+ "dir": "results/q19-model-smoke/D03-practice-login/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Log in to practicetestautomation.com's practice login page with username \"student\" and the password {PTA}, and report the heading shown after logging in. Where the task names a secret in braces, such as {PTA}, type it exactly so; the harness fills it in.",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 3,
+ "status": "done",
+ "memory": [
+  "step 1: type(Username) text='student' -> confirmed",
+  "step 2: type(Password) text='{secret}' -> unverifiable",
+  "step 3: click(Submit) -> confirmed",
+  "step 3: read [-1] 'Logged In Successfully' as @HEADING",
+  "step 4: done accepted"
+ ],
+ "last_url": "https://practicetestautomation.com/logged-in-successfully/",
+ "last_title": "Logged In Successfully | Practice Test Automation",
+ "last_page_text": "Logged In Successfully\nCongratulations student. You successfully logged in!\n\u00a9 Copyright 2020\nAll rights reserved |",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Practice Test Automation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Practice Test Automation",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "HOME",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "PRACTICE",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "COURSES",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "AI WORKSHOP",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Log out",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 32,
+   "label": "BLOG",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 33,
+   "label": "CONTACT",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 34,
+   "label": "Practice Test Automation.",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 35,
+   "label": "Privacy Policy",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 46,
+   "label": "Press \"Enter\" to skip to content",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-8031be77-3ba7-40dd-8665-0429def7ff7d",
+ "secret_names": [
+  "PTA"
+ ]
+}

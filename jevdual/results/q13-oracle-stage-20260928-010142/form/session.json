@@ -1,0 +1,164 @@
+{
+ "dir": "results/q13-oracle-stage-20260928-010142/form",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 977,
+ "task": "Send the result through the form",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 9,
+ "status": "open",
+ "memory": [
+  "step 1: type(Name) text='Ada' -> confirmed",
+  "step 2: type(Email) text='ada@example.com' -> confirmed",
+  "step 3: type(Message) text=@result (from native app://Calculator) -> confirmed",
+  "step 4: click(Send message) -> confirmed",
+  "step 5: navigate(http://127.0.0.1:57989/form.html) text='http://127.0.0.1:57989/form.html' -> confirmed",
+  "step 6: type(Name) text='Ada' -> confirmed",
+  "step 7: type(Email) text='ada@example.com' -> confirmed",
+  "step 8: type(Message) text=@result (from native app://Calculator) -> confirmed",
+  "step 9: click(Send message) -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:57989/confirm.html?name=Ada&email=ada%40example.com&topic=&message=624",
+ "last_title": "Contact us",
+ "last_page_text": "|\nMessage received\nThanks, we received your message.\nAda\nada@example.com\n624\n|",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Home",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Search",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Catalog",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Contact",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Announcements",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Sign in",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Checkout",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Article",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Back to home",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 34,
+   "label": "Tracking",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-8159ee68-8491-4640-9cde-b2212a94d60f",
+ "secret_names": []
+}

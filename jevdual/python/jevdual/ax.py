@@ -127,6 +127,43 @@ def value(el: Any) -> str:
     return str(v)
 
 
+def can_insert(el: Any) -> bool:
+    """Read-only qualification for the caret-and-insert route used by ``insert_at_end``.
+
+    A text-area role or readable value alone does not establish editability.
+    Unknown/refused setter capability is not permission to attempt input.
+    """
+    from ApplicationServices import AXUIElementIsAttributeSettable
+
+    for name in ("AXSelectedTextRange", "AXSelectedText"):
+        err, settable = AXUIElementIsAttributeSettable(el, name, None)
+        if err or not settable:
+            return False
+    return True
+
+
+def document_path(pid: int, window_id: int) -> str | None:
+    """The file a document window shows (its AXDocument URL as a path), or None when it names none."""
+    from urllib.parse import unquote, urlsplit
+
+    doc = _attr(window_element(pid, window_id), "AXDocument")
+    if not doc:
+        return None
+    parts = urlsplit(str(doc))
+    return unquote(parts.path) if parts.scheme == "file" else None
+
+
+def text_area_values(pid: int, window_id: int) -> list[str]:
+    """The exact values of the window's text areas, in tree order."""
+    out = []
+    for el in elements_by_role(window_element(pid, window_id), "AXTextArea"):
+        try:
+            out.append(value(el))
+        except AXError:
+            continue
+    return out
+
+
 def utf16_len(s: str) -> int:
     return len(s.encode("utf-16-le")) // 2
 
@@ -163,6 +200,52 @@ def focused_window_id(pid: int) -> int | None:
     return wid.value if _hi()(objc.pyobjc_id(w), ctypes.byref(wid)) == 0 else None
 
 
+def title_bar_point(pid: int, window_id: int) -> tuple[float, float] | None:
+    """A point on the bound window's title bar, left of the title (clicking a document's title can open
+    its rename popover) and right of the window buttons, or None when a hit test there does not land on
+    that window (another window covers it, or it has no frame)."""
+    import objc
+    from ApplicationServices import AXUIElementCopyElementAtPosition, AXUIElementCreateSystemWide
+
+    f = frame_of(window_element(pid, window_id))
+    if f is None or f.w < 120:
+        return None
+    x, y = f.x + min(90.0, f.w / 4), f.y + 12
+    err, hit = AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), x, y, None)
+    win = _attr(hit, "AXWindow") if err == 0 and hit is not None else None
+    if win is None and err == 0 and _attr(hit, "AXRole") == "AXWindow":
+        win = hit
+    wid = ctypes.c_uint32(0)
+    if win is None or _hi()(objc.pyobjc_id(win), ctypes.byref(wid)) != 0 or wid.value != window_id:
+        return None
+    return x, y
+
+
+def click_at(x: float, y: float) -> None:
+    """One real left click at a screen point, the cursor put back where it was: the one input TextEdit
+    takes to change its key window (Q19 U48: AX raises, the Window menu and AppleScript reorder its
+    windows but leave the previous one key)."""
+    import time
+
+    from Quartz import (
+        CGEventCreate,
+        CGEventCreateMouseEvent,
+        CGEventGetLocation,
+        CGEventPost,
+        CGWarpMouseCursorPosition,
+        kCGEventLeftMouseDown,
+        kCGEventLeftMouseUp,
+        kCGHIDEventTap,
+        kCGMouseButtonLeft,
+    )
+
+    back = CGEventGetLocation(CGEventCreate(None))
+    for kind in (kCGEventLeftMouseDown, kCGEventLeftMouseUp):
+        CGEventPost(kCGHIDEventTap, CGEventCreateMouseEvent(None, kind, (x, y), kCGMouseButtonLeft))
+        time.sleep(0.03)
+    CGWarpMouseCursorPosition(back)
+
+
 def _title(el: Any) -> str:
     t = str(_attr(el, "AXTitle") or "").strip()
     return t.removesuffix("…").removesuffix("...").strip().casefold()
@@ -175,6 +258,26 @@ def _menu_items(node: Any) -> list[Any]:
         return kids
     sub = next((k for k in kids if _attr(k, "AXRole") == "AXMenu"), None)
     return list(_attr(sub, "AXChildren") or ()) if sub is not None else []
+
+
+def menu_paths(pid: int, *, limit: int = 400) -> list[str]:
+    """Every menu item under the app's menu bar as a path ("File > Save"), two levels deep, read through AX
+    (the observation's element cap dropped them all on Dictionary, Q19 frozen re-drive)."""
+    from ApplicationServices import AXUIElementCreateApplication
+
+    bar = _attr(AXUIElementCreateApplication(pid), "AXMenuBar")
+    out: list[str] = []
+    for top in _menu_items(bar) if bar is not None else []:
+        head = str(_attr(top, "AXTitle") or "").strip()
+        if not head or head == "Apple":
+            continue
+        for item in _menu_items(top):
+            title = str(_attr(item, "AXTitle") or "").strip()
+            if title:
+                out.append(f"{head} > {title}")
+            if len(out) >= limit:
+                return out
+    return out
 
 
 def press_menu(pid: int, path: list[str]) -> None:

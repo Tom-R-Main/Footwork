@@ -1,0 +1,23 @@
+{
+  "accepted_by_model": true,
+  "final_accepted": true,
+  "dispatched": true,
+  "postcondition_observed": true,
+  "admission_reason": "effect_verified",
+  "action": {
+    "dispatched": true,
+    "route": "background_accessibility",
+    "error_code": 0,
+    "target_label": "Apply proposed crop"
+  },
+  "setup_ms": 375.47487497795373,
+  "effect_ms": 121.69420905411243,
+  "total_ms": 497.17058299575,
+  "fresh_bound_window": {
+    "pid": 87076,
+    "window_id": 27728
+  },
+  "observation_sha256": "ce7052436cbdd1b70fa740b5f62fd17796a3bd7c33ddc5e62bcb27484ae08f7b",
+  "surface": "native_fixture",
+  "scope": "reconstructed authored fixture; independently checked persisted effect"
+}

@@ -1,0 +1,42 @@
+{
+ "correct, with context": {
+  "band": "verify",
+  "reason": "uncertain: complete p=0.74, max unmet p=0.47",
+  "unmet": {
+   "The document's last line is the first book's price": 0.47,
+   "The document was saved": 0.08
+  }
+ },
+ "correct, without context": {
+  "band": "verify",
+  "reason": "uncertain: complete p=0.54, max unmet p=0.58",
+  "unmet": {
+   "The document's last line is the first book's price": 0.58,
+   "The document was saved": 0.09
+  }
+ },
+ "tampered (\u00a352.00), with context": {
+  "band": "verify",
+  "reason": "uncertain: complete p=0.77, max unmet p=0.45",
+  "unmet": {
+   "The document's last line is the first book's price": 0.45,
+   "The document was saved": 0.08
+  }
+ },
+ "correct, with context and check (V5)": {
+  "band": "verify",
+  "reason": "uncertain: complete p=0.74, max unmet p=0.40",
+  "unmet": {
+   "The document's last line is the first book's price": 0.4,
+   "The document was saved": 0.08
+  }
+ },
+ "tampered, with context and check (V5)": {
+  "band": "reject",
+  "reason": "The document's last line is the first book's price unmet with p=0.93",
+  "unmet": {
+   "The document's last line is the first book's price": 0.93,
+   "The document was saved": 0.15
+  }
+ }
+}

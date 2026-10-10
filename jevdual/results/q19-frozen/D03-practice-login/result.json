@@ -1,0 +1,16 @@
+{
+ "task": "D03-practice-login",
+ "oracle_ok": true,
+ "oracle": "answer contains 'Logged In Successfully'",
+ "answer": "The heading after logging in is \"Logged In Successfully\".",
+ "commands": 6,
+ "wall_s": 10.0,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

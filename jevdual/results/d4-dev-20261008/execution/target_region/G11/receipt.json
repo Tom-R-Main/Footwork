@@ -1,0 +1,175 @@
+{
+  "accepted_by_model": false,
+  "dispatched": false,
+  "guard_reason": "model_not_confidently_true",
+  "goal_met": false,
+  "wrong_effect": false,
+  "before": {
+    "mode": "none"
+  },
+  "after": {
+    "mode": "none"
+  },
+  "content_matches": true,
+  "current_observation": {
+    "image": "current.png",
+    "image_sha256": "2a144965799e94824fd71a9c7259e76ace74762a13915ab19c53b076fa2d723d",
+    "dimensions": [
+      640,
+      360
+    ],
+    "captured_at": "2026-10-08T20:41:48.244647+00:00",
+    "revision": "16102ce12432d28c43700c8ec3d5a28781b0edb3bf6fff914c9843af8491dcc1",
+    "target_id": "36D5423D74CEF101C90531B2F75C1384",
+    "process_id": 22125,
+    "dom": {
+      "rendered_text": "Image editor\n\nChoose the crop tool.\n\nNo action yet",
+      "elements": [
+        {
+          "target_id": "tool-a",
+          "role": "button",
+          "name": "",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 80,
+            "y": 100,
+            "width": 60,
+            "height": 60
+          }
+        },
+        {
+          "target_id": "tool-b",
+          "role": "button",
+          "name": "",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 180,
+            "y": 100,
+            "width": 60,
+            "height": 60
+          }
+        }
+      ]
+    },
+    "ax": [
+      {
+        "role": "heading",
+        "name": "Image editor",
+        "value": null,
+        "properties": [
+          {
+            "name": "level",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "button",
+        "name": "",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "button",
+        "name": "",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Image editor",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Choose the crop tool.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Image editor",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Choose the crop tool.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      }
+    ],
+    "phases_ms": {
+      "capture": 25.46987496316433,
+      "extraction": 4.069249960593879,
+      "encode": 0.2615409903228283
+    }
+  },
+  "phases_ms": {
+    "setup_capture": 564.4346659537405,
+    "validation": 0.01808302477002144,
+    "dispatch": 0.0,
+    "readback": 0.1888750120997429,
+    "total": 564.9001660058275
+  }
+}

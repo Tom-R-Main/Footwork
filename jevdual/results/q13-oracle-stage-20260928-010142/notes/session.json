@@ -1,0 +1,40 @@
+{
+ "dir": "results/q13-oracle-stage-20260928-010142/notes",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 1098,
+ "task": "Read the next search",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'Next search: quarterly report' as @query"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "notes.txt",
+ "last_page_text": "notes.txt\nNext search: quarterly report",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "Next search: quarterly report",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "background_only",
+ "browser_tab": "",
+ "secret_names": []
+}

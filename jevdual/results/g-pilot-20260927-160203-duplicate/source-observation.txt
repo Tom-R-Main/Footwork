@@ -1,0 +1,149 @@
+INFO     [jevdual.browser] driver authorization allowed: Attach Cua Driver to GoogleChrome window 48809 using its logged-in profile
+bound footwork's Chrome (pid 32761) window 48809, tab tab-36055c63-92a2-412d-bc67-9d7c9259668c
+navigate https://books.toscrape.com/: unverifiable navigated tab-36055c63-92a2-412d-bc67-9d7c9259668c to https://books.toscrape.com
+Google Chrome (footwork): 'All products | Books to Scrape - Sandbox'  [elements_incomplete 1]
+119 elements:
+  [   1] link       'Books to Scrape'
+  [   2] link       'Home'
+  [   3] link       'Books'
+  [   4] link       'Travel'
+  [   5] link       'Mystery'
+  [   6] link       'Historical Fiction'
+  [   7] link       'Sequential Art'
+  [   8] link       'Classics'
+  [   9] link       'Philosophy'
+  [  10] link       'Romance'
+  [  54] link       'Womens Fiction'
+  [  55] link       'Fiction'
+  [  56] link       'Childrens'
+  [  57] link       'Religion'
+  [  58] link       'Nonfiction'
+  [  59] link       'Music'
+  [  60] link       'Default'
+  [  61] link       'Science Fiction'
+  [  62] link       'Sports and Games'
+  [  63] link       'Add a comment'
+  [  64] link       'Fantasy'
+  [  65] link       'New Adult'
+  [  66] link       'Young Adult'
+  [  67] link       'Science'
+  [  68] link       'Poetry'
+  [  69] link       'Paranormal'
+  [  70] link       'Art'
+  [  71] link       'Psychology'
+  [  72] link       'Autobiography'
+  [  73] link       'Parenting'
+  [  74] link       'Adult Fiction'
+  [  75] link       'Humor'
+  [  76] link       'Horror'
+  [  77] link       'History'
+  [  78] link       'Food and Drink'
+  [  79] link       'A Light in the Attic'
+  [  80] image      'A Light in the Attic'
+  [  81] link       'A Light in the ...'
+  [  82] button     'Add to basket'
+  [  83] link       'Tipping the Velvet'
+  [  84] image      'Tipping the Velvet'
+  [  85] link       'Tipping the Velvet'
+  [  86] button     'Add to basket'
+  [  87] link       'Soumission'
+  [  88] image      'Soumission'
+  [  89] link       'Soumission'
+  [  90] button     'Add to basket'
+  [  91] link       'Sharp Objects'
+  [  92] image      'Sharp Objects'
+  [  93] link       'Sharp Objects'
+  [  94] button     'Add to basket'
+  [  95] link       'Sapiens: A Brief History of Humankind'
+  [  96] image      'Sapiens: A Brief History of Humankind'
+  [  97] link       'The Requiem Red'
+  [  98] image      'The Requiem Red'
+  [  99] link       'The Dirty Little Secrets of Getting Your Dream Job'
+  [ 100] image      'The Dirty Little Secrets of Getting Your Dream Job'
+  [ 101] link       'The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull'
+  [ 102] image      'The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull'
+  [ 240] link       'Christian Fiction'
+  [ 241] link       'Business'
+  [ 242] link       'Biography'
+  [ 243] link       'Thriller'
+  [ 244] link       'Contemporary'
+  [ 245] link       'Spirituality'
+  [ 246] link       'Academic'
+  [ 247] link       'Self Help'
+  [ 248] link       'Historical'
+  [ 249] link       'Christian'
+  [ 250] link       'Suspense'
+  [ 251] link       'Short Stories'
+  [ 252] link       'Novels'
+  [ 253] link       'Health'
+  [ 254] link       'Politics'
+  [ 255] link       'Cultural'
+  [ 256] link       'Erotica'
+  [ 257] link       'Crime'
+  [ 258] link       'Sapiens: A Brief History ...'
+  [ 259] button     'Add to basket'
+  [ 260] link       'The Requiem Red'
+  [ 261] button     'Add to basket'
+  [ 262] link       'The Dirty Little Secrets ...'
+  [ 263] button     'Add to basket'
+  [ 264] link       'The Coming Woman: A ...'
+  [ 265] button     'Add to basket'
+  [ 266] link       'The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics'
+  [ 267] image      'The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics'
+  [ 268] link       'The Boys in the ...'
+  [ 269] button     'Add to basket'
+  [ 270] link       'The Black Maria'
+  [ 271] image      'The Black Maria'
+  [ 272] link       'The Black Maria'
+  [ 273] button     'Add to basket'
+  [ 274] link       'Starving Hearts (Triangular Trade Trilogy, #1)'
+  [ 275] image      'Starving Hearts (Triangular Trade Trilogy, #1)'
+  [ 276] link       'Starving Hearts (Triangular Trade ...'
+  [ 277] button     'Add to basket'
+  [ 278] link       "Shakespeare's Sonnets"
+  [ 279] image      "Shakespeare's Sonnets"
+  [ 280] link       "Shakespeare's Sonnets"
+  [ 281] button     'Add to basket'
+  [ 282] link       'Set Me Free'
+  [ 283] image      'Set Me Free'
+  [ 284] link       'Set Me Free'
+  [ 285] button     'Add to basket'
+  [ 286] link       "Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)"
+  [ 287] image      "Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)"
+  [ 288] link       "Scott Pilgrim's Precious Little ..."
+  [ 289] button     'Add to basket'
+  [ 290] link       'Rip it Up and Start Again'
+  [ 291] image      'Rip it Up and Start Again'
+  [ 292] link       'Rip it Up and ...'
+  [ 293] button     'Add to basket'
+  [ 294] link       'Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991'
+  [ 295] image      'Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991'
+  [ 296] link       'Our Band Could Be ...'
+  [ 297] button     'Add to basket'
+  [ 298] link       'Olio'
+  [ 299] image      'Olio'
+page text (327 chars):
+We love being scraped!
+All products
+1000
+results - showing
+1
+to
+20
+.
+Warning!
+This is a demo website for web scraping purposes. Prices and ratings here were randomly assigned and have no real meaning.
+A Light in the ...
+£51.77
+In stock
+Tipping the Velvet
+£53.74
+In stock
+Soumission
+£50.10
+In stock
+Sharp Objects
+£47.82
+In stock
+
+session: results/g-pilot-20260927-160203-duplicate/browser  (export FOOTWORK_SESSION=results/g-pilot-20260927-160203-duplicate/browser to omit --session)

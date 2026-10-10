@@ -1,0 +1,353 @@
+[
+  {
+    "case": "empty",
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "tools_offered": [
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__status"
+    ],
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__act",
+      "mcp__footwork__observe"
+    ],
+    "out_of_arm": [],
+    "valid_environment": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_seconds": 14.169103499967605,
+    "cost_usd": 0.052331,
+    "backends_retired": true,
+    "oracle_actual": "17.25 USD",
+    "oracle_expected": "17.25 USD",
+    "oracle_exact": true,
+    "oracle_error": null,
+    "one_applied": true,
+    "journal": [
+      {
+        "id": "op_bbe6dd082419",
+        "state": "final",
+        "disposition": "applied"
+      }
+    ],
+    "harness_invalid": false,
+    "act_inputs": [
+      {
+        "target": "target_bd4d798900dd4b9caef8133c94bde802",
+        "text": "17.25 USD",
+        "client_token": "invoice-total-append-20261009"
+      }
+    ],
+    "offered_target_contracts": [
+      {
+        "value": "",
+        "value_exact": true,
+        "append_separator": "",
+        "moves": [
+          "append"
+        ]
+      },
+      {
+        "value": "17.25 USD",
+        "value_exact": true,
+        "append_separator": "\n",
+        "moves": [
+          "append"
+        ]
+      }
+    ],
+    "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/empty/receipt.json",
+    "receipt_sha256": "1a8057e719d8107399dfd31f5312ecdc2c317d669fbbc226359c97f00a591d43",
+    "private_transcript": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/empty/transcript.jsonl",
+    "transcript_sha256": "d107b114d8aa28688af8e0a873e5bda9002ad0023bbb24c3fd5c04a6e6a4ad2c"
+  },
+  {
+    "case": "whitespace-only",
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "tools_offered": [
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__status"
+    ],
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__act"
+    ],
+    "out_of_arm": [],
+    "valid_environment": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_seconds": 15.72556299995631,
+    "cost_usd": 0.048815,
+    "backends_retired": true,
+    "oracle_actual": "  \t\n17.25 USD",
+    "oracle_expected": "  \t\n17.25 USD",
+    "oracle_exact": true,
+    "oracle_error": null,
+    "one_applied": true,
+    "journal": [
+      {
+        "id": "op_eccbe44eb773",
+        "state": "final",
+        "disposition": "applied"
+      }
+    ],
+    "harness_invalid": false,
+    "act_inputs": [
+      {
+        "target": "target_8ada7d91ef1e4ef1a37a6627054c251f",
+        "text": "17.25 USD",
+        "client_token": "invoice-total-append-20261009-73067-29892"
+      }
+    ],
+    "offered_target_contracts": [
+      {
+        "value": "  \t",
+        "value_exact": true,
+        "append_separator": "\n",
+        "moves": [
+          "append"
+        ]
+      }
+    ],
+    "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/whitespace-only/receipt.json",
+    "receipt_sha256": "13b6deeae79a65696b3e3ca8d6b1aae575c2287faa6d999eeae5f0681f77a9b9",
+    "private_transcript": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/whitespace-only/transcript.jsonl",
+    "transcript_sha256": "8eb2a71ab5b68e03d41bfe9a56d445577d1fd26c8132ac9b7f4b977244e8b2d1"
+  },
+  {
+    "case": "preserved-whitespace",
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "tools_offered": [
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__status"
+    ],
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__act"
+    ],
+    "out_of_arm": [],
+    "valid_environment": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_seconds": 11.933846125029959,
+    "cost_usd": 0.046282,
+    "backends_retired": true,
+    "oracle_actual": "Invoice report\n\tkept  \n\n17.25 USD",
+    "oracle_expected": "Invoice report\n\tkept  \n\n17.25 USD",
+    "oracle_exact": true,
+    "oracle_error": null,
+    "one_applied": true,
+    "journal": [
+      {
+        "id": "op_439546e5c878",
+        "state": "final",
+        "disposition": "applied"
+      }
+    ],
+    "harness_invalid": false,
+    "act_inputs": [
+      {
+        "target": "target_2153977b01e7435f95eb28dcee5070b5",
+        "text": "17.25 USD",
+        "client_token": "invoice-total-append-20261009-1"
+      }
+    ],
+    "offered_target_contracts": [
+      {
+        "value": "Invoice report\n\tkept  \n\n",
+        "value_exact": true,
+        "append_separator": "",
+        "moves": [
+          "append"
+        ]
+      }
+    ],
+    "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/preserved-whitespace/receipt.json",
+    "receipt_sha256": "73b3f358a6625a8c807bd17d3bab88a26dc2802ca35e8300e5d8bbd0c1d60025",
+    "private_transcript": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/preserved-whitespace/transcript.jsonl",
+    "transcript_sha256": "2f9c9745bc2585fa72dfb54d631d86e9a01c0dece36d7d4b1258281ed507975e"
+  },
+  {
+    "case": "intentional-blank-line",
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "tools_offered": [
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__status"
+    ],
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__act"
+    ],
+    "out_of_arm": [],
+    "valid_environment": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_seconds": 15.420895999995992,
+    "cost_usd": 0.0479812,
+    "backends_retired": true,
+    "oracle_actual": "Invoice report\n\n17.25 USD",
+    "oracle_expected": "Invoice report\n\n17.25 USD",
+    "oracle_exact": true,
+    "oracle_error": null,
+    "one_applied": true,
+    "journal": [
+      {
+        "id": "op_38404056699e",
+        "state": "final",
+        "disposition": "applied"
+      }
+    ],
+    "harness_invalid": false,
+    "act_inputs": [
+      {
+        "target": "target_d27b45c672774c0ab0b9bb1541c45e0d",
+        "text": "\n17.25 USD",
+        "client_token": "invoice-total-append-20261009-1"
+      }
+    ],
+    "offered_target_contracts": [
+      {
+        "value": "Invoice report",
+        "value_exact": true,
+        "append_separator": "\n",
+        "moves": [
+          "append"
+        ]
+      }
+    ],
+    "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/intentional-blank-line/receipt.json",
+    "receipt_sha256": "9ffc7586a5c4687311dbd3e3a97e6f5771688ca25a34f5b53941622c5f976903",
+    "private_transcript": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/intentional-blank-line/transcript.jsonl",
+    "transcript_sha256": "426544e2160a5d5062f80bd3f65502feca55b6ac0e86717d4ec5e0a4bb6f24c8"
+  },
+  {
+    "case": "newline-ended",
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "tools_offered": [
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__status"
+    ],
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__act"
+    ],
+    "out_of_arm": [],
+    "valid_environment": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_seconds": 13.419882125104778,
+    "cost_usd": 0.0580018,
+    "backends_retired": true,
+    "oracle_actual": "Invoice report\n17.25 USD",
+    "oracle_expected": "Invoice report\n17.25 USD",
+    "oracle_exact": true,
+    "oracle_error": null,
+    "one_applied": true,
+    "journal": [
+      {
+        "id": "op_b3dd75dda3c6",
+        "state": "final",
+        "disposition": "applied"
+      }
+    ],
+    "harness_invalid": false,
+    "act_inputs": [
+      {
+        "target": "target_627c30b3946942308014513fb130b169",
+        "text": "17.25 USD",
+        "client_token": "invoice-total-append-20261009-1"
+      }
+    ],
+    "offered_target_contracts": [
+      {
+        "value": "Invoice report\n",
+        "value_exact": true,
+        "append_separator": "",
+        "moves": [
+          "append"
+        ]
+      }
+    ],
+    "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/newline-ended/receipt.json",
+    "receipt_sha256": "df6c3be0c81e4396324ea52dbfb741ab4637317b5b6928c1c8c67fd38912c59b",
+    "private_transcript": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/newline-ended/transcript.jsonl",
+    "transcript_sha256": "3fd91bc02d39be477f3efe2dbfb861fc8fba50bbb7832e5cfd14fc57257dcb55"
+  },
+  {
+    "case": "no-newline",
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "tools_offered": [
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__status"
+    ],
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__act"
+    ],
+    "out_of_arm": [],
+    "valid_environment": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_seconds": 13.22760562505573,
+    "cost_usd": 0.0455072,
+    "backends_retired": true,
+    "oracle_actual": "Invoice report\n17.25 USD",
+    "oracle_expected": "Invoice report\n17.25 USD",
+    "oracle_exact": true,
+    "oracle_error": null,
+    "one_applied": true,
+    "journal": [
+      {
+        "id": "op_1ad575ab52a2",
+        "state": "final",
+        "disposition": "applied"
+      }
+    ],
+    "harness_invalid": false,
+    "act_inputs": [
+      {
+        "target": "target_77532c2302374dcab3f1a9cf58b1862a",
+        "text": "17.25 USD",
+        "client_token": "invoice-total-append-20261009-73067-29892"
+      }
+    ],
+    "offered_target_contracts": [
+      {
+        "value": "Invoice report",
+        "value_exact": true,
+        "append_separator": "\n",
+        "moves": [
+          "append"
+        ]
+      }
+    ],
+    "private_receipt": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/no-newline/receipt.json",
+    "receipt_sha256": "63a81c6d691dbb6d41d53c23938d17cef9d5fc8af4079b16ea4e5e883faafff6",
+    "private_transcript": "/Users/thomasmain/projects/footwork/output/capability-text-repair-host-20261009-v1/no-newline/transcript.jsonl",
+    "transcript_sha256": "1d90fd7a2e2036c3abf4eec0b34959777b717700b5059eb62e09e65e153a64d2"
+  }
+]

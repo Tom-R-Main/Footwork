@@ -1,0 +1,74 @@
+{
+ "claims_page": {
+  "accepted_contradicted": "8/8",
+  "accepted_insufficient": "4/6",
+  "false_acceptance": "12/14",
+  "false_rejection": "0/10",
+  "falsely_accepted": [
+   "C1-wrong-count",
+   "C2-wrong-day",
+   "C3-wrong-person",
+   "C4-search-not-page",
+   "C5-not-subscribed",
+   "C6-setting-wrong",
+   "C7-wrong-function",
+   "C8-closed-as-open",
+   "I1-email-arrived",
+   "I2-saved-settings",
+   "I3-assignee",
+   "I6-not-submitted-no-history"
+  ],
+  "falsely_rejected": []
+ },
+ "claims_page_and_fields": {
+  "accepted_contradicted": "7/8",
+  "accepted_insufficient": "4/6",
+  "false_acceptance": "11/14",
+  "false_rejection": "1/10",
+  "falsely_accepted": [
+   "C1-wrong-count",
+   "C2-wrong-day",
+   "C3-wrong-person",
+   "C4-search-not-page",
+   "C5-not-subscribed",
+   "C6-setting-wrong",
+   "C8-closed-as-open",
+   "I1-email-arrived",
+   "I2-saved-settings",
+   "I3-assignee",
+   "I6-not-submitted-no-history"
+  ],
+  "falsely_rejected": [
+   "S1-docs-answer"
+  ]
+ },
+ "verifier_page": {
+  "accepted_contradicted": "0/8",
+  "accepted_insufficient": "0/6",
+  "false_acceptance": "0/14",
+  "false_rejection": "6/10",
+  "falsely_accepted": [],
+  "falsely_rejected": [
+   "S2-issue-count",
+   "S5-subscribed",
+   "S6-mdn-open",
+   "S8-baseline-year",
+   "S9-form-filled",
+   "S10-setting-on"
+  ]
+ },
+ "verifier_page_and_fields": {
+  "accepted_contradicted": "0/8",
+  "accepted_insufficient": "0/6",
+  "false_acceptance": "0/14",
+  "false_rejection": "5/10",
+  "falsely_accepted": [],
+  "falsely_rejected": [
+   "S1-docs-answer",
+   "S2-issue-count",
+   "S8-baseline-year",
+   "S9-form-filled",
+   "S10-setting-on"
+  ]
+ }
+}

@@ -1,0 +1,2 @@
+Authored fixture; synthetic surface IDs; no real native capture.
+Construction: role=crop_subject_containment; style=2; variant=text_control.

@@ -6,7 +6,17 @@ import pytest
 from jevdual._pure.evidence_match import evidence_match
 from jevdual.menu import Menu
 from jevdual.policy import PolicyError
-from jevdual.verify import ArbiterHook, Verifier, VerifyPolicy, band_for, check_claims, split_claims
+from jevdual.verify import (
+    MAX_VALUE_WORDS,
+    ArbiterHook,
+    Verifier,
+    VerifyPolicy,
+    band_for,
+    check_claims,
+    clean_claim,
+    extract_atoms,
+    split_claims,
+)
 from typesafe_sdk import SystemOneResponse
 
 FIXTURES = Path(__file__).parent / "fixtures" / "jev_responses"
@@ -118,7 +128,17 @@ def test_accept_path():
     assert (
         t["band"] == "accept"
         and t["unsupported"] == 0
-        and set(t) == {"band", "complete", "unmet", "unmet_effective", "claims", "unsupported", "reason"}
+        and set(t)
+        == {
+            "band",
+            "complete",
+            "unmet",
+            "unmet_effective",
+            "claims",
+            "unsupported",
+            "unsupported_claims",
+            "reason",
+        }
     )
 
 
@@ -234,3 +254,72 @@ def test_claims_are_checked_against_the_full_page_text_and_the_excerpt_centres_o
     assert "exception KeyError Raised when a mapping" in sent and len(sent) <= 6000
     assert evidence_excerpt(full, None) == full[:6000]
     assert evidence_excerpt("short page", answer) == "short page"
+
+
+# ---- package E: the strict claim check (Q16's guarded_evidence arm) ----
+
+
+def test_status_labels_and_asides_are_not_facts():
+    s = "UNVERIFIED: Customer name: Alan Turing (verified in input value and screenshot)"
+    assert clean_claim(s) == "Customer name: Alan Turing"
+    assert extract_atoms(s, strict=True) == ["Alan Turing"]
+    # the Q12 claim check took the aside in with the value
+    assert extract_atoms(s) == ["Alan Turing (verified in input value and screenshot)"]
+
+
+def test_a_long_clause_after_a_colon_is_narrative_in_strict_mode():
+    s = "UNVERIFIED: Pizza order form at the site was filled and then submitted by me."
+    assert extract_atoms(s, strict=True) == [] and MAX_VALUE_WORDS == 6
+    assert extract_atoms(s) == ["Pizza order form at the site was filled and then submitted by me"]
+    [c] = check_claims(s, "anything", strict=True)
+    assert c.grade == "narrative"
+
+
+def test_a_value_in_a_form_field_is_found_there_and_says_so():
+    answer = "Customer name: Alan Turing."
+    [plain] = check_claims(answer, "Customer name Telephone Submit order")
+    assert plain.grade == "none"
+    [c] = check_claims(
+        answer, "Customer name Telephone Submit order", field_text="Customer name: Alan Turing", strict=True
+    )
+    assert c.grade in ("exact", "normalized") and c.source == "field"
+
+
+def test_a_fact_on_neither_page_nor_field_stays_unsupported():
+    [c] = check_claims("Total: $32.39", "Total: $29.99", field_text="Name: Alan", strict=True)
+    assert c.grade == "none"
+
+
+def test_a_price_split_across_text_nodes_matches_in_strict_mode():
+    page = "Sauce Labs Bike Light A red light ... $ 9.99 Add to cart"
+    claim = 'The price of "Sauce Labs Bike Light" is $9.99.'
+    assert check_claims(claim, page)[0].grade == "none"  # Q12's check
+    assert check_claims(claim, page, strict=True)[0].grade in ("exact", "normalized")
+
+
+def test_a_fact_inside_an_aside_is_still_checked_in_strict_mode():
+    """Secondary audit 2026-09-27: the strict check removed every parenthetical before taking atoms and
+    kept the whole sentence as supported, so "(shipping $50)" went unchecked."""
+    s = "Price: $9.99 (shipping $50)"
+    assert set(extract_atoms(s, strict=True)) == {"$9.99", "$50"}
+    [c] = check_claims(s, "Bike Light $9.99 Add to cart", strict=True)
+    assert c.grade == "none"  # $50 is not on the page, so the sentence is not supported
+    [ok] = check_claims(s, "Bike Light $9.99 Shipping: $50", strict=True)
+    assert ok.grade in ("exact", "normalized")
+    # an aside with no facts in it is still only commentary
+    assert extract_atoms("Customer name: Alan Turing (verified in the field)", strict=True) == ["Alan Turing"]
+    assert set(extract_atoms('Status: sent (the page said "Order received")', strict=True)) == {
+        "sent",
+        "Order received",
+    }
+
+
+def test_a_carried_value_is_a_fact_even_unquoted():
+    """Q19 R4: "The first quote tagged love is by André Gide." had no atom and read as no fact."""
+    page = "Viewing tag: love\nby\nAndré Gide\nTags:"
+    sentence = "The first quote tagged love is by André Gide."
+    assert check_claims(sentence, page, strict=True)[0].grade == "narrative"
+    [c] = check_claims(sentence, page, strict=True, carried=("André Gide",))
+    assert c.grade in ("exact", "normalized")
+    [bad] = check_claims("It is by Albert Einstein.", page, strict=True, carried=("Albert Einstein",))
+    assert bad.grade == "none"  # a carried value still has to be on the page

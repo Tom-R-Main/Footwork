@@ -1,0 +1,36 @@
+{
+ "PAGETEXT": {
+  "name": "PAGETEXT",
+  "text": "Archive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-help.html",
+  "title": "Archive help",
+  "element_id": -1,
+  "element_label": "Archive help\nArchives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+  "element_role": "text",
+  "part": "match",
+  "step": 3,
+  "session": "results/m3-dev/A-r2/X1-withdrawn-archive/web",
+  "taken_at": 1790672790.072701,
+  "surroundings": "Archive help / Archives that are offered can be downloaded from their own page. Withdrawn archives cannot be downloaded.",
+  "occurrence": "match 1 of 2 on the page"
+ },
+ "ARCHIVE": {
+  "name": "ARCHIVE",
+  "text": "|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/index.html",
+  "title": "Kestrel Bay Supply",
+  "element_id": -1,
+  "element_label": "|\nKestrel Bay Supply\nWelcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.\n|",
+  "element_role": "text",
+  "part": "match",
+  "step": 7,
+  "session": "results/m3-dev/A-r2/X1-withdrawn-archive/web",
+  "taken_at": 1790672839.0622668,
+  "surroundings": "| / Kestrel Bay Supply / Welcome to the Kestrel Bay Supply fixture site. Use the navigation to reach each page.",
+  "occurrence": "match 1 of 2 on the page"
+ }
+}

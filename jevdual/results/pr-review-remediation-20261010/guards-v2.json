@@ -1,0 +1,529 @@
+{
+  "valid": true,
+  "cases_requested": [
+    "suffix_space",
+    "suffix_newline",
+    "window_move"
+  ],
+  "cases": [
+    {
+      "case": "suffix_space",
+      "prefix": "Invoice report\n",
+      "payload": "17.25 USD",
+      "destination": {
+        "pid": 73067,
+        "window_id": 30866,
+        "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+      },
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_act",
+          "actual": "Invoice report\n "
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n "
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n "
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "act": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_b301596ac7a1",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: precondition_changed",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "precondition_changed",
+            "evidence": {
+              "reason": "the field holds different text than when the step was decided; nothing written"
+            },
+            "operation_id": "op_b301596ac7a1",
+            "packet_digest": "a2defd308862ea403e8605396306718582082caea4ccb7dd00d86cc278d8d018",
+            "phase": "not_sent",
+            "request_digest": "f6870697ec7c7e4b6225c2b78d80716632c5a497fe7c31b9597f9e752e5ef83c",
+            "version": 1
+          }
+        },
+        "client_token": "guard-suffix_space",
+        "error": "precondition_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "actor": {
+        "case": "suffix_space",
+        "pid": 73067,
+        "window_id": 30866,
+        "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+        "worker_pid": 23166,
+        "injected_monotonic": 913709.504495125,
+        "valid": true,
+        "stage": "after_validation_before_original_NativeBridge_live_observation",
+        "document_before": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+        "before": "Invoice report\n",
+        "offered_frame": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "field_frame_before": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "actor_write": {
+          "attribute": "AXValue",
+          "error": 0
+        },
+        "field_frame_after": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "actual_after_actor": "Invoice report\n ",
+        "expected_after_actor": "Invoice report\n ",
+        "document_after": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+      },
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_b301596ac7a1",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: precondition_changed",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "precondition_changed",
+            "evidence": {
+              "reason": "the field holds different text than when the step was decided; nothing written"
+            },
+            "operation_id": "op_b301596ac7a1",
+            "packet_digest": "a2defd308862ea403e8605396306718582082caea4ccb7dd00d86cc278d8d018",
+            "phase": "not_sent",
+            "request_digest": "f6870697ec7c7e4b6225c2b78d80716632c5a497fe7c31b9597f9e752e5ef83c",
+            "version": 1
+          }
+        },
+        "client_token": "guard-suffix_space",
+        "error": "precondition_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "186744b90948ebfb5803bb6f95d7b6d3924e58d1ac393b604589033fc2f080f3",
+            "length": 16
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_b301596ac7a1",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: precondition_changed",
+        "repeat": true,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "precondition_changed",
+            "evidence": {
+              "reason": "the field holds different text than when the step was decided; nothing written"
+            },
+            "operation_id": "op_b301596ac7a1",
+            "packet_digest": "a2defd308862ea403e8605396306718582082caea4ccb7dd00d86cc278d8d018",
+            "phase": "not_sent",
+            "request_digest": "f6870697ec7c7e4b6225c2b78d80716632c5a497fe7c31b9597f9e752e5ef83c",
+            "version": 1
+          }
+        },
+        "client_token": "guard-suffix_space",
+        "error": "precondition_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "suffix_newline",
+      "prefix": "Invoice report\n",
+      "payload": "17.25 USD",
+      "destination": {
+        "pid": 73067,
+        "window_id": 30866,
+        "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+      },
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_act",
+          "actual": "Invoice report\n\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "act": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_ec1e47ee487e",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: precondition_changed",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "precondition_changed",
+            "evidence": {
+              "reason": "the field holds different text than when the step was decided; nothing written"
+            },
+            "operation_id": "op_ec1e47ee487e",
+            "packet_digest": "1de44fefa03cbe040c4467837750147d873af1ef0e8042c02f3407f169ad3ee5",
+            "phase": "not_sent",
+            "request_digest": "9ddbdd30f878e9531fbd040a2ead4962e3928f4f7b29255b357a78e2d9c03b66",
+            "version": 1
+          }
+        },
+        "client_token": "guard-suffix_newline",
+        "error": "precondition_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "actor": {
+        "case": "suffix_newline",
+        "pid": 73067,
+        "window_id": 30866,
+        "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+        "worker_pid": 23266,
+        "injected_monotonic": 913711.551889541,
+        "valid": true,
+        "stage": "after_validation_before_original_NativeBridge_live_observation",
+        "document_before": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+        "before": "Invoice report\n",
+        "offered_frame": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "field_frame_before": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "actor_write": {
+          "attribute": "AXValue",
+          "error": 0
+        },
+        "field_frame_after": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "actual_after_actor": "Invoice report\n\n",
+        "expected_after_actor": "Invoice report\n\n",
+        "document_after": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+      },
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_ec1e47ee487e",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: precondition_changed",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "precondition_changed",
+            "evidence": {
+              "reason": "the field holds different text than when the step was decided; nothing written"
+            },
+            "operation_id": "op_ec1e47ee487e",
+            "packet_digest": "1de44fefa03cbe040c4467837750147d873af1ef0e8042c02f3407f169ad3ee5",
+            "phase": "not_sent",
+            "request_digest": "9ddbdd30f878e9531fbd040a2ead4962e3928f4f7b29255b357a78e2d9c03b66",
+            "version": 1
+          }
+        },
+        "client_token": "guard-suffix_newline",
+        "error": "precondition_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "current": {
+          "agreement": "no",
+          "value": {
+            "sha256": "6d0c62479c65590ed212bbeed5bbad3a20d41c9e973b2a65495b844ffdd3eaaa",
+            "length": 16
+          },
+          "disk_identity_changed": false,
+          "persistence": "not_checked"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_ec1e47ee487e",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: precondition_changed",
+        "repeat": true,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "precondition_changed",
+            "evidence": {
+              "reason": "the field holds different text than when the step was decided; nothing written"
+            },
+            "operation_id": "op_ec1e47ee487e",
+            "packet_digest": "1de44fefa03cbe040c4467837750147d873af1ef0e8042c02f3407f169ad3ee5",
+            "phase": "not_sent",
+            "request_digest": "9ddbdd30f878e9531fbd040a2ead4962e3928f4f7b29255b357a78e2d9c03b66",
+            "version": 1
+          }
+        },
+        "client_token": "guard-suffix_newline",
+        "error": "precondition_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "worker_cleanup": true
+    },
+    {
+      "case": "window_move",
+      "prefix": "Invoice report\n",
+      "payload": "17.25 USD",
+      "destination": {
+        "pid": 73067,
+        "window_id": 30866,
+        "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+      },
+      "steps": [
+        {
+          "oracle": "reset",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_act",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_status",
+          "actual": "Invoice report\n"
+        },
+        {
+          "oracle": "after_same_token",
+          "actual": "Invoice report\n"
+        }
+      ],
+      "valid": true,
+      "act_submitted": true,
+      "act": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_cda2d3544506",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: target_changed",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "target_changed",
+            "evidence": {
+              "reason": "the original field role or frame changed; nothing written"
+            },
+            "operation_id": "op_cda2d3544506",
+            "packet_digest": "b2381d2c8b6165f787d2469c16ccbb6bb34315904cdc73f60c19d6c0436d61dc",
+            "phase": "not_sent",
+            "request_digest": "44fa3ea12e9a82d4800ef47f2ddacd9581025ad6307bed3ca29f851d05bf496d",
+            "version": 1
+          }
+        },
+        "client_token": "guard-window_move",
+        "error": "target_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "actor": {
+        "case": "window_move",
+        "pid": 73067,
+        "window_id": 30866,
+        "document": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+        "worker_pid": 23359,
+        "injected_monotonic": 913713.601188833,
+        "valid": true,
+        "stage": "after_validation_before_original_NativeBridge_live_observation",
+        "document_before": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt",
+        "before": "Invoice report\n",
+        "offered_frame": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "field_frame_before": [
+          172.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "actor_write": {
+          "attribute": "AXPosition",
+          "error": 0
+        },
+        "window_position_before": [
+          172.0,
+          73.0
+        ],
+        "window_position_requested": [
+          192.0,
+          73.0
+        ],
+        "window_position_after": [
+          192.0,
+          73.0
+        ],
+        "geometry_poll_timeout_s": 2.5,
+        "field_frame_after": [
+          185.0,
+          105.0,
+          656.0,
+          384.0
+        ],
+        "geometry_observation_elapsed_s": 0.03057924995664507,
+        "actual_after_actor": "Invoice report\n",
+        "expected_after_actor": "Invoice report\n",
+        "document_after": "[PROJECT]/output/pr-native-fixture-20261010/pr-native-fixture-20261010-invoice.txt"
+      },
+      "status": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_cda2d3544506",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: target_changed",
+        "repeat": false,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "target_changed",
+            "evidence": {
+              "reason": "the original field role or frame changed; nothing written"
+            },
+            "operation_id": "op_cda2d3544506",
+            "packet_digest": "b2381d2c8b6165f787d2469c16ccbb6bb34315904cdc73f60c19d6c0436d61dc",
+            "phase": "not_sent",
+            "request_digest": "44fa3ea12e9a82d4800ef47f2ddacd9581025ad6307bed3ca29f851d05bf496d",
+            "version": 1
+          }
+        },
+        "client_token": "guard-window_move",
+        "error": "target_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        },
+        "current": {
+          "agreement": "unverifiable",
+          "reason": "ValueError"
+        }
+      },
+      "repeat": {
+        "is_error": false,
+        "schema_version": "1",
+        "operation_id": "op_cda2d3544506",
+        "disposition": "not_sent",
+        "state": "final",
+        "phase": "not_sent",
+        "summary": "Finished as not_sent: target_changed",
+        "repeat": true,
+        "evidence": {
+          "execution_receipt": {
+            "disposition": "not_sent",
+            "error": "target_changed",
+            "evidence": {
+              "reason": "the original field role or frame changed; nothing written"
+            },
+            "operation_id": "op_cda2d3544506",
+            "packet_digest": "b2381d2c8b6165f787d2469c16ccbb6bb34315904cdc73f60c19d6c0436d61dc",
+            "phase": "not_sent",
+            "request_digest": "44fa3ea12e9a82d4800ef47f2ddacd9581025ad6307bed3ca29f851d05bf496d",
+            "version": 1
+          }
+        },
+        "client_token": "guard-window_move",
+        "error": "target_changed",
+        "next": {
+          "tool": "observe",
+          "resource": "native:73067:30866",
+          "reason": "Nothing was sent. Re-observe and use a new token for a newly intended action."
+        }
+      },
+      "worker_cleanup": true
+    }
+  ]
+}

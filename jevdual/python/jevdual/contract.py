@@ -117,6 +117,18 @@ def declare(contract: TaskContract) -> str:
     return "\n".join(lines)
 
 
+def declare_narrow(contract: TaskContract) -> str:
+    """Q11b: the requirements and one sentence about the done text, nothing about the gate. Q11's full
+    declaration invited narrated done texts (no-fact refusals up) and "stop and report" dones; this keeps
+    only what the driver cannot learn except by being refused."""
+    reqs = "\n".join(f"{i}. {r}" for i, r in enumerate(contract.requirements, 1))
+    return (
+        "The harness accepts your `done` only when these requirements are met:\n"
+        f"{reqs}\n"
+        "Your `done` text is checked against the current page: state only what the page shows."
+    )
+
+
 def typed_rejection(verdict: Verdict, policy: VerifyPolicy, refusals_left: int) -> str:
     """Name what a refused done is missing, from the verdict the verifier already computed.
 

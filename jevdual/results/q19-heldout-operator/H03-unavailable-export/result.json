@@ -1,0 +1,18 @@
+{
+ "task": "H03-unavailable-export",
+ "t_oracle": 1790664784.708799,
+ "oracle_ok": false,
+ "oracle": "h03-report.txt does not exist",
+ "answer": "STOP: not downloaded. The portal says 'Status: export unavailable. The report has not been published. There is no download available'; the page has no controls.",
+ "commands": 1,
+ "wall_s": 2.7,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {}
+}

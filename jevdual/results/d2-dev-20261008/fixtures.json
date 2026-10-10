@@ -1,0 +1,206 @@
+[
+  {
+    "id": "f00",
+    "file": "f00.png",
+    "category": "checkbox",
+    "expected": true,
+    "text": "Preferences panel. Control labelled Receive updates.",
+    "question": "Is the Receive updates checkbox checked?",
+    "true": "A check mark is visibly inside its square.",
+    "false": "Its square is empty.",
+    "sha256": "b965833e206918e8dd4a80b480605b4e7b64736cd0407d3d06d0fcd2ad07b953",
+    "bytes": 8654,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f01",
+    "file": "f01.png",
+    "category": "checkbox",
+    "expected": false,
+    "text": "Preferences panel. Control labelled Receive updates.",
+    "question": "Is the Receive updates checkbox checked?",
+    "true": "A check mark is visibly inside its square.",
+    "false": "Its square is empty.",
+    "sha256": "1b6946751c1385bcb53ccaca0b3605bc21999141482c7101096bef341e3e32d3",
+    "bytes": 8527,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f02",
+    "file": "f02.png",
+    "category": "radio",
+    "expected": true,
+    "text": "Plan panel. Radio options Standard and Extended.",
+    "question": "Is Standard the selected radio option?",
+    "true": "The Standard circle has a filled center.",
+    "false": "The Standard circle is empty and Extended has a filled center.",
+    "sha256": "bd252356c8a69852cf15e71ab9e0718dade322d857be8b67b048c81415bfa937",
+    "bytes": 9633,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f03",
+    "file": "f03.png",
+    "category": "radio",
+    "expected": false,
+    "text": "Plan panel. Radio options Standard and Extended.",
+    "question": "Is Standard the selected radio option?",
+    "true": "The Standard circle has a filled center.",
+    "false": "The Standard circle is empty and Extended has a filled center.",
+    "sha256": "42721bc5743d1cf372c12ad2fa9286c2e76ef618e699d74c9728fa740ec95753",
+    "bytes": 9619,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f04",
+    "file": "f04.png",
+    "category": "color_status",
+    "expected": true,
+    "text": "Service panel. Labels Service status and Status legend.",
+    "question": "Does the Service status indicator signify healthy according to the visible legend?",
+    "true": "The indicator matches the legend color for Healthy.",
+    "false": "It matches the legend color for Fault.",
+    "sha256": "deeb482756095fface74a0f2091d8f26dbfdc31c945706923509c627c4bd877b",
+    "bytes": 10696,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f05",
+    "file": "f05.png",
+    "category": "color_status",
+    "expected": false,
+    "text": "Service panel. Labels Service status and Status legend.",
+    "question": "Does the Service status indicator signify healthy according to the visible legend?",
+    "true": "The indicator matches the legend color for Healthy.",
+    "false": "It matches the legend color for Fault.",
+    "sha256": "22f7055e3b7d1a7a3782221316731beeae21fb5c4cedf382cd6cc7149014a641",
+    "bytes": 10697,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f06",
+    "file": "f06.png",
+    "category": "modal_occlusion",
+    "expected": true,
+    "text": "Workspace panel. Controls Save and Cancel; a dialog may overlay the workspace.",
+    "question": "Is the Save button fully visible and unobscured?",
+    "true": "The full Save button is visible outside an overlay.",
+    "false": "An opaque dialog covers the Save button's position.",
+    "sha256": "f2cae28916741fb888d3fd11f7152f71ed121bd8ee090376e1b1d2ce876326bf",
+    "bytes": 9583,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f07",
+    "file": "f07.png",
+    "category": "modal_occlusion",
+    "expected": false,
+    "text": "Workspace panel. Controls Save and Cancel; a dialog may overlay the workspace.",
+    "question": "Is the Save button fully visible and unobscured?",
+    "true": "The full Save button is visible outside an overlay.",
+    "false": "An opaque dialog covers the Save button's position.",
+    "sha256": "d7d0b0f047819889415fb4abe69405ec9446790c6dd41a53526334d8245e4108",
+    "bytes": 12932,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f08",
+    "file": "f08.png",
+    "category": "bar_height",
+    "expected": true,
+    "text": "Chart panel. A vertical Load bar and a dashed threshold at 60.",
+    "question": "Does the Load bar rise above the 60 threshold line?",
+    "true": "The top of the Load bar is above the 60 line.",
+    "false": "The top of the Load bar is below the 60 line.",
+    "sha256": "723cebd3f0a4fbc5a379cad5e9e2d753138f88cfd8c7b6c1c0f75e0b09af8571",
+    "bytes": 6510,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f09",
+    "file": "f09.png",
+    "category": "bar_height",
+    "expected": false,
+    "text": "Chart panel. A vertical Load bar and a dashed threshold at 60.",
+    "question": "Does the Load bar rise above the 60 threshold line?",
+    "true": "The top of the Load bar is above the 60 line.",
+    "false": "The top of the Load bar is below the 60 line.",
+    "sha256": "e775d7cb8f83c4a69c90e4bc425c61a4064f1edada4ad55abb89ebb08b61ee65",
+    "bytes": 6480,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f10",
+    "file": "f10.png",
+    "category": "padlock",
+    "expected": true,
+    "text": "Access panel. A padlock icon and the label Workspace access.",
+    "question": "Is the padlock closed?",
+    "true": "Both shackle ends are connected to the lock body.",
+    "false": "One shackle end is visibly raised free of the lock body.",
+    "sha256": "3ae19a0bdf851ad873905ff482db0d2baadd4b04c92cf71ebd18a0500ed800f3",
+    "bytes": 7756,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  },
+  {
+    "id": "f11",
+    "file": "f11.png",
+    "category": "padlock",
+    "expected": false,
+    "text": "Access panel. A padlock icon and the label Workspace access.",
+    "question": "Is the padlock closed?",
+    "true": "Both shackle ends are connected to the lock body.",
+    "false": "One shackle end is visibly raised free of the lock body.",
+    "sha256": "672a873eb0b9be9a20fcf21436586d51a8d478e0367534daae2494bc61394381",
+    "bytes": 7778,
+    "dimensions": [
+      480,
+      300
+    ],
+    "label_source": "explicit renderer state"
+  }
+]

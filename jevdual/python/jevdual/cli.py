@@ -7,8 +7,11 @@
     footwork menu --app "Google Chrome"          # what System 1 would see, and how long it took
     footwork apps                                 # running apps the Driver can bind to
 
-Defaults are the guarded configuration the experiments adopted: Jev as System 1 with the arbiter's
-floors, Muse as System 2 on escalation, the verifier on every done, the one authorization boundary
+``--arm`` names the configuration in the experiments' terms. The default is ``guarded``, the one
+the native and browser measurements favour (Q10b: 15 of 18 verified against dual's 13, at lower
+cost): Muse as System 2 decides every step behind the gate. ``dual`` adds Jev as System 1 with the
+arbiter's floors, escalating to System 2; ``s1_only`` runs Jev alone. Every arm has the verifier on
+every done, the one authorization boundary
 on every route, a trace and a screenshot per step under ``--out``. Nothing is typed from chat: text
 comes from the task sentence or ``--secret NAME=VALUE`` placeholders. ``--authorize`` names the
 labels the boundary stands down for (the one change the operator approved), and a paused run prints
@@ -24,6 +27,13 @@ import sys
 import time
 from pathlib import Path
 from typing import Any
+
+RUN_ARMS = ("guarded", "dual", "s1_only")
+
+
+def run_arm(args: argparse.Namespace) -> str:
+    """The configuration ``footwork run`` uses; ``--no-s2`` is the older spelling of ``s1_only``."""
+    return "s1_only" if getattr(args, "no_s2", False) else getattr(args, "arm", "guarded")
 
 
 def _split(s: str, sep: str) -> tuple[str, ...]:
@@ -99,6 +109,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
     from jevdual.trace import TraceWriter
     from jevdual.verify import ArbiterHook, Verifier
 
+    arm = run_arm(args)
     keys = load_keys()
     if not keys.get("TYPESAFE_API_KEY"):
         print("TYPESAFE_API_KEY missing (0400 file under ~/.config/jevdual)", file=sys.stderr)
@@ -148,8 +159,14 @@ async def cmd_run(args: argparse.Namespace) -> int:
             verifier = Verifier(client)
             hook = ArbiterHook(verifier, requirements, use_trajectory=True)
             s2 = None
-            if not args.no_s2:
+            if arm != "s1_only":
                 chat = meta_chat_from_env()
+                if chat is None and arm == "guarded":
+                    print(
+                        "MODEL_API_KEY missing: the guarded arm needs System 2 (or pass --arm s1_only)",
+                        file=sys.stderr,
+                    )
+                    return 2
                 if chat is None:
                     print(
                         "MODEL_API_KEY missing: running System 1 only (escalations end the run)",
@@ -173,6 +190,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
                 run_id=out.name,
                 max_steps=args.steps,
                 s2=s2,
+                s1_enabled=arm != "guarded",
                 answer_expected=args.answer,
                 secrets=_secrets(args.secret, args.app),
                 authorizer=Authorizer(
@@ -263,7 +281,14 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--secret", action="append", help="NAME=VALUE the task refers to as {NAME}; never printed")
     r.add_argument("--steps", type=int, default=20)
     r.add_argument("--answer", action="store_true", help="the task asks for a reported value")
-    r.add_argument("--no-s2", action="store_true", help="System 1 only")
+    r.add_argument(
+        "--arm",
+        default="guarded",
+        choices=RUN_ARMS,
+        help="guarded: System 2 decides every step behind the gate (default, the measured baseline); "
+        "dual: Jev as System 1, System 2 on escalation; s1_only: Jev alone",
+    )
+    r.add_argument("--no-s2", action="store_true", help="same as --arm s1_only")
     r.add_argument("--out", help="run directory (default runs/<timestamp>)")
     r.add_argument(
         "--mode",
@@ -308,15 +333,46 @@ def build_parser() -> argparse.ArgumentParser:
     common(st)
     st.set_defaults(fn=S.cmd_start)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")
+    lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
     common(lk)
     lk.set_defaults(fn=S.cmd_look)
+    inspect = sub.add_parser(
+        "inspect-target", help="record fresh target-bound visual evidence without judging or executing"
+    )
+    inspect.add_argument("target", help="fresh element ID, or a unique label on a complete observation")
+    inspect.add_argument(
+        "--operation", default="click", choices=("click", "hover", "type", "append", "enter", "scroll")
+    )
+    inspect.add_argument(
+        "--postcondition", required=True, help="required effect to inspect; this command does not verify it"
+    )
+    common(inspect)
+    inspect.set_defaults(fn=S.cmd_inspect_target)
+    from jevdual.visual_native import cmd_visual_check
+
+    visual = sub.add_parser("visual-check", help="record one native advisory visual predicate; never execute")
+    visual.add_argument("--request", required=True, help="JSON request manifest inside the session")
+    visual.add_argument("--provider", choices=("decisions",), help="explicitly enable one provider request")
+    visual.add_argument("--disclose", action="store_true", help="allow this session capture and supplied asset upload")
+    visual.add_argument("--timeout", type=float, default=10.0, help="operational deadline; not an admission setting")
+    visual.add_argument("--max-bytes", type=int, default=4_000_000)
+    visual.add_argument("--max-input-tokens", type=int, default=64_000)
+    visual.add_argument("--max-calls", type=int, choices=(1, 2), default=1,
+                        help="fixed workflow cap; two permits one changed-evidence recovery")
+    visual.add_argument("--max-cost", type=float, default=0.0064)
+    common(visual)
+    visual.set_defaults(fn=cmd_visual_check)
     do = sub.add_parser("do", help="dispatch one action through the boundary and get its receipt")
     do.add_argument("words", nargs="+")
     do.add_argument(
         "--authorize", default="", help="stand the boundary down for these labels, this action only"
     )
     do.add_argument("--settle", type=float, default=S.SETTLE_S)
-    do.add_argument("--no-judge", action="store_true", help="skip the Jev destructive judgment on clicks")
+    do.add_argument(
+        "--no-judge", action="store_true",
+        help="explicit keyword/replacement-only mode; skips Jev judgment on click/menu/key/enter/navigation",
+    )
+    do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
     do.add_argument(
         "--route",
         choices=("trusted", "dom"),
@@ -332,8 +388,43 @@ def build_parser() -> argparse.ArgumentParser:
     s1.set_defaults(fn=S.cmd_s1)
     dn = sub.add_parser("done", help="ask the verifier to accept the task as done")
     dn.add_argument("answer", nargs="?", default="")
+    dn.add_argument(
+        "--context-from",
+        action="append",
+        help="another surface's session directory: its receipts and carried values go on the verifier's trajectory",
+    )
     common(dn)
     dn.set_defaults(fn=S.cmd_done)
+    rd = sub.add_parser("read", help="carry an element's value or label, with where it came from")
+    rd.add_argument("target", nargs="?", default="", help="element id or label")
+    rd.add_argument("--match", help="carry the first match of this regular expression in the text instead")
+    rd.add_argument("--as", dest="name", required=True, help="the carried value's name, used as @NAME")
+    rd.add_argument("--part", choices=("auto", "value", "label"), default="auto")
+    common(rd)
+    rd.set_defaults(fn=S.cmd_read)
+    cf = sub.add_parser("check-file", help="exact oracle: a line of the file equals a carried value")
+    cf.add_argument("path")
+    cf.add_argument("ref", help="@NAME")
+    cf.add_argument("--from", dest="from_session", help="the session the value was read in")
+    cf.add_argument(
+        "--appended",
+        action="store_true",
+        help="require the file to be its snapshot plus the value, once, at the end (see snapshot-file)",
+    )
+    common(cf)
+    cf.set_defaults(fn=S.cmd_check_file)
+    gr = sub.add_parser("grant", help="allow one exact effect on one resource (the words `do` takes)")
+    gr.add_argument("words", nargs="+")
+    gr.add_argument("--uses", type=int, default=1)
+    gr.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
+    common(gr)
+    gr.set_defaults(fn=S.cmd_grant)
+    sf = sub.add_parser(
+        "snapshot-file", help="record a destination file before the work (check-file --appended)"
+    )
+    sf.add_argument("path")
+    common(sf)
+    sf.set_defaults(fn=S.cmd_snapshot_file)
     stt = sub.add_parser("status")
     common(stt)
     stt.set_defaults(fn=S.cmd_status)
@@ -345,7 +436,40 @@ def main(argv: list[str] | None = None) -> int:
 
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
-    return asyncio.run(args.fn(args))
+    try:
+        return asyncio.run(args.fn(args))
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except Exception as exc:  # noqa: BLE001 - every stop names its reason (G7 pilot, 2026-09-27)
+        return _stopped(args, exc)
+
+
+#: exit code for a command stopped by an error it could not handle
+EXIT_STOPPED = 7
+
+
+def _stopped(args: argparse.Namespace, exc: BaseException) -> int:
+    """A command that fails outside its own handling stops with a named reason, logged to the session
+    when there is one, instead of a traceback: `footwork start` on a TextEdit whose accessibility walk
+    timed out printed a Rust-side DriverError trace and left no session behind."""
+    reason = getattr(exc, "reason", None) or type(exc).__name__
+    message = " ".join(str(exc).split())[:300]
+    print(f"stopped: {reason}: {message}", file=sys.stderr)
+    session = getattr(args, "session", None)
+    if session:
+        from pathlib import Path
+
+        d = Path(session)
+        if d.is_dir():
+            import json
+            import time
+
+            with (d / "session.jsonl").open("a") as fh:
+                fh.write(
+                    json.dumps({"t": time.time(), "kind": "stopped", "reason": reason, "message": message})
+                    + "\n"
+                )
+    return EXIT_STOPPED
 
 
 if __name__ == "__main__":

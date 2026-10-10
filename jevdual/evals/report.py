@@ -57,8 +57,16 @@ class TaskResult:
     #: effect word per step with the count of suspected no-ops
     terminal_mode: str = ""
     checkpoints_reached: int = 0
+    #: how many checkpoints the task declares (0 for a single-page task); rows before 2026-09-26 lack it
+    checkpoints_declared: int = 0
     receipts: tuple[str, ...] = ()
     noop_receipts: int = 0
+    #: package E: no_evidence | unmet | uncertain when the run ended UNVERIFIED
+    unverified_reason: str | None = None
+    #: package I, bounded arm: how many times control passed between System 1 and System 2
+    handovers: int = 0
+    #: package D: steps whose input was dispatched and never reached the page
+    undelivered_inputs: int = 0
 
     @property
     def cost_usd(self) -> float:

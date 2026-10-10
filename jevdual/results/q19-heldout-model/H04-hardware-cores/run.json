@@ -1,0 +1,38 @@
+{
+ "status": "done",
+ "reason": "verifier: accept (complete p=0.88) [225 ms]: complete p=0.88, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read total CPU core count",
+   "action": {
+    "name": "read",
+    "surface": "hardware",
+    "match": "Total Number of Cores: (\\d+)",
+    "as": "CORES"
+   },
+   "exit": 0,
+   "output": "carried @CORES = '12', read from native System Information at app://System Information (text 'Total Number of Cores: 12 (8 Performance and 4 Efficiency)', its match) at step 0 of session results/q19-heldout-model/H04-hardware-cores/hardware",
+   "ms": 3767.083290993469,
+   "input_tokens": 1240,
+   "output_tokens": 216
+  },
+  {
+   "step": 2,
+   "note": "Report carried CPU core count",
+   "action": {
+    "name": "done",
+    "surface": "hardware",
+    "answer": "@CORES"
+   },
+   "exit": 0,
+   "output": "verifier: accept (complete p=0.88) [225 ms]: complete p=0.88, max unmet p=0.00\naccepted. session closed.",
+   "ms": 4526.621332988725,
+   "input_tokens": 1340,
+   "output_tokens": 215
+  }
+ ],
+ "answer": "12",
+ "input_tokens": 2580,
+ "output_tokens": 431
+}

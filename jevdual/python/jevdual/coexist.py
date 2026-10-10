@@ -563,7 +563,9 @@ async def case_foreground_permitted(driver: Any, work: Path) -> CaseResult:
         mover.start()
         moved_step = await step(r, "menu", b.menu(nm, ["Edit", "Select All"]))
         await asyncio.to_thread(mover.join, 6.0)
-        r.details["move_overlapped_step"] = tk2.pid in ((moved_step.foreground or {}).get("fronts_during") or [])
+        r.details["move_overlapped_step"] = tk2.pid in (
+            (moved_step.foreground or {}).get("fronts_during") or []
+        )
         await asyncio.sleep(0.5)
         front_after_c = frontmost_pid()
         p3 = Person(tk2.pid, "now over here.")

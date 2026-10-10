@@ -1,0 +1,572 @@
+{
+ "dir": "results/q19-frozen/D18-domain-to-ticket/iana",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Example domain",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [
+  "step 0: read [-1] 'example.com' as @domain"
+ ],
+ "last_url": "https://www.iana.org/domains/reserved",
+ "last_title": "IANA-managed Reserved Domains",
+ "last_page_text": "IANA-managed Reserved Domains\nCertain domains are set aside, and nominally registered to \u201cIANA\u201d, for specific policy or technical purposes.\nExample domains\nAs described in\nand\n, a number of domains such as\nare maintained for documentation purposes. These domains may be used as illustrative examples in documents without prior coordination with us. They are not available for registration or transfer.\nDomain Names\nexample.com\nand\nexample.org\nTest IDN top-level domains\nThese domains were temporarily delegated by IANA for the\nbeing conducted by\n.\n\u0625\u062e\u062a\u0628\u0627\u0631\nxn--kgbechtv\nArabic\n\u0622\u0632\u0645\u0627\u06cc\u0634\u06cc\nxn--hgbk6aj7f53bba\nPersian\nArabic\n\u6d4b\u8bd5\nxn--0zwm56d\nChinese\nHan (Simplified variant)\n\u6e2c\u8a66\nxn--g6w251d\nChinese\nHan (Traditional variant)\n\u0438\u0441\u043f\u044b\u0442\u0430\u043d\u0438\u0435\nxn--80akhbyknj4f\nRussian\nCyrillic\n\u092a\u0930\u0940\u0915\u094d\u0937\u093e\nxn--11b5bs3a9aj6g\nHindi\nDevanagari (Nagari)\n\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae\nxn--jxalpdlp\nGreek, Modern (1453-)\nGreek\n\ud14c\uc2a4\ud2b8\nxn--9t4b11yi5a\nKorean\nHangul (Hang\u016dl, Hangeul)\n\u05d8\u05e2\u05e1\u05d8\nxn--deba0ad\nYiddish\nHebrew\n\u30c6\u30b9\u30c8\nxn--zckzah\nJapanese\nKatakana\n\u0baa\u0bb0\u0bbf\u0b9f\u0bcd\u0b9a\u0bc8\nxn--hlcj6aya9esc7a\nTamil\nPolicy-reserved domains\nWe act as both the registrant and registrar for a select number of domains which have been reserved under policy grounds. These exclusions are typically indicated in either technical standards (RFC documents), or\n.\nDomains which are described as registered to IANA or ICANN on policy grounds are not available for registration or transfer, with the exception of\ncountry-name\n.info\ndomains. These domains are available for release by the ICANN Governmental Advisory Committee Secretariat.\nOther Special-Use Domains\nThere is additionally a\nregistry documenting special-use domains designated by technical standards. For further information, see\n(RFC 6761).\nThe IANA functions coordinate the Internet\u2019s globally unique identifiers, and are provided by\n, an affiliate of\n.",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Homepage",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Homepage",
+   "role": "image",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "RFC 2606",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "RFC 6761",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Overview",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Root Zone Management",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": ".INT Registry",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": ".ARPA Registry",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "IDN Practices Repository",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "Root Key Signing Key (DNSSEC)",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 10,
+   "label": "Reserved Domains",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 37,
+   "label": "Domains",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 38,
+   "label": "Protocols",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 39,
+   "label": "Numbers",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 40,
+   "label": "About",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 41,
+   "label": "IDN Evaluation",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 42,
+   "label": "ICANN",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 123,
+   "label": "contractual limitations",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 124,
+   "label": "Special-Use Domain Names",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 125,
+   "label": "Special-Use Domain Names",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 126,
+   "label": "Domain Names",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 127,
+   "label": "Root Zone Registry",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 128,
+   "label": ".INT Registry",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 129,
+   "label": ".ARPA Registry",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 130,
+   "label": "IDN Repository",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 131,
+   "label": "Number Resources",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 132,
+   "label": "Number Registries",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 133,
+   "label": "RIR Allocation Data",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 134,
+   "label": "Abuse Information",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 135,
+   "label": "Protocols",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 136,
+   "label": "Protocol Registries",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 137,
+   "label": "Time Zone Database",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 138,
+   "label": "About Us",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 139,
+   "label": "News",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 140,
+   "label": "Performance",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 141,
+   "label": "The Organization",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 142,
+   "label": "Archive",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 143,
+   "label": "Contact Us",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 144,
+   "label": "Public Technical Identifiers",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 145,
+   "label": "ICANN",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 146,
+   "label": "Privacy Policy",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 147,
+   "label": "Terms of Service",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-a829665f-8f28-43a7-a2c7-c382d468ed86",
+ "secret_names": []
+}

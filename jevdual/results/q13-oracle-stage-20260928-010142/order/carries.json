@@ -1,0 +1,17 @@
+{
+ "ref": {
+  "name": "ref",
+  "text": "B-20260921",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:57989/order-confirmed.html",
+  "title": "Order confirmed",
+  "element_id": -1,
+  "element_label": "Thank you. Your order number is KB-20260921.",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q13-oracle-stage-20260928-010142/order",
+  "taken_at": 1790571778.1845171
+ }
+}

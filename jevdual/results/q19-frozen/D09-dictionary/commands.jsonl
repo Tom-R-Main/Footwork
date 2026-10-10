@@ -1,0 +1,3 @@
+{"t": 1790641463.377735, "surface": "dict", "args": ["start", "Look up serendipity", "--app", "Dictionary", "--mode", "foreground_permitted"], "exit": 0, "s": 2.17}
+{"t": 1790641465.053623, "surface": "dict", "args": ["look", "--menu-bar"], "exit": 0, "s": 1.58}
+{"t": 1790641510.202067, "surface": "dict", "args": ["look", "--menu-bar"], "exit": 0, "s": 1.19}

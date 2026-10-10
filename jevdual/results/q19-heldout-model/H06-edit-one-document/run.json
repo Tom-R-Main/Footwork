@@ -1,0 +1,144 @@
+{
+ "status": "done_unverified",
+ "reason": "verifier: verify (complete p=0.71) [232 ms]: uncertain: complete p=0.71, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Focus the labels document text area",
+   "action": {
+    "name": "do",
+    "surface": "doc",
+    "op": "click",
+    "target": "text area"
+   },
+   "exit": 0,
+   "output": "destructive judgment: p=0.03 on 'text area'\ndispatched click(text area): driver says not dispatched (unknown_operation: 'click' is not offered on [1] 'text area' (textbox)) in 0.0s\nreceipt: Receipt for click(text area): refused (not applied: unknown_operation: 'click' is not offered on [1] 'text area' (textbox); page unchanged).\nTextEdit: 'h06-labels.txt'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n1 elements:\n  [   1] textbox    'text area' = 'Batch amber: 4\\nKeep this line.\\nBatch amber: 9'\npage text (60 chars):\nh06-labels.txt\nBatch amber: 4\nKeep this line.\nBatch amber: 9",
+   "ms": 10842.217083001742,
+   "input_tokens": 651,
+   "output_tokens": 560
+  },
+  {
+   "step": 2,
+   "note": "Inspect editor for edit options",
+   "action": {
+    "name": "look",
+    "surface": "doc"
+   },
+   "exit": 0,
+   "output": "TextEdit: 'h06-labels.txt'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n1 elements:\n  [   1] textbox    'text area' = 'Batch amber: 4\\nKeep this line.\\nBatch amber: 9'\npage text (60 chars):\nh06-labels.txt\nBatch amber: 4\nKeep this line.\nBatch amber: 9",
+   "ms": 13057.151000000886,
+   "input_tokens": 737,
+   "output_tokens": 790
+  },
+  {
+   "step": 3,
+   "note": "Read current text to prepare replacement",
+   "action": {
+    "name": "read",
+    "surface": "doc",
+    "target": "text area",
+    "as": "ORIG"
+   },
+   "exit": 0,
+   "output": "carried @ORIG = 'Batch amber: 4\\nKeep this line.\\nBatch amber: 9', read from native TextEdit at app://TextEdit (textbox 'text area', its value) at step 1 of session results/q19-heldout-model/H06-edit-one-document/doc",
+   "ms": 20289.29691699159,
+   "input_tokens": 702,
+   "output_tokens": 672
+  },
+  {
+   "step": 4,
+   "note": "Replace both occurrences with cobalt text",
+   "action": {
+    "name": "do",
+    "surface": "doc",
+    "op": "type",
+    "target": "text area",
+    "text": "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9"
+   },
+   "exit": 0,
+   "output": "dispatched type(text area) text='Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9': driver says confirmed in 1.2s\nreceipt: Receipt for type(text area) text='Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9': confirmed ('text area' now holds 'Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9').\nTextEdit: 'h06-labels.txt'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n1 elements:\n  [   1] textbox    'text area' = 'Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9'\npage text (62 chars):\nh06-labels.txt\nBatch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+   "ms": 19633.865833005984,
+   "input_tokens": 809,
+   "output_tokens": 1183
+  },
+  {
+   "step": 5,
+   "note": "Text replaced, now saving document",
+   "action": {
+    "name": "do",
+    "surface": "doc",
+    "op": "hotkey",
+    "target": "text area",
+    "keys": [
+     "cmd",
+     "s"
+    ]
+   },
+   "exit": 0,
+   "output": "dispatched hotkey(cmd+s): driver says confirmed in 2.7s\nreceipt: Receipt for hotkey(cmd+s): confirmed (saved: /Users/thomasmain/footwork-pilot/q19/q19-heldout-model/H06-edit-one-document/h06-labels.txt holds the window's text exactly (47 characters)).\nTextEdit: 'h06-labels.txt'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n1 elements:\n  [   1] textbox    'text area' = 'Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9'\npage text (62 chars):\nh06-labels.txt\nBatch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+   "ms": 10282.856917008758,
+   "input_tokens": 964,
+   "output_tokens": 259
+  },
+  {
+   "step": 6,
+   "note": "Read final text to carry for completion",
+   "action": {
+    "name": "read",
+    "surface": "doc",
+    "target": "text area",
+    "as": "FINAL"
+   },
+   "exit": 0,
+   "output": "carried @FINAL = 'Batch cobalt: 4\\nKeep this line.\\nBatch cobalt: 9', read from native TextEdit at app://TextEdit (textbox 'text area', its value) at step 3 of session results/q19-heldout-model/H06-edit-one-document/doc",
+   "ms": 10121.869791997597,
+   "input_tokens": 1007,
+   "output_tokens": 419
+  },
+  {
+   "step": 7,
+   "note": "Edit verified saved, finishing task",
+   "action": {
+    "name": "done",
+    "surface": "doc",
+    "answer": "@FINAL"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.71) [331 ms]: uncertain: complete p=0.71, max unmet p=0.00",
+   "ms": 3494.4507909967797,
+   "input_tokens": 1108,
+   "output_tokens": 118
+  },
+  {
+   "step": 8,
+   "note": "Saved edit verified, submitting carried final text",
+   "action": {
+    "name": "done",
+    "surface": "doc",
+    "answer": "@FINAL"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.69) [191 ms]: uncertain: complete p=0.69, max unmet p=0.00",
+   "ms": 3246.531042008428,
+   "input_tokens": 1168,
+   "output_tokens": 120
+  },
+  {
+   "step": 9,
+   "note": "Submit carried final text via done",
+   "action": {
+    "name": "done",
+    "surface": "doc",
+    "answer": "@FINAL"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.71) [232 ms]: uncertain: complete p=0.71, max unmet p=0.00",
+   "ms": 7568.063250000705,
+   "input_tokens": 1228,
+   "output_tokens": 257
+  }
+ ],
+ "answer": "Batch cobalt: 4\nKeep this line.\nBatch cobalt: 9",
+ "input_tokens": 8374,
+ "output_tokens": 4378
+}

@@ -1,0 +1,169 @@
+{
+ "dir": "results/m4-dev/B-r2/X1-withdrawn-archive/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Download the field survey archive as survey.zip into the scratch folder. (The scratch folder is /Users/thomasmain/footwork-pilot/q19/B-r2/X1-withdrawn-archive.)",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 14,
+ "status": "open",
+ "memory": [
+  "step 1: click(Home) -> confirmed",
+  "step 2: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 3: click(Home) -> confirmed",
+  "step 4: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 5: navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html' -> confirmed",
+  "step 6: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 7: navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html' -> confirmed",
+  "step 8: navigate(http://localhost:8768/m3-archive.html) text='http://localhost:8768/m3-archive.html' -> confirmed",
+  "step 9: navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html' -> confirmed",
+  "step 10: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 11: navigate(http://127.0.0.1:8768/index.html) text='http://127.0.0.1:8768/index.html' -> confirmed",
+  "step 12: click(Catalog) -> confirmed",
+  "step 13: navigate(http://127.0.0.1:8768/m3-archive.html) text='http://127.0.0.1:8768/m3-archive.html' -> confirmed",
+  "step 14: navigate(http://127.0.0.1:8768/list.html) text='http://127.0.0.1:8768/list.html' -> confirmed"
+ ],
+ "last_url": "http://127.0.0.1:8768/list.html",
+ "last_title": "Field survey archive",
+ "last_page_text": "|\nCatalog\nShowing page\n1\nof 3.\nAnchor, 12 kg\nBilge pump\nChart of the bay\nDeck brush\nEnsign, small\n|",
+ "last_candidates": [
+  {
+   "id": 0,
+   "label": "Home",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 1,
+   "label": "Search",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "Catalog",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Contact",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Announcements",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "Sign in",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Checkout",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Article",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Next page",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 41,
+   "label": "Tracking",
+   "role": "link",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "p2",
+ "pending": null,
+ "mode": "browser",
+ "posture": "foreground_permitted",
+ "browser_tab": "tab-91ae5af2-6330-4a4c-8edb-ed971ea64841",
+ "secret_names": []
+}

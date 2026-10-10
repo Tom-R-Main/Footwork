@@ -1,0 +1,1 @@
+stopped: the save was refused not_key (another TextEdit document stays key); nothing written anywhere

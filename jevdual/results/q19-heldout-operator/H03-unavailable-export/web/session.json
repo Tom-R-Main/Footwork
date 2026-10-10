@@ -1,0 +1,23 @@
+{
+ "dir": "results/q19-heldout-operator/H03-unavailable-export/web",
+ "app": "Google Chrome (footwork)",
+ "pid": 121,
+ "window_id": 3042,
+ "task": "Download the September inventory report",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [],
+ "last_url": "http://127.0.0.1:8767/q19h-reports.html",
+ "last_title": "Scratch room reservations",
+ "last_page_text": "September inventory report\nStatus: export unavailable. The report has not been published. There is no download available and no publication control in this portal.",
+ "last_candidates": [],
+ "last_snapshot": "p1",
+ "pending": null,
+ "mode": "browser",
+ "posture": "background_only",
+ "browser_tab": "tab-337d7614-329c-4f74-9d19-d08c1043dd66",
+ "secret_names": []
+}

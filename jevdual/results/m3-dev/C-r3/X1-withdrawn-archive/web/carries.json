@@ -1,0 +1,19 @@
+{
+ "STATUS": {
+  "name": "STATUS",
+  "text": "withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published.\n\u00b7",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/m3-archive.html",
+  "title": "Field survey archive",
+  "element_id": -1,
+  "element_label": "Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is pu",
+  "element_role": "text",
+  "part": "match",
+  "step": 9,
+  "session": "results/m3-dev/C-r3/X1-withdrawn-archive/web",
+  "taken_at": 1790674541.731992,
+  "surroundings": "Field survey archive / Status: withdrawn. This archive was withdrawn on 12 September and is no longer offered for download. No other copy is published. / \u00b7",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

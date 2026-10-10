@@ -1,0 +1,1 @@
+stopped: Dictionary showed only its Wikipedia source; no route to the dictionary entry found

@@ -1,0 +1,61 @@
+{
+  "artifact": "9148c2e",
+  "review_base": "bd98fdb5bdc38e4cbfe4c36bf2417eac1ef03fa2",
+  "review_target": "cbd7bf1bc12a3a294ba56ec304506215825820ec",
+  "full_suite": {
+    "passed": 1031,
+    "skipped": 26,
+    "elapsed_s": 68.07,
+    "command": ".venv/bin/pytest -q",
+    "exit": 0
+  },
+  "focused_integration": {
+    "passed": 157,
+    "elapsed_s": 1.57
+  },
+  "independent_recheck": {
+    "initial_fix_set_passed": 127,
+    "publication_native_scenarios_passed": 24,
+    "model_coverage": "inherited session model; independent context, no model diversity"
+  },
+  "native_review1": {
+    "artifact": "c088a2b",
+    "receipt_scenarios": 11,
+    "early_refusal_scenarios": 3,
+    "loopback_requests": 6,
+    "action_dispatches": 0,
+    "no_effect": true,
+    "no_grants": true,
+    "proof": "../visual-checks-native-20261008/review1/verification.json"
+  },
+  "native_review2": {
+    "artifact": "9148c2e",
+    "status": "blocked",
+    "reason": "screen_locked",
+    "proof": "../visual-checks-native-20261008/review2/verification.json",
+    "owning_error_log": "runs/visual-checks-native-20261008/review2/prepare/session.jsonl"
+  },
+  "source_sha256": {
+    "desktop": "82fb71280fd6b2a833e7bf909e44024e9097f6603c9abe39eacf43d682e8c8e7",
+    "desktop_s2": "5f9623f17e7392faedad5a831c008c91d808a30725aa932e072a0a37ba2de4e1",
+    "session": "1eea62d4ee29e99dc9fea2838856d63c07ebab0c35500ecf0cde3fa126ae8839",
+    "visual_decisions": "c7133e3119cbe5f0432a5f9cfe5d81d2dc69a40e4e431b6e9e412599dcf7a3be",
+    "visual_native": "c10fabc53f325c65c486f41e6e0ac0a726a4cf72d095f3c7e0484bfbf059a10b"
+  },
+  "paid_calls": 0,
+  "settings_or_routing_changes": false,
+  "native_review3": {
+    "artifact": "9148c2e20221461993086c746f1a8253e386835e",
+    "status": "passed",
+    "receipt_scenarios": 12,
+    "early_refusal_scenarios": 3,
+    "loopback_requests": 7,
+    "action_dispatches": 0,
+    "no_effect": true,
+    "no_grants": true,
+    "source_hashes_match": true,
+    "publication_packet_fields_match_receipt": true,
+    "cleanup_confirmed": true,
+    "proof": "../visual-checks-native-20261008/review3/verification.json"
+  }
+}

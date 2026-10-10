@@ -1,0 +1,19 @@
+{
+ "size": {
+  "name": "size",
+  "text": "640 \u00d7 480",
+  "surface": "native",
+  "app": "Preview",
+  "location": "app://Preview",
+  "title": "d10.png",
+  "element_id": -1,
+  "element_label": "640 \u00d7 480 pixels",
+  "element_role": "text",
+  "part": "match",
+  "step": 1,
+  "session": "results/q19-baseline/D10-image-size/preview",
+  "taken_at": 1790639921.730345,
+  "surroundings": "Modification Date / Sep 28, 2026 at 7:58 PM / Image Size / 640 \u00d7 480 pixels / Image DPI / 72 pixels/inch",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "task": "D19-image-width-to-search",
+ "oracle_ok": true,
+ "oracle": "one submission to /search.html with {'q': '800'}",
+ "answer": null,
+ "commands": 6,
+ "wall_s": 12.9,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ }
+}

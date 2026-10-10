@@ -1,0 +1,40 @@
+{
+ "dir": "results/q19-baseline/D12-save-new/te",
+ "app": "TextEdit",
+ "pid": 93844,
+ "window_id": 3151,
+ "task": "New document saved as d12.txt",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: hotkey(cmd+n) -> suspected_noop"
+ ],
+ "last_url": "app://TextEdit",
+ "last_title": "d11.txt",
+ "last_page_text": "\u2014\nd11.txt\nThe color of the sky.\nA color chart.",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "text area",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": "The color of the sky.\nA color chart.",
+   "input_type": "textarea",
+   "checked": null,
+   "selected": null,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000002",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

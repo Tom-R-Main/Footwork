@@ -1,0 +1,9 @@
+{
+  "family": "export_finalizing",
+  "variant": "near_miss",
+  "buttons": [
+    "Finish export"
+  ],
+  "caption": "Export progress: 100%",
+  "phase": "finalizing"
+}

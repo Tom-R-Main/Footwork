@@ -1,0 +1,36 @@
+{
+ "TRAY": {
+  "name": "TRAY",
+  "text": "8",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/q19h-batches.html",
+  "title": "Scratch batch board",
+  "element_id": -1,
+  "element_label": "Active batch \u2014 Larch\nTray count: 8",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-model/H09-browser-to-calculator/board",
+  "taken_at": 1790666043.32973,
+  "surroundings": "Archived batch \u2014 Alder / Tray count: 9 / Pieces per tray: 6 / Active batch \u2014 Larch / Tray count: 8 / Pieces per tray: 7",
+  "occurrence": "match 1 of 1 on the page"
+ },
+ "PIECES": {
+  "name": "PIECES",
+  "text": "7",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "http://127.0.0.1:8768/q19h-batches.html",
+  "title": "Scratch batch board",
+  "element_id": -1,
+  "element_label": "Active batch \u2014 Larch\nTray count: 8\nPieces per tray: 7",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/q19-heldout-model/H09-browser-to-calculator/board",
+  "taken_at": 1790666047.363426,
+  "surroundings": "Archived batch \u2014 Alder / Tray count: 9 / Pieces per tray: 6 / Active batch \u2014 Larch / Tray count: 8 / Pieces per tray: 7",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

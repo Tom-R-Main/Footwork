@@ -1,0 +1,337 @@
+{
+ "dir": "results/q19-heldout-operator/H09-browser-to-calculator/calc",
+ "app": "Calculator",
+ "pid": 74748,
+ "window_id": 3942,
+ "task": "Compute trays times pieces",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 10,
+ "status": "done",
+ "memory": [
+  "step 1: click(Clear) -> confirmed",
+  "step 2: click(8) -> confirmed",
+  "step 3: click(Multiply) -> suspected_noop",
+  "step 4: click(7) -> suspected_noop",
+  "step 5: click(Equals) -> confirmed",
+  "step 6: click(All Clear) -> confirmed",
+  "step 7: click(8) -> confirmed",
+  "step 8: click(Multiply) -> suspected_noop",
+  "step 9: click(7) -> suspected_noop",
+  "step 10: click(Equals) -> confirmed",
+  "step 10: read [-1] '8\u00d77\\n56' as @total",
+  "step 11: done refused (answer carries no fact found on the page (1 unsupported, rest narrative); comple)",
+  "step 11: done accepted"
+ ],
+ "last_url": "app://Calculator",
+ "last_title": "Calculator",
+ "last_page_text": "8\u00d77\n56\n2\u00d78\u00d77\n112\n17\u00d723\n391\n512\u00d72\n1,024\n256\u00d72\n512\n128\u00d72\n256\n64\u00d72\n128\n32\u00d72\n64\n16\u00d72\n32\n8\u00d72\n16\n4\u00d72\n8\n2\u00d72\n4\n17\u00d723\n391\n512\u00d72\n1,024\n256\u00d72\n512\n128\u00d72\n256\n64\u00d72\n128\n32\u00d72\n64\n16\u00d72\n32\n8\u00d72\n16\n4\u00d72\n8\n2\u00d72\n4\n216,513\u00d73\n649,539\n72,171\u00d73\n216,513\n24,057\u00d73\n72,171\n8,019\u00d73\n24,057\n2,673\u00d73\n8,019\n891\u00d73\n2,673\n297\u00d73\n891\n99\u00d73\n297\n33\u00d73\n99\n48\u00d713\n624\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n24,015%\n240.15\n250-75\n175\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n15%\u00d7240\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n15%240\n15\n48\u00d713\n624\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n240%5\n0\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n240\u00d715%\n36\n15%20\n15\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n15%20\n15\n15%230\n15\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n9\u00d79\n81\n9\u00d79\n81\n240\u00d715%\n36\n15%2\n1\n250-75\n175\n250-75\n175\n250-75\n175\n12\u00d711\n132\n12\u00d711\n132\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d79\n81\n240\u00d715%\n36\n250-75\n175\n12\u00d711\n132\n9\u00d78\n72\n6\u00d77\n42\n584+664\n1,248\n146\u00d74\n584\n166\u00d74\n664\n352+372\n724\n88\u00d74\n352\n59+29\n88\n93\u00d74\n372\n64+29\n93\n8\u00d77\n56",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "HistoryView",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 502,
+   "label": "Delete",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 503,
+   "label": "All Clear",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 504,
+   "label": "Percent",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 505,
+   "label": "Divide",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 506,
+   "label": "7",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 507,
+   "label": "8",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 508,
+   "label": "9",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 509,
+   "label": "Multiply",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 510,
+   "label": "4",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 511,
+   "label": "5",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 512,
+   "label": "6",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 513,
+   "label": "Subtract",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 514,
+   "label": "1",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 515,
+   "label": "2",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 516,
+   "label": "3",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 517,
+   "label": "Add",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 518,
+   "label": "Change Sign",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 519,
+   "label": "0",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 520,
+   "label": "Point",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 521,
+   "label": "Equals",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 524,
+   "label": "Hide Sidebar",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 525,
+   "label": "Mode",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

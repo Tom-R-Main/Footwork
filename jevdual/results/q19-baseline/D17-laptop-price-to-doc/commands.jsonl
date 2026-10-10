@@ -1,0 +1,6 @@
+{"t": 1790640240.21356, "surface": "web", "args": ["start", "Cheapest laptop price", "--browser", "--url", "https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops"], "exit": 0, "s": 3.17}
+{"t": 1790640240.9896371, "surface": "web", "args": ["read", "--match", "(\\$\\d+\\.\\d\\d)", "--as", "price"], "exit": 0, "s": 0.69}
+{"t": 1790640242.7985961, "surface": "doc", "args": ["start", "Append the price and save", "--app", "TextEdit", "--window", "d17.txt", "--mode", "foreground_permitted", "--authorize", "Save"], "exit": 0, "s": 1.64}
+{"t": 1790640244.985347, "surface": "doc", "args": ["do", "append", "text area", "@price", "--from", "results/q19-baseline/D17-laptop-price-to-doc/web"], "exit": 0, "s": 2.09}
+{"t": 1790640251.329142, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 6.25}
+{"t": 1790640265.486681, "surface": "doc", "args": ["do", "hotkey", "cmd", "s", "--no-judge"], "exit": 0, "s": 6.27}

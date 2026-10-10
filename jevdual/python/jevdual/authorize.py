@@ -26,6 +26,7 @@ Rules, in order:
 from __future__ import annotations
 
 import logging
+import math
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import Any, Literal
@@ -39,6 +40,9 @@ log = logging.getLogger("jevdual.authorize")
 Route = Literal["click", "type", "append", "enter", "key", "hotkey", "menu", "scroll", "hover"]
 
 #: chord meanings the keyword gate can read
+#: routes System 2 proposes that get the destructive judgment (type is covered by the replace rule)
+JUDGED_ROUTES = ("click", "menu", "hotkey", "key", "enter")
+
 CHORD_MEANING = {
     "cmd+delete": "delete",
     "cmd+backspace": "delete",
@@ -51,7 +55,6 @@ CHORD_MEANING = {
     "return": "confirm the default button",
     "enter": "confirm the default button",
 }
-REPLACE_MIN_CHARS = 20
 
 
 @dataclass(frozen=True)
@@ -76,7 +79,9 @@ class NativeAction:
         cur = self.current if self.current is not None else (self.target.value or "")
         return (
             self.target.input_type == "textarea"
-            and len(cur) >= REPLACE_MIN_CHARS
+            # any existing content: a length floor (20 characters until 2026-09-26) let a short document
+            # be replaced unpaused (status audit, probe short_document_replacement)
+            and bool(cur.strip())
             and (self.text or "") != cur
             and not (self.text or "").startswith(cur)
         )
@@ -116,6 +121,32 @@ def action_for(
 
 Judge = Callable[..., Awaitable[list[float]]]  # Verifier.judge_destructive(task, targets, *, url, title)
 
+GRANT_ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+
+
+def checked_probabilities(probs: Any, n: int) -> list[float]:
+    """A judgment's answer, or ValueError: exactly ``n`` finite probabilities in [0, 1]. An empty,
+    short, NaN or non-numeric answer is a judgment that did not answer, never a p of 0 (package B1)."""
+    if not isinstance(probs, (list, tuple)) or len(probs) != n:
+        raise ValueError(
+            f"judgment returned {len(probs) if isinstance(probs, (list, tuple)) else type(probs).__name__} values for {n} targets"
+        )
+    out = []
+    for p in probs:
+        if (
+            isinstance(p, bool)
+            or not isinstance(p, (int, float))
+            or not math.isfinite(p)
+            or not 0.0 <= p <= 1.0
+        ):
+            raise ValueError(f"judgment returned {p!r}, not a probability")
+        out.append(float(p))
+    return out
+
+
+def _norm(s: str) -> str:
+    return " ".join(s.casefold().split())
+
 
 @dataclass
 class Authorizer:
@@ -129,11 +160,23 @@ class Authorizer:
     extra: Callable[[NativeMenu, Candidate], Any] | None = None
     judgments: list[dict[str, Any]] = field(default_factory=list)
 
-    def is_authorized(self, label: str) -> bool:
+    def is_authorized(self, label: str, *, route: str | None = None) -> bool:
+        """A grant clears the action it names: the whole label (case and spacing aside), or for a menu
+        path its whole path or final item, optionally prefixed by a route (``menu:File > Move to Trash``).
+        Until 2026-09-26 a grant was a substring, so ``Delete`` cleared "Delete account" (package B3)."""
         if self.authorize_all:
             return True
-        low = label.casefold()
-        return any(a.casefold() in low for a in self.authorized_actions)
+        lab = _norm(label)
+        last = _norm(label.split(">")[-1]) if ">" in label else None
+        for g in self.authorized_actions:
+            head, sep, rest = g.partition(":")
+            grant_route = _norm(head) if sep and _norm(head) in GRANT_ROUTES else None
+            name = _norm(rest if grant_route else g)
+            if grant_route is not None and grant_route != (route or ""):
+                continue
+            if name == lab or (last is not None and name == last):
+                return True
+        return False
 
     def _keyword(self, action: NativeAction) -> str | None:
         hit = destructive_match(action.label, action.context, self.policy)
@@ -142,7 +185,7 @@ class Authorizer:
         if action.route in ("key", "hotkey", "enter"):
             # the chord may activate a button on screen; the buttons carry the meaning
             for b in action.buttons:
-                if self.is_authorized(b):
+                if self.is_authorized(b, route="click"):
                     continue
                 bh = destructive_match(b, action.context, self.policy)
                 if bh:
@@ -151,7 +194,7 @@ class Authorizer:
 
     async def check(self, nm: NativeMenu, action: NativeAction, *, task: str = "") -> str | None:
         """Reason to pause before dispatching ``action``, or None."""
-        if self.is_authorized(action.label):
+        if self.is_authorized(action.label, route=action.route):
             return None
         if self.extra is not None and action.target is not None:
             r = self.extra(nm, action.target)
@@ -165,22 +208,36 @@ class Authorizer:
         if action.replaces_content and not self.is_authorized("replace"):
             n = len(action.current if action.current is not None else (action.target.value or ""))
             return f"replaces {n} characters of existing content in {action.label!r}"
-        if action.system == "s2" and action.route in ("click", "menu", "hotkey") and self.judge is not None:
+        if action.system == "s2" and self.judge is not None and action.route in JUDGED_ROUTES:
+            # a key, chord or Return may press any button on screen (the keyword rule above already
+            # reads them that way), so those buttons are judged with it: the same effect gets the same
+            # decision whether it is clicked or confirmed by a key (package B2)
+            labels = [action.label]
+            if action.route in ("key", "hotkey", "enter"):
+                labels += [b for b in action.buttons if not self.is_authorized(b, route="click")]
             try:
-                probs = await self.judge(
-                    task,
-                    [{"label": action.label, "context": action.context}],
-                    url=nm.menu.url,
-                    title=nm.menu.title,
+                probs = checked_probabilities(
+                    await self.judge(
+                        task,
+                        [{"label": lab, "context": action.context} for lab in labels],
+                        url=nm.menu.url,
+                        title=nm.menu.title,
+                    ),
+                    len(labels),
                 )
-                p = float(probs[0]) if probs else 0.0
             except Exception as exc:  # noqa: BLE001 - a failed judgment has an explicit outcome, never an allow
                 log.warning("destructive judgment failed on %r: %s", action.label, exc)
                 self.judgments.append({"route": action.route, "label": action.label, "error": str(exc)[:120]})
                 if self.on_judgment_failure == "confirm":
                     return f"judgment unavailable for {action.route} {action.label!r} ({type(exc).__name__}); pausing"
                 return None
-            self.judgments.append({"route": action.route, "label": action.label, "p": p})
+            p, which = max(zip(probs, labels, strict=True))
+            self.judgments.append({"route": action.route, "label": action.label, "p": p, "on": which})
             if p >= self.policy.destructive_confirm:
+                if which != action.label:
+                    # name the button first: the grant a pause suggests is the effect, not the key
+                    return (
+                        f"judgment p={p:.2f} on button {which!r} reachable by {action.route} {action.label!r}"
+                    )
                 return f"judgment p={p:.2f} on {action.route} {action.label!r}"
         return None

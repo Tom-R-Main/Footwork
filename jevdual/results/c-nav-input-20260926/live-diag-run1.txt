@@ -1,0 +1,2 @@
+PROBE launch 0 error Event handler browser_use.browser.watchdog_base.BrowserSession.on_NavigateToUrlEvent#7680(?▶ NavigateToUrlEvent#ec4e 🏃) 
+PROBE launch 1 error Event handler browser_use.browser.watchdog_base.BrowserSession.on_NavigateToUrlEvent#7840(?▶ NavigateToUrlEvent#3098 🏃) 

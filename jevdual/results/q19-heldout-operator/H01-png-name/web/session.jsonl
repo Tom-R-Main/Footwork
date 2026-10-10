@@ -1,0 +1,2 @@
+{"t": 1790664601.5698628, "step": 0, "kind": "start", "task": "Report the full name represented by PNG", "requirements": [], "mode": "browser"}
+{"t": 1790664621.9443562, "step": 0, "kind": "done", "answer": "The page title 'PNG (Portable Network Graphics) Home Site' gives PNG's full name: Portable Network Graphics.", "band": "accept", "reason": "complete p=0.88, max unmet p=0.00", "unmet": {}}

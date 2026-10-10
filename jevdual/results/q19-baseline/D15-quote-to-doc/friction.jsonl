@@ -1,0 +1,1 @@
+{"t": 1790640172.708976, "kind": "contradicted", "text": "DEFECT (wrong resource): Command-S dispatched to the d15.txt session saved d11.txt (TextEdit's key window), writing a file of another task; the save readback truthfully said d15.txt was unsaved but nothing reported the other file. The hotkey route has no key-window check; the menu route does (not_key)"}

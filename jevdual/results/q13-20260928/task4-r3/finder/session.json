@@ -1,0 +1,2264 @@
+{
+ "dir": "results/q13-20260928/task4-r3/finder",
+ "app": "Finder",
+ "pid": 652,
+ "window_id": 1166,
+ "task": "Download the shop's quarterly report (quarterly-report.txt) and open it in TextEdit.",
+ "requirements": [
+  "The quarterly report was downloaded",
+  "The report is open in TextEdit"
+ ],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [],
+ "last_url": "app://Finder",
+ "last_title": "Downloads",
+ "last_page_text": "Recents\nShared\nFavorites\nApplications\nDesktop\nDocuments\nDownloads\nprojects\nLocations\niCloud Drive\nGoogle Drive\nthomasmain\nMacintosh HD\nExternal SSD\nAirDrop\nNetwork\nTrash\nTags\nRed\nYellow\nOrange\nGreen\nBlue\nPurple\nGray\nWork\nAll Tags\u2026\nAugust\n269 KB\nPDF Document\nYesterday at 3:58 PM\nAugust\n36 KB\nPlain Text\nSep 21, 2026 at 5:58 PM\n7 KB\nPDF Document\nSep 21, 2026 at 9:02 PM\n3 KB\nPDF Document\nSep 21, 2026 at 9:11 PM\n24 KB\nPNG image\nSep 22, 2026 at 1:54 PM\n51 KB\nPNG image\nSep 22, 2026 at 1:54 PM\n58 KB\nPNG image\nSep 22, 2026 at 2:53 PM\n2.7 MB\nPNG image\nSep 22, 2026 at 3:38 PM\n5.6 MB\nMPEG-4 movie\nSep 23, 2026 at 3:51 PM\n13 MB\nPDF Document\nSep 23, 2026 at 6:49 PM\n1.5 MB\nPNG image\nSep 24, 2026 at 3:22 PM\n1.4 MB\nPNG image\nSep 24, 2026 at 3:34 PM\n17.8 MB\nPDF Document\nSep 24, 2026 at 11:23 PM\n332 KB\nPDF Document\nSep 24, 2026 at 11:23 PM\n16.4 MB\nPDF Document\nSep 24, 2026 at 11:23 PM\n13.9 MB\nPDF Document\nSep 24, 2026 at 11:23 PM\nPrevious 30 Days\n2.7 MB\nPNG image\nAug 21, 2026 at 12:44 AM\n2.7 MB\nPNG image\nAug 21, 2026 at 12:52 AM\n20 KB\nCodex Skill\nAug 21, 2026 at 4:55 PM\n77 KB\nPDF Document\nAug 21, 2026 at 5:04 PM\n1.7 MB\nJPEG image\nAug 21, 2026 at 5:17 PM\n1.9 MB\nJPEG image\nAug 21, 2026 at 5:18 PM\n79 KB\nPDF Document\nAug 21, 2026 at 5:39 PM\n80 KB\nPDF Document\nAug 21, 2026 at 5:58 PM\n1.8 MB\nPNG image\nAug 21, 2026 at 7:17 PM\n1.8 MB\nPNG image\nAug 21, 2026 at 7:18 PM\n138 KB\nJPEG image\nAug 21, 2026 at 7:20 PM\n177 KB\nPNG image\nAug 21, 2026 at 7:20 PM\n1.8 MB\nPNG image\nAug 21, 2026 at 7:23 PM\n1.8 MB\nPNG image\nAug 21, 2026 at 7:24 PM\n1.8 MB\nPNG image\nAug 21, 2026 at 7:27 PM\n138 KB\nJPEG image\nAug 21, 2026 at 7:28 PM\n35 KB\nPNG image\nAug 21, 2026 at 7:30 PM\n375 KB\nPNG image\nAug 21, 2026 at 7:33 PM\n115 KB\nJPEG image\nAug 21, 2026 at 7:37 PM\n145 KB\nPNG image\nAug 21, 2026 at 7:37 PM\n111 KB\nJPEG image\nAug 21, 2026 at 7:42 PM\n135 KB\nPNG image\nAug 21, 2026 at 7:42 PM\n107 KB\nJPEG image\nAug 21, 2026 at 7:43 PM\n132 KB\nPNG image\nAug 21, 2026 at 7:43 PM\n107 KB\nJPEG image\nAug 21, 2026 at 7:52 PM\n267 KB\nPDF Document\nAug 22, 2026 at 3:32 AM\n162 KB\nPDF Document\nAug 22, 2026 at 3:33 AM\n357 KB\nPNG image\nAug 22, 2026 at 4:30 PM\n296 KB\nPNG image\nAug 22, 2026 at 4:30 PM\n407 KB\nPNG image\nAug 22, 2026 at 4:30 PM\n255 KB\nPNG image\nAug 22, 2026 at 4:44 PM\n389 KB\nPNG image\nAug 22, 2026 at 4:44 PM\n378 KB\nPNG image\nAug 22, 2026 at 4:44 PM\n518 KB\nPNG image\nAug 22, 2026 at 4:44 PM\n409 KB\nPNG image\nAug 22, 2026 at 4:44 PM\n293 KB\nPNG image\nAug 22, 2026 at 4:44 PM\n--\nFolder\nAug 22, 2026 at 6:44 PM\n110 KB\nMarkdown document\nAug 22, 2026 at 10:46 PM\n19 KB\nMarkdown document\nAug 23, 2026 at 12:17 AM\n--\nFolder\nAug 23, 2026 at 12:52 AM\n85 bytes\nXML Document\nAug 24, 2026 at 1:17 PM\n84 KB\nHTML text\nAug 24, 2026 at 6:14 PM\n34 KB\nMarkdown document\nAug 24, 2026 at 6:14 PM\n21 KB\nMarkdown document\nAug 24, 2026 at 8:59 PM\n204 KB\nPDF Document\nAug 25, 2026 at 1:10 PM\n541 KB\nPDF Document\nAug 25, 2026 at 1:34 PM\n4.1 MB\nPDF Document\nAug 26, 2026 at 12:14 PM\n53 KB\nPlain Text\nAug 27, 2026 at 1:37 AM\n1 MB\nJPEG image\nAug 27, 2026 at 11:18 PM\n9.6 MB\nPDF Document\nAug 28, 2026 at 9:55 AM\n780 KB\nPNG image\nSep 1, 2026 at 3:25 PM\n597 KB\nPNG image\nSep 1, 2026 at 3:25 PM\n1.5 MB\nPNG image\nSep 1, 2026 at 3:35 PM\n1.4 MB\nPNG image\nSep 1, 2026 at 3:52 PM\n351 KB\nPNG image\nSep 1, 2026 at 4:02 PM\n671 KB\nPNG image\nSep 1, 2026 at 4:02 PM\n532 KB\nPNG image\nSep 1, 2026 at 4:03 PM\n351 KB\nPNG image\nSep 1, 2026 at 4:12 PM\n667 KB\nPNG image\nSep 1, 2026 at 4:12 PM\n525 KB\nPNG image\nSep 1, 2026 at 4:12 PM\n210 KB\nPNG image\nSep 1, 2026 at 6:57 PM\n19.2 MB\nbzip2 compressed archive\nSep 2, 2026 at 1:14 PM\n69.1 MB\nPDF Document\nSep 3, 2026 at 4:53 PM\n25.3 MB\nEPUB\nSep 3, 2026 at 4:54 PM\n6.1 MB\nPDF Document\nSep 3, 2026 at 5:44 PM\n246 KB\nEPUB\nSep 3, 2026 at 5:45 PM\n41.4 MB\nPDF Document\nSep 3, 2026 at 5:51 PM\n15.7 MB\nPDF Document\nSep 3, 2026 at 5:57 PM\n492 KB\nPlain Text\nSep 3, 2026 at 6:27 PM\n784 KB\nPDF Document\nSep 3, 2026 at 9:07 PM\n10.3 MB\nPDF Document\nSep 3, 2026 at 9:08 PM\n859 KB\nPDF Document\nSep 3, 2026 at 9:08 PM\n845 KB\nPDF Document\nSep 3, 2026 at 9:08 PM\n120.4 MB\nPDF Document\nSep 3, 2026 at 9:09 PM\n833 KB\nPDF Document\nSep 3, 2026 at 9:40 PM\n833 KB\nPDF Document\nSep 3, 2026 at 9:40 PM\n1 KB\nSVG document\nSep 5, 2026 at 1:16 PM\n63 KB\nMarkdown document\nSep 8, 2026 at 1:14 PM\n144 KB\nMarkdown document\nSep 8, 2026 at 1:15 PM\n546 KB\nPNG image\nSep 8, 2026 at 5:28 PM\n2 MB\nPNG image\nSep 10, 2026 at 4:11 PM\n787 KB\nJPEG image\nSep 10, 2026 at 4:11 PM\n855 KB\nJPEG image\nSep 10, 2026 at 4:11 PM\n978 KB\nJPEG image\nSep 10, 2026 at 4:17 PM\n961 KB\nJPEG image\nSep 10, 2026 at 4:17 PM\n1 MB\nJPEG image\nSep 10, 2026 at 4:17 PM\n2.1 MB\nPNG image\nSep 10, 2026 at 4:19 PM\n1.3 MB\nJPEG image\nSep 10, 2026 at 4:21 PM\n774 KB\nJPEG image\nSep 10, 2026 at 4:22 PM\n1.9 MB\nPNG image\nSep 10, 2026 at 4:23 PM\n2 MB\nPNG image\nSep 10, 2026 at 4:23 PM\n781 KB\nJPEG image\nSep 10, 2026 at 4:24 PM\n615 KB\nJPEG image\nSep 10, 2026 at 4:29 PM\n487 KB\nPDF Document\nSep 12, 2026 at 3:44 PM\n270 bytes\nPlain Text\nSep 12, 2026 at 5:52 PM\n3 MB\nPDF Document\nSep 12, 2026 at 11:53 PM\n283 KB\nPDF Document\nSep 13, 2026 at 12:33 AM\n344 KB\nPDF Document\nSep 13, 2026 at 12:35 AM\n91 KB\nJPEG image\nSep 14, 2026 at 1:19 PM\n647 KB\nPNG image\nSep 14, 2026 at 1:40 PM\n559 KB\nPNG image\nSep 14, 2026 at 1:41 PM\n16.2 MB\nPDF Document\nSep 14, 2026 at 1:54 PM\n5 KB\nComma Separated Values\nSep 14, 2026 at 2:38 PM\n65 KB\nPDF Document\nSep 15, 2026 at 12:59 PM\n69 KB\nPDF Document\nSep 15, 2026 at 1:15 PM\n66 KB\nPDF Document\nSep 15, 2026 at 1:58 PM\n1.2 MB\nPNG image\nSep 15, 2026 at 4:31 PM\n65 KB\nPDF Document\nSep 15, 2026 at 4:50 PM\n3 KB\nPDF Document\nSep 16, 2026 at 3:50 PM\n39 KB\nMarkdown document\nSep 17, 2026 at 9:26 PM\n49 KB\nMarkdown document\nSep 19, 2026 at 12:44 PM\nPrevious 30 Days\n865 KB\nJPEG image\nAug 1, 2026 at 12:45 PM\n906 KB\nJPEG image\nAug 1, 2026 at 12:45 PM\n1.9 MB\nPNG image\nAug 1, 2026 at 12:47 PM\n12 KB\nCodex Skill\nAug 1, 2026 at 2:19 PM\n67 KB\nXLSX\nAug 1, 2026 at 2:21 PM\n12 KB\nCodex Skill\nAug 3, 2026 at 4:34 PM\n2.8 MB\nEPUB\nAug 3, 2026 at 4:57 PM\n15 KB\nZIP archive\nAug 4, 2026 at 12:40 PM\n23 KB\nLog File\nAug 6, 2",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "sidebar",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 28,
+   "label": "Eject",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 58,
+   "label": "list view",
+   "role": "tree",
+   "operations": [
+    "scroll"
+   ],
+   "value": null,
+   "input_type": null,
+   "checked": null,
+   "selected": null,
+   "section": null
+  },
+  {
+   "id": 61,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Futures_Atlas_2035_2050.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 64,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Meeting Transcription (1).txt",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 66,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Torc_Map_Enablement_Resume.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 68,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Torc_Cover_Letter.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 70,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260922-mkkb.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 72,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260922-mklb.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 74,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "download (3).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 76,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "IMG_20260922_153733.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 78,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "siftable-chatgpt-demo-v2.mp4",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 80,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Writing fiction a guide to narrative craft (Burroway, Janet, author) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 82,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ghostBuzz.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 84,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ghostBuzzFem.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 86,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Claude Opus 5.5 System Card.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 88,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "4p7card-5eccc980.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 90,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Claude Fable 5.1 & Claude Mythos 5.1 System Card.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 92,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "gpt-6-astra.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 95,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "d14915c7-2825-41ea-8ee1-6277c2493791.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 97,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "b3a467a4-b24c-4460-97d4-9b1bb466d0a4.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 99,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "resume-builder.skill",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 101,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Applied_AI_Agent_Systems_Resume_Draft.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 103,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260821-pefb.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 105,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260821-pepy.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 107,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Applied_AI_Agent_Systems_Resume.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 109,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Resume_Aug_21.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 111,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260821-191736.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 113,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260821-191803.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 115,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL \u2014 LinkedIn company banner \u00b7 4200\u00d7700.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 117,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL \u2014 LinkedIn company banner \u00b7 4200\u00d7700.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 119,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260821-192335.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 121,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260821-192404.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 123,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260821-192701.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 125,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Codex Image Aug 21, 2026, 07_28_13 PM.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 127,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Codex Image Aug 21, 2026, 07_30_13 PM.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 129,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260821-193305.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 131,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL v2 \u2014 LinkedIn banner \u00b7 profile-logo handoff.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 133,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL v2 \u2014 LinkedIn banner \u00b7 profile-logo handoff.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 135,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL v3 \u2014 LinkedIn banner \u00b7 logo-clear signal rail.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 137,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL v3 \u2014 LinkedIn banner \u00b7 logo-clear signal rail.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 139,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL v3 \u2014 LinkedIn banner \u00b7 logo-clear signal rail (1).jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 141,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FINAL v3 \u2014 LinkedIn banner \u00b7 logo-clear signal rail (1).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 143,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Codex Image Aug 21, 2026, 07_52_26 PM.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 145,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Gmail - Your Google Play Order Receipt from Apr 4, 2022.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 147,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Gmail - Thanks for purchasing LogMeIn Products.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 149,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "A \u2014 Bookings tab \u00b7 populated (links + upcoming on one page)@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 151,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "B \u2014 Bookings tab \u00b7 first run (no links, no bookings)@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 153,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "C \u2014 New link \u00b7 three questions, then fine-tune@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 155,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "0 \u2014 Flow map \u00b7 host + guest loops@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 157,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "D \u2014 Edit link \u00b7 Fine-tune (after the link exists)@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 159,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "E \u2014 Availability \u00b7 schedules, weekly hours, date overrides@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 161,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "F \u2014 Booking detail \u00b7 host reschedule _ cancel@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 163,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "G \u2014 Guest \u00b7 _book__slug \u00b7 pick \u2192 details \u2192 booked@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 165,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "H \u2014 Guest \u00b7 _book_manage__token \u00b7 reschedule _ cancel _ already started@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 167,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "human-writing",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 169,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "resumable-work-representation-study.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 171,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "2026-08-22-supplied-review-synthesis.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 173,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "resumable-work-experiment-2026-08-23",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 175,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "BingSiteAuth.xml",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 177,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "siftable-polish-audit-standalone.html",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 179,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "siftable-polish-audit.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 181,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "siftable-mcp-hosted-audit-2026-08-24.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 183,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "index.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 185,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Personal Use Terms of Service.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 187,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "What's in America's Code_.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 189,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "build_3311_step_115_container_0.txt",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 191,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260827-ucjp.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 193,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "JHTT26_BROCHURE_NA Total Rewards_v2.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 195,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Main@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 197,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FirstLook@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 199,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ChatGPT Image Sep 1, 2026, 03_35_32 PM.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 201,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ChatGPT Image Sep 1, 2026, 03_52_05 PM.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 203,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Proposal@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 205,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Main@2x (1).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 207,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FirstLook@2x (1).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 209,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Proposal@2x (1).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 211,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Main@2x (2).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 213,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "FirstLook@2x (2).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 215,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260901-qnrm.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 217,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Nominatim-5.3.2.tar.bz2",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 219,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Splendid Soups \u2022 Recipes and Master Techniques for Making the Worlds Best Soups (James Peterson) (z-library.sk, 1lib.sk\u2026",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 221,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "The Complete Vegetarian Cookbook (Americas Test Kitchen) (z-library.sk, 1lib.sk, z-lib.sk).epub",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 223,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "jtf_style_guide.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 225,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "\u82f1\u8a9e\u529b\u30a2\u30c3\u30d5\u309a\u53b3\u9078\u30c8\u30ec\u30fc\u30cb\u30f3\u30af\u309920\u9078 \u81ea\u5206\u306b\u5408\u3063\u305f\u82f1\u8a9e\u5b66\u7fd2\u6cd5\u3092\u898b\u3064\u3051\u305f\u3044\u4eba\u306b\u304a\u3059\u3059\u3081 \u7ffb\u8a33\u306e\u30d5\u309a\u30ed\u304b\u3099\u4f1d\u6388\u3059\u308b\u30b7\u30ea\u30fc\u30b9\u3099 (\u4e2d\u6751 \u53cb\u5f66) (z-library.sk, 1lib.sk, z-lib.sk).epub",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 227,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "\u6c49\u82f1\u7ffb\u8bd1 \u8bd1\u00b7\u6ce8\u00b7\u8bc4\uff08\u7ffb\u8bd1\u540d\u5e08\u8bb2\u8bc4\u7cfb\u5217\uff09 (\u674e\u957f\u6813) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 229,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "\u4e2d\u5f0f\u82f1\u8bed\u4e4b\u9274 (Joan Pinkham \u59dc\u6842\u534e) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 231,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "build_5228_step_115_container_0.txt",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 233,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "\u0641\u0646_\u0627\u0644\u062a\u0631\u062c\u0645\u0629.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 235,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Using Arabic A Guide to Contemporary Usage (Mahdi Alosh) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 237,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ara-sau-StyleGuide.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 239,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "rus-rus-StyleGuide.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 241,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "\u0421\u043b\u043e\u0432\u043e \u0436\u0438\u0432\u043e\u0435 \u0438 \u043c\u0435\u0440\u0442\u0432\u043e\u0435 (\u041d\u043e\u0440\u0430 \u0413\u0430\u043b\u044c) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 243,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ita-ita-StyleGuide.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 245,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "ita-ita-StyleGuide (1).pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 247,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "siftable-logo.svg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 249,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "codex cli.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 251,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "deepseek harness.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 253,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260908-pijb.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 255,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-ogub.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 257,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-ogxk.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 259,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-ogxx.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 261,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-oizd.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 263,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-oizq.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 265,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-ojal.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 267,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-ojwy.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 269,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-okmj.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 271,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-okxh.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 273,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-olbo.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 275,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-olfx.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 277,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260910-olrr.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 279,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "PXL_20260910_180440269.TS-000.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 281,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Siftable Mobile 1.0 Design Brief.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 283,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "openai-recovery-keys-2026-09-12-21-52-47Z.txt",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 285,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "navier-stokes.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 287,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "3618260.3649664.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 289,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "likelihoods.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 291,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260913-165030~2.jpg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 293,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260914-134012.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 295,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Screenshot_20260914-134008.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 297,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Meltwater - State of PR Report.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 299,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "best-edit-initial-cold-call.csv",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 301,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Future_Cover_Letter.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 303,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_OpenAI_Startups_Resume.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 305,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_OpenAI_Startups_Cover_Letter.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 307,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260915-onwf.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 309,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Bolt_Cover_Letter.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 311,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Thomas_Main_Hightouch_Cover_Letter.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 313,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "agent-harness-comparative-analysis-2026-09-17.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 315,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "agent-room-coordinator-and-frontier-scheduler.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 318,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260801-llue.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 320,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260801-llve.jpeg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 322,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260801-lmki.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 324,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "sharp-edit.skill",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 326,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "BE Features for Shaw Proposal.xlsx",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 328,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "sharp-edit (1).skill",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 330,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "The Pragmatic Programmer Your Journey To Mastery, 20th Anniversary Edition, 2nd Edition (David Thomas, Andrew Hunt) (z-\u2026",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 332,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "predict-future.zip",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 334,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "pornhubvideo.log",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 336,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "xvideovideo.log",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 338,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "xvideosthumbnail.log",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 340,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "pornhubthumbnail.log",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 342,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "onlyfansperformerpage.log",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 344,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Cass-County-Commissioners-Story-Package_1.pages",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 346,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "the-legible-loop-v4.md",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 348,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "national-call-list.html",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 350,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "SCR-20260807-kspe.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 352,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Satellites remaining in Earth orbit, 1957\u2013Aug. 8, 2026.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 354,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Paper Skill Lab _ Desktop.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 356,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Paper Skill Lab _ Desktop.svg",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 358,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Paper Skill Lab _ Mobile@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 360,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Combined.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 362,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "Siftable UI Audit \u2014 the lens seam.pdf",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 364,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "human-writing-2026-08-09.zip",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 366,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "A1 \u2014 Annotated folio \u00b7 Draft@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 368,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "A1 \u2014 Annotated folio \u00b7 Draft@2x (1).png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 370,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "A2 \u2014 Annotated folio \u00b7 Review + history@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 372,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "A3 \u2014 Annotated folio \u00b7 Mobile review@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 374,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "B1 \u2014 Message theatre \u00b7 Draft@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  },
+  {
+   "id": 376,
+   "label": "textbox",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "B2 \u2014 Message theatre \u00b7 Review + history@2x.png",
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "section": null
+  }
+ ],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "foreground_permitted",
+ "browser_tab": "",
+ "secret_names": []
+}

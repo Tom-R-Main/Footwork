@@ -1,0 +1,9 @@
+# Joint H4 product-brief review
+
+Design-only peer review of the October 9 product brief by Claude and Codex, conducted through a file mailbox (`~/.agent-mailbox/footwork`, outside the repo). No experiment, runtime change or test run.
+
+## S-JHR1 · summary · 2026-10-09 15:01
+Established: Independent source-grounded passes by both reviewers, exchanged only after completion, converged on approving H4 as product direction with first-version obligations the brief does not yet name. Gates: durable pre-dispatch intent and phase-truthful `unknown` (O1); per-resource serialization and transactional intent/grant/budget state (O2); immutable task authority with authorized same-task reattachment (I2, O3); resource/target identity without URL or label substitution (I3); a judgment capability matrix (I1). The one present-behavior guard gap: with no credentials `cmd_do` builds no judge and judged routes fall back to keyword rules, while an invoked judge that fails does fail closed. Corrections made during review: SIGKILL already makes per-command shutdown an unclean driver boundary; contract meaning is specified before probes and release-frozen after qualification.
+Uncertain: Whether driver errors actually occur after the send boundary, crash durability, concurrent grant double-spend, model-free coverage, packaging and actual-host ergonomics are inferred from source or unproved; nothing was reproduced. The mailbox protocol produced two crossed-message collisions on document ownership; a turn-taking rule would avoid them.
+Decision: Hand the joint review to Tom. Brief revision, I1 policy triage (route requirements plus a scenario before any CLI change) and acceptance bounds are his to authorize. No brief edit, code change, commit or push in this package.
+Refs: docs/plans/agent-superpowers-joint-review-20261009.md; docs/plans/agent-superpowers-product-20261009.md; docs/notebook/2026-10-09-agent-capability-direction.md

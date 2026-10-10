@@ -61,6 +61,9 @@ class DualProcessAgent(Agent):
         self.receipts: dict[int, Any] = {}
         self._pre_step_menu: Any = None
         self._pre_step_state: Any = None
+        #: package D: page probes around each step (jevdual.delivery)
+        self._pre_probe: Any = None
+        self._last_post_probe: Any = None
         self.s1_policy = s1_policy
         #: Pre-dispatch gate for BOTH systems: an index-bearing action whose target label matches a
         #: destructive keyword is replaced by a failed done asking for confirmation, unless the task
@@ -164,6 +167,20 @@ class DualProcessAgent(Agent):
             hops += 1
         return " ".join(parts)
 
+    async def _enter_targets(self, actions: list[Any]) -> list[tuple[int, str, str]]:
+        """``(-1, label, context)`` for each Enter System 2 proposes: the focused element and the submit
+        control of its form, as ``_active_element_label`` reads them."""
+        out: list[tuple[int, str, str]] = []
+        for action in actions:
+            data = action.model_dump(exclude_unset=True)
+            name, params = next(iter(data.items()))
+            if name == "send_keys" and "enter" in str((params or {}).get("keys", "")).casefold():
+                label = await self._active_element_label()
+                out.append(
+                    (-1, f"Enter in {label[:120]}" if label else "Enter with unknown focused element", label)
+                )
+        return out
+
     async def _active_element_label(self) -> str:
         """Label of the focused element and its form's submit control, for gating Enter."""
         js = (
@@ -249,28 +266,54 @@ class DualProcessAgent(Agent):
 
         The keyword list missed "Submit order" and "Finish" on every arm (results/q8-consent.md) while
         System 1's own noul judged "Submit order" at 0.80 inside a delegation. A judgment at or above
-        ``destructive_confirm`` pauses like a keyword hit; a failed call falls back to the keyword gate.
+        ``destructive_confirm`` pauses like a keyword hit. A judgment that cannot answer (the call fails,
+        or returns anything but one probability per target) pauses on the first target: until
+        2026-09-26 it fell back to the keyword gate and let the step through (package B1).
         """
         verifier = getattr(getattr(self.s1_policy, "verifier", None), "verifier", None)
         judge = getattr(verifier, "judge_destructive", None)
-        targets = self._click_targets(actions)
-        if judge is None or not targets:
+        if judge is None:
+            return None
+        targets = list(self._click_targets(actions))
+        enter = getattr(self, "_enter_targets", None)
+        if enter is not None:
+            # Enter submits the focused form: the same effect as clicking its submit control, so it gets
+            # the same judgment, not the keyword list alone (secondary audit 2026-09-27)
+            targets += await enter(actions)
+        if not targets:
             return None
         cached = getattr(self.browser_session, "_cached_browser_state_summary", None)
         store = getattr(self.s1_policy, "secrets", None)
         red = store.redactor() if store is not None else (lambda s: s)
+        from jevdual.authorize import checked_probabilities
+
         try:
-            probs = await judge(
-                red(self.task),
-                [{"label": red(label), "context": red(ctx)} for _, label, ctx in targets],
-                url=red(str(getattr(cached, "url", "") or "")),
-                title=red(str(getattr(cached, "title", "") or "")),
+            probs = checked_probabilities(
+                await judge(
+                    red(self.task),
+                    [{"label": red(label), "context": red(ctx)} for _, label, ctx in targets],
+                    url=red(str(getattr(cached, "url", "") or "")),
+                    title=red(str(getattr(cached, "title", "") or "")),
+                ),
+                len(targets),
             )
-        except Exception as exc:  # noqa: BLE001 - the keyword gate already ran; a failed judgment must not block the step
+        except Exception as exc:  # noqa: BLE001 - a judgment that cannot answer withholds the step
+            idx, label, _ = targets[0]
             log.warning(
-                "step %s: destructive judgment failed (%s); keyword gate only", self.state.n_steps, exc
+                "step %s: destructive judgment unavailable (%s); pausing before %r",
+                self.state.n_steps,
+                exc,
+                label,
             )
-            return None
+            getattr(self, "gate_judgments", []).append(
+                {
+                    "step": self.state.n_steps,
+                    "targets": [(lab, None) for _, lab, _ in targets],
+                    "hit": label,
+                    "error": f"{type(exc).__name__}: {str(exc)[:120]}",
+                }
+            )
+            return (label, f"judgment unavailable ({type(exc).__name__})", idx)
         floor = self.gate_policy.destructive_confirm
         record = {
             "step": self.state.n_steps,
@@ -393,6 +436,13 @@ class DualProcessAgent(Agent):
     async def _issue_receipt(self) -> None:
         """Q12: one Receipt for the step just executed, from the state after it. One extra DOM read
         per step (no screenshot); the next step's own read is unchanged."""
+        from jevdual.delivery import (
+            delivery_between,
+            expects_input,
+            navigated_between_steps,
+            read_only,
+            read_probe,
+        )
         from jevdual.effects import diff
         from jevdual.menu import build_menu
         from jevdual.receipts import action_lines, receipt_from_effect, receipt_text
@@ -402,6 +452,10 @@ class DualProcessAgent(Agent):
         out = self.state.last_model_output
         if self._pre_step_menu is None or not results or out is None or any(r.is_done for r in results):
             return
+        # package D: a wait, an extract or a page search dispatches nothing, so "no change" says
+        # nothing about it (the Q12b smoke's docs run got five such no-op receipts)
+        if read_only([next(iter(a.model_dump(exclude_unset=True)), "") for a in out.action]):
+            return
         try:
             after = await self.browser_session.get_browser_state_summary(include_screenshot=False)
             menu = build_menu(after)
@@ -410,15 +464,23 @@ class DualProcessAgent(Agent):
             return
         effect = diff(self._pre_step_menu, menu)
         error = next((r.error for r in results if r.error), None)
+        post = await read_probe(self.browser_session)
+        names = [next(iter(a.model_dump(exclude_unset=True)), "") for a in out.action]
+        executed = names[: len(results)]
         receipt = receipt_from_effect(
             step,
             action_lines(list(out.action), self._pre_step_state),
             effect,
             url_after=getattr(after, "url", "") or "",
             error=error,
+            delivery=delivery_between(self._pre_probe, post, expects_input(executed)),
+            between=navigated_between_steps(self._last_post_probe, self._pre_probe),
         )
+        self._last_post_probe = post
         self.receipts[step] = receipt
-        log.info("step %s: receipt %s: %s", step, receipt.effect, receipt.evidence)
+        log.info(
+            "step %s: receipt %s (input %s): %s", step, receipt.effect, receipt.delivery, receipt.evidence
+        )
         if self.receipts_mode == "deliver":
             last = results[-1]
             text = receipt_text(receipt)
@@ -429,8 +491,10 @@ class DualProcessAgent(Agent):
 
     async def _get_next_action(self, browser_state_summary: BrowserStateSummary) -> None:
         if getattr(self, "receipts_mode", "off") != "off":
+            from jevdual.delivery import read_probe
             from jevdual.menu import build_menu
 
+            self._pre_probe = await read_probe(self.browser_session)
             try:
                 self._pre_step_menu = build_menu(browser_state_summary)
                 self._pre_step_state = browser_state_summary

@@ -1,0 +1,3 @@
+{"t": 1790664681.2892852, "kind": "retry", "text": "done refused: a paraphrased summary carried no fact quoted from the page"}
+{"t": 1790664688.4400058, "kind": "retry", "text": "second done refused: the whole sentence read as one unsupported fact; QH-204 is not on the result page"}
+{"t": 1790664699.118479, "kind": "dead_end", "text": "no done is accepted on a result page without facts, even the page's own heading (harness defect: no-fact exemption not applied); effect proven by confirmed receipt"}

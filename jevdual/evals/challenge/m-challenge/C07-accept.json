@@ -1,0 +1,48 @@
+{
+  "id": "C07-accept",
+  "pair": "C07",
+  "category": "stale field values",
+  "task": "Leave the unsubmitted delivery form with postal code 48103.",
+  "requirements": [],
+  "answer_expected": false,
+  "answer": "Done",
+  "page": {
+    "url": "http://127.0.0.1:8767/summary.html",
+    "title": "Scratch service",
+    "text": "Delivery draft. Not submitted.",
+    "candidates": [
+      {
+        "id": 1,
+        "label": "Postal code",
+        "role": "textbox",
+        "operations": [
+          "type",
+          "append"
+        ],
+        "value": "48103"
+      }
+    ]
+  },
+  "mode": "browser",
+  "records": [
+    {
+      "t": 1.0,
+      "step": 1,
+      "kind": "receipt",
+      "action": {
+        "op": "type",
+        "target_label": "Postal code"
+      },
+      "effect": "confirmed",
+      "evidence": "'Postal code' now holds '48103'"
+    }
+  ],
+  "carries": {},
+  "memory": [
+    "step 1: type(Postal code) -> confirmed: 'Postal code' now holds '48103'"
+  ],
+  "context": [],
+  "expect": "accept",
+  "rationale": "The latest readback and currently observed field both hold the requested code.",
+  "truth_status": "supported"
+}

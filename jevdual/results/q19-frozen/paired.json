@@ -1,0 +1,246 @@
+{
+ "baseline": {
+  "D01-quote-tag": {
+   "out": "proven",
+   "cmds": 7,
+   "fr": 3,
+   "s": 8
+  },
+  "D02-cheapest-laptop": {
+   "out": "proven",
+   "cmds": 8,
+   "fr": 3,
+   "s": 11
+  },
+  "D03-practice-login": {
+   "out": "proven",
+   "cmds": 6,
+   "fr": 2,
+   "s": 10
+  },
+  "D04-iana-example": {
+   "out": "proven",
+   "cmds": 3,
+   "fr": 0,
+   "s": 5
+  },
+  "D05-ticket": {
+   "out": "proven",
+   "cmds": 4,
+   "fr": 0,
+   "s": 8
+  },
+  "D06-delete-one-draft": {
+   "out": "proven",
+   "cmds": 4,
+   "fr": 2,
+   "s": 6
+  },
+  "D07-settings": {
+   "out": "stopped",
+   "cmds": 10,
+   "fr": 2,
+   "s": 14
+  },
+  "D08-calc-power": {
+   "out": "proven",
+   "cmds": 50,
+   "fr": 4,
+   "s": 149
+  },
+  "D09-dictionary": {
+   "out": "stopped",
+   "cmds": 7,
+   "fr": 2,
+   "s": 14
+  },
+  "D10-image-size": {
+   "out": "proven",
+   "cmds": 5,
+   "fr": 0,
+   "s": 8
+  },
+  "D11-replace-word": {
+   "out": "stopped",
+   "cmds": 7,
+   "fr": 3,
+   "s": 23
+  },
+  "D12-save-new": {
+   "out": "stopped",
+   "cmds": 6,
+   "fr": 2,
+   "s": 11
+  },
+  "D13-computer-name": {
+   "out": "proven",
+   "cmds": 11,
+   "fr": 0,
+   "s": 19
+  },
+  "D14-sticky": {
+   "out": "proven",
+   "cmds": 5,
+   "fr": 1,
+   "s": 9
+  },
+  "D15-quote-to-doc": {
+   "out": "proven",
+   "cmds": 7,
+   "fr": 1,
+   "s": 23
+  },
+  "D16-calc-to-ticket": {
+   "out": "proven",
+   "cmds": 13,
+   "fr": 0,
+   "s": 32
+  },
+  "D17-laptop-price-to-doc": {
+   "out": "stopped",
+   "cmds": 6,
+   "fr": 3,
+   "s": 20
+  },
+  "D18-domain-to-ticket": {
+   "out": "proven",
+   "cmds": 6,
+   "fr": 1,
+   "s": 14
+  },
+  "D19-image-width-to-search": {
+   "out": "proven",
+   "cmds": 6,
+   "fr": 0,
+   "s": 15
+  },
+  "D20-move-file": {
+   "out": "stopped",
+   "cmds": 3,
+   "fr": 1,
+   "s": 7
+  }
+ },
+ "frozen": {
+  "D01-quote-tag": {
+   "out": "proven",
+   "cmds": 3,
+   "fr": 0,
+   "s": 4
+  },
+  "D02-cheapest-laptop": {
+   "out": "stopped",
+   "cmds": 3,
+   "fr": 1,
+   "s": 5
+  },
+  "D03-practice-login": {
+   "out": "proven",
+   "cmds": 6,
+   "fr": 0,
+   "s": 9
+  },
+  "D04-iana-example": {
+   "out": "proven",
+   "cmds": 3,
+   "fr": 0,
+   "s": 4
+  },
+  "D05-ticket": {
+   "out": "proven",
+   "cmds": 4,
+   "fr": 0,
+   "s": 8
+  },
+  "D06-delete-one-draft": {
+   "out": "proven",
+   "cmds": 3,
+   "fr": 1,
+   "s": 5
+  },
+  "D07-settings": {
+   "out": "stopped",
+   "cmds": 3,
+   "fr": 1,
+   "s": 7
+  },
+  "D08-calc-power": {
+   "out": "proven",
+   "cmds": 16,
+   "fr": 0,
+   "s": 43
+  },
+  "D09-dictionary": {
+   "out": "stopped",
+   "cmds": 3,
+   "fr": 2,
+   "s": 5
+  },
+  "D10-image-size": {
+   "out": "proven",
+   "cmds": 4,
+   "fr": 1,
+   "s": 7
+  },
+  "D11-replace-word": {
+   "out": "stopped",
+   "cmds": 4,
+   "fr": 1,
+   "s": 10
+  },
+  "D12-save-new": {
+   "out": "stopped",
+   "cmds": 1,
+   "fr": 1,
+   "s": 2
+  },
+  "D13-computer-name": {
+   "out": "proven",
+   "cmds": 7,
+   "fr": 0,
+   "s": 12
+  },
+  "D14-sticky": {
+   "out": "proven",
+   "cmds": 4,
+   "fr": 0,
+   "s": 9
+  },
+  "D15-quote-to-doc": {
+   "out": "stopped",
+   "cmds": 8,
+   "fr": 1,
+   "s": 21
+  },
+  "D16-calc-to-ticket": {
+   "out": "proven",
+   "cmds": 13,
+   "fr": 0,
+   "s": 32
+  },
+  "D17-laptop-price-to-doc": {
+   "out": "stopped",
+   "cmds": 5,
+   "fr": 1,
+   "s": 12
+  },
+  "D18-domain-to-ticket": {
+   "out": "proven",
+   "cmds": 6,
+   "fr": 0,
+   "s": 11
+  },
+  "D19-image-width-to-search": {
+   "out": "proven",
+   "cmds": 6,
+   "fr": 0,
+   "s": 12
+  },
+  "D20-move-file": {
+   "out": "stopped",
+   "cmds": 1,
+   "fr": 1,
+   "s": 2
+  }
+ }
+}

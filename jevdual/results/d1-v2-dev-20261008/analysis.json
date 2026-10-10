@@ -1,0 +1,105 @@
+{
+  "scheduled_attempts_finished": true,
+  "usable_contracts": 627,
+  "roles": {
+    "completion": {
+      "jev": {
+        "attempts": 108,
+        "usable": 108,
+        "all_attempt_median_ms": 140.44,
+        "all_attempt_p95_ms": 185.8
+      },
+      "decisions": {
+        "attempts": 108,
+        "usable": 108,
+        "all_attempt_median_ms": 147.62,
+        "all_attempt_p95_ms": 316.54
+      }
+    },
+    "risk": {
+      "jev": {
+        "attempts": 120,
+        "usable": 120,
+        "all_attempt_median_ms": 142.70499999999998,
+        "all_attempt_p95_ms": 226.0
+      },
+      "decisions": {
+        "attempts": 120,
+        "usable": 120,
+        "all_attempt_median_ms": 150.945,
+        "all_attempt_p95_ms": 668.7
+      }
+    },
+    "actions": {
+      "jev": {
+        "attempts": 90,
+        "usable": 90,
+        "all_attempt_median_ms": 146.685,
+        "all_attempt_p95_ms": 194.88
+      },
+      "decisions": {
+        "attempts": 90,
+        "usable": 81,
+        "all_attempt_median_ms": 168.305,
+        "all_attempt_p95_ms": 407.34
+      }
+    }
+  },
+  "negative_final_acceptance": [
+    {
+      "id": "C07-refuse",
+      "category": "stale field values",
+      "accepted_replays": 3,
+      "reasons": [
+        "complete p=0.82, max unmet p=0.00",
+        "complete p=0.82, max unmet p=0.00",
+        "complete p=0.82, max unmet p=0.00"
+      ]
+    },
+    {
+      "id": "C11-refuse",
+      "category": "destination and preserved neighbor",
+      "accepted_replays": 3,
+      "reasons": [
+        "complete p=0.92, max unmet p=0.00",
+        "complete p=0.92, max unmet p=0.00",
+        "complete p=0.92, max unmet p=0.00"
+      ]
+    },
+    {
+      "id": "C13-refuse",
+      "category": "answer calibration lookup",
+      "accepted_replays": 3,
+      "reasons": [
+        "complete p=1.00, max unmet p=0.00",
+        "complete p=1.00, max unmet p=0.00",
+        "complete p=1.00, max unmet p=0.00"
+      ]
+    },
+    {
+      "id": "C14-refuse",
+      "category": "answer calibration calculation",
+      "accepted_replays": 3,
+      "reasons": [
+        "complete p=1.00, max unmet p=0.00",
+        "complete p=1.00, max unmet p=0.00",
+        "complete p=1.00, max unmet p=0.00"
+      ]
+    },
+    {
+      "id": "C15-refuse",
+      "category": "answer calibration source",
+      "accepted_replays": 3,
+      "reasons": [
+        "complete p=1.00, max unmet p=0.00",
+        "complete p=1.00, max unmet p=0.00",
+        "complete p=1.00, max unmet p=0.00"
+      ]
+    }
+  ],
+  "all_runs_accounting": {
+    "reported_input_usage_usd": 0.04769387000000001,
+    "reported_or_reserved_upper_usd": 0.1884938700000002,
+    "unknown_usage_attempts": 2
+  }
+}

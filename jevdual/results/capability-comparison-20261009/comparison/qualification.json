@@ -1,0 +1,59 @@
+{
+  "development": [
+    {
+      "version": "v1",
+      "commit": "e00818b8d0d42ad0499609ef7b1a34efc3754e89",
+      "sessions": 2,
+      "invalid": 1,
+      "cost_usd": 0.2545796,
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-comparison-dev-20261009-v1",
+      "summary_sha256": "8ed9341372ff06cf91a44219ed58420598788a6c64463537c75debf767e55d36",
+      "included_in_C1": false
+    },
+    {
+      "version": "v2",
+      "commit": "1c97f94c55cbcbaac5b4d298c524c8ffcc57e1bc",
+      "sessions": 3,
+      "invalid": 1,
+      "cost_usd": 0.4412844,
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-comparison-dev-20261009-v2",
+      "summary_sha256": "213ecd88cb4256dc85158abf6afb034b0e1fa4aa632a712abcf2541825f3bc15",
+      "included_in_C1": false
+    },
+    {
+      "version": "v3",
+      "commit": "4f209bee70960fe60137fcfdde8cf0116d9f184c",
+      "sessions": 6,
+      "invalid": 0,
+      "cost_usd": 1.2032227999999998,
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-comparison-dev-20261009-v3",
+      "summary_sha256": "8292292ede765bf1788cf198decd3a99b0675cce9a1b99b6011894ab84de1e45",
+      "included_in_C1": false
+    }
+  ],
+  "initial_opus_reviews": [
+    {
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-comparison-peer-20261009",
+      "transcript_sha256": "b37c9e644d642613c9c134f5b9179ad7172710f1d88155b2e79a4fc62c5721d3",
+      "model": "claude-opus-5-5",
+      "tools": [],
+      "mcp_servers": [],
+      "terminal_success": true,
+      "cost_usd": 0.212955
+    },
+    {
+      "private_path": "/Users/thomasmain/projects/footwork/output/capability-comparison-harness-review-20261009",
+      "transcript_sha256": "c123548c15d97854c11175aee90e1542f669a34d4370dc8c4e2e253044b914a0",
+      "model": "claude-opus-5-5",
+      "tools": [],
+      "mcp_servers": [],
+      "terminal_success": true,
+      "cost_usd": 0.5507608
+    }
+  ],
+  "original_mailbox_peer_new_package_response_received": false,
+  "final_opus_scoring_terminal_success": false,
+  "final_opus_structured_review_complete": true,
+  "final_review_primary_outcome_disagreements": 0,
+  "final_review_false_completion_disagreements": 0
+}

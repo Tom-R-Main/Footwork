@@ -1,0 +1,305 @@
+{
+ "status": "budget",
+ "reason": "20 steps",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Inspect Preview window for image dimensions",
+   "action": {
+    "name": "look",
+    "surface": "image"
+   },
+   "exit": 0,
+   "output": "Preview: 'h08-poster.png'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n21 elements:\n  [   2] button     'View'\n  [   3] button     'zoom out'\n  [   4] button     'zoom in'\n  [   5] radio      'Rotate' checked=False\n  [   6] checkbox   'Form Filling' checked=False\n  [   7] combobox   'more toolbar items'\n  [   8] button     'menu button'\n  [   9] checkbox   'Instant Alpha' checked=False\n  [  10] checkbox   'Sketch' checked=False\n  [  11] checkbox   'Draw' checked=False\n  [  12] button     'Shapes'\n  [  13] button     'Text'\n  [  14] button     'Sign'\n  [  15] checkbox   'Adjust Color' checked=False\n  [  16] checkbox   'Adjust Size' checked=False\n  [  17] button     'Shape Style'\n  [  18] colorwell  'Border Color'\n  [  19] colorwell  'Fill Color'\n  [  20] button     'Text Style'\n  [  21] button     'Image Description'\n  [  25] statictext 'h08-poster.png'\npage text (14 chars):\nh08-poster.png",
+   "ms": 6166.950291997637,
+   "input_tokens": 1159,
+   "output_tokens": 251
+  },
+  {
+   "step": 2,
+   "note": "Open Adjust Size to reveal pixel dimensions",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "Adjust Size"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 6898.141207988374,
+   "input_tokens": 1159,
+   "output_tokens": 159
+  },
+  {
+   "step": 3,
+   "note": "Switch units to pixels to reveal pixel height",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "combobox"
+   },
+   "exit": 4,
+   "output": "'combobox' matches 3 elements: [28] 'combobox', [29] 'combobox', [31] 'combobox'",
+   "ms": 5565.727624998544,
+   "input_tokens": 1478,
+   "output_tokens": 314
+  },
+  {
+   "step": 4,
+   "note": "Need full view of Adjust Size dialog",
+   "action": {
+    "name": "look",
+    "surface": "image"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 3067.895958010922,
+   "input_tokens": 939,
+   "output_tokens": 101
+  },
+  {
+   "step": 5,
+   "note": "Open unit dropdown to switch to pixels",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "28"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  36] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  37] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  38] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  39] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 9894.88216600148,
+   "input_tokens": 1520,
+   "output_tokens": 402
+  },
+  {
+   "step": 6,
+   "note": "Switch size units to pixels to reveal pixel height",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "28"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 17166.9755000039,
+   "input_tokens": 1628,
+   "output_tokens": 696
+  },
+  {
+   "step": 7,
+   "note": "Change units to pixels to read height",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "31"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 11232.210375004797,
+   "input_tokens": 1673,
+   "output_tokens": 450
+  },
+  {
+   "step": 8,
+   "note": "Try typing pixels unit into combobox",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "28"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 14986.654707987327,
+   "input_tokens": 1718,
+   "output_tokens": 652
+  },
+  {
+   "step": 9,
+   "note": "Close Adjust Size to try Inspector",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "key",
+    "target": "Cancel",
+    "keys": [
+     "Escape"
+    ]
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 20846.160625005723,
+   "input_tokens": 1763,
+   "output_tokens": 871
+  },
+  {
+   "step": 10,
+   "note": "Try Inspector for pixel dimensions",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "menu",
+    "path": "Tools > Show Inspector"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 21843.028957999195,
+   "input_tokens": 1803,
+   "output_tokens": 890
+  },
+  {
+   "step": 11,
+   "note": "Try typing pixels into unit combobox",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "28"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  36] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  37] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  38] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  39] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 16951.46583400492,
+   "input_tokens": 1902,
+   "output_tokens": 677
+  },
+  {
+   "step": 12,
+   "note": "Try typing pixels into units combobox",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "28"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 19370.06741699588,
+   "input_tokens": 1856,
+   "output_tokens": 992
+  },
+  {
+   "step": 13,
+   "note": "Try typing pixels into units combobox",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "24"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 14125.307082998916,
+   "input_tokens": 1863,
+   "output_tokens": 590
+  },
+  {
+   "step": 14,
+   "note": "Need fresh Preview view to change units",
+   "action": {
+    "name": "look",
+    "surface": "image"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 10098.6681249924,
+   "input_tokens": 1891,
+   "output_tokens": 552
+  },
+  {
+   "step": 15,
+   "note": "Switch units to pixels to read height",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "type",
+    "target": "28",
+    "text": "pixels"
+   },
+   "exit": 0,
+   "output": " observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (132 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n100 percent\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 17867.960167001,
+   "input_tokens": 1805,
+   "output_tokens": 554
+  },
+  {
+   "step": 16,
+   "note": "Try dropdown arrow to change units",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "click",
+    "target": "32"
+   },
+   "exit": 0,
+   "output": "tion is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (140 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n10.61 \u00d7 4.42 inches\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 15438.874792002025,
+   "input_tokens": 1898,
+   "output_tokens": 711
+  },
+  {
+   "step": 17,
+   "note": "Try opening units dropdown via keyboard",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "key",
+    "target": "28",
+    "text": "Down"
+   },
+   "exit": 1,
+   "output": "key needs a key name, e.g. key Down, key cmd Down",
+   "ms": 25826.431375011452,
+   "input_tokens": 1866,
+   "output_tokens": 1229
+  },
+  {
+   "step": 18,
+   "note": "Need current Preview view to find height",
+   "action": {
+    "name": "look",
+    "surface": "image"
+   },
+   "exit": 0,
+   "output": "tion is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (140 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n10.61 \u00d7 4.42 inches\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 3370.1257909997366,
+   "input_tokens": 1245,
+   "output_tokens": 127
+  },
+  {
+   "step": 19,
+   "note": "Try changing units combobox to pixels via keyboard",
+   "action": {
+    "name": "do",
+    "surface": "image",
+    "op": "key",
+    "target": "28",
+    "text": "Down"
+   },
+   "exit": 1,
+   "output": "key needs a key name, e.g. key Down, key cmd Down",
+   "ms": 16947.44195799285,
+   "input_tokens": 1803,
+   "output_tokens": 1025
+  },
+  {
+   "step": 20,
+   "note": "Inspect Preview window for dimensions",
+   "action": {
+    "name": "look",
+    "surface": "image"
+   },
+   "exit": 0,
+   "output": "tion is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n28 elements:\n  [   2] combobox   'more toolbar items'\n  [   3] button     'menu button'\n  [   4] checkbox   'Instant Alpha' checked=False\n  [   5] checkbox   'Sketch' checked=False\n  [   6] checkbox   'Draw' checked=False\n  [   7] button     'Shapes'\n  [   8] button     'Text'\n  [   9] button     'Sign'\n  [  10] checkbox   'Adjust Color' checked=False\n  [  11] checkbox   'Adjust Size' checked=False\n  [  12] button     'Shape Style'\n  [  13] colorwell  'Border Color'\n  [  14] colorwell  'Fill Color'\n  [  15] button     'Text Style'\n  [  16] button     'Image Description'\n  [  19] statictext 'h08-poster.png'\n  [  21] button     'OK'  [_NS:198]\n  [  22] button     'Cancel'  [_NS:198]\n  [  23] checkbox   'Resample image' checked=True  [_NS:198]\n  [  24] textbox    'textbox' = '10.61'  [_NS:198]\n  [  25] textbox    'textbox' = '4.42'  [_NS:198]\n  [  26] textbox    'textbox' = '72'  [_NS:198]\n  [  27] checkbox   'lock' checked=True  [_NS:198]\n  [  28] combobox   'combobox' = 'inches'  [_NS:198]\n  [  29] combobox   'combobox' = 'pixels/inch'  [_NS:198]\n  [  30] checkbox   'Scale proportionally' checked=True  [_NS:198]\n  [  31] combobox   'combobox' = 'Custom'  [_NS:198]\n  [  32] button     '_NS:365'  [_NS:198]\npage text (140 chars):\nh08-poster.png\nWidth:\nHeight:\nResolution:\nFit into:\npixels\nImage Dimensions\n10.61 \u00d7 4.42 inches\n4 KB (was 4 KB)\nResulting Size\n10.61\n4.42\n72",
+   "ms": 3817.1579170011682,
+   "input_tokens": 1239,
+   "output_tokens": 150
+  }
+ ],
+ "answer": null,
+ "input_tokens": 32208,
+ "output_tokens": 11393
+}

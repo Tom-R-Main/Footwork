@@ -1,0 +1,141 @@
+{
+ "status": "done_unverified",
+ "reason": "verifier: verify (complete p=0.89) [279 ms]: answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.89, max unmet p=0.00",
+ "steps": [
+  {
+   "step": 1,
+   "note": "Read active reference from source file",
+   "action": {
+    "name": "read",
+    "surface": "source",
+    "match": "Reference: ([A-Z]+-\\d+)",
+    "as": "REF"
+   },
+   "exit": 0,
+   "output": "carried @REF = 'QUIET-83', read from native TextEdit at app://TextEdit (text 'Reference: QUIET-83', its match) at step 0 of session results/q19-heldout-model/H10-document-to-request/source",
+   "ms": 32375.88712500292,
+   "input_tokens": 960,
+   "output_tokens": 143
+  },
+  {
+   "step": 2,
+   "note": "Read active quantity from source",
+   "action": {
+    "name": "read",
+    "surface": "source",
+    "match": "Quantity: (\\d+)",
+    "as": "QTY"
+   },
+   "exit": 0,
+   "output": "carried @QTY = '27', read from native TextEdit at app://TextEdit (text 'Quantity: 27', its match) at step 0 of session results/q19-heldout-model/H10-document-to-request/source",
+   "ms": 25085.175334010273,
+   "input_tokens": 1058,
+   "output_tokens": 113
+  },
+  {
+   "step": 3,
+   "note": "Enter active reference into scratch form",
+   "action": {
+    "name": "do",
+    "surface": "request",
+    "op": "type",
+    "target": "Reference",
+    "text": "@REF"
+   },
+   "exit": 0,
+   "output": "carrying @REF = 'QUIET-83', read from native TextEdit at app://TextEdit (text 'Reference: QUIET-83', its match) at step 0 of session results/q19-heldout-model/H10-document-to-request/source\nnote: the window changed since your last look (title changed to 'Scratch cutting request'); ids below are from the fresh observation\ndispatched type(Reference) text=@REF (from native app://TextEdit): driver says unverifiable in 0.2s\nreceipt: Receipt for type(Reference) text=@REF (from native app://TextEdit): confirmed ('Reference' now holds 'QUIET-83').\nGoogle Chrome (footwork): 'Scratch cutting request'\n6 elements:\n  [   1] textbox    'Reference' = 'QUIET-83'\n  [   2] textbox    'Quantity'\n  [   3] button     'Submit cutting request'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\n  [  14] statictext 'QUIET-83'\npage text (104 chars):\nScratch cutting request\nLocal simulation: no real order, payment or message.\nReference\nQuantity\nQUIET-83",
+   "ms": 24006.752207991667,
+   "input_tokens": 1137,
+   "output_tokens": 121
+  },
+  {
+   "step": 4,
+   "note": "Enter quantity into request form",
+   "action": {
+    "name": "do",
+    "surface": "request",
+    "op": "type",
+    "target": "Quantity",
+    "text": "@QTY"
+   },
+   "exit": 0,
+   "output": "carrying @QTY = '27', read from native TextEdit at app://TextEdit (text 'Quantity: 27', its match) at step 0 of session results/q19-heldout-model/H10-document-to-request/source\ndispatched type(Quantity) text=@QTY (from native app://TextEdit): driver says unverifiable in 0.1s\nreceipt: Receipt for type(Quantity) text=@QTY (from native app://TextEdit): confirmed ('Quantity' now holds '27').\nGoogle Chrome (footwork): 'Scratch cutting request'\n7 elements:\n  [   1] textbox    'Quantity' = '27'\n  [   2] textbox    'Reference' = 'QUIET-83'\n  [   3] button     'Submit cutting request'\n  [  12] generic    'generic'\n  [  13] generic    'generic'\n  [  14] statictext 'QUIET-83'\n  [  15] statictext '27'\npage text (107 chars):\nScratch cutting request\nLocal simulation: no real order, payment or message.\nReference\nQuantity\n27\nQUIET-83",
+   "ms": 23423.25512500247,
+   "input_tokens": 1199,
+   "output_tokens": 127
+  },
+  {
+   "step": 5,
+   "note": "Both fields filled, submitting request",
+   "action": {
+    "name": "do",
+    "surface": "request",
+    "op": "click",
+    "target": "Submit cutting request"
+   },
+   "exit": 0,
+   "output": "dispatched click(Submit cutting request): driver says unverifiable in 0.1s\nreceipt: Receipt for click(Submit cutting request): confirmed (navigated to /q19h-cutting-done.html?reference=QUIET-83&quantity=27; 0 elements added, 6 removed, 0 changed).\nGoogle Chrome (footwork): 'Scratch cutting request'\n0 elements:\npage text (77 chars):\nScratch request recorded\nThe local service has recorded your cutting request.",
+   "ms": 36039.26770800899,
+   "input_tokens": 1227,
+   "output_tokens": 113
+  },
+  {
+   "step": 6,
+   "note": "Request submitted and recorded, finishing",
+   "action": {
+    "name": "done",
+    "surface": "request",
+    "answer": "QUIET-83 27"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.92) [253 ms]: answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.92, max unmet p=0.00\n  not found on the page: 'QUIET-83 27'",
+   "ms": 43453.01408300293,
+   "input_tokens": 1149,
+   "output_tokens": 226
+  },
+  {
+   "step": 7,
+   "note": "Check result page for verifiable values",
+   "action": {
+    "name": "look",
+    "surface": "request"
+   },
+   "exit": 0,
+   "output": "Google Chrome (footwork): 'Scratch request recorded'\n0 elements:\npage text (77 chars):\nScratch request recorded\nThe local service has recorded your cutting request.",
+   "ms": 21733.756667003036,
+   "input_tokens": 1215,
+   "output_tokens": 139
+  },
+  {
+   "step": 8,
+   "note": "Submit confirmation with carried values",
+   "action": {
+    "name": "done",
+    "surface": "request",
+    "answer": "@REF @QTY"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.89) [186 ms]: answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.89, max unmet p=0.00\n  not found on the page: 'QUIET-83 27'",
+   "ms": 29731.49041699071,
+   "input_tokens": 1193,
+   "output_tokens": 850
+  },
+  {
+   "step": 9,
+   "note": "Submit confirmed, finish with page confirmation text",
+   "action": {
+    "name": "done",
+    "surface": "request",
+    "answer": "Scratch request recorded"
+   },
+   "exit": 5,
+   "output": "verifier: verify (complete p=0.89) [279 ms]: answer carries no fact found on the page (0 unsupported, rest narrative); complete p=0.89, max unmet p=0.00",
+   "ms": 42168.07779199735,
+   "input_tokens": 1260,
+   "output_tokens": 1604
+  }
+ ],
+ "answer": "Scratch request recorded",
+ "input_tokens": 10398,
+ "output_tokens": 3436
+}

@@ -1,0 +1,18 @@
+{
+ "task": "H09-browser-to-calculator",
+ "t_oracle": 1790665990.616908,
+ "oracle_ok": true,
+ "oracle": "answer contains '56'",
+ "answer": "The active Larch batch has 56 pieces: Calculator shows 8\u00d77 = 56 (8 trays of 7 pieces).",
+ "commands": 20,
+ "wall_s": 209.1,
+ "friction": 2,
+ "friction_by_kind": {
+  "misread": 1,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 1,
+  "vague_stop": 0
+ },
+ "files": {}
+}

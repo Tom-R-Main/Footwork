@@ -1,0 +1,177 @@
+[
+ {
+  "variant": "V0 as run",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.49,
+  "reason": "uncertain: complete p=0.49, max unmet p=0.00"
+ },
+ {
+  "variant": "V0 as run",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.49,
+  "reason": "uncertain: complete p=0.49, max unmet p=0.00"
+ },
+ {
+  "variant": "V0 as run",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.52,
+  "reason": "uncertain: complete p=0.52, max unmet p=0.00"
+ },
+ {
+  "variant": "V0 as run",
+  "repeat": 3,
+  "band": "verify",
+  "complete": 0.54,
+  "reason": "uncertain: complete p=0.54, max unmet p=0.00"
+ },
+ {
+  "variant": "V0 as run",
+  "repeat": 4,
+  "band": "verify",
+  "complete": 0.51,
+  "reason": "uncertain: complete p=0.51, max unmet p=0.00"
+ },
+ {
+  "variant": "V1 answer states source and exclusion",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.71,
+  "reason": "uncertain: complete p=0.71, max unmet p=0.00"
+ },
+ {
+  "variant": "V1 answer states source and exclusion",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.69,
+  "reason": "uncertain: complete p=0.69, max unmet p=0.00"
+ },
+ {
+  "variant": "V1 answer states source and exclusion",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.72,
+  "reason": "uncertain: complete p=0.72, max unmet p=0.00"
+ },
+ {
+  "variant": "V1 answer states source and exclusion",
+  "repeat": 3,
+  "band": "verify",
+  "complete": 0.64,
+  "reason": "uncertain: complete p=0.64, max unmet p=0.00"
+ },
+ {
+  "variant": "V1 answer states source and exclusion",
+  "repeat": 4,
+  "band": "verify",
+  "complete": 0.69,
+  "reason": "uncertain: complete p=0.69, max unmet p=0.00"
+ },
+ {
+  "variant": "V2 qualifier as requirement",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.44,
+  "reason": "uncertain: complete p=0.44, max unmet p=0.53"
+ },
+ {
+  "variant": "V2 qualifier as requirement",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.46,
+  "reason": "uncertain: complete p=0.46, max unmet p=0.52"
+ },
+ {
+  "variant": "V2 qualifier as requirement",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.39,
+  "reason": "uncertain: complete p=0.39, max unmet p=0.50"
+ },
+ {
+  "variant": "V2 qualifier as requirement",
+  "repeat": 3,
+  "band": "verify",
+  "complete": 0.47,
+  "reason": "uncertain: complete p=0.47, max unmet p=0.50"
+ },
+ {
+  "variant": "V2 qualifier as requirement",
+  "repeat": 4,
+  "band": "verify",
+  "complete": 0.5,
+  "reason": "uncertain: complete p=0.50, max unmet p=0.47"
+ },
+ {
+  "variant": "V3 carried read as evidence",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.67,
+  "reason": "uncertain: complete p=0.67, max unmet p=0.00"
+ },
+ {
+  "variant": "V3 carried read as evidence",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.64,
+  "reason": "uncertain: complete p=0.64, max unmet p=0.00"
+ },
+ {
+  "variant": "V3 carried read as evidence",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.62,
+  "reason": "uncertain: complete p=0.62, max unmet p=0.00"
+ },
+ {
+  "variant": "V3 carried read as evidence",
+  "repeat": 3,
+  "band": "verify",
+  "complete": 0.71,
+  "reason": "uncertain: complete p=0.71, max unmet p=0.00"
+ },
+ {
+  "variant": "V3 carried read as evidence",
+  "repeat": 4,
+  "band": "verify",
+  "complete": 0.67,
+  "reason": "uncertain: complete p=0.67, max unmet p=0.00"
+ },
+ {
+  "variant": "V4 control: no qualifier (changes the task)",
+  "repeat": 0,
+  "band": "verify",
+  "complete": 0.75,
+  "reason": "uncertain: complete p=0.75, max unmet p=0.00"
+ },
+ {
+  "variant": "V4 control: no qualifier (changes the task)",
+  "repeat": 1,
+  "band": "verify",
+  "complete": 0.77,
+  "reason": "uncertain: complete p=0.77, max unmet p=0.00"
+ },
+ {
+  "variant": "V4 control: no qualifier (changes the task)",
+  "repeat": 2,
+  "band": "verify",
+  "complete": 0.75,
+  "reason": "uncertain: complete p=0.75, max unmet p=0.00"
+ },
+ {
+  "variant": "V4 control: no qualifier (changes the task)",
+  "repeat": 3,
+  "band": "verify",
+  "complete": 0.79,
+  "reason": "uncertain: complete p=0.79, max unmet p=0.00"
+ },
+ {
+  "variant": "V4 control: no qualifier (changes the task)",
+  "repeat": 4,
+  "band": "accept",
+  "complete": 0.8,
+  "reason": "complete p=0.80, max unmet p=0.00"
+ }
+]

@@ -1,0 +1,18 @@
+{
+  "source_commit": "4f209be",
+  "measured_commit": "c7c418c7a118fca1b86b7de653668f45478e0bc7",
+  "product_changed_after_suite": false,
+  "full_suite": {
+    "passed": 1198,
+    "skipped": 26,
+    "seconds": 97.6,
+    "private_log": "/Users/thomasmain/projects/footwork/output/capability-comparison-final-suite.log",
+    "sha256": "a34c0deafac0f04796cd170ad2f23a6c33e24166cde8fce8c5e0b51afc0ce19c"
+  },
+  "focused_relay_fixture": {
+    "passed": 10,
+    "seconds": 2.61
+  },
+  "lint": "ruff check python evals tests scripts passed before measurement",
+  "raw_logs_committed": false
+}

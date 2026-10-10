@@ -1,0 +1,197 @@
+{
+  "surface": "browser_fixture",
+  "accepted": false,
+  "dispatched": false,
+  "guard_reason": "model_not_confidently_true",
+  "goal_met": false,
+  "effect_changed": false,
+  "wrong_effect": false,
+  "before": {
+    "selected": null
+  },
+  "after": {
+    "selected": null
+  },
+  "current_observation": {
+    "image": "current.png",
+    "image_sha256": "b654062e9b0c85e202f07531857dd1d30a6ce2f060658a2277d844d70c84f470",
+    "dimensions": [
+      640,
+      360
+    ],
+    "captured_at": "2026-10-08T19:35:30.347020+00:00",
+    "revision": "aea7b7c9d8097586da5ee3c71b10f4b3a39943a8ab08a3edee526abdfbbdf142",
+    "target_id": "38BD523BE21428293E5C4C2389B437EB",
+    "process_id": 86616,
+    "dom": {
+      "rendered_text": "Delivery map\n\nChoose a marker inside the shaded delivery zone.\n\nNo action yet",
+      "elements": [
+        {
+          "target_id": "map",
+          "role": "canvas",
+          "name": "",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 0,
+            "y": 70,
+            "width": 640,
+            "height": 220
+          }
+        },
+        {
+          "target_id": "marker-a",
+          "role": "button",
+          "name": "marker-a",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 140,
+            "y": 170,
+            "width": 20,
+            "height": 20
+          }
+        },
+        {
+          "target_id": "marker-b",
+          "role": "button",
+          "name": "marker-b",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 350,
+            "y": 190,
+            "width": 20,
+            "height": 20
+          }
+        }
+      ]
+    },
+    "ax": [
+      {
+        "role": "heading",
+        "name": "Delivery map",
+        "value": null,
+        "properties": [
+          {
+            "name": "level",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "Canvas",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "button",
+        "name": "marker-a",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "button",
+        "name": "marker-b",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Delivery map",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Choose a marker inside the shaded delivery zone.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Delivery map",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Choose a marker inside the shaded delivery zone.",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      }
+    ],
+    "phases_ms": {
+      "capture": 43.05037495214492,
+      "extraction": 2.1487089106813073,
+      "encode": 0.26879203505814075
+    }
+  },
+  "reconstruction_content_matches": true,
+  "phases_ms": {
+    "dispatch": 0.0,
+    "setup_capture": 665.8798330463469,
+    "validation": 0.020125065930187702,
+    "readback": 0.1722910674288869,
+    "total": 666.292457957752
+  },
+  "evaluation": "oracle used only in independent goal/effect check"
+}

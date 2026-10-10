@@ -1,0 +1,6 @@
+{"t": 1790631492.484322, "surface": "web", "args": ["start", "Log in and report the heading", "--browser", "--url", "https://practicetestautomation.com/practice-test-login/"], "exit": 0, "s": 3.11}
+{"t": 1790631500.9770072, "surface": "web", "args": ["do", "type", "Username", "student"], "exit": 0, "s": 1.81}
+{"t": 1790631502.793231, "surface": "web", "args": ["do", "type", "Password", "{PTA}"], "exit": 0, "s": 1.72}
+{"t": 1790631504.949161, "surface": "web", "args": ["do", "click", "Submit"], "exit": 0, "s": 2.07}
+{"t": 1790631505.485535, "surface": "web", "args": ["look", "--text", "400"], "exit": 0, "s": 0.44}
+{"t": 1790631517.5578802, "surface": "web", "args": ["done", "The heading after logging in is \"Logged In Successfully\"."], "exit": 5, "s": 1.0}

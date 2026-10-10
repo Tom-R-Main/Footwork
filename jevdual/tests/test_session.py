@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import dataclasses
+import json
 from types import SimpleNamespace
 
 from jevdual.menu import Candidate, Menu
@@ -61,7 +63,8 @@ def test_secret_and_password_receipts_never_show_the_value(tmp_path):
     }
     st = _state(tmp_path, before, pend)
     r = receipt_for(st, _nm([_field(1, "Password", input_type="password", has_value=True)]))
-    assert r["effect"] == "confirmed" and "hunter" not in r["text"] and "a value" in r["evidence"]
+    # a password field says only that it holds something: unverifiable, not confirmed (package A2)
+    assert r["effect"] == "unverifiable" and "hunter" not in r["text"] and "a value" in r["evidence"]
     r = receipt_for(st, _nm([_field(1, "Password", input_type="password", has_value=False)]))
     assert r["effect"] == "suspected_noop" and "{secret}" in r["evidence"]
 
@@ -140,3 +143,262 @@ def test_browser_replace_typing_asks_the_posture_and_never_keystrokes():
     assert (
         eff.effect != "refused" and calls[-1][1]["replace"] is True and calls[-1][1]["mode"] == "insert_text"
     )
+
+
+def _append_pending(**kw):
+    return {
+        "line": "append(text area)",
+        "driver_effect": "confirmed",
+        "op": "append",
+        "target_id": 1,
+        "target_label": "text area",
+        "intended": "£51.77",
+        "secret": False,
+    } | kw
+
+
+def test_native_append_after_a_stripped_trailing_newline_is_confirmed(tmp_path):
+    """G1 pilot: the file ended with a newline the Driver strips, the bridge appended no separator, and
+    the receipt said partial on a correct append."""
+    st = _state(tmp_path, [_field(1, "text area", value="Price:")], _append_pending())
+    r = receipt_for(st, _nm([_field(1, "text area", value="Price:\n£51.77")]))
+    assert r is not None and r["effect"] == "confirmed", r
+
+
+def test_browser_append_keeps_the_exact_rule(tmp_path):
+    st = _state(tmp_path, [_field(1, "text area", value="Price:")], _append_pending(mode="browser"))
+    r = receipt_for(st, _nm([_field(1, "text area", value="Price:\n£51.77")]))
+    assert r is not None and r["effect"] == "partial", r
+
+
+def test_a_save_is_confirmed_only_by_the_file_on_disk(tmp_path):
+    cands = [_field(1, "text area", value="x")]
+    for rb, effect in (
+        (
+            {"ok": True, "path": "/f", "detail": "/f holds the window's text exactly (5 characters)"},
+            "confirmed",
+        ),
+        (
+            {"ok": False, "path": "/f", "detail": "/f differs from the window's text at character 3"},
+            "partial",
+        ),
+        ({"ok": None, "detail": "the window names no file (unsaved document)"}, "unverifiable"),
+    ):
+        pend = {"line": "hotkey(cmd+s)", "driver_effect": "unverifiable", "op": "hotkey", "save_readback": rb}
+        r = receipt_for(_state(tmp_path, cands, pend), _nm(cands))
+        assert r is not None and r["effect"] == effect and rb["detail"] in r["evidence"], r
+
+
+def test_save_readback_compares_the_disk_with_the_window(tmp_path):
+    from types import SimpleNamespace
+
+    from jevdual.native import NativeEffect, is_save, save_readback, with_save_readback
+
+    f = tmp_path / "t.txt"
+    f.write_text("a\nb")
+    ax = SimpleNamespace(document_path=lambda pid, wid: str(f), text_area_values=lambda pid, wid: ["a\nb"])
+    rb = save_readback(ax, 1, 2)
+    assert rb["ok"] is True
+    eff = with_save_readback(NativeEffect("hotkey", -1, "cmd+s", "unverifiable"), rb)
+    assert eff.effect == "confirmed" and "saved: " in eff.summary and eff.readback == rb
+    ax.text_area_values = lambda pid, wid: ["a\nc"]
+    rb = save_readback(ax, 1, 2)
+    assert rb["ok"] is False and "character 2" in rb["detail"]
+    assert with_save_readback(NativeEffect("menu", -1, "File > Save", "unverifiable"), rb).effect == "partial"
+    ax.document_path = lambda pid, wid: None
+    rb = save_readback(ax, 1, 2)
+    assert (
+        rb["ok"] is None
+        and with_save_readback(NativeEffect("m", -1, "x", "confirmed"), rb).effect == "unverifiable"
+    )
+    assert is_save(keys=["cmd", "s"]) and is_save(path=["File", "Save"])
+    assert not is_save(keys=["cmd", "shift", "s"]) and not is_save(path=["File", "Save As…"])
+
+
+def test_no_screenshot_is_written_while_the_session_holds_a_secret(tmp_path, monkeypatch):
+    """Secondary audit 2026-09-27: the screenshot was written before the observation was scrubbed, so a
+    named secret shown in an ordinary field could persist in the image. Pixels cannot be scrubbed, so
+    no screenshot is captured once the session holds a secret."""
+    import asyncio
+
+    from jevdual.session import observe
+
+    asked: list[object] = []
+
+    class Bridge:
+        async def observe(self, *, screenshot_path=None):
+            asked.append(screenshot_path)
+            return _nm([_field(1, "API key", value="s3cr3t-value")])
+
+    st = SessionState(dir=str(tmp_path), app="X", pid=1, window_id=2, task="t")
+    asyncio.run(observe(st, Bridge()))
+    assert asked[-1] is not None  # no secret yet: the audit screenshot is kept
+    monkeypatch.setenv("FOOTWORK_SECRET_KEY", "s3cr3t-value")
+    st.secret_names.append("KEY")
+    nm, _ = asyncio.run(observe(st, Bridge()))
+    assert asked[-1] is None
+    assert "s3cr3t-value" not in json.dumps(dataclasses.asdict(nm.menu), default=str)
+    assert "screenshot withheld" in (tmp_path / "session.jsonl").read_text()
+
+
+def test_screenshots_stay_off_after_a_secret_even_when_its_value_is_gone(tmp_path, monkeypatch):
+    """The first fix keyed on the value being scrubbable: a short secret, or one no longer exported,
+    re-enabled capture while the session still remembered handling it."""
+    import asyncio
+
+    from jevdual.session import observe
+
+    asked: list[object] = []
+
+    class Bridge:
+        async def observe(self, *, screenshot_path=None):
+            asked.append(screenshot_path)
+            return _nm([_field(1, "PIN", value="42")])
+
+    st = SessionState(dir=str(tmp_path), app="X", pid=1, window_id=2, task="t")
+    st.secret_names.append("PIN")
+    monkeypatch.delenv("FOOTWORK_SECRET_PIN", raising=False)
+    asyncio.run(observe(st, Bridge()))
+    monkeypatch.setenv("FOOTWORK_SECRET_PIN", "42")  # shorter than the scrub minimum
+    asyncio.run(observe(st, Bridge()))
+    assert asked == [None, None]
+
+
+def test_a_menu_items_effect_is_not_confirmed_by_the_windows_change(tmp_path):
+    """Q13a task 4: File > Open in Finder read "confirmed (1 elements removed)" and opened nothing."""
+    before = [_field(1, "a", value="x"), _field(2, "b", value="y")]
+    pend = {"line": "menu(File > Open)", "driver_effect": "unverifiable", "op": "menu"}
+    r = receipt_for(_state(tmp_path, before, pend), _nm(before[:1]))
+    assert r is not None and r["effect"] == "unverifiable" and "another window or app" in r["evidence"], r
+
+
+def test_a_navigation_that_became_a_download_is_not_called_not_applied(tmp_path):
+    """Q13a task 4: navigating to a .txt read "refused (not applied ...)" while the file was downloaded."""
+    cands = [_field(1, "a", value="x")]
+    pend = {
+        "line": "navigate(http://x/report.txt)",
+        "driver_effect": "refused",
+        "op": "navigate",
+        "error": "driver refused:  navigation failed: net::ERR_ABORTED",
+    }
+    r = receipt_for(_state(tmp_path, cands, pend), _nm(cands))
+    assert r is not None and r["effect"] == "unverifiable" and "download" in r["evidence"], r
+
+
+def test_cross_context_labels_receipts_and_carries_with_their_surface(tmp_path):
+    import json as _json
+
+    from jevdual.session import cross_context
+
+    st = SessionState(
+        dir=str(tmp_path), app="Google Chrome (footwork)", pid=1, window_id=2, task="t", mode="browser"
+    )
+    st.last_url = "https://books.toscrape.com/"
+    st.save()
+    (tmp_path / "session.jsonl").write_text(
+        _json.dumps(
+            {
+                "kind": "receipt",
+                "action": {"line": "click(Books)"},
+                "effect": "confirmed",
+                "evidence": "navigated to /",
+            }
+        )
+        + "\n"
+    )
+    (tmp_path / "carries.json").write_text(
+        _json.dumps(
+            {
+                "price": {
+                    "text": "£51.77",
+                    "location": "https://books.toscrape.com/",
+                    "title": "",
+                    "element_role": "text",
+                    "element_label": "£51.77",
+                }
+            }
+        )
+    )
+    ctx = cross_context(tmp_path)
+    assert ctx[0]["surface"] == "Google Chrome (footwork) https://books.toscrape.com/"
+    assert ctx[0]["actions"] == ["click(Books) -> confirmed: navigated to /"]
+    assert "read @price = '£51.77' at https://books.toscrape.com/" in ctx[1]["actions"][0]
+
+
+def test_carried_checks_say_whether_the_field_holds_the_carried_value():
+    from jevdual.session import carried_checks
+
+    carry = {"name": "price", "text": "£51.77", "location": "https://books.toscrape.com/", "title": ""}
+    rec = {"kind": "do", "op": "append", "target_label": "text area", "carry": carry}
+    ok = carried_checks([rec], _nm([_field(1, "text area", value="Price:\n£51.77")]).menu)
+    assert ok[0]["actions"][0].startswith("harness check: 'text area' holds @price = '£51.77'")
+    bad = carried_checks([rec], _nm([_field(1, "text area", value="Price:\n£52.00")]).menu)
+    assert "does NOT hold" in bad[0]["actions"][0] and "'£52.00'" in bad[0]["actions"][0]
+    typed = {"kind": "do", "op": "type", "target_label": "Message", "carry": {**carry, "text": "624"}}
+    assert (
+        "holds @price = '624'"
+        in carried_checks([typed], _nm([_field(2, "Message", value="624")]).menu)[0]["actions"][0]
+    )
+
+
+def test_writing_a_finder_name_field_is_not_a_confirmed_rename(tmp_path):
+    """E3: typing into Finder's list-view name cell read "confirmed" while the file on disk kept its name."""
+    before = [_field(61, "textbox", value="draft.txt")]
+    pend = {
+        "line": "type(textbox)",
+        "driver_effect": "confirmed",
+        "op": "type",
+        "target_id": 61,
+        "target_label": "textbox",
+        "intended": "KB-20260921.txt",
+        "secret": False,
+        "app": "Finder",
+    }
+    r = receipt_for(_state(tmp_path, before, pend), _nm([_field(61, "textbox", value="KB-20260921.txt")]))
+    assert r is not None and r["effect"] == "unverifiable" and "not a committed rename" in r["evidence"], r
+
+
+def test_a_secret_typed_into_a_masked_field_is_unverifiable_not_partial(tmp_path, monkeypatch):
+    """Q19 R3: a correct password read "partial (holds {secret}, not the text typed)" because the browser
+    reads the field back as bullets and does not mark it as a password."""
+    monkeypatch.setenv("FOOTWORK_SECRET_PTA", "Password123")
+    before = [_field(34, "Password")]
+    pend = {
+        "line": "type(Password)",
+        "driver_effect": "confirmed",
+        "op": "type",
+        "target_id": 34,
+        "target_label": "Password",
+        "intended": None,
+        "secret": True,
+    }
+    st = _state(tmp_path, before, pend)
+    st.secret_names.append("PTA")
+    r = receipt_for(st, _nm([_field(34, "Password", value="•" * 11)]), secret_value="Password123")
+    assert (
+        r is not None
+        and r["effect"] == "unverifiable"
+        and "11 characters, the length of the {secret}" in r["evidence"]
+    ), r
+
+
+def test_a_numeric_label_is_addressable_and_an_incomplete_view_says_so():
+    """Q19 R4: digit buttons could not be addressed by label (D08); a partial page read as whole (D02)."""
+    from jevdual.session import render_observation, resolve_label
+
+    nm = _nm(
+        [
+            Candidate(id=14, label="2", role="button", operations=("click",)),
+            Candidate(id=2, label="All Clear", role="button", operations=("click",)),
+        ]
+    )
+    assert resolve_label(nm, "label:2") == (14, "")
+    nm.menu = Menu(
+        url="u",
+        title="t",
+        page_text="",
+        candidates=nm.menu.candidates,
+        by_operation={},
+        omitted={"elements_incomplete": 1},
+    )
+    assert "this observation is incomplete" in render_observation(nm, receipt=None)

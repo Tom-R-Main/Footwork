@@ -1,0 +1,123 @@
+"""Notebook V4, offline: the verifier on Q13 task 1's destination window, with and without the other
+surface's context, and on a tampered destination. Three Jev calls.
+
+    uv run python scripts/v4_offline.py
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from dataclasses import asdict
+
+from jevdual.carry import take_match
+from jevdual.keys import load_keys
+from jevdual.menu import Candidate, Menu
+from jevdual.session import carried_checks, carry_line
+from jevdual.verify import Verifier
+
+TASK = (
+    "Read the price of the first book on books.toscrape.com and add it as a new line at the end of the "
+    "TextEdit document prices.txt, then save the document."
+)
+REQS = ("The document's last line is the first book's price", "The document was saved")
+OWN = [
+    {
+        "step": 1,
+        "url": "app://TextEdit",
+        "actions": ["append(text area) text=@price (from browser https://books.toscrape.com/) -> confirmed"],
+    },
+    {"step": 2, "url": "app://TextEdit", "actions": ["hotkey(cmd+s) -> confirmed"]},
+]
+PAGE = (
+    "Books to Scrape\nHome\nAll products\nA Light in the ...\n£51.77\nIn stock\nAdd to basket\n"
+    "Tipping the Velvet\n£53.74\nIn stock\nAdd to basket\nSoumission\n£50.10\nIn stock\nAdd to basket"
+)
+_CARRY = take_match(
+    "price",
+    r"(£[0-9]+\.[0-9]{2})",
+    PAGE,
+    surface="browser",
+    app="Google Chrome (footwork)",
+    location="https://books.toscrape.com/",
+    title="All products",
+    step=0,
+    session="web",
+)
+CARRY_LINE = carry_line("price", asdict(_CARRY))
+CONTEXT = [
+    {
+        "surface": "Google Chrome (footwork) https://books.toscrape.com/",
+        "actions": ["navigate(https://books.toscrape.com/) -> confirmed: navigated to /"],
+    },
+    {
+        "surface": "Google Chrome (footwork) https://books.toscrape.com/",
+        "actions": [
+            "read @price = '£51.77' at https://books.toscrape.com/ from text 'A Light in the Attic £51.77 In stock Add to basket' (the first book on the page)"
+        ],
+    },
+]
+
+
+def window(last: str) -> Menu:
+    text = f"Price carried from the browser:\n{last}"
+    area = Candidate(id=1, label="text area", role="textbox", operations=("type",), value=text)
+    return Menu(
+        url="app://TextEdit",
+        title="prices.txt",
+        page_text=text,
+        candidates=(area,),
+        by_operation={},
+        full_text=text,
+    )
+
+
+async def main() -> None:
+    load_keys()
+    from typesafe_sdk import AsyncTypeSafeClient
+
+    async with AsyncTypeSafeClient() as client:
+        v = Verifier(client)
+        rec = {
+            "kind": "do",
+            "op": "append",
+            "target_label": "text area",
+            "carry": {
+                "name": "price",
+                "text": "£51.77",
+                "location": "https://books.toscrape.com/",
+                "title": "",
+            },
+        }
+
+        def check(menu):  # V5: the harness's own verdict on the carried value
+            return carried_checks([rec], menu)
+
+        good, bad = window("£51.77"), window("£52.00")
+        cases = {
+            "correct, with context": (good, CONTEXT + OWN),
+            "correct, without context": (good, OWN),
+            "tampered (£52.00), with context": (bad, CONTEXT + OWN),
+            "correct, with context, check and surroundings (V6)": (good, CONTEXT + OWN + check(good)),
+            "tampered, with context, check and surroundings (V6)": (bad, CONTEXT + OWN + check(bad)),
+        }
+        out = {}
+        for name, (menu, traj) in cases.items():
+            r = await v.verify(
+                TASK, REQS, menu, "Added the first book's price as the last line and saved.", trajectory=traj
+            )
+            out[name] = {
+                "band": r.band,
+                "reason": r.reason[:200],
+                "unmet": {k: round(x, 2) for k, x in r.unmet.items()},
+            }
+            print(f"{name}: {r.band} ({r.reason[:140]})")
+    Path("results/v6-offline-20260928.json").write_text(json.dumps(out, indent=1))
+
+
+asyncio.run(main())

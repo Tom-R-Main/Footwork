@@ -1,0 +1,361 @@
+{
+  "provider_boundary": "production client, official URL intercepted into owned loopback server",
+  "semantic_accuracy": "unqualified; fixed provider predicates",
+  "application_discovery": "unqualified",
+  "reference_recipe": "pdftoppm page 1, 96 dpi PNG; run-owned source-0.pdf",
+  "reference_resource_sha256": "d275231bc5327ec94da3041c41e1a975291625929be9568bdf6aee4b0aacc01e",
+  "fixture_binding": "ready pid/window supplied; real CLI and Cua SDK observations",
+  "source_sha256": {
+    "scripts/verify_visual_checks.py": "87dddec727591172676a304f58a02175e5c2d20777a1bcc4e7d363db7e1696e6",
+    "python/jevdual/visual_checks.py": "206e9c32b42ac58c56e6634a19e8760fb829589222f583ae1467acc3f9cc1e20",
+    "python/jevdual/visual_decisions.py": "9846202884e65a03bfba35a7f00f1891dd5f1fb04553fe84aac32bdf30436869",
+    "python/jevdual/visual_native.py": "aa0c25b0f10dd832eba29962de1bb5d1db9479c1b6a7997168d63461cf8e4d8c",
+    "python/jevdual/native.py": "7ebfa295960a2b143be7d9f28324c13cfa8f1a5808f9c42cfa53f6cfb96bd650",
+    "python/jevdual/session.py": "5dec50a44f2bd82bb7640ff5155b62c1e941cabc22a07474a064c214b3e10933",
+    "python/jevdual/cli.py": "74f564dcb040a7f56a3d2eaa8385dde2cfebf2a8213d568a34bb37a82e61cfd1",
+    "python/jevdual/desktop_s2.py": "bed31f81a8501ae0e6532c73a594ec91d8b49909d688af83707c380405a5095c"
+  },
+  "checks": {
+    "prepare-valid-unavailable": {
+      "status": "unavailable",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/prepare/visual/299988b9564b46a18b4cb54e2c57d7e3.json"
+    },
+    "document_reference_match-valid-valid": {
+      "status": "valid",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/document_reference_match/visual/b7782cdfee424ca5becb2e81bc8b7348.json"
+    },
+    "document_reference_match-valid-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/document_reference_match/visual/11d7146ccfb94c69949a6ac9c1ae7753.json"
+    },
+    "crop_subject_containment-valid-valid": {
+      "status": "valid",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/crop_subject_containment/visual/ffb16a85765247828b93d3880d56be31.json"
+    },
+    "crop_subject_containment-valid-budget_exhausted": {
+      "status": "budget_exhausted",
+      "calls": 0,
+      "receipt": "runs/visual-checks-native-20261008/crop_subject_containment/visual/b9caae06fffe4a13badf36b208f2e8e2.json"
+    },
+    "refusal-refusal-refusal": {
+      "status": "refusal",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/refusal/visual/f4b9cc636a7b4e9b8f38d39eed8ee262.json"
+    },
+    "timeout-timeout-timeout": {
+      "status": "timeout",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/timeout/visual/40486775969b41ffa9c7b3912ccd478d.json"
+    },
+    "source_changed-source_changed-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/source_changed/visual/9eb6258dc038483fb3d172d52932cabe.json"
+    },
+    "generation_changed-generation_changed-invalidated": {
+      "status": "invalidated",
+      "calls": 1,
+      "receipt": "runs/visual-checks-native-20261008/generation_changed/visual/35181599220d455ebec121b948e9146c.json"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/prepare"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/prepare",
+        "--request",
+        "request.json"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/prepare/visual/299988b9564b46a18b4cb54e2c57d7e3.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"8ea870723ccf44119d0c4a5ba141b99d\", \"evidence_digest\": \"b4f4c9367707133711b44396d4eeb60f97fd2bf0802459236c21ae156e7330fa\", \"generation\": \"299988b9564b46a18b4cb54e2c57d7e3\", \"role\": \"document_reference_match\", \"status\": \"unavailable\", \"p\": null, \"reason\": \"provider_unconfigured\", \"requested_model\": \"\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": null, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"e38087c8ec5dba800f00cc104e5530c24382e4f94e08c9f598c8a5340b0c58ac\", \"prompt_sha256\": \"\", \"phases_ms\": [], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"8ea870723ccf44119d0c4a5ba141b99d\", \"evidence_digest\": \"b4f4c9367707133711b44396d4eeb60f97fd2bf0802459236c21ae156e7330fa\", \"generation\": \"299988b9564b46a18b4cb54e2c57d7e3\", \"role\": \"document_reference_match\", \"status\": \"unavailable\", \"p\": null, \"reason\": \"provider_unconfigured\", \"requested_model\": \"\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": null, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"e38087c8ec5dba800f00cc104e5530c24382e4f94e08c9f598c8a5340b0c58ac\", \"prompt_sha256\": \"\", \"phases_ms\": [], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"8ea870723ccf44119d0c4a5ba141b99d\", \"role\": \"document_reference_match\", \"generation\": \"299988b9564b46a18b4cb54e2c57d7e3\", \"evidence_digest\": \"b4f4c9367707133711b44396d4eeb60f97fd2bf0802459236c21ae156e7330fa\", \"reason\": \"provider_unconfigured\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/document_reference_match"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 0,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/document_reference_match/visual/b7782cdfee424ca5becb2e81bc8b7348.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"33f4cb4849284a2598160ea9d4390bda\", \"evidence_digest\": \"17bda99e63885f8918943e52d7ebfee36aff48be919ad8b053704685f40aac15\", \"generation\": \"b7782cdfee424ca5becb2e81bc8b7348\", \"role\": \"document_reference_match\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 53.40587499085814, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"6a0523e706119b59cfe67863610d5a166e88f6ccd4712c3d30c730a26a93981b\", \"prompt_sha256\": \"682168227ff0ee154b0c8b75d0fb13e172d9d98c7c5a2cce12e21d27c864211f\", \"phases_ms\": [[\"encoding\", 0.45966694597154856], [\"provider\", 52.02337505761534], [\"validation\", 0.3707080613821745]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"33f4cb4849284a2598160ea9d4390bda\", \"evidence_digest\": \"17bda99e63885f8918943e52d7ebfee36aff48be919ad8b053704685f40aac15\", \"generation\": \"b7782cdfee424ca5becb2e81bc8b7348\", \"role\": \"document_reference_match\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 53.40587499085814, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"6a0523e706119b59cfe67863610d5a166e88f6ccd4712c3d30c730a26a93981b\", \"prompt_sha256\": \"682168227ff0ee154b0c8b75d0fb13e172d9d98c7c5a2cce12e21d27c864211f\", \"phases_ms\": [[\"encoding\", 0.45966694597154856], [\"provider\", 52.02337505761534], [\"validation\", 0.3707080613821745]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"33f4cb4849284a2598160ea9d4390bda\", \"role\": \"document_reference_match\", \"generation\": \"b7782cdfee424ca5becb2e81bc8b7348\", \"evidence_digest\": \"17bda99e63885f8918943e52d7ebfee36aff48be919ad8b053704685f40aac15\", \"reason\": \"valid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/document_reference_match",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/document_reference_match/visual/11d7146ccfb94c69949a6ac9c1ae7753.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"7f93ef856fae47878617c14d259eb2c4\", \"evidence_digest\": \"216c2dcedc08089651357069d2d89624e7cd195b5913c88a805942c695e7b2e8\", \"generation\": \"11d7146ccfb94c69949a6ac9c1ae7753\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.8979999693110585, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"a7511ef8fa51725951b24dc53c90cc769698fd319d9fecc9fa19875ed075c27c\", \"prompt_sha256\": \"915d4dcb01c77779d2ca82f39b6f18d6a28a4cb3a5dd784f7e319489050b600e\", \"phases_ms\": [[\"encoding\", 0.5384170217439532]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"7f93ef856fae47878617c14d259eb2c4\", \"evidence_digest\": \"216c2dcedc08089651357069d2d89624e7cd195b5913c88a805942c695e7b2e8\", \"generation\": \"11d7146ccfb94c69949a6ac9c1ae7753\", \"role\": \"document_reference_match\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.8979999693110585, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"a7511ef8fa51725951b24dc53c90cc769698fd319d9fecc9fa19875ed075c27c\", \"prompt_sha256\": \"915d4dcb01c77779d2ca82f39b6f18d6a28a4cb3a5dd784f7e319489050b600e\", \"phases_ms\": [[\"encoding\", 0.5384170217439532]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"7f93ef856fae47878617c14d259eb2c4\", \"role\": \"document_reference_match\", \"generation\": \"11d7146ccfb94c69949a6ac9c1ae7753\", \"evidence_digest\": \"216c2dcedc08089651357069d2d89624e7cd195b5913c88a805942c695e7b2e8\", \"reason\": \"duplicate_evidence\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Apply proposed crop'\n  [   2] button     'Apply safe crop'\npage text (89 chars):\nApply the displayed crop while preserving the entire subject.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "inspect-target",
+        "1",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment",
+        "--postcondition",
+        "Read-only source canvas geometry"
+      ],
+      "exit": 0,
+      "stdout": "inspection: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment/inspection/bc129f42e0e74be8ba65197f61e575d5.json\npreview: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment/inspection/bc129f42e0e74be8ba65197f61e575d5.html\nread-only evidence recorded; no action or postcondition was verified\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 0,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment/visual/ffb16a85765247828b93d3880d56be31.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"2fd69d376c3c4d31bb1c4484c9b9de33\", \"evidence_digest\": \"c6aae47b4d44d8e8435c1937dfd8bee3a43e7def14a0f5ec5f9ef4295f1c40bb\", \"generation\": \"ffb16a85765247828b93d3880d56be31\", \"role\": \"crop_subject_containment\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 18.06724991183728, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"ca3fd4a1bb1d0e6bcfa9a47af46d174bd23d78fb253f8c23e52b9a09baf65533\", \"prompt_sha256\": \"0b4e45eb94cac9f94d50d8c66f5fcd77084eea9004d3d469387d60e4d6085931\", \"phases_ms\": [[\"encoding\", 0.3877920098602772], [\"provider\", 14.7676250198856], [\"validation\", 0.3463340690359473]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"2fd69d376c3c4d31bb1c4484c9b9de33\", \"evidence_digest\": \"c6aae47b4d44d8e8435c1937dfd8bee3a43e7def14a0f5ec5f9ef4295f1c40bb\", \"generation\": \"ffb16a85765247828b93d3880d56be31\", \"role\": \"crop_subject_containment\", \"status\": \"valid\", \"p\": 0.97, \"reason\": \"\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 18.06724991183728, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"ca3fd4a1bb1d0e6bcfa9a47af46d174bd23d78fb253f8c23e52b9a09baf65533\", \"prompt_sha256\": \"0b4e45eb94cac9f94d50d8c66f5fcd77084eea9004d3d469387d60e4d6085931\", \"phases_ms\": [[\"encoding\", 0.3877920098602772], [\"provider\", 14.7676250198856], [\"validation\", 0.3463340690359473]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"2fd69d376c3c4d31bb1c4484c9b9de33\", \"role\": \"crop_subject_containment\", \"generation\": \"ffb16a85765247828b93d3880d56be31\", \"evidence_digest\": \"c6aae47b4d44d8e8435c1937dfd8bee3a43e7def14a0f5ec5f9ef4295f1c40bb\", \"reason\": \"valid\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/crop_subject_containment/visual/b9caae06fffe4a13badf36b208f2e8e2.json\n{\"question\": {\"role\": \"crop_subject_containment\", \"criterion\": \"Retain the whole visible subject inside the supplied crop\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"2c93986dca92baea50872278fe846f1d0c5baafab3ab2944b537d6219948b0f5\"}, \"reference\": null, \"source\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"supplied_png\", \"dimensions\": [620, 316], \"image_sha256\": \"e121ca30def206bb89db29d8f413caa301bb4e9eb8d4749a3b4097027a1ac207\"}, \"crop\": {\"rectangle\": {\"x\": 220.0, \"y\": 45.0, \"width\": 180.0, \"height\": 235.0}, \"displayed_bounds\": {\"x\": 70.0, \"y\": 524.0, \"width\": 620.0, \"height\": 316.0}, \"orientation\": \"upright\"}, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"04735c1a595c4e86bf634689895ff11f\", \"evidence_digest\": \"63f43eb321108341e25a67c08db7e2e9aa46b191e69a83679ff1b830741b4fd5\", \"generation\": \"b9caae06fffe4a13badf36b208f2e8e2\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.5832919850945473, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"568f5706987b172bdfebf05ebf9e3c97f732d90dda6f3dae6c1c981cf3ced25a\", \"prompt_sha256\": \"cb8a1f88c472329660ced133bb4a133f3d4397a859e484d7b44daf8cbfaedadf\", \"phases_ms\": [[\"encoding\", 0.35099999513477087]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"04735c1a595c4e86bf634689895ff11f\", \"evidence_digest\": \"63f43eb321108341e25a67c08db7e2e9aa46b191e69a83679ff1b830741b4fd5\", \"generation\": \"b9caae06fffe4a13badf36b208f2e8e2\", \"role\": \"crop_subject_containment\", \"status\": \"budget_exhausted\", \"p\": null, \"reason\": \"duplicate_evidence\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 0.5832919850945473, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"568f5706987b172bdfebf05ebf9e3c97f732d90dda6f3dae6c1c981cf3ced25a\", \"prompt_sha256\": \"cb8a1f88c472329660ced133bb4a133f3d4397a859e484d7b44daf8cbfaedadf\", \"phases_ms\": [[\"encoding\", 0.35099999513477087]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"04735c1a595c4e86bf634689895ff11f\", \"role\": \"crop_subject_containment\", \"generation\": \"b9caae06fffe4a13badf36b208f2e8e2\", \"evidence_digest\": \"63f43eb321108341e25a67c08db7e2e9aa46b191e69a83679ff1b830741b4fd5\", \"reason\": \"duplicate_evidence\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/refusal"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/refusal",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/refusal/visual/f4b9cc636a7b4e9b8f38d39eed8ee262.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"d4017b541f8f4ecfa684eb0d61c9fbed\", \"evidence_digest\": \"8f458535689ba21c00d8a1cfb1f98c0f6a66732b8facd7ec6890efb62dcc3646\", \"generation\": \"f4b9cc636a7b4e9b8f38d39eed8ee262\", \"role\": \"document_reference_match\", \"status\": \"refusal\", \"p\": null, \"reason\": \"refusal\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.695209006778896, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"6bd63d98ad0853baa56ec7d1ca9710aad682d8dc32c23f3b8e890c6d86fdade9\", \"prompt_sha256\": \"7cc8fa6ccc39896b1c2f1761ebbf53e25911701c868c7b6af3310d6de14c9094\", \"phases_ms\": [[\"encoding\", 0.6360419793054461], [\"provider\", 11.180000030435622]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"d4017b541f8f4ecfa684eb0d61c9fbed\", \"evidence_digest\": \"8f458535689ba21c00d8a1cfb1f98c0f6a66732b8facd7ec6890efb62dcc3646\", \"generation\": \"f4b9cc636a7b4e9b8f38d39eed8ee262\", \"role\": \"document_reference_match\", \"status\": \"refusal\", \"p\": null, \"reason\": \"refusal\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.695209006778896, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"6bd63d98ad0853baa56ec7d1ca9710aad682d8dc32c23f3b8e890c6d86fdade9\", \"prompt_sha256\": \"7cc8fa6ccc39896b1c2f1761ebbf53e25911701c868c7b6af3310d6de14c9094\", \"phases_ms\": [[\"encoding\", 0.6360419793054461], [\"provider\", 11.180000030435622]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"d4017b541f8f4ecfa684eb0d61c9fbed\", \"role\": \"document_reference_match\", \"generation\": \"f4b9cc636a7b4e9b8f38d39eed8ee262\", \"evidence_digest\": \"8f458535689ba21c00d8a1cfb1f98c0f6a66732b8facd7ec6890efb62dcc3646\", \"reason\": \"refusal\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/timeout"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/timeout",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose",
+        "--timeout",
+        "1"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/timeout/visual/40486775969b41ffa9c7b3912ccd478d.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"66b539c146134ed8a6c0906978494de4\", \"evidence_digest\": \"196dcf90454def605fa25fd1a6b3eaeeb49dfff785f2def84af03cd5f47045b2\", \"generation\": \"40486775969b41ffa9c7b3912ccd478d\", \"role\": \"document_reference_match\", \"status\": \"timeout\", \"p\": null, \"reason\": \"deadline_or_transport_timeout\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 928.3338750246912, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"e7a3d9fdc5943374a161e9af5234340ca92408f01f23653b810ddb710ada9652\", \"prompt_sha256\": \"9eef8a5d2815b9422282aa41728e48cc5de7f48bcbf09595cf8a8a664cda738a\", \"phases_ms\": [[\"encoding\", 0.44954195618629456]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"66b539c146134ed8a6c0906978494de4\", \"evidence_digest\": \"196dcf90454def605fa25fd1a6b3eaeeb49dfff785f2def84af03cd5f47045b2\", \"generation\": \"40486775969b41ffa9c7b3912ccd478d\", \"role\": \"document_reference_match\", \"status\": \"timeout\", \"p\": null, \"reason\": \"deadline_or_transport_timeout\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"\", \"input_tokens\": null, \"output_tokens\": null, \"elapsed_ms\": 928.3338750246912, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"e7a3d9fdc5943374a161e9af5234340ca92408f01f23653b810ddb710ada9652\", \"prompt_sha256\": \"9eef8a5d2815b9422282aa41728e48cc5de7f48bcbf09595cf8a8a664cda738a\", \"phases_ms\": [[\"encoding\", 0.44954195618629456]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"66b539c146134ed8a6c0906978494de4\", \"role\": \"document_reference_match\", \"generation\": \"40486775969b41ffa9c7b3912ccd478d\", \"evidence_digest\": \"196dcf90454def605fa25fd1a6b3eaeeb49dfff785f2def84af03cd5f47045b2\", \"reason\": \"deadline_or_transport_timeout\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/source_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/source_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/source_changed/visual/9eb6258dc038483fb3d172d52932cabe.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"257fe0a0c8de4a97aae477019869b0a8\", \"evidence_digest\": \"ccacdce77e29336913e62726d78c619151da58d74a35b122eb9d7e0d988e5de0\", \"generation\": \"9eb6258dc038483fb3d172d52932cabe\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 15.168541925959289, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"c06816eeee55e0229acf8ea909aae6a2afd87af34e6fc87e98d3b7c1400878d3\", \"prompt_sha256\": \"0ab5ee824000c7128792381782fdf999b4b057c374465c2fb4e245a2582e824e\", \"phases_ms\": [[\"encoding\", 0.6308329757303], [\"provider\", 13.592459028586745], [\"validation\", 0.2502079587429762]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"257fe0a0c8de4a97aae477019869b0a8\", \"evidence_digest\": \"ccacdce77e29336913e62726d78c619151da58d74a35b122eb9d7e0d988e5de0\", \"generation\": \"9eb6258dc038483fb3d172d52932cabe\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 15.168541925959289, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"c06816eeee55e0229acf8ea909aae6a2afd87af34e6fc87e98d3b7c1400878d3\", \"prompt_sha256\": \"0ab5ee824000c7128792381782fdf999b4b057c374465c2fb4e245a2582e824e\", \"phases_ms\": [[\"encoding\", 0.6308329757303], [\"provider\", 13.592459028586745], [\"validation\", 0.2502079587429762]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"257fe0a0c8de4a97aae477019869b0a8\", \"role\": \"document_reference_match\", \"generation\": \"9eb6258dc038483fb3d172d52932cabe\", \"evidence_digest\": \"ccacdce77e29336913e62726d78c619151da58d74a35b122eb9d7e0d988e5de0\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/generation_changed"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/generation_changed",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions",
+        "--disclose"
+      ],
+      "exit": 4,
+      "stdout": "visual check: /Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/generation_changed/visual/35181599220d455ebec121b948e9146c.json\n{\"question\": {\"role\": \"document_reference_match\", \"criterion\": \"Compare the offered document preview to the supplied reference page\", \"criterion_version\": \"qa-v1\", \"target\": {\"id\": \"1\", \"bounds\": {\"x\": 76.0, \"y\": 859.0, \"width\": 178.0, \"height\": 22.0}, \"operation\": \"inspect\", \"pixel_bounds\": [52, 850, 408, 894], \"postcondition_sha256\": \"7a0ec7602bb93e0c8a082e35b48431b736036d987bf76d80a7a4628e00e8c0c5\"}, \"reference\": {\"resource_id\": \"qa-source\", \"revision\": \"qa-v1\", \"page\": 1, \"render_recipe\": \"pdftoppm-96dpi-page-1\", \"dimensions\": [247, 347], \"image_sha256\": \"db3ff5bc56d80d3f6798e6612a385f341eb3ef40f0161832a0a242f62de571dc\"}, \"source\": null, \"crop\": null, \"resource_ownership_proven\": false, \"display_transform_proven\": false, \"result\": {\"request_id\": \"e5ea1a52f78c4b5e9d6bfd251899c0f2\", \"evidence_digest\": \"813c24c8c81b9bd3c2d1106e5ceb4827bb10ead61edfdc196123bea5011cfff0\", \"generation\": \"35181599220d455ebec121b948e9146c\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.640499975532293, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"95062e8dcdb1c31a43d64abe1c335278156e991690f1bbd6054066b395a3f5c2\", \"prompt_sha256\": \"f90168d0f9f55aed964b06fd592d4546082236321147e68bff395e31d3290fd5\", \"phases_ms\": [[\"encoding\", 0.4390829708427191], [\"provider\", 11.452791979536414], [\"validation\", 0.26758399326354265]], \"advisory_only\": true, \"execution_authority\": false}, \"image_visible_to_s2\": false, \"execution_authority\": false}, \"result\": {\"request_id\": \"e5ea1a52f78c4b5e9d6bfd251899c0f2\", \"evidence_digest\": \"813c24c8c81b9bd3c2d1106e5ceb4827bb10ead61edfdc196123bea5011cfff0\", \"generation\": \"35181599220d455ebec121b948e9146c\", \"role\": \"document_reference_match\", \"status\": \"invalidated\", \"p\": null, \"reason\": \"generation_changed_or_expired\", \"requested_model\": \"gpt-6-luna\", \"returned_model\": \"gpt-6-luna\", \"input_tokens\": 100, \"output_tokens\": null, \"elapsed_ms\": 12.640499975532293, \"prompt_version\": \"visual-check-v1\", \"request_digest\": \"95062e8dcdb1c31a43d64abe1c335278156e991690f1bbd6054066b395a3f5c2\", \"prompt_sha256\": \"f90168d0f9f55aed964b06fd592d4546082236321147e68bff395e31d3290fd5\", \"phases_ms\": [[\"encoding\", 0.4390829708427191], [\"provider\", 11.452791979536414], [\"validation\", 0.26758399326354265]], \"advisory_only\": true, \"execution_authority\": false}, \"escalation\": {\"request_id\": \"e5ea1a52f78c4b5e9d6bfd251899c0f2\", \"role\": \"document_reference_match\", \"generation\": \"35181599220d455ebec121b948e9146c\", \"evidence_digest\": \"813c24c8c81b9bd3c2d1106e5ceb4827bb10ead61edfdc196123bea5011cfff0\", \"reason\": \"generation_changed_or_expired\", \"coverage_warning\": \"Observed candidate only; native AX projection is not exhaustive.\", \"remaining_recovery\": 0, \"image_visible_to_s2\": false, \"pixel_question_resolved\": false, \"execution_authority\": false}}\nAdvisory evidence only; no action, grant or postcondition verified. Pixels unavailable to text System Two.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/no-disclosure"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/no-disclosure",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: pixels_withheld; no action authorized\n"
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/secret"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/secret",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: pixels_withheld; no action authorized\n"
+    },
+    {
+      "argv": [
+        "look",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/browser"
+      ],
+      "exit": 0,
+      "stdout": "Python: 'D3 run-owned visual fixture'  [elements_incomplete 1]\nnote: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown\n2 elements:\n  [   1] button     'Select Candidate A'\n  [   2] button     'Select Candidate B'\npage text (77 chars):\nSelect the document matching the reference cover.\nD3 run-owned visual fixture\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "visual-check",
+        "--session",
+        "/Users/thomasmain/projects/footwork/jevdual/runs/visual-checks-native-20261008/browser",
+        "--request",
+        "request.json",
+        "--provider",
+        "decisions"
+      ],
+      "exit": 4,
+      "stdout": "",
+      "stderr": "visual check unavailable: surface_unsupported; no action authorized\n"
+    }
+  ],
+  "requests": 6,
+  "no_effect": true,
+  "no_grants": true,
+  "action_dispatches": 0,
+  "source_commit": "82aef06e180915a4cfd75ca095a44b98a28ebd7c"
+}

@@ -188,3 +188,20 @@ def test_rejections_reads_reasons_carried_on_result_rows(tmp_path):
     rej = load(tmp_path, "guarded_legible")
     assert [(r.band, r.category) for r in rej] == [("reject", "process_unmet"), ("verify", "uncertain")]
     assert rej[0].requirement == "Backpack in cart" and rej[0].passed is True
+
+
+def test_narrow_declaration_states_requirements_and_the_page_check_only():
+    from jevdual.contract import TaskContract, declare_narrow
+
+    text = declare_narrow(
+        TaskContract.from_task(
+            requirements=("Signed in", "Backpack in cart"),
+            answer_expected=True,
+            authorized_destructive=False,
+            authorized_actions=(),
+        )
+    )
+    assert "1. Signed in" in text and "2. Backpack in cart" in text
+    assert "state only what the page shows" in text
+    for gate_word in ("irreversible", "evaluate", "pause", "Authority", "refusal"):
+        assert gate_word not in text

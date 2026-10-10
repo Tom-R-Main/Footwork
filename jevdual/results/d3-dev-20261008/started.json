@@ -1,0 +1,27 @@
+{
+  "commit": "c4653771afceebc1378acc27db027cf3c4411a02",
+  "manifest_sha256": "df4f079d44de25be34bc504ff0aa178b392ede111e032e6bd97af5a41e6ee230",
+  "models": [
+    "jev-1.13.0",
+    "gpt-6-luna"
+  ],
+  "seed": 10082028,
+  "replays": 3,
+  "bands": {
+    "true": 0.8,
+    "false": 0.2
+  },
+  "body_bound": 48000,
+  "prices": {
+    "jev": 0.042,
+    "decisions": 0.1
+  },
+  "versions": {
+    "httpx": "0.28.1",
+    "typesafe-sdk": "0.7.0",
+    "pillow": "12.3.0"
+  },
+  "prior_cost_upper_usd": 0.192055158,
+  "cap_usd": 5.0,
+  "scope": "authored captures and reconstructed one-step fixture checks; not an autonomous real-app journey"
+}

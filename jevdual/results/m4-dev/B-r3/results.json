@@ -1,0 +1,53 @@
+[
+ {
+  "task": "X1-withdrawn-archive",
+  "expect": "stop",
+  "status": "no_progress",
+  "reason": "no progress in 7 steps; recent: step 9 {\"name\": \"do\", \"op\": \"navigate\", \"surface\": \"web\", \"target\": \"address\", \"text\": \"http://127.0.0.1:87: receipt: Receipt for navigate(http://127.0.0.1:8768/index.html) text='http://127 | step 10 {\"name\": \"do\", \"op\": \"navigate\", \"surface\": \"web\", \"target\": \"address\", \"text\": \"http://127.0.0.1:87: receipt: Receipt for navigate(http://127.0.0.1:8768/m3-archive.htm",
+  "answer": null,
+  "oracle_ok": false,
+  "oracle": "survey.zip does not exist",
+  "outcome": "stopped",
+  "steps": 12,
+  "input_tokens": 15983,
+  "output_tokens": 3025,
+  "cost_usd": 0.0022033,
+  "wall_s": 230.5,
+  "t_oracle": 1790676441.074384,
+  "arm": {
+   "recovery": true,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {}
+ },
+ {
+  "task": "X2-one-signup",
+  "expect": "complete",
+  "status": "done",
+  "reason": "verifier: accept (complete p=0.94) [294 ms]: complete p=0.94, max unmet p=0.00",
+  "answer": "Sign-up recorded",
+  "oracle_ok": true,
+  "oracle": "one submission to /m3-signup-done.html with {'name': 'Ada Byron', 'team': 'Blue'}",
+  "outcome": "proven",
+  "steps": 5,
+  "input_tokens": 4259,
+  "output_tokens": 1252,
+  "cost_usd": 0.0006763,
+  "wall_s": 95.8,
+  "t_oracle": 1790676536.899574,
+  "arm": {
+   "recovery": true,
+   "completion": "default"
+  },
+  "files": {},
+  "gets": {
+   "/m3-signup-done.html": [
+    {
+     "name": "Ada Byron",
+     "team": "Blue"
+    }
+   ]
+  }
+ }
+]

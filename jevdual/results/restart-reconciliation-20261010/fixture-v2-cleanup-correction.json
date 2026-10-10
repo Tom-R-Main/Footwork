@@ -1,0 +1,16 @@
+{
+  "owned_window_gone": true,
+  "owned_browser_gone": true,
+  "all_remaining_native_window_ids": [
+    30464,
+    6325,
+    6324,
+    6323,
+    6322,
+    6321
+  ],
+  "other_windows_before_after_comparison": "unverified: before inventory was on-screen only; closing owned window exposed an existing window",
+  "initial_observer_error": "fixture-v2-cleanup.json",
+  "all_case_worker_cleanup": true,
+  "remaining_ax_window_count": 0
+}

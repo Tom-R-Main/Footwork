@@ -1,0 +1,214 @@
+{
+  "surface": "browser_fixture",
+  "accepted": false,
+  "dispatched": false,
+  "guard_reason": "model_not_confidently_true",
+  "goal_met": false,
+  "effect_changed": false,
+  "wrong_effect": false,
+  "before": {
+    "action": null
+  },
+  "after": {
+    "action": null
+  },
+  "current_observation": {
+    "image": "current.png",
+    "image_sha256": "659d14c817de4d7030bc0dc2a531cf6aca350dddf47d44e3006ff18915b063ef",
+    "dimensions": [
+      640,
+      360
+    ],
+    "captured_at": "2026-10-08T19:36:01.663155+00:00",
+    "revision": "3f004d87f03a03d2af864803edca014ea835466a33f738bb9c705b9064b99a9d",
+    "target_id": "883A5D1CD7C5B09FD907B3EC1DDAD034",
+    "process_id": 87321,
+    "dom": {
+      "rendered_text": "Sample approval\n\nLayout revision 1\n\nApprove sample\nCancel sample\n\nNo action yet\n\nUpdating layout; controls unavailable",
+      "elements": [
+        {
+          "target_id": "approve",
+          "role": "button",
+          "name": "Approve sample",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 80,
+            "y": 140,
+            "width": 120,
+            "height": 50
+          }
+        },
+        {
+          "target_id": "cancel",
+          "role": "button",
+          "name": "Cancel sample",
+          "disabled": false,
+          "hidden": false,
+          "bounds": {
+            "x": 300,
+            "y": 140,
+            "width": 120,
+            "height": 50
+          }
+        }
+      ]
+    },
+    "ax": [
+      {
+        "role": "heading",
+        "name": "Sample approval",
+        "value": null,
+        "properties": [
+          {
+            "name": "level",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "button",
+        "name": "Approve sample",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "button",
+        "name": "Cancel sample",
+        "value": null,
+        "properties": [
+          {
+            "name": "invalid",
+            "value": {
+              "type": "token",
+              "value": "false"
+            }
+          },
+          {
+            "name": "focusable",
+            "value": {
+              "type": "booleanOrUndefined",
+              "value": true
+            }
+          }
+        ]
+      },
+      {
+        "role": "paragraph",
+        "name": "",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Sample approval",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Layout revision 1",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Approve sample",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Cancel sample",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "StaticText",
+        "name": "Updating layout; controls unavailable",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Sample approval",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Layout revision 1",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Approve sample",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Cancel sample",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "No action yet",
+        "value": null,
+        "properties": []
+      },
+      {
+        "role": "InlineTextBox",
+        "name": "Updating layout; controls unavailable",
+        "value": null,
+        "properties": []
+      }
+    ],
+    "phases_ms": {
+      "capture": 56.3164169434458,
+      "extraction": 2.4244169471785426,
+      "encode": 0.30570896342396736
+    }
+  },
+  "reconstruction_content_matches": true,
+  "phases_ms": {
+    "dispatch": 0.0,
+    "setup_capture": 504.84854204114527,
+    "validation": 0.019583036191761494,
+    "readback": 0.46712509356439114,
+    "total": 505.7184590259567
+  },
+  "evaluation": "oracle used only in independent goal/effect check"
+}

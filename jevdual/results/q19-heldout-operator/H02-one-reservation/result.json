@@ -1,0 +1,18 @@
+{
+ "task": "H02-one-reservation",
+ "t_oracle": 1790664673.044468,
+ "oracle_ok": true,
+ "oracle": "one submission to /q19h-reservation-deleted.html with {'reservation': 'QH-204'}",
+ "answer": "Reservation QH-204 (Cedar room) was deleted: the page now reads 'Scratch cancellation recorded'; QH-203 and QH-205 were not touched.",
+ "commands": 3,
+ "wall_s": 18.6,
+ "friction": 0,
+ "friction_by_kind": {
+  "misread": 0,
+  "retry": 0,
+  "dead_end": 0,
+  "contradicted": 0,
+  "vague_stop": 0
+ },
+ "files": {}
+}

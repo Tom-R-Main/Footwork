@@ -1,0 +1,19 @@
+{
+ "heading": {
+  "name": "heading",
+  "text": "Logged In Successfully",
+  "surface": "browser",
+  "app": "Google Chrome (footwork)",
+  "location": "https://practicetestautomation.com/logged-in-successfully/",
+  "title": "Logged In Successfully | Practice Test Automation",
+  "element_id": -1,
+  "element_label": "Logged In Successfully",
+  "element_role": "text",
+  "part": "match",
+  "step": 3,
+  "session": "results/q19-frozen/D03-practice-login/web",
+  "taken_at": 1790641350.770487,
+  "surroundings": "Logged In Successfully / Congratulations student. You successfully logged in! / \u00a9 Copyright 2020",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}

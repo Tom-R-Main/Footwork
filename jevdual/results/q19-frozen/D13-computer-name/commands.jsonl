@@ -1,0 +1,7 @@
+{"t": 1790641536.137113, "surface": "set", "args": ["start", "Computer name", "--app", "System Settings", "--mode", "foreground_permitted"], "exit": 0, "s": 1.67}
+{"t": 1790641537.0792189, "surface": "set", "args": ["look"], "exit": 0, "s": 0.85}
+{"t": 1790641548.5066261, "surface": "set", "args": ["do", "click", "General", "--no-judge"], "exit": 0, "s": 3.66}
+{"t": 1790641549.418782, "surface": "set", "args": ["look"], "exit": 0, "s": 0.82}
+{"t": 1790641558.774463, "surface": "set", "args": ["do", "click", "About", "--no-judge"], "exit": 0, "s": 3.53}
+{"t": 1790641559.654586, "surface": "set", "args": ["read", "--match", "(MacBook Pro \\(\\d\\))", "--as", "name"], "exit": 0, "s": 0.79}
+{"t": 1790641560.831394, "surface": "set", "args": ["done", "This Mac is named MacBook Pro (2)."], "exit": 0, "s": 1.08}

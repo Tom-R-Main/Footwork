@@ -1,0 +1,112 @@
+{
+  "recorded_at": "2026-10-09T17:12:31.896201-04:00",
+  "prediction": "CS3",
+  "verdict": "held",
+  "prediction_commit": "703ebd8",
+  "verifier_commit": "808d86f",
+  "cases": [
+    {
+      "case": "A",
+      "verdict": "held",
+      "trigger": "field_changed",
+      "trigger_seconds": 0.6418,
+      "journal_at_kill": [
+        {
+          "id": "op_0b5efeca0506",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "client_token": "cs3-interrupt-A"
+        }
+      ],
+      "restart_operation": {
+        "schema_version": "1",
+        "operation_id": "op_0b5efeca0506",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_0b5efeca0506. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "cs3-interrupt-A",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_0b5efeca0506",
+          "reconcile": true
+        }
+      },
+      "repeat_operation": "op_0b5efeca0506",
+      "repeat": true,
+      "tokenless_code": "busy",
+      "oracle_counts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "raw_path": "/Users/thomasmain/projects/footwork/output/capability-live-20261009-1651/interrupt-v1/case-A.json",
+      "sha256": "c5a3b123cd1f2add4482bb62fde094e593d3fc632cfa372451cfecd95d960f95"
+    },
+    {
+      "case": "B",
+      "verdict": "held",
+      "trigger": "row_dispatching",
+      "trigger_seconds": 0.2966,
+      "journal_at_kill": [
+        {
+          "id": "op_08b8a4ace601",
+          "state": "dispatching",
+          "disposition": null,
+          "phase": null,
+          "client_token": "cs3-interrupt-B"
+        }
+      ],
+      "restart_operation": {
+        "schema_version": "1",
+        "operation_id": "op_08b8a4ace601",
+        "disposition": "unknown",
+        "state": "unknown",
+        "phase": "ambiguous",
+        "summary": "Outcome unknown for op_08b8a4ace601. Do not append again; call status with this operation (reconcile=true) or have the operator inspect the document.",
+        "repeat": false,
+        "evidence": {},
+        "client_token": "cs3-interrupt-B",
+        "error": "process ended during dispatch",
+        "next": {
+          "tool": "status",
+          "operation": "op_08b8a4ace601",
+          "reconcile": true
+        }
+      },
+      "repeat_operation": "op_08b8a4ace601",
+      "repeat": true,
+      "tokenless_code": "busy",
+      "oracle_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_path": "/Users/thomasmain/projects/footwork/output/capability-live-20261009-1651/interrupt-v1/case-B.json",
+      "sha256": "f0c3640559e366b7c0308d16ac206e8a1fd9ef6bacc5198c6e7739981d416152"
+    }
+  ],
+  "provider_calls": 0,
+  "scope": "Two real fixture cases, one run each. No exactly-once GUI guarantee or baseline advantage inferred.",
+  "reviewers": [
+    {
+      "reviewer": "Codex (AI)",
+      "verdict": "held"
+    },
+    {
+      "reviewer": "Claude (AI)",
+      "verdict": "held"
+    }
+  ],
+  "cleanup_evidence": "/Users/thomasmain/projects/footwork/output/capability-live-20261009-1651/cleanup.json"
+}

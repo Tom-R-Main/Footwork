@@ -1,0 +1,44 @@
+[
+  {
+    "id": "contract",
+    "role": "probe",
+    "state": "A tray contains one red cube and one blue sphere. The red cube is undamaged.",
+    "candidate_questions": [
+      {
+        "type": "predicate",
+        "name": "red_cube",
+        "instructions": "Is a red cube present?"
+      },
+      {
+        "type": "choice",
+        "name": "shape",
+        "instructions": "What shape is the red object?",
+        "choices": [
+          {
+            "value": "cube",
+            "description": "A cube."
+          },
+          {
+            "value": "sphere",
+            "description": "A sphere."
+          }
+        ]
+      },
+      {
+        "type": "score",
+        "name": "damage",
+        "instructions": "How damaged is the red cube?",
+        "levels": [
+          {
+            "label": "none",
+            "description": "Undamaged."
+          },
+          {
+            "label": "damaged",
+            "description": "Damaged."
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,6 @@
+{"t": 1790641749.238202, "surface": "preview", "args": ["start", "Image width", "--app", "Preview", "--window", "d19.png", "--mode", "foreground_permitted"], "exit": 0, "s": 1.62}
+{"t": 1790641753.018871, "surface": "preview", "args": ["do", "menu", "Tools > Show Inspector"], "exit": 0, "s": 3.69}
+{"t": 1790641753.933219, "surface": "preview", "args": ["read", "--match", "(\\d+) \u00d7 \\d+ pixels", "--as", "width"], "exit": 0, "s": 0.82}
+{"t": 1790641756.603441, "surface": "web", "args": ["start", "Search", "--browser", "--url", "http://127.0.0.1:8767/search.html"], "exit": 0, "s": 2.58}
+{"t": 1790641758.3600059, "surface": "web", "args": ["do", "type", "Search products", "@width", "--from", "results/q19-frozen/D19-image-width-to-search/preview"], "exit": 0, "s": 1.66}
+{"t": 1790641760.413328, "surface": "web", "args": ["do", "click", "button:Search"], "exit": 0, "s": 1.96}

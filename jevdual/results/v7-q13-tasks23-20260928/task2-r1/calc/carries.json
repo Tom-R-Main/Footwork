@@ -1,0 +1,19 @@
+{
+ "RESULT": {
+  "name": "RESULT",
+  "text": "624",
+  "surface": "native",
+  "app": "Calculator",
+  "location": "app://Calculator",
+  "title": "Calculator",
+  "element_id": -1,
+  "element_label": "48\u00d713\n624",
+  "element_role": "text",
+  "part": "match",
+  "step": 0,
+  "session": "results/v7-q13-tasks23-20260928/task2-r1/calc",
+  "taken_at": 1790576991.2745159,
+  "surroundings": "48\u00d713 / 624",
+  "occurrence": "match 1 of 1 on the page"
+ }
+}
