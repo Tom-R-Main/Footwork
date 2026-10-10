@@ -123,6 +123,9 @@ class CaptureTests(unittest.TestCase):
         self.assertIn("-nostdin", args)
         self.assertIn("-n", args)
         self.assertNotIn("-video_size", args)
+        self.assertEqual(args[args.index("-framerate") + 1], "30")
+        self.assertLess(args.index("-framerate"), args.index("-i"))
+        self.assertEqual(result["request"]["framerate_fps"], 30)
 
     def test_changed_token_arguments_refused_before_second_dispatch(self):
         with self.working_device() as dispatched:
@@ -131,11 +134,21 @@ class CaptureTests(unittest.TestCase):
                                              (CAMERA, 15, True)):
                 with self.assertRaises(capture.Refusal):
                     capture.capture(self.root, camera, "first", timeout, prompt)
+            ledger, _, _ = capture.paths(self.root, "first")
+            record = capture.read_json(ledger)
+            record["request"]["framerate_fps"] = 15
+            capture.persist(ledger, record)
+            with self.assertRaises(capture.Refusal):
+                capture.capture(self.root, CAMERA, "first", 15)
+            del record["request"]["framerate_fps"]
+            capture.persist(ledger, record)
+            with self.assertRaises(capture.Refusal):
+                capture.capture(self.root, CAMERA, "first", 15)
         self.assertEqual(len(dispatched), 1)
 
     def test_unknown_and_valid_unreceipted_artifact_never_replay(self):
         ledger, artifact, _ = capture.paths(self.root, "first")
-        request = {"camera": CAMERA, "format": "png", "timeout_seconds": 15,
+        request = {"camera": CAMERA, "format": "png", "framerate_fps": 30, "timeout_seconds": 15,
                    "allow_permission_prompt": False}
         capture.persist(ledger, {"token": "first", "request": request, "state": "pending"})
         artifact.write_bytes(PNG)

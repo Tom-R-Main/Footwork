@@ -283,7 +283,7 @@ def status(root, token):
 def capture(root, camera, token, timeout, allow_permission_prompt=False):
     ledger, artifact, staging = paths(root, token)
     diagnostic = ledger.with_suffix(".ffmpeg.stderr.log")
-    request = {"camera": camera, "format": "png", "timeout_seconds": timeout,
+    request = {"camera": camera, "format": "png", "framerate_fps": 30, "timeout_seconds": timeout,
                "allow_permission_prompt": allow_permission_prompt}
     if ledger.exists() or ledger.is_symlink():
         record = read_json(ledger)
@@ -307,7 +307,8 @@ def capture(root, camera, token, timeout, allow_permission_prompt=False):
     persist(ledger, record)
     try:
         rc, _, stderr = run_process([programs["ffmpeg"], "-hide_banner", "-loglevel", "error",
-                               "-nostdin", "-n", "-f", "avfoundation", "-i", f"{camera}:none",
+                               "-nostdin", "-n", "-f", "avfoundation", "-framerate", "30",
+                               "-i", f"{camera}:none",
                                "-an", "-frames:v", "1", "-c:v", "png", str(staging)], timeout)
         private_diagnostic(diagnostic, stderr)
         record["diagnostic_name"] = diagnostic.name

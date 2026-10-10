@@ -42,8 +42,10 @@ macOS authorization flow. `doctor` never opens the camera or requests access. A 
 denied/restricted status is refused; inspect macOS privacy settings before proceeding.
 
 Capture selects the observed device by name, explicitly disables microphone capture,
-and saves one PNG without overwriting an existing artifact. It makes no frame-rate or
-resolution assumption. Capture defaults to a 15-second timeout; `--timeout` accepts 1-60
+and saves one PNG without overwriting an existing artifact. It explicitly requests 30 fps,
+a supported mode reported by this MacBook camera during NC1. It makes no resolution
+assumption. Another device may reject this fixed mode; there is no mode fallback.
+Capture defaults to a 15-second timeout; `--timeout` accepts 1-60
 seconds. Inventory and permission inspection have separate bounded process lifetimes.
 FFmpeg and its descendants are terminated on completion, timeout, or cancellation.
 
@@ -59,8 +61,10 @@ positive dimensions and a matching retained hash/byte count. `status` rechecks t
 artifact without opening a camera. It provides no exposure timestamp or semantic claim.
 
 The ledger records intent before dispatch. Repeating the same token and arguments reads
-the existing record, even in a fresh process. A token with changed camera, timeout, or
-permission-prompt arguments is refused. A nonblocking process lock permits one owner per run.
+the existing record, even in a fresh process. The request binds the fixed `framerate_fps: 30`
+alongside camera, timeout and permission-prompt arguments. Changed arguments or an older
+request without that mode are refused by `capture`; `status` can still inspect the earlier
+record. A nonblocking process lock permits one owner per run.
 
 After dispatch, any incomplete capture or receipt produces `unknown`, including the first
 CLI response. A pending ledger found after a restart remains unknown. A valid image without
