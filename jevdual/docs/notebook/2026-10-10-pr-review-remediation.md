@@ -84,3 +84,10 @@ Predicts: current writer fails the visibility assertion; repaired writer passes 
 Against: partial JSON remains visible, an existing marker is overwritten, or native failure persists after publication repair.
 Refs: output/pr-native-restart-9961eda/delivered/report.json; scripts/capability_restart_trial.py
 
+## PR8 · prediction · 2026-10-10 13:26
+Hypothesis: TextEdit acknowledges changed AXPosition before its child AXTextArea geometry updates, so the trial actor's immediate field read invalidates a legitimate delayed geometry change before product dispatch runs. A bounded independent observation wait can qualify the interference without guessing a frame or weakening the no-input assertion.
+Test: delayed versus unchanged geometry helper controls, then a fresh full three-case MCP/native guard run. Preserve the first run whose actor failed before original live dispatch.
+Predicts: actor reports actual changed field geometry within its fixed deadline; original product refuses before input and exact text remains unchanged across status and repeated token.
+Against: no actual field geometry change, any input after a qualified changed frame, or a deadline timeout promoted to success.
+Refs: output/pr-native-guards-4fb9a95/window_move/report.json; scripts/capability_dispatch_guard_trial.py
+
