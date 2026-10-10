@@ -6,10 +6,12 @@ this module lifts exactly those into typed records the done decision can use:
 
 * ``saved``: a save readback read the bound document's file equal to the window's text (current state
   at that time);
-* ``submitted``: a click navigated to a result whose URL carries the submitted fields (an event; a POST
-  form leaves no such evidence, and a generic confirmation page is not evidence of which request);
 * ``field_holds``: a typed or appended field read back holding its value (current state at that time);
 * ``read``: a value the harness carried out of an observation, with its source (answer provenance).
+
+Query navigation establishes neither a submission nor its values. The current receipt producer has
+no qualified submission acknowledgement, so this module emits no ``submitted`` events. The floor can
+check such events when a qualified producer exists; labels and result URLs cannot supply that proof.
 
 Each record keeps its limits. A duplicated submission, a save followed by another edit, a readback of a
 document other than the bound one: such a record is shown to the verifier with the limit and never counts
@@ -18,17 +20,64 @@ as support for a claimed value.
 
 from __future__ import annotations
 
+import ast
 import json
 import re
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qsl, urlsplit
+from urllib.parse import urlsplit
 
 KINDS = ("current_state", "event", "answer")
 _NAVIGATED = re.compile(r"navigated to (\S+?)[;)]?(?:\s|$)")
-_HOLDS = re.compile(r"'(?P<label>[^']+)' now holds '(?P<value>(?:[^'\\]|\\.)*)'")
-_EDITS = ("type", "append", "enter", "key", "paste")
+_STRING = r"'(?:[^'\\\r\n]|\\.)*'|\"(?:[^\"\\\r\n]|\\.)*\""
+_HOLDS = re.compile(rf"(?P<label>{_STRING}) now holds (?P<value>{_STRING})")
+_READ_ONLY = ("observe", "read", "look", "status", "inspect")
+_NOT_SENT = ("not sent", "not dispatched", "refused")
+_MAX_RECEIPT_LITERAL = 16_384
+
+
+def _literal(text: str) -> str | None:
+    """Decode only a bounded, quoted string produced by repr; never execute receipt text."""
+    if len(text) > _MAX_RECEIPT_LITERAL or re.fullmatch(_STRING, text) is None:
+        return None
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", SyntaxWarning)
+            value = ast.literal_eval(text)
+    except (SyntaxError, SyntaxWarning, ValueError):
+        return None
+    return value if isinstance(value, str) and repr(value) == text else None
+
+
+def _same_surface(record: dict[str, Any], earlier: dict[str, Any]) -> bool:
+    action, before = record.get("action") or {}, earlier.get("action") or {}
+    return not any(
+        action.get(scope) and before.get(scope) and action[scope] != before[scope]
+        for scope in ("app", "mode")
+    )
+
+
+def _possible_edit(record: dict[str, Any], earlier: dict[str, Any]) -> bool:
+    """Whether later input may supersede current-state evidence on the same source.
+
+    Experimental receipt metadata has app/mode scope but no qualified stable field incarnation.
+    Presentation labels and snapshot IDs can both remap, so they cannot prove distinct fields.
+    Any input route can mutate that source; a route name is not proof that a value stayed unchanged.
+    Preserve only read-only operations, explicit non-delivery or a known different source; unknown
+    input/scope overlaps. A later qualified readback supplies its own new current-state effect.
+    """
+    action = record.get("action") or {}
+    if (
+        action.get("op") in _READ_ONLY
+        or record.get("effect") not in ("confirmed", "partial", "unverifiable", "suspected_noop")
+        or action.get("driver_effect") in _NOT_SENT
+        or action.get("dispatched") is False
+        or record.get("dispatched") is False
+    ):
+        return False
+    return _same_surface(record, earlier)
 
 
 @dataclass(frozen=True)
@@ -60,10 +109,13 @@ def effects(
     records: list[dict[str, Any]], *, document: str = "", carries: dict[str, Any] | None = None
 ) -> list[Effect]:
     """The effect evidence in one session's records. ``document`` is the bound window's document name
-    (a readback of any other file is limited); ``carries`` is the session's carries.json."""
+    (a readback of any other file is limited); ``carries`` is the session's carries.json.
+    Current-state freshness follows receipt order, with conservative source scope because labels
+    and snapshot IDs do not establish stable field/document incarnation identity.
+    """
     out: list[Effect] = []
     receipts = [r for r in records if r.get("kind") == "receipt"]
-    for r in receipts:
+    for index, r in enumerate(receipts):
         a = r.get("action") or {}
         op, step, t = a.get("op"), int(r.get("step") or 0), float(r.get("t") or 0.0)
         if r.get("effect") != "confirmed":
@@ -74,15 +126,9 @@ def effects(
             limits = []
             if document and Path(path).name != document:
                 limits.append(f"the readback names {Path(path).name}, not the bound document {document}")
-            later = [
-                x
-                for x in receipts
-                if float(x.get("t") or 0) > t
-                and (x.get("action") or {}).get("op") in _EDITS
-                and x.get("effect") in ("confirmed", "partial", "unverifiable")
-            ]
-            if later:
-                limits.append(f"edited again after this save (step {later[0].get('step')})")
+            later = next((x for x in receipts[index + 1 :] if _possible_edit(x, r)), None)
+            if later is not None:
+                limits.append(f"possible edit after this save (step {later.get('step')})")
             out.append(
                 Effect(
                     "saved", path, "current_state", step, t, str(rb.get("detail") or ""), (), tuple(limits)
@@ -90,52 +136,33 @@ def effects(
             )
             continue
         ev = str(r.get("evidence") or "")
-        m = _NAVIGATED.search(ev)
-        if op == "click" and m and "?" in m.group(1):
-            u = urlsplit(m.group(1))
-            fields = tuple(v for _, v in parse_qsl(u.query) if v)
-            out.append(Effect("submitted", u.path, "event", step, t, f"submitted {u.query}", fields))
-            continue
-        h = _HOLDS.search(ev)
+        h = _HOLDS.fullmatch(ev) if len(ev) <= _MAX_RECEIPT_LITERAL else None
         if op in ("type", "append") and h:
-            value = h.group("value").encode().decode("unicode_escape")
+            label, value = _literal(h.group("label")), _literal(h.group("value"))
+            if not label or value is None:
+                continue
             # M2: once the page navigated away, the field it held is gone; its readback says nothing now
             moved = [
-                x for x in receipts if float(x.get("t") or 0) > t and "navigated to" in str(x.get("evidence"))
+                x
+                for x in receipts[index + 1 :]
+                if _NAVIGATED.match(str(x.get("evidence") or "")) and _same_surface(x, r)
             ]
-            limits = (f"the page navigated away at step {moved[0].get('step')}",) if moved else ()
+            limits = [f"the page navigated away at step {moved[0].get('step')}"] if moved else []
+            edited = next((x for x in receipts[index + 1 :] if _possible_edit(x, r)), None)
+            if edited is not None:
+                limits.append(f"a later input may have changed the field (step {edited.get('step')})")
             out.append(
                 Effect(
                     "field_holds",
-                    h.group("label"),
+                    label,
                     "current_state",
                     step,
                     t,
                     f"holds {value!r}",
                     (value,),
-                    limits,
+                    tuple(limits),
                 )
             )
-    # a submission repeated to the same result is a duplicated effect, whatever its fields
-    by_path: dict[str, int] = {}
-    for e in out:
-        if e.effect == "submitted":
-            by_path[e.resource] = by_path.get(e.resource, 0) + 1
-    out = [
-        Effect(
-            e.effect,
-            e.resource,
-            e.kind,
-            e.step,
-            e.t,
-            e.detail,
-            e.values,
-            (*e.limits, f"{by_path[e.resource]} submissions to {e.resource}"),
-        )
-        if e.effect == "submitted" and by_path[e.resource] > 1
-        else e
-        for e in out
-    ]
     for name, c in (carries or {}).items():
         v = str(c.get("text") or "")
         if v:
@@ -203,28 +230,45 @@ def floor(task: str, items: list[Effect] | tuple[Effect, ...], *, answer_bearing
 
 
 def repeat_of(records: list[dict[str, Any]], op: str, *, url: str = "", label: str = "") -> str | None:
-    """Why an action would repeat a submission these records already hold, or None: loading the
-    submission's result address again (a GET form submits on load), or clicking the control that made
-    it. U52: in the loop as frozen for Q19, a model whose done was refused loaded the sign-up's result
-    address, submitting a second time, and its next done was accepted."""
-    from urllib.parse import urlsplit
+    """Conservative repeat risk from observed query navigation, without submission evidence.
 
-    for e in effects(records):
-        if e.effect != "submitted":
+    A repeated query URL can repeat a GET form's effect. This guard preserves that pause but does not
+    establish whether an earlier submission happened. Absolute URLs keep origin identity; legacy
+    relative receipt URLs have unknown origin and conservatively match the same path and query.
+    """
+    for record in records:
+        action = record.get("action") or {}
+        if (
+            record.get("kind") != "receipt"
+            or record.get("effect") != "confirmed"
+            or action.get("op") != "click"
+            or action.get("driver_effect") in _NOT_SENT
+            or action.get("dispatched") is False
+            or record.get("dispatched") is False
+        ):
             continue
-        query = e.detail.removeprefix("submitted ")
+        navigation = _NAVIGATED.match(str(record.get("evidence") or ""))
+        if not navigation:
+            continue
+        prior = urlsplit(navigation.group(1))
+        if not prior.query:
+            continue
+        step = record.get("step")
         if op == "navigate" and url:
             u = urlsplit(url)
-            if u.path == e.resource and u.query and u.query == query:
-                return f"loading {u.path}?{u.query} would submit again (repeating the submission recorded at step {e.step})"
-        if op == "click" and label:
-            made = [
-                r
-                for r in records
-                if r.get("kind") == "receipt"
-                and float(r.get("t") or 0) == e.t
-                and (r.get("action") or {}).get("target_label") == label
-            ]
-            if made:
-                return f"'{label}' already submitted at step {e.step} ({query}); pressing it again would submit again"
+            if prior.netloc and (u.scheme.casefold(), u.netloc.casefold()) != (
+                prior.scheme.casefold(),
+                prior.netloc.casefold(),
+            ):
+                continue
+            if u.path == prior.path and u.query == prior.query:
+                return (
+                    f"repeating the query navigation recorded at step {step}; "
+                    f"loading {u.path}?{u.query} may submit again or repeat an effect"
+                )
+        if op == "click" and label and action.get("target_label") == label:
+            return (
+                f"{label!r} caused query navigation at step {step}; "
+                "pressing it again may submit again or repeat an effect"
+            )
     return None
