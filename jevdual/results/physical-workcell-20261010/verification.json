@@ -1,0 +1,35 @@
+{
+  "checks": [
+    {
+      "label": "native-conformance",
+      "argv": [
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/physical-workcell",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "test_before_condition_false_and_completion_creates_nothing (test_workcell.WorkcellTests.test_before_condition_false_and_completion_creates_nothing) ... ok\ntest_cross_process_lock_prevents_second_owner (test_workcell.WorkcellTests.test_cross_process_lock_prevents_second_owner) ... ok\ntest_fresh_process_continuity_repeat_and_one_digital_result (test_workcell.WorkcellTests.test_fresh_process_continuity_repeat_and_one_digital_result) ... ok\ntest_init_lookup_is_repeat_safe_and_changed_order_refused (test_workcell.WorkcellTests.test_init_lookup_is_repeat_safe_and_changed_order_refused) ... ok\ntest_interrupted_state_publication_does_not_implicitly_reset_or_reexecute (test_workcell.WorkcellTests.test_interrupted_state_publication_does_not_implicitly_reset_or_reexecute) ... ok\ntest_lost_motion_receipt_blocks_replay_and_completion (test_workcell.WorkcellTests.test_lost_motion_receipt_blocks_replay_and_completion) ... ok\ntest_lost_software_receipt_never_promotes_valid_bytes_or_replays (test_workcell.WorkcellTests.test_lost_software_receipt_never_promotes_valid_bytes_or_replays) ... ok\ntest_malformed_and_nonfinite_inputs_fail_without_traceback (test_workcell.WorkcellTests.test_malformed_and_nonfinite_inputs_fail_without_traceback) ... ok\ntest_model_state_order_and_runtime_tamper_refuse_implicit_reset (test_workcell.WorkcellTests.test_model_state_order_and_runtime_tamper_refuse_implicit_reset) ... ok\ntest_noncontact_command_does_not_fulfill_order (test_workcell.WorkcellTests.test_noncontact_command_does_not_fulfill_order) ... ok\ntest_real_contact_changes_block_and_enables_independent_computer_result (test_workcell.WorkcellTests.test_real_contact_changes_block_and_enables_independent_computer_result) ... ok\ntest_tampered_or_missing_result_preserves_history_without_recreation (test_workcell.WorkcellTests.test_tampered_or_missing_result_preserves_history_without_recreation) ... ok\ntest_token_arguments_stale_generation_and_workspace_refuse_before_step (test_workcell.WorkcellTests.test_token_arguments_stale_generation_and_workspace_refuse_before_step) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 3.263s\n\nOK\n"
+    },
+    {
+      "label": "ruff",
+      "argv": [
+        "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/ruff",
+        "check",
+        "tools/physical-workcell"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "label": "measured-source-unchanged",
+      "implementation_sha256": "810d343cf500526ac884badc31bae095f819a3c3e469a3d4a3155c7a20960d3b",
+      "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f"
+    }
+  ]
+}

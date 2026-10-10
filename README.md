@@ -27,6 +27,12 @@ camera frame to local text recognition and a reviewed inbox note. Its private re
 the original image and OCR text. `footwork check-artifact` checks the saved note against
 the approved source bytes without a model call; it does not judge recognition accuracy.
 
+[Project-linked workbench records](tools/workbench-notes/README.md) attach reviewed evidence
+to an explicit project, repository revision and proposed check. The optional
+[MuJoCo workcell](tools/physical-workcell/README.md) explores a body interface with
+physical-state feedback and a conditional computer work-order update. Simulation results
+remain separate from real-camera and robot qualification.
+
 ## Drive it
 
 ```sh

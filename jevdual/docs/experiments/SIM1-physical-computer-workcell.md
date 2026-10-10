@@ -26,4 +26,6 @@ Decision rule: qualify only demonstrated simulation/native-controller/local-comp
 
 ## Result
 
-Pending.
+Held for the bounded simulated workcell. Prediction committed in `49904e3`; measured implementation/model frozen in `ece54ae`. The independent public CLI run moved the free block through native contact into the work-order zone, refused premature completion, persisted state between processes, refused stale/out-of-envelope motion, and preserved state/results on repeated tokens. A conditional local work-order result passed a separate public Footwork byte check. Native before/after images were inspected. See `results/physical-workcell-20261010/report.md` and `independent-demo.json`.
+
+This establishes simulator/controller/local-computer coupling. It does not establish camera perception, robot hardware, general manipulation/navigation, real-time control or an external project update.
