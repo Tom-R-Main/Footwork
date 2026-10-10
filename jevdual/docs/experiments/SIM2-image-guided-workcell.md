@@ -27,3 +27,9 @@ Decision: adopt only as an experimental image-driven body interface if the compl
 ## Result
 
 Pending.
+
+## Amendment · 2026-10-10 15:54
+
+Version 1 at `fbc9815` completed the parent AI image-guided trial: five bounded image decisions, residual placement error at generation 4, a smaller correction at generation 5, fresh visual completion and separate native/file checks. Preserve it as `results/image-guided-workcell-20261010/trial-v1.json`.
+
+Source review identified an additional cached-packet boundary: the reader validates known fields but returns the original dictionary, so an injected extra field could enter planner evidence. Before adopting version 2, reject unknown packet fields and any changed perception-scope marker. Add forged-oracle-field and altered-scope conformance cases; commit the amendment before these tests. Keep dynamics, camera, detector thresholds, control settings and target intent unchanged. Freeze the revised source and repeat the parent image-driven public trial on a new run; earlier run evidence remains version 1 and is not silently upgraded. This is schema hardening, not tuning from a failed placement.
