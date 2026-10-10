@@ -1,0 +1,16 @@
+{
+  "observed_at": "2026-10-10T14:22:07.709439-04:00",
+  "system_camera_names": [
+    "MacBook Pro Camera",
+    "OBS Virtual Camera"
+  ],
+  "ffmpeg_exact_native_name_matches": [
+    "MacBook Pro Camera"
+  ],
+  "ffmpeg_avfoundation_available": true,
+  "swift_video_authorization_raw": 0,
+  "swift_video_authorization": "not_determined",
+  "authorization_identity_limit": "Swift status is not a qualified FFmpeg permission result",
+  "camera_opened": false,
+  "frame_acquisition": "unverified"
+}
