@@ -233,22 +233,28 @@ def test_legacy_schema_migration_does_not_invent_execution_authority(prepared, m
         reopened.close()
 
 
-@pytest.mark.parametrize("hang", ["before", "after"])
-def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(prepared, tmp_path, hang):
-    """Run the fixed worker in a real process; only OS reads/Timer duration are replaced."""
+@pytest.mark.parametrize(
+    ("hang", "pre_boundary_delay"), [("before", 0), ("after", 0), ("before", 0.4), ("after", 0.4)]
+)
+def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
+    prepared, tmp_path, hang, pre_boundary_delay
+):
+    """Run the fixed worker; trigger its original deadline at an observed blocked OS-read boundary."""
     journal, store, op, _ = prepared
     op = journal.start(op.id)
     packet_path = store.directory(op.id) / "packet.json"
     effect = tmp_path / "observed-effect.json"
+    boundary = tmp_path / "observed-boundary.json"
     child_code = textwrap.dedent(
         """
-        import asyncio,json,sys,threading
+        import asyncio,json,os,sys,threading
         from pathlib import Path
         from types import SimpleNamespace
         import pytest
         from jevdual.capability import execution_worker,recovery
         from tests.fixtures.native_world import TextWorld
         packet_path,effect,hang=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
+        pre_boundary_delay,boundary=float(sys.argv[4]),Path(sys.argv[5])
         packet=json.loads(packet_path.read_text())
         scope=packet['recovery']['scope']
         world=TextWorld(Path(scope['destination']['document']),content='Invoice\\n',window_id=4,frame=(0,0,100,100))
@@ -257,10 +263,27 @@ def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(prepar
         patch.setattr(recovery,'native_identity',lambda scope:packet['recovery']['identity'])
         patch.setattr(execution_worker,'native_identity',lambda scope:packet['recovery']['identity'])
         original_timer=threading.Timer
-        patch.setattr(threading,'Timer',lambda interval,fn:original_timer(0.25,fn))
+        boundary_reached=threading.Event()
+        def at_boundary(interval,fn):
+            def fire():
+                if not boundary_reached.wait(timeout=3):
+                    os._exit(3)  # unqualified boundary, never manufacture a deadline receipt
+                fn()  # the unchanged production admission fence and deadline writer
+            return original_timer(0,fire)
+        patch.setattr(threading,'Timer',at_boundary)
         original_read=world.get_window_state
+        first_read=True
         async def blocked_read(inp):
+            global first_read
+            if first_read:
+                first_read=False
+                await asyncio.sleep(pre_boundary_delay)
             if hang=='before' or world.content.endswith('17.25 USD'):
+                if hang=='after':
+                    assert effect.exists()
+                    assert json.loads(effect.read_text())['actual']==world.content=='Invoice\\n17.25 USD'
+                boundary.write_text(json.dumps({'phase':hang,'actual':world.content}))
+                boundary_reached.set()
                 await asyncio.sleep(10)
             return await original_read(inp)
         patch.setattr(world,'get_window_state',blocked_read)
@@ -275,7 +298,16 @@ def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(prepar
         """
     )
     child = subprocess.Popen(
-        [sys.executable, "-c", child_code, str(packet_path), str(effect), hang],
+        [
+            sys.executable,
+            "-c",
+            child_code,
+            str(packet_path),
+            str(effect),
+            hang,
+            str(pre_boundary_delay),
+            str(boundary),
+        ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
@@ -288,6 +320,10 @@ def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(prepar
         child.communicate(timeout=3)
         raise
     assert child.returncode == 2, (stdout, stderr)
+    assert boundary.exists(), "the requested observation boundary was never reached"
+    observed_boundary = json.loads(boundary.read_text())
+    assert observed_boundary["phase"] == hang
+    assert observed_boundary["actual"] == ("Invoice\n" if hang == "before" else "Invoice\n17.25 USD")
     result = store.read_result(op)
     assert result["error"] == "worker_deadline"
     assert result["disposition"] == ("not_sent" if hang == "before" else "unknown")
