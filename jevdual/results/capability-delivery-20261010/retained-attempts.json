@@ -1,0 +1,15 @@
+{
+  "offline_lock_regeneration": {
+    "command": "uv lock --offline",
+    "outcome": "failed before updating lock; default cache lacked broad Python-split resolution metadata",
+    "final_resolution": "Two direct dependency metadata entries added using existing26.3 resolution; uv lock --check --offline passed."
+  },
+  "precommit_metadata_smoke": {
+    "path": "output/delivery-package-py312-v3",
+    "outcome": "passed against working-tree metadata, not used as final frozen artifact evidence",
+    "final_profiles": [
+      "output/delivery-package-py312-v4",
+      "output/delivery-package-py314-v4"
+    ]
+  }
+}

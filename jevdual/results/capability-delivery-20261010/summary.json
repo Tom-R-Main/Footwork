@@ -1,0 +1,67 @@
+{
+  "source_commit": "2ea6ff988ce3b7eb3bbf444fc4cee6633f74b690",
+  "base_commit": "8c9478f7afc05be9d00a6919388fb2a2cced33d4",
+  "artifact_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "local_artifact_profiles": {
+    "Python3.12.6": true,
+    "Python3.14.7": true
+  },
+  "checks": {
+    "python_non_browser": {
+      "passed": 1473,
+      "skipped": 27,
+      "deselected": 12
+    },
+    "focused_python": 58,
+    "node": 97,
+    "rust": 19,
+    "rust_fmt": true,
+    "rust_clippy": true,
+    "ruff": true,
+    "notebook": true,
+    "workflow_structure_and_shell_syntax": true,
+    "lock_check_offline": true
+  },
+  "hosted_ci": "not_run",
+  "claude_review": {
+    "approved_source": "fc525da64d9c76f38d04ed0a20ac3bea1990a4fd",
+    "message": "1791670452579982000",
+    "remediation_closure": {
+      "approved_source": "2ea6ff988ce3b7eb3bbf444fc4cee6633f74b690",
+      "message": "1791670667746229000",
+      "verdict": "approved_no_blockers"
+    }
+  },
+  "publication": "not_published",
+  "merge": "not_merged",
+  "native_input_this_package": false,
+  "limits": [
+    "Local delivery checks run on existing macOS arm64 only. Linux and hosted macOS CI execution await PR delivery.",
+    "Fresh-OS/TCC permission onboarding is unqualified.",
+    "U1 native evidence is reused only for byte-identical runtime modules and identical selected dependency versions. The final artifact has separately qualified fresh installs.",
+    "Direct worker __main__ diagnostic origin remains a nonblocking gap."
+  ],
+  "logs": {
+    "python": "output/delivery-final-pytest.log",
+    "node": "output/delivery-final-node.log",
+    "ruff": "output/delivery-final-ruff.log",
+    "notebook": "output/delivery-final-notebook.log"
+  },
+  "initial_source_commit": "fc525da64d9c76f38d04ed0a20ac3bea1990a4fd",
+  "initial_artifact_sha256": "54a4085c992f7066c105f1ce3772d310725b457858543766ea8958cb2e4a275a",
+  "final_dependencies": {
+    "312": {
+      "packages": 115,
+      "versions_match_u1": true,
+      "strict_doctor": 0,
+      "packaging_version": "26.3"
+    },
+    "314": {
+      "packages": 115,
+      "versions_match_u1": true,
+      "strict_doctor": 0,
+      "packaging_version": "26.3"
+    }
+  },
+  "runtime_bytes_unchanged": true
+}
