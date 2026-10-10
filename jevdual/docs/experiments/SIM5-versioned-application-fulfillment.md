@@ -80,7 +80,16 @@ Hardware transfer, real operator demand and production adapter promotion remain 
 
 ## Result
 
-Pending.
+The first implementation failed the wrong-app mutation requirement in development;
+the failure is retained and notebook SIM5-R revises its prediction. Corrected frozen
+implementation `bd896e1` passed the actual isolated-browser read/bind, image-guided native
+contact, verified browser fulfillment and persisted readback. All seven independent
+public-API integration scenarios passed on first attempts with unchanged source.
+The 95 affected checks, source fingerprints, failed development attempts, separate
+browser evidence, SQLite effect counts and cleanup are recorded under
+`results/versioned-application-fulfillment-20261010/`. Adopt the bounded local experimental
+handoff; hardware, persistent shared-body orders and production capability promotion
+remain outside this result.
 
 ## Amendment · 2026-10-10 19:38 · before independent qualification
 

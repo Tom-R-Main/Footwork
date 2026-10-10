@@ -50,3 +50,16 @@ Changes: the adapter now requires an integer leased revision, exact fulfilled re
 Inferred: assigned IDs alone are insufficient for typed historical application-effect claims. This is a conformance fault on owned persisted data, not a hardware/security qualification.
 Next: finish final-source adapter/backend suites, freeze all measured source, then run independent SIM5-R trials.
 Refs: tools/physical-workcell/output/h5-receipt-before-type-fix-v2/unittest.log; tools/physical-workcell/test_app_handoff.py
+
+## SIM5-R-U1 · update · 2026-10-10 19:46
+Resolves: SIM5-R = held
+Observed: frozen bd896e1 completed the isolated-browser order binding, four image-guided native-contact moves, staged artifact verification and browser fulfillment. Separate HTTP/SQLite scoring found exactly one receipt at fulfilled revision 2; browser reload preserved it. Independent public-API trials passed all seven first attempts with unchanged source, including native-step-confirmed edit/cancel stops, lost-reply reconciliation, identity/conflict refusals, restart history and current artifact tampering.
+Inferred: the corrected bounded local handoff connects physical evidence to saved application state while preserving explicit stale/current/history boundaries. It does not establish general visual-policy performance or hardware transfer.
+Next: close this package with retained failures, evidence and owned-process cleanup; consider persistent body identity across successive work orders separately.
+Refs: bd896e1; results/versioned-application-fulfillment-20261010/report.md; results/versioned-application-fulfillment-20261010/summary.json; results/versioned-application-fulfillment-20261010/browser-result.json
+
+## SIM5-S · summary · 2026-10-10 19:46
+Established: Python/SQLite application revision leases and a public controller adapter completed a real browser/native-image/software loop, with 95 affected checks and seven independent diagnostic scenarios supporting the corrected implementation. Wrong-app mutation and malformed reconciliation development failures are preserved; all trial-owned processes/sockets and the temporary browser tab were cleaned up.
+Uncertain: physical/application proof is not atomic; the host must invoke guard to interrupt stale jobs; each lease currently owns a separate simulated episode. General robotics, a physical shared-body scheduler, camera/hardware calibration, operator demand and production capability governance are unqualified.
+Decision: keep the bounded local app/handoff as an experimental Footwork tool, with deterministic authority and host planning. A subsequent package should separate persistent body/resource ownership from changing task identity.
+Refs: results/versioned-application-fulfillment-20261010/; docs/experiments/SIM5-versioned-application-fulfillment.md; tools/physical-workcell/ORDER_APP.md
