@@ -242,3 +242,20 @@ def test_config_rejects_symlink_destination(tmp_path):
             document=link,
         )
     assert not (tmp_path / "run").exists()
+
+
+def test_doctor_uses_installed_requirements_and_marks_unknown_specs(monkeypatch):
+    from jevdual.capability import setup
+
+    monkeypatch.setattr(
+        setup.importlib.metadata,
+        "requires",
+        lambda name: ["cua-driver==99.0.0", "future-lib~=1.0", "ignored-lib>=1; sys_platform == 'never'"],
+    )
+    monkeypatch.setattr(setup.importlib.metadata, "version", lambda name: "0.28.2")
+    checked = doctor()
+    assert checked["dependencies"]["cua-driver"]["requirement"] == "==99.0.0"
+    assert checked["dependencies"]["cua-driver"]["compatible"] is False
+    assert checked["dependencies"]["future-lib"]["compatible"] == "unparsed"
+    assert "ignored-lib" not in checked["dependencies"]
+    assert any("unparsed" in warning for warning in checked["warnings"])

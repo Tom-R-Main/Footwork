@@ -15,14 +15,6 @@ from .backend import ScopedBackend
 from .completion import REPORT_SCHEMA, ReportError, validate_from_journal
 from .contracts import CapabilityError
 
-DEPENDENCIES = {
-    "mcp": "==2.1.1",
-    "cua-driver": "==0.28.2",
-    "psutil": "==7.2.2",
-    "browser-use": "==0.13.10",
-    "typesafe-sdk": ">=0.7,<1",
-    "orjson": ">=3.10",
-}
 LIMITATION = "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding."
 
 
@@ -141,28 +133,45 @@ def _compatible(version: str, requirement: str) -> bool:
 
 def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> dict:
     dependencies = {}
-    required = dict(DEPENDENCIES)
-    if sys.platform == "darwin":
-        required.update(
-            {
-                name: ">=12"
-                for name in (
-                    "pyobjc-framework-applicationservices",
-                    "pyobjc-framework-quartz",
-                    "pyobjc-framework-cocoa",
+    warnings = []
+    try:
+        from packaging.requirements import InvalidRequirement, Requirement
+
+        declared = importlib.metadata.requires("jevdual")
+        if declared is None:
+            warnings.append("Installed distribution has no dependency metadata; compatibility is unverified.")
+        for declaration in declared or []:
+            try:
+                required = Requirement(declaration)
+                if required.marker and not required.marker.evaluate():
+                    continue
+                name, requirement = required.name, str(required.specifier)
+                understood = (
+                    bool(requirement)
+                    and all(
+                        re.fullmatch(r"(?:==|>=|<)\d+(?:\.\d+)*", clause) for clause in requirement.split(",")
+                    )
+                    and not required.url
+                    and not required.extras
                 )
-            }
+                try:
+                    version = importlib.metadata.version(name)
+                    compatibility = _compatible(version, requirement) if understood else "unparsed"
+                except importlib.metadata.PackageNotFoundError:
+                    version, compatibility = None, False
+                dependencies[name] = {
+                    "version": version,
+                    "requirement": requirement,
+                    "compatible": compatibility,
+                }
+                if not understood:
+                    warnings.append(f"Dependency requirement is unparsed: {declaration}")
+            except InvalidRequirement:
+                warnings.append(f"Dependency requirement is unparsed: {declaration}")
+    except (ImportError, importlib.metadata.PackageNotFoundError):
+        warnings.append(
+            "Installed distribution metadata or requirement parser unavailable; compatibility is unverified."
         )
-    for name, requirement in required.items():
-        try:
-            version = importlib.metadata.version(name)
-            dependencies[name] = {
-                "version": version,
-                "requirement": requirement,
-                "compatible": _compatible(version, requirement),
-            }
-        except importlib.metadata.PackageNotFoundError:
-            dependencies[name] = {"version": None, "requirement": requirement, "compatible": False}
     result = {
         "platform": sys.platform,
         "supported": sys.platform == "darwin",
@@ -170,7 +179,8 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
         "permissions": permission_status(),
         "scope": "not_checked",
         "journal": "not_checked",
-        "warnings": [],
+        "warnings": warnings,
+        "dependency_metadata": "installed distribution",
         "limitation": LIMITATION,
         "provider_account_required": False,
         "rust_toolchain_required": False,

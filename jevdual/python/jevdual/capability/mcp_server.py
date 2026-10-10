@@ -12,6 +12,7 @@ import asyncio
 import json
 import logging
 import sys
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
 
@@ -68,7 +69,11 @@ def create_server(facade: ToolFacade) -> Any:
     from mcp import types
     from mcp.server import Server
 
-    server = Server("footwork-capability", version="0.2.0")
+    try:
+        artifact_version = version("jevdual")
+    except PackageNotFoundError:
+        artifact_version = "0.0.1+source"
+    server = Server("footwork-capability", version=artifact_version)
 
     async def list_tools(_context: Any, _params: Any) -> Any:
         return types.ListToolsResult(
