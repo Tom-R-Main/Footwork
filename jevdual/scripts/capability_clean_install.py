@@ -101,7 +101,6 @@ def main() -> int:
             "https://pypi.org/simple",
             "--only-binary",
             ":all:",
-            "--no-build",
             str(wheel),
         ],
     ):
