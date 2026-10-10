@@ -1,0 +1,47 @@
+{
+  "source_commit": "aa971782964a42d12d1ea8a52d6617476e8e3c63",
+  "branch": "codex/independent-onboarding",
+  "product_pr": "https://github.com/Tom-R-Main/Footwork/pull/2",
+  "product_pr_head": "7669d3db3a02edadd1a9cc65479d6f737544f4fc",
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "packet_sha256": "1eed24b44e1749ccee387a1677d89e43d4ac4616554eac4f80f02cb75e5d6a31",
+  "packet_members": 13,
+  "local_transport_checks": "passed",
+  "first_use_qualification": "not_performed",
+  "independent_environment": "not_selected",
+  "claude_review": "requested_queued_unread",
+  "claude_request_id": "1791674683421027000",
+  "selected_tests": 17,
+  "ruff": "passed",
+  "native_input": false,
+  "vm_created": false,
+  "os_permission_changes": false,
+  "host_disk_available_gib_observed": 7.9,
+  "hold": {
+    "pid": 40049,
+    "argv": [
+      "/usr/bin/caffeinate",
+      "-diu",
+      "-t",
+      "7200"
+    ],
+    "started_local": "2026-10-10 19:15:03 EDT",
+    "expires_approximately_local": "2026-10-10 21:15:03 EDT",
+    "persistent_settings_changed": false
+  },
+  "limits": [
+    "Transport/configuration checked with already installed dependencies on existing Mac, not an independent OS permission transition.",
+    "Placeholder resource IDs were never bound or used for input.",
+    "VM launcher installation, restore image and storage choices remain pending.",
+    "Independent Claude verdict unavailable."
+  ],
+  "retained_attempts": {
+    "initial_frozen_verifier_baseline": "A staging-path failure left HEAD at f39b76a, so the initial baseline did not exercise a changed-HEAD condition; not used as repair evidence.",
+    "committed_frozen_verifier_baseline": {
+      "head": "16c13acf8649c13a364286669623837ae61f89b4",
+      "exit_code": 1,
+      "log": "output/u2-frozen-verifier-baseline-committed.log"
+    },
+    "frozen_ref_remedy": "aa971782 verifies v1 with its explicit f39b76a ref, and rejects a foreign ref for v2."
+  }
+}

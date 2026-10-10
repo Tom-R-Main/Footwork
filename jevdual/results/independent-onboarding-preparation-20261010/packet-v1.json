@@ -1,0 +1,58 @@
+{
+  "passed": true,
+  "source_commit": "f39b76a81559903addea4c712f999b4740970450",
+  "imports": {
+    "helpers": {
+      "capability_clean_install": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_clean_install.py",
+      "capability_fixture": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_fixture.py",
+      "capability_fixture_config": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_fixture_config.py",
+      "capability_host_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_host_trial.py",
+      "capability_interrupt_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_interrupt_trial.py",
+      "capability_restart_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_restart_trial.py",
+      "capability_installed_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/jevdual/scripts/capability_installed_trial.py"
+    },
+    "product": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-dependencies-py312-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+    "provider_imported": false
+  },
+  "help_exits": {
+    "capability_clean_install.py": 0,
+    "capability_fixture.py": 0,
+    "capability_fixture_config.py": 0,
+    "capability_installed_trial.py": 0
+  },
+  "config_command": {
+    "command": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-dependencies-py312-v1/venv/bin/python",
+    "env": {
+      "PYTHONPATH": "",
+      "PYTHONHOME": "",
+      "PYTHONNOUSERSITE": "1",
+      "ANONYMIZED_TELEMETRY": "false",
+      "BROWSER_USE_CLOUD_SYNC": "false"
+    },
+    "args": [
+      "-I",
+      "-m",
+      "jevdual.capability.cli",
+      "server",
+      "--scope",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/job-test/scope.json",
+      "--journal",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v1/unpacked/footwork/job-test/operations.sqlite"
+    ]
+  },
+  "fresh_task_generated": true,
+  "journal_created": false,
+  "tamper_rejected": true,
+  "first_use_qualification": "not_performed",
+  "limitations": "Already installed dependency environment on existing Mac; helper transport/configuration only. Placeholder window IDs were not bound.",
+  "extra_member_rejected": true,
+  "py314": {
+    "helper_imports": 7,
+    "config_exit": 0,
+    "reuse_exit": 2,
+    "reuse_bytes_unchanged": true,
+    "recursive_input_exit": 2,
+    "invalid_run_not_created": true,
+    "private_config": true
+  }
+}
