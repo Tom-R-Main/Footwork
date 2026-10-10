@@ -24,7 +24,7 @@ Decision rule: advance only frame-acquisition feasibility when all required conf
 
 ## Result
 
-Partial result on frozen sources 2bccd45 and 48b33a1: discovery and 18 conformance checks pass; no live PNG was saved. The initial default-framerate rejection was removed by the preregistered 30 fps amendment, but the distinct trial timed out. Actual access and first-frame delivery remain unverified. NC1 stays open pending the human camera-prompt observation. See results/native-camera-20261010/report.md.
+Frame-acquisition feasibility verified on source 48b33a1 in attended live-v3: one 1080 by 1920 PNG independently decoded by ffprobe and FFmpeg, matching receipt hash and bytes; fresh-process repeat/status preserve the same operation/artifact, with no remaining FFmpeg process. The 18 conformance tests and Ruff pass on the unchanged source. Earlier live-v1/v2 unknown records remain preserved. Their timeout cause and prompt history are unqualified. See results/native-camera-20261010/report.md and live-v3.json.
 
 ## Amendment · 2026-10-10 14:30
 Live-v1 on 2bccd45 found FFmpeg default 29.970030 fps unsupported; no PNG exists and its ledger remains unknown. Next frozen version will explicitly request device-reported 30 fps and record it as part of the request. Live-v2 is a distinct operation, without altering or replaying live-v1. Original scope and decision rule remain unchanged.

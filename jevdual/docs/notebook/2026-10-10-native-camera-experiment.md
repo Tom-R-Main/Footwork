@@ -45,3 +45,23 @@ Test: the user explicitly requested another attempt after being AFK; preserve pr
 Predicts: if a prompt was the prerequisite and is allowed, the new operation yields one decoded saved PNG and retained receipt. Otherwise it remains unknown/refused, which does not diagnose permission as the cause.
 Against: authorization is confirmed yet no frame is acquired within the bound, or repeated lookup reopens the camera or promotes missing evidence.
 Refs: results/native-camera-20261010/report.md; tools/camera-capture-experiment/output/live-v3/; 48b33a1
+
+## U-NC3 · update · 2026-10-10 14:41
+Resolves: NC1 = held
+Observed: attended live-v3 on unchanged 48b33a1 completes acquisition. Independently executed ffprobe and FFmpeg decode one 1080 by 1920 PNG; hash and byte count match the receipt. Fresh-process capture repeat and status retain the original intent, receipt and artifact; ledger bytes are unchanged, exactly one PNG remains, and no FFmpeg process remains. NC1 frame-acquisition feasibility is established. The user has not described any actual permission prompt or action, so the proposed cause in NC3 is inconclusive.
+Inferred: the observed camera route can acquire a retained frame with the current host state. Success does not identify the prior timeout cause or qualify exposure freshness, scene interpretation, hardware authentication or useful physical workflows.
+Next: close this acquisition package; use its retained artifact seam for a separately scoped desk workflow experiment.
+Refs: results/native-camera-20261010/live-v3.json; results/native-camera-20261010/report.md; c8f71e6; 48b33a1
+
+## U-NCCAUSE · update · 2026-10-10 14:41
+Resolves: NC3 = inconclusive
+Observed: live-v3 acquired a verified frame, but the actual prompt history and prior timeout cause were not observed; both user presence and timeout bound differ from live-v2.
+Inferred: acquisition success does not establish the proposed permission mechanism.
+Next: close feasibility without assigning a cause to the earlier timeout.
+Refs: results/native-camera-20261010/live-v3.json; results/native-camera-20261010/report.md
+
+## S-NCCLOSED · summary · 2026-10-10 14:41
+Established: exact observed native-camera selection, one decoded saved frame with matching receipt, cross-process repeat/status lookup and cleanup on this Mac; conformance checks pass on the frozen implementation. Private frame and diagnostics remain excluded from Git.
+Uncertain: why live-v2 timed out; actual prompt history, authenticated camera identity, exposure time, image utility and any robotic or document effects.
+Decision: retain the isolated experiment under tools/camera-capture-experiment; frame acquisition is qualified here, while production adapter adoption and scene-driven effects need a separate experiment.
+Refs: results/native-camera-20261010/live-v3.json; results/native-camera-20261010/report.md; docs/experiments/NC1-native-camera.md

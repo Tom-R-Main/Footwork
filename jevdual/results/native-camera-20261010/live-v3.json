@@ -1,0 +1,48 @@
+{
+  "source_commit": "48b33a1",
+  "preregistration_commit": "c8f71e6",
+  "run": "tools/camera-capture-experiment/output/live-v3",
+  "token": "native-frame-003",
+  "state": "acquired",
+  "request": {
+    "allow_permission_prompt": true,
+    "camera": "MacBook Pro Camera",
+    "format": "png",
+    "framerate_fps": 30,
+    "timeout_seconds": 60.0
+  },
+  "artifact": {
+    "bytes": 2300920,
+    "codec": "png",
+    "height": 1920,
+    "sha256": "402a74b6443c6b5f3e9b04dc7f99bd24265e2e177ee6eddc8f85233a53c73d04",
+    "width": 1080
+  },
+  "private_artifact_mode": "0o600",
+  "live_exit_code": 0,
+  "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "png",
+        "width": 1080,
+        "height": 1920,
+        "nb_read_frames": "1"
+      }
+    ]
+  },
+  "ffmpeg_independent_decode_exit_code": 0,
+  "sha256_matches_receipt": true,
+  "fresh_process_repeat_capture": "same intent, receipt, artifact; unchanged ledger",
+  "fresh_process_status": "acquired; retained artifact verified",
+  "png_count": 1,
+  "ffmpeg_processes_after_checks": [],
+  "duration_intent_to_receipt_seconds": 2.582584857940674,
+  "limits": [
+    "No authenticated hardware identity or exposure timestamp",
+    "No scene interpretation or desk workflow qualification",
+    "Observed success does not establish why earlier attempts timed out",
+    "Private image and diagnostics remain ignored"
+  ]
+}

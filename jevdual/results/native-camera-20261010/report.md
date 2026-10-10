@@ -1,41 +1,38 @@
 # Native MacBook camera experiment
 
-The isolated capture CLI is implemented and its conformance checks pass. Native camera discovery is verified on this Mac. **Live frame acquisition remains unverified:** neither trial saved a PNG.
+**Frame acquisition is verified on this Mac.** Attended live-v3 acquired one private 1080 × 1920 PNG on frozen source `48b33a1`. Independently run ffprobe and FFmpeg decoded it, and its SHA-256 and byte count match the persisted receipt. Fresh-process capture repeat and status retain the same original intent, receipt and artifact; the ledger bytes are unchanged. Exactly one PNG remains, and no FFmpeg process remained after verification.
 
-## Artifact identity
+## Source and evidence
 
-- Preregistration: `fb090bd`; experiment `jevdual/docs/experiments/NC1-native-camera.md`.
-- Initial frozen source: `2bccd45`; amended fixed-30-fps source: `48b33a1`.
-- Source hashes and checks: `conformance.json` and `conformance-v2.json`.
-- Implementation: `tools/camera-capture-experiment/`; private evidence: ignored `tools/camera-capture-experiment/output/live-v1/` and `live-v2/`.
+- Initial preregistration: `fb090bd`; attended-trial preregistration: `c8f71e6`.
+- Initial source: `2bccd45`; fixed-30-fps source used for the successful trial: `48b33a1`.
+- Implementation: `tools/camera-capture-experiment/`.
+- Conformance/source hashes: `conformance.json`, `conformance-v2.json`.
+- Live results: `live-v1.json`, `live-v2.json`, `live-v3.json`.
+- Private image/diagnostics: ignored `tools/camera-capture-experiment/output/live-v3/`; image has mode 0600. Image contents are not included in this report or Git.
 
-## Evidence
+All 18 stdlib conformance tests and Ruff pass on `48b33a1`. Those tests use synthetic camera/process boundaries plus a real ffprobe check on a generated fixture. The separate live-v3 result supplies native-frame evidence.
 
-| Criterion | Kind | Observation | Result |
-| --- | --- | --- | --- |
-| Select observed physical camera and exclude OBS/screen | Answer | Public doctor selects only MacBook Pro Camera | Verified discovery; names are not authenticated hardware identity |
-| Produce one decoded saved native frame | Historical action/current artifact | Both attempts retained unknown; no PNG in either run | Unverified |
-| Retain prior unresolved action across restart | Current record | Repeated live-v1 capture retrieved original unknown intent; live-v2 status retrieved unknown with empty claims | Verified lookup; no exactly-once claim |
-| Disable audio and reject substituted sources | Contract | Capture input explicitly camera:none and -an; conformance fixtures challenge virtual/screen/unobserved names | Passed conformance; no microphone opened by configured route |
-| Bound acquisition process lifetime | Runtime | Live-v2 returned after bounded attempt; no FFmpeg process observed after termination | Observed cleanup; subprocess descendant case also passed |
-| Bind request mode and defend saved evidence | Contract | Tests reject changed/legacy mode, tampered/missing artifacts and lost receipts | Passed fixtures; native artifact integrity not exercised |
+## Qualification
 
-All 18 stdlib tests and Ruff pass on `48b33a1`. Tests simulate camera/process boundaries; the real ffprobe test uses a generated fixture. These are not native-camera acquisition evidence.
+| Criterion | Evidence | Result |
+| --- | --- | --- |
+| Select observed physical camera and exclude OBS/screen | Public doctor selects only MacBook Pro Camera | Discovery verified; names are not authenticated hardware identity |
+| Acquire a saved native frame | Live-v3 receipt and independent decode/hash readback | Verified PNG, 1080 × 1920, 2,300,920 bytes |
+| Preserve repeat operations across process restart | Public capture repeat and status preserve ledger and saved bytes | Verified retained lookup; no exactly-once physical-effect claim |
+| Disable audio and reject substituted sources | Explicit camera:none and -an; source-selection conformance cases | Passed configured route and fixtures |
+| Bound owned subprocess lifetime | Live termination/readback plus descendant timeout fixture | No FFmpeg process remained |
+| Preserve uncertainty and reject corrupt/missing evidence | Earlier live unknown records and conformance fixtures | Passed; original failed trials preserved |
 
-Live-v1 rejected FFmpeg's default 29.970030 fps. The camera reports modes spanning 15–30 fps. Its record and diagnostic remain unchanged; repeating its token did not create a new intent or image.
+Live-v1 rejected FFmpeg's default 29.970030 fps; the fixed source explicitly requests the observed supported 30 fps. Live-v2 timed out without saving an image. Its pixel-format message does not prove the cause because [FFmpeg documents fallback to the first supported format](https://ffmpeg.org/ffmpeg-devices.html#avfoundation). The user then requested a new attempt after being away. Live-v3 succeeded in about 2.58 seconds from persisted intent to receipt with a 60-second bound. This success does not establish prompt history or why live-v2 timed out.
 
-Live-v2 explicitly requests 30 fps and no longer reports the unsupported framerate. It timed out with no saved PNG. Diagnostics list supported pixel formats after rejecting default yuv420p, but [FFmpeg documents fallback to the first supported format](https://ffmpeg.org/ffmpeg-devices.html#avfoundation); this message alone does not identify the timeout cause. Swift's inspection still reports not_determined for its own privacy identity; that does not prove FFmpeg's authorization state. The human's observation of any macOS camera prompt is pending.
-
-## Reproduce without another capture
+## Readback and limits
 
 ```sh
-python3 tools/camera-capture-experiment/capture.py doctor --run-dir tools/camera-capture-experiment/output/live-v2
-python3 tools/camera-capture-experiment/capture.py status --run-dir tools/camera-capture-experiment/output/live-v2 --token native-frame-002
+python3 tools/camera-capture-experiment/capture.py status --run-dir tools/camera-capture-experiment/output/live-v3 --token native-frame-003
 python3 -m unittest discover -s tools/camera-capture-experiment -p 'test_*.py' -v
 ```
 
-Original live commands used exact camera MacBook Pro Camera, token native-frame-001 in live-v1 and native-frame-002 in live-v2, --allow-permission-prompt, and --timeout 30. Existing unresolved operations are never replayed automatically. A future distinct acquisition requires a deliberate new operation after examining the prerequisite/runtime cause.
+The successful capture command used exact camera MacBook Pro Camera, token native-frame-003, run live-v3, --allow-permission-prompt and --timeout 60. Repeating those exact arguments retrieves the retained result. Earlier unresolved records are never replayed automatically.
 
-## Next decision
-
-Establish whether a macOS access prompt appeared and was allowed, then diagnose first-frame delivery on the unchanged camera. Do not treat the remaining timeout as a pixel-format diagnosis. Keep this as an isolated tool until a useful desk workflow has been observed. Core Footwork authority, TextEdit recovery and model routing are unchanged. No provider calls or downloads were needed; images and private diagnostics are excluded from Git.
+This qualifies frame acquisition and retained artifact integrity here. It does not qualify exposure freshness, semantic interpretation, useful desk workflows, robot control, power-loss recovery or authenticated hardware identity. Retain the isolated tool until a separately scoped useful workflow is observed. Core Footwork authority, TextEdit recovery and model routing are unchanged. No provider calls or downloads were needed.
