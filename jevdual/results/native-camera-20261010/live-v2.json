@@ -1,0 +1,28 @@
+{
+  "source_commit": "48b33a1",
+  "run": "tools/camera-capture-experiment/output/live-v2",
+  "token": "native-frame-002",
+  "state": "unknown",
+  "request": {
+    "allow_permission_prompt": true,
+    "camera": "MacBook Pro Camera",
+    "format": "png",
+    "framerate_fps": 30,
+    "timeout_seconds": 30.0
+  },
+  "png_count": 0,
+  "live_exit_code": 2,
+  "diagnosis": "30 second capture timeout; no PNG. Prior unsupported framerate message absent. Default yuv420p unsupported and supported pixel formats listed; FFmpeg documents automatic fallback, so format message alone does not establish cause. Camera authorization and first-frame delivery remain unverified.",
+  "supported_pixel_formats": [
+    "uyvy422",
+    "yuyv422",
+    "nv12",
+    "0rgb",
+    "bgr0"
+  ],
+  "source_reference": "https://ffmpeg.org/ffmpeg-devices.html#avfoundation",
+  "status_after_restart": "unknown with no claims",
+  "cleanup": "no FFmpeg process observed after capture termination",
+  "ledger_sha256": "d5fad1d7096e345c36e5dbe2a9bfd483e3d931533267b59fbbd51d83859e6cc2",
+  "swift_status_after_trial": "not_determined; distinct privacy identity from FFmpeg"
+}

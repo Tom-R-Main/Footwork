@@ -1,0 +1,15 @@
+{
+  "source_commit": "48b33a1",
+  "source_sha256": {
+    "tools/camera-capture-experiment/capture.py": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+    "tools/camera-capture-experiment/permission.swift": "71887f8fed0c51f4c539b2cce98c7c826a4b7c641c6ddbdc72f560f636161f56",
+    "tools/camera-capture-experiment/test_capture.py": "47b27ab7400fc264a88d1c3bd4f1794dbed8dfb802d85d42e5f96a9e4877eb1f",
+    "tools/camera-capture-experiment/README.md": "b1639705df033ddbeca92cf96ffac77e80f7a447a8f6369771e982abb481d2e7"
+  },
+  "tests": 18,
+  "unit_command": "python3 -m unittest discover -s tools/camera-capture-experiment -p 'test_*.py' -v",
+  "unit_exit_code": 0,
+  "ruff_command": "uv run --no-sync ruff check ../tools/camera-capture-experiment",
+  "ruff_exit_code": 0,
+  "runtime_boundary": "synthetic camera/process fixtures; real ffprobe on generated image. Native camera attempts are separately reported."
+}

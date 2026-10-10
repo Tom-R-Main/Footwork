@@ -25,3 +25,16 @@ Test: add a fixed 30 fps input option and bind it into the request; retain confo
 Predicts: command requests 30 fps; live-v2 no longer fails with unsupported 29.970030 fps. Successful acquisition additionally requires permission and a decoded saved artifact; another failure remains unknown.
 Against: FFmpeg still rejects 30 fps as unsupported, the request omits the mode, changing a retained mode replays an operation, or failure becomes a success without artifact proof.
 Refs: results/native-camera-20261010/live-v1.json; docs/experiments/NC1-native-camera.md
+
+## U-NC2 · update · 2026-10-10 14:33
+Resolves: NC2 = held
+Observed: amended source 48b33a1 binds fixed 30 fps; all 18 conformance checks and Ruff pass. Live-v2 does not report unsupported framerate, but reaches its bounded timeout with no saved PNG. Status after process restart retains unknown and empty claims. No FFmpeg process remained. Swift still reports not_determined for its separate privacy identity. NC1 remains open.
+Inferred: the 30 fps change removes the known mode failure but does not establish actual authorization or first-frame delivery. The unsupported default pixel-format message is not a sufficient cause: FFmpeg documents automatic fallback to its first supported format.
+Next: establish the human's observation of any macOS camera prompt before further live acquisition; preserve both prior operations unchanged.
+Refs: results/native-camera-20261010/live-v2.json; results/native-camera-20261010/conformance-v2.json; results/native-camera-20261010/report.md; https://ffmpeg.org/ffmpeg-devices.html#avfoundation
+
+## S-NCPARTIAL · summary · 2026-10-10 14:33
+Established: an isolated public capture/status CLI, exact local discovery, conservative unknown outcomes and restart lookups; fixture conformance and lint pass. A committed explicit 30 fps setting eliminates the observed unsupported-default frame-rate failure.
+Uncertain: live native-frame acquisition, camera permission identity and first-frame delivery; exposure freshness, scene semantics and useful desk workflows remain unqualified.
+Decision: retain the bounded prototype in tools/camera-capture-experiment, leave NC1 open, and hand off the permission observation prerequisite before another distinct live trial. No production native-runtime adoption is supported by these results.
+Refs: results/native-camera-20261010/report.md; docs/experiments/NC1-native-camera.md; 48b33a1
