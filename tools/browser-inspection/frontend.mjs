@@ -3,10 +3,32 @@ import { resolve, relative, isAbsolute, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { safeText, safeUrl } from './redaction.mjs';
 
+function inventorySummary(value) {
+  // PageAssetsTabCapability.list() exposes only these aggregate counts, not bundle() metadata.
+  const result = {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return result;
+  const count = n => Number.isSafeInteger(n) && n >= 0;
+  for (const key of ['totalCount', 'inlineSvgCount']) {
+    if (!Object.hasOwn(value, key)) continue;
+    const n = value[key];
+    if (count(n)) result[key] = n;
+  }
+  const byKind = Object.hasOwn(value, 'byKind') ? value.byKind : undefined;
+  if (byKind && typeof byKind === 'object' && !Array.isArray(byKind)) {
+    result.byKind = {};
+    for (const key of ['script', 'other', 'font', 'image', 'stylesheet', 'video']) {
+      if (!Object.hasOwn(byKind, key)) continue;
+      const n = byKind[key];
+      if (count(n)) result.byKind[key] = n;
+    }
+  }
+  return result;
+}
+
 export function sanitizeInventory(inventory) {
   return {
     inventoryId: safeText(inventory.id, 100), pageUrl: safeUrl(inventory.pageUrl),
-    summary: inventory.summary,
+    summary: inventorySummary(inventory.summary),
     assets: (inventory.assets ?? []).map(asset => ({ id: safeText(asset.id, 100), kind: safeText(asset.kind, 40),
       name: safeText(asset.name, 160), url: safeUrl(asset.url),
       sources: (asset.sources ?? []).map(source => ({kind: safeText(source.kind, 40),

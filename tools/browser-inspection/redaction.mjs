@@ -1,5 +1,9 @@
 // Keep raw browser data in memory only. Journal serializers use positive allowlists.
 export const SECRET_KEY = /authorization|cookie|password|passwd|secret|token|credential|api.?key|signature|session|jwt|signed|policy|x-amz|x-goog/i;
+// Short credentials are not distinguishable from ordinary names by length alone. Once a route
+// identifies a credential-bearing operation, suppress its entire tail rather than guess a token.
+const CREDENTIAL_ROUTE = /^(?:reset(?:password)?|passwordreset|invites?|invitations?|acceptinvite|magiclink|passwordless|signed(?:url|link)?|signature|tokens?|accesstoken|refreshtoken|credentials?|secret|apikey|session|jwt|challengeplatform)$/;
+const credentialRoute = segment => CREDENTIAL_ROUTE.test(segment.toLowerCase().replace(/[-_.]/g, ''));
 
 export function safeText(value, max = 2000) {
   if (typeof value !== 'string') return undefined;
@@ -21,11 +25,22 @@ export function safeUrl(value) {
     // data:/blob:/javascript: pathnames can contain the entire document or a token.
     if (!['http:', 'https:', 'ws:', 'wss:'].includes(url.protocol)) return '[NON_NETWORK_URL]';
     // No credentials, hash or query values, even when their parameter names look harmless.
+    let credentialTail = false;
     const pathname = url.pathname.split('/').map(segment => {
       let decoded;
       try { decoded = decodeURIComponent(segment); } catch { return '[INVALID]'; }
+      if (credentialTail && decoded) return '[OPAQUE]';
+      const parts = decoded.split('/');
+      const routeIndex = parts.findIndex(credentialRoute);
+      if (routeIndex >= 0) {
+        credentialTail = true;
+        // Encoded slash boundaries can place the credential in the route's own segment.
+        if (parts.slice(routeIndex + 1).some(Boolean)) return '[OPAQUE]';
+      }
       // Challenge and signed-route tokens often combine punctuation with shorter opaque runs.
-      return /@|eyJ|[\w-]{48,}/.test(decoded) || (decoded.length >= 64 && /[A-Za-z0-9]{16,}/.test(decoded) && /[.:_-]/.test(decoded)) ? '[OPAQUE]' : segment;
+      return /@|eyJ|[\w-]{32,}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}|[a-f\d]{32}/i.test(decoded)
+        || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[\w-]{24,}$/.test(decoded)
+        || (decoded.length >= 64 && /[A-Za-z0-9]{16,}/.test(decoded) && /[.:_-]/.test(decoded)) ? '[OPAQUE]' : segment;
     }).join('/');
     const keys = [...new Set([...url.searchParams.keys()].map(key => SECRET_KEY.test(key) ? '[SECRET]' : key.replace(/[^\w.-]/g, '_').slice(0, 60)))];
     return `${url.protocol}//${url.host}${pathname}${keys.length ? `?${keys.map(k => `${k}=[OMITTED]`).join('&')}` : ''}`;
