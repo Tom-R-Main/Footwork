@@ -58,6 +58,22 @@ def _point(element: Any) -> tuple[float, float]:
     return float(point.x), float(point.y)
 
 
+def _wait_for_geometry(read_frame: Any, before: Any, *, timeout_s: float = 2.5) -> Any:
+    """Observe the independent AX field geometry after moving its owned window."""
+    deadline = time.monotonic() + timeout_s
+    while True:
+        after = read_frame()
+        observed_at = time.monotonic()
+        if observed_at > deadline:
+            raise OracleError("window mutation did not expose actual field geometry before deadline")
+        if after is not None and after != before:
+            return after
+        remaining = deadline - observed_at
+        if remaining <= 0:
+            raise OracleError("window mutation did not change the actual field geometry before deadline")
+        time.sleep(min(0.025, remaining))
+
+
 def _actor(case: str, scope: dict, packet: dict, out: Path, bridge: Any, snapshot: Any, cid: int) -> None:
     """One independent interference, using observed field/position and the owned scope."""
     from jevdual import ax
@@ -118,10 +134,22 @@ def _actor(case: str, scope: dict, packet: dict, out: Path, bridge: Any, snapsho
             if moved != desired:
                 raise OracleError("the observed window did not move to the requested offset")
             expected = before
-        after_frame = ax.frame_of(_scoped_text_area(pid, document))
-        record["field_frame_after"] = (
-            None if after_frame is None else [after_frame.x, after_frame.y, after_frame.w, after_frame.h]
-        )
+
+        def read_frame():
+            observed_frame = ax.frame_of(_scoped_text_area(pid, document))
+            return (
+                None
+                if observed_frame is None
+                else [observed_frame.x, observed_frame.y, observed_frame.w, observed_frame.h]
+            )
+
+        if case == "window_move":
+            geometry_started = time.monotonic()
+            record["geometry_poll_timeout_s"] = 2.5
+            record["field_frame_after"] = _wait_for_geometry(read_frame, record["field_frame_before"])
+            record["geometry_observation_elapsed_s"] = time.monotonic() - geometry_started
+        else:
+            record["field_frame_after"] = read_frame()
         record["actual_after_actor"] = ax_document_text(pid, document)
         record["expected_after_actor"] = expected
         record["document_after"] = _document_path(ax.window_element(pid, window_id))
