@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-10-10T17:00:21.017059-04:00",
+  "qualification_episodes_rerun": false,
+  "retained_episode_count": 12,
+  "frozen_runtime_hashes_unchanged": true,
+  "frozen_case_hashes_unchanged": true,
+  "ordinary_qualified_completion_and_current_software_contact_verified": true,
+  "challenge_images_retained_and_zero_actions_verified": true,
+  "notebook_check": {
+    "command": "uv run python -m evals.notebook docs/notebook --check",
+    "exit_code": 0,
+    "summary": "333 entries, 113 predictions: 80 held, 22 failed, 10 inconclusive, 1 open"
+  },
+  "result_redaction": {
+    "command": "uv run python scripts/redact_results.py results/repeatable-work-orders-20261010",
+    "exit_code": 0,
+    "files_changed": 0
+  },
+  "prose_hygiene": {
+    "files_checked": 6,
+    "removed": 0,
+    "replaced": 0
+  },
+  "git_diff_check_exit_code": 0
+}

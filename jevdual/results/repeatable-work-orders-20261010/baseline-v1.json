@@ -1,0 +1,482 @@
+{
+  "source_commit": "b9941ef",
+  "doctor": {
+    "exit_code": 0,
+    "result": {
+      "checks": {
+        "footwork_checker": true,
+        "native_runtime_pinned": true,
+        "numpy_available": true,
+        "renderer": true
+      },
+      "mujoco_version": "3.15.0",
+      "phase": "ready",
+      "scope": "dependency readiness only; no episode, persisted state, action or camera acquisition",
+      "source_kind": "mujoco_simulation"
+    }
+  },
+  "episodes": [
+    {
+      "case_id": "ordinary-a",
+      "group": "ordinary",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-a",
+      "exit_code": 0,
+      "wall_call_seconds": 1.2456378936767578,
+      "public_result": {
+        "case_sha256": "4a60068d9e562246812c02d57e978259e24697274f3ea5055bda8175c85a5751",
+        "declaration": {
+          "explanation": "Fresh RGB completion proposal received a staged software receipt.\n",
+          "explanation_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-a/baseline-explanation.txt",
+          "explanation_sha256": "5b03217d327bb49b459fca24b1e2a108f01a427d2f590b40a1a2c09cd7ab58c4",
+          "finished_time_unix": 1791665370.330595,
+          "interventions_declared": 0,
+          "outcome": "completed"
+        },
+        "episode_id": "e822fa4d00d345a8bc89acc09029b49f",
+        "history": [
+          {
+            "decision": "move",
+            "generation": 0,
+            "phase": "executed",
+            "token": "rgb-000"
+          },
+          {
+            "decision": "complete",
+            "generation": 3,
+            "phase": "staged",
+            "token": "rgb-003"
+          },
+          {
+            "decision": "move",
+            "generation": 2,
+            "phase": "executed",
+            "token": "rgb-002"
+          },
+          {
+            "decision": "move",
+            "generation": 1,
+            "phase": "executed",
+            "token": "rgb-001"
+          }
+        ],
+        "participant": "deterministic_rgb",
+        "phase": "finished",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-a",
+        "source_kind": "mujoco_simulation",
+        "started_time_unix": 1791665369.1890612
+      },
+      "stderr": "",
+      "evaluation_exit_code": 0,
+      "evaluation": {
+        "action_count": 4,
+        "attempted": 1,
+        "case_sha256": "4a60068d9e562246812c02d57e978259e24697274f3ea5055bda8175c85a5751",
+        "completed": 1,
+        "contact_motion_count": 3,
+        "current_software_ok": true,
+        "declared_outcome": "completed",
+        "driver_failed": false,
+        "elapsed_s": 1.1415338516235352,
+        "episode_id": "e822fa4d00d345a8bc89acc09029b49f",
+        "evidence_errors": [],
+        "failed": 0,
+        "finished": true,
+        "historical_software_staged": true,
+        "incorrect_completion_claim": false,
+        "interventions_declared": 0,
+        "motion_executed_count": 3,
+        "participant": "deterministic_rgb",
+        "physical_condition": true,
+        "qualified_completion": true,
+        "refused_completion_count": 0,
+        "role": "parent_only_evaluator",
+        "setup_failed": false,
+        "source_kind": "mujoco_simulation",
+        "unresolved": 0,
+        "visual_completion_attempts": 1,
+        "visual_false_positive_count": 0,
+        "visual_positive_count": 1,
+        "visual_verdicts": [
+          {
+            "bound_native_condition": true,
+            "generation": 3,
+            "reason": "fresh RGB center satisfies the conservative zone",
+            "token": "rgb-003",
+            "visual_false_positive": false,
+            "visual_positive": true
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "ordinary-b",
+      "group": "ordinary",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-b",
+      "exit_code": 0,
+      "wall_call_seconds": 1.458353042602539,
+      "public_result": {
+        "case_sha256": "b6a36fffbf83a68af315944ff1f92cdfd9a0dfa48c921dd11a6f64f4b564b926",
+        "declaration": {
+          "explanation": "Fresh RGB completion proposal received a staged software receipt.\n",
+          "explanation_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-b/baseline-explanation.txt",
+          "explanation_sha256": "5b03217d327bb49b459fca24b1e2a108f01a427d2f590b40a1a2c09cd7ab58c4",
+          "finished_time_unix": 1791665372.149882,
+          "interventions_declared": 0,
+          "outcome": "completed"
+        },
+        "episode_id": "2b5357cd5a0d4e06bede3bc57d5ff285",
+        "history": [
+          {
+            "decision": "move",
+            "generation": 0,
+            "phase": "executed",
+            "token": "rgb-000"
+          },
+          {
+            "decision": "move",
+            "generation": 3,
+            "phase": "executed",
+            "token": "rgb-003"
+          },
+          {
+            "decision": "move",
+            "generation": 2,
+            "phase": "executed",
+            "token": "rgb-002"
+          },
+          {
+            "decision": "complete",
+            "generation": 4,
+            "phase": "staged",
+            "token": "rgb-004"
+          },
+          {
+            "decision": "move",
+            "generation": 1,
+            "phase": "executed",
+            "token": "rgb-001"
+          }
+        ],
+        "participant": "deterministic_rgb",
+        "phase": "finished",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-b",
+        "source_kind": "mujoco_simulation",
+        "started_time_unix": 1791665370.801292
+      },
+      "stderr": "",
+      "evaluation_exit_code": 0,
+      "evaluation": {
+        "action_count": 5,
+        "attempted": 1,
+        "case_sha256": "b6a36fffbf83a68af315944ff1f92cdfd9a0dfa48c921dd11a6f64f4b564b926",
+        "completed": 1,
+        "contact_motion_count": 3,
+        "current_software_ok": true,
+        "declared_outcome": "completed",
+        "driver_failed": false,
+        "elapsed_s": 1.3485901355743408,
+        "episode_id": "2b5357cd5a0d4e06bede3bc57d5ff285",
+        "evidence_errors": [],
+        "failed": 0,
+        "finished": true,
+        "historical_software_staged": true,
+        "incorrect_completion_claim": false,
+        "interventions_declared": 0,
+        "motion_executed_count": 4,
+        "participant": "deterministic_rgb",
+        "physical_condition": true,
+        "qualified_completion": true,
+        "refused_completion_count": 0,
+        "role": "parent_only_evaluator",
+        "setup_failed": false,
+        "source_kind": "mujoco_simulation",
+        "unresolved": 0,
+        "visual_completion_attempts": 1,
+        "visual_false_positive_count": 0,
+        "visual_positive_count": 1,
+        "visual_verdicts": [
+          {
+            "bound_native_condition": true,
+            "generation": 4,
+            "reason": "fresh RGB center satisfies the conservative zone",
+            "token": "rgb-004",
+            "visual_false_positive": false,
+            "visual_positive": true
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "ordinary-c",
+      "group": "ordinary",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-c",
+      "exit_code": 0,
+      "wall_call_seconds": 1.4272665977478027,
+      "public_result": {
+        "case_sha256": "fa34684c4d313a2fb765c2ad1bed38f7cfc37d447436486ff87d88380c25fbb7",
+        "declaration": {
+          "explanation": "Fresh RGB completion proposal received a staged software receipt.\n",
+          "explanation_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-c/baseline-explanation.txt",
+          "explanation_sha256": "5b03217d327bb49b459fca24b1e2a108f01a427d2f590b40a1a2c09cd7ab58c4",
+          "finished_time_unix": 1791665373.945101,
+          "interventions_declared": 0,
+          "outcome": "completed"
+        },
+        "episode_id": "ea08bacdeee54db596cb90e687abe88c",
+        "history": [
+          {
+            "decision": "move",
+            "generation": 0,
+            "phase": "executed",
+            "token": "rgb-000"
+          },
+          {
+            "decision": "move",
+            "generation": 3,
+            "phase": "executed",
+            "token": "rgb-003"
+          },
+          {
+            "decision": "move",
+            "generation": 2,
+            "phase": "executed",
+            "token": "rgb-002"
+          },
+          {
+            "decision": "complete",
+            "generation": 4,
+            "phase": "staged",
+            "token": "rgb-004"
+          },
+          {
+            "decision": "move",
+            "generation": 1,
+            "phase": "executed",
+            "token": "rgb-001"
+          }
+        ],
+        "participant": "deterministic_rgb",
+        "phase": "finished",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/ordinary-c",
+        "source_kind": "mujoco_simulation",
+        "started_time_unix": 1791665372.623067
+      },
+      "stderr": "",
+      "evaluation_exit_code": 0,
+      "evaluation": {
+        "action_count": 5,
+        "attempted": 1,
+        "case_sha256": "fa34684c4d313a2fb765c2ad1bed38f7cfc37d447436486ff87d88380c25fbb7",
+        "completed": 1,
+        "contact_motion_count": 3,
+        "current_software_ok": true,
+        "declared_outcome": "completed",
+        "driver_failed": false,
+        "elapsed_s": 1.3220341205596924,
+        "episode_id": "ea08bacdeee54db596cb90e687abe88c",
+        "evidence_errors": [],
+        "failed": 0,
+        "finished": true,
+        "historical_software_staged": true,
+        "incorrect_completion_claim": false,
+        "interventions_declared": 0,
+        "motion_executed_count": 4,
+        "participant": "deterministic_rgb",
+        "physical_condition": true,
+        "qualified_completion": true,
+        "refused_completion_count": 0,
+        "role": "parent_only_evaluator",
+        "setup_failed": false,
+        "source_kind": "mujoco_simulation",
+        "unresolved": 0,
+        "visual_completion_attempts": 1,
+        "visual_false_positive_count": 0,
+        "visual_positive_count": 1,
+        "visual_verdicts": [
+          {
+            "bound_native_condition": true,
+            "generation": 4,
+            "reason": "fresh RGB center satisfies the conservative zone",
+            "token": "rgb-004",
+            "visual_false_positive": false,
+            "visual_positive": true
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "low-light",
+      "group": "challenge",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/low-light",
+      "exit_code": 0,
+      "wall_call_seconds": 0.21388792991638184,
+      "public_result": {
+        "case_sha256": "30321dd8243b1305de5dad17e6f4f9d1230187e6f8dd6845d82c56508e871d98",
+        "declaration": {
+          "explanation": "Acquired RGB image has unavailable or ambiguous part recognition.\n",
+          "explanation_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/low-light/baseline-explanation.txt",
+          "explanation_sha256": "2054ff7634f4c4fb93a47a0848f353b3b7789b8ebcebc9e9eabe937e1939b634",
+          "finished_time_unix": 1791665374.5302908,
+          "interventions_declared": 0,
+          "outcome": "unresolved"
+        },
+        "episode_id": "fdd98251a28347e5a36febc35f0e237e",
+        "history": [],
+        "participant": "deterministic_rgb",
+        "phase": "finished",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/low-light",
+        "source_kind": "mujoco_simulation",
+        "started_time_unix": 1791665374.4217238
+      },
+      "stderr": "",
+      "evaluation_exit_code": 0,
+      "evaluation": {
+        "action_count": 0,
+        "attempted": 1,
+        "case_sha256": "30321dd8243b1305de5dad17e6f4f9d1230187e6f8dd6845d82c56508e871d98",
+        "completed": 0,
+        "contact_motion_count": 0,
+        "current_software_ok": false,
+        "declared_outcome": "unresolved",
+        "driver_failed": false,
+        "elapsed_s": 0.1085669994354248,
+        "episode_id": "fdd98251a28347e5a36febc35f0e237e",
+        "evidence_errors": [],
+        "failed": 0,
+        "finished": true,
+        "historical_software_staged": false,
+        "incorrect_completion_claim": false,
+        "interventions_declared": 0,
+        "motion_executed_count": 0,
+        "participant": "deterministic_rgb",
+        "physical_condition": false,
+        "qualified_completion": false,
+        "refused_completion_count": 0,
+        "role": "parent_only_evaluator",
+        "setup_failed": false,
+        "source_kind": "mujoco_simulation",
+        "unresolved": 1,
+        "visual_completion_attempts": 0,
+        "visual_false_positive_count": 0,
+        "visual_positive_count": 0,
+        "visual_verdicts": []
+      }
+    },
+    {
+      "case_id": "occlusion",
+      "group": "challenge",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/occlusion",
+      "exit_code": 0,
+      "wall_call_seconds": 0.21574687957763672,
+      "public_result": {
+        "case_sha256": "934880ad3736e73cb761b64d3cfda109a7e40d08320e770fb3edcb50c90769da",
+        "declaration": {
+          "explanation": "Acquired RGB image has unavailable or ambiguous part recognition.\n",
+          "explanation_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/occlusion/baseline-explanation.txt",
+          "explanation_sha256": "2054ff7634f4c4fb93a47a0848f353b3b7789b8ebcebc9e9eabe937e1939b634",
+          "finished_time_unix": 1791665374.8538518,
+          "interventions_declared": 0,
+          "outcome": "unresolved"
+        },
+        "episode_id": "d97255015d6641089984f4b3f61c63e8",
+        "history": [],
+        "participant": "deterministic_rgb",
+        "phase": "finished",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/occlusion",
+        "source_kind": "mujoco_simulation",
+        "started_time_unix": 1791665374.7464461
+      },
+      "stderr": "",
+      "evaluation_exit_code": 0,
+      "evaluation": {
+        "action_count": 0,
+        "attempted": 1,
+        "case_sha256": "934880ad3736e73cb761b64d3cfda109a7e40d08320e770fb3edcb50c90769da",
+        "completed": 0,
+        "contact_motion_count": 0,
+        "current_software_ok": false,
+        "declared_outcome": "unresolved",
+        "driver_failed": false,
+        "elapsed_s": 0.1074056625366211,
+        "episode_id": "d97255015d6641089984f4b3f61c63e8",
+        "evidence_errors": [],
+        "failed": 0,
+        "finished": true,
+        "historical_software_staged": false,
+        "incorrect_completion_claim": false,
+        "interventions_declared": 0,
+        "motion_executed_count": 0,
+        "participant": "deterministic_rgb",
+        "physical_condition": false,
+        "qualified_completion": false,
+        "refused_completion_count": 0,
+        "role": "parent_only_evaluator",
+        "setup_failed": false,
+        "source_kind": "mujoco_simulation",
+        "unresolved": 1,
+        "visual_completion_attempts": 0,
+        "visual_false_positive_count": 0,
+        "visual_positive_count": 0,
+        "visual_verdicts": []
+      }
+    },
+    {
+      "case_id": "camera-shift",
+      "group": "challenge",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/camera-shift",
+      "exit_code": 0,
+      "wall_call_seconds": 0.21552515029907227,
+      "public_result": {
+        "case_sha256": "cbf8a3b2612965dd2246523ba630bd86760192f9f8b3a01d9be9d7af89fc72c6",
+        "declaration": {
+          "explanation": "Acquired RGB image has invalid calibration; no motion admitted.\n",
+          "explanation_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/camera-shift/baseline-explanation.txt",
+          "explanation_sha256": "15ea03df5cb667b60ca920cefe7d979a3ce091398e4d897c6b2d8f4a1bcec944",
+          "finished_time_unix": 1791665375.1818979,
+          "interventions_declared": 0,
+          "outcome": "unresolved"
+        },
+        "episode_id": "56f14e28ceda47df938551de89395f4d",
+        "history": [],
+        "participant": "deterministic_rgb",
+        "phase": "finished",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim3-qualification-v1/deterministic/camera-shift",
+        "source_kind": "mujoco_simulation",
+        "started_time_unix": 1791665375.073507
+      },
+      "stderr": "",
+      "evaluation_exit_code": 0,
+      "evaluation": {
+        "action_count": 0,
+        "attempted": 1,
+        "case_sha256": "cbf8a3b2612965dd2246523ba630bd86760192f9f8b3a01d9be9d7af89fc72c6",
+        "completed": 0,
+        "contact_motion_count": 0,
+        "current_software_ok": false,
+        "declared_outcome": "unresolved",
+        "driver_failed": false,
+        "elapsed_s": 0.10839080810546875,
+        "episode_id": "56f14e28ceda47df938551de89395f4d",
+        "evidence_errors": [],
+        "failed": 0,
+        "finished": true,
+        "historical_software_staged": false,
+        "incorrect_completion_claim": false,
+        "interventions_declared": 0,
+        "motion_executed_count": 0,
+        "participant": "deterministic_rgb",
+        "physical_condition": false,
+        "qualified_completion": false,
+        "refused_completion_count": 0,
+        "role": "parent_only_evaluator",
+        "setup_failed": false,
+        "source_kind": "mujoco_simulation",
+        "unresolved": 1,
+        "visual_completion_attempts": 0,
+        "visual_false_positive_count": 0,
+        "visual_positive_count": 0,
+        "visual_verdicts": []
+      }
+    }
+  ]
+}

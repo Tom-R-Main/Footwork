@@ -38,4 +38,20 @@ Decision: adopt only the bounded episode/evidence interface supported by the obs
 
 ## Result
 
-Pending.
+Frozen runtime b9941ef: both participants completed 3/3 ordinary jobs and 3/6 total jobs.
+Each declared the three challenged cases unresolved, retained inspectable images and
+executed no motion on those cases. Independent scoring found no incorrect completion
+claims or visual false positives in the twelve attempted episodes. These observations
+support the bounded episode/evidence interface; they do not establish general reliability
+or an AI movement advantage.
+
+The fresh host inspected 19 images and reported zero external interventions. Its first
+doctor-output redirection failed because the destination directory did not exist. It
+corrected that itself, but doctor actually ran after the first initialization, before
+the first view. Strict doctor-before-init and clean-machine setup are unqualified.
+Role separation was instruction-based on a shared filesystem, with a post-trial self-audit.
+
+All six cases were run once per participant with no qualification tuning or reruns.
+Scoped conformance: 50 actual-engine/renderer tests and Ruff passed. Full evidence,
+descriptive elapsed times, retained failures and subsequent scope are in
+[the report](../../results/repeatable-work-orders-20261010/report.md).

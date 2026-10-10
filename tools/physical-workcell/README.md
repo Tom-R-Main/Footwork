@@ -12,6 +12,10 @@ simulator. This package is an isolated experiment, rather than a production Foot
 For RGB-driven agent control, use the separate [image-guided route](IMAGE_GUIDED.md). It keeps
 native poses out of planner packets and adds a fresh visual gate before computer staging.
 The base commands below retain their original native-state behavior.
+For independently specified cases, readiness checks, a deterministic RGB baseline and
+separate participant declarations and scoring, use the [episode interface](EPISODES.md).
+Its [measured comparison](../../jevdual/results/repeatable-work-orders-20261010/report.md)
+covers varied ordinary jobs and lighting, occlusion and calibration challenges.
 
 ## One work order
 

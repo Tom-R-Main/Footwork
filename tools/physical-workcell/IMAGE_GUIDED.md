@@ -24,13 +24,31 @@ tools/physical-workcell/.venv/bin/python tools/physical-workcell/image_guided.py
 ```
 
 The returned packet names the private PNG and its SHA256, generation/state digest, calibration,
-task intent and proposal schema. Use an image-viewing tool to inspect that PNG. It is native
+task intent, remaining action budget and proposal schema. Use an image-viewing tool to inspect that PNG. It is native
 MuJoCo rendering, labeled `mujoco_simulation`, rather than a real camera image or AI-generated picture.
+
+A `ready` image means acquisition succeeded. Its separate `perception.state` is `recognized`,
+`ambiguous` or `unavailable`. Valid native images remain inspectable when recognition fails;
+that failure does not turn a saved frame into a partial acquisition. Recognized packets include
+RGB block/pusher boxes. They include image-derived world centers only while `calibration.valid`
+is true. Ambiguous/unavailable evidence or invalid calibration cannot admit an action.
 
 The top-down camera is orthographic at world position `(0,0,1)`, with vertical span 0.6 m and
 640 by 360 RGB pixels. Image right is positive world x; image down is negative world y.
 The image center represents `(0,0)` on the table. Scale is `0.6/360` meters per pixel. This
 calibration belongs to the simulated camera and supplies no real-camera calibration claim.
+
+Repeatable SIM3 cases use the [episode workflow](EPISODES.md). A case may change the initial
+block position, illumination, visual occlusion or camera position. Initial block coordinates
+are applied once before initial settling; loading or repeating initialization never resets
+the block. Illumination and a static non-contact occluder affect rendering. A nonzero camera
+offset invalidates this fixed calibration, so the wrapper retains the image but withholds
+world centers and refuses effects. It does not infer a replacement calibration.
+
+Case bytes, canonical source path, digest and action limit remain bound to the run. Changing
+the original or retained case refuses readback rather than silently starting another scene.
+Case settings and native coordinates stay out of planner packets. Source fingerprints for
+SIM3 invalidate earlier run bindings; preserve those runs and start a new one for this version.
 
 Images and their receipts are generation-bound. A repeated `view` validates and returns the
 same image; it does not rerender. Pending receipts, unreceipted images or altered image/task/run/
@@ -78,13 +96,20 @@ green, and green at least 1.35 times blue. Blue requires blue at least 80, blue 
 times green, and green at least 1.3 times red. Significant connected regions require 20 pixels.
 These are scope/settings declarations, not measured recognition accuracy. Small occlusions
 within tolerances, same-colored impostors, changed lighting or general object identity are
-not qualified. Missing, multiple, heavily occluded, off-frame or implausible evidence refuses.
+not qualified. Missing, multiple, heavily occluded, off-frame or implausible evidence is
+reported separately from image acquisition and refuses effects.
 
 Move targets are absolute pusher world coordinates. The wrapper derives its current pusher
 estimate solely from RGB. It admits forward x increments from 0.005 to 0.12 m, with target
 `|y| <= 0.01 m`, observed pusher `|y| <= 0.02 m`, and existing SIM1 workspace/force/step limits.
 Leave room below the maximum for pixel quantization. Reverse, oversized or stale-image moves
 refuse before dispatch. The native controller still owns low-level motion/contact dynamics.
+
+For an episode, `action_budget` reports `max_actions`, `admitted_dispatches` and `remaining`.
+Both admitted motion and computer-completion intents consume the limit; viewing and rejected
+visual/calibration checks consume none. Leave one action for completion. An exhausted budget
+refuses before writing an effect intent. Interrupted admitted actions still count and block
+further effects. SIM3 supplies no recovery command to resolve those unknown outcomes.
 
 After an executed move, request another fresh view. The feedback contains opaque state hashes,
 generation, command and contact statistics, plus a historical RGB check. It does not expose
@@ -96,6 +121,13 @@ A completion proposal has the same identity/image/box fields, with `"decision": 
 and no `target`. The freshly segmented block center must lie inside the task rectangle with
 a 0.005 m margin. A visually short placement refuses completion, allowing another fresh-image
 move proposal with a new token.
+
+Before consulting the native gate, the wrapper saves the exact completion request and a
+`vision-verdict-<token-hash>.json` record bound to that image, state, generation and case.
+The verdict is true, false or unavailable, with its reason. This includes visually refused
+completions and survives a later native refusal. The independent episode evaluator can score
+the visual decision against the native state at that generation; final placement cannot
+replace the earlier state when scoring a decision.
 
 After the visual gate, SIM1 privately checks its own native-state predicate and stages one
 local computer order. Footwork's public `check-artifact` independently checks its saved bytes.
