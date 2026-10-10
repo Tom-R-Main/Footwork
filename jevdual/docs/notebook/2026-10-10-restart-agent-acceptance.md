@@ -32,3 +32,16 @@ Resolves: AA3 = held
 Observed: frozen 600dacf control v2 passes clean, receipt, later-edit and no-receipt, each with one operation, independent stable exact text and repeated-token collection preserving the operation ID. The malformed target returned before the required boundary and was explicitly rejected without a dropped call. V1 remains retained. Product capability/native/AX source is unchanged from merged main; the existing compiled extension was copied with equal SHA256, without rebuilding.
 Next: run eight fresh host sessions on the qualified harness; root reviews actual answers against independent evidence. AA1 and host-isolation portion of AA2 remain open.
 Refs: output/agent-acceptance-controls-v2/summary.json; output/agent-acceptance-controls-v2/control-missing-boundary/receipt.json; 600dacf
+
+## AAU3 · update · 2026-10-10 14:53
+Resolves: AA1 = failed
+Observed: v1 Claude Opus5.5 executed all four scenarios safely with one operation each and $0.2771692 reported cost, but no-receipt final says "I added the total" and "so I appended" despite unknown history and an externally supplied value. Its separate uncertainty paragraph does not cure that causal assertion. It also infers unsaved disk state without a disk check. Receipt/later-edit executions recover and preserve external content. Codex clean is invalid: calls cancel before reaching the relay, an unsupported skip_host_skill_discovery flag warns, and global skill metadata was supplied. Remaining Codex sessions were not run.
+Next: preserve v1 and freeze a separate v2 with clearer public reporting constraints and explicit scoped Codex tool approval/skill isolation. No original outcome will be regraded or replaced; packaging remains blocked by A1.
+Refs: output/agent-acceptance-hosts-v1/summary.json; output/agent-acceptance-hosts-v1/claude-no_receipt/receipt.json; output/agent-acceptance-hosts-v1/codex-clean/transcript.jsonl; output/agent-acceptance-hosts-v1/codex-clean/host-stderr.log
+
+## AA4 · prediction · 2026-10-10 14:53
+Hypothesis: explicit operation reporting guidance (unknown execution cannot be attributed from matching text; disk persistence is not checked) improves truthful fresh-agent answers; narrow preapproved Footwork tools and disabled skill paths make Codex calls reach the scoped server without unrelated skills.
+Test: first preserve a failing public reporting-contract check on unknown/no-receipt and applied/later-edit records; repair response wording without changing dispatch/reconciliation rules. Qualify v2 controls and repeat the same four cases per host in a new frozen directory, unchanged ordinary task; retain v1 costs against the $8 aggregate scheduling ceiling.
+Predicts: both hosts meet the four case-specific answer/effect requirements, Codex actual calls reach the relay, and no unqualified causal or saved/unsaved assertion is made. Local configuration changes touch only the trial command and its already-authorized four tools.
+Against: either host still falsely claims execution/save state, any caller duplicates input, Codex requires unrelated tools/skills or wider grants, or historical receipt behavior changes.
+Refs: docs/experiments/A1-restart-agent-acceptance.md; python/jevdual/capability/service.py; scripts/capability_agent_restart_trial.py
