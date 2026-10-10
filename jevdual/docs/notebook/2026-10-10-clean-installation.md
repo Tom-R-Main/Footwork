@@ -54,3 +54,21 @@ Established: two isolated binary dependency installs and real installed native f
 Uncertain: fresh OS permission prompts/new physical machine, exhaustive filesystem/network tracing, direct worker __main__ diagnostic origin, arbitrary apps and saved-file/whole-job certification remain unqualified.
 Decision: deliver updated local wheel/guide/results on the clean unmerged branch; preserve earlier A1/A2/U1 failures and profile context. Fresh dependencies are qualified, not a clean OS.
 Refs: results/clean-installation-20261010; docs/capability-packaging.md; 2613cff
+
+## UIR2 · update · 2026-10-10 18:10
+Resolves: UI2 = held
+Observed: UIU4 records the final strict diagnostic and negative prerequisite checks in results/clean-installation-20261010. The notebook reader accepts one resolution per field, so its earlier semicolon-separated resolutions left UI2 open. This entry makes that existing outcome machine-readable without rerunning or changing the evidence.
+Next: delivery preparation; fresh-OS/TCC qualification remains separate.
+Refs: UIU4; results/clean-installation-20261010/missing-prerequisites.json
+
+## UIR3 · update · 2026-10-10 18:10
+Resolves: UI3 = held
+Observed: UIU4 records final private state, installed module origins and actual process contexts in both native profiles. This entry supplies the individual resolution omitted by the notebook reader's handling of UIU4's combined field; no outcome is regraded.
+Next: delivery preparation; retain the explicit direct worker __main__ diagnostic gap.
+Refs: UIU4; results/clean-installation-20261010/py312-native.json; results/clean-installation-20261010/py314-native.json
+
+## UIR4 · update · 2026-10-10 18:10
+Resolves: UI4 = held
+Observed: UIU4 records final2613cff isolated server/worker/report launches against planted cwd packages and the separate plain-m shadow baseline. This individual resolution makes that recorded outcome visible to the notebook reader; original runs and failures remain unchanged.
+Next: delivery preparation; no additional native input is required by this correction.
+Refs: UIU4; results/clean-installation-20261010/cwd-shadow-baseline.json; results/clean-installation-20261010/report.md

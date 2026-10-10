@@ -1,0 +1,57 @@
+name: capability-package
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  consumer-artifact:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: "3.12"
+          - os: macos-15
+            python: "3.12"
+          - os: macos-15
+            python: "3.14"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: jevdual
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+          version: "0.12.5"
+      - name: Rebuild and check dependency-free installed CLI
+        run: python scripts/capability_package_check.py --run-dir "$GITHUB_WORKSPACE/output/ci-package"
+      - name: Fresh binary dependency installation on macOS
+        if: runner.os == 'macOS'
+        run: |
+          python scripts/capability_clean_install.py \
+            --python "$(command -v python)" \
+            --wheel "$GITHUB_WORKSPACE"/output/ci-package/build-one/*.whl \
+            --run-dir "$GITHUB_WORKSPACE/output/ci-dependencies"
+      - name: Retain candidate artifact and qualification receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capability-${{ matrix.os }}-py${{ matrix.python }}
+          if-no-files-found: error
+          path: |
+            output/ci-package/receipt.json
+            output/ci-package/build-one/*.whl
+            output/ci-package/*.log
+            output/ci-dependencies/receipt.json
+            output/ci-dependencies/*.log

@@ -84,3 +84,9 @@ Established: journal-derived publication prevents the retained false completion 
 Uncertain: fresh-machine dependency resolution, arbitrary apps, saved-file persistence, full host inventory/exact default model, unwrapped interactive final prose and public release are unqualified.
 Decision: deliver local wheel/guide and evidence on the unmerged branch. Preserve run/journal/artifact context and original A1/v1/harness outcomes.
 Refs: results/operation-completion-20261010; results/capability-packaging-20261010; docs/capability-packaging.md
+
+## HCR2 · update · 2026-10-10 18:10
+Resolves: HC2 = held
+Observed: HCU4 records frozen e7a5d9b's four qualified execution/report/adapter cases. Its combined HC1/HC2 resolution is parsed only for HC1; this individual entry closes HC2 using the same recorded evidence, without regrading v1 or changing A1's original7/8 answer result.
+Next: delivery preparation; preserve all original invalid and rejected reports.
+Refs: HCU4; results/operation-completion-20261010/summary.json

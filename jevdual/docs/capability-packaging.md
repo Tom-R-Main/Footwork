@@ -17,6 +17,16 @@ The builder uses the standard library and downloads nothing. It refuses to repla
 
 Only `.py` runtime files, the policy file and generated distribution metadata ship. Research runs, tests, caches and compiled extensions are excluded; source symlinks are rejected. Dependencies are declared rather than bundled. The wheel retains the full current dependency list, including exact MCP, browser-use, cua-driver and psutil pins. It is not a reduced-dependency distribution.
 
+### Consumer artifact checks
+
+The separate `capability-package` CI workflow builds the wheel twice, verifies its bytes and RECORD, and installs it offline without dependencies in a fresh environment. It checks the installed console entry point, isolated imports from a directory containing shadow packages, strict refusal of missing prerequisites, and conservative reporting when the journal is absent. Run the same check locally with an existing Python and uv:
+
+```sh
+python scripts/capability_package_check.py --run-dir /absolute/footwork/output/new-package-check
+```
+
+CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The macOS profiles also run U1's fresh-cache, private-state, binary-only dependency installer. Receipts and the candidate wheel are retained as CI artifacts. These checks neither launch native input nor qualify macOS permission prompts. Each interpreter's two builds must match; byte identity across operating systems or compression-library versions is not required.
+
 ## Install into a fresh environment
 
 With an existing Python and uv, create an owned environment and install the local wheel with its dependencies:
