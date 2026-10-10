@@ -22,6 +22,11 @@ timestamped evidence through an existing tab/CDP adapter. They are dependency-fr
 separate from the Python driver and verification gates. Their contract is tested offline; live
 capture fidelity must be calibrated on the selected browser.
 
+The optional [desk paper inbox](tools/desk-inbox-experiment/README.md) connects a saved
+camera frame to local text recognition and a reviewed inbox note. Its private review keeps
+the original image and OCR text. `footwork check-artifact` checks the saved note against
+the approved source bytes without a model call; it does not judge recognition accuracy.
+
 ## Drive it
 
 ```sh

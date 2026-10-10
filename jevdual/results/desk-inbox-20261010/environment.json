@@ -1,0 +1,14 @@
+{
+  "macos_version": "26.5.1",
+  "machine": "arm64",
+  "python_version": "3.14.5",
+  "ocr": "Apple Vision via installed Swift; actual request revision captured by helper",
+  "reference_seams": [
+    "/Volumes/External SSD/referencerepos/cua/libs/lume/src/Utils/VNCDriver.swift:272",
+    "/Volumes/External SSD/referencerepos/rerun/examples/python/live_camera_edge_detection/live_camera_edge_detection.py"
+  ],
+  "source_references": [
+    "https://developer.apple.com/documentation/vision/recognizing-text-in-images",
+    "https://developer.apple.com/documentation/imageio/cgimagepropertyorientation/upmirrored"
+  ]
+}

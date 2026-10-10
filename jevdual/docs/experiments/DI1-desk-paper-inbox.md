@@ -26,7 +26,7 @@ Decision rule: qualify only demonstrated source/OCR/file behavior. Advance towar
 
 ## Result
 
-Pending.
+Reviewed live note handoff verified on frozen source 6e93c35: user-confirmed corrected text saved once and independently matched by Footwork; original frame/raw OCR retained. All 31 focused tests and Ruff pass. Known printed/normal/mirrored OCR matches expected text; blank and adversarial cases remain explicit. Raw live handwriting OCR required correction, so autonomous transcription and daily utility are unqualified. See results/desk-inbox-20261010/report.md and verification.json.
 
 ## Amendment · 2026-10-10 14:54
 The user asks whether the camera mirrors. Preparation will expose an explicit --mirror-input option for OCR orientation and review display, bind it in request provenance, and retain original capture bytes. Mirroring is chosen from readable calibration text, not inferred from faces or OCR confidence. Normal/mirrored synthetic fixtures and the live LEFT 123 RIGHT line will assess orientation.
