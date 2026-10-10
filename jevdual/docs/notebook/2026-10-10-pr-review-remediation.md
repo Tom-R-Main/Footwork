@@ -133,3 +133,10 @@ Observed: First LinuxCI failed14tests. D2 runtime-regeneration control failed be
 Inferred: Different host rendering changes the generated manifest despite equal Pillow12.3.0 versions. The immutable authored manifest and exact PNG hashes provide the stable corpus authority; fresh LinuxCI remains the integration gate.
 Next: do not merge until fresh LinuxCI confirms the corrected path; append its observed outcome to resolvePR10.
 Refs: commits33fdf1f and14fb64f; results/pr-review-remediation-20261010/ci-remediation.json; results/pr-review-remediation-20261010/ci-review.md; output/pr-ci-failure-38072093984.log
+## PR11 · prediction · 2026-10-10 13:49
+Hypothesis: the deadline subprocess test starts a250ms timer before the intended after-input blocking read; slower CI can expire after admission but before AX delivery, correctly yielding unknown without an effect and defeating the test's intended boundary. Synchronizing the test timer to the independently observed blocked boundary preserves the production callback and admission fence while removing host-speed assumptions.
+Test: retain secondCI's one-failure log; before-input and after-delivery child scenarios must reach their declared boundary, invoke the original deadline callback in a real watchdog thread, preserve exact effect/no-effect assertions and require process exit plus immutable uncertainty receipt. Fresh LinuxCI decides remaining qualification.
+Predicts: no250ms race determines the phase; missing boundary fails via bounded child timeout; product deadline constants and execution code remain unchanged.
+Against: effect assertions weakened, a fake result replaces the actual worker callback, a missing boundary succeeds, or LinuxCI remains flaky at this boundary.
+Refs: output/pr-ci-failure-38073038841.log; tests/test_capability_recovery.py::test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty
+
