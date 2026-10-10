@@ -1,0 +1,26 @@
+{
+  "code_commit": "e95a85299b894827bb019d7aacca518064220a5e",
+  "test_sha256": "d29e100a400c32cec6af4b8053e550151f100e469c8086512c69112183dff797",
+  "second_ci": {
+    "run": 38073038841,
+    "conclusion": "failure",
+    "python_passed": 1413,
+    "failed": 1,
+    "skipped": 28,
+    "deselected": 12,
+    "failed_case": "test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[after]",
+    "all_original_14_failures_resolved": true,
+    "node_passed": 97
+  },
+  "controlled_old_timer_baseline": {
+    "failed": 2,
+    "passed": 2,
+    "log": "output/deadline-boundary-before-v2.log"
+  },
+  "invalid_first_probe": "output/deadline-boundary-before.log: child module SyntaxError; not causal evidence",
+  "root_recovery_passed": 35,
+  "independent_recovery_passed": 35,
+  "product_source_unchanged": true,
+  "qualification_limit": "test-only boundary trigger; production25-second duration not measured by this test",
+  "next_gate": "fresh final Linux CI before merge"
+}

@@ -140,3 +140,20 @@ Predicts: no250ms race determines the phase; missing boundary fails via bounded 
 Against: effect assertions weakened, a fake result replaces the actual worker callback, a missing boundary succeeds, or LinuxCI remains flaky at this boundary.
 Refs: output/pr-ci-failure-38073038841.log; tests/test_capability_recovery.py::test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty
 
+## PRU10 · update · 2026-10-10 13:54
+Resolves: PR10 = held
+Observed: SecondLinuxCI resolved all fourteen original environment/corpus failures, passing1413Pythonchecks with28skip12deselected. It passed97Nodechecks plus Rust and lint. Its sole failure was a separate timing assumption in the fixed-worker deadline test, now trackedPR11. No frozen corpus bytes were changed.
+Next: qualify the corrected deadline test in fresh finalLinuxCI before merge.
+Refs: GitHubActions38073038841; results/pr-review-remediation-20261010/deadline-remediation.json; output/pr-ci-failure-38073038841.log
+
+## PRU11 · update · 2026-10-10 13:54
+Resolves: PR11 = held
+Observed: Controlled400ms delay defeated the old250ms timer in two cases; after boundary synchronization, root35recoverychecks and independent35checks pass. The unchanged production callback runs in a real watchdog thread only after the exact before/after observation; missing boundary exits3 rather than expected2 and cannot manufacture a receipt. Original effect, uncertainty, admission and custody assertions are retained. An earlier child-scope SyntaxError was corrected before the causal baseline and remains labeled invalid evidence.
+Next: fresh finalLinuxCI is the remaining merge gate; do not change production worker deadlines or replay policy.
+Refs: results/pr-review-remediation-20261010/deadline-review.md; results/pr-review-remediation-20261010/deadline-remediation.json; output/deadline-boundary-before-v2.log; output/pr-deadline-root.log
+
+## PR-CI-HANDOFF · summary · 2026-10-10 13:54
+Established: Both bot findings fixed and threads resolved; independent review cleared product, redaction, portable corpus/probes and test-boundary deltas. Local full1428pass26skip, finalNode97pass, finalRecovery35pass; actual native restart12/12 and guards3/3 remain bound to unchanged product content. SecondCI proves all fourteen original Linux failures corrected, with the remaining test-speed race repaired by controlled-boundary evidence.
+Uncertain: Final remoteCI is pending. Broad app/installation readiness, power loss, persistence and exactly-once GUI effects remain unqualified; archived research was sampled rather than exhaustively validated.
+Decision: Hand this final source/evidence snapshot to LinuxCI; merge only after green checks and no unresolved actionable review threads. Preserve unrelated sealed authoring worktrees and source-history chronology.
+Refs: results/pr-review-remediation-20261010/ci-review.md; results/pr-review-remediation-20261010/deadline-review.md; results/pr-review-remediation-20261010/report.md; PR1
