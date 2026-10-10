@@ -58,6 +58,7 @@ def make_config(
             "BROWSER_USE_CLOUD_SYNC": "false",
         },
         "args": [
+            "-I",
             "-m",
             "jevdual.capability.cli",
             "server",
@@ -69,6 +70,7 @@ def make_config(
     }
     adapter = [
         executable,
+        "-I",
         "-m",
         "jevdual.capability.cli",
         "report",

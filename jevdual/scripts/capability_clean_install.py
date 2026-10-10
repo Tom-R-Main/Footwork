@@ -37,6 +37,7 @@ def isolated_environment(state_root: Path | None = None) -> dict[str, str]:
     env["ANONYMIZED_TELEMETRY"] = "false"
     env["BROWSER_USE_CLOUD_SYNC"] = "false"
     if state_root is not None:
+        state_root = state_root.resolve()
         for name, suffix in {
             "HOME": "private-home",
             "XDG_CONFIG_HOME": "private-config",
@@ -151,7 +152,7 @@ names=("cua_driver","psutil","mcp","ApplicationServices","Quartz","Foundation","
 modules={n:str(importlib.import_module(n).__file__) for n in names}
 print(json.dumps({"version":sys.version,"prefix":sys.prefix,"base_prefix":sys.base_prefix,"python":sys.executable,"package":jevdual.__file__,"worker":worker.__file__,"backend":BACKEND,"module_origins":modules,"sys_path":sys.path}))
 """
-    if not run("origins", [python, "-c", probe], timeout=30):
+    if not run("origins", [python, "-I", "-c", probe], timeout=30):
         return 1
     origins = json.loads((root / "origins.stdout.log").read_text())
     if not all(
@@ -185,7 +186,7 @@ print(json.dumps({"version":sys.version,"prefix":sys.prefix,"base_prefix":sys.ba
     receipt["doctor"] = json.loads((root / "doctor.stdout.log").read_text())
     receipt["inventory"] = json.loads((root / "inventory.stdout.log").read_text())
     tag_probe = 'import json,importlib.metadata;print(json.dumps([{"name":d.metadata["Name"],"version":d.version,"tags":[l[5:] for l in (d.read_text("WHEEL") or "").splitlines() if l.startswith("Tag: ")]} for d in importlib.metadata.distributions()]))'
-    if not run("wheel-tags", [python, "-c", tag_probe], timeout=30):
+    if not run("wheel-tags", [python, "-I", "-c", tag_probe], timeout=30):
         return 1
     receipt["wheel_tags"] = json.loads((root / "wheel-tags.stdout.log").read_text())
     receipt["cache_bytes_after_install"] = sum(p.stat().st_size for p in cache.rglob("*") if p.is_file())

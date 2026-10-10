@@ -79,3 +79,34 @@ def test_runtime_audit_is_private_optional_and_not_a_receipt(tmp_path, monkeypat
     monkeypatch.setenv("FOOTWORK_RUNTIME_AUDIT_DIR", str(public))
     emit_runtime_audit("worker", "fixture")
     assert list(public.iterdir()) == []
+
+
+def test_generated_launches_isolate_interpreter_and_private_root(tmp_path, monkeypatch):
+    from jevdual.capability.recovery import ExecutionStore
+    from jevdual.capability.setup import make_config
+
+    document = tmp_path / "doc.txt"
+    document.write_text("prefix")
+    manifest = make_config(
+        tmp_path / "run",
+        source_pid=1,
+        source_window=2,
+        source_url="http://127.0.0.1:8000/",
+        destination_pid=3,
+        destination_window=4,
+        document=document,
+    )
+    server = json.loads(Path(manifest["host_config"]).read_text())["mcpServers"]["footwork"]
+    assert server["args"][:3] == ["-I", "-m", "jevdual.capability.cli"]
+    assert manifest["report_adapter"][1:4] == ["-I", "-m", "jevdual.capability.cli"]
+    assert server["env"]["ANONYMIZED_TELEMETRY"] == server["env"]["BROWSER_USE_CLOUD_SYNC"] == "false"
+    captured = []
+    monkeypatch.setattr(
+        "jevdual.capability.recovery.subprocess.Popen", lambda command, **kwargs: captured.append(command)
+    )
+    from types import SimpleNamespace
+
+    store = ExecutionStore(tmp_path / "run/ops.sqlite")
+    monkeypatch.setattr(store, "directory", lambda op_id: tmp_path / "run/packet")
+    store._launch(SimpleNamespace(id="fixture"))
+    assert captured[0][1:4] == ["-I", "-m", "jevdual.capability.execution_worker"]

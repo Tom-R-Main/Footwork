@@ -42,6 +42,7 @@ class InstalledServer(Server):
         self.log_stream = log.open("a")
         argv = [
             str(python),
+            "-I",
             "-m",
             "jevdual.capability.cli",
             "server",
@@ -101,6 +102,12 @@ def main() -> int:
     root.mkdir(parents=True, mode=0o700, exist_ok=False)
     cwd = root / "outside-source"
     cwd.mkdir(mode=0o700)
+    if args.isolation_root:
+        args.isolation_root = args.isolation_root.resolve()
+        for name in ("jevdual", "psutil", "mcp", "cua_driver"):
+            package = cwd / name
+            package.mkdir()
+            (package / "__init__.py").write_text("raise RuntimeError('cwd shadow imported')\n")
     env = isolated_environment(args.isolation_root)
     env.pop("PYTHONPATH", None)
     env.pop("JEVDUAL_PURE_PY", None)
@@ -116,6 +123,7 @@ def main() -> int:
     probe = subprocess.run(
         [
             str(python),
+            "-I",
             "-c",
             (
                 "import json,sys,os,psutil,importlib.metadata,jevdual,jevdual.capability.execution_worker as w;"
@@ -249,6 +257,7 @@ def main() -> int:
         final = subprocess.run(
             [
                 str(python),
+                "-I",
                 "-m",
                 "jevdual.capability.cli",
                 "report",
