@@ -33,3 +33,22 @@ Test: source-frozen independent public CLI/socket trials of all eight preregiste
 Predicts: returning clients retrieve known completed history; actual in-motion cancellation retains a verified stop; controller death remains unknown unless exact terminal evidence supports recovery; stale bindings refuse; normal contact fulfills the conditional saved-byte-checked order.
 Against: duplicate motion, queued cancellation dispatch, false stopped/fulfilled claims, lost historical result from unavailable current state, accepted stale binding or incomplete lower evidence promoted to success.
 Refs: docs/experiments/SIM4-independent-controller-recovery.md; results/independent-controller-20261010/diagnostic-plan.json
+
+## SIM4-U4 · update · 2026-10-10 18:22
+Observed: all 67 scoped regressions passed on the pre-freeze version. A subsequent root review found shutdown releasing both ownership locks if its bounded join timed out while a non-daemon worker remained alive; the lower artifact checker timeout exceeded that join interval. A targeted actual-process slow-checker/short-join fault reproduced both locks becoming available before the writer ended (one failing scenario, 3.400 s). No native stop was claimed by that timing-fault test.
+Inferred: a successful ordinary regression suite did not cover ownership during failed graceful shutdown. The controller must abort the whole process on join timeout rather than release locks under a live writer, retaining uncertainty rather than a stopped claim.
+Next: fix the abort fallback, run the new ownership regression and full scoped suite, then freeze source before independent diagnostics. SIM4R remains untested by independent source-frozen trials.
+Refs: results/independent-controller-20261010/pre-shutdown-fix-checks.json; tools/physical-workcell/output/c4-shutdown-before-fix/unittest.log; tools/physical-workcell/output/c416f26c/conformance.json
+
+## SIM4-U5 · update · 2026-10-10 18:29
+Observed: frozen 5713173 passed all 68 scoped tests and Ruff. Independent public service diagnostics report nine passing checks, covering eight required scenarios plus admission negatives. Live cancellation retains 156 advancing native steps plus 500 settle steps and velocity/state stop evidence. The crash trial killed after public running status plus 0.45 seconds; its retained native journal proves dispatch intent but cannot prove native stepping before death. Process cleanup and exact frozen hashes are retained.
+Inferred: public response/history checks passed, but the strict during-motion kill requirement needs stronger observation than a timed running status. No runtime defect or source change is established by this evidence gap.
+Next: preserve the original trial and run a fresh supplemental case with explicit observation-only tracing around the real native step; do not change controller behavior or reuse the earlier episode.
+Refs: tools/physical-workcell/output/s4audit/verification.json; results/independent-controller-20261010/source-freeze.json; checks.json
+
+## SIM4P · prediction · 2026-10-10 18:29
+Hypothesis: an observation-only marker written after a real mj_step returns can establish native execution before process death while preserving the controller's frozen source, dynamics and proposal admission.
+Test: new owned supplemental episode and real native-step wrapper that calls the original function unchanged, records its first return outside the episode, then signals the exact controller PID; restart uninstrumented and compare native generation/state/receipt history and stale-incarnation admission.
+Predicts: native-step marker identifies the killed PID before SIGKILL; restart remains unknown with no extra generation/dispatch, old-incarnation effects refuse and all owned processes exit.
+Against: trace cannot identify actual step completion, changes native inputs/outputs, kill occurs before marker, replay or fabricated execution/stop history, changed frozen source or leaked owned resources.
+Refs: docs/experiments/SIM4-independent-controller-recovery.md; tools/physical-workcell/output/s4audit/06-running-kill/events.json
