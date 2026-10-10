@@ -15,6 +15,7 @@ import signal
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -40,10 +41,28 @@ TIMEOUT_S = 30
 
 
 def _write(path: Path, value: Any) -> None:
-    with path.open("x", encoding="utf-8") as out:
-        os.chmod(path, 0o600)
-        json.dump(value, out, indent=2, ensure_ascii=False)
-        out.write("\n")
+    """Publish a complete private record once, without an observable empty marker."""
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}-", dir=path.parent)
+    tmp = Path(temporary)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as out:
+            json.dump(value, out, indent=2, ensure_ascii=False)
+            out.write("\n")
+            out.flush()
+            os.fsync(out.fileno())
+        os.link(tmp, path, follow_symlinks=False)  # exclusive publication, never overwrite
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        tmp.unlink(missing_ok=True)
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
 
 
 def _hold(out: Path, name: str) -> None:
