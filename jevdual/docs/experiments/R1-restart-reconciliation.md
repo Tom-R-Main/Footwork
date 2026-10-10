@@ -1,0 +1,20 @@
+# R1: qualified read-only restart reconciliation
+
+A developmental correctness qualification of the scoped native TextEdit append capability. User authorized implementation/reference inspection/Claude review. No heldout split, C1 regrade or general recovery benchmark.
+
+## Hypothesis
+An independently owned fixed-action dispatcher can preserve a qualified receipt across MCP parent death. Restarted status can reconcile supported operations without sending input. Matching current text without a causal execution receipt remains insufficient.
+
+## Design and primary criterion
+Required cases: parent death at prepared-before-start, during dispatcher execution, after durable dispatcher receipt but before journal finalization, and after final journal commit. Include worker death before receipt; delayed worker with an identical externally written target; receipt digest/nonce/version corruption; original process-start/document inode/AX role/frame/ambiguity replacement; private/migrated legacy journals. Offline scenarios/subprocesses qualify mechanisms first; real owned TextEdit cases qualify the native boundary. Record exact committed implementation/harness hashes, original stages, owner identities, artifact durability, receipt match, public status/repeat behavior and an independent AX oracle.
+
+Primary criterion: every required outcome obeys the preregistered rule, with zero incorrect applied resolutions and zero repeated input from restart/status/token collection. Parent mid-dispatch with completed qualified worker receipt must recover; started/no receipt and identity loss must remain unknown and blocked even when current text matches. Prepared-only or explicit no-send receipt is the only basis for non-delivery. Original final records return historical results.
+
+## Guardrails and decision
+No overwrite of an external edit, no effect outside the owned document, no adoption/kill based on PID alone, no fallbacks to absent-as-empty, no automatic retries, and no unknown-to-known claim based on quiet intervals. An unmet required live case is unverified/inconclusive, not passed by mocks. Proceed only when all required cases pass and concrete Claude findings are addressed. Preserve failures and start a new version after source changes; never prune counterexamples or tune thresholds. New examples supplement rather than replace failed cases.
+
+Model-free checks are primary. Mailbox Claude review is authorized; if unavailable, at most two fresh tool-less canonical Opus5.5/high reviews with requested $1 soft CLI cap and $6 aggregate scheduling reserve may be used. Account for actual reported cost; missing cost stops further calls. No install/fetch/global configuration/permission change/push/public release.
+
+## Result
+
+Appended after qualification.
