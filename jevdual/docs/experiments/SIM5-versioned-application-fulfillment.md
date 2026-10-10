@@ -81,3 +81,12 @@ Hardware transfer, real operator demand and production adapter promotion remain 
 ## Result
 
 Pending.
+
+## Amendment · 2026-10-10 19:38 · before independent qualification
+
+Development conformance found reply-only application identity checking insufficient: a
+missing or foreign expected app identity could mutate an order before the browser checked
+the reply. Require one exact `X-Footwork-App-ID` on every mutation, validated before any
+effect. Original and corrected development evidence are retained; notebook SIM5-R revises
+the failed first implementation prediction. Freeze corrected runtime before independent
+browser/public-API trials. The seven scenarios, primary metric and decision remain unchanged.
