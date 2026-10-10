@@ -82,7 +82,7 @@ def main() -> int:
     env.pop("PYTHONPATH", None)
     env.pop("JEVDUAL_PURE_PY", None)
     env["PYTHONUNBUFFERED"] = "1"
-    python = args.python.absolute()
+    python = Path(os.path.abspath(args.python))
     probe = subprocess.run(
         [
             str(python),
@@ -101,6 +101,7 @@ def main() -> int:
         timeout=15,
     )
     origins = json.loads(probe.stdout)
+    (root / "origin-probe.json").write_text(json.dumps(origins, indent=2) + "\n")
     assert origins["backend"] == "pure-python", origins
     assert str(python.parent.parent) in origins["package"] and str(python.parent.parent) in origins["worker"]
     assert not any(str(PROJECT / "jevdual/python") in p for p in origins["sys_path"])
