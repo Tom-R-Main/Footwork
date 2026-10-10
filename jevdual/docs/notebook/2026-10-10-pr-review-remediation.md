@@ -108,3 +108,17 @@ Established: Nine independent review findings are remediated in content-bound so
 Uncertain: Broad arbitrary-app capability and general installation readiness; disk persistence, power loss and exactly-once GUI effects; exhaustive validation of the large historical research corpus. These remain outside the qualified slice.
 Decision: Land one combined PR after remote CI and review threads clear, using merge commit to preserve preregistration chronology and source hashes; preserve unrelated sealed authoring worktrees.
 Refs: results/pr-review-remediation-20261010/report.md; results/pr-review-remediation-20261010/review.md; docs/plans/reference-restart-reconciliation-20261010.md
+## PR9 · prediction · 2026-10-10 13:36
+Hypothesis: browser inspection's URL opacity filter misses short UUID/hex credentials and secret-bearing route tails, while frontend inventory summary bypasses allowlists. Positive counter allowlists and broader credential-route redaction close both persisted-artifact leaks.
+Test: synthetic request URLs and inventory adapters must expose current leaks before repair; persisted metadata/frontend artifact must omit them afterwards, preserve safe structure/counts and refuse unknown summary fields.
+Predicts: bot reproducers fail current tests and pass corrected redaction with no raw synthetic credential in serialized artifacts.
+Against: retained credential path/summary strings or loss of expected aggregate counts.
+Refs: PR1 review threads PRRT_kwDOUjL4E86rGQ-v and PRRT_kwDOUjL4E86rGQ-x; tools/browser-inspection/redaction.mjs; tools/browser-inspection/frontend.mjs
+
+## PR10 · prediction · 2026-10-10 13:36
+Hypothesis: Linux CI failures come from regenerating frozen visual PNG/manifest bytes in a different renderer environment and from unconditional macOS probes in evaluation helpers/tests. Verifying the immutable authored corpus against pinned manifest and PNG hashes, while isolating OS-specific probes, preserves evidence integrity across platforms.
+Test: retain first CI14failure log; simulate a renderer environment mismatch without editing frozen artifacts, plus manifest/image tamper rejection; platform-specific absent-command/import controls and focused Mac checks, then fresh full Linux CI.
+Predicts: authentic frozen cases load without runtime regeneration and altered manifest/pixels remain rejected; redaction still works when macOS hardware probing is unavailable; real Mac-only checks remain available on Mac and explicitly skipped elsewhere.
+Against: mutated corpus passes, supported-platform probes silently disappear, or Linux failures persist.
+Refs: output/pr-ci-failure-38072093984.log; evals/d2_visual.py; scripts/redact_results.py; tests/test_capability_fixture.py; tests/test_q19.py
+
