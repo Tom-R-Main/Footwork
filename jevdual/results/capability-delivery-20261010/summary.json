@@ -22,7 +22,31 @@
     "workflow_structure_and_shell_syntax": true,
     "lock_check_offline": true
   },
-  "hosted_ci": "not_run",
+  "hosted_ci": {
+    "pr_head": "75994a7fa423d53428448f50755c1e0544296523",
+    "merge_candidate": "e30e761a25c1ceb6f7bb036d4bb0c369dc4a8847",
+    "package_run_id": 38091091640,
+    "package_conclusion": "success",
+    "verified_uploaded_wheels": 3,
+    "main_run_id": 38091091582,
+    "main_conclusion": "success",
+    "main_checks": {
+      "python_non_browser": {
+        "passed": 1472,
+        "skipped": 28,
+        "deselected": 12
+      },
+      "node": 97,
+      "rust": 19,
+      "ruff": true,
+      "rust_fmt": true,
+      "rust_clippy": true
+    },
+    "run_urls": [
+      "https://github.com/Tom-R-Main/Footwork/actions/runs/38091091640",
+      "https://github.com/Tom-R-Main/Footwork/actions/runs/38091091582"
+    ]
+  },
   "claude_review": {
     "approved_source": "fc525da64d9c76f38d04ed0a20ac3bea1990a4fd",
     "message": "1791670452579982000",
@@ -36,7 +60,7 @@
   "merge": "not_merged",
   "native_input_this_package": false,
   "limits": [
-    "Local delivery checks run on existing macOS arm64 only. Linux and hosted macOS CI execution await PR delivery.",
+    "Local and hosted Linux/macOS consumer artifact checks pass. Hosted macOS arm64 fresh binary installs pass on Python3.12.10 and3.14.7; permission status is pregranted, so permission prompts remain unqualified.",
     "Fresh-OS/TCC permission onboarding is unqualified.",
     "U1 native evidence is reused only for byte-identical runtime modules and identical selected dependency versions. The final artifact has separately qualified fresh installs.",
     "Direct worker __main__ diagnostic origin remains a nonblocking gap."
@@ -63,5 +87,6 @@
       "packaging_version": "26.3"
     }
   },
-  "runtime_bytes_unchanged": true
+  "runtime_bytes_unchanged": true,
+  "pr_url": "https://github.com/Tom-R-Main/Footwork/pull/2"
 }

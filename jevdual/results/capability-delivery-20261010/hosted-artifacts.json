@@ -1,0 +1,51 @@
+{
+  "run_id": 38091091640,
+  "run_url": "https://github.com/Tom-R-Main/Footwork/actions/runs/38091091640",
+  "pr_head": "75994a7fa423d53428448f50755c1e0544296523",
+  "profiles": [
+    {
+      "name": "capability-macos-15-py3.12",
+      "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+      "verified_inventory": 75,
+      "offline_cli_passed": true,
+      "isolated_module_origin": "/Users/runner/work/Footwork/Footwork/output/ci-package/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+      "fresh_dependencies_passed": true,
+      "python_version": "3.12.10",
+      "architecture": "arm64",
+      "packages": 115,
+      "packaging_version": "26.3",
+      "workflow_source_commit": "e30e761a25c1ceb6f7bb036d4bb0c369dc4a8847",
+      "doctor_prerequisites": "met",
+      "permission_status": {
+        "accessibility": "granted",
+        "screen_recording": "granted"
+      }
+    },
+    {
+      "name": "capability-macos-15-py3.14",
+      "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+      "verified_inventory": 75,
+      "offline_cli_passed": true,
+      "isolated_module_origin": "/Users/runner/work/Footwork/Footwork/output/ci-package/venv/lib/python3.14/site-packages/jevdual/__init__.py",
+      "fresh_dependencies_passed": true,
+      "python_version": "3.14.7",
+      "architecture": "arm64",
+      "packages": 115,
+      "packaging_version": "26.3",
+      "workflow_source_commit": "e30e761a25c1ceb6f7bb036d4bb0c369dc4a8847",
+      "doctor_prerequisites": "met",
+      "permission_status": {
+        "accessibility": "granted",
+        "screen_recording": "granted"
+      }
+    },
+    {
+      "name": "capability-ubuntu-latest-py3.12",
+      "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+      "verified_inventory": 75,
+      "offline_cli_passed": true,
+      "isolated_module_origin": "/home/runner/work/Footwork/Footwork/output/ci-package/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+    }
+  ],
+  "limits": "Hosted installation/CLI only; no UI inputs or macOS permission grant journey."
+}

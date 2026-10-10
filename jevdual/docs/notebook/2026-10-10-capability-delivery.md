@@ -30,3 +30,15 @@ Established: standalone consumer artifact/CLI checks, two final fresh dependency
 Uncertain: hosted CI execution is pending at this preparation boundary; fresh-OS/TCC onboarding, direct worker __main__ diagnostic origin and arbitrary app/persistence/whole-goal behavior remain unqualified.
 Decision: hand off the clean committed source and sanitized records to one draft PR and finish its hosted-check/review loop. Registry publication and merging remain separate decisions. Native input and persistent sleep/lock settings were not changed.
 Refs: results/capability-delivery-20261010/report.md; 2ea6ff9
+
+## DPU3 · update · 2026-10-10 18:23
+Resolves: DP1 = held
+Observed: draftPR2 head75994a7 produces merge candidatee30e761a; its packaging run38091091640 passes Linux3.12/macOS-arm64 3.12/3.14. All three uploaded wheels independently verify against the current source inventory and match the final9bb0440d hash. Hosted macOS3.12.10/3.14.7 full binary installs each resolve115packages with the declared26.3 parser and fresh-site origins. Permission statuses are pregranted; this does not qualify their grant journey. MainCI is running the non-browser tests; no bot threads are present in the complete current review-thread page.
+Next: observe mainCI completion, commit the hosted evidence/closure and verify the final PR head. Preserve the interactive fresh-OS/TCC boundary.
+Refs: results/capability-delivery-20261010/hosted-artifacts.json; https://github.com/Tom-R-Main/Footwork/pull/2; https://github.com/Tom-R-Main/Footwork/actions/runs/38091091640
+
+## DPS2 · summary · 2026-10-10 18:25
+Established: all three packaging CI profiles and mainCI pass on PR2's recorded head/merge candidate; uploaded wheels independently match the final source inventory and local hash. Hosted Linux reports1472pass/28skip/12deselected, plus97Node/19Rust and lint/format/Clippy; local macOS counts remain separately recorded. Claude final review and both setup follow-ups are approved. Both delivery predictions are resolved.
+Uncertain: fresh-OS permission prompts remain unqualified despite hosted runners' pregranted status; direct worker __main__ diagnostic origin and broader app/persistence/whole-goal behavior remain outside the established claims.
+Decision: retain hosted evidence, verify the final evidence-only PR head's checks, and deliver the draft PR. Next product qualification is interactive first use on an independently provisioned Mac. No merge, registry publication, native input or persistent lock-setting change occurred in this package.
+Refs: results/capability-delivery-20261010; https://github.com/Tom-R-Main/Footwork/pull/2
