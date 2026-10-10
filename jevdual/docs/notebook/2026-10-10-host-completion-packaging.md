@@ -41,3 +41,15 @@ Resolves: HC1 = held; HC2 = held
 Observed: frozen e7a5d9b native v2 qualifies all four unchanged cases: execution4/4, raw structured reports accepted4/4, enforced summaries4/4. No-receipt records unknown with matching text and no second append; receipt/later-edit collect historical applied while preserving the external note. Selected calls are only the five Footwork tools. V1 remains three qualified executions with rejected raw reports and one invalid connector-leak session. Claude independently checked and approved the three code remediations.
 Next: implement the preregistered HP1 offline package, then qualify installed CLI/transport/detached worker outside source. HP1 remains open.
 Refs: results/operation-completion-20261010/summary.json; results/operation-completion-20261010/sessions.json; Claude mailbox1791662060412492000
+
+## HPU1 · update · 2026-10-10 16:03
+Observed: frozen b5d5330 built and verified the74-member wheel, installed it offline/no-deps into the owned venv. Installed-native trial v1 stopped at origin comparison before reset or input: Path.absolute retained ../ while import paths were normalized. No action was admitted. The wheel's artifact hash is retained; dependencies are explicitly reused through an owned .pth file.
+Next: normalize the harness interpreter path with abspath while preserving the venv symlink, retain v1 and run a separate native verification v2 without changing wheel bytes.
+Refs: output/a2-wheel-v1/jevdual-0.0.1-py3-none-any.whl; output/a2-installed-trial-v1; scripts/capability_installed_trial.py
+
+## HP2 · prediction · 2026-10-10 16:03
+Hypothesis: lexical path normalization fixes the installed-origin guard without resolving away venv identity; installed modules already resolve correctly.
+Test: compare installed package/worker origins against normalized owned venv root, then drive actual installed MCP/worker in a separate run directory.
+Predicts: no source path appears in child import search, pure fallback is selected, installed interpreter launches the real detached worker, one exact append and repeat-token restart produce one journal record.
+Against: normalized paths still point outside the installed environment, source is needed or any duplicate effect/record occurs.
+Refs: scripts/capability_installed_trial.py; output/a2-installed-trial-v1
