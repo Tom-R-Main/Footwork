@@ -1,0 +1,24 @@
+{
+  "qualification": "failed_answer_acceptance",
+  "selected_sessions": 8,
+  "execution_and_input_guard_passed": 8,
+  "answer_acceptance_passed": 7,
+  "claude_answers_passed": 4,
+  "codex_answers_passed": 3,
+  "no_duplicate_inputs": true,
+  "external_edits_preserved": true,
+  "package_gate": "blocked by Codex no-receipt final omitting execution uncertainty",
+  "claude_reported_total_cost_usd": 0.5483640000000001,
+  "codex_cost_usd": "unavailable through installed exec JSON; usage retained",
+  "claude_model": "claude-opus-5-5 (provider init), requested high",
+  "claude_cli": "2.1.296",
+  "codex_cli": "0.147.0",
+  "codex_model": "installed CLI default; canonical model unavailable in exec JSON",
+  "isolation_limit": "Configured isolated paths and disabled features; actual calls audited. Full offered Codex inventory and instruction context are not attested.",
+  "evidence_versions": {
+    "claude": "v2",
+    "codex": "v3",
+    "matching_product_modules": 12
+  },
+  "not_a_population_benchmark": true
+}

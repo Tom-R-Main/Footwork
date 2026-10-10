@@ -1,0 +1,114 @@
+{
+  "product_main_base": "8c9478f7afc05be9d00a6919388fb2a2cced33d4",
+  "product_patch_commit": "08f4cf8",
+  "final_harness_commit": "2c69cd8",
+  "claude_harness_commit": "b178ff33aa732c99e067a08882162f6ce0d0368d",
+  "codex_harness_commit": "2c69cd8df17949111c052a084a705c019fb559b4",
+  "product_hashes_match": true,
+  "same_scope": true,
+  "same_prompt_sha256": "4131111a88a150f9f562d81f858aaa38387681efaae2e78e64b802c364de748a",
+  "product_hashes": {
+    "jevdual/python/jevdual/capability/__init__.py": "884c16358ba194d7017e55d98d8a801193f29836a4d6faf579c1c080e31b659d",
+    "jevdual/python/jevdual/capability/backend.py": "4ef489e5e28ac378043efbd081a537eba519b2fe6d4b5c29ae61fcdc9d744c0a",
+    "jevdual/python/jevdual/capability/contracts.py": "e17e08d23694227ae6c7e190504c118ed7b941975e7ae4d0cace0cc861cf9417",
+    "jevdual/python/jevdual/capability/execution_worker.py": "0c0d00e3858d336bd14e588e9a22fd5ec0ec4fb959ba5942cb6adf10489fbb73",
+    "jevdual/python/jevdual/capability/journal.py": "a0017bf32478caca9372080b04e3ebf828c8690d877304f43b6474ba317cb25c",
+    "jevdual/python/jevdual/capability/mcp_server.py": "dd990ee41cfda3a07a372a66c62e63c817ac25d7458158f4d1cbc529e47cf911",
+    "jevdual/python/jevdual/capability/observations.py": "b9fd6aa61dd584557e1721926349272531345781c5817497fa08673ae377e7bf",
+    "jevdual/python/jevdual/capability/recovery.py": "944f845f919ce933c2895f138fff4c344d99dec54cdf6f82b55116bda730433f",
+    "jevdual/python/jevdual/capability/service.py": "04bd12418b8839d1660573222487f2eb766f93dc4ba2d5174421d78acb9c946b",
+    "jevdual/uv.lock": "46b4b0a0974ad58975f8d31c247d9e94634f972ef8551550317c71099965a399",
+    "jevdual/python/jevdual/native.py": "d89afbedcf592ef8fe0e699d11c273c4c45df4a2c9039922c77e5907ffd33bfd",
+    "jevdual/python/jevdual/ax.py": "dc8c21d022e575d66debec19a578848266b8d15b2b102b68c36dea826bdd3f75"
+  },
+  "compiled_core_sha256": "85285d042174e02ca7f5b3de9b1713974bc5fccd19e5b12cc48e71162607531c",
+  "python": "3.12.6",
+  "pinned_installed_dependencies": {
+    "browser-use": "0.13.10",
+    "cua-driver": "0.28.2",
+    "psutil": "7.2.2",
+    "mcp": "2.1.1"
+  },
+  "full_suite": {
+    "passed": 1433,
+    "skipped": 27,
+    "log": "output/agent-acceptance-full-tests.log"
+  },
+  "focused_service_recovery_mcp": {
+    "passed": 51,
+    "log": "output/agent-reporting-after.log"
+  },
+  "final_relay_controls": {
+    "passed": 9,
+    "log": "output/agent-cancel-after.log"
+  },
+  "native_controls": {
+    "commit": "2c69cd8df17949111c052a084a705c019fb559b4",
+    "source_hashes": {
+      "jevdual/python/jevdual/capability/__init__.py": "884c16358ba194d7017e55d98d8a801193f29836a4d6faf579c1c080e31b659d",
+      "jevdual/python/jevdual/capability/backend.py": "4ef489e5e28ac378043efbd081a537eba519b2fe6d4b5c29ae61fcdc9d744c0a",
+      "jevdual/python/jevdual/capability/contracts.py": "e17e08d23694227ae6c7e190504c118ed7b941975e7ae4d0cace0cc861cf9417",
+      "jevdual/python/jevdual/capability/execution_worker.py": "0c0d00e3858d336bd14e588e9a22fd5ec0ec4fb959ba5942cb6adf10489fbb73",
+      "jevdual/python/jevdual/capability/journal.py": "a0017bf32478caca9372080b04e3ebf828c8690d877304f43b6474ba317cb25c",
+      "jevdual/python/jevdual/capability/mcp_server.py": "dd990ee41cfda3a07a372a66c62e63c817ac25d7458158f4d1cbc529e47cf911",
+      "jevdual/python/jevdual/capability/observations.py": "b9fd6aa61dd584557e1721926349272531345781c5817497fa08673ae377e7bf",
+      "jevdual/python/jevdual/capability/recovery.py": "944f845f919ce933c2895f138fff4c344d99dec54cdf6f82b55116bda730433f",
+      "jevdual/python/jevdual/capability/service.py": "04bd12418b8839d1660573222487f2eb766f93dc4ba2d5174421d78acb9c946b",
+      "jevdual/scripts/capability_agent_restart_trial.py": "e796093a9f9c28dd050df9510bc42d6e33f586cb6ed7b56d6ba856ba7181fcff",
+      "jevdual/scripts/capability_comparison_relay.py": "a92cb945260de1444643be2cdb4e2758a4a37166485129d1a39f0b0b99a76c65",
+      "jevdual/scripts/capability_restart_trial.py": "c9b82846a8e9516902c356bea65034ca46237b1393603d68c5eda357a5828289",
+      "jevdual/scripts/capability_host_trial.py": "6a4413c34bea59732f9a597bd37a609708ed0d50cc974759de5dab4e8f939e14",
+      "jevdual/uv.lock": "46b4b0a0974ad58975f8d31c247d9e94634f972ef8551550317c71099965a399",
+      "jevdual/python/jevdual/native.py": "d89afbedcf592ef8fe0e699d11c273c4c45df4a2c9039922c77e5907ffd33bfd",
+      "jevdual/python/jevdual/ax.py": "dc8c21d022e575d66debec19a578848266b8d15b2b102b68c36dea826bdd3f75"
+    },
+    "scope_sha256": "972c5faf481b8ed421eb9967a100be908a4663b7f25945cb6e7b9ca7b4b6a071",
+    "sessions": [
+      {
+        "host": "control",
+        "case": "clean",
+        "execution_pass": true,
+        "valid_environment": true,
+        "elapsed_seconds": 3.1292241669725627
+      },
+      {
+        "host": "control",
+        "case": "receipt",
+        "execution_pass": true,
+        "valid_environment": true,
+        "elapsed_seconds": 3.7085493330378085
+      },
+      {
+        "host": "control",
+        "case": "later_edit",
+        "execution_pass": true,
+        "valid_environment": true,
+        "elapsed_seconds": 3.6843717920128256
+      },
+      {
+        "host": "control",
+        "case": "no_receipt",
+        "execution_pass": true,
+        "valid_environment": true,
+        "elapsed_seconds": 3.364778207964264
+      }
+    ],
+    "claude_cost_usd": 0.0,
+    "prior_claude_cost_usd": 0.0,
+    "stop_reason": null,
+    "claim_review_pending": false,
+    "missing_boundary_rejected": true
+  },
+  "cleanup": [
+    {
+      "owned_browser_absent": true,
+      "AX_inventory_error": 0,
+      "owned_document_absent": true
+    },
+    {
+      "owned_browser_absent": true,
+      "AX_inventory_error": 0,
+      "owned_document_absent": true
+    }
+  ]
+}

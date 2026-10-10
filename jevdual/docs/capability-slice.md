@@ -26,7 +26,12 @@ Those two fixes now pass [six fresh agent content cases](../results/capability-t
 including empty and whitespace-only documents; the original C1 comparison remains unchanged.
 Restart reconciliation now passes [twelve actual MCP/native process-crash cases](../results/restart-reconciliation-20261010/report.md),
 including delayed execution and identical external text. This qualification uses a scripted MCP caller;
-a fresh agent trial on the new receipt wording and latency remains future work.
+a fresh agent trial on the new receipt wording and latency is recorded in
+[A1](../results/restart-agent-acceptance-20261010/report.md). On the isolated reporting extension,
+both hosts pass eight selected execution cases, but Codex omits execution uncertainty in one final
+answer; combined answer acceptance is seven of eight. That failure blocks packaging and does not
+change the original C1 or R1 results. The reporting extension remains on the unmerged
+`codex/restart-agent-acceptance` branch.
 Evidence covers the scoped prototype. Arbitrary apps, saved-file persistence,
 parallel hosts and a packaged public release remain unqualified.
 

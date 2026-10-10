@@ -73,3 +73,28 @@ Refs: scripts/capability_agent_restart_trial.py; output/agent-acceptance-hosts-v
 Observed: actual SIGTERM baseline v2 fails idle cancellation and passes active-call cancellation. Corrected actual two-case controls plus seven existing relay tests pass9, with spawned child PIDs absent; Ruff passes. Initial helper import failure is invalid and retained. The fix catches cancellation separately after qualified backend closeout and retains invalid for active requests or unfinished cleanup. Product service/native/dispatcher source is unchanged from08f4cf8; no new Claude session is scheduled.
 Next: commit the narrow harness fix, run fresh native controls, then Codex-only v3 four-case trial. Keep original v1/v2 Codex receipts invalid and bind carried Claude evidence by matching product/task hashes.
 Refs: output/agent-cancel-before.log; output/agent-cancel-before-v2.log; output/agent-cancel-after.log; tests/test_capability_agent_restart_trial.py
+
+## AAU8 · update · 2026-10-10 15:18
+Resolves: AA5 = held
+Observed: final Codex-v3 passes all four actual execution cases with orderly idle shutdown, exactly one act each, no non-Footwork executed call, qualified worker closeout and stable exact AX text. Native controls-v5 pass four plus missing-boundary rejection. Active SIGTERM remains invalid in the actual subprocess control. The existing full product suite and nine final relay checks qualify distinct snapshots. Both owned fixture browsers/documents are independently absent after closeout.
+Next: final answer review and bounded package closure; retain Codex-v1/v2 invalid samples and all counterexamples.
+Refs: results/restart-agent-acceptance-20261010/checks.json; sessions.json; output/agent-acceptance-controls-v5/summary.json; output/agent-acceptance-fixture-v2/cleanup.json
+
+## AAU9 · update · 2026-10-10 15:18
+Resolves: AA4 = failed
+Observed: root final-answer review passes Claude4/4 and Codex3/4. In the no-receipt case, Codex received unknown historical effect, current agreement yes and explicit unconfirmed-action guidance, then answered "Done" with only current text. It did not repeat input or change the broker's unknown state. Seven of eight selected answers meet A1. Product/dependency hashes match across twelve modules, scope and ordinary task bytes are identical, and unchanged Claude-v2 relays have no cancellation event. Reported aggregate Claude cost0.548364; Codex dollar/model inventory is unavailable through exec JSON.
+Inferred: wording alone does not qualify the host's completion reporting; safe broker execution and truthful job reporting are separate acceptance boundaries.
+Next: investigate a host completion-report contract checked against durable operation disposition before packaging. Do not advertise all-host acceptance or rerun until a new mechanism and test are preregistered.
+Refs: results/restart-agent-acceptance-20261010/report.md; sessions.json; summary.json; retained-failures.json
+
+## AAU10 · update · 2026-10-10 15:18
+Resolves: AA2 = held
+Observed: the bounded relay composition exposes actual generic lost replies, unchanged restarted catalogs and attested worker custody to both tested hosts. Missing boundary and active cancellation fail controls; idle closeout succeeds. Unsupported Codex flag and cancelled approval setup were identified and replaced with local supported configuration. Actual selected calls stay within the four tools. Complete Codex offered-tool/instruction inventory and canonical default model remain unverified, so this resolves the executable bounded composition rather than a claim of complete host isolation.
+Next: close A1 as failed answer acceptance with the explicit observability limits.
+Refs: results/restart-agent-acceptance-20261010/checks.json; report.md; tests/test_capability_agent_restart_trial.py
+
+## AAS · summary · 2026-10-10 15:18
+Established: scoped fresh-host experiment completed:8/8 selected execution/input guards and7/8 truthful-answer acceptance across Claude-v2 and Codex-v3 on identical product/task hashes. Public reporting extension, local Codex configuration and precise shutdown classification are reviewable oncodex/restart-agent-acceptance. Full1433pass27skip, focused51pass, finalrelay9pass, nativefourcases plus negative control pass; owned runtime cleanup verified. Original Claude counterexample and invalid scaffolds/Codex samples retained; result redactor reports0fileschanged. No push, merge, release, heldout measurement, source-default migration or network installation.
+Uncertain: Codex still omits unknown execution in one final answer; general host/model behavior, full Codex context/tool inventory, saved-file persistence, arbitrary apps, setup/packaging and public readiness are unqualified.
+Decision: close the experiment as failed answer acceptance. Validate a host completion report against durable operation disposition next; packaging follows that gate. Preserve the original failed predictions and this useful isolated branch/evidence.
+Refs: results/restart-agent-acceptance-20261010/report.md; summary.json; checks.json; sessions.json; retained-failures.json; docs/experiments/A1-restart-agent-acceptance.md

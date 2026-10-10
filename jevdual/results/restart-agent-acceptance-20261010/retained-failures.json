@@ -1,0 +1,22 @@
+{
+  "retained_private_runs": [
+    "agent-acceptance-controls-v1",
+    "agent-acceptance-controls-v3",
+    "agent-acceptance-hosts-v1",
+    "agent-acceptance-hosts-v2/codex-clean"
+  ],
+  "v1_valid_counterexample": "Claude false attribution of external text and unchecked unsaved-file assertion; never regraded.",
+  "v1_codex": "approval cancellations before calls reached relay plus injected skill context; invalid. Its item.error was originally mislabeled as a non-Footwork call, but remains an isolation failure.",
+  "v2_codex": "one safely completed clean task incorrectly invalidated by idle cancellation; retained invalid rather than retroactively scored.",
+  "invalid_baseline_logs": [
+    "agent-reporting-before.log",
+    "agent-reporting-before-v2.log",
+    "agent-reporting-before-v3.log",
+    "agent-cancel-before.log"
+  ],
+  "valid_baseline_logs": [
+    "agent-reporting-before-v4.log",
+    "agent-cancel-before-v2.log"
+  ],
+  "control_v3": "0 matching owned windows at prerequisite; later probe matched; cause unverified. No session/action counted."
+}
