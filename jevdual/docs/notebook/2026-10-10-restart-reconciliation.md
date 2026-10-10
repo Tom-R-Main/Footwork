@@ -26,3 +26,10 @@ Test: model-free owned fixture; spawn start_new_session child that binds only de
 Predicts: detached child reports confirmed exact readback and independent oracle agrees; startup cost is measured rather than assumed negligible.
 Against: detached child lacks TCC permission, cannot resolve the owned field, inserts incorrectly or requires unapproved configuration changes.
 Refs: scripts/capability_restart_probe.py; scripts/capability_fixture.py
+
+## RRU2 · update · 2026-10-10 12:14
+Resolves: RR3 = held
+Observed: detached owned child 17255, its own process group, appended once with confirmed driver effect and exact independent AX agreement. Spawn-to-import 0.0574 seconds; spawn-to-dispatch 1.8597 seconds; total 2.2170 seconds. Public baseline with final journal write loss remains unknown after fresh backend/service despite matching text; one insertion and resource busy. Initial baseline teardown double-close was a harness error, corrected without changing the expectation. The first notebook append used the wrong working directory and failed; this entry corrects that omission before implementation.
+Inferred: existing Accessibility authorization works for a detached child on this host. Fresh binding costs dominate startup; this is a latency tradeoff, not evidence for broad platform/TCC support.
+Next: implement immutable operation-bound receipt consumption and independent fixed-action worker; qualify process boundaries and counterexamples.
+Refs: /Users/thomasmain/projects/footwork/output/restart-detached-20261010/report.json; scripts/capability_restart_probe.py; /Users/thomasmain/projects/footwork/output/capability-restart-baseline-v2.log; tests/test_session_scenarios.py; dcc0ed4
