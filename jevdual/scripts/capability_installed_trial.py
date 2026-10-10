@@ -88,9 +88,9 @@ def main() -> int:
             str(python),
             "-c",
             (
-                "import json,sys,jevdual,jevdual.capability.execution_worker as w;"
+                "import json,sys,os,psutil,jevdual,jevdual.capability.execution_worker as w;"
                 "from jevdual._native import BACKEND;"
-                'print(json.dumps({"python":sys.executable,"package":jevdual.__file__,"worker":w.__file__,"backend":BACKEND,"sys_path":sys.path}))'
+                'print(json.dumps({"python":sys.executable,"prefix":sys.prefix,"kernel_executable":psutil.Process(os.getpid()).exe(),"kernel_argv0":psutil.Process(os.getpid()).cmdline()[0],"package":jevdual.__file__,"worker":w.__file__,"backend":BACKEND,"sys_path":sys.path}))'
             ),
         ],
         env=env,
@@ -104,7 +104,8 @@ def main() -> int:
     (root / "origin-probe.json").write_text(json.dumps(origins, indent=2) + "\n")
     assert origins["backend"] == "pure-python", origins
     assert str(python.parent.parent) in origins["package"] and str(python.parent.parent) in origins["worker"]
-    assert not any(str(PROJECT / "jevdual/python") in p for p in origins["sys_path"])
+    assert Path(origins["prefix"]) == python.parent.parent
+    assert not any(p.endswith("footwork/jevdual/python") for p in origins["sys_path"])
     scope = json.loads(args.scope.read_text())
     scope["task"] = "installed-" + uuid.uuid4().hex
     scope_path = root / "scope.json"
@@ -170,7 +171,10 @@ def main() -> int:
         client.stop()
         client = None
         assert _wait_no_worker(journal)
-        assert worker_proofs and all(p["cmdline"][0] == str(python) for p in worker_proofs), worker_proofs
+        assert worker_proofs and all(
+            p["cmdline"][0] == origins["kernel_argv0"] and p["executable"] == origins["kernel_executable"]
+            for p in worker_proofs
+        ), worker_proofs
         text = ax_document_text(dst["pid"], dst["document"])
         assert text == PREFIX + VALUE and len(_rows(journal)) == 1
         final = subprocess.run(
@@ -217,6 +221,7 @@ def main() -> int:
         if client is not None:
             client.stop()
         done.set()
+        (root / "worker-observations.json").write_text(json.dumps(worker_proofs, indent=2) + "\n")
         watcher.join(timeout=5)
     return 0
 
