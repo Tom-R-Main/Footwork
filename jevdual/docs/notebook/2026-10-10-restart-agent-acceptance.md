@@ -26,3 +26,9 @@ Test: fresh control v2 uses task status then the returned operation ID with reco
 Predicts: four positive controls meet their unchanged oracle/journal criteria, token collection preserves one row and exact text, and malformed-target control cannot manufacture a qualified interruption.
 Against: operation-specific status cannot recover the qualified receipt, repeat adds an effect/row, matching text resolves without receipt, or an unobserved interruption is accepted.
 Refs: scripts/capability_agent_restart_trial.py; output/agent-acceptance-controls-v1
+
+## AAU2 · update · 2026-10-10 14:48
+Resolves: AA3 = held
+Observed: frozen 600dacf control v2 passes clean, receipt, later-edit and no-receipt, each with one operation, independent stable exact text and repeated-token collection preserving the operation ID. The malformed target returned before the required boundary and was explicitly rejected without a dropped call. V1 remains retained. Product capability/native/AX source is unchanged from merged main; the existing compiled extension was copied with equal SHA256, without rebuilding.
+Next: run eight fresh host sessions on the qualified harness; root reviews actual answers against independent evidence. AA1 and host-isolation portion of AA2 remain open.
+Refs: output/agent-acceptance-controls-v2/summary.json; output/agent-acceptance-controls-v2/control-missing-boundary/receipt.json; 600dacf
