@@ -14,6 +14,7 @@ from build_capability_wheel import verify as verify_wheel
 
 PROJECT = Path(__file__).resolve().parents[2]
 HELPERS = (
+    "verify_onboarding_packet.py",
     "capability_clean_install.py",
     "capability_fixture.py",
     "capability_fixture_config.py",

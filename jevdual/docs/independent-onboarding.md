@@ -15,12 +15,20 @@ Open an interactive guest Terminal and define the packet directory:
 ~~~sh
 cd /absolute/extracted/footwork
 PACKET_ROOT="$(pwd -P)"
+QUALIFICATION_PYTHON=/absolute/python3.12
+command -v python3 uv
+"$QUALIFICATION_PYTHON" --version
+uv --version
+"$QUALIFICATION_PYTHON" -I "$PACKET_ROOT/jevdual/scripts/verify_onboarding_packet.py" \
+  --packet-root "$PACKET_ROOT"
 cd jevdual
-python3 scripts/capability_clean_install.py \
-  --python /absolute/python3.12 \
+"$QUALIFICATION_PYTHON" -E -s scripts/capability_clean_install.py \
+  --python "$QUALIFICATION_PYTHON" \
   --wheel "$PACKET_ROOT/artifacts/jevdual-0.0.1-py3-none-any.whl" \
   --run-dir "$PACKET_ROOT/output/install-v1"
 ~~~
+
+Set QUALIFICATION_PYTHON to the absolute executable installed for this run, not /usr/bin/python3. The system Python and Git commands can trigger a developer-tools installation dialog on a fresh Mac. The standalone helpers read their source commit from MANIFEST.json and do not need Git. Record the command paths and version output above. Verify members before installation creates output directories; stop on a nonzero verification exit. The archive hash from the accompanying report authenticates the manifest; member hashes detect changes after extraction.
 
 The installer uses a fresh environment, empty cache, private state and public binary packages. Preserve failures as their own version; a new attempt needs a new run directory. Existing dependencies, source code, Rust and model accounts must not satisfy missing prerequisites.
 
