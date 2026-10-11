@@ -78,3 +78,16 @@ Test: before the grant, retain and visibly print SHA256 hashes of the denied doc
 Predicts: exported bytes match the observed guest archive and pre-grant baseline hashes, and the receiver shuts down after receipt or timeout.
 Against: hashes differ, a receipt is absent, transfer requires widening host access beyond the fixed upload, or the receiver remains active after its bound.
 Refs: results/u2-independent-onboarding-20261011-v1; guest denied-baseline.sha256; Claude message1791751104201824000
+
+## UOU8 · update · 2026-10-11 17:18
+Observed: human reports unlock complete. Root observes Terminal Accessibility already on upon reopening Settings; root never toggled it. The change occurred between the earlier off observation and this on observation, with explicit human consent, but its actor/time are not independently captured. Baseline receipt hashes were printed before the post-restart diagnostic, not demonstrably before the actual grant. Guest Terminal quit visibly, then relaunched; strict installed doctor exits0, Accessibility granted, Screen Recording not_granted and no blockers. The first fixture creates its exact TextEdit document but fails its30second identity deadline while guest Chrome first-launch verification is visibly still running. No scope is emitted and no product action runs. Root declines Python local-network discovery and Terminal TextEdit Automation prompts, closes only the unchanged fixture document manually and preserves the failed fixture directory/log.
+Inferred: Chrome cold verification is a candidate startup cause, not yet isolated from SDK window visibility or other readiness causes. The permission transition is observed, but the initial complete first-use lane does not pass. The original denied baseline is retained without a permission reset.
+Next: export original failure evidence and review it; run a separately recorded development continuation with the same frozen helpers only after vendor verification completes. Never regrade fixture-v1 as success.
+Refs: results/u2-independent-onboarding-20261011-v1; guest fixture-console.txt; guest packet output/doctor-after.json; root CUA observations
+
+## UO5 · prediction · 2026-10-11 17:18
+Hypothesis: the unchanged fixture can identify owned windows once the official Chrome first-launch verification has completed; the initial failure is startup readiness rather than a broken approved AX/SDK seam.
+Test: retain fixture-v1 and its refusal/timeout evidence. Observe normal vendor Chrome verification completion, with no Gatekeeper bypass or added permission. Launch the frozen fixture into fresh fixture-v2; if ready, run the existing installed native oracle in new job-v2/native-v2. Keep declined extra permissions and manually close the exact document when automatic cleanup cannot do so.
+Predicts: fixture-v2 emits ready and the installed append/repeated-token/report oracle passes with one operation and one effect under the same Terminal Accessibility grant.
+Against: Chrome remains unable to launch normally, scope identification fails again, native oracle refuses or duplicates, or additional permission is necessary for native execution.
+Refs: docs/experiments/U2-independent-onboarding.md; guest fixture-console.txt; scripts/capability_fixture.py; scripts/capability_installed_trial.py
