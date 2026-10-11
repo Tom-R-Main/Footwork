@@ -80,7 +80,13 @@ def usage_from_events(content):
         if not isinstance(event, dict):
             continue
         item = event.get("item", {})
-        if isinstance(item, dict) and item.get("type") not in {None, "agent_message", "reasoning"}:
+        if isinstance(item, dict) and item.get("type") == "error":
+            message = item.get("message", "")
+            known = ("Code Mode is unavailable because code-mode host is disabled.",
+                     "Skill descriptions were shortened to fit the skills context budget.")
+            if not isinstance(message, str) or not message.startswith(known):
+                raise PolicyUnavailable("codex_reported_error")
+        elif isinstance(item, dict) and item.get("type") not in {None, "agent_message", "reasoning"}:
             raise PolicyUnavailable("unexpected_model_tool_use")
         if event.get("type") == "turn.completed":
             data = event.get("usage", {})

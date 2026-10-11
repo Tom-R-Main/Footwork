@@ -26,6 +26,11 @@ class PolicyTests(unittest.TestCase):
         self.assertIsNone(policy.usage_from_events(b'{}\nnull\n'))
         usage = {"input_tokens": 20, "output_tokens": 10, "cached_input_tokens": 2}
         self.assertEqual(policy.usage_from_events(json.dumps({"type": "turn.completed", "usage": usage}).encode()), usage)
+        for message in ("Code Mode is unavailable because code-mode host is disabled.",
+                        "Skill descriptions were shortened to fit the skills context budget."):
+            self.assertIsNone(policy.usage_from_events(json.dumps({"type": "item.completed", "item": {"type": "error", "message": message}}).encode()))
+        with self.assertRaises(policy.PolicyUnavailable):
+            policy.usage_from_events(b'{"item":{"type":"error","message":"unknown failure"}}')
         for kind in ("command_execution", "file_change", "mcp_tool_call", "web_search", "tool_call", "plan", "image_view"):
             with self.subTest(kind=kind), self.assertRaises(policy.PolicyUnavailable):
                 policy.usage_from_events(json.dumps({"type": "item.completed", "item": {"type": kind}}).encode())

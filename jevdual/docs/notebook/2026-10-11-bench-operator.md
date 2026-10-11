@@ -13,3 +13,18 @@ Test: commit the policy source, render a fresh native preparation image, invoke 
 Predicts: a bounded completed model process returns a valid typed action and reported usage, with no tool events and no native state change.
 Against: configuration or authentication fails, tools are invoked, the model cannot accept the image/schema, output is invalid, or the probe dispatches a bench action.
 Refs: tools/physical-workcell/codex_policy.py; tools/physical-workcell/output/sim8-policy-smoke1/
+
+## SIM8-CLI-U1 · update · 2026-10-11 15:36
+Resolves: SIM8-CLI = failed
+Observed: the first committed-source probe exited 0 with a valid movement action but the adapter refused it as unexpected tool use. The emitted error items were two nonfatal startup diagnostics: disabled code-mode host and shortened skill descriptions. No tool call or native dispatch occurred; all raw output remains retained.
+Inferred: the event classifier confused startup diagnostics with tool execution. This does not establish the complete accepted policy transport.
+Next: retain this failure, allow only those exact diagnostic prefixes, keep arbitrary errors and actual tool items refused, rerun focused checks, commit the revised prediction and policy, then probe a fresh call before product qualification.
+Refs: 3e6475e; tools/physical-workcell/output/sim8-policy-smoke1/model-call/outcome.json; tools/physical-workcell/test_codex_policy.py
+
+## SIM8-CLI-R · prediction · 2026-10-11 15:36
+Revises: SIM8-CLI
+Hypothesis: separating the two known nonfatal startup diagnostics from tool events permits a valid bounded model action without admitting actual tool use or arbitrary provider errors.
+Test: commit the corrected classifier and invoke one fresh no-dispatch decision, then check schema, usage, process exit and unchanged native generation.
+Predicts: valid typed action accepted with reported usage, no actual tool items, process reaped and native generation zero; focused unknown-error/tool tests still refuse.
+Against: actual tools or arbitrary errors are accepted, a normal action still fails, or the bench moves during the transport probe.
+Refs: tools/physical-workcell/output/sim8-policy-smoke1/model-call-v2/; tools/physical-workcell/test_codex_policy.py
