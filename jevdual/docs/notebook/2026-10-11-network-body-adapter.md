@@ -33,3 +33,10 @@ Test: load an exact hash-bound full-capacity journal, reject duplicate keys and 
 Predicts: the full journal reloads without effects, capacity refuses the next send, malformed journals refuse, and unchanged wire decoding still rejects oversized messages.
 Against: 256 entries still cannot reload, malformed data or oversized wire messages are admitted, unresolved commands disappear, or network recovery changes.
 Refs: tools/physical-workcell/body_client.py; tools/physical-workcell/test_body_client.py
+
+## SIM9-U3 · update · 2026-10-11 16:40
+Resolves: SIM9-CAPACITY = held
+Observed: the full-capacity reload failed before repair at the 64 KiB reader. The separate strict 128 KiB journal reader passes full-capacity reload, refusal before send 257, duplicate/nonfinite/oversized journal rejection and unchanged oversized-wire refusal. Eleven client checks pass. The third twelve-case matrix passes on the final source, with all owned processes reaped and all recorded source hashes unchanged. Thirteen server checks and twenty-nine core checks also pass.
+Inferred: the 65 conformance checks support the bounded same-host network adapter and its retained authority under these faults; they do not establish actual-model network completion.
+Next: commit measured source, freeze its exact bytes, and run two actual Codex image-guided network cycles with lost-reply reconciliation, duplicate and delayed dispatches. Score native states, SQLite and exact model/transport receipts separately after process cleanup.
+Refs: tools/physical-workcell/output/sim9-client-capacity-before/unittest.log; tools/physical-workcell/output/sim9-client-tests-v4/unittest.log; tools/physical-workcell/output/n9-matrix-v3/aggregate.json; tools/physical-workcell/output/sim9-core-regression.log

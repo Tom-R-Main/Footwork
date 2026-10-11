@@ -1,0 +1,65 @@
+# Persistent simulated body
+
+The body service retains a MuJoCo bench while a separate client plans from camera images received over TCP. The local service checks proposals and owns every physical effect. This adapter lives inside Footwork's existing workcell package; the browser bench remains a separate local interface.
+
+Start from the repository root with the existing pinned Python environment:
+
+```sh
+tools/physical-workcell/.venv/bin/python tools/physical-workcell/body_network.py \
+  --root tools/physical-workcell/output/my-network-body --initialize --port 64371
+```
+
+Restart the same body by omitting `--initialize`. Body identity, generation, native time, jobs and receipts persist. Restart revokes all leases. The service binds to loopback; this version does not provide authentication or remote deployment.
+
+The Python client provides the action boundary:
+
+```python
+from body_client import BodyClient, Uncertain
+
+client = BodyClient("tools/physical-workcell/output/my-network-client",
+                    "http://127.0.0.1:64371")
+client.acquire()
+client.start_job("desk-job-1", {
+    "x_min": .035, "x_max": .105, "y_min": -.025, "y_max": .025,
+})
+challenge = client.observe()  # SHA-verified PNG downloaded into the client root
+# A visual model chooses action, intent and finite target coordinates.
+proposal = client.propose(challenge["challenge_id"], "move",
+                          "Approach the block from its left side", -.25, 0)
+try:
+    result = client.dispatch(proposal["proposal_id"])
+except Uncertain as uncertain:
+    receipt = client.reconcile(uncertain.command_id)  # reads; never resends
+client.close()
+```
+
+The example is one approach move, not a complete manipulation policy. The frozen qualification runner uses actual Codex image decisions for placement, measurement, contact reset and a second job. It needs the already authenticated Codex CLI and retains model inputs, decisions, usage and process outcomes.
+
+```sh
+tools/physical-workcell/.venv/bin/python tools/physical-workcell/qualify_network_body.py \
+  --root tools/physical-workcell/output/my-network-qualification \
+  --source-commit COMMITTED_SOURCE_SHA
+tools/physical-workcell/.venv/bin/python tools/physical-workcell/score_network_body.py \
+  --root tools/physical-workcell/output/my-network-qualification
+```
+
+Run the scorer after the runner has stopped its service and proxy. It reads native states and SQLite separately from planning. Results and the qualification scope are recorded under `jevdual/results/network-body-adapter-20261011/` when available.
+
+Commands have persistent IDs and content digests. Exact duplicates return the historical receipt. Changed arguments under the same ID refuse. If a reply disappears, the client records an unknown outcome and blocks new commands. Receipt lookup can settle a completed command; an expired or revoked lease can prove that an unaccepted command cannot arrive later. An accepted intent without lower-level proof remains unknown. Neither restarting nor reconnecting clears it.
+
+A lease limits admission of new commands. An already admitted action can finish after a disconnect within the existing local force, speed and time limits. This prototype does not claim an emergency stop, robot safety certification, hardware recovery, power-loss durability or secure control across machines.
+
+The diagnostic fault proxy injects bounded delays, discarded requests/replies and exact duplicates. Crash barriers are enabled only for test services and intentionally stop the owned service process so the harness can test receipt recovery. They are absent from normal startup.
+
+Reference: [protocol and ownership](NETWORK_CONTRACT.md); [preregistered experiment](../../jevdual/docs/experiments/SIM9-network-body-adapter.md).
+
+Verification recipe (from this directory):
+
+```sh
+.venv/bin/python -m unittest -v test_body_network test_body_client test_network_body_faults
+../../jevdual/.venv/bin/ruff check body_protocol.py body_network.py body_client.py \
+  network_fault_proxy.py qualify_network_body.py score_network_body.py \
+  test_body_network.py test_body_client.py test_network_body_faults.py
+```
+
+The twelve-case matrix covers network delay, dropped traffic, concurrent duplicates, stale proposals, lease and identity fences, retained restarts, read-only receipt recovery and unresolved crash intents. Server/client checks cover bounded schemas, ownership, malformed replies and image integrity. The actual-model run and its separate scorer qualify the complete camera-to-motion-to-computer workflow; deterministic checks alone do not establish model performance.
