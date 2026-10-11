@@ -1,0 +1,37 @@
+{
+  "processes": [
+    {
+      "role": "body",
+      "pid": 65719,
+      "arguments": [
+        "body_network.py",
+        "--root",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim10-browser-ai-v1/body",
+        "--diagnostic",
+        "--port",
+        "51373"
+      ]
+    },
+    {
+      "role": "workbench",
+      "pid": 65723,
+      "arguments": [
+        "network_bench_operator.py",
+        "serve",
+        "--root",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim10-browser-ai-v1/operator",
+        "--port",
+        "51377",
+        "--backend",
+        "codex"
+      ]
+    }
+  ],
+  "browser_origin": "http://127.0.0.1:51377",
+  "body_id": "a649def6a17f4401b475acd602c151f5",
+  "app_id": "7560f614128c40c7b9d82a7a20f35435",
+  "runner_status": "paused",
+  "completed_jobs": 2,
+  "client_commands": 80,
+  "model_request_pending": false
+}

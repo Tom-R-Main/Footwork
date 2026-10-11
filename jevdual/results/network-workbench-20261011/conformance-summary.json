@@ -1,0 +1,22 @@
+{
+  "additional_checks": [
+    "Ruff new Python",
+    "JavaScript syntax",
+    "notebook schema",
+    "Codex CLI authenticated preflight"
+  ],
+  "failed_final": 0,
+  "passed": 94,
+  "suites": [
+    {
+      "cases": 14,
+      "log": "tools/physical-workcell/output/sim10-network-runtime-final.log",
+      "scope": "real-socket queue, unknown stages, restart, health and control races"
+    },
+    {
+      "cases": 80,
+      "log": "tools/physical-workcell/output/sim10-core-link-http-regression-v2.log",
+      "scope": "unchanged core, adapter, network fault matrix, retained link and browser HTTP boundaries"
+    }
+  ]
+}

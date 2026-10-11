@@ -1,0 +1,18 @@
+{
+  "actual_model_attempts": [
+    {
+      "attempt": 1,
+      "completed_cycles": 2,
+      "faults": "fault-observations.json",
+      "model_calls": 26,
+      "outcome": "passed",
+      "owned_trial_processes_reaped": true,
+      "planner": "actual_codex_cli_images_over_TCP",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim10-browser-ai-v1",
+      "source_commit": "d731ac8ea03f326edef18ea9c1b9cb2027421871",
+      "transport_commands": 80
+    }
+  ],
+  "development_attempts": "retained-development-attempts.json",
+  "handoff": "handoff.json"
+}

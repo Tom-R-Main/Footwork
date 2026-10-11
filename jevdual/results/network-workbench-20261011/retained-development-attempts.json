@@ -1,0 +1,32 @@
+{
+  "attempts": [
+    {
+      "artifact": "tools/physical-workcell/output/sim10-link-tests-v1/unittest.log",
+      "outcome": "Eight of nine passed; wrong lexical command selector corrected, retained link behavior unchanged"
+    },
+    {
+      "artifact": "tools/physical-workcell/output/sim10-idle-health-before-fix.log",
+      "outcome": "Original idle upstream outage not detected; bounded health added"
+    },
+    {
+      "artifact": "tools/physical-workcell/output/sim10-resume-before-fix.log",
+      "outcome": "Original stale Resume overrode Pause; control epoch bound"
+    },
+    {
+      "artifact": "tools/physical-workcell/output/sim10-stale-health-before-fix.log",
+      "outcome": "Original old failed health response paused a known completed native dispatch; transport epoch bound"
+    },
+    {
+      "artifact": "tools/physical-workcell/output/sim10-network-runtime-tests-first.log",
+      "outcome": "Eleven of thirteen passed; local manifest reader and duplicate fixture initialization errors corrected"
+    },
+    {
+      "artifact": "tools/physical-workcell/output/sim10-network-runtime-tests-second.log",
+      "outcome": "Thirteen passed before the final fourteen-case suite"
+    },
+    {
+      "artifact": "tools/physical-workcell/output/sim10-core-link-http-regression.log",
+      "outcome": "Wrong relative interpreter path exited before tests; corrected launch retained separately"
+    }
+  ]
+}

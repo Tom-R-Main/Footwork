@@ -1,0 +1,25 @@
+{
+  "app_id": "7560f614128c40c7b9d82a7a20f35435",
+  "body_id": "a649def6a17f4401b475acd602c151f5",
+  "body_origin": "http://127.0.0.1:51373",
+  "browser_origin": "http://127.0.0.1:51377",
+  "owned_processes_exited": true,
+  "planner": "actual_codex_cli_images_over_TCP",
+  "processes": [
+    {
+      "exit_observed": true,
+      "pid": 51543,
+      "returncode": 0,
+      "role": "body"
+    },
+    {
+      "exit_observed": true,
+      "pid": 51546,
+      "returncode": 0,
+      "role": "workbench"
+    }
+  ],
+  "ready": true,
+  "simulation": true,
+  "source_commit": "d731ac8ea03f326edef18ea9c1b9cb2027421871"
+}

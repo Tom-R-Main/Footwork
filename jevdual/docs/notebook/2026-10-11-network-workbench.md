@@ -76,3 +76,17 @@ Refs: tools/physical-workcell/output/sim10-network-runtime-final.log
 Observed: the final eighty unchanged-core, adapter, link and HTTP checks passed; combined with the fourteen runtime checks this is 94 passing checks. Ruff, JavaScript syntax, notebook checks and CLI preflight pass. No existing body/core/local-product source changed. One regression launch used an incorrect relative interpreter path and exited before tests; the corrected launch is retained separately.
 Next: commit measured source and run the first actual browser/model trial without source edits.
 Refs: tools/physical-workcell/output/sim10-core-link-http-regression.log; tools/physical-workcell/output/sim10-core-link-http-regression-v2.log; tools/physical-workcell/output/sim10-network-runtime-final.log
+
+## SIM10-U8 · update · 2026-10-11 17:44
+Resolves: SIM10-P1 = held
+Observed: the first frozen actual Codex browser trial passed independent scoring after both owned trial processes exited. Two successive thirteen-call jobs advanced one body from generation zero to twenty with continuous native time, one verified SQLite measurement each and contact resets. The first dispatch reply was lost; the browser blocked the queue. Disconnect, reconnect and exact receipt lookup retained four command records without another send, and recovery remained paused until explicit Resume. Duplicate and 0.8-second delay controls were consumed once. Reload preserved both completed jobs and eighty commands. Every model image, typed proposal and lower receipt was independently bound; no private pose was supplied. The same roots and ports restarted with unchanged identities and history, paused with no active job or pending model request.
+Inferred: browser-visible uncertainty and explicit recovery compose with the retained body adapter for this loopback simulation. This does not qualify hardware or authenticated remote deployment.
+Next: hand off the running paused product and its runbook; preserve finite budgets and admission semantics.
+Refs: results/network-workbench-20261011/report.md; results/network-workbench-20261011/qualification-score.json; results/network-workbench-20261011/ui-ledger.json; results/network-workbench-20261011/fault-observations.json; results/network-workbench-20261011/handoff.json
+
+## SIM10-S1 · summary · 2026-10-11 17:44
+Established: the browser workbench now queues actual image-guided jobs through a separate persistent TCP body. Local identity, freshness, lease and effect guards remain authoritative. Disconnect, uncertain replies and exact receipt recovery are visible product states, with explicit Resume and no hidden retry.
+Evidence: 94 conformance checks and the first frozen actual-model browser trial passed. Two completed jobs, native/SQLite/contact proof, receipt and image binding, reload and paused restart are retained in the result package. Development failures remain separately recorded.
+Uncertain: physical actuation, cross-machine authentication and long-running budget renewal remain outside qualification. An admitted bounded action can settle after Pause or Disconnect.
+Decision: adopt the qualified loopback network workbench and hand off the running paused product with completed history retained.
+Refs: docs/experiments/SIM10-network-workbench.md; results/network-workbench-20261011/report.md; results/network-workbench-20261011/attempt-ledger.json; tools/physical-workcell/NETWORK_WORKBENCH.md
