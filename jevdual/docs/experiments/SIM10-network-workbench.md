@@ -17,3 +17,7 @@ Guardrails: no direct native calls from the browser host, no teleport, no privat
 Decision rule: adopt and show the network browser product only if conformance checks and the independently scored frozen browser/model trial pass. Otherwise retain the prior idle local product and report the failed boundary.
 
 Scope: same-Mac loopback simulation; remote authentication, hardware and emergency stopping remain outside this experiment.
+
+## Amendment · 2026-10-11 17:27
+
+Host admission is the durable checked stage write, before handing the exact command to BodyClient. Pause/Disconnect prevent later host admissions; an admitted request may reach the body after the control returns. The body retains its separate lease/freshness/effect checks. Qualification must not claim that Pause interrupts this in-flight request. Add a control-boundary check: pause before admission yields no command; pause after admission permits only that command to settle and admits no successor.

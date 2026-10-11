@@ -20,6 +20,13 @@ Predicts: the original cached-state path misses the outage; after repair the hea
 Against: the original path already detects an idle outage, the poll blocks browser reads for a body timeout, sends commands, clears uncertainty, or resumes the queue automatically.
 Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
 
+## SIM10-ADMISSION · prediction · 2026-10-11 17:27
+Hypothesis: persisting a checked host stage is a usable admission boundary for Pause over TCP: an admitted request can settle after Pause while all later commands remain suppressed, without holding browser state reads behind network I/O.
+Test: pause before durable stage admission and assert no send; pause after stage admission while delivery waits, then release delivery and assert at most that admitted command settles and no successor is sent. Keep the body guards unchanged.
+Predicts: the queue remains paused, known admitted results are applied once, unknown results remain blocked, and state reads remain responsive during the network wait.
+Against: a later command sends, Pause silently resumes, an uncertain request is resent, or browser state waits behind the HTTP timeout.
+Refs: tools/physical-workcell/NETWORK_WORKBENCH_CONTRACT.md; docs/experiments/SIM10-network-workbench.md; tools/physical-workcell/test_network_operator.py
+
 ## SIM10-RESUME · prediction · 2026-10-11 17:25
 Hypothesis: Resume's readback gap can overwrite a newer Pause because it clears cancellation after HTTP without rechecking the control epoch. Binding its commit to the unchanged control epoch will preserve the newer control.
 Test: delay the real HTTP status response while Resume waits, issue Pause, then release the response; retain the first failing result and rerun after the epoch check.
