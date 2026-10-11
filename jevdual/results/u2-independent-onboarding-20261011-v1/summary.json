@@ -27,7 +27,7 @@
     "chrome_dmg": "mounted_read_only",
     "chrome_signature": "deep strict codesign valid; spctl accepted Notarized Developer ID; stapled ticket",
     "chrome_version": "155.0.8059.40",
-    "chrome_installation": "copy started; completion not yet observed"
+    "chrome_installation": "completed at /Applications/Google Chrome.app; installed bundle version readback 155.0.8059.40"
   },
   "qualification": {
     "packet_member_verification": "pending_installed_python",
