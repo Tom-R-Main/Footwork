@@ -26,3 +26,21 @@ Test: stage exactly packetv3, Python3.14.7, uv0.12.5, ChromeDMG and their manife
 Predicts: ISO creation does not require hostmount or global changes, contains the five declared source files plus checksum/provenance metadata, and Tart's CLI/source passes readOnly=true for the attachment.
 Against: ISO creation fails like host DMG attach, unexpectedly includes other hostfiles, or the supported attachment cannot be made/readback as read-only inside the guest.
 Refs: output/u2-vm-provision-20261011/tart-run-help.txt; output/u2-vm-provision-20261011/tart-run-pinned.swift; output/u2-vm-provision-20261011/prerequisite-provenance.json
+
+## VMU2 · update · 2026-10-11 14:07
+Observed: VM3's test enumerates four assets, while its Predicts line inadvertently says five source files; the intended inventory is the packet, Python installer, uv archive and Chrome DMG plus provenance/checksum metadata.
+Next: measure that explicit four-asset inventory; do not add an extra asset to satisfy the mistaken count.
+Refs: output/u2-vm-provision-20261011/prerequisite-provenance.json
+
+## VMU3 · update · 2026-10-11 14:13
+Observed: the Apple byte-range downloader stopped with curl exit18 (partial transfer) at roughly90.7percent aggregate image bytes; completed segments and all partial files remain. The full-image SHA256 has not been checked and no guest exists. ISO creation/inventory verification succeeded without a hostmount; guest readback is pending.
+Inferred: a bounded byte-range continuation can retain useful downloaded bytes, but partial transport success cannot certify the image.
+Next: commit VM4 before resuming only incomplete ranges, preserving the failed original transfer logs.
+Refs: output/u2-vm-provision-20261011/apple-range-00.log; output/u2-vm-provision-20261011/iso-verification.json
+
+## VM4 · prediction · 2026-10-11 14:13
+Hypothesis: Apple CDN supports precise Range continuation after a partial transfer, so a new downloader can finish only the missing bytes of retained ranges and produce the advertised complete-image SHA256 without downloading successful segments again.
+Test: resume incomplete segments with Range beginning at their recorded absolute offset, require HTTP206 with matching Content-Range before appending, bound retries and preserve per-attempt headers/logs, then stream-assemble and compare the final whole-image SHA256 to Apple CDN metadata.
+Predicts: retained segments remain unchanged, each range reaches its exact expected length, the complete image matches Apple SHA256885503b7f4b06609e9a512f2befd40f59730640a3f1233e3892d60affdd51c95, and only then the committed Tart provisioning test starts.
+Against: the CDN ignores/rejects offsets, repeated partial transport prevents completion, existing bytes are altered, or final image hash differs.
+Refs: output/u2-vm-provision-20261011/apple-ipsw-headers.txt; output/u2-vm-provision-20261011/download_apple_ranges.py
