@@ -6,3 +6,8 @@ Test: preserve the old packet's installer failure outside a repository with Git 
 Predicts: standalone receipt provenance equals the frozen manifest, no Git subprocess occurs in packet mode, bad provenance refuses before effects, and altered extracted payloads fail guest verification.
 Against: either receipt still invokes Git, accepts an enclosing foreign checkout, fails after native effects for provenance, or guest verification accepts modified payloads.
 Refs: Claude review1791739896683034000; scripts/capability_clean_install.py; scripts/capability_installed_trial.py; docs/independent-onboarding.md
+
+## UORU0 · update · 2026-10-11 13:43
+Observed: the prediction heading was entered13:43 while the terminal clock showed13:41. Its committed161e439 precedes the resolving tests; the prediction text is retained. PR2 merged exact7669d3d into268f0fc after four passing checks and an empty review-thread audit. User selected and authorized disposable VM provisioning on External SSD, including launcher/image downloads.
+Next: reproduce the packet receipt defect, remediate and freezev3; independently provision a SIP-enabled guest without inherited grants.
+Refs: https://github.com/Tom-R-Main/Footwork/pull/2; Claude review1791739896683034000
