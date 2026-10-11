@@ -33,3 +33,9 @@ Test: delay the real HTTP status response while Resume waits, issue Pause, then 
 Predicts: the original Resume returns to running despite the newer Pause; the repaired path stays paused with no command POST and does not clear uncertainty or disconnect state.
 Against: the original path already preserves Pause, the repaired path still resumes or sends effects, or the test does not exercise the unlocked readback gap.
 Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
+
+## SIM10-U2 · update · 2026-10-11 17:30
+Observed: the original idle connection path missed a stopped real TCP body endpoint. A delayed real HTTP status read also reproduced Resume overwriting a newer Pause. Both failing logs are retained; neither fixture sent model or physical commands. Nine diagnostic-link checks and six HTTP boundary checks now pass.
+Inferred: the two control/status predictions are supported at reproduction, but the repairs still require their resolving checks. Host admission is explicitly defined at the durable stage write so Pause does not promise interruption of an in-flight request.
+Next: finish bounded read-only health and epoch-checked Resume, check stage recovery and control boundaries, then freeze the browser/model trial.
+Refs: tools/physical-workcell/output/sim10-idle-health-before-fix.log; tools/physical-workcell/output/sim10-resume-before-fix.log; tools/physical-workcell/output/sim10-link-tests-v2/unittest.log; tools/physical-workcell/output/sim10-http-tests-v1/unittest.log
