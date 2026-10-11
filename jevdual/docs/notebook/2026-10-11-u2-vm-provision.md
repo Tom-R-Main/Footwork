@@ -44,3 +44,27 @@ Test: resume incomplete segments with Range beginning at their recorded absolute
 Predicts: retained segments remain unchanged, each range reaches its exact expected length, the complete image matches Apple SHA256885503b7f4b06609e9a512f2befd40f59730640a3f1233e3892d60affdd51c95, and only then the committed Tart provisioning test starts.
 Against: the CDN ignores/rejects offsets, repeated partial transport prevents completion, existing bytes are altered, or final image hash differs.
 Refs: output/u2-vm-provision-20261011/apple-ipsw-headers.txt; output/u2-vm-provision-20261011/download_apple_ranges.py
+
+## VMU4 · update · 2026-10-11 14:41
+Resolves: VM4 = held
+Observed: five bounded continuation requests returned HTTP206 with exact absolute Content-Range; all missing bytes were retained in separate attempt files before append. Original completed ranges were not downloaded again. Single streamed assembly/fsync produced 19,772,231,540 bytes and Apple SHA256885503b7f4b06609e9a512f2befd40f59730640a3f1233e3892d60affdd51c95. The image is read-only with recorded file identity and private non-symlink parent; Tart creation started only after those guards passed. A redundant preliminary prefix-hash scan was stopped before network requests, preserving its script/context; no image was certified from that attempt.
+Next: supervise Tart installation and hand its actual native viewer to root; VM2 and VM3 guest observations remain open.
+Refs: output/u2-vm-provision-20261011/apple-ipsw-provenance.json; output/u2-vm-provision-20261011/provision-state.json; output/u2-vm-provision-20261011/tart-create.log
+
+## VMU5 · update · 2026-10-11 14:41
+Resolves: VM1 = inconclusive
+Observed: pinned Lume integrity/signature/configuration checks passed, but native clipboard source behavior and absence of a supported VNC bind option caused its controller to stop before any guest creation. Actual provisioning now uses independently verified Tart2.40.1 with its supported disabled-clipboard route; the Lume guest hypothesis was not executed to completion.
+Next: retain Lume findings as the launcher selection rationale; do not call them a Lume installation or first-use failure.
+Refs: output/u2-vm-provision-20261011/launcher-provenance.json; output/u2-vm-provision-20261011/tart-launcher-provenance.json
+
+## VM5 · prediction · 2026-10-11 15:11
+Hypothesis: pausing only the Python controller before its create timeout while Tart continues verified disk work, then resuming after the create child exits, preserves the actual child exit status and allows existing configuration/viewer steps without restarting installation.
+Test: inspect the active controller's Python/POSIX subprocess wait semantics and exact process relationships, pause only that controller if creation remains active near15:18, supervise the same child PID and scoped disk activity for at most15additionalminutes, then resume the controller after the child exits or becomes a zombie; preserve any timeout/failure without resetting the partial guest.
+Predicts: Tart1958 continues writing while its supervisor alone is stopped, the completed child is reaped before timeout rejection in the resumed wait, and the same fresh guest reaches the queued native viewer with the selected isolation flags.
+Against: pausing affects the child/process group, the resumed controller loses true exit status or times out despite completion, installation fails/stalls, or the15minute extension expires without a justified handoff.
+Refs: output/u2-vm-provision-20261011/provision_tart_after_download.py; output/u2-vm-provision-20261011/python-popen-wait-source.txt; output/u2-vm-provision-20261011/installer-liveness-current.json
+
+## VMU6 · update · 2026-10-11 15:12
+Observed: VM5 was written at15:12EDT (clock19:12:02UTC), while its heading used15:11; the heading minute is approximate and git commit order remains the preregistration boundary. POSIX _wait polls waitpid before testing the elapsed deadline on each iteration, but a stop between that poll and deadline calculation would still permit a timeout on resume; the prediction does not assume away that narrow race.
+Next: commit VM5 before any pause, prefer observing the controller sleeping in its wait loop, and report any resumed timeout honestly rather than inferring successful child status from a percentage.
+Refs: output/u2-vm-provision-20261011/python-popen-wait-source.txt
