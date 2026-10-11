@@ -68,3 +68,23 @@ Refs: output/u2-vm-provision-20261011/provision_tart_after_download.py; output/u
 Observed: VM5 was written at15:12EDT (clock19:12:02UTC), while its heading used15:11; the heading minute is approximate and git commit order remains the preregistration boundary. POSIX _wait polls waitpid before testing the elapsed deadline on each iteration, but a stop between that poll and deadline calculation would still permit a timeout on resume; the prediction does not assume away that narrow race.
 Next: commit VM5 before any pause, prefer observing the controller sleeping in its wait loop, and report any resumed timeout honestly rather than inferring successful child status from a percentage.
 Refs: output/u2-vm-provision-20261011/python-popen-wait-source.txt
+
+
+## VMU7 · update · 2026-10-11 15:20
+Resolves: VM2 = held
+Observed: Tart creation returned success at15:14EDT before its timeout; get/list report the same owned guest running with4CPUs,8192MB RAM and64GB logical disk. Actual argv disables clipboard/audio/USB passthrough, captures system keys and attaches the verified ISO read-only. Root bound exactPID25080/window footwork-u2-20261011 and observed fresh welcome then actual Setup Assistant Language page/English/license-use notice in native CUA tool images. Root owns all GUI input; human license approval is pending.
+Inferred: provisioning reached a visible pristine setup boundary; this does not establish guest SIP, initial TCC denial, ISO guest readback or the U2 permission journey.
+Next: retain the running guest for human setup and root's independent onboarding qualification; VM3 remains open.
+Refs: output/u2-vm-provision-20261011/delivery-record/summary.json; output/u2-vm-provision-20261011/provision-state.json; root native CUA tool images in this chat
+
+## VMU8 · update · 2026-10-11 15:20
+Resolves: VM5 = inconclusive
+Observed: installer completed normally before the planned15:18pause boundary, so no controller pause, resume, swap or extended timeout was executed.
+Next: preserve the proposed recovery and narrow wait-race caveat as untested; do not call VM5 held.
+Refs: output/u2-vm-provision-20261011/tart-create.log; output/u2-vm-provision-20261011/provision-state.json
+
+## VMS1 · summary · 2026-10-11 15:20
+Established: pinned launchers/artifact provenance, safe supported Tart flags/storage, bounded authenticated Apple image recovery, exact ISO inventory/payload verification, successful fresh guest creation/configuration and root-observed visible Setup Assistant. No global launcher, host permission change, guest account/SSH/TCC grant or SIP change was performed.
+Uncertain: guest SIP runtime status, denied Accessibility baseline, actual ISO guest read-only/hash readback and the complete installed U2 effect/restart/report/cleanup journey. Tart Gatekeeper diagnostics reported Unnotarized Developer ID even though normal CLI/create/run succeeded without policy overrides.
+Decision: hand the running guest and all GUI ownership to root at the explicit human setup/license boundary; keep VM3 and UO2 open.
+Refs: output/u2-vm-provision-20261011/delivery-record/report.md; output/u2-vm-provision-20261011/delivery-record/summary.json
