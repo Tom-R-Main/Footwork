@@ -34,7 +34,7 @@
     "packet_member_verification": "passed 14 members, exit0",
     "cold_dependency_install": "passed 115 packages, seven stages exit0, installer exit0",
     "denied_accessibility_baseline": "observed not_granted, strict doctor exit1, fixture exit2, fixture directory absent",
-    "permission_transition": "not_run",
+    "permission_transition": "pending human confirmation; guest Settings shows Terminal switch off",
     "native_effect_restart_report": "not_run",
     "cleanup": "not_run",
     "qualified": false
