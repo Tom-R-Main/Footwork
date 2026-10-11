@@ -1,0 +1,16 @@
+{
+  "artifact_version": "0.0.1",
+  "python": "/Users/tom/footwork-u2/footwork/output/install-v1/venv/bin/python",
+  "prefix": "/Users/tom/footwork-u2/footwork/output/install-v1/venv",
+  "kernel_executable": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+  "kernel_argv0": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+  "package": "/Users/tom/footwork-u2/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py",
+  "worker": "/Users/tom/footwork-u2/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/capability/execution_worker.py",
+  "backend": "pure-python",
+  "sys_path": [
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python314.zip",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload",
+    "/Users/tom/footwork-u2/footwork/output/install-v1/venv/lib/python3.14/site-packages"
+  ]
+}

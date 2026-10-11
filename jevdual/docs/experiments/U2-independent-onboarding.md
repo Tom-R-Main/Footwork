@@ -25,3 +25,9 @@ Primary criterion: one valid independently provisioned lane with an observed den
 ## Decision rule
 
 Close packet preparation after artifact verification, helper import/launch checks and Claude review. Keep U2 runtime qualification open until the independent lane passes all required observations. Preserve failures under a new run version; do not reset the host's grants to manufacture a baseline or regrade existing U1/A2 results.
+
+## Result · 2026-10-11
+
+Full first-use qualification does not pass. A fresh SIP-enabled guest cold-installed the frozenv3 packet and exhibited a valid denied Accessibility baseline. The grant actor/time was not captured, the first fixture failed during normal Chrome verification, and automatic document cleanup could not be confirmed after Automation was declined. Preserve results/u2-independent-onboarding-20261011-v1.
+
+Separately preregistered development continuation UO5 passes after ordinary Chrome verification: unchanged helpers and installed wheel, one native effect/ledger row, actual isolated detached worker, same-token server restart and accepted structured completion report. Owned process/listener cleanup passes; exact document close required the operator and persistence remains not_checked. Claude independently reviewed the raw receipts/journal and confirmed these limits. See results/u2-independent-onboarding-20261011-v2-dev. This continuation does not regrade the initial failure. Future packet fixes and a captured fresh transition remain required before a complete first-use claim.

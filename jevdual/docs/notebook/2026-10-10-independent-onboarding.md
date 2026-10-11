@@ -91,3 +91,28 @@ Test: retain fixture-v1 and its refusal/timeout evidence. Observe normal vendor 
 Predicts: fixture-v2 emits ready and the installed append/repeated-token/report oracle passes with one operation and one effect under the same Terminal Accessibility grant.
 Against: Chrome remains unable to launch normally, scope identification fails again, native oracle refuses or duplicates, or additional permission is necessary for native execution.
 Refs: docs/experiments/U2-independent-onboarding.md; guest fixture-console.txt; scripts/capability_fixture.py; scripts/capability_installed_trial.py
+
+## UOU9 · update · 2026-10-11 17:28
+Resolves: UO5 = held
+Observed: unchanged fixture-v2 emits ready after ordinary Chrome verification completes. Config and installed native oracle exit0; AX oracle matches once, installed detached worker contexts are retained, same-token server restart returns the same operation, and read-only journal/report show one final applied row. Exact fixture/browser/worker processes are absent and loopback is closed after cleanup; exact document close requires the operator because Automation was declined. Claude independently verifies the raw archive/journal and accepts the bounded development pass without new runtime blockers.
+Inferred: startup readiness is supported as the initial fixture failure explanation, but no isolated causal test proves Gatekeeper was the only cause. Additional TCC grants were unnecessary for product execution.
+Next: retain this post-grant continuation separately; develop fixture/setup improvements in a new packet before another complete first-use qualification.
+Refs: results/u2-independent-onboarding-20261011-v2-dev; Claude1791754065071525000; preregistration47f38de
+
+## UOU10 · update · 2026-10-11 17:28
+Resolves: UO2 = inconclusive
+Observed: denied installed diagnostics and no-resource refusal are valid; post-restart doctor and the separate post-grant installed native flow pass. The actual grant actor/time remain uncaptured, the initial fixture times out and automatic document close remains unconfirmed. Claude flags the original transition pass condition as unmet. Earlier UOU8 phrase permission transition is observed means only separated off/on states, not a captured grant event; it cannot satisfy the transition gate.
+Next: keep full first-use U2 unqualified. A new captured denied-to-approved lane requires an explicitly approved guest reset or fresh environment; no reset is performed here.
+Refs: results/u2-independent-onboarding-20261011-v1; results/u2-independent-onboarding-20261011-v2-dev; Claude1791753660836044000
+
+## UOU11 · update · 2026-10-11 17:28
+Resolves: UO4 = inconclusive
+Observed: both allowlisted raw guest exports match the observed archive hashes; original denied doctor/refusal/install receipt hashes also match byte-for-byte. Both fixed-source-IP/path/size/hash bridge receivers terminate after one upload and are absent during qualification. However the baseline hashes were printed before post-restart doctor, not demonstrably before the actual grant, so the prediction's pre-grant timing claim is not established.
+Next: preserve raw and sanitized receipts and use contemporaneous grant capture in the next first-use lane.
+Refs: output/u2-export-v1; output/u2-export-v2; results/u2-independent-onboarding-20261011-v2-dev/summary.json
+
+## UOS3 · summary · 2026-10-11 17:28
+Established: fresh SIP-enabled guest cold install, truthful denied baseline, post-grant installed browser-to-desktop execution, isolated actual detached worker, same-token restart deduplication, journal-validated completion report and bounded receipt export; independently reviewed by Claude. Original first-use failure remains preserved. Only exact owned fixture resources were closed; document cleanup required the operator.
+Uncertain: grant actor/time, complete first-use transition, automatic document cleanup and disk persistence. Discovery attribution remains a hypothesis. No new packet or permission reset has been tested.
+Decision: close this measured package as a reviewed post-grant development pass and an unqualified full first-use lane. Next packet should use exact-document AX cleanup, distinct browser startup/identity phases and a separately tested discovery-flag hypothesis, grounded in Arc CUA, Chrome DevTools MCP and browser-use source. Keep frozenv3 and product wheel unchanged.
+Refs: results/u2-independent-onboarding-20261011-v2-dev/report.md; Claude1791754065071525000; results/u2-independent-onboarding-20261011-v1

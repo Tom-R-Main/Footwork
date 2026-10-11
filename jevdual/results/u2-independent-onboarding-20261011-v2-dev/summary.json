@@ -1,0 +1,39 @@
+{
+  "status": "reviewed_post_grant_development_pass",
+  "full_first_use_qualified": false,
+  "recorded_at": "2026-10-11T17:28:00-04:00",
+  "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "config_exit": 0,
+  "native_exit": 0,
+  "operation_count": 1,
+  "same_token_restart_same_operation": true,
+  "native_oracle_passed": true,
+  "installed_worker_observed": true,
+  "structured_report_accepted": true,
+  "disk_persistence": "not_checked",
+  "cleanup": {
+    "owned_processes_absent": true,
+    "fixture_loopback_closed": true,
+    "document_close": "operator via native CUA",
+    "fixture_automatic_document_cleanup": "unconfirmed",
+    "automation_grant": "declined"
+  },
+  "permissions": {
+    "initial_denial_observed": true,
+    "grant_actor_and_time": "not_observed",
+    "accessibility_after_restart": "granted",
+    "screen_recording": "not_granted"
+  },
+  "archive": {
+    "path": "output/u2-export-v2/evidence-v2.zip",
+    "bytes": 18394,
+    "members": 28,
+    "sha256": "b7e6672e59e8aa5aaaab5c8722f62e577a99236cb5e2b29af67d28c18ddf6add",
+    "receiver_closed": true
+  },
+  "claude_review": {
+    "message": "1791754065071525000",
+    "verdict": "valid post-grant development pass; no new blockers; full first-use remains unqualified"
+  }
+}

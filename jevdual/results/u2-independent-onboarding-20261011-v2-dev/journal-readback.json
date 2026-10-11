@@ -1,0 +1,16 @@
+{
+  "read_only": true,
+  "count": 1,
+  "operations": [
+    {
+      "id": "op_19f9d53bc4e6",
+      "task": "task_a5de7021e73f434e8713e86c651d73f7",
+      "client_token": "installed-once",
+      "state": "final",
+      "disposition": "applied",
+      "phase": "sent",
+      "created": 1791753863.419928,
+      "updated": 1791753864.586184
+    }
+  ]
+}
