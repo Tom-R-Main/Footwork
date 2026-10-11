@@ -1,0 +1,95 @@
+{
+  "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+  "packet_sha256": "769c08c89061731368db33d78b180e7c8c96d531190f43bee44263642a76fd0f",
+  "members": 14,
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "reproducible": true,
+  "focused_tests_passed": 23,
+  "ruff": "passed",
+  "profiles": {
+    "312": {
+      "v2": {
+        "returncode": 1,
+        "git_invoked": true,
+        "receipt_source_commit": null,
+        "external_stage": null
+      },
+      "member_verification": {
+        "verified": true,
+        "members": 14,
+        "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+        "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7"
+      },
+      "v3": {
+        "returncode": 1,
+        "git_invoked": false,
+        "receipt_source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+        "external_stage": [
+          {
+            "stage": "venv",
+            "argv": [
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-remediation-smoke-v3/312-v3/stub-bin/uv",
+              "--no-config",
+              "--no-progress",
+              "--cache-dir",
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-remediation-smoke-v3/312-v3/footwork/output/install-provenance/empty-cache",
+              "--no-python-downloads",
+              "venv",
+              "--python",
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-dependencies-py312-v1/venv/bin/python",
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-remediation-smoke-v3/312-v3/footwork/output/install-provenance/venv"
+            ],
+            "returncode": 17
+          }
+        ]
+      },
+      "native_bad_provenance_refuses_before_resources": true
+    },
+    "314": {
+      "v2": {
+        "returncode": 1,
+        "git_invoked": true,
+        "receipt_source_commit": null,
+        "external_stage": null
+      },
+      "member_verification": {
+        "verified": true,
+        "members": 14,
+        "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+        "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7"
+      },
+      "v3": {
+        "returncode": 1,
+        "git_invoked": false,
+        "receipt_source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+        "external_stage": [
+          {
+            "stage": "venv",
+            "argv": [
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-remediation-smoke-v3/314-v3/stub-bin/uv",
+              "--no-config",
+              "--no-progress",
+              "--cache-dir",
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-remediation-smoke-v3/314-v3/footwork/output/install-provenance/empty-cache",
+              "--no-python-downloads",
+              "venv",
+              "--python",
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-dependencies-py314-v1/venv/bin/python",
+              "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-remediation-smoke-v3/314-v3/footwork/output/install-provenance/venv"
+            ],
+            "returncode": 17
+          }
+        ]
+      },
+      "native_bad_provenance_refuses_before_resources": true
+    }
+  },
+  "first_use_qualification": "not_performed",
+  "claude_review": "requested",
+  "pr2": {
+    "state": "merged",
+    "merge_commit": "268f0fc940a76e1fb071faeeb94ef12799176df2",
+    "post_merge_ci": "passed"
+  },
+  "limits": "stopped_at_external_uv_boundary; native actions not performed; source unit checks use existing dev environment, packet checks use separately installed dependency environments."
+}
