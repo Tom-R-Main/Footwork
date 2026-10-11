@@ -39,3 +39,10 @@ Observed: the original idle connection path missed a stopped real TCP body endpo
 Inferred: the two control/status predictions are supported at reproduction, but the repairs still require their resolving checks. Host admission is explicitly defined at the durable stage write so Pause does not promise interruption of an in-flight request.
 Next: finish bounded read-only health and epoch-checked Resume, check stage recovery and control boundaries, then freeze the browser/model trial.
 Refs: tools/physical-workcell/output/sim10-idle-health-before-fix.log; tools/physical-workcell/output/sim10-resume-before-fix.log; tools/physical-workcell/output/sim10-link-tests-v2/unittest.log; tools/physical-workcell/output/sim10-http-tests-v1/unittest.log
+
+## SIM10-POLL · prediction · 2026-10-11 17:32
+Hypothesis: a background health response that overlaps a newly admitted RPC can mistake the body lock wait for an outage; binding the health result to an unchanged transport epoch prevents this stale status from cancelling a healthy action.
+Test: overlap a delayed real TCP health read with a completed network command, then deliver the old failed health response; compare queue/connection status and command count before and after the epoch guard.
+Predicts: the original stale response can pause the healthy host; the guarded response is discarded, normal command proof remains applied once, and the next idle read establishes current health.
+Against: no false pause occurs before repair, the guarded result still changes current health, or discarding it loses an actual idle outage or command receipt.
+Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
