@@ -19,3 +19,17 @@ Test: inject an intent persistence failure after a real native dispatch and term
 Predicts: the current cached-pointer assertion fails; after repair cache and disk both remain unknown, admission remains blocked, and restart recovers the indexed core result without replay.
 Against: no cache inconsistency occurs before repair, the repair admits fresh actions or loses the effect receipt, or restart changes native generation while recovering.
 Refs: tools/physical-workcell/body_network.py; tools/physical-workcell/test_body_network.py
+
+## SIM9-U2 · update · 2026-10-11 16:35
+Resolves: SIM9-JOURNAL = held
+Observed: injected terminal-pointer persistence failure reproduced the cached digest inconsistency while disk-based admission remained blocked. Copying the record and persisting it before updating the cache passes the regression; thirteen server checks pass. The second complete twelve-case matrix passes with unchanged recorded source and all owned processes reaped; ten client checks and twenty-nine unchanged-core checks pass. Static serialization also shows a normal 256-entry client index exceeds the 64 KiB wire JSON decoder bound.
+Inferred: transport authority fences hold on these cases, but the client journal needs its own bounded reader before the advertised 256-command capacity is consistent.
+Next: retain failures, add a strictly bounded local journal decoder without changing wire limits, rerun affected checks, then freeze measured source for the actual-model trial.
+Refs: tools/physical-workcell/output/sim9-terminal-pointer-before-fix.log; tools/physical-workcell/output/sim9-terminal-pointer-after-fix.log; tools/physical-workcell/output/n9-matrix-v2/unittest.log; tools/physical-workcell/output/sim9-client-tests-v3/unittest.log; tools/physical-workcell/output/sim9-core-regression.log
+
+## SIM9-CAPACITY · prediction · 2026-10-11 16:35
+Hypothesis: a separate 128 KiB strict decoder for the local client journal can retain the declared 256-command index while preserving the existing 64 KiB network-message bound and pending-command integrity.
+Test: load an exact hash-bound full-capacity journal, reject duplicate keys and oversized local journals, refuse a fresh command at capacity without sending, and rerun client and network fault checks.
+Predicts: the full journal reloads without effects, capacity refuses the next send, malformed journals refuse, and unchanged wire decoding still rejects oversized messages.
+Against: 256 entries still cannot reload, malformed data or oversized wire messages are admitted, unresolved commands disappear, or network recovery changes.
+Refs: tools/physical-workcell/body_client.py; tools/physical-workcell/test_body_client.py
