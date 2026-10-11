@@ -19,3 +19,10 @@ Test: stop the real body endpoint while the host is idle, check that the UI-faci
 Predicts: the original cached-state path misses the outage; after repair the health check changes only connection/admission state, preserves body identity and historical results, and cannot dispatch during recovery.
 Against: the original path already detects an idle outage, the poll blocks browser reads for a body timeout, sends commands, clears uncertainty, or resumes the queue automatically.
 Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
+
+## SIM10-RESUME · prediction · 2026-10-11 17:25
+Hypothesis: Resume's readback gap can overwrite a newer Pause because it clears cancellation after HTTP without rechecking the control epoch. Binding its commit to the unchanged control epoch will preserve the newer control.
+Test: delay the real HTTP status response while Resume waits, issue Pause, then release the response; retain the first failing result and rerun after the epoch check.
+Predicts: the original Resume returns to running despite the newer Pause; the repaired path stays paused with no command POST and does not clear uncertainty or disconnect state.
+Against: the original path already preserves Pause, the repaired path still resumes or sends effects, or the test does not exercise the unlocked readback gap.
+Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
