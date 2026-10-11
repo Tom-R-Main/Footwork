@@ -6,3 +6,16 @@ Test: build a separate network operator and retained diagnostic link; check real
 Predicts: the UI preserves identity and cached history, unknown commands block new effects, reconnect is transport-only, read-only receipt lookup applies the exact retained stage once, and explicit resume plans from a fresh TCP image before completing native/SQLite/contact verification.
 Against: extra sends or native motion during recovery, silent queue resume, completion without lower proof, private pose used for planning, or independent scoring failure.
 Refs: docs/experiments/SIM10-network-workbench.md; tools/physical-workcell/NETWORK_WORKBENCH_CONTRACT.md; results/network-workbench-20261011/
+
+## SIM10-U1 · update · 2026-10-11 17:21
+Observed: the first diagnostic-link run passed eight checks; the duplicate-receipt check selected an observation command by lexical journal order instead of the exact dispatch command. Its mismatched result was a test-selector failure, with the original log retained. Read-only review also found the draft scorer treated missing dispatch evidence as a withheld decision without explicit cancellation; it now requires a cancelled model outcome and no associated dispatch.
+Inferred: the link's first run does not establish the complete browser workflow. Exact command identity is required in both conformance and independent scoring.
+Next: bind the conformance selector to its proposal, finish runtime integration, rerun affected checks and freeze all measured source before browser/model qualification.
+Refs: tools/physical-workcell/output/sim10-link-tests-v1/unittest.log; tools/physical-workcell/test_workbench_link.py; tools/physical-workcell/score_network_workbench.py
+
+## SIM10-HEALTH · prediction · 2026-10-11 17:24
+Hypothesis: cached connection state alone leaves an idle upstream outage invisible; a bounded read-only health poll can detect it without delaying browser state reads, changing completed history or sending commands.
+Test: stop the real body endpoint while the host is idle, check that the UI-facing connection becomes unavailable and state reads stay responsive, then restore the same endpoint and prove reconnect remains paused with unchanged command count.
+Predicts: the original cached-state path misses the outage; after repair the health check changes only connection/admission state, preserves body identity and historical results, and cannot dispatch during recovery.
+Against: the original path already detects an idle outage, the poll blocks browser reads for a body timeout, sends commands, clears uncertainty, or resumes the queue automatically.
+Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
