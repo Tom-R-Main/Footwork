@@ -33,3 +33,7 @@ One active job and exclusive bench writer; exact source, bench, job, generation 
 ## Decision rule
 
 Adopt only as an isolated experimental tool if the primary metric and guardrails hold. A recovery failure is retained and narrows the supported disturbance envelope. This qualification does not establish model-driven planning, arbitrary manipulation, hardware transfer, power-loss safety or production Footwork capability governance.
+
+## Result
+
+Frozen source `0091e5f832a3aef24ef73fdc9f1ee76bd64b7e46` passed 2/2 first-attempt cycles with one persistent bench identity and generations 0 to 29 to 70. A 0.1333 m axial disturbance invalidated the previous image; stale movement and measurement refused before fresh RGB guidance recovered placement. Separate native-state and read-only SQLite scoring verified both measurements and contact resets. Fourteen focused final-source conformance tests passed. See `results/reusable-bench-20261011/report.md` and `qualification.json` for evidence and limitations. Adopt only as the isolated experimental bench.

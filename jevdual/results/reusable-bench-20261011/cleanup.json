@@ -1,0 +1,22 @@
+{
+  "background_controller_started": false,
+  "host_process_exit_codes": [
+    0,
+    0
+  ],
+  "measurement_workers": [
+    {
+      "job_id": "ordinary",
+      "worker_pid": 58696,
+      "exit_code": 0
+    },
+    {
+      "job_id": "disturbed",
+      "worker_pid": 58726,
+      "exit_code": 0
+    }
+  ],
+  "all_started_subprocesses_waited": true,
+  "bench_idle_verified_in_fresh_cli": true,
+  "evidence_retained": true
+}

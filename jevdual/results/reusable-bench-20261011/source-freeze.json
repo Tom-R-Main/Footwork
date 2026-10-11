@@ -1,0 +1,15 @@
+{
+  "commit": "0091e5f832a3aef24ef73fdc9f1ee76bd64b7e46",
+  "files": {
+    "tools/camera-capture-experiment/capture.py": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+    "tools/physical-workcell/bench.py": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+    "tools/physical-workcell/bench_runner.py": "cfbf6b638879e8a3498a84171d47804dc511a9e7af6cf9ae8f48ebc564d7b4eb",
+    "tools/physical-workcell/episode_cases.py": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+    "tools/physical-workcell/image_guided.py": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961",
+    "tools/physical-workcell/measurement.py": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+    "tools/physical-workcell/order_protocol.py": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+    "tools/physical-workcell/qualify_bench.py": "524c537c1b310a0f0ae493acee99a069966a5e7c4b0a783daadf347094db58ef",
+    "tools/physical-workcell/scene.xml": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+    "tools/physical-workcell/workcell.py": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2"
+  }
+}
