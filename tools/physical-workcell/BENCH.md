@@ -4,6 +4,9 @@ Prepare the block in the measurement region, run an optical measurement on the c
 
 This is an isolated Footwork experiment. It reuses the pinned MuJoCo model, native contact controller, PNG codec and color-specific RGB detector. It preserves the older single-order routes and uses a deterministic image-guided host. It makes no language-model calls and controls no hardware.
 
+For an actual multimodal agent choosing actions from the images, use the separate
+[visual AI handoff](AGENT_BENCH.md). The deterministic runner below remains a diagnostic baseline.
+
 ## Run two jobs
 
 Use a new private directory below `tools/physical-workcell/output`. Run from the repository root with the existing pinned environment:
