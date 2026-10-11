@@ -19,3 +19,10 @@ Test: verify official release digest/signature/license and actual CLI help/sourc
 Predicts: CLI/source and runtime state confirm the supported disabled clipboard route and isolated storage, guest installation succeeds, and a real visible Setup Assistant is available before permission grants.
 Against: the flags are unsupported or still read host clipboard, Tart requires unapproved global paths or paid terms, installation fails, or Setup Assistant/host isolation cannot be established.
 Refs: output/u2-vm-provision-20261011/tart-release.json; output/u2-vm-provision-20261011/tart-run-pinned.swift; docs/experiments/U2-independent-onboarding.md
+
+## VM3 · prediction · 2026-10-11 14:07
+Hypothesis: hdiutil makehybrid can produce an ISO containing only the approved packet and downloaded prerequisite assets without attaching a host volume, and Tart's supported --disk path:ro route can expose that immutable image inside the pristine guest without host clipboard or directory sharing.
+Test: stage exactly packetv3, Python3.14.7, uv0.12.5, ChromeDMG and their manifest/checksums, build an ISO under the approved SSD folder, verify its inventory/hash, and attach read-only on the first isolated Tart run; root later observes guest volume and verifies payload hashes.
+Predicts: ISO creation does not require hostmount or global changes, contains the five declared source files plus checksum/provenance metadata, and Tart's CLI/source passes readOnly=true for the attachment.
+Against: ISO creation fails like host DMG attach, unexpectedly includes other hostfiles, or the supported attachment cannot be made/readback as read-only inside the guest.
+Refs: output/u2-vm-provision-20261011/tart-run-help.txt; output/u2-vm-provision-20261011/tart-run-pinned.swift; output/u2-vm-provision-20261011/prerequisite-provenance.json
