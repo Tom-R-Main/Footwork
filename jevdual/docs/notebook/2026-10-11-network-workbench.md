@@ -46,3 +46,33 @@ Test: overlap a delayed real TCP health read with a completed network command, t
 Predicts: the original stale response can pause the healthy host; the guarded response is discarded, normal command proof remains applied once, and the next idle read establishes current health.
 Against: no false pause occurs before repair, the guarded result still changes current health, or discarding it loses an actual idle outage or command receipt.
 Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py
+
+## SIM10-U3 · update · 2026-10-11 17:36
+Resolves: SIM10-HEALTH = held
+Observed: the final fourteen-case runtime suite passed on real sockets. Idle outage and delayed Resume reproduce their original failures and pass after bounded read-only health and epoch checks. A known native dispatch advanced generation to one before an older health response falsely paused the original host; transport-epoch binding now discards that response. Pause before host admission sends nothing; after admission the exact command settles once without a successor. Two deterministic cycles with disturbance and all four uncertain RPC stages pass. Earlier broad-suite errors were retained fixture mistakes in the local reader and duplicate host initialization, corrected without relaxing product checks.
+Inferred: the host control/recovery boundaries hold on these mechanical cases. This does not establish actual-model completion through the browser.
+Next: finish unchanged-core/link/HTTP regression, commit measured source, and drive the frozen actual Codex browser trial.
+Refs: tools/physical-workcell/output/sim10-network-runtime-final.log; tools/physical-workcell/output/sim10-network-runtime-tests-first.log; tools/physical-workcell/output/sim10-network-runtime-tests-second.log; tools/physical-workcell/output/sim10-stale-health-before-fix.log; tools/physical-workcell/output/sim10-health-resume-after-fix.log
+
+## SIM10-U4 · update · 2026-10-11 17:37
+Resolves: SIM10-RESUME = held
+Observed: The delayed actual HTTP status collision now refuses stale Resume and leaves the newer Pause intact, with zero command sends.
+Next: frozen source and actual browser/model qualification.
+Refs: tools/physical-workcell/output/sim10-resume-before-fix.log; output/sim10-health-resume-after-fix.log
+
+## SIM10-U5 · update · 2026-10-11 17:37
+Resolves: SIM10-POLL = held
+Observed: The older failed health response no longer pauses a host after a known native dispatch; the transport epoch binds readback to the observed interval.
+Next: frozen source and actual browser/model qualification.
+Refs: tools/physical-workcell/output/sim10-stale-health-before-fix.log; output/sim10-network-runtime-final.log
+
+## SIM10-U6 · update · 2026-10-11 17:37
+Resolves: SIM10-ADMISSION = held
+Observed: Both pause boundaries pass: no command before durable admission, and only the admitted command settles after Pause with no successor. Cached state remains responsive.
+Next: frozen source and actual browser/model qualification.
+Refs: tools/physical-workcell/output/sim10-network-runtime-final.log
+
+## SIM10-U7 · update · 2026-10-11 17:37
+Observed: the final eighty unchanged-core, adapter, link and HTTP checks passed; combined with the fourteen runtime checks this is 94 passing checks. Ruff, JavaScript syntax, notebook checks and CLI preflight pass. No existing body/core/local-product source changed. One regression launch used an incorrect relative interpreter path and exited before tests; the corrected launch is retained separately.
+Next: commit measured source and run the first actual browser/model trial without source edits.
+Refs: tools/physical-workcell/output/sim10-core-link-http-regression.log; tools/physical-workcell/output/sim10-core-link-http-regression-v2.log; tools/physical-workcell/output/sim10-network-runtime-final.log
