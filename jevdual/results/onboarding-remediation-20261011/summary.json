@@ -85,7 +85,12 @@
     }
   },
   "first_use_qualification": "not_performed",
-  "claude_review": "requested",
+  "claude_review": {
+    "verdict": "approved_for_preparation",
+    "message": "1791740993609795000",
+    "artifact_sha256": "769c08c89061731368db33d78b180e7c8c96d531190f43bee44263642a76fd0f",
+    "runtime_success": false
+  },
   "pr2": {
     "state": "merged",
     "merge_commit": "268f0fc940a76e1fb071faeeb94ef12799176df2",

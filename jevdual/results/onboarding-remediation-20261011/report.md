@@ -12,3 +12,5 @@ Claude B1/N1/N2 are addressed: both receipt paths obtain manifest provenance bef
 The checkout development .venv disappeared between checks and was recreated empty by uv; no cause was established. The repeated23tests and Ruff used the main checkout's existing development environment with the isolated checkout's source/tests. Packet tests used the retained separate full-dependency environments. No new host dependencies were installed for these checks.
 
 PR2 merged exact7669d3d at268f0fc; both post-merge workflows passed (38160734302,38160734323). The new packet changes remain on the local independent-onboarding branch. Claude's v3 review is requested. The user approved SSD VM launcher/image provisioning; actual clean-Mac permission qualification remains unexecuted.
+
+Claude approved the exact v3 archive in mailbox1791740993609795000 after independent outside-repository extraction, trapped-Git provenance checks and guest-verifier modification/extra/symlink negatives. B1/N1/N2 are closed; U2runtime success remains unproven.

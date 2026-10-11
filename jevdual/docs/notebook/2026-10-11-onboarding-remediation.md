@@ -17,3 +17,9 @@ Resolves: UOR1 = held
 Observed: the baseline installer fails at trapped Git; v3 unpacks and retains manifest provenance without Git on installed3.12.6/3.14.7. Both guest verifier invocations pass; both native invalid-manifest paths refuse before resources.23 focused tests and Ruff pass, repeated14member builds match frozen33e1afb, with the reviewed wheel unchanged. The smoke stops at an intentional uv boundary and does not establish dependency installation or native effects. Initial headings ran ahead of terminal clock by one or two minutes; committed prediction order is authoritative.
 Next: request Claude exact-artifact review and keep UO2 open for independent guest runtime/permission evidence.
 Refs: results/onboarding-remediation-20261011; output/u2-remediation-smoke-v3/receipt.json; PR2 merge268f0fc
+
+## UORS1 · summary · 2026-10-11 13:51
+Established: packetv3 is frozen, reproducible and independently approved by Claude1791740993609795000 for preparation; all three review findings closed. PR2 merged268f0fc and both postmerge workflows passed.
+Uncertain: independent guest permission transition, final native receipt and cleanup remain unexecuted; verified SIP-on guest provisioning is underway in the user-approved SSD folder.
+Decision: retain immutablev3 and execute UO2 only on the new guest after real setup, denied baseline and explicit permission transition.
+Refs: results/onboarding-remediation-20261011; output/u2-vm-provision-20261011/provision-state.json
