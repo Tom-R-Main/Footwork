@@ -1,0 +1,1 @@
+jevdual._core unavailable (cannot import name '_core' from partially initialized module 'jevdual' (most likely due to a circular import) (/Users/tom/footwork-u2/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py)); falling back to pure Python

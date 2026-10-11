@@ -1,0 +1,8 @@
+{"stage": "venv", "returncode": 0}
+{"stage": "install", "returncode": 0}
+{"stage": "consistency", "returncode": 0}
+{"stage": "inventory", "returncode": 0}
+{"stage": "origins", "returncode": 0}
+{"stage": "doctor", "returncode": 0}
+{"stage": "wheel-tags", "returncode": 0}
+{"passed": true, "packages": 115, "python": "3.14.7"}

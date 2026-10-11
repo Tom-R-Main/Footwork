@@ -1,0 +1,4 @@
+footwork-onboarding-u2-packet-v3.zip: OK
+python-3.14.7-macos11.pkg: OK
+uv-0.12.5-aarch64-apple-darwin.tar.gz: OK
+googlechrome.dmg: OK
