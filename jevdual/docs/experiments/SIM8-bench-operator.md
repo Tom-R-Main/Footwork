@@ -26,6 +26,10 @@ After development conformance, freeze measured source before live model calls. D
 
 Primary metric: completed queued job cycles, required 2/2 on the first frozen qualification attempt. Stale refusal and fresh-image recovery are required, as are truthful browser readback and pause semantics. Conformance can use an explicitly labelled fake policy to deterministically test failures; that is not model-control evidence. A failed frozen run is retained and reported; any repair needs a new preregistered version rather than a hidden retry.
 
+## Amendment · 2026-10-11 · version 2
+
+Version 1's actual AI/browser workflow completed both cycles, but independent scoring refused its PNG byte size and did not produce a complete score. Preserve that qualification as inconclusive. A read-only review also found a paused queued-job admission race, with cancelled-motion dispatch still guarded. Version 2 repairs the admission check and scorer, explicitly verifies the diagnostic force, more than 2 cm native displacement and exact saved-proposal stale-refusal chain, then repeats the same two-job qualification on fresh committed source. Stop the owned browser/server before scoring to avoid contention. The primary requirement remains 2/2 on the first version 2 qualification attempt; retain all prior calls and failures.
+
 ## Decision and limits
 
 Adopt only as a local simulated bench-operator prototype if the complete flow and guards pass. Record model/CLI identity, call count, token usage when reported and elapsed time; subscription usage does not supply an independently verified monetary price. This does not establish hardware transfer, broad model repeatability, production security, physical power-loss recovery, billing accuracy or demand.

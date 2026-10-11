@@ -41,3 +41,18 @@ Established: 19 deterministic operator checks, 3 policy checks, 15 agent checks 
 Uncertain: fake policy conformance establishes no live AI job completion. The first complete frozen model/product attempt remains open.
 Decision: commit the product and separate post-trial scorer, freeze their exact bytes, and drive the two-job qualification through the browser without chat-directed motion.
 Refs: tools/physical-workcell/output/sim8-final-runtime-tests.log; tools/physical-workcell/output/sim8-final-policy-tests.log; tools/physical-workcell/output/sim8-final-agent-tests.log; tools/physical-workcell/output/sim8-final-bench-tests.log; tools/physical-workcell/output/sim8-empty-preview/
+
+## SIM8-U1 · update · 2026-10-11 15:53
+Resolves: SIM8-P1 = inconclusive
+Observed: both queued AI jobs completed with measurements and resets; actual inference cancellation dispatched nothing; browser reload retained both results. Independent scoring first collided with the live ownership lock, then refused the PNG because the scorer used the smaller protocol-data byte bound. Review also found a queued-job admission race after a pause acknowledgement and a disturbance-scoring predicate that did not independently establish the force/displacement chain.
+Inferred: the observed model/product workflow completed, but this frozen qualification lacks its required complete independent score. Cancelled-motion authority remained guarded; queue admission and scoring need repair before product handoff.
+Next: retain version 1 unchanged as an inconclusive qualification, reproduce the admission race, repair the scorer with explicit media bounds and a native force chain, then freeze a second complete product qualification.
+Refs: e7b716a; tools/physical-workcell/output/sim8-qualified-20261011-v1/; tools/physical-workcell/score_operator.py; tools/physical-workcell/operator_runtime.py
+
+## SIM8-P2 · prediction · 2026-10-11 15:53
+Revises: SIM8-P1
+Hypothesis: checking pause admission inside the step lock prevents a queued job start after pause; an explicit PNG bound and exact independent force/displacement chain permit complete scoring of the already bounded visual workcell workflow.
+Test: demonstrate the paused-step fixture fails on version 1 and passes after the admission fix; repair scoring, run focused conformance, commit all measured source, and drive two new UI-queued model jobs with the same regions and saved-measurement disturbance. Stop the owned UI/server before post-trial scoring.
+Predicts: no post-pause job start or call reservation; two verified cycles on one new persistent bench; a native displacement greater than 2 cm after a saved proposal, an exact stale refusal without measurement effects, fresh-model recovery, measurements and contact resets, truthful browser reload and owned process cleanup.
+Against: the admission fixture still starts work, native/SQLite/model-boundary scoring fails, displacement or exact stale binding is absent, recovery needs chat guidance, or completion/readback cannot be substantiated.
+Refs: tools/physical-workcell/output/sim8-qualified-20261011-v2/; tools/physical-workcell/test_operator_runtime.py; tools/physical-workcell/score_operator.py
