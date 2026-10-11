@@ -45,7 +45,7 @@ The second job reached preparation generation 40 before a -1.5 N diagnostic forc
 | Contact reset before next job | Historical and current state | Contact steps, reset scores, next-job start | Passed |
 | Final bench idle, evidence retained | Current state | Fresh CLI status and cleanup | Passed |
 
-Fourteen final-source conformance tests passed in 4.266 seconds: replay/conflict semantics, job phases, measurement readback, stale evidence, corrupt source/state/image/model/measurement/SQL bindings, and interrupted-intent refusal. See [conformance.log](conformance.log). Ruff, the notebook checker and diff checks also passed.
+Fourteen final-source conformance tests passed in 4.266 seconds: replay/conflict semantics, job phases, measurement readback, stale evidence, corrupt source/state/image/model/measurement/SQL bindings, and interrupted-intent refusal. See [checks.json](checks.json); the original test log remains in `tools/physical-workcell/output/sim6-final-checks/unittest.log`. Ruff, the notebook checker and diff checks also passed.
 
 ## Recorded observations
 

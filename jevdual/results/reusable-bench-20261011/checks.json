@@ -1,0 +1,72 @@
+{
+  "source_commit": "0091e5f832a3aef24ef73fdc9f1ee76bd64b7e46",
+  "conformance": {
+    "passed": true,
+    "count": 14,
+    "elapsed_s": 4.266,
+    "checks": [
+      {
+        "name": "test_corrupted_image_refuses_measurement_and_does_not_create_a_database",
+        "result": "ok"
+      },
+      {
+        "name": "test_corrupted_native_state_never_causes_an_implicit_reset",
+        "result": "ok"
+      },
+      {
+        "name": "test_corrupted_retained_model_refuses_without_recreating_the_body",
+        "result": "ok"
+      },
+      {
+        "name": "test_corrupted_source_binding_refuses_without_a_new_generation",
+        "result": "ok"
+      },
+      {
+        "name": "test_diagnostic_force_needs_explicit_enablement_and_finite_bounds",
+        "result": "ok"
+      },
+      {
+        "name": "test_exact_motion_replay_retains_one_native_effect_and_conflicts_refuse",
+        "result": "ok"
+      },
+      {
+        "name": "test_external_force_invalidates_stale_motion_and_measurement_before_dispatch",
+        "result": "ok"
+      },
+      {
+        "name": "test_foreign_or_modified_observation_cannot_authorize_a_motion",
+        "result": "ok"
+      },
+      {
+        "name": "test_measurement_column_corruption_is_not_hidden_by_an_unchanged_receipt",
+        "result": "ok"
+      },
+      {
+        "name": "test_measurement_is_a_separate_process_with_exact_persisted_image_binding",
+        "result": "ok"
+      },
+      {
+        "name": "test_measurement_receipt_corruption_refuses_historical_replay",
+        "result": "ok"
+      },
+      {
+        "name": "test_measurement_replay_is_historical_and_does_not_run_another_worker",
+        "result": "ok"
+      },
+      {
+        "name": "test_retained_interrupted_intent_blocks_all_new_dispatch",
+        "result": "ok"
+      },
+      {
+        "name": "test_successive_job_gate_requires_measurement_and_verified_reset",
+        "result": "ok"
+      }
+    ],
+    "raw_log_path": "tools/physical-workcell/output/sim6-final-checks/unittest.log",
+    "raw_log_sha256": "e5ca1e7edd35ec49a416c78bc5f5cb1534e037d6f0f506221ee194f4326a58e9"
+  },
+  "ruff": "passed",
+  "notebook": "passed",
+  "diff_check": "passed",
+  "redaction_files_changed": 0
+}
