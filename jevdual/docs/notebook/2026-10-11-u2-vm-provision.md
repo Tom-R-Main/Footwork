@@ -88,3 +88,8 @@ Established: pinned launchers/artifact provenance, safe supported Tart flags/sto
 Uncertain: guest SIP runtime status, denied Accessibility baseline, actual ISO guest read-only/hash readback and the complete installed U2 effect/restart/report/cleanup journey. Tart Gatekeeper diagnostics reported Unnotarized Developer ID even though normal CLI/create/run succeeded without policy overrides.
 Decision: hand the running guest and all GUI ownership to root at the explicit human setup/license boundary; keep VM3 and UO2 open.
 Refs: output/u2-vm-provision-20261011/delivery-record/report.md; output/u2-vm-provision-20261011/delivery-record/summary.json
+
+## VMU9 · update · 2026-10-11 16:18
+Observed: the user reports accepting the macOS license and creating the disposable guest account. Root observed the unlocked desktop and launched the guest interactive Terminal, com.apple.Terminal version2.15. Guest sw_vers reports macOS26.6.2 build25G83; csrutil reports SIP enabled. diskutil reports both media and volume read-only at /Volumes/FOOTWORK_U2 with the exact six staged filenames. Guest payload checksum verification is running; VM3 remains open until those results are observed. Native CUA modifier-key input is not reliably forwarded by the VM; unmodified menu navigation and printf octal-decoded commands execute in the same Terminal without clipboard sharing. No Accessibility grant or product installation has occurred.
+Next: finish guest media verification, install verified prerequisites, then capture the denied installed diagnostic and fixture before any permission grant.
+Refs: root native CUA tool images in this chat; guest /Users/tom/footwork-u2/baseline.txt; guest /Users/tom/footwork-u2/media-hashes.txt
