@@ -1,0 +1,1483 @@
+{
+  "attempt": 1,
+  "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+  "calls": [
+    {
+      "call": 1,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-01",
+      "exact_image": true,
+      "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 2.4791216669837013,
+        "exit_code": 0,
+        "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+        "outcome": "cancelled",
+        "pid": 43768,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "reason": "operator_pause_requested",
+        "request_sha256": "1ea7c320b8e069ddb9033b30e87ef09550f86a19f2d3842f10594ffa83c495e3",
+        "started_at": 1791747955.481091,
+        "usage": null
+      }
+    },
+    {
+      "call": 2,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-02",
+      "decision": {
+        "action": "move",
+        "intent": "Push the block right until its center reaches the target zone.",
+        "target_x": 0.015,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.849983792053536,
+        "exit_code": 0,
+        "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+        "outcome": "decision",
+        "pid": 44387,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "1ea7c320b8e069ddb9033b30e87ef09550f86a19f2d3842f10594ffa83c495e3",
+        "started_at": 1791748002.4942029,
+        "usage": {
+          "cached_input_tokens": 3968,
+          "input_tokens": 12612,
+          "output_tokens": 205
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 3,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-03",
+      "decision": {
+        "action": "move",
+        "intent": "Retract the pusher left to clear contact before measuring.",
+        "target_x": -0.05,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "cb4221e600bbb24aec549f49924fc9224876a1ad8d04159fe0cc3798658d8357",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.667845832998864,
+        "exit_code": 0,
+        "image_sha256": "cb4221e600bbb24aec549f49924fc9224876a1ad8d04159fe0cc3798658d8357",
+        "outcome": "decision",
+        "pid": 44900,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "63b5c518ef3926c4dddf0f6134737c5e1dafa71e505a2c0e819017d7eff0842c",
+        "started_at": 1791748010.667745,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13099,
+          "output_tokens": 173
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 4,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-04",
+      "decision": {
+        "action": "measure",
+        "intent": "Measure with the block centered in the target zone and the pusher clear.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.881987208034843,
+        "exit_code": 0,
+        "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+        "outcome": "decision",
+        "pid": 45415,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "3b8abc9063677d968e4568281b662ce535bb78d425d6e2a24249129ae0c113e2",
+        "started_at": 1791748018.6216419,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 12752,
+          "output_tokens": 120
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 5,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-05",
+      "decision": {
+        "action": "begin_reset",
+        "intent": "Begin reset after the verified measurement.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 4.3645455840742216,
+        "exit_code": 0,
+        "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+        "outcome": "decision",
+        "pid": 45925,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "234ec7c30702c2fcff25c81b82a4c9b2e881fdd13325a285df83fe1f13349dd1",
+        "started_at": 1791748026.124774,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 12819,
+          "output_tokens": 36
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 6,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-06",
+      "decision": {
+        "action": "move",
+        "intent": "Enter the upper bypass lane before crossing to the block's right side.",
+        "target_x": -0.05,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.16687750001438,
+        "exit_code": 0,
+        "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+        "outcome": "decision",
+        "pid": 46434,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "e021570c95c0f3c592f9e9e4dd9557e739b3ce0b5f1c849fd3a1e3ac60582697",
+        "started_at": 1791748030.9481258,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 12878,
+          "output_tokens": 191
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 7,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-07",
+      "decision": {
+        "action": "move",
+        "intent": "Cross horizontally through the upper bypass lane to clear the block's right side.",
+        "target_x": 0.14,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "aeb57b730bc64cb1ec47fbf9a42ef0acce36a927702e60d6df1d751e4d240d1e",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 5.60894104198087,
+        "exit_code": 0,
+        "image_sha256": "aeb57b730bc64cb1ec47fbf9a42ef0acce36a927702e60d6df1d751e4d240d1e",
+        "outcome": "decision",
+        "pid": 46949,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "997c133c62de6f0728296dca32f078c8724c141ae634ba18e418a30929cb1044",
+        "started_at": 1791748038.544946,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 12949,
+          "output_tokens": 144
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 8,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-08",
+      "decision": {
+        "action": "move",
+        "intent": "Descend from the bypass lane to align on the block's right side.",
+        "target_x": 0.14,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "c62187cd908d71592bdd7193b83ec80666e6f350e90968204d2d87a7169d12dc",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.800459083053283,
+        "exit_code": 0,
+        "image_sha256": "c62187cd908d71592bdd7193b83ec80666e6f350e90968204d2d87a7169d12dc",
+        "outcome": "decision",
+        "pid": 47455,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "f2a90b5784c11ee2709eb5eb54f01e79c43cc02e7afcbc89443a675705584e0a",
+        "started_at": 1791748044.5946538,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13021,
+          "output_tokens": 233
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 9,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-09",
+      "decision": {
+        "action": "move",
+        "intent": "Push the block left from its right side until its center reaches the home zone.",
+        "target_x": -0.065,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "e6f35d68a39eccb69ef08ffb81de2aed231bbe097a530bc31bb48ffda662a3f1",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.44600391597487,
+        "exit_code": 0,
+        "image_sha256": "e6f35d68a39eccb69ef08ffb81de2aed231bbe097a530bc31bb48ffda662a3f1",
+        "outcome": "decision",
+        "pid": 47967,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "18844fa9c6b4610d70f4d6f818204ab593467ce49d03474eaaa3505facc64594",
+        "started_at": 1791748052.853769,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13024,
+          "output_tokens": 191
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 10,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-10",
+      "decision": {
+        "action": "move",
+        "intent": "Retreat slightly right to release contact before entering the bypass lane.",
+        "target_x": -0.03,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "6c4785ad11fbf959867ca24381e9caf3a051c777b86c8e5357697aa2cdea5f67",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.274478291976266,
+        "exit_code": 0,
+        "image_sha256": "6c4785ad11fbf959867ca24381e9caf3a051c777b86c8e5357697aa2cdea5f67",
+        "outcome": "decision",
+        "pid": 48473,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "fc1027ce3a3f8c2dfbce7515e3f73caad702d7924d5cb0fdd57d3bb9ff214aa2",
+        "started_at": 1791748059.7891278,
+        "usage": {
+          "cached_input_tokens": 3968,
+          "input_tokens": 13028,
+          "output_tokens": 205
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 11,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-11",
+      "decision": {
+        "action": "move",
+        "intent": "Enter the upper bypass lane before crossing left to the pusher home position.",
+        "target_x": -0.03,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "18e16fad85b15cc6b6c095191c6d8f1be9d3e1a605f05ae0ac11954d420d7c38",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 9.480418457998894,
+        "exit_code": 0,
+        "image_sha256": "18e16fad85b15cc6b6c095191c6d8f1be9d3e1a605f05ae0ac11954d420d7c38",
+        "outcome": "decision",
+        "pid": 48981,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "ed4d631901be126bad3f215cf2680783f6b35a9f8c396a706192f9c2bc77fd9f",
+        "started_at": 1791748066.594038,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13032,
+          "output_tokens": 177
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 12,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-12",
+      "decision": {
+        "action": "move",
+        "intent": "Cross left through the upper bypass lane to align above the pusher home position.",
+        "target_x": -0.3,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "18207abc055796d1b37f4b94528d52bfd960be835625169fc997360f0ec4d906",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.573040917050093,
+        "exit_code": 0,
+        "image_sha256": "18207abc055796d1b37f4b94528d52bfd960be835625169fc997360f0ec4d906",
+        "outcome": "decision",
+        "pid": 49516,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "6b4b53027012b1938db3e9fbb5a86e27954b84c4f9f79deb3fda8e946174ddb5",
+        "started_at": 1791748076.550199,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13045,
+          "output_tokens": 139
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 13,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-13",
+      "decision": {
+        "action": "move",
+        "intent": "Descend from the bypass lane to place the pusher at its home position.",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "cda2378ead3e165186825aa560540c8495d01f07acff067406513a16ee92db65",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 4.563002625014633,
+        "exit_code": 0,
+        "image_sha256": "cda2378ead3e165186825aa560540c8495d01f07acff067406513a16ee92db65",
+        "outcome": "decision",
+        "pid": 50028,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "6f523f547452e42c1b16fa8bdc3262e08ec177eb04909c34719045c02e58322a",
+        "started_at": 1791748083.629318,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13047,
+          "output_tokens": 102
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 14,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/089965b9-90b8-4bc3-a4a0-71bcfc9bbeef-14",
+      "decision": {
+        "action": "finish_reset",
+        "intent": "Verify the block center and pusher are both at their home positions.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+      "input_has_no_private_pose": true,
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 5.43770991708152,
+        "exit_code": 0,
+        "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+        "outcome": "decision",
+        "pid": 50527,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "d3ef7cb828ecfbcca3c2b6d94b8d74206e4dc3883724628489257a7a7ef9f3d3",
+        "started_at": 1791748088.6519191,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13048,
+          "output_tokens": 98
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 1,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-01",
+      "decision": {
+        "action": "move",
+        "intent": "Push the block rightward so its center enters the measurement region.",
+        "target_x": 0.02,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.025500625022687,
+        "exit_code": 0,
+        "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+        "outcome": "decision",
+        "pid": 51046,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "2b9935035d2ca76af7eeff020bc20cd89ceeca8ac70b78942df9190e20c0e10a",
+        "started_at": 1791748094.602582,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 12608,
+          "output_tokens": 214
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 2,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-02",
+      "decision": {
+        "action": "move",
+        "intent": "Retreat the pusher left to clear contact before measuring.",
+        "target_x": -0.02,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "9dcda84f7fbb7dc6fefb739e5c03d41844904990de78d0ff166f200ac4b64d75",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 9.081188458018005,
+        "exit_code": 0,
+        "image_sha256": "9dcda84f7fbb7dc6fefb739e5c03d41844904990de78d0ff166f200ac4b64d75",
+        "outcome": "decision",
+        "pid": 51559,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "d5da5eeba589aad084d8341bc7c6f0c4ab352c59919387966d4bbe9f14791093",
+        "started_at": 1791748102.1232471,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 12680,
+          "output_tokens": 194
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 3,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-03",
+      "decision": {
+        "action": "measure",
+        "intent": "Measure now that the block center is inside the target region and the pusher is clear.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "fe4391474faf68c9747d98a5ccab2cb3e67bba7c701d34243160ebfa15dc88f3",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "refused",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.434076459030621,
+        "exit_code": 0,
+        "image_sha256": "fe4391474faf68c9747d98a5ccab2cb3e67bba7c701d34243160ebfa15dc88f3",
+        "outcome": "decision",
+        "pid": 52079,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "8eb42d1af7e9fc2b9c62d8ba5f898a4dad7a2e98a7b7364c07c2dd6f4a97b318",
+        "started_at": 1791748111.682272,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 12749,
+          "output_tokens": 146
+        }
+      },
+      "reason": "observation is stale or foreign; no requested effect dispatched"
+    },
+    {
+      "call": 4,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-04",
+      "decision": {
+        "action": "move",
+        "intent": "Push the block rightward until its center is securely inside the measurement region.",
+        "target_x": 0.01,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "b5090ea13b11819d9bb20df20761d158f9fc0371a22b0536b64ae9c75c199ad9",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.509735166095197,
+        "exit_code": 0,
+        "image_sha256": "b5090ea13b11819d9bb20df20761d158f9fc0371a22b0536b64ae9c75c199ad9",
+        "outcome": "decision",
+        "pid": 52590,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "b9bb9447f22ada733ca7f89cb5eb7331277e8e6097006242db95c5203cc90e31",
+        "started_at": 1791748118.5814898,
+        "usage": {
+          "cached_input_tokens": 10752,
+          "input_tokens": 13246,
+          "output_tokens": 213
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 5,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-05",
+      "decision": {
+        "action": "move",
+        "intent": "Retreat the pusher left to clear contact before measuring.",
+        "target_x": -0.03,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "9558a7e6223404d532dbe2fd33ea8423ca309bdbed0426b5f78ddb756dfb3dc0",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 8.427244249964133,
+        "exit_code": 0,
+        "image_sha256": "9558a7e6223404d532dbe2fd33ea8423ca309bdbed0426b5f78ddb756dfb3dc0",
+        "outcome": "decision",
+        "pid": 53100,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "c20289e474af81f88587306e8a49a38a28da12890457c78e185655845ccc2f48",
+        "started_at": 1791748126.5655649,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 12902,
+          "output_tokens": 220
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 6,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-06",
+      "decision": {
+        "action": "measure",
+        "intent": "Measure now that the block center is inside the target region and the pusher is clear.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 8.417126499931328,
+        "exit_code": 0,
+        "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+        "outcome": "decision",
+        "pid": 53612,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "25b53c6f4be7e4ce1f606a3585c499d375187b734036d41386e6003ca7ba71f0",
+        "started_at": 1791748135.447528,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 12971,
+          "output_tokens": 145
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 7,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-07",
+      "decision": {
+        "action": "begin_reset",
+        "intent": "Begin resetting after the verified measurement.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 4.853458332945593,
+        "exit_code": 0,
+        "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+        "outcome": "decision",
+        "pid": 54129,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "80136e11af46f16f2c9bec183a4089c6f16ecbe69116813d6d13d56e46356d6e",
+        "started_at": 1791748144.692519,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13041,
+          "output_tokens": 36
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 8,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-08",
+      "decision": {
+        "action": "move",
+        "intent": "Enter the upper bypass lane before crossing to the block's right side.",
+        "target_x": -0.03,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 5.961126709007658,
+        "exit_code": 0,
+        "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+        "outcome": "decision",
+        "pid": 54630,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "f389429f86fdf134e081e4ecf8755c68bbec9c3bc8580d90c4faf1039a6e56d0",
+        "started_at": 1791748150.1803892,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13030,
+          "output_tokens": 154
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 9,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-09",
+      "decision": {
+        "action": "move",
+        "intent": "Cross the upper bypass lane to position the pusher safely on the block's right side.",
+        "target_x": 0.13,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "7aace630613576b58a4a90ab5c31f59a361dcaf33122917a4ecea5b0699de0b3",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 9.262546166894026,
+        "exit_code": 0,
+        "image_sha256": "7aace630613576b58a4a90ab5c31f59a361dcaf33122917a4ecea5b0699de0b3",
+        "outcome": "decision",
+        "pid": 55230,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "484495d5c496d831f25d497c04c8ae1b75aab4654e0686e0d49b3f3ea9dd4e11",
+        "started_at": 1791748156.7521942,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13032,
+          "output_tokens": 194
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 10,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-10",
+      "decision": {
+        "action": "move",
+        "intent": "Descend from the bypass lane to align safely on the block's right side.",
+        "target_x": 0.13,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "7cde902d68c7974bbf1fef5aa77c002f75c09b1f1bf2af83e75656a30212a995",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.034838500083424,
+        "exit_code": 0,
+        "image_sha256": "7cde902d68c7974bbf1fef5aa77c002f75c09b1f1bf2af83e75656a30212a995",
+        "outcome": "decision",
+        "pid": 55743,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "47eb58a72576319e857f0209c0e2fbbb429b570997c6059ea5213479c5ef2181",
+        "started_at": 1791748166.634509,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13026,
+          "output_tokens": 218
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 11,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-11",
+      "decision": {
+        "action": "move",
+        "intent": "Push the block left from its right side until its center reaches the home zone.",
+        "target_x": -0.065,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "a37ce97b1710cb0bdee031f6bfebee784c4f376e2f43a1d9b88883cf7a0b2a22",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.248244917020202,
+        "exit_code": 0,
+        "image_sha256": "a37ce97b1710cb0bdee031f6bfebee784c4f376e2f43a1d9b88883cf7a0b2a22",
+        "outcome": "decision",
+        "pid": 56253,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "fc697fc9959c09ee32f3171b63f643866e368fcca13632a8fa174052c5bd9d69",
+        "started_at": 1791748174.340254,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13027,
+          "output_tokens": 186
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 12,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-12",
+      "decision": {
+        "action": "move",
+        "intent": "Retreat slightly right to release contact before entering the bypass lane.",
+        "target_x": -0.03,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "7b672da1a7c7fc13edb2fce73f7849a65de4fd59fd4d5fbee7b777ae250ff951",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 6.222484749974683,
+        "exit_code": 0,
+        "image_sha256": "7b672da1a7c7fc13edb2fce73f7849a65de4fd59fd4d5fbee7b777ae250ff951",
+        "outcome": "decision",
+        "pid": 56766,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "cabc9d7bf03d68b5ed1dacf38a501e8f59a73fa3174c1704aed8e10129d0f976",
+        "started_at": 1791748181.269278,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13031,
+          "output_tokens": 177
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 13,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-13",
+      "decision": {
+        "action": "move",
+        "intent": "Enter the upper bypass lane before returning the pusher to its home position.",
+        "target_x": -0.03,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "ddd63e8e81f9bda9ae7aa090d918e00f57a11698fbd5de91678b5571b58e449e",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 7.362335458979942,
+        "exit_code": 0,
+        "image_sha256": "ddd63e8e81f9bda9ae7aa090d918e00f57a11698fbd5de91678b5571b58e449e",
+        "outcome": "decision",
+        "pid": 57270,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "b999d7bcf66542d894b3956c663771fd5e9db9b98215eb124dc34b3ddab1ed50",
+        "started_at": 1791748188.1343849,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13448,
+          "output_tokens": 172
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 14,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-14",
+      "decision": {
+        "action": "move",
+        "intent": "Cross the upper bypass lane to align above the pusher home position.",
+        "target_x": -0.3,
+        "target_y": 0.135
+      },
+      "exact_image": true,
+      "image_sha256": "1adaf7fe8dfee1cd5b5d2555f77541dc5fd312d5af140b3e710e69f3c3723568",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 5.290408417000435,
+        "exit_code": 0,
+        "image_sha256": "1adaf7fe8dfee1cd5b5d2555f77541dc5fd312d5af140b3e710e69f3c3723568",
+        "outcome": "decision",
+        "pid": 57777,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "35aab4696cafad1fb8b4b3800f757cd8db0b9f155c0a307831e8eeda92c37041",
+        "started_at": 1791748196.1089122,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13045,
+          "output_tokens": 124
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 15,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-15",
+      "decision": {
+        "action": "move",
+        "intent": "Descend from the bypass lane to place the pusher at its home position.",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "exact_image": true,
+      "image_sha256": "77c82130db457b8ca7683d63d7869756967ad36785728429d25e99bc489b7b64",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 4.851276458008215,
+        "exit_code": 0,
+        "image_sha256": "77c82130db457b8ca7683d63d7869756967ad36785728429d25e99bc489b7b64",
+        "outcome": "decision",
+        "pid": 58281,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "60c2e07a3a346f67ac5f2abd81660440a8120b2da58976a777abc53ae08c358d",
+        "started_at": 1791748202.050539,
+        "usage": {
+          "cached_input_tokens": 0,
+          "input_tokens": 13045,
+          "output_tokens": 109
+        }
+      },
+      "reason": ""
+    },
+    {
+      "call": 16,
+      "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-qualified-20261011-v1/calls/dcbe6123-1fc6-4442-bea9-e75b683c1f68-16",
+      "decision": {
+        "action": "finish_reset",
+        "intent": "Verify the block center and pusher are both at their home positions.",
+        "target_x": null,
+        "target_y": null
+      },
+      "exact_image": true,
+      "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+      "input_has_no_private_pose": true,
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "outcome": "executed",
+      "process": {
+        "cli_version": "codex-cli 0.147.0",
+        "elapsed_s": 5.12791329191532,
+        "exit_code": 0,
+        "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+        "outcome": "decision",
+        "pid": 58785,
+        "process_exit_observed": true,
+        "provider": "codex_cli",
+        "request_sha256": "e3916fe8fc35c920638457603be4cdca82c8d239dcd4980ca95e2700962edb65",
+        "started_at": 1791748207.581609,
+        "usage": {
+          "cached_input_tokens": 10368,
+          "input_tokens": 13043,
+          "output_tokens": 87
+        }
+      },
+      "reason": ""
+    }
+  ],
+  "completed_cycles": 2,
+  "current_status": {
+    "active_job": null,
+    "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+    "diagnostic_enabled": true,
+    "generation": 23,
+    "jobs": {
+      "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef": {
+        "completed_generation": 10,
+        "completed_native_time_s": 21.81399999999879,
+        "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+        "measurement_operation_id": "agent-afd48d867d2346f4a01d3659c4aec982",
+        "measurement_receipt": {
+          "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+          "generation": 2,
+          "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+          "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+          "measurement": {
+            "block_box": [
+              339,
+              159,
+              381,
+              201
+            ],
+            "block_center_xy": [
+              0.06666666666666667,
+              0.0
+            ],
+            "centroid_pixel_xy": [
+              359.0486674391657,
+              179.5393974507532
+            ],
+            "footprint_area_m2": 0.004794444444444444,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1726
+          },
+          "native_time_s": 5.533999999999613,
+          "operation_id": "agent-afd48d867d2346f4a01d3659c4aec982",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3",
+          "version": 1,
+          "worker_pid": 45916
+        },
+        "moves": 10,
+        "phase": "completed",
+        "reset_receipt": {
+          "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+          "block_home_verified": true,
+          "generation": 10,
+          "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+          "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+          "kind": "finish_reset",
+          "native_time_s": 21.81399999999879,
+          "operation_id": "agent-a52f04d4553c46fa8023896307981195",
+          "pusher_home_verified": true,
+          "reset_contact_samples": 3174,
+          "reset_native_steps": 8140,
+          "state_sha256": "ff7af086a1eea92c53736c30a05c8102da4417d39f0423b48573218144fcb713"
+        },
+        "reset_started_generation": 2,
+        "started_generation": 0,
+        "started_native_time_s": 1.0000000000000007,
+        "target_zone": {
+          "x_max": 0.105,
+          "x_min": 0.035,
+          "y_max": 0.025,
+          "y_min": -0.025
+        }
+      },
+      "dcbe6123-1fc6-4442-bea9-e75b683c1f68": {
+        "completed_generation": 23,
+        "completed_native_time_s": 45.86000000001008,
+        "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+        "measurement_operation_id": "agent-ab389fc3848a4fc5a17b18e1fe931de0",
+        "measurement_receipt": {
+          "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+          "generation": 15,
+          "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+          "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+          "measurement": {
+            "block_box": [
+              336,
+              159,
+              378,
+              201
+            ],
+            "block_center_xy": [
+              0.06166666666666666,
+              0.0
+            ],
+            "centroid_pixel_xy": [
+              356.0365217391304,
+              179.5304347826087
+            ],
+            "footprint_area_m2": 0.004791666666666666,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1725
+          },
+          "native_time_s": 29.845999999994337,
+          "operation_id": "agent-ab389fc3848a4fc5a17b18e1fe931de0",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "99f7e539e079b784ca4c8e530b34d3f5a96514d0c661f2e137c66c34cb2d19f4",
+          "version": 1,
+          "worker_pid": 54121
+        },
+        "moves": 12,
+        "phase": "completed",
+        "reset_receipt": {
+          "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+          "block_home_verified": true,
+          "generation": 23,
+          "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+          "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+          "kind": "finish_reset",
+          "native_time_s": 45.86000000001008,
+          "operation_id": "agent-86a32a4e78e64aaf9322558f4d9d0853",
+          "pusher_home_verified": true,
+          "reset_contact_samples": 3112,
+          "reset_native_steps": 8007,
+          "state_sha256": "ab359450848224f47ced5d9c79542dc8a733034a8d40053381de7c7569fd3115"
+        },
+        "reset_started_generation": 15,
+        "started_generation": 10,
+        "started_native_time_s": 21.81399999999879,
+        "target_zone": {
+          "x_max": 0.115,
+          "x_min": 0.045,
+          "y_max": 0.025,
+          "y_min": -0.025
+        }
+      }
+    },
+    "native_time_s": 45.86000000001008,
+    "source_fingerprints": {
+      "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+      "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+      "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+      "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+      "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+      "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+      "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+      "mujoco_version": "3.15.0",
+      "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+      "state_spec": 16383,
+      "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+    },
+    "source_kind": "mujoco_simulation",
+    "state": "ready",
+    "unresolved_effect": null,
+    "version": 1
+  },
+  "fault_chain": {
+    "after": {
+      "block_center_in_zone": false,
+      "block_xyz": [
+        0.03101368936485668,
+        -2.3636102442079535e-09,
+        0.03499824550643647
+      ],
+      "external_force_cleared": true,
+      "generation": 13,
+      "native_time_s": 27.375999999995706,
+      "pusher_home": false,
+      "pusher_xyz": [
+        -0.023983540317720375,
+        1.7203059752249304e-17,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "c231f845db47170cb50d5a98b52fd2304ff320967fd89fae6c21dab71ac24936"
+    },
+    "before": {
+      "block_center_in_zone": true,
+      "block_xyz": [
+        0.07079077670575931,
+        -2.363612923572088e-09,
+        0.03499573045536986
+      ],
+      "external_force_cleared": true,
+      "generation": 12,
+      "native_time_s": 26.21599999999635,
+      "pusher_home": false,
+      "pusher_xyz": [
+        -0.019999970650332433,
+        -3.5065733542877396e-26,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "e9a6f4f2aac925aa4018c27cbb9dfd3fb75852b71e68e8a13d1221605eae01ae"
+    },
+    "displacement_m": 0.039777087420414255,
+    "force": {
+      "receipt": {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "force_x_n": -1.5,
+        "forced_steps": 80,
+        "generation": 13,
+        "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+        "kind": "diagnostic_external_force",
+        "native_steps": 580,
+        "native_time_s": 27.375999999995706,
+        "operation_id": "disturb-ae433d5c49634285847f2c50aa67355b",
+        "state_sha256": "c231f845db47170cb50d5a98b52fd2304ff320967fd89fae6c21dab71ac24936"
+      },
+      "request": {
+        "force_x_n": -1.5,
+        "kind": "disturb",
+        "steps": 80
+      }
+    },
+    "fresh_model_move_bound_to_force_image": true,
+    "immutable_chain_bound": true,
+    "no_measurement_effect": true,
+    "passed": true,
+    "saved_proposal_id": "proposal-d76c7e8666f8478baf4ce0cf6174f8a4",
+    "stale_call": 3
+  },
+  "fresh_model_move_after_refusal": true,
+  "model_boundaries_passed": true,
+  "passed": false,
+  "qualification_version": 1,
+  "scope": "separate post-trial native/SQLite and retained model-boundary scoring; browser evidence recorded separately",
+  "scores": [
+    {
+      "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+      "label": "Baseline inspection",
+      "measurement": {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "generation": 2,
+        "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+        "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+        "measurement": {
+          "block_box": [
+            339,
+            159,
+            381,
+            201
+          ],
+          "block_center_xy": [
+            0.06666666666666667,
+            0.0
+          ],
+          "centroid_pixel_xy": [
+            359.0486674391657,
+            179.5393974507532
+          ],
+          "footprint_area_m2": 0.004794444444444444,
+          "method": "simulated_orange_RGB_footprint",
+          "orange_pixel_count": 1726
+        },
+        "native_time_s": 5.533999999999613,
+        "operation_id": "agent-afd48d867d2346f4a01d3659c4aec982",
+        "source_kind": "mujoco_simulation",
+        "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3",
+        "version": 1,
+        "worker_pid": 45916
+      },
+      "measurement_state": {
+        "block_center_in_zone": true,
+        "block_xyz": [
+          0.06582868246696554,
+          -8.393868978677625e-11,
+          0.034995730455369786
+        ],
+        "external_force_cleared": true,
+        "generation": 2,
+        "native_time_s": 5.533999999999613,
+        "pusher_home": false,
+        "pusher_xyz": [
+          -0.049999969408768885,
+          8.057882667829012e-26,
+          0.06
+        ],
+        "role": "independent_native_state_scorer",
+        "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3"
+      },
+      "model_calls": 14,
+      "motion_count": 10,
+      "passed": true,
+      "reset": {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "block_home_verified": true,
+        "generation": 10,
+        "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+        "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+        "kind": "finish_reset",
+        "native_time_s": 21.81399999999879,
+        "operation_id": "agent-a52f04d4553c46fa8023896307981195",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3174,
+        "reset_native_steps": 8140,
+        "state_sha256": "ff7af086a1eea92c53736c30a05c8102da4417d39f0423b48573218144fcb713"
+      },
+      "reset_state": {
+        "block_center_in_zone": true,
+        "block_xyz": [
+          -0.11582763630912812,
+          -2.3633644648884637e-09,
+          0.03499573045536985
+        ],
+        "external_force_cleared": true,
+        "generation": 10,
+        "native_time_s": 21.81399999999879,
+        "pusher_home": true,
+        "pusher_xyz": [
+          -0.3,
+          3.071149644023488e-08,
+          0.06
+        ],
+        "role": "independent_native_state_scorer",
+        "state_sha256": "ff7af086a1eea92c53736c30a05c8102da4417d39f0423b48573218144fcb713"
+      }
+    },
+    {
+      "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+      "label": "Recovery inspection",
+      "measurement": {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "generation": 15,
+        "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+        "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+        "measurement": {
+          "block_box": [
+            336,
+            159,
+            378,
+            201
+          ],
+          "block_center_xy": [
+            0.06166666666666666,
+            0.0
+          ],
+          "centroid_pixel_xy": [
+            356.0365217391304,
+            179.5304347826087
+          ],
+          "footprint_area_m2": 0.004791666666666666,
+          "method": "simulated_orange_RGB_footprint",
+          "orange_pixel_count": 1725
+        },
+        "native_time_s": 29.845999999994337,
+        "operation_id": "agent-ab389fc3848a4fc5a17b18e1fe931de0",
+        "source_kind": "mujoco_simulation",
+        "state_sha256": "99f7e539e079b784ca4c8e530b34d3f5a96514d0c661f2e137c66c34cb2d19f4",
+        "version": 1,
+        "worker_pid": 54121
+      },
+      "measurement_state": {
+        "block_center_in_zone": true,
+        "block_xyz": [
+          0.060828133227863616,
+          -2.363604036670241e-09,
+          0.03499573045536984
+        ],
+        "external_force_cleared": true,
+        "generation": 15,
+        "native_time_s": 29.845999999994337,
+        "pusher_home": false,
+        "pusher_xyz": [
+          -0.02999997064612875,
+          -6.834842985587421e-26,
+          0.06
+        ],
+        "role": "independent_native_state_scorer",
+        "state_sha256": "99f7e539e079b784ca4c8e530b34d3f5a96514d0c661f2e137c66c34cb2d19f4"
+      },
+      "model_calls": 16,
+      "motion_count": 12,
+      "passed": true,
+      "reset": {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "block_home_verified": true,
+        "generation": 23,
+        "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+        "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+        "kind": "finish_reset",
+        "native_time_s": 45.86000000001008,
+        "operation_id": "agent-86a32a4e78e64aaf9322558f4d9d0853",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3112,
+        "reset_native_steps": 8007,
+        "state_sha256": "ab359450848224f47ced5d9c79542dc8a733034a8d40053381de7c7569fd3115"
+      },
+      "reset_state": {
+        "block_center_in_zone": true,
+        "block_xyz": [
+          -0.11577112750257858,
+          -5.9658799447144094e-09,
+          0.03499573045536983
+        ],
+        "external_force_cleared": true,
+        "generation": 23,
+        "native_time_s": 45.86000000001008,
+        "pusher_home": true,
+        "pusher_xyz": [
+          -0.3,
+          3.071149644023488e-08,
+          0.06
+        ],
+        "role": "independent_native_state_scorer",
+        "state_sha256": "ab359450848224f47ced5d9c79542dc8a733034a8d40053381de7c7569fd3115"
+      }
+    }
+  ],
+  "source_commit": "e7b716a8221db6b69c876dde030235f59d643460",
+  "source_unchanged": false,
+  "sqlite": {
+    "count": 2,
+    "role": "independent_read_only_sqlite_scorer",
+    "rows": [
+      {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "generation": 2,
+        "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+        "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+        "operation_id": "agent-afd48d867d2346f4a01d3659c4aec982",
+        "receipt": {
+          "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+          "generation": 2,
+          "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+          "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+          "measurement": {
+            "block_box": [
+              339,
+              159,
+              381,
+              201
+            ],
+            "block_center_xy": [
+              0.06666666666666667,
+              0.0
+            ],
+            "centroid_pixel_xy": [
+              359.0486674391657,
+              179.5393974507532
+            ],
+            "footprint_area_m2": 0.004794444444444444,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1726
+          },
+          "native_time_s": 5.533999999999613,
+          "operation_id": "agent-afd48d867d2346f4a01d3659c4aec982",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3",
+          "version": 1,
+          "worker_pid": 45916
+        },
+        "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3"
+      },
+      {
+        "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+        "generation": 15,
+        "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+        "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+        "operation_id": "agent-ab389fc3848a4fc5a17b18e1fe931de0",
+        "receipt": {
+          "bench_id": "809a7e27db014f759e4e323e83dff8a7",
+          "generation": 15,
+          "image_sha256": "9cb34f24c00f6647c2c9763ca17e4d7189620c96ff40059736b25ff0d67d3dcc",
+          "job_id": "dcbe6123-1fc6-4442-bea9-e75b683c1f68",
+          "measurement": {
+            "block_box": [
+              336,
+              159,
+              378,
+              201
+            ],
+            "block_center_xy": [
+              0.06166666666666666,
+              0.0
+            ],
+            "centroid_pixel_xy": [
+              356.0365217391304,
+              179.5304347826087
+            ],
+            "footprint_area_m2": 0.004791666666666666,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1725
+          },
+          "native_time_s": 29.845999999994337,
+          "operation_id": "agent-ab389fc3848a4fc5a17b18e1fe931de0",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "99f7e539e079b784ca4c8e530b34d3f5a96514d0c661f2e137c66c34cb2d19f4",
+          "version": 1,
+          "worker_pid": 54121
+        },
+        "state_sha256": "99f7e539e079b784ca4c8e530b34d3f5a96514d0c661f2e137c66c34cb2d19f4"
+      }
+    ]
+  },
+  "stale_measure_refused": true,
+  "usage": {
+    "calls": 30,
+    "input_tokens": 376278,
+    "output_tokens": 4603,
+    "reported_calls": 29
+  },
+  "version": 1
+}

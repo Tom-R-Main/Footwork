@@ -1,0 +1,93 @@
+{
+  "state": {
+    "app_id": "6f81d519dcfb43c0a7fb05292e0c97d7",
+    "simulation": true,
+    "runner_status": "paused",
+    "jobs": [
+      {
+        "job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+        "label": "Baseline inspection",
+        "target": "A",
+        "disturbance_test": false,
+        "status": "paused",
+        "phase": "prepare",
+        "call_count": 1,
+        "last_intent": "",
+        "measurement": null,
+        "error": "operator_pause_requested"
+      }
+    ],
+    "model_request_pending": false,
+    "active_job_id": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef",
+    "activity": [
+      {
+        "seq": 1,
+        "time": 1791747955.0840802,
+        "kind": "queued",
+        "intent": "Baseline inspection",
+        "outcome": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef"
+      },
+      {
+        "seq": 2,
+        "time": 1791747955.0969112,
+        "kind": "start_intent",
+        "intent": "Baseline inspection",
+        "outcome": "089965b9-90b8-4bc3-a4a0-71bcfc9bbeef"
+      },
+      {
+        "seq": 3,
+        "time": 1791747955.1905348,
+        "kind": "inference",
+        "intent": "Baseline inspection",
+        "outcome": "Model call 1 reserved"
+      },
+      {
+        "seq": 4,
+        "time": 1791747957.950015,
+        "kind": "pause",
+        "intent": "",
+        "outcome": "Paused; an in-flight native action may finish before the next boundary"
+      },
+      {
+        "seq": 5,
+        "time": 1791747957.9677608,
+        "kind": "halt",
+        "intent": "",
+        "outcome": "operator_pause_requested"
+      }
+    ],
+    "usage": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0,
+      "token_usage_complete": false
+    },
+    "readiness": {
+      "ready": false,
+      "reason": "operator_pause_requested"
+    },
+    "current_frame": {
+      "generation": 0,
+      "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "available": true
+    }
+  },
+  "outcome": {
+    "cli_version": "codex-cli 0.147.0",
+    "elapsed_s": 2.4791216669837013,
+    "exit_code": 0,
+    "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+    "outcome": "cancelled",
+    "pid": 43768,
+    "process_exit_observed": true,
+    "provider": "codex_cli",
+    "reason": "operator_pause_requested",
+    "request_sha256": "1ea7c320b8e069ddb9033b30e87ef09550f86a19f2d3842f10594ffa83c495e3",
+    "started_at": 1791747955.481091,
+    "usage": null
+  },
+  "proposal_exists": false,
+  "dispatch_exists": false,
+  "native_generation": 0
+}

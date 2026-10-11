@@ -33,3 +33,11 @@ Version 1's actual AI/browser workflow completed both cycles, but independent sc
 ## Decision and limits
 
 Adopt only as a local simulated bench-operator prototype if the complete flow and guards pass. Record model/CLI identity, call count, token usage when reported and elapsed time; subscription usage does not supply an independently verified monetary price. This does not establish hardware transfer, broad model repeatability, production security, physical power-loss recovery, billing accuracy or demand.
+
+## Result
+
+Version 1 completed both actual AI/browser cycles but its independent scoring failed on live ownership contention and PNG byte size; retain the frozen qualification as inconclusive. The pause admission regression failed before repair, with motion dispatch still guarded. A preregistered version 2 repaired admission and independently checked force/displacement/stale binding.
+
+Version 2 attempt 1 passed 2/2 on source freeze `1415f594ccc91dbc6f7856ba9b2ab0252d45cfdb`. Native/SQLite scoring verified measurements and contact resets on one body, and the exact immutable chain established a 5.61 cm native displacement, refusal of a saved stale measurement without effect, and fresh-image AI recovery. Actual inference cancellation dispatched nothing; browser reload and server restart retained results without replay. Thirty-one reserved CLI calls produced 30 typed decisions, 29 executed decisions, one stale refusal and one cancelled call. All model processes were reaped. Fifty-four focused checks passed; native guard source is unchanged.
+
+Adopt as a local simulated product prototype. Evidence, all-attempt ledger and limits: [bench-operator results](../../results/bench-operator-20261011/report.md). Raw model logs and native run directories remain private; hardware and demand remain unqualified.

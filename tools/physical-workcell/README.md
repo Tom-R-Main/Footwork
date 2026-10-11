@@ -5,9 +5,10 @@ then stage a local software work-order result only when the observed block cente
 the order's inspection zone. Footwork independently checks the saved result bytes.
 
 Every observation, action, render and software result is labeled `mujoco_simulation`.
-There is no real robot, camera acquisition, learned policy, visual-recognition claim,
-cloud call or external task creation. State readback comes directly from the native
-simulator. This package is an isolated experiment, rather than a production Footwork adapter.
+The base commands on this page use native simulator state and do not call a learned
+policy or cloud model. The linked routes below add RGB control, actual model decisions
+and independent verification. All routes use simulation; real robots and camera
+acquisition remain outside this isolated experiment.
 
 For RGB-driven agent control, use the separate [image-guided route](IMAGE_GUIDED.md). It keeps
 native poses out of planner packets and adds a fresh visual gate before computer staging.

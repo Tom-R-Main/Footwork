@@ -1,0 +1,1 @@
+{"outcome": "refused", "reason": "PNG read used 64 KiB protocol-data bound; no score written", "next": "preregistered scorer repair with 1 MiB image bound"}

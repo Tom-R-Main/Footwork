@@ -1,0 +1,231 @@
+{
+  "passed": true,
+  "state": {
+    "app_id": "dfc891dc85774b2497cd8b306844a96e",
+    "simulation": true,
+    "runner_status": "paused",
+    "jobs": [
+      {
+        "call_count": 14,
+        "disturbance_test": false,
+        "error": null,
+        "job_id": "9bd00615-a89f-4c60-99ff-4b3dd5110b4b",
+        "label": "Baseline inspection",
+        "last_intent": "Finish reset now that the block center and pusher are both in their home positions.",
+        "measurement": {
+          "footprint_area_m2": 0.004794444444444444,
+          "method": "simulated_orange_RGB_footprint",
+          "orange_pixel_count": 1726
+        },
+        "phase": "completed",
+        "status": "completed",
+        "target": "A"
+      },
+      {
+        "call_count": 17,
+        "disturbance_test": true,
+        "error": null,
+        "job_id": "9a905ec1-093b-47b6-ba1f-558b736da542",
+        "label": "Recovery inspection",
+        "last_intent": "Finish reset now that the block is centered in the home zone and the pusher is at its home position.",
+        "measurement": {
+          "footprint_area_m2": 0.004802777777777777,
+          "method": "simulated_orange_RGB_footprint",
+          "orange_pixel_count": 1729
+        },
+        "phase": "completed",
+        "status": "completed",
+        "target": "B"
+      }
+    ],
+    "model_request_pending": false,
+    "active_job_id": null,
+    "activity": [
+      {
+        "intent": "Retreat the pusher left to clear contact before measuring the centered block.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 48,
+        "time": 1791748757.1141179
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 7 reserved",
+        "seq": 49,
+        "time": 1791748757.249968
+      },
+      {
+        "intent": "Measure with the block centered in the target region and the pusher clear of contact.",
+        "kind": "dispatch",
+        "outcome": "executed: measure",
+        "seq": 50,
+        "time": 1791748763.792654
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 8 reserved",
+        "seq": 51,
+        "time": 1791748764.077049
+      },
+      {
+        "intent": "Begin the reset sequence after the verified measurement.",
+        "kind": "dispatch",
+        "outcome": "executed: begin_reset",
+        "seq": 52,
+        "time": 1791748768.943161
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 9 reserved",
+        "seq": 53,
+        "time": 1791748769.218656
+      },
+      {
+        "intent": "Enter the upper bypass lane before crossing to the block's right side.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 54,
+        "time": 1791748776.686862
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 10 reserved",
+        "seq": 55,
+        "time": 1791748776.915343
+      },
+      {
+        "intent": "Cross the upper bypass lane to position the pusher safely right of the block.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 56,
+        "time": 1791748784.087341
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 11 reserved",
+        "seq": 57,
+        "time": 1791748784.352294
+      },
+      {
+        "intent": "Return from the bypass lane to align on the block's right side for a leftward push.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 58,
+        "time": 1791748791.344933
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 12 reserved",
+        "seq": 59,
+        "time": 1791748791.558492
+      },
+      {
+        "intent": "Push the block left from its right side until its center reaches the home zone.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 60,
+        "time": 1791748799.1835608
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 13 reserved",
+        "seq": 61,
+        "time": 1791748799.412058
+      },
+      {
+        "intent": "Retreat right to clear contact with the home-positioned block before entering the bypass lane.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 62,
+        "time": 1791748809.6114829
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 14 reserved",
+        "seq": 63,
+        "time": 1791748809.81729
+      },
+      {
+        "intent": "Enter the upper bypass lane before crossing left toward the pusher home position.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 64,
+        "time": 1791748817.115353
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 15 reserved",
+        "seq": 65,
+        "time": 1791748817.392006
+      },
+      {
+        "intent": "Cross the upper bypass lane to align above the pusher home position.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 66,
+        "time": 1791748824.084478
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 16 reserved",
+        "seq": 67,
+        "time": 1791748824.3450701
+      },
+      {
+        "intent": "Lower the safely bypassed pusher to its home position while leaving the block centered in the home zone.",
+        "kind": "dispatch",
+        "outcome": "executed: move",
+        "seq": 68,
+        "time": 1791748831.661006
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "inference",
+        "outcome": "Model call 17 reserved",
+        "seq": 69,
+        "time": 1791748831.861367
+      },
+      {
+        "intent": "Finish reset now that the block is centered in the home zone and the pusher is at its home position.",
+        "kind": "dispatch",
+        "outcome": "executed: finish_reset",
+        "seq": 70,
+        "time": 1791748838.118604
+      },
+      {
+        "intent": "Recovery inspection",
+        "kind": "completed",
+        "outcome": "Saved measurement and contact reset verified",
+        "seq": 71,
+        "time": 1791748838.1658392
+      }
+    ],
+    "usage": {
+      "calls": 31,
+      "input_tokens": 388482,
+      "output_tokens": 4804,
+      "reported_calls": 30,
+      "token_usage_complete": false
+    },
+    "readiness": {
+      "ready": false,
+      "reason": "Restarted; inspect retained state and explicitly resume"
+    },
+    "current_frame": {
+      "generation": 24,
+      "image_url": "/api/frame?generation=24&sha256=010748ac551827d5579da25ccf5ef0a1618f26a60826a7c5d5c452904d1eb68b",
+      "available": true
+    }
+  },
+  "scope": "same retained origin and body, no unfinished job replay or additional model call"
+}

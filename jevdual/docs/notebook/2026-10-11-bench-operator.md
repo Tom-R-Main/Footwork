@@ -62,3 +62,16 @@ Observed: the admission fixture failed on version 1 by starting a paused job and
 Inferred: the admission fix and stronger post-trial scorer address the identified failures; version 2 still needs a fresh full qualification.
 Next: freeze repaired source and enqueue two new actual model jobs through the browser, then stop the owned UI/server before independent scoring.
 Refs: tools/physical-workcell/output/sim8-pause-admission-before-fix.log; tools/physical-workcell/output/sim8-pause-admission-after-fix-runtime.log; tools/physical-workcell/output/sim8-score-repair-tests.log; tools/physical-workcell/output/sim8-qualified-20261011-v1/qualification-score.json
+
+## SIM8-U2 · update · 2026-10-11 16:04
+Resolves: SIM8-P2 = held
+Observed: version 2 attempt 1 completed both UI-queued actual AI cycles on one retained body with unchanged frozen source. Separate native/SQLite scoring passed placement, measurements, contact resets and continuous generation/time. Exact immutable binding and native force states show a 5.61 cm displacement, stale measurement refusal without effect, and a fresh-image model move followed by recovery. Actual inference cancellation left generation zero without a proposal/dispatch. Browser reload and same-origin server restart retained both results without replay. All 31 model processes exited and were reaped; 54 focused conformance checks pass.
+Inferred: the repaired local product supports the bounded unattended image/action/computer loop on these recorded attempts. This establishes neither hardware transfer nor broad model repeatability.
+Next: preserve derived evidence and prior failures, leave the user-facing server running idle, and require separate network/body-adapter qualification before hardware authority.
+Refs: 1415f59; results/bench-operator-20261011/qualification-score.json; results/bench-operator-20261011/final-checks.json; results/bench-operator-20261011/conformance-summary.json; results/bench-operator-20261011/attempt-ledger.json
+
+## SIM8-S · summary · 2026-10-11 16:04
+Established: Footwork Bench provides UI job creation, persistent camera/queue/result state, autonomous visual decisions, separately saved optical measurement, contact reset, bounded pause/resume, source/freshness guards and independent evidence. The final first-attempt version 2 qualification passed 2/2; all earlier probe, scorer and conformance failures are retained. Native guard files remain unchanged. Model usage is reported with missing cancelled-call accounting explicit.
+Uncertain: hardware, general manipulation, physical power-loss recovery, network fault tolerance, production security, customer demand and monetary pricing remain unqualified.
+Decision: adopt as a local simulated prototype in the existing Footwork workcell package. Keep the current server intentionally open with no queued/pending model work. Next physical boundary is a qualified persistent body adapter; do not infer hardware readiness from these simulation runs.
+Refs: results/bench-operator-20261011/report.md; tools/physical-workcell/OPERATOR.md; results/bench-operator-20261011/final-checks.json

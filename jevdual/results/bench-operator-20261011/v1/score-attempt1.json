@@ -1,0 +1,1 @@
+{"outcome": "refused", "reason": "another process owns this application directory", "no_score_created": true, "next": "close owned UI/server before independent read-only scoring"}
