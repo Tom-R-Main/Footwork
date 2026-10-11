@@ -60,6 +60,24 @@ class OperatorTests(unittest.TestCase):
         self.assertEqual(op.body.status()["generation"], 0)
         self.assertTrue(op.frame().startswith(b"\x89PNG"))
 
+    def test_pause_between_outer_loop_check_and_step_admission_starts_nothing(self):
+        policy_calls = []
+        def policy(*args):
+            policy_calls.append(args)
+            return action(), {}
+        op = self.open(policy)
+        op.enqueue(self.job())
+        # The outer loop's running check already passed; Pause now wins the admission lock.
+        op.pause()
+        self.assertFalse(op._step())
+        self.assertIsNone(op.body.status()["active_job"])
+        self.assertIsNone(op.state()["active_job_id"])
+        self.assertEqual(op.state()["jobs"][0]["status"], "queued")
+        self.assertEqual(op.state()["jobs"][0]["call_count"], 0)
+        self.assertEqual(op.state()["usage"]["calls"], 0)
+        self.assertEqual(list((self.root / "calls").glob("*/reservation.json")), [])
+        self.assertEqual(policy_calls, [])
+
     def test_get_state_and_frame_do_not_capture_or_call_model(self):
         op = self.open(lambda *_: self.fail("GET invoked model"))
         before = op.agent.status()["sequence"]

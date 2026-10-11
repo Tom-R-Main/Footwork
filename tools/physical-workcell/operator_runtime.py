@@ -288,6 +288,8 @@ class Operator:
 
     def _step(self):
         with self.lock:
+            if self.closing or self.m["runner_status"] != "running" or self.cancel.is_set():
+                return False
             self._healthy()
             if self.m["usage"]["calls"] >= MAX_TOTAL_CALLS:
                 self._halt("Operator lifetime model-call budget exhausted")
