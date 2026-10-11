@@ -1,6 +1,6 @@
 {
   "recorded_at": "2026-10-11T16:22:00-04:00",
-  "status": "in_progress_denied_baseline_observed_permission_grant_pending",
+  "status": "grant_authorized_waiting_for_guest_unlock",
   "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
   "packet_sha256": "769c08c89061731368db33d78b180e7c8c96d531190f43bee44263642a76fd0f",
   "guest": {
@@ -34,10 +34,18 @@
     "packet_member_verification": "passed 14 members, exit0",
     "cold_dependency_install": "passed 115 packages, seven stages exit0, installer exit0",
     "denied_accessibility_baseline": "observed not_granted, strict doctor exit1, fixture exit2, fixture directory absent",
-    "permission_transition": "pending human confirmation; guest Settings shows Terminal switch off",
+    "permission_transition": "human authorizes root; not applied because guest auto-locked",
     "native_effect_restart_report": "not_run",
     "cleanup": "not_run",
     "qualified": false
   },
-  "evidence_location": "Guest /Users/tom/footwork-u2 and native CUA tool images in the current chat; guest receipts not exported yet"
+  "evidence_location": "Guest /Users/tom/footwork-u2 and native CUA tool images in the current chat; guest receipts not exported yet",
+  "claude_baseline_review": {
+    "message": "1791751104201824000",
+    "verdict": "valid denied baseline",
+    "clarifications": [
+      "cause of Terminal entry not reconstructible retrospectively; no prompting dialog observed",
+      "raw receipt export and hashes required before post-grant run"
+    ]
+  }
 }
