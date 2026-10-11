@@ -1,0 +1,40 @@
+{
+  "recorded_at": "2026-10-11T16:22:00-04:00",
+  "status": "in_progress_waiting_for_guest_installer_authentication",
+  "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+  "packet_sha256": "769c08c89061731368db33d78b180e7c8c96d531190f43bee44263642a76fd0f",
+  "guest": {
+    "os": "macOS",
+    "version": "26.6.2",
+    "build": "25G83",
+    "sip": "enabled",
+    "responsible_host": "com.apple.Terminal",
+    "responsible_host_version": "2.15"
+  },
+  "media": {
+    "mount": "/Volumes/FOOTWORK_U2",
+    "media_read_only": true,
+    "volume_read_only": true,
+    "visible_files": 6,
+    "payload_checksum_checks": 4,
+    "payload_checksum_passes": 4
+  },
+  "prerequisites": {
+    "uv_version": "0.12.5",
+    "python_installed": false,
+    "python_license": "human_approved_and_accepted",
+    "python_installer": "waiting_for_guest_admin_authentication",
+    "chrome_dmg": "mounted_read_only",
+    "chrome_signature": "assessment_started_result_not_yet_observed"
+  },
+  "qualification": {
+    "packet_member_verification": "pending_installed_python",
+    "cold_dependency_install": "not_run",
+    "denied_accessibility_baseline": "not_run",
+    "permission_transition": "not_run",
+    "native_effect_restart_report": "not_run",
+    "cleanup": "not_run",
+    "qualified": false
+  },
+  "evidence_location": "Guest /Users/tom/footwork-u2 and native CUA tool images in the current chat; guest receipts not exported yet"
+}

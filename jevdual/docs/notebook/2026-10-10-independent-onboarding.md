@@ -44,3 +44,8 @@ Established: self-checked transportable packet, immutable source verification, g
 Uncertain: independent environment, actual denied-to-approved TCC/host transition, native U2 postconditions and Claude's queued review remain unavailable. Internal7.9GiB free disk constrains a local guest; no launcher/image/guest was installed.
 Decision: deliver this bounded preparation on a local branch, keep UO2 open, and require an independent Mac or selected VM/storage environment before its runtime lane. Do not present source/helper checks as first-use qualification.
 Refs: results/independent-onboarding-preparation-20261010/report.md; aa971782
+
+## UOU4 · update · 2026-10-11 16:22
+Observed: the independently provisioned guest is at the desktop after human license/account setup. Root observed SIP enabled, the exact read-only qualification volume, four payload checksum passes and guest Terminal com.apple.Terminal2.15. Packetv3 is freshly extracted and uv0.12.5 runs. The human approved the Python3.14.7 license at its actual Agree dialog; root accepted it. Installation now requires guest administrator authentication, handed to the human to keep credentials out of tool logs. Chrome image is mounted read-only with signature assessment pending. No installed diagnostic, TCC grant or native oracle has run; UO2 remains open.
+Next: resume at installer authentication, then pristine packet verification and cold dependency install before the denied Accessibility baseline.
+Refs: results/u2-independent-onboarding-20261011-v1; guest /Users/tom/footwork-u2; root native CUA tool images in this chat
