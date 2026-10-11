@@ -31,6 +31,11 @@ The [reusable bench](BENCH.md) keeps one simulated body across successive jobs: 
 preparation, a separately executed computer measurement, contact-driven reset, and recovery
 from a bounded unexpected block displacement.
 
+The [Footwork Bench operator](OPERATOR.md) adds a local browser product: queue jobs,
+watch an independently running visual AI prepare and reset the bench, inspect saved
+measurements, and pause at action boundaries. It uses the installed authenticated Codex
+CLI for decisions and preserves the existing simulated effect guards.
+
 ## One work order
 
 The package uses pinned `mujoco==3.15.0` in its own ignored `.venv`. The existing Footwork

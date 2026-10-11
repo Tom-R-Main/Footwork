@@ -28,3 +28,16 @@ Test: commit the corrected classifier and invoke one fresh no-dispatch decision,
 Predicts: valid typed action accepted with reported usage, no actual tool items, process reaped and native generation zero; focused unknown-error/tool tests still refuse.
 Against: actual tools or arbitrary errors are accepted, a normal action still fails, or the bench moves during the transport probe.
 Refs: tools/physical-workcell/output/sim8-policy-smoke1/model-call-v2/; tools/physical-workcell/test_codex_policy.py
+
+## SIM8-CLI-U2 · update · 2026-10-11 15:42
+Resolves: SIM8-CLI-R = held
+Observed: the revised committed-source probe accepted a schema-valid movement decision from the exact PNG, reported token usage, and reaped the CLI process after 7.46 seconds. Native generation remained zero with no dispatch. Focused conformance still refuses unknown errors and tool items.
+Inferred: the installed authenticated CLI supports the bounded decision transport; full unattended job completion remains untested.
+Next: freeze the complete operator product after conformance and browser preview, then run the primary two-job qualification through its UI.
+Refs: 7867d96; tools/physical-workcell/output/sim8-policy-smoke1/probe-v2.json; tools/physical-workcell/test_codex_policy.py
+
+## SIM8-CONFORMANCE · summary · 2026-10-11 15:44
+Established: 19 deterministic operator checks, 3 policy checks, 15 agent checks and 14 bench checks passed. The browser preview showed the idle camera, new-job form and pause/resume. Review corrected the pause/resume control version, source/image identity, completion readback and incomplete token reporting. Existing native guard source is unchanged.
+Uncertain: fake policy conformance establishes no live AI job completion. The first complete frozen model/product attempt remains open.
+Decision: commit the product and separate post-trial scorer, freeze their exact bytes, and drive the two-job qualification through the browser without chat-directed motion.
+Refs: tools/physical-workcell/output/sim8-final-runtime-tests.log; tools/physical-workcell/output/sim8-final-policy-tests.log; tools/physical-workcell/output/sim8-final-agent-tests.log; tools/physical-workcell/output/sim8-final-bench-tests.log; tools/physical-workcell/output/sim8-empty-preview/
