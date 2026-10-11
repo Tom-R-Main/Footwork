@@ -25,7 +25,9 @@
     "python_license": "human_approved_and_accepted",
     "python_installer": "waiting_for_guest_admin_authentication",
     "chrome_dmg": "mounted_read_only",
-    "chrome_signature": "assessment_started_result_not_yet_observed"
+    "chrome_signature": "deep strict codesign valid; spctl accepted Notarized Developer ID; stapled ticket",
+    "chrome_version": "155.0.8059.40",
+    "chrome_installation": "copy started; completion not yet observed"
   },
   "qualification": {
     "packet_member_verification": "pending_installed_python",

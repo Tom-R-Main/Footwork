@@ -49,3 +49,8 @@ Refs: results/independent-onboarding-preparation-20261010/report.md; aa971782
 Observed: the independently provisioned guest is at the desktop after human license/account setup. Root observed SIP enabled, the exact read-only qualification volume, four payload checksum passes and guest Terminal com.apple.Terminal2.15. Packetv3 is freshly extracted and uv0.12.5 runs. The human approved the Python3.14.7 license at its actual Agree dialog; root accepted it. Installation now requires guest administrator authentication, handed to the human to keep credentials out of tool logs. Chrome image is mounted read-only with signature assessment pending. No installed diagnostic, TCC grant or native oracle has run; UO2 remains open.
 Next: resume at installer authentication, then pristine packet verification and cold dependency install before the denied Accessibility baseline.
 Refs: results/u2-independent-onboarding-20261011-v1; guest /Users/tom/footwork-u2; root native CUA tool images in this chat
+
+## UOU5 · update · 2026-10-11 16:22
+Observed: Chrome guest assessment completed with deep strict codesign valid, Google LLC Team EQHXZ8M8AV, stapled ticket and spctl accepted Notarized Developer ID. The bundle version is155.0.8059.40. Copy to the previously absent guest Applications destination is running; installation completion is not yet observed. Python remains at administrator authentication.
+Next: leave the guest authentication prompt for human entry and resume the remaining UO2 gates afterward.
+Refs: results/u2-independent-onboarding-20261011-v1; guest /Users/tom/footwork-u2/chrome-signature.txt
