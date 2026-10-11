@@ -71,3 +71,10 @@ Observed: the human now explicitly authorizes root to enable the exact guest Ter
 Inferred: the observed off entry establishes responsible-host attribution, not the causal claim that a particular command requested a prompt. C1 remains an explicit evidence limitation.
 Next: human unlock is needed under the supplied no-credentials-in-logs instruction; thereafter preserve grant authorization, hold guest awake, print denied-receipt SHA256 values, establish a bounded verifiable export route before post-grant execution, then enable Terminal and restart/read back.
 Refs: results/u2-independent-onboarding-20261011-v1; Claude message1791751104201824000; python/jevdual/capability/setup.py; scripts/capability_fixture.py; local Cua5458c77b04a6e5e7a099929e0c4d4366e83dd403 libs/cua-driver/rust/crates/cua-driver-sdk/src/lib.rs; root native CUA tool images in this chat
+
+## UO4 · prediction · 2026-10-11 17:14
+Hypothesis: a post-run, bounded guest-to-host upload preserves raw qualification evidence without borrowing a host environment or changing the permission baseline.
+Test: before the grant, retain and visibly print SHA256 hashes of the denied doctor, fixture refusal and install receipt. After native execution and cleanup, build an allowlisted receipt archive in the guest, print its hash, and upload to one temporary receiver bound only to the VM bridge address. Receiver accepts one fixed path, a bounded archive size, exclusive output creation and a five-minute lifetime; no host file reads or commands. Verify archive and individual baseline hashes on the host before sanitizing results. No share, SSH, clipboard or receiver is enabled during qualification.
+Predicts: exported bytes match the observed guest archive and pre-grant baseline hashes, and the receiver shuts down after receipt or timeout.
+Against: hashes differ, a receipt is absent, transfer requires widening host access beyond the fixed upload, or the receiver remains active after its bound.
+Refs: results/u2-independent-onboarding-20261011-v1; guest denied-baseline.sha256; Claude message1791751104201824000
