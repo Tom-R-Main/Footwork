@@ -402,6 +402,7 @@ class ExecutionStore:
         return subprocess.Popen(
             [
                 sys.executable,
+                "-I",
                 "-m",
                 "jevdual.capability.execution_worker",
                 "--packet",

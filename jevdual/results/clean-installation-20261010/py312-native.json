@@ -1,0 +1,372 @@
+{
+  "passed": true,
+  "source_commit": "2613cff7a75e220f8829f506c380765df7a8bd08",
+  "origins": {
+    "artifact_version": "0.0.1",
+    "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+    "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv",
+    "kernel_executable": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+    "kernel_argv0": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+    "package": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+    "worker": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/capability/execution_worker.py",
+    "backend": "pure-python",
+    "sys_path": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python312.zip",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/lib-dynload",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+    ]
+  },
+  "actual_runtime_contexts": [
+    {
+      "role": "worker",
+      "operation": "op_017d41997eaf",
+      "pid": 6166,
+      "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+      "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/cua_driver/__init__.py"
+        ],
+        "mcp": null,
+        "ApplicationServices": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py"
+        ],
+        "Quartz": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/Quartz/__init__.py"
+        ],
+        "Foundation": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/Foundation/__init__.py"
+        ]
+      },
+      "cua_library": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/cua_driver/libcua_driver_sdk.dylib",
+      "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791665625685474000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 5987,
+      "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+      "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/cua_driver/__init__.py"
+        ],
+        "mcp": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": null,
+        "Quartz": null,
+        "Foundation": null
+      },
+      "cua_library": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/cua_driver/libcua_driver_sdk.dylib",
+      "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791665623740404000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 5987,
+      "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+      "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": null,
+        "mcp": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": null,
+        "Quartz": null,
+        "Foundation": null
+      },
+      "cua_library": null,
+      "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791665623402658000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 5987,
+      "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+      "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/cua_driver/__init__.py"
+        ],
+        "mcp": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py"
+        ],
+        "Quartz": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/Quartz/__init__.py"
+        ],
+        "Foundation": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/Foundation/__init__.py"
+        ]
+      },
+      "cua_library": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/cua_driver/libcua_driver_sdk.dylib",
+      "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791665624513518000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 6219,
+      "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+      "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": null,
+        "mcp": [
+          "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": null,
+        "Quartz": null,
+        "Foundation": null
+      },
+      "cua_library": null,
+      "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791665626939734000
+    }
+  ],
+  "emitted_configuration_checked": true,
+  "initialized": {
+    "capabilities": {
+      "experimental": {},
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "protocolVersion": "2025-06-18",
+    "serverInfo": {
+      "name": "footwork-capability",
+      "version": "0.0.1"
+    }
+  },
+  "worker_proofs": [
+    {
+      "registration": {
+        "nonce": "b5e2de4809d64f3f98740282c36783fa",
+        "operation_id": "op_017d41997eaf",
+        "packet_digest": "f5955672e5ac3b5ad7c4e571cc4cf48f9c00a8bda6e32114b4ef5f9b3f9b2d4f",
+        "pgid": 6166,
+        "pid": 6166,
+        "request_digest": "baf46c96037e5e1a65c0b4d972af06649222791794fd74f34560bc2e4b1866fe",
+        "start": "0x1.ab2a976314c73p+30",
+        "version": 1
+      },
+      "cmdline": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+        "-I",
+        "-m",
+        "jevdual.capability.execution_worker",
+        "--packet",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-config-py312-v2/operations.sqlite.executions/op_017d41997eaf/packet.json"
+      ],
+      "executable": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "action": {
+    "is_error": false,
+    "schema_version": "1",
+    "operation_id": "op_017d41997eaf",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": false,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 24,
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+          },
+          "before": {
+            "length": 15,
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-fixture-v1/u1-fixture-v1-invoice.txt",
+            "inode": 349081534,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "identity_after": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-fixture-v1/u1-fixture-v1-invoice.txt",
+            "inode": 349081534,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "b5e2de4809d64f3f98740282c36783fa",
+        "operation_id": "op_017d41997eaf",
+        "packet_digest": "f5955672e5ac3b5ad7c4e571cc4cf48f9c00a8bda6e32114b4ef5f9b3f9b2d4f",
+        "phase": "sent",
+        "request_digest": "baf46c96037e5e1a65c0b4d972af06649222791794fd74f34560bc2e4b1866fe",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "installed-once"
+  },
+  "repeat": {
+    "is_error": false,
+    "schema_version": "1",
+    "operation_id": "op_017d41997eaf",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": true,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 24,
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+          },
+          "before": {
+            "length": 15,
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-fixture-v1/u1-fixture-v1-invoice.txt",
+            "inode": 349081534,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "identity_after": {
+            "boot": "5D021B00-499B-4397-AFA6-EAEA3D355E6E",
+            "device": 16777232,
+            "document": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-fixture-v1/u1-fixture-v1-invoice.txt",
+            "inode": 349081534,
+            "pid": 73067,
+            "start": "0x1.aaf07762cecccp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "b5e2de4809d64f3f98740282c36783fa",
+        "operation_id": "op_017d41997eaf",
+        "packet_digest": "f5955672e5ac3b5ad7c4e571cc4cf48f9c00a8bda6e32114b4ef5f9b3f9b2d4f",
+        "phase": "sent",
+        "request_digest": "baf46c96037e5e1a65c0b4d972af06649222791794fd74f34560bc2e4b1866fe",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "installed-once"
+  },
+  "report": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": true,
+      "reasons": []
+    },
+    "operation_completion": "completed",
+    "operations": [
+      {
+        "operation": "op_017d41997eaf",
+        "state": "final",
+        "disposition": "applied",
+        "updated": 1791665626.53506,
+        "created": 1791665624.769047
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "task_0fc5a39f61384b9593913db8338b4692",
+    "snapshot_digest": "0e432a82037b5df834d084703c15b020a490739356141f56a4023c26cec7993a",
+    "ledger_span": {
+      "first_created": 1791665624.769047,
+      "last_updated": 1791665626.53506,
+      "count": 1
+    },
+    "accepted_host_claim": "completed",
+    "as_of": 1791665627.064808,
+    "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-10T20:53:44.769047+00:00 through 2026-10-10T20:53:46.535060+00:00. Current document state and disk persistence are not certified by this report."
+  },
+  "oracle_actual": "Invoice report\n17.25 USD",
+  "owned_worker_finished": true,
+  "limits": "Existing host OS/system frameworks/permissions. Fresh dependency/private-home qualification."
+}

@@ -1,6 +1,6 @@
 """Small contracts for the single-process, fixture-scoped capability slice.
 
-The host sees four tools. An offered target contains its resource, observation
+The host sees five tools. An offered target contains its resource, observation
 and move binding; callers need not reconstruct those fields for every append.
 """
 
@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol
+
+from .completion import REPORT_SCHEMA, ReportError, check_report
 
 Disposition = Literal["applied", "partial", "refused", "not_sent", "unknown"]
 Phase = Literal["not_sent", "sent", "ambiguous"]
@@ -61,6 +63,13 @@ class Backend(Protocol):
 
 
 TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
+    "report": {
+        "description": "Validate a structured completion report against all admitted operations in this task. "
+        "Reports historical execution only, never current document state, disk persistence or a broader job. "
+        "Unknown operations cannot be reported completed. Never sends input or reconciles operations. "
+        "The host adapter must publish only trusted_summary, not unvalidated model prose.",
+        "inputSchema": REPORT_SCHEMA,
+    },
     "bind": {
         "description": "Bind source or destination from the configured fixture scope. Returns an observation. "
         "Source is read-only. Destination offers append targets. No apps or tabs are created.",
@@ -130,6 +139,11 @@ def check_arguments(tool: str, arguments: Any) -> dict[str, Any]:
         raise CapabilityError("unknown_tool", f"Unknown tool {tool!r}")
     if not isinstance(arguments, dict):
         raise CapabilityError("invalid_arguments", "Arguments must be an object")
+    if tool == "report":
+        try:
+            return check_report(arguments)
+        except ReportError as exc:
+            raise CapabilityError("invalid_arguments", str(exc)) from exc
     schema = TOOL_SCHEMAS[tool]["inputSchema"]
     properties = schema["properties"]
     if set(arguments) - set(properties):

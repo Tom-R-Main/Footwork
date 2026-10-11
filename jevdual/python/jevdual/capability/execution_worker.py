@@ -30,6 +30,7 @@ from .recovery import (
     validate_packet,
     validate_result,
 )
+from .runtime import emit_runtime_audit
 
 
 async def run(packet_path: Path) -> int:
@@ -91,6 +92,7 @@ async def run(packet_path: Path) -> int:
             if await asyncio.to_thread(native_identity, backend.scope) != recovery["identity"]:
                 raise CapabilityError("identity_changed", "Original native identity changed")
             observed = await backend.bind("destination")  # no source/browser binding
+            emit_runtime_audit("worker", op_id)
             candidates = []
             for row in observed["elements"]:
                 if "append" in row["moves"]:

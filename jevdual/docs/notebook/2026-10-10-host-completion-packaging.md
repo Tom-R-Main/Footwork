@@ -1,0 +1,92 @@
+# Journal-validated completion and packaging
+
+## HC1 · prediction · 2026-10-10 15:38
+Hypothesis: checking structured host reports against the full durable task ledger and publishing only a deterministic summary prevents unknown attempts from becoming completed, independent of matching text or optimistic raw model prose.
+Test: A2 public MCP/CLI adversarial and positive cases, readonly retained A1 counterexample replay, then four frozen native Codex host cases through an enforced final-output adapter.
+Predicts: forged/omitted/foreign/duplicate/stale or unchecked-persistence reports are rejected; unknown never renders completed; actual all-applied reports remain usable; validator performs no input or ledger transition.
+Against: any trusted completed output lacks a complete final/applied ledger, raw model prose is published on failure, validation changes operation state/effects, or qualified historical action is erased by later current text.
+Refs: docs/experiments/A2-host-completion-validation.md; results/restart-agent-acceptance-20261010/report.md
+
+## HP1 · prediction · 2026-10-10 15:38
+Hypothesis: the existing pure-Python fallback can support an offline installable capability wheel without a consumer Rust toolchain or provider account, while preserving exact driver pins and the qualified operation boundaries.
+Test: after HC1's adapter gate, inspect wheel contents/RECORD/license/metadata, install offline into an owned isolated target, run server/report/doctor/config outside source, and qualify installed detached worker discovery on the owned native fixture.
+Predicts: installed modules and worker entry resolve from the wheel, required resources and declared dependencies are present, research/secrets/compiled caches are absent, and diagnostics explain unsupported routes or prerequisites without changing permissions/configuration.
+Against: runtime resolves repository source, wheel omits required data/dependencies, consumer must compile Rust, broadening imports changes driver/model semantics, forbidden files ship, or doctor creates/changes a resource.
+Refs: docs/experiments/A2-host-completion-validation.md; pyproject.toml; python/jevdual/_native.py; local chrome-devtools-mcp artifact verifier
+
+## HCU1 · update · 2026-10-10 16:05
+Observed: Claude's read-only mailbox review identified safe no-input retries and run identity as missing cases. Amendment above narrows the trusted statement to historical effects, accepts honest host downgrades and includes refused/not_sent attempts without treating them as uncertain effects. Packaging will generate a durable per-run task ID, reused across reconnects; reusing a task explicitly means reporting its full history.  Initial focused checks exposed a test fixture blocked by a real unresolved-resource guard and a four-tool catalog assertion; no product reporting failure was established by those fixture failures.
+Next: before native trials, qualify safe retry, downgrade and abrupt-owner-exit readonly cases.
+Refs: docs/experiments/A2-host-completion-validation.md; output/a2-completion-checks-v1.log; Claude mailbox 1791661308184549000-claude-codex.md
+
+## HCU2 · update · 2026-10-10 16:10
+Observed: completion/MCP/service/recovery checks pass75; readonly reads work while the owner is live, after clean close and after SIGKILL with WAL retained. Retained A1 Codex optimistic claim is rejected as unknown and its original DB hash is unchanged. The first update heading reused HC1 and omitted required field labels; this commit repairs formatting without changing the recorded observation. Offline uv resolution lacked cached cross-version metadata; only the root dependency declaration for already-resolved MCP2.1.1 was synchronized, preserving the full resolved package graph.
+Next: run four native structured Codex sessions on frozen code, then open packaging if the published adapter gate qualifies.
+Refs: tests/test_capability_completion.py; output/a2-retained-replay.json; scripts/capability_completion_trial.py
+
+## HCU3 · update · 2026-10-10 15:53
+Observed: frozen7449164 native v1 passes execution and enforced summaries for clean, receipt and later_edit, while all three raw final reports use action prose instead of operation IDs and are rejected. The no_receipt session is invalid: it executes connector resource/search tools, never calls Footwork, and creates no operation. No unsafe completed summary was published, but the four-case native gate is unmet. Claude approves the core with one confirmed RecursionError CLI bug and ledger-span/downgrade presentation gaps. HCU1/HCU2 times were mistakenly typed as future times; commit ordering records their actual precedence.
+Next: preserve v1, repair only trial isolation and schema guidance plus the reviewed CLI/summary gaps; freeze a separate v2 and rerun all four development cases.
+Refs: output/a2-hosts-v1/summary.json; output/a2-hosts-v1/codex-no_receipt/receipt.json; output/a2-full-suite.log; Claude mailbox1791661855739708000
+
+## HC2 · prediction · 2026-10-10 15:53
+Hypothesis: disabling the installed CLI's explicit apps and skill_search features removes the connector route missed by the original trial configuration, while operation-ID descriptions distinguish structured records from task prose.
+Test: separate frozen A2v2 four-case native run; retain v1, audit every selected call and report shape, and require the original independent oracle/injection/worker gate.
+Predicts: four sessions execute only the five scoped Footwork tools, no_receipt actually reaches its private interruption boundary, and the adapter reports unknown without duplicate input. Raw report acceptance is measured separately and is not promised.
+Against: any external selected call, unqualified injection/worker cleanup, unsafe summary or changed scenario oracle.
+Refs: local codex-cli core/src/config/mod.rs apps_enabled; installed codex features list; scripts/capability_completion_trial.py
+
+## HCU4 · update · 2026-10-10 15:57
+Resolves: HC1 = held; HC2 = held
+Observed: frozen e7a5d9b native v2 qualifies all four unchanged cases: execution4/4, raw structured reports accepted4/4, enforced summaries4/4. No-receipt records unknown with matching text and no second append; receipt/later-edit collect historical applied while preserving the external note. Selected calls are only the five Footwork tools. V1 remains three qualified executions with rejected raw reports and one invalid connector-leak session. Claude independently checked and approved the three code remediations.
+Next: implement the preregistered HP1 offline package, then qualify installed CLI/transport/detached worker outside source. HP1 remains open.
+Refs: results/operation-completion-20261010/summary.json; results/operation-completion-20261010/sessions.json; Claude mailbox1791662060412492000
+
+## HPU1 · update · 2026-10-10 16:03
+Observed: frozen b5d5330 built and verified the74-member wheel, installed it offline/no-deps into the owned venv. Installed-native trial v1 stopped at origin comparison before reset or input: Path.absolute retained ../ while import paths were normalized. No action was admitted. The wheel's artifact hash is retained; dependencies are explicitly reused through an owned .pth file.
+Next: normalize the harness interpreter path with abspath while preserving the venv symlink, retain v1 and run a separate native verification v2 without changing wheel bytes.
+Refs: output/a2-wheel-v1/jevdual-0.0.1-py3-none-any.whl; output/a2-installed-trial-v1; scripts/capability_installed_trial.py
+
+## HP2 · prediction · 2026-10-10 16:03
+Hypothesis: lexical path normalization fixes the installed-origin guard without resolving away venv identity; installed modules already resolve correctly.
+Test: compare installed package/worker origins against normalized owned venv root, then drive actual installed MCP/worker in a separate run directory.
+Predicts: no source path appears in child import search, pure fallback is selected, installed interpreter launches the real detached worker, one exact append and repeat-token restart produce one journal record.
+Against: normalized paths still point outside the installed environment, source is needed or any duplicate effect/record occurs.
+Refs: scripts/capability_installed_trial.py; output/a2-installed-trial-v1
+
+## HPU2 · update · 2026-10-10 16:05
+Resolves: HP2 = held
+Observed: lexical-normalized origin guard passes and installed v2 performs one applied append plus same-token collection after restart, with the actual worker registered/observed. The last harness assertion rejects kernel argv0: macOS exposes the framework Python.app executable, whereas sys.executable/import origins retain the owned venv. This is an observation mismatch, not a second effect. All original run files remain retained; wheel bytes are unchanged.
+Next: compare worker kernel executable/argv0 to a probe launched through the same owned venv, additionally record Python prefix/module origins and retain worker evidence even on harness failure. Native qualification remains open.
+Refs: output/a2-installed-trial-v2/origin-probe.json; output/a2-installed-trial-v2/operations.sqlite.executions; scripts/capability_installed_trial.py
+
+## HP3 · prediction · 2026-10-10 16:05
+Hypothesis: comparing the actual macOS kernel identity to the same-interpreter probe, while checking installed prefix/module origins and inherited -m resolution, qualifies the detached worker without assuming argv0 equals the venv symlink.
+Test: separate installed-native v3, unchanged wheel; retain actual registration/cmdline/kernel identity, one-effect/repeated-token journal and independent AX oracle.
+Predicts: worker kernel identity matches probe, source imports remain absent, installed server launches the fixed worker module and records one exact append across restart.
+Against: worker uses an unexpected executable/module/packet, installed origin relies on source, custody is unqualified, or effect/record duplicates.
+Refs: output/a2-installed-trial-v2; scripts/capability_installed_trial.py
+
+## HPU3 · update · 2026-10-10 16:06
+Resolves: HP3 = held
+Observed: unchanged wheel installed-native v3 passes: pure module/worker origins and prefix resolve inside owned venv outside source, kernel worker identity matches the same-interpreter probe, registration/cmdline/packet match, actual append and restart-token collection leave one record and exact text. Claude's packaging review has no blocker, with three minor issues: hand-copied doctor requirements, permission attribution and inconsistent server/artifact versions.
+Next: derive doctor requirements and server version from installed distribution metadata, clarify responsible-process permissions, then rebuild a separate wheel and qualify its installed public entry points/native worker. Preserve old artifacts and failed harness directories. HP1 remains open until final artifact checks.
+Refs: output/a2-installed-trial-v3/receipt.json; Claude mailbox1791662699420820000; output/a2-wheel-v1
+
+## HPU4 · update · 2026-10-10 16:12
+Resolves: HP1 = held
+Observed: final b28af7c wheel74members/RECORD/license verifies and repeated builds match SHA256 f734ad127da548ce1b12d3e95b114f76d9893cefe58e6a188d49059cdd3414f7. Offline installed console config/doctor/report checks and actual generated-task native v4 pass outside source; real detached worker, one exact append and restart-token collection qualify. Full final suite1473pass/27skip, Ruff/notebook pass. Fixture owner exited0; independent browser absence and zero owned-document windows verified. Claude confirmed review follow-ups closed and approved packaging subject to these now-completed checks.
+Next: close local packaging; clean-machine dependency install and release delivery remain separate. No push/merge/publication/global configuration occurred.
+Refs: results/capability-packaging-20261010/report.md; results/capability-packaging-20261010/summary.json; output/a2-packaging-final-full-suite.log; Claude mailbox1791663054444394000
+
+## HCS1 · summary · 2026-10-10 16:12
+Established: journal-derived publication prevents the retained false completion assertion; separate A2v2 execution/raw report/adapter gates qualify4/4. Offline pure wheel and installed native worker are checked, with exact artifact and retained failure context.
+Uncertain: fresh-machine dependency resolution, arbitrary apps, saved-file persistence, full host inventory/exact default model, unwrapped interactive final prose and public release are unqualified.
+Decision: deliver local wheel/guide and evidence on the unmerged branch. Preserve run/journal/artifact context and original A1/v1/harness outcomes.
+Refs: results/operation-completion-20261010; results/capability-packaging-20261010; docs/capability-packaging.md
+
+## HCR2 · update · 2026-10-10 18:10
+Resolves: HC2 = held
+Observed: HCU4 records frozen e7a5d9b's four qualified execution/report/adapter cases. Its combined HC1/HC2 resolution is parsed only for HC1; this individual entry closes HC2 using the same recorded evidence, without regrading v1 or changing A1's original7/8 answer result.
+Next: delivery preparation; preserve all original invalid and rejected reports.
+Refs: HCU4; results/operation-completion-20261010/summary.json

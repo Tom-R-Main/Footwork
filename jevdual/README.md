@@ -10,6 +10,8 @@ accessibility tree (`cua-driver` 0.28.2, pinned). The operator surface is the `f
 (`python/jevdual/cli.py`, `session.py`); see the [top-level README](../README.md#drive-it). Measured hot
 paths in the DOM pipeline run in Rust through PyO3, each with a pure-Python twin and equality tests.
 
+For the standalone agent capability wheel, see [installation and per-job configuration](docs/capability-packaging.md). It includes a journal-validated completion adapter for the scoped browser-to-TextEdit flow; it does not require Rust or a model provider account.
+
 The browser tables below are the Q6 to Q9 measurements; native and coexistence results (Q10, Q15) are in
 the top-level README and `docs/experiments/`.
 

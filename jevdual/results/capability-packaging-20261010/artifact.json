@@ -1,0 +1,13 @@
+{
+  "filename": "jevdual-0.0.1-py3-none-any.whl",
+  "sha256": "f734ad127da548ce1b12d3e95b114f76d9893cefe58e6a188d49059cdd3414f7",
+  "source_commit": "b28af7c380447a6499bb376174e6b76188b79e76",
+  "members": 74,
+  "record_verified": true,
+  "repeated_build_identical": true,
+  "license": "MIT",
+  "artifact_version": "0.0.1",
+  "backend": "pure-python",
+  "dependency_install": "existing dependencies explicitly reused through owned .pth; offline --no-deps wheel install",
+  "public_release": false
+}

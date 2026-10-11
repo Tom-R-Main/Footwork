@@ -1,4 +1,4 @@
-"""Four-tool MCP stdio facade for one preconfigured local fixture task.
+"""Five-tool MCP stdio facade for one preconfigured local fixture task.
 
 Launch with ``python -m jevdual.capability.mcp_server --scope scope.json
 --journal operations.sqlite``. This registers no host configuration and starts
@@ -12,12 +12,14 @@ import asyncio
 import json
 import logging
 import sys
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
 
 from .backend import ScopedBackend
 from .contracts import TOOL_SCHEMAS, CapabilityError, check_arguments
 from .journal import Journal, JournalError
+from .runtime import emit_runtime_audit
 from .service import CapabilityService
 
 
@@ -29,6 +31,8 @@ class ToolFacade:
 
     async def call(self, name: str, arguments: Any) -> dict[str, Any]:
         args = check_arguments(name, arguments)
+        if name == "report":
+            return self.service.report(task=self.backend.task, **args)
         if name == "status":
             return await self.service.status(task=self.backend.task, **args)
         # One surface owner in this thin process; never queue an append decided
@@ -38,7 +42,9 @@ class ToolFacade:
         self._surface_busy = True
         try:
             if name == "bind":
-                return await self.backend.bind(args["name"])
+                result = await self.backend.bind(args["name"])
+                emit_runtime_audit("server")
+                return result
             if name == "observe":
                 return await self.backend.observe(args["resource"])
             token = args.get("client_token")
@@ -66,7 +72,11 @@ def create_server(facade: ToolFacade) -> Any:
     from mcp import types
     from mcp.server import Server
 
-    server = Server("footwork-capability", version="0.1.0")
+    try:
+        artifact_version = version("jevdual")
+    except PackageNotFoundError:
+        artifact_version = "0.0.1+source"
+    server = Server("footwork-capability", version=artifact_version)
 
     async def list_tools(_context: Any, _params: Any) -> Any:
         return types.ListToolsResult(
@@ -110,6 +120,7 @@ async def serve(scope: dict[str, Any], journal_path: Path) -> None:
     journal = Journal(journal_path)
     facade = ToolFacade(backend, CapabilityService(journal, backend))
     server = create_server(facade)
+    emit_runtime_audit("server")
     try:
         async with stdio_server() as (read_stream, write_stream):
             await server.run(read_stream, write_stream, server.create_initialization_options())

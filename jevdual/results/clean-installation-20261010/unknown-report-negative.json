@@ -1,0 +1,39 @@
+{
+  "exit": 1,
+  "validated": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": false,
+      "reasons": [
+        "disposition_mismatch",
+        "completion_mismatch"
+      ]
+    },
+    "operation_completion": "unknown",
+    "operations": [
+      {
+        "operation": "op_39d4a667241f",
+        "state": "unknown",
+        "disposition": "unknown",
+        "updated": 1791659556.137922,
+        "created": 1791659554.733087
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "agent-acceptance-fixture-v2",
+    "snapshot_digest": "3a458438a150053499d6d64e9019ef30dc70a5654379e77feb8b4c3303bfc1ab",
+    "ledger_span": {
+      "first_created": 1791659554.733087,
+      "last_updated": 1791659556.137922,
+      "count": 1
+    },
+    "accepted_host_claim": null,
+    "as_of": 1791665774.740117,
+    "trusted_summary": "Host completion report rejected (disposition_mismatch, completion_mismatch). Execution remains unknown. Matching text cannot confirm the attempted append; do not append again. Full task ledger: 1 records, 2026-10-10T19:12:34.733087+00:00 through 2026-10-10T19:12:36.137922+00:00. Current document state and disk persistence are not certified by this report."
+  },
+  "original_db_unchanged": true,
+  "sha256": "d405fbc2df562fce249630e4ce77beebfb8bfd930b23db6660d919028115b515",
+  "cwd_shadow_present": true
+}

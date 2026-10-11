@@ -1,0 +1,184 @@
+{
+  "passed": true,
+  "commands": [
+    {
+      "stage": "venv",
+      "argv": [
+        "/opt/homebrew/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/empty-cache",
+        "--no-python-downloads",
+        "venv",
+        "--python",
+        "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "install",
+      "argv": [
+        "/opt/homebrew/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "install",
+        "--offline",
+        "--no-deps",
+        "--python",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/python",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/build-one/jevdual-0.0.1-py3-none-any.whl"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "origins",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/python",
+        "-I",
+        "-c",
+        "\nimport sys,json,importlib.metadata\nimport jevdual,jevdual.capability.cli as cli\ndist=importlib.metadata.distribution('jevdual')\nprint(json.dumps({'prefix':sys.prefix,'base_prefix':sys.base_prefix,'package':jevdual.__file__,\n 'cli':cli.__file__,'backend':jevdual.BACKEND,'license':dist.metadata['License-Expression'],\n 'requirements':dist.requires,'entry_points':{e.name:e.value for e in dist.entry_points},\n 'sys_path':sys.path}))\n"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "entry-help",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/footwork-capability",
+        "--help"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "doctor",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/python",
+        "-I",
+        "-m",
+        "jevdual.capability.cli",
+        "doctor"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "strict-doctor",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/python",
+        "-I",
+        "-m",
+        "jevdual.capability.cli",
+        "doctor",
+        "--strict"
+      ],
+      "returncode": 1
+    },
+    {
+      "stage": "report",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/python",
+        "-I",
+        "-m",
+        "jevdual.capability.cli",
+        "report",
+        "--journal",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/absent.sqlite",
+        "--task",
+        "ci-artifact"
+      ],
+      "returncode": 2
+    }
+  ],
+  "native_qualification": false,
+  "artifact": {
+    "wheel": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/build-one/jevdual-0.0.1-py3-none-any.whl",
+    "files": 75,
+    "sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+    "verified": true
+  },
+  "origins": {
+    "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv",
+    "base_prefix": "/Library/Frameworks/Python.framework/Versions/3.14",
+    "package": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/lib/python3.14/site-packages/jevdual/__init__.py",
+    "cli": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/lib/python3.14/site-packages/jevdual/capability/cli.py",
+    "backend": "pure-python",
+    "license": "MIT",
+    "requirements": [
+      "browser-use==0.13.10",
+      "typesafe-sdk>=0.7,<1",
+      "orjson>=3.10",
+      "psutil==7.2.2",
+      "mcp==2.1.1",
+      "packaging>=25,<27",
+      "cua-driver==0.28.2",
+      "pyobjc-framework-applicationservices>=12 ; sys_platform == 'darwin'",
+      "pyobjc-framework-quartz>=12 ; sys_platform == 'darwin'",
+      "pyobjc-framework-cocoa>=12 ; sys_platform == 'darwin'"
+    ],
+    "entry_points": {
+      "footwork": "jevdual.cli:main",
+      "footwork-capability": "jevdual.capability.cli:main"
+    },
+    "sys_path": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/lib/python314.zip",
+      "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14",
+      "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/lib/python3.14/site-packages"
+    ]
+  },
+  "doctor": {
+    "platform": "darwin",
+    "supported": true,
+    "runtime": {
+      "python_version": "3.14.7",
+      "python_requirement": ">=3.11,<4.0",
+      "python_compatible": true,
+      "interpreter": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/bin/python",
+      "architecture": "arm64",
+      "distribution": {
+        "version": "0.0.1",
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/lib/python3.14/site-packages"
+      },
+      "loaded_modules": {
+        "jevdual": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/lib/python3.14/site-packages/jevdual/__init__.py",
+        "jevdual.capability.setup": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/delivery-package-py314-v4/venv/lib/python3.14/site-packages/jevdual/capability/setup.py"
+      }
+    },
+    "dependencies": {},
+    "permissions": {
+      "accessibility": "unavailable",
+      "screen_recording": "unavailable"
+    },
+    "scope": "not_checked",
+    "journal": "not_checked",
+    "warnings": [
+      "Installed distribution metadata or requirement parser unavailable; compatibility is unverified.",
+      "Screen Recording is not qualified. Routes that capture pixels may require it."
+    ],
+    "dependency_metadata": "installed distribution",
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "provider_account_required": false,
+    "rust_toolchain_required": false,
+    "blockers": [
+      "dependency_metadata_unavailable",
+      "accessibility_unavailable"
+    ],
+    "prerequisite_status": "blocked",
+    "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+  },
+  "report": {
+    "schema_version": "1",
+    "validation": {
+      "accepted": false,
+      "reasons": [
+        "report_unavailable"
+      ]
+    },
+    "operation_completion": "unknown",
+    "trusted_summary": "Completion validation is unavailable. No completion is certified."
+  }
+}

@@ -295,6 +295,11 @@ class CapabilityService:
 
     # ---- rendering -----------------------------------------------------------------------------
 
+    def report(self, *, task: str, **claims: Any) -> dict[str, Any]:
+        from .completion import validate_report
+
+        return validate_report(claims, self.journal.report_snapshot(task))
+
     @staticmethod
     def _receipt(op: Operation, *, repeat: bool, note: str | None = None) -> dict[str, Any]:
         if op.state == "final" and op.disposition == "applied":
@@ -318,7 +323,8 @@ class CapabilityService:
         else:
             summary = (
                 f"Outcome unknown for {op.id}. Do not append again; call status with this operation "
-                "(reconcile=true) or have the operator inspect the document."
+                "(reconcile=true) or have the operator inspect the document. "
+                "Matching text does not confirm this attempt wrote it. Report the attempted append as unknown."
             )
             next_step = {"tool": "status", "operation": op.id, "reconcile": True}
         result: dict[str, Any] = {
@@ -330,6 +336,16 @@ class CapabilityService:
             "summary": summary,
             "repeat": repeat,
             "evidence": op.evidence,
+            "reporting": {
+                "historical_effect": op.disposition or "unknown",
+                "disk_persistence": "not_checked",
+                "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved."
+                + (
+                    " This attempt is unconfirmed even if the text matches. Do not claim that you appended it."
+                    if op.state != "final"
+                    else " Report the retained execution result separately from current document agreement."
+                ),
+            },
         }
         if op.client_token is not None:
             result["client_token"] = op.client_token

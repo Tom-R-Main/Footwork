@@ -1,0 +1,30 @@
+{
+  "original_db_sha256": "d405fbc2df562fce249630e4ce77beebfb8bfd930b23db6660d919028115b515",
+  "unchanged": true,
+  "validated": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": false,
+      "reasons": [
+        "disposition_mismatch",
+        "completion_mismatch"
+      ]
+    },
+    "operation_completion": "unknown",
+    "operations": [
+      {
+        "operation": "op_39d4a667241f",
+        "state": "unknown",
+        "disposition": "unknown",
+        "updated": 1791659556.137922
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "agent-acceptance-fixture-v2",
+    "snapshot_digest": "52619e77c0bf8c5945e249593ecf81e38ee55aaf8df4884103c98644924da6e4",
+    "as_of": 1791661691.965367,
+    "trusted_summary": "Host completion report rejected. Execution remains unknown. Matching text cannot confirm the attempted append; do not append again. Current document state and disk persistence are not certified by this report."
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "returncode": 0,
+  "doctor": {
+    "platform": "darwin",
+    "supported": true,
+    "runtime": {
+      "python_version": "3.12.6",
+      "python_requirement": ">=3.11,<4.0",
+      "python_compatible": true,
+      "interpreter": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/bin/python",
+      "architecture": "arm64",
+      "distribution": {
+        "version": "0.0.1",
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "loaded_modules": {
+        "jevdual": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+        "jevdual.capability.setup": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/jevdual/capability/setup.py",
+        "ApplicationServices": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py",
+        "Quartz": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages/Quartz/__init__.py"
+      }
+    },
+    "dependencies": {
+      "browser-use": {
+        "version": "0.13.10",
+        "requirement": "==0.13.10",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "typesafe-sdk": {
+        "version": "0.7.4",
+        "requirement": "<1,>=0.7",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "orjson": {
+        "version": "3.13.0",
+        "requirement": ">=3.10",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "psutil": {
+        "version": "7.2.2",
+        "requirement": "==7.2.2",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "mcp": {
+        "version": "2.1.1",
+        "requirement": "==2.1.1",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "cua-driver": {
+        "version": "0.28.2",
+        "requirement": "==0.28.2",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "pyobjc-framework-applicationservices": {
+        "version": "12.2.2",
+        "requirement": ">=12",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "pyobjc-framework-quartz": {
+        "version": "12.2.2",
+        "requirement": ">=12",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      },
+      "pyobjc-framework-cocoa": {
+        "version": "12.2.2",
+        "requirement": ">=12",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v4/venv/lib/python3.12/site-packages"
+      }
+    },
+    "permissions": {
+      "accessibility": "granted",
+      "screen_recording": "granted"
+    },
+    "scope": {
+      "valid": true,
+      "document_exists": true,
+      "window_identity": "checked_at_bind",
+      "pids_exist": true
+    },
+    "journal": "not_created",
+    "warnings": [],
+    "dependency_metadata": "installed distribution",
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "provider_account_required": false,
+    "rust_toolchain_required": false,
+    "blockers": [],
+    "prerequisite_status": "met",
+    "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+  }
+}

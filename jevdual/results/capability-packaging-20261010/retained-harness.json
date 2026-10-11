@@ -1,0 +1,12 @@
+{
+  "v1": "Origin guard failed before input because Path.absolute retained ../; no operation.",
+  "v2": "Installed effect/restart collection succeeded; final strict argv0 assertion failed on macOS framework launcher identity.",
+  "v3": "Unchanged first wheel qualified with observed kernel identity and installed import/prefix chain.",
+  "v4": "Final rebuilt wheel qualified with generated task/scope, matching server/artifact version and actual installed worker.",
+  "original_paths": [
+    "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-installed-trial-v1",
+    "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-installed-trial-v2",
+    "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-installed-trial-v3",
+    "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/a2-installed-trial-v4"
+  ]
+}

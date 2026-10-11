@@ -1,0 +1,56 @@
+{
+  "source_commit": "2613cff7a75e220f8829f506c380765df7a8bd08",
+  "wheel_sha256": "54a4085c992f7066c105f1ce3772d310725b457858543766ea8958cb2e4a275a",
+  "wheel_members": 75,
+  "reproducible": true,
+  "platform": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "macos_version": "26.5.1"
+  },
+  "profiles": {
+    "py314": {
+      "python": "3.14.7",
+      "packages": 115,
+      "install_pass": true,
+      "native_pass": true,
+      "strict_doctor_exit": 0,
+      "cache_bytes": 391898597,
+      "runtime_contexts": 5,
+      "emitted_configuration_checked": true
+    },
+    "py312": {
+      "python": "3.12.6",
+      "packages": 115,
+      "install_pass": true,
+      "native_pass": true,
+      "strict_doctor_exit": 0,
+      "cache_bytes": 391530897,
+      "runtime_contexts": 5,
+      "emitted_configuration_checked": true
+    }
+  },
+  "checks": {
+    "full_suite_passed": 1485,
+    "full_suite_skipped": 27,
+    "ruff": "passed",
+    "notebook": "passed",
+    "missing_prereq_strict": "passed",
+    "planted_cwd": "passed",
+    "unknown_report_no_db_change": "passed",
+    "fixture_cleanup": "passed"
+  },
+  "qualified": "fresh dependency and configured user-state profiles on this existing Mac",
+  "limits": [
+    "Existing OS/frameworks/Chrome/TextEdit/TCC permissions; no fresh OS/new-machine result",
+    "No exhaustive filesystem/outbound-network tracing; known browser-use telemetry/cloud-sync disabled",
+    "No global config or permissions changes, push, merge or publication",
+    "Arbitrary apps and saved-file/whole-job certification outside scope"
+  ],
+  "review": {
+    "reviewer": "Claude via authorized mailbox",
+    "verdict": "approved bounded local fresh-dependency qualification",
+    "message": "1791665859056600000",
+    "nonblocking_gap": "worker __main__ origin not directly recorded; installed parent/probe/isolated invocation evidence retained"
+  }
+}

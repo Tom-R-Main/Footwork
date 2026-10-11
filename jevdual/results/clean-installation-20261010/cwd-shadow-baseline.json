@@ -1,0 +1,6 @@
+{
+  "plain_exit": 1,
+  "plain_shadowed": true,
+  "isolated_exit": 0,
+  "isolated_origin": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u1-py312-v3/venv/lib/python3.12/site-packages/psutil/__init__.py"
+}

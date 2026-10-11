@@ -1172,7 +1172,9 @@ source = { editable = "." }
 dependencies = [
     { name = "browser-use" },
     { name = "cua-driver" },
+    { name = "mcp" },
     { name = "orjson" },
+    { name = "packaging" },
     { name = "psutil" },
     { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'" },
     { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
@@ -1197,7 +1199,9 @@ dev = [
 requires-dist = [
     { name = "browser-use", specifier = "==0.13.10" },
     { name = "cua-driver", specifier = "==0.28.2" },
+    { name = "mcp", specifier = "==2.1.1" },
     { name = "orjson", specifier = ">=3.10" },
+    { name = "packaging", specifier = ">=25,<27" },
     { name = "psutil", specifier = "==7.2.2" },
     { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'", specifier = ">=12" },
     { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=12" },
