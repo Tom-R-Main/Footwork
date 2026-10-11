@@ -40,3 +40,16 @@ Observed: the full-capacity reload failed before repair at the 64 KiB reader. Th
 Inferred: the 65 conformance checks support the bounded same-host network adapter and its retained authority under these faults; they do not establish actual-model network completion.
 Next: commit measured source, freeze its exact bytes, and run two actual Codex image-guided network cycles with lost-reply reconciliation, duplicate and delayed dispatches. Score native states, SQLite and exact model/transport receipts separately after process cleanup.
 Refs: tools/physical-workcell/output/sim9-client-capacity-before/unittest.log; tools/physical-workcell/output/sim9-client-tests-v4/unittest.log; tools/physical-workcell/output/n9-matrix-v3/aggregate.json; tools/physical-workcell/output/sim9-core-regression.log
+
+## SIM9-U4 · update · 2026-10-11 16:44
+Resolves: SIM9-P1 = held
+Observed: the first frozen actual-model attempt completed two network jobs on one body with 27 exact-image decisions, 21 movements and 83 bound commands. Separate native/SQLite scoring passed placement, measurement, contact reset and generation/time continuity. Proxy evidence binds one lost dispatch reply to one POST and one read-only GET, one concurrent duplicate to equal payloads/replies, and one delayed reply. All model/service processes exited and the proxy closed; source stayed unchanged. The final mechanical matrix and focused checks remain 65/65 passed, with earlier failures retained.
+Inferred: the persistent adapter supports this simulated network camera/action/computer loop and preserves uncertainty under the recorded faults; the evidence does not qualify hardware or secure remote deployment.
+Next: preserve derived scores and attempt ledgers, keep the previous browser product available, and use the adapter contract as the boundary for a future device-specific local controller.
+Refs: e8c7e9b; results/network-body-adapter-20261011/qualification-score.json; results/network-body-adapter-20261011/final-checks.json; results/network-body-adapter-20261011/attempt-ledger.json
+
+## SIM9-S · summary · 2026-10-11 16:44
+Established: committed persistent body identity, server-owned admission leases, immutable command IDs and receipts, image transport, durable single-send client uncertainty, read-only recovery, diagnostic fault proxy and independently scored actual AI network cycles. Native/core guards are unchanged. All run-owned processes are stopped; the earlier local browser server remains idle.
+Uncertain: authentication across machines, physical devices, emergency stopping of accepted motion, power-loss durability, general manipulation and broader model performance.
+Decision: adopt the service/client API and qualification CLI inside the existing Footwork workcell package as a loopback simulated prototype. Keep raw/private evidence and failed development attempts; do not infer hardware readiness from this result.
+Refs: results/network-body-adapter-20261011/report.md; tools/physical-workcell/NETWORK_BODY.md; docs/experiments/SIM9-network-body-adapter.md

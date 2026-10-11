@@ -11,7 +11,11 @@ tools/physical-workcell/.venv/bin/python tools/physical-workcell/body_network.py
 
 Restart the same body by omitting `--initialize`. Body identity, generation, native time, jobs and receipts persist. Restart revokes all leases. The service binds to loopback; this version does not provide authentication or remote deployment.
 
-The Python client provides the action boundary:
+The Python client provides the action boundary. To try the following example from the repository root, start an interpreter with:
+
+```sh
+PYTHONPATH=tools/physical-workcell tools/physical-workcell/.venv/bin/python
+```
 
 ```python
 from body_client import BodyClient, Uncertain

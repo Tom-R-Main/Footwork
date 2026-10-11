@@ -1,0 +1,44 @@
+{
+  "actual_model_attempts": [
+    {
+      "attempt": 1,
+      "completed_cycles": 2,
+      "faults": [
+        {
+          "call": "calls/job-1-call-001",
+          "command_id": "command-9b6a7f12d66e4839a33440f6a4dd657e",
+          "mode": "drop_after",
+          "read_only": true,
+          "reconciled_state": "completed"
+        },
+        {
+          "call": "calls/job-1-call-002",
+          "mode": "duplicate"
+        },
+        {
+          "call": "calls/job-1-call-003",
+          "mode": "delay_after"
+        }
+      ],
+      "jobs": [
+        {
+          "calls": 14,
+          "completed": true,
+          "job_id": "network-ai-1"
+        },
+        {
+          "calls": 13,
+          "completed": true,
+          "job_id": "network-ai-2"
+        }
+      ],
+      "outcome": "passed",
+      "planner": "actual_codex_cli_images_over_TCP",
+      "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-network-ai-v1",
+      "service_exit_observed": true,
+      "source_commit": "e8c7e9b502f852639a89932aa30884a40a432ca9",
+      "version": 1
+    }
+  ],
+  "development_attempts": "retained-development-attempts.json"
+}
