@@ -93,3 +93,9 @@ Refs: output/u2-vm-provision-20261011/delivery-record/report.md; output/u2-vm-pr
 Observed: the user reports accepting the macOS license and creating the disposable guest account. Root observed the unlocked desktop and launched the guest interactive Terminal, com.apple.Terminal version2.15. Guest sw_vers reports macOS26.6.2 build25G83; csrutil reports SIP enabled. diskutil reports both media and volume read-only at /Volumes/FOOTWORK_U2 with the exact six staged filenames. Guest payload checksum verification is running; VM3 remains open until those results are observed. Native CUA modifier-key input is not reliably forwarded by the VM; unmodified menu navigation and printf octal-decoded commands execute in the same Terminal without clipboard sharing. No Accessibility grant or product installation has occurred.
 Next: finish guest media verification, install verified prerequisites, then capture the denied installed diagnostic and fixture before any permission grant.
 Refs: root native CUA tool images in this chat; guest /Users/tom/footwork-u2/baseline.txt; guest /Users/tom/footwork-u2/media-hashes.txt
+
+## VMU10 · update · 2026-10-11 16:18
+Resolves: VM3 = held
+Observed: the guest read-only qualification volume contains the exact six staged files. The guest shasum check reports OK for all four executable/archive payloads, including packetv3. Root observed the completed output in the native viewer; guest media-hashes.txt preserves it. The prior host ISO parser verified the metadata files and payload bytes; the guest readback now establishes transport to the same independent environment.
+Next: install verified prerequisites and execute UO2; preparation and media verification do not establish first-use permission or native effect success.
+Refs: guest /Users/tom/footwork-u2/media-hashes.txt; output/u2-vm-provision-20261011/iso-verification.json; root native CUA tool images in this chat
