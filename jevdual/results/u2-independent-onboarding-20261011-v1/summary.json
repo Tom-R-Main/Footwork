@@ -1,6 +1,6 @@
 {
   "recorded_at": "2026-10-11T16:22:00-04:00",
-  "status": "in_progress_waiting_for_guest_installer_authentication",
+  "status": "in_progress_denied_baseline_observed_permission_grant_pending",
   "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
   "packet_sha256": "769c08c89061731368db33d78b180e7c8c96d531190f43bee44263642a76fd0f",
   "guest": {
@@ -21,18 +21,19 @@
   },
   "prerequisites": {
     "uv_version": "0.12.5",
-    "python_installed": false,
+    "python_installed": true,
     "python_license": "human_approved_and_accepted",
-    "python_installer": "waiting_for_guest_admin_authentication",
+    "python_installer": "human authentication completed",
     "chrome_dmg": "mounted_read_only",
     "chrome_signature": "deep strict codesign valid; spctl accepted Notarized Developer ID; stapled ticket",
     "chrome_version": "155.0.8059.40",
-    "chrome_installation": "completed at /Applications/Google Chrome.app; installed bundle version readback 155.0.8059.40"
+    "chrome_installation": "completed at /Applications/Google Chrome.app; installed bundle version readback 155.0.8059.40",
+    "python_version": "3.14.7"
   },
   "qualification": {
-    "packet_member_verification": "pending_installed_python",
-    "cold_dependency_install": "not_run",
-    "denied_accessibility_baseline": "not_run",
+    "packet_member_verification": "passed 14 members, exit0",
+    "cold_dependency_install": "passed 115 packages, seven stages exit0, installer exit0",
+    "denied_accessibility_baseline": "observed not_granted, strict doctor exit1, fixture exit2, fixture directory absent",
     "permission_transition": "not_run",
     "native_effect_restart_report": "not_run",
     "cleanup": "not_run",
