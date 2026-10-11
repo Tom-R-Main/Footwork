@@ -27,6 +27,10 @@ physical staging before fulfillment, and saves the application result in SQLite.
 cancelling the order invalidates its old lease; the agent must call the guard to request
 cancellation of active motion. This remains a local simulated application experiment.
 
+The [reusable bench](BENCH.md) keeps one simulated body across successive jobs: RGB-guided
+preparation, a separately executed computer measurement, contact-driven reset, and recovery
+from a bounded unexpected block displacement.
+
 ## One work order
 
 The package uses pinned `mujoco==3.15.0` in its own ignored `.venv`. The existing Footwork
