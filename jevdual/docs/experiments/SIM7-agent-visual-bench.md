@@ -25,3 +25,7 @@ Primary metric: complete job cycles, required 2/2 on the first frozen trial atte
 ## Guardrails and limits
 
 Keep bench.py, measurement.py, native controller and image gate source unchanged. One writer, typed finite actions, exact observation/source/job binding, retained intent before dispatch, no replay of unknown effects, and independent effect readback. No keys, paid provider calls, real cameras, hardware, production application changes or cloud deployment. The trial establishes this AI session's behavior, not a repeatability rate, a deployed policy service or general robotics.
+
+## Result
+
+Frozen `9a5d2f8bfac8088b13c63052887e0c0c2e9d5c7e` passed both first-attempt cycles with the Codex conversation AI authoring 29 proposals from presented images. A prepared measurement refused after a 0.13303 m native-force displacement; the AI observed the changed image, corrected placement, measured and reset. Post-trial native/SQLite scoring confirmed both cycles and exactly two saved measurements. Native guards remained unchanged; 29 focused checks passed. See `results/agent-visual-bench-20261011/report.md` and its structured evidence. Adopt the external visual-agent handoff as an isolated experimental interface, not an unattended policy service.

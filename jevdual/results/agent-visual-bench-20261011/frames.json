@@ -1,0 +1,281 @@
+[
+  {
+    "challenge_id": "challenge-e4339df93bb44cf9827aaa89ca5e2d0c",
+    "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+    "generation": 0,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000000-0fcba1683fc2ca06.png"
+  },
+  {
+    "challenge_id": "challenge-0a7f171f17d0440aba49e0b394ca6981",
+    "image_sha256": "cb4221e600bbb24aec549f49924fc9224876a1ad8d04159fe0cc3798658d8357",
+    "generation": 1,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000001-bad2078e152acd7a.png"
+  },
+  {
+    "challenge_id": "challenge-b946ac2ff9d74070b5f3efbed673b58d",
+    "image_sha256": "8d5e38c9bbef1250112550bdea0dee41bd573dd7cb2d42278be9eeda5590b159",
+    "generation": 2,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000002-332dd2be629a31e3.png"
+  },
+  {
+    "challenge_id": "challenge-37730e6485b945b4a30e5ae544e5a91d",
+    "image_sha256": "8d5e38c9bbef1250112550bdea0dee41bd573dd7cb2d42278be9eeda5590b159",
+    "generation": 2,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "measured",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000002-d77f175856925cf4.png"
+  },
+  {
+    "challenge_id": "challenge-fe85036078c24be39d7e21b9ad462286",
+    "image_sha256": "8d5e38c9bbef1250112550bdea0dee41bd573dd7cb2d42278be9eeda5590b159",
+    "generation": 2,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000002-0d491dd460366578.png"
+  },
+  {
+    "challenge_id": "challenge-859f365ee5294dac81a68cf58fb8d5be",
+    "image_sha256": "09026909d3489122b3f84704a9072495ec2288b7ccd0e2d1f6029521293335ea",
+    "generation": 3,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000003-d2dcace5d1bb6a76.png"
+  },
+  {
+    "challenge_id": "challenge-0e224d3ea5de42699bc1abc4e84d87b5",
+    "image_sha256": "c62187cd908d71592bdd7193b83ec80666e6f350e90968204d2d87a7169d12dc",
+    "generation": 4,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000004-5ed6501f87fe26b3.png"
+  },
+  {
+    "challenge_id": "challenge-98c4443f685c43bca0555096bbe64d57",
+    "image_sha256": "e6f35d68a39eccb69ef08ffb81de2aed231bbe097a530bc31bb48ffda662a3f1",
+    "generation": 5,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000005-b554100267ea777c.png"
+  },
+  {
+    "challenge_id": "challenge-3abc7266237042b68e06877018787ccd",
+    "image_sha256": "6c4785ad11fbf959867ca24381e9caf3a051c777b86c8e5357697aa2cdea5f67",
+    "generation": 6,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000006-3a09bfeb46845bbd.png"
+  },
+  {
+    "challenge_id": "challenge-d5633b65146f4065bb710dda3ee037dd",
+    "image_sha256": "6a03bda6c21d45a6c0de319fa273262335ebcf36de34e1f4a41bee1604479d49",
+    "generation": 7,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000007-2709c62d9ef39660.png"
+  },
+  {
+    "challenge_id": "challenge-ccab1d2dc0e345ee9071c7fbdcb72f95",
+    "image_sha256": "fa76012ace8a01cde6bb10e4742798a428ccbd9a868bf7bc97a9447e0cfc866e",
+    "generation": 8,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000008-61b275312f5615cc.png"
+  },
+  {
+    "challenge_id": "challenge-7851634f3566401f954ebae1f6e29e88",
+    "image_sha256": "cda2378ead3e165186825aa560540c8495d01f07acff067406513a16ee92db65",
+    "generation": 9,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000009-9b921e5067762a87.png"
+  },
+  {
+    "challenge_id": "challenge-93a8a4f678e947648e4fa8062ce4203b",
+    "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+    "generation": 10,
+    "job_id": "ai-ordinary",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000010-ea9e6cc3a19e8a18.png"
+  },
+  {
+    "challenge_id": "challenge-34408876d0a34de0a98301cb7f2ef02a",
+    "image_sha256": "c71216bf1c74a28b5e7475bf9af5afe4a22d62ee1aeb31c3ecf8dc62dbb591a8",
+    "generation": 10,
+    "job_id": null,
+    "tool": "view_image",
+    "phase": "idle",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000010-38e0b9de817f645c.png"
+  },
+  {
+    "challenge_id": "challenge-4af4aec17ab440c48a0852b7041b60d0",
+    "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+    "generation": 10,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000010-5295830fbdea7b61.png"
+  },
+  {
+    "challenge_id": "challenge-1ce07c2c0e8b4af0897468a2d7aabfb0",
+    "image_sha256": "0d42c93fef97b6bf1ded19965b65518e43b873916c9e8bc1d8300debf130f9fa",
+    "generation": 11,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000011-48260e325fc6e5c5.png"
+  },
+  {
+    "challenge_id": "challenge-c2d34501db714daa970aa0cfa132270a",
+    "image_sha256": "126a049946a82dda474c3ec72f2da13b50e2a5e5d1686cc4c408251f75e06d9d",
+    "generation": 12,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000012-a53794cdf5f55ea3.png"
+  },
+  {
+    "challenge_id": "challenge-0a4a355152664f8690b4e6cc5c4d03c4",
+    "image_sha256": "ba1d19598b817acd57a746150d30d4755b48a80287fd362d3a24ce6a0e244d45",
+    "generation": 13,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000013-a53794cdf5f55ea3.png"
+  },
+  {
+    "challenge_id": "challenge-48c16468357b44d4a3565bf9e8511e1e",
+    "image_sha256": "6fc50ac16b71d7a5f11e88c85c3fa2ef13df8374291e764e5e3c7213a38f8c25",
+    "generation": 14,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000014-c9d65316327fa7eb.png"
+  },
+  {
+    "challenge_id": "challenge-5a89495500094ccda58a991a9a27f494",
+    "image_sha256": "b9a5cd587ca0afbcf85dbb7708030f9914fc7be82d9f29317563c4a7cd204e2f",
+    "generation": 15,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000015-eb4e1af60ee1ae89.png"
+  },
+  {
+    "challenge_id": "challenge-e8114cfa482c4499ada30283ad6d51aa",
+    "image_sha256": "b9a5cd587ca0afbcf85dbb7708030f9914fc7be82d9f29317563c4a7cd204e2f",
+    "generation": 15,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "measured",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000015-bb47387aad541841.png"
+  },
+  {
+    "challenge_id": "challenge-a5477a6495ee49c991b30693bdd152ab",
+    "image_sha256": "b9a5cd587ca0afbcf85dbb7708030f9914fc7be82d9f29317563c4a7cd204e2f",
+    "generation": 15,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000015-56e663affd1e3522.png"
+  },
+  {
+    "challenge_id": "challenge-8132b582443e4392b135133800f6b3c9",
+    "image_sha256": "9c6a5951995c9196fd2cb636f7cf6d44888a91202dc61bcf74b3097a0923830c",
+    "generation": 16,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000016-34800b2a5f2c8244.png"
+  },
+  {
+    "challenge_id": "challenge-98023517d0234bca96066852a972469d",
+    "image_sha256": "184c403f4a7eeccbd82ba7247128604e475e92229f2db1d6c96595d7fbdd0941",
+    "generation": 17,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000017-83ca05ae26421883.png"
+  },
+  {
+    "challenge_id": "challenge-4d9640297ce040beac29488d78a43013",
+    "image_sha256": "3ef275d26144f92492c90735f8bebdd5cfdcc989da6423ae83715a010873d5f8",
+    "generation": 18,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000018-4d3178b6b72ca439.png"
+  },
+  {
+    "challenge_id": "challenge-20c6400e862f450684f04802b6e8cb11",
+    "image_sha256": "bf70dba8e16f7cc3324ef2e5e39d2d5408b83df9f0c03f2f446a57659cb8255a",
+    "generation": 19,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000019-bd8d7b56f8897648.png"
+  },
+  {
+    "challenge_id": "challenge-6ecc3179fac541d48f6c295b638a8a16",
+    "image_sha256": "6f0d26dda31720cc658216254a63289a4e7804cb2339d2a7489e0365be6f3114",
+    "generation": 20,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000020-125013457cb8308a.png"
+  },
+  {
+    "challenge_id": "challenge-e7b2a397392a416c9bedd0dd02496dd1",
+    "image_sha256": "1505aeadca7409c872c4e3edf9a58508ad3c89e3f5911644449d5f542117d248",
+    "generation": 21,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000021-899159eed0d2cf4a.png"
+  },
+  {
+    "challenge_id": "challenge-b0dca65c9e7a434a8dad5ea5fd803784",
+    "image_sha256": "94f2de9164d14475774f68d3f5860562d35d3bd09ff9f26349f1d6a4008db583",
+    "generation": 22,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000022-a1d8394031a01bc5.png"
+  },
+  {
+    "challenge_id": "challenge-9292c66d94af4c4b93b74f186a0262c3",
+    "image_sha256": "a834aeb17495159a215c0d6a51becde2e50afd38f47316aaa1a8c414d4af0bd4",
+    "generation": 23,
+    "job_id": "ai-disturbed",
+    "tool": "view_image",
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000023-5b88ee5f2a264bb0.png"
+  },
+  {
+    "challenge_id": "challenge-f8ee1d62647e4bb3aa8b348d9b7f68ec",
+    "image_sha256": "9f67472a3681ba01ab6c8ee8ce7ea2a34bd816ba9c67c1ab0f36a01cc12ce597",
+    "generation": 23,
+    "job_id": null,
+    "tool": "view_image",
+    "phase": "idle",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim7-ai-20261011-v1/bench/images/000023-38e0b9de817f645c.png"
+  }
+]

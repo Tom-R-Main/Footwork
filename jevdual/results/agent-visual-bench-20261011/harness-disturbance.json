@@ -1,0 +1,16 @@
+{
+  "prepared_proposal_id": "proposal-28b240a0c5e944c8b2ab0e793835d374",
+  "prior_challenge_id": "challenge-c2d34501db714daa970aa0cfa132270a",
+  "intervention": {
+    "bench_id": "3e025aca6ea240f29003b7c6fdc91a39",
+    "force_x_n": -1.5,
+    "forced_steps": 80,
+    "generation": 13,
+    "job_id": "ai-disturbed",
+    "kind": "diagnostic_external_force",
+    "native_steps": 580,
+    "native_time_s": 32.57599999999385,
+    "operation_id": "sim7-harness-force",
+    "state_sha256": "1816ee306f82952178fe88ac2857976ccd1594d917628fad36a438f79183280b"
+  }
+}
