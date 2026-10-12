@@ -17,3 +17,7 @@ Guardrails: commit predictions before tests, freeze all measured source before m
 Decision rule: report restart recovery verified only if all four product interruptions and the independent scorer pass. If any boundary fails, retain its evidence and report the exact mismatch without promoting unaffected checks to a full pass. Hand off a paused connected product only after successful scoring; otherwise return to the preserved product.
 
 Scope: two actual-model jobs, graceful owned process restarts, same-Mac loopback simulation. Abrupt power loss and torn native writes remain untested.
+
+## Amendment · 2026-10-12 13:58
+
+Read-only review found that a fast body reboot can fall between health polls: unchanged body identity with a new epoch currently leaves the host running and permits lease refresh around an old model decision. Add a real-socket reproduction before repair. A changed known boot epoch must invalidate the model decision and pause before a new command admission, including when the lease-acquisition read sees it before the health worker does. Pending historical commands must remain recoverable across that epoch change without lease rotation or replay. The live body-planning restart will also challenge the fast path; retained body identity and motion state remain intact.
