@@ -20,6 +20,9 @@ def simulated_identity_timeout_api(monkeypatch):
     monkeypatch.setattr(
         ApplicationServices, "AXUIElementCreateApplication", lambda pid: SimpleNamespace(pid=pid)
     )
+    monkeypatch.setattr(
+        ApplicationServices, "AXUIElementCreateSystemWide", lambda: SimpleNamespace(systemwide=True)
+    )
     monkeypatch.setattr(ApplicationServices, "AXUIElementSetMessagingTimeout", lambda *args: 0)
 
 
@@ -707,7 +710,7 @@ async def test_scope_sets_process_timeout_and_rejects_late_document_identity(mon
     monkeypatch.setattr(
         ApplicationServices,
         "AXUIElementSetMessagingTimeout",
-        lambda app, timeout: timeouts.append((app.pid, timeout)) or 0,
+        lambda app, timeout: timeouts.append((app.systemwide, timeout)) or 0,
     )
 
     class Driver:
@@ -730,7 +733,7 @@ async def test_scope_sets_process_timeout_and_rejects_late_document_identity(mon
         await module.scope_for(42, "http://127.0.0.1:1", document)
     assert failure.value.reason == "identity_deadline"
     assert failure.value.exit_code == 4
-    assert timeouts == [(43, 1.0)]
+    assert timeouts == [(True, 1.0), (True, 0)]
 
 
 def test_cleanup_snapshots_actual_file_bytes_before_and_after_close(monkeypatch, tmp_path):
@@ -821,3 +824,59 @@ def test_second_sigint_is_ignored_only_during_cleanup_and_handler_restored(
         module.main()
     assert observed == [signal.SIG_IGN]
     assert signal.getsignal(signal.SIGINT) == previous
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("outcome", ["success", "identity_failure", "shutdown_failure", "setter_failure"])
+async def test_identity_uses_global_ax_reference_and_resets_default_even_on_shutdown_failure(
+    monkeypatch, tmp_path, outcome
+):
+    import ApplicationServices
+    import cua_driver
+    from jevdual import ax
+
+    module = fixture_module()
+    global_reference = object()
+    calls = []
+    document = tmp_path / "owned.txt"
+    monkeypatch.setattr(ApplicationServices, "AXUIElementCreateSystemWide", lambda: global_reference)
+
+    def timeout(element, seconds):
+        assert element is global_reference  # An application-element timeout would not cover new references.
+        calls.append(seconds)
+        return -25202 if outcome == "setter_failure" and seconds else 0
+
+    monkeypatch.setattr(ApplicationServices, "AXUIElementSetMessagingTimeout", timeout)
+
+    class Driver:
+        async def list_apps(self, _):
+            return SimpleNamespace(apps=[SimpleNamespace(name="TextEdit", pid=43)])
+
+        async def list_windows(self, args):
+            return SimpleNamespace(windows=[SimpleNamespace(window_id=7)])
+
+        async def shutdown(self):
+            if outcome == "shutdown_failure":
+                raise RuntimeError("SDK shutdown refused")
+
+    def path(*args):
+        if outcome == "identity_failure":
+            raise ax.AXError("permission_denied", "AX lookup refused")
+        return str(document)
+
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(ax, "document_path", path)
+    if outcome == "success":
+        result = await module.scope_for(42, "http://127.0.0.1:1", document)
+        assert result["destination"]["document"] == str(document)
+    else:
+        expected = (
+            ax.AXError
+            if outcome == "identity_failure"
+            else RuntimeError
+            if outcome == "shutdown_failure"
+            else module.FixtureFailure
+        )
+        with pytest.raises(expected):
+            await module.scope_for(42, "http://127.0.0.1:1", document)
+    assert calls == [1.0, 0]

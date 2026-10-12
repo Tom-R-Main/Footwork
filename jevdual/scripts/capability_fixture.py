@@ -239,10 +239,12 @@ async def textedit_pid() -> int | None:
 
 
 async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> dict:
+    from ApplicationServices import AXUIElementCreateSystemWide, AXUIElementSetMessagingTimeout
     from cua_driver import CuaDriver, ListAppsInput, ListWindowsInput
     from jevdual import ax
 
     driver = CuaDriver.create()
+    global_ax = AXUIElementCreateSystemWide()
     try:
         deadline = time.monotonic() + IDENTITY_SECONDS
         while time.monotonic() < deadline:
@@ -272,17 +274,14 @@ async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> 
                 else []
             )
             matching = []
-            if textedit:
-                from ApplicationServices import AXUIElementCreateApplication, AXUIElementSetMessagingTimeout
-
-                app = AXUIElementCreateApplication(textedit)
             for window in native_windows:
-                # The synchronous product lookup inherits this process timeout;
-                # recheck the phase budget for each window and refuse late results.
+                # System-wide element timeout sets this helper process's global AX
+                # default, including references created inside the product lookup.
+                # Recheck the phase budget for each window and refuse late results.
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     raise FixtureFailure("identity", "identity_deadline", 4)
-                error = AXUIElementSetMessagingTimeout(app, min(1.0, remaining))
+                error = AXUIElementSetMessagingTimeout(global_ax, min(1.0, remaining))
                 if error:
                     raise FixtureFailure("identity", f"ax_timeout_refused:{error}", 4)
                 try:
@@ -309,7 +308,14 @@ async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> 
             await asyncio.sleep(0.25)
         raise FixtureFailure("identity", "windows_not_unique", 4)
     finally:
-        await shutdown_driver(driver, "identity", time.monotonic() + 2)
+        try:
+            await shutdown_driver(driver, "identity", time.monotonic() + 2)
+        finally:
+            # This standalone helper owns the process default. Zero resets the
+            # global default; it does not restore an unknown previous timeout.
+            error = AXUIElementSetMessagingTimeout(global_ax, 0)
+            if error:
+                raise FixtureFailure("identity", f"ax_timeout_reset_refused:{error}", 4)
 
 
 def document_snapshot(document: Path) -> dict:
