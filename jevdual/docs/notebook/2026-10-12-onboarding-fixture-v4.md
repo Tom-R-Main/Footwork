@@ -50,3 +50,17 @@ Observed: user approves the actual Terminal Accessibility grant. Codex clicks th
 Changes: public-command transport truncation recurs on a long diagnostic readback; unexecuted input is discarded by closing only the owned shell. Short octal commands and explicit shell variables now preserve exact paths and arguments, which are visibly read back before the native trial. Plain special-character input was also refused without launching the intended hold; a short octal hold succeeds. These are operator transport events, not permission or product failures.
 Next: retain trial result without repeating an uncertain effect, signal the exact owned fixture once, inspect automatic cleanup and absence, then export raw evidence for independent Claude review. UF1/UF2/UF3 remain open.
 Refs: guest permission-grant.txt; guest terminal-restarted.txt; guest doctor-after-exit.txt; guest footwork/output/doctor-after.json; guest footwork/output/fixture-v1/fixture-status.json; guest config-exit.txt; U3-packet-v4-permission-journey.md
+
+## UFU6 · update · 2026-10-12 14:55
+Resolves: UF1 = failed; UF3 = failed
+Observed: installed native-v1 exits0 and reports passed with its actual installed worker observed. Exact fixture PID52621 receives one SIGINT. The document disappears visually without an operator close; cleanup nevertheless records ax_attribute_refused:AXRole:-25202 and exits6. Owned browser52622 and listener cleanup are confirmed. File snapshots change from15to24bytes. Thus the required automatic confirmation gate fails; original frozen run-v1 remains failed and no new grant or native effect is retried.
+Inferred: after successful close, a previously observed AX window or child becomes invalid while cleanup is inspecting its sheet tree. Invalid-element evidence must trigger bounded fresh observation, never substitute for absence.
+Next: export immutable raw-v1 evidence; reproduce the close-versus-read race before correcting it, obtain Claude review, and qualify a separate frozen repair run. UF2 awaits final source/receipt review.
+Refs: guest native-exit.txt; guest native-console.txt; guest footwork/output/fixture-v1/cleanup.json; guest fixture-exit.txt; guest cleanup-signal.txt; CUA document disappearance
+
+## UF4 · prediction · 2026-10-12 14:55
+Hypothesis: a narrow bounded retry of invalid AX element errors after AXPress permits fresh same-application window enumeration to confirm actual disappearance, without allowing read errors or changed identity to certify cleanup.
+Test: reproduce the observed stale AXRole child/window race against21599c6; then cover a fresh readable absent window, unreadable AXWindows, persistent invalid element, renamed/reused identity and unrelated windows. Correct only fixture/helper tests, review with Claude and run a separately frozen fixture/native/automatic-cleanup trial on the same granted guest. Retain failed U3v1; a post-grant repair trial is not a new first-use pass.
+Predicts: stale reads cause no extra action; confirmation requires a subsequent fresh readable AXWindows snapshot proving the original identity absent. Persistent errors remain bounded unknown/error, foreign identity refuses, and real repaired fixture closes automatically.
+Against: an AX error alone confirms closure, a stale element is pressed again, an unrelated window is closed, retry exceeds the cleanup deadline, or live cleanup still lacks confirmation.
+Refs: UFU6; scripts/capability_fixture.py close_owned_document/discard_button; frozen21599c6
