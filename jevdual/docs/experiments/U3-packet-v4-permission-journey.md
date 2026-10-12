@@ -29,3 +29,9 @@ Accept only this scoped permission-state journey when every required gate and in
 ## Evidence location
 
 Preparation: results/onboarding-fixture-v4-preparation-20261012. Guest run: results/u3-packet-v4-permission-20261012-v1. Raw archives remain under ignored output. Notebook: docs/notebook/2026-10-12-onboarding-fixture-v4.md.
+
+## Result
+
+2026-10-12: original U3v1 on packet eef36325/source21599c6 failed automatic document confirmation; its native and other cleanup gates passed. The failure and raw receipts remain in `results/u3-packet-v4-permission-20261012-v1`. The separately frozen repair packet205577ee/source445a348 retained the unchanged wheel. UF5 was interrupted by a VM stop and an uncaptured post-boot grant; it remains inconclusive.
+
+Final UF6/U3v3 passed every preregistered scoped gate on the repaired artifact. A new supported Terminal-only reset supplied a hashed denied baseline, followed by the approved agent click and human authentication, observed OFF-to-ON transition, actual Terminal relaunch, installed native effect/replay/report and automatic exact-resource cleanup. Claude independently reviewed raw evidence and approved the result, reporting Opus5.5. See `results/u3-packet-v4-permission-20261012-v3` for the gate ledger, sanitized receipts, artifact digests, review records and limits. This is permission reset then captured grant on a previously provisioned guest; saved-file persistence, pixel routes and other hosts remain unqualified.

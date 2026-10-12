@@ -3,3 +3,5 @@ Frozen repair packet205577ee/source445a348 corrects the observed stale AX elemen
 The frozen old source21599c6 fails five of six reproduction cases; corrected55fixture cases and81combined helper/onboarding/packaging checks pass. Ruff check/format pass. Two builds match14members/312916bytes. Claude verifies exact packet/helper blob and approves the full new permission-state run in1791832201147781000.
 
 The packet is pristine-verified and cold-installed into a new guest root footwork-u4-repair (seven stages/115packages). Supported Terminal-only reset and a denied doctor/refusal are observed; corrected same-command capture records exits1/2 and no resources. Baseline hashes are retained before the actual grant. Native/cleanup qualification remains pending. This existing SIP-enabled macOS26.6.2 guest is not a new cold OS. U3v1 remains failed in results/u3-packet-v4-permission-20261012-v1.
+
+Subsequent runtime result: final U3v3 passed its scoped permission-state and automatic-cleanup gates, with independent Claude review. See `../u3-packet-v4-permission-20261012-v3/report.md`; the preparation state above remains its historical record.

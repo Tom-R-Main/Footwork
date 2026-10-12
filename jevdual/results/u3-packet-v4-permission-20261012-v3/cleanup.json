@@ -1,0 +1,25 @@
+{
+  "document": {
+    "status": "confirmed",
+    "reason": "window_disappeared",
+    "pid": 457,
+    "file_before": {
+      "status": "observed",
+      "size_bytes": 15,
+      "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+    },
+    "file_after": {
+      "status": "observed",
+      "size_bytes": 24,
+      "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+    }
+  },
+  "browser": {
+    "status": "confirmed",
+    "pid": 1356,
+    "returncode": 0
+  },
+  "listener": {
+    "status": "confirmed"
+  }
+}

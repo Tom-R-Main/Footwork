@@ -112,3 +112,28 @@ Observed: separate supported reset succeeds19:31:47Z; installed doctor1/refusal2
 Changes: grant actors are root click plus human authentication; the session belongs to admin group. Earlier interrupted grant remains unavailable, not substituted into this transition. GUI menu attempts are operator transport events; no fixture or native effect has started.
 Next: installed strict doctor after actual Terminal relaunch, one native/replay/report trial, automatic cleanup and Claude raw-receipt review. UF6 remains open.
 Refs: guest hashes-final.txt; guest grant-v3.txt; CUA OFF/password dialog/ON/Terminal absence observations; UF6
+
+## UFU12 · update · 2026-10-12 15:59
+Resolves: UF4 = held
+Observed: repaired installed native trial exits0 with exact oracle, same-token replay, one durable final/applied/sent row and accepted completion. One SIGINT to owned fixture1355 confirms exact document window disappearance, browser1356 and listener cleanup, fixtureexit0. Independent fixture/browser/worker2248 absence and HTTP refusal pass. All eight helper hashes match the frozen manifest. Five failing stale-read reproduction cases against21599c6 and55corrected helper cases establish the boundary distinction; live repaired cleanup supplies the missing confirmation. No operator document close or repeated native effect occurs.
+Inferred: the observed stale-observation mechanism is addressed within the tested boundary; the live pass does not establish every possible AX race.
+Next: retain failed UF1/UF3 and interrupted UF5; close final UF6 with independent raw review.
+Refs: results/u3-packet-v4-permission-20261012-v3; output/u3-export-v3; source445a348; UFU7
+
+## UFU13 · update · 2026-10-12 15:59
+Resolves: UF2 = held
+Observed: frozen browser startup reports ready for owned1356 and private CDP49153 before exact fixture scope/hold. Boundary checks cover delayed readiness, startup exit/timeout, unique versus ambiguous identity and cleanup. Both original and repaired live runs reach the owned browser/native path. Claude independently approves final raw receipts; readiness never substitutes for identity.
+Next: retain normal live readiness evidence separately from simulated startup failure coverage; no cold Chrome launch claim.
+Refs: results/u3-packet-v4-permission-20261012-v3/startup.json; tests/test_capability_fixture.py; UFU3; Claude1791835064888832000
+
+## UFU14 · update · 2026-10-12 15:59
+Resolves: UF6 = held
+Observed: all required gates pass on exact205577ee/source445a348. Eight final pre-grant baseline hashes match; actual OFF/password-dialog/ON and Terminal shutdown/relaunch are observed. Claude independently checks raw94member archive and two-member supplement, read-only journal, installed origins and all eight unchanged helpers; final1791835064888832000 discharges worker absence and approves scoped qualification. Reviewer reports modelclaude-opus-5-5. Disk persistence remains not_checked and Screen Recording remains not_granted.
+Next: close this package with its exact host/OS limits; recommend external agent installation qualification next.
+Refs: results/u3-packet-v4-permission-20261012-v3; Claude1791834939955400000; Claude1791835064888832000; UFU10
+
+## UFS1 · summary · 2026-10-12 15:59
+Established: fixes built and reviewed; repaired frozen packet exercised through supported permission reset, captured approved grant with human authentication, actual Terminal restart, installed native/replay/report and automatic owned cleanup on one SIP-enabled macOS26.6.2 guest. Raw export and independent Opus5.5 reviewer-reported review pass. UF1/UF3 remain failed, UF5 inconclusive, UF2/UF4/UF6 held; no earlier result is regraded.
+Uncertain: cold OS/first Chrome launch, other responsible hosts or OS versions, MDM, pixel capture and saved-file persistence are not qualified. Actual VM stop cause and interrupted grant actor remain unavailable.
+Decision: accept this scoped permission-state journey. Next recommended package is a real external-agent installation and first bounded task on the candidate; keep broader release claims behind that evidence.
+Refs: results/u3-packet-v4-permission-20261012-v3/report.md; results/u3-packet-v4-permission-20261012-v1; source445a348

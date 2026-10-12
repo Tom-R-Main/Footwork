@@ -1,0 +1,17 @@
+{
+  "reset-v3.txt": "Mon Oct 12 19:31:47 UTC 2026\nSuccessfully reset Accessibility approval status for com.apple.Terminal\n0",
+  "doctor-denied-v3-exit.txt": "1",
+  "denied-fixture-v3-exit.txt": "2",
+  "no-resources-v3.txt": "0",
+  "grant-v3.txt": "Codex click after19:33:55Z; human authenticated before19:35:16Z; OFF->ON captured\nUser approved exact Terminal grant; human entered guest authentication; admin session",
+  "terminal-restarted-v3.txt": "Mon Oct 12 19:40:10 UTC 2026",
+  "doctor-after-v3-exit.txt": "0",
+  "config-exit-v3.txt": "0",
+  "native-exit-v3.txt": "0",
+  "cleanup-signal-v3.txt": "Mon Oct 12 19:52:38 UTC 2026\n0",
+  "fixture-exit-v3.txt": "0",
+  "absence-v3.txt": "PID  PPID COMM\n1\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to 127.0.0.1 port 49152 after 1 ms: Couldn't connect to server\n7",
+  "worker-absence-v3.txt": "PID  PPID COMM\n1",
+  "ui_evidence": "CUA transcript observes actual OFF, approved one switch click, password dialog completed by human, ON, Terminal quit and relaunch, native receipt, automatic document disappearance.",
+  "grant_time_precision": "Clock anchors bracket UI events; do not infer exact-second action timestamps."
+}
