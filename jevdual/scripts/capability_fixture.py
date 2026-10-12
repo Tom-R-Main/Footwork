@@ -1,7 +1,7 @@
-"""Prepare and hold run-owned browser/TextEdit fixtures for capability trials.
+"""Hold run-owned browser/TextEdit fixtures; Ctrl-C performs bounded owned cleanup.
 
-Run in a terminal; Ctrl-C closes only this process's browser and named fixture
-document. Scope and fixture files remain in the explicitly supplied directory.
+Accessibility must already be granted. Closing the exact document uses AX only;
+this helper never requests an Automation or Screen Recording grant.
 """
 
 from __future__ import annotations
@@ -14,11 +14,22 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
+from urllib.request import ProxyHandler, build_opener
 
 VALUE = "17.25 USD"
 PREFIX = "Invoice report\n"
 HTML = f"<!doctype html><title>Footwork invoice fixture</title><h1>Invoice</h1><p>Invoice total: {VALUE}</p>"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+BROWSER_STARTUP_SECONDS = 180
+IDENTITY_SECONDS = 30
+CLEANUP_SECONDS = 10
+
+
+class FixtureFailure(Exception):
+    def __init__(self, phase: str, reason: str, exit_code: int):
+        super().__init__(reason)
+        self.phase, self.reason, self.exit_code = phase, reason, exit_code
 
 
 class Page(BaseHTTPRequestHandler):
@@ -34,54 +45,304 @@ class Page(BaseHTTPRequestHandler):
         pass
 
 
-def script(source: str, *args: str) -> str:
-    return subprocess.run(
-        ["osascript", "-e", source, *args], check=True, capture_output=True, text=True, timeout=10
-    ).stdout.strip()
+def normalized_document(value) -> str | None:
+    if not value:
+        return None
+    parts = urlsplit(str(value))
+    if parts.scheme != "file" or parts.netloc not in ("", "localhost") or parts.query or parts.fragment:
+        return None
+    return str(Path(unquote(parts.path)).resolve())
 
 
-async def scope_for(chrome_pid: int, url: str, document: Path) -> dict:
+def ax_deadline(element, deadline: float | None):
+    from ApplicationServices import AXUIElementSetMessagingTimeout
+
+    if deadline is None:
+        return
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise FixtureFailure("document_cleanup", "cleanup_deadline", 6)
+    error = AXUIElementSetMessagingTimeout(element, min(1.0, remaining))
+    if error:
+        raise FixtureFailure("document_cleanup", f"ax_timeout_refused:{error}", 6)
+
+
+def ax_attribute(element, name: str, *, optional: bool = False, deadline: float | None = None):
+    from ApplicationServices import AXUIElementCopyAttributeValue
+
+    ax_deadline(element, deadline)
+    error, value = AXUIElementCopyAttributeValue(element, name, None)
+    # AXErrorAttributeUnsupported / AXErrorNoValue are absence only for optional attributes.
+    if error in (-25205, -25212) and optional:
+        return None
+    if error:
+        raise FixtureFailure("document_cleanup", f"ax_attribute_refused:{name}:{error}", 6)
+    return value
+
+
+def owned_window(app, document: Path, deadline: float | None = None):
+    expected = str(document.resolve())
+    matches = [
+        window
+        for window in ax_attribute(app, "AXWindows", deadline=deadline) or ()
+        if normalized_document(ax_attribute(window, "AXDocument", optional=True, deadline=deadline))
+        == expected
+    ]
+    if len(matches) > 1:
+        raise FixtureFailure("document_cleanup", "document_ambiguous", 6)
+    return matches[0] if matches else None
+
+
+def press(element, deadline: float | None = None):
+    from ApplicationServices import AXUIElementPerformAction
+
+    ax_deadline(element, deadline)
+    error = AXUIElementPerformAction(element, "AXPress")
+    if error:
+        raise FixtureFailure("document_cleanup", f"ax_press_refused:{error}", 6)
+
+
+def discard_button(window, deadline: float | None = None):
+    sheets = list(ax_attribute(window, "AXSheets", optional=True, deadline=deadline) or ())
+    # Some TextEdit versions expose attached sheets through AXChildren instead.
+    if not sheets:
+        sheets = [
+            child
+            for child in ax_attribute(window, "AXChildren", optional=True, deadline=deadline) or ()
+            if ax_attribute(child, "AXRole", optional=True, deadline=deadline) == "AXSheet"
+        ]
+    if not sheets:
+        return None
+    if len(sheets) != 1 or ax_attribute(sheets[0], "AXRole", deadline=deadline) != "AXSheet":
+        raise FixtureFailure("document_cleanup", "sheet_ambiguous", 6)
+    sheet = sheets[0]
+    # The sheet must be attached to this exact window, never app-global.
+    if ax_attribute(sheet, "AXParent", deadline=deadline) != window:
+        raise FixtureFailure("document_cleanup", "sheet_not_attached", 6)
+    stack, seen, matches, titles = [sheet], 0, [], set()
+    while stack:
+        node = stack.pop()
+        seen += 1
+        if seen > 400:
+            raise FixtureFailure("document_cleanup", "sheet_tree_limit", 6)
+        if ax_attribute(node, "AXRole", optional=True, deadline=deadline) == "AXButton":
+            title = str(ax_attribute(node, "AXTitle", optional=True, deadline=deadline) or "")
+            titles.add(title)
+            if title in ("Don't Save", "Don’t Save", "Delete"):
+                matches.append(node)
+        stack.extend(ax_attribute(node, "AXChildren", optional=True, deadline=deadline) or ())
+    if not {"Save", "Cancel"} <= titles:
+        raise FixtureFailure("document_cleanup", "sheet_not_save_prompt", 6)
+    if len(matches) != 1:
+        raise FixtureFailure("document_cleanup", "discard_button_ambiguous", 6)
+    return sheet, matches[0]
+
+
+def close_owned_document(pid: int, document: Path) -> dict:
+    from ApplicationServices import AXUIElementCreateApplication
+
+    try:
+        deadline = time.monotonic() + CLEANUP_SECONDS
+        app = AXUIElementCreateApplication(pid)
+        window = owned_window(app, document, deadline)
+        if window is None:
+            return {"status": "unknown", "reason": "document_not_observed", "pid": pid}
+        close = ax_attribute(window, "AXCloseButton", optional=True, deadline=deadline)
+        if close is None:
+            raise FixtureFailure("document_cleanup", "close_button_missing", 6)
+        if owned_window(app, document, deadline) != window:
+            raise FixtureFailure("document_cleanup", "document_identity_changed", 6)
+        if ax_attribute(window, "AXCloseButton", deadline=deadline) != close:
+            raise FixtureFailure("document_cleanup", "close_button_changed", 6)
+        press(close, deadline)
+        discarded = False
+        while time.monotonic() < deadline:
+            current = owned_window(app, document, deadline)
+            if current is None:
+                # Do not mistake a renamed/reused window for observed disappearance.
+                if window in (ax_attribute(app, "AXWindows", deadline=deadline) or ()):
+                    raise FixtureFailure("document_cleanup", "document_identity_changed", 6)
+                return {"status": "confirmed", "reason": "window_disappeared", "pid": pid}
+            if current != window:
+                raise FixtureFailure("document_cleanup", "document_identity_changed", 6)
+            discard = discard_button(window, deadline)
+            if discard is not None and not discarded:
+                if (
+                    owned_window(app, document, deadline) != window
+                    or discard_button(window, deadline) != discard
+                ):
+                    raise FixtureFailure("document_cleanup", "sheet_identity_changed", 6)
+                press(discard[1], deadline)
+                discarded = True
+            time.sleep(0.1)
+        return {"status": "unknown", "reason": "window_still_present", "pid": pid}
+    except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
+        return {"status": "error", "reason": getattr(exc, "reason", type(exc).__name__), "pid": pid}
+
+
+def wait_browser_ready(browser, profile: Path) -> dict:
+    deadline = time.monotonic() + BROWSER_STARTUP_SECONDS
+    opener = build_opener(ProxyHandler({}))
+    while time.monotonic() < deadline:
+        if browser.poll() is not None:
+            raise FixtureFailure("browser_startup", "browser_exited", 3)
+        try:
+            lines = (profile / "DevToolsActivePort").read_text().splitlines()
+            port = int(lines[0])
+            if not 1 <= port <= 65535 or len(lines) != 2 or not lines[1].startswith("/devtools/browser/"):
+                raise ValueError("invalid private-profile endpoint")
+            with opener.open(f"http://127.0.0.1:{port}/json/version", timeout=1) as response:
+                version = json.loads(response.read(65536))
+            if version.get("webSocketDebuggerUrl") != f"ws://127.0.0.1:{port}{lines[1]}":
+                raise ValueError("endpoint mismatch")
+            if browser.poll() is not None:
+                raise FixtureFailure("browser_startup", "browser_exited", 3)
+            return {"status": "ready", "pid": browser.pid, "port": port}
+        except (OSError, ValueError, IndexError):
+            time.sleep(0.25)
+    raise FixtureFailure("browser_startup", "startup_timeout", 3)
+
+
+async def bounded_call(awaitable, deadline: float, phase: str):
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        awaitable.close()
+        raise FixtureFailure(phase, "sdk_deadline", 4 if phase == "identity" else 6)
+    try:
+        return await asyncio.wait_for(awaitable, timeout=remaining)
+    except TimeoutError as exc:
+        raise FixtureFailure(phase, "sdk_timeout", 4 if phase == "identity" else 6) from exc
+
+
+async def shutdown_driver(driver, phase: str, deadline: float):
+    await bounded_call(driver.shutdown(), deadline, phase)
+
+
+async def textedit_pid() -> int | None:
+    from cua_driver import CuaDriver, ListAppsInput
+
+    driver = CuaDriver.create()
+    deadline = time.monotonic() + 3
+    try:
+        apps = (await bounded_call(driver.list_apps(ListAppsInput()), deadline - 1, "document_cleanup")).apps
+        pids = {a.pid for a in apps if a.name == "TextEdit" and a.pid}
+        if len(pids) > 1:
+            raise FixtureFailure("document_cleanup", "textedit_process_ambiguous", 6)
+        return next(iter(pids), None)
+    finally:
+        await shutdown_driver(driver, "document_cleanup", deadline)
+
+
+async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> dict:
     from cua_driver import CuaDriver, ListAppsInput, ListWindowsInput
     from jevdual import ax
 
     driver = CuaDriver.create()
     try:
-        deadline = time.monotonic() + 30
+        deadline = time.monotonic() + IDENTITY_SECONDS
         while time.monotonic() < deadline:
-            apps = (await driver.list_apps(ListAppsInput())).apps
-            textedit = next((a for a in apps if a.name == "TextEdit" and a.pid), None)
+            if browser is not None and browser.poll() is not None:
+                raise FixtureFailure("identity", "browser_exited", 4)
+            apps = (await bounded_call(driver.list_apps(ListAppsInput()), deadline, "identity")).apps
+            textedit_pids = {a.pid for a in apps if a.name == "TextEdit" and a.pid}
+            if len(textedit_pids) > 1:
+                raise FixtureFailure("identity", "textedit_process_ambiguous", 4)
+            textedit = next(iter(textedit_pids), None)
             browser_windows = (
-                await driver.list_windows(ListWindowsInput(pid=chrome_pid, on_screen_only=True))
+                await bounded_call(
+                    driver.list_windows(ListWindowsInput(pid=chrome_pid, on_screen_only=True)),
+                    deadline,
+                    "identity",
+                )
             ).windows
             native_windows = (
-                (await driver.list_windows(ListWindowsInput(pid=textedit.pid, on_screen_only=True))).windows
+                (
+                    await bounded_call(
+                        driver.list_windows(ListWindowsInput(pid=textedit, on_screen_only=True)),
+                        deadline,
+                        "identity",
+                    )
+                ).windows
                 if textedit
                 else []
             )
             matching = []
             for window in native_windows:
                 try:
-                    if ax.document_path(textedit.pid, window.window_id) == str(document):
+                    path = ax.document_path(textedit, window.window_id)
+                    if path and str(Path(path).resolve()) == str(document.resolve()):
                         matching.append(window)
                 except ax.AXError as exc:
-                    # WindowServer can publish an opening window before its AX
-                    # surface exists. Retain the identity check and deadline.
                     if exc.reason != "window_missing":
                         raise
             if len(browser_windows) == 1 and len(matching) == 1:
+                if browser is not None and browser.poll() is not None:
+                    raise FixtureFailure("identity", "browser_exited", 4)
                 return {
                     "task": document.parent.name,
                     "source": {"pid": chrome_pid, "window_id": browser_windows[0].window_id, "url": url},
                     "destination": {
-                        "pid": textedit.pid,
+                        "pid": textedit,
                         "window_id": matching[0].window_id,
                         "document": str(document),
                     },
                 }
             await asyncio.sleep(0.25)
-        raise RuntimeError("Owned browser/document windows could not be identified uniquely")
+        raise FixtureFailure("identity", "windows_not_unique", 4)
     finally:
-        await driver.shutdown()
+        await shutdown_driver(driver, "identity", time.monotonic() + 2)
+
+
+def cleanup(browser, http, thread, logfile, document: Path, *, opened: bool, pid: int | None) -> dict:
+    result = {
+        "document": {"status": "not_started"},
+        "browser": {"status": "not_started"},
+        "listener": {"status": "not_started"},
+    }
+    if opened:
+        try:
+            observed_pid = asyncio.run(textedit_pid())
+            if pid is not None and observed_pid != pid:
+                raise FixtureFailure("document_cleanup", "textedit_process_changed", 6)
+            pid = observed_pid
+            result["document"] = (
+                close_owned_document(pid, document)
+                if pid
+                else {"status": "unknown", "reason": "textedit_not_observed"}
+            )
+        except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
+            result["document"] = {"status": "error", "reason": getattr(exc, "reason", type(exc).__name__)}
+    if browser is not None:
+        try:
+            if browser.poll() is None:
+                browser.terminate()
+            try:
+                browser.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                browser.kill()
+                browser.wait(timeout=10)
+            result["browser"] = {"status": "confirmed", "pid": browser.pid, "returncode": browser.returncode}
+        except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
+            result["browser"] = {"status": "error", "reason": type(exc).__name__, "pid": browser.pid}
+    if http is not None:
+        try:
+            if thread is not None and thread.is_alive():
+                http.shutdown()
+            http.server_close()
+            if thread is not None:
+                thread.join(timeout=2)
+                if thread.is_alive():
+                    raise RuntimeError("listener_thread_alive")
+            result["listener"] = {"status": "confirmed"}
+        except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
+            result["listener"] = {"status": "error", "reason": type(exc).__name__}
+    if logfile is not None:
+        logfile.close()
+    return result
+
+
+def record(root: Path, name: str, value: dict):
+    (root / name).write_text(json.dumps(value, indent=2) + "\n")
 
 
 def main() -> None:
@@ -98,75 +359,91 @@ def main() -> None:
     root = args.run_dir.resolve()
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
     document = root / f"{root.name}-invoice.txt"
-    document.write_text(PREFIX)
-    (root / "fixture.html").write_text(HTML)
-    http = ThreadingHTTPServer(("127.0.0.1", 0), Page)
-    threading.Thread(target=http.serve_forever, daemon=True).start()
-    url = f"http://127.0.0.1:{http.server_port}/"
-    logfile = (root / "chrome.log").open("w")
-    browser = subprocess.Popen(
-        [
-            CHROME,
-            f"--user-data-dir={root / 'chrome-profile'}",
-            "--remote-debugging-port=0",
-            "--no-first-run",
-            "--no-default-browser-check",
-            "--disable-background-networking",
-            "--disable-sync",
-            "--disable-component-update",
-            "--new-window",
-            url,
-        ],
-        stdout=logfile,
-        stderr=logfile,
-        start_new_session=True,
-    )
+    browser = http = thread = logfile = pid = None
+    opened, exit_code, phase = False, 0, "setup"
     try:
-        # Launch Services supplies the selected-file sandbox extension; a raw
-        # AppleEvent open can be refused by sandboxed TextEdit.
-        subprocess.run(["open", "-a", "TextEdit", str(document)], check=True)
-        scope = asyncio.run(scope_for(browser.pid, url, document))
-        (root / "scope.json").write_text(json.dumps(scope, indent=2) + "\n")
-        (root / "fixture.json").write_text(
-            json.dumps(
-                {
-                    "url": url,
-                    "document": str(document),
-                    "value": VALUE,
-                    "prefix": PREFIX,
-                    "browser_pid": browser.pid,
-                },
-                indent=2,
-            )
-            + "\n"
+        document.write_text(PREFIX)
+        (root / "fixture.html").write_text(HTML)
+        http = ThreadingHTTPServer(("127.0.0.1", 0), Page)
+        thread = threading.Thread(target=http.serve_forever, daemon=True)
+        thread.start()
+        url = f"http://127.0.0.1:{http.server_port}/"
+        logfile = (root / "chrome.log").open("w")
+        phase = "browser_startup"
+        browser = subprocess.Popen(
+            [
+                CHROME,
+                f"--user-data-dir={root / 'chrome-profile'}",
+                "--remote-debugging-port=0",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--disable-background-networking",
+                "--disable-sync",
+                "--disable-component-update",
+                "--new-window",
+                url,
+            ],
+            stdout=logfile,
+            stderr=logfile,
+            start_new_session=True,
         )
-        print(json.dumps({"ready": True, "scope": str(root / "scope.json")}), flush=True)
-        while True:
+        startup = wait_browser_ready(browser, root / "chrome-profile")
+        record(root, "startup.json", startup)
+        phase = "document_open"
+        # Mark attempted ownership before launch, so partial opens still get cleanup.
+        opened = True
+        subprocess.run(["open", "-a", "TextEdit", str(document)], check=True, timeout=10)
+        phase = "identity"
+        scope = asyncio.run(scope_for(browser.pid, url, document, browser))
+        pid = scope["destination"]["pid"]
+        record(root, "scope.json", scope)
+        record(
+            root,
+            "fixture.json",
+            {
+                "url": url,
+                "document": str(document),
+                "value": VALUE,
+                "prefix": PREFIX,
+                "browser_pid": browser.pid,
+            },
+        )
+        ready = {"ready": True, "phase": "hold", "scope": str(root / "scope.json")}
+        record(root, "fixture-status.json", ready)
+        print(json.dumps(ready), flush=True)
+        phase = "hold"
+        while browser.poll() is None:
             time.sleep(1)
+        raise FixtureFailure("hold", "browser_exited", 3)
     except KeyboardInterrupt:
-        pass
+        if phase != "hold":
+            exit_code = 130
+            failure = {"ready": False, "phase": phase, "reason": "interrupted", "exit_code": exit_code}
+            record(root, "fixture-status.json", failure)
+            print(json.dumps(failure), flush=True)
+    except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
+        exit_code = getattr(
+            exc, "exit_code", 3 if phase == "browser_startup" else 4 if phase == "identity" else 5
+        )
+        failure = {
+            "ready": False,
+            "phase": getattr(exc, "phase", phase),
+            "reason": getattr(exc, "reason", type(exc).__name__),
+            "exit_code": exit_code,
+        }
+        record(root, "fixture-status.json", failure)
+        print(json.dumps(failure), flush=True)
     finally:
-        # This exact file was created and opened by this fixture owner.
-        try:
-            script(
-                'on run argv\ntell application "TextEdit"\n'
-                "set matches to every document whose name is (item 2 of argv)\n"
-                "if (count of matches) is 1 then\nset d to item 1 of matches\n"
-                "if path of d is (item 1 of argv) then close d saving no\n"
-                "end if\nend tell\nend run",
-                str(document),
-                document.name,
-            )
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
-            print("Fixture document cleanup could not be confirmed; browser cleanup continues.", flush=True)
-        browser.terminate()
-        try:
-            browser.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            browser.kill()
-            browser.wait(timeout=10)
-        http.shutdown()
-        logfile.close()
+        shutdown = cleanup(browser, http, thread, logfile, document, opened=opened, pid=pid)
+        record(root, "cleanup.json", shutdown)
+        print(json.dumps({"shutdown": shutdown}), flush=True)
+        if (
+            any(item["status"] not in ("confirmed", "not_started") for item in shutdown.values())
+            and not exit_code
+        ):
+            exit_code = 6
+    if exit_code:
+        raise SystemExit(exit_code)
 
 
 if __name__ == "__main__":
