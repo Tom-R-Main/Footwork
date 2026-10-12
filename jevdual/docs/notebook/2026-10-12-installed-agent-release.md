@@ -26,3 +26,15 @@ Observed: Claude independently verifies all13raw evidence digests, exact offered
 Changes: release summaries add explicit host/OS/single-sample limits already established by the existing records; no receipt or prior failed outcome changes. Guest summary receives its existing Terminal/macOS26.6.2 scope metadata for artifact consumers.
 Next: commit release builder/docs/approved summaries, build twice, verify payload/RECORD/extraction and have Claude inspect the actual candidate. IA2 remainsopen.
 Refs: results/installed-agent-release-20261012-v2; results/u3-packet-v4-permission-20261012-v3/report.md; Claude1791836103010895000
+
+## IAU3 · update · 2026-10-12 16:25
+Observed: first local bundle5031b50 builds twice byte-identically,30members341107bytes/SHA47d87922; allpayloadmanifest/RECORD/source and18relative links verify, consumerextractedverifier passes and10qualifiedpayloads unchanged. Claude independently reproduces artifactchecks and approves localcandidate in1791836643188530000. Its N1 finds189absolutehostpaths in six legacyJSONattachments; these are not secrets but expose user/workspace layout before external sharing.
+Next: derive sanitized attachment copies in a new frozen candidate, keep originals and approvedv1 immutable, test path removal without changing qualifiedruntime, then repeat finalartifactchecks/review. IA2 remainsopen until finalderivedcandidate closes.
+Refs: output/release-candidate-20261012; results/release-candidate-20261012; Claude1791836643188530000
+
+## IA3 · prediction · 2026-10-12 16:25
+Hypothesis: deterministic sanitization of derived evidence copies removes identifying host home/worktree paths from the distributable candidate while preserving original evidence, qualified wheel/helpers and meaningful qualification claims.
+Test: replace absolute /Users/<name> and /home/<name> path prefixes in derived legacyJSONstrings with stable placeholders, marking sanitization/provenance in qualification metadata. Before changing builder, reproduce old leaked-hostpath boundary; test nested paths, multiple identities, module/oracle fields, nonpath text and source-preservation. Build two new candidates from committedsource; require equalhashes, noidentifyinghomepaths acrossalltextmembers, unchanged10qualifiedpayloads, workinglinks/verifier and Claude exactartifactreview. No install/native/model rerun.
+Predicts: derivedJSON remainsvalid, source blobs unchanged and no host username/worktree layout appears in distributable evidence. Provenance records originals separately from derived digests.
+Against: an identifyinghomepath remains, legitimate nonpath fixture claims change, original evidence is edited, qualifiedpayloadbyteschange, or newbuild/verifier fails.
+Refs: ClaudeN1in1791836643188530000; scripts/build_release_candidate.py; IA2
