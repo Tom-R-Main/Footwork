@@ -1,0 +1,372 @@
+{
+  "passed": true,
+  "source_commit": "21599c641e4c54cad137b3c49e11142c5c14e596",
+  "origins": {
+    "artifact_version": "0.0.1",
+    "python": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/bin/python",
+    "prefix": "/Users/tom/footwork-u4/footwork/output/install-v1/venv",
+    "kernel_executable": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+    "kernel_argv0": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+    "package": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py",
+    "worker": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/capability/execution_worker.py",
+    "backend": "pure-python",
+    "sys_path": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/lib/python314.zip",
+      "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14",
+      "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload",
+      "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages"
+    ]
+  },
+  "actual_runtime_contexts": [
+    {
+      "role": "worker",
+      "operation": "op_a3c8d3e60e2d",
+      "pid": 53493,
+      "python": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/bin/python",
+      "prefix": "/Users/tom/footwork-u4/footwork/output/install-v1/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/cua_driver/__init__.py"
+        ],
+        "mcp": null,
+        "ApplicationServices": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/ApplicationServices/__init__.py"
+        ],
+        "Quartz": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/Quartz/__init__.py"
+        ],
+        "Foundation": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/Foundation/__init__.py"
+        ]
+      },
+      "cua_library": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/cua_driver/libcua_driver_sdk.dylib",
+      "home": "/Users/tom/footwork-u4/footwork/output/install-v1/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791831095436142000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 53368,
+      "python": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/bin/python",
+      "prefix": "/Users/tom/footwork-u4/footwork/output/install-v1/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/cua_driver/__init__.py"
+        ],
+        "mcp": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/ApplicationServices/__init__.py"
+        ],
+        "Quartz": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/Quartz/__init__.py"
+        ],
+        "Foundation": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/Foundation/__init__.py"
+        ]
+      },
+      "cua_library": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/cua_driver/libcua_driver_sdk.dylib",
+      "home": "/Users/tom/footwork-u4/footwork/output/install-v1/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791831094548872000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 53368,
+      "python": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/bin/python",
+      "prefix": "/Users/tom/footwork-u4/footwork/output/install-v1/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": null,
+        "mcp": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": null,
+        "Quartz": null,
+        "Foundation": null
+      },
+      "cua_library": null,
+      "home": "/Users/tom/footwork-u4/footwork/output/install-v1/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791831093299192000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 53523,
+      "python": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/bin/python",
+      "prefix": "/Users/tom/footwork-u4/footwork/output/install-v1/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": null,
+        "mcp": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": null,
+        "Quartz": null,
+        "Foundation": null
+      },
+      "cua_library": null,
+      "home": "/Users/tom/footwork-u4/footwork/output/install-v1/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791831096739411000
+    },
+    {
+      "role": "server",
+      "operation": null,
+      "pid": 53368,
+      "python": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/bin/python",
+      "prefix": "/Users/tom/footwork-u4/footwork/output/install-v1/venv",
+      "modules": {
+        "jevdual": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/jevdual/__init__.py"
+        ],
+        "jevdual.capability.execution_worker": null,
+        "cua_driver": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/cua_driver/__init__.py"
+        ],
+        "mcp": [
+          "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/mcp/__init__.py"
+        ],
+        "ApplicationServices": null,
+        "Quartz": null,
+        "Foundation": null
+      },
+      "cua_library": "/Users/tom/footwork-u4/footwork/output/install-v1/venv/lib/python3.14/site-packages/cua_driver/libcua_driver_sdk.dylib",
+      "home": "/Users/tom/footwork-u4/footwork/output/install-v1/private-home",
+      "user_site_disabled": true,
+      "browser_telemetry_disabled": true,
+      "browser_cloud_sync_disabled": true,
+      "as_of_ns": 1791831093759737000
+    }
+  ],
+  "emitted_configuration_checked": true,
+  "initialized": {
+    "capabilities": {
+      "experimental": {},
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "protocolVersion": "2025-06-18",
+    "serverInfo": {
+      "name": "footwork-capability",
+      "version": "0.0.1"
+    }
+  },
+  "worker_proofs": [
+    {
+      "registration": {
+        "nonce": "8c75f10165e6462babbdb4bdc61c669a",
+        "operation_id": "op_a3c8d3e60e2d",
+        "packet_digest": "0ebc4a7e56c0d4c4d1a118abf20e411f4a3c35cfe7181b58872bec7c37f92528",
+        "pgid": 53493,
+        "pid": 53493,
+        "request_digest": "30225dcd2278b572fc206259c7bcca93b56586cc42b1bdca0d0564bf1d20eb51",
+        "start": "0x1.ab34b0daf2c41p+30",
+        "version": 1
+      },
+      "cmdline": [
+        "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "-I",
+        "-m",
+        "jevdual.capability.execution_worker",
+        "--packet",
+        "/Users/tom/footwork-u4/footwork/output/job-v1/operations.sqlite.executions/op_a3c8d3e60e2d/packet.json"
+      ],
+      "executable": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "action": {
+    "is_error": false,
+    "schema_version": "1",
+    "operation_id": "op_a3c8d3e60e2d",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": false,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 24,
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+          },
+          "before": {
+            "length": 15,
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "11EBDE2F-6F02-4282-B73B-6DB59AABD9A1",
+            "device": 16777233,
+            "document": "/Users/tom/footwork-u4/footwork/output/fixture-v1/fixture-v1-invoice.txt",
+            "inode": 163250,
+            "pid": 2817,
+            "start": "0x1.ab2ff26e1fcadp+30"
+          },
+          "identity_after": {
+            "boot": "11EBDE2F-6F02-4282-B73B-6DB59AABD9A1",
+            "device": 16777233,
+            "document": "/Users/tom/footwork-u4/footwork/output/fixture-v1/fixture-v1-invoice.txt",
+            "inode": 163250,
+            "pid": 2817,
+            "start": "0x1.ab2ff26e1fcadp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "8c75f10165e6462babbdb4bdc61c669a",
+        "operation_id": "op_a3c8d3e60e2d",
+        "packet_digest": "0ebc4a7e56c0d4c4d1a118abf20e411f4a3c35cfe7181b58872bec7c37f92528",
+        "phase": "sent",
+        "request_digest": "30225dcd2278b572fc206259c7bcca93b56586cc42b1bdca0d0564bf1d20eb51",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "installed-once"
+  },
+  "repeat": {
+    "is_error": false,
+    "schema_version": "1",
+    "operation_id": "op_a3c8d3e60e2d",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": true,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 24,
+            "sha256": "783172d2e6ac11f2c5450015856703ebe655b8c2aa86ca81b802ab1d8d210aee"
+          },
+          "before": {
+            "length": 15,
+            "sha256": "ac11060594d5bcde616f5e88156ea7c0f55e2cca74c2de52c4da375fbde33339"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "11EBDE2F-6F02-4282-B73B-6DB59AABD9A1",
+            "device": 16777233,
+            "document": "/Users/tom/footwork-u4/footwork/output/fixture-v1/fixture-v1-invoice.txt",
+            "inode": 163250,
+            "pid": 2817,
+            "start": "0x1.ab2ff26e1fcadp+30"
+          },
+          "identity_after": {
+            "boot": "11EBDE2F-6F02-4282-B73B-6DB59AABD9A1",
+            "device": 16777233,
+            "document": "/Users/tom/footwork-u4/footwork/output/fixture-v1/fixture-v1-invoice.txt",
+            "inode": 163250,
+            "pid": 2817,
+            "start": "0x1.ab2ff26e1fcadp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "8c75f10165e6462babbdb4bdc61c669a",
+        "operation_id": "op_a3c8d3e60e2d",
+        "packet_digest": "0ebc4a7e56c0d4c4d1a118abf20e411f4a3c35cfe7181b58872bec7c37f92528",
+        "phase": "sent",
+        "request_digest": "30225dcd2278b572fc206259c7bcca93b56586cc42b1bdca0d0564bf1d20eb51",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "installed-once"
+  },
+  "report": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": true,
+      "reasons": []
+    },
+    "operation_completion": "completed",
+    "operations": [
+      {
+        "operation": "op_a3c8d3e60e2d",
+        "state": "final",
+        "disposition": "applied",
+        "updated": 1791831096.0829408,
+        "created": 1791831094.731467
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "task_e773ee572b84420b9c1eeed7173ead46",
+    "snapshot_digest": "09aecceb2931e9ecde82e51cfa1010701352a5884f119109171d253305391b17",
+    "ledger_span": {
+      "first_created": 1791831094.731467,
+      "last_updated": 1791831096.0829408,
+      "count": 1
+    },
+    "accepted_host_claim": "completed",
+    "as_of": 1791831096.956186,
+    "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-12T18:51:34.731467+00:00 through 2026-10-12T18:51:36.082941+00:00. Current document state and disk persistence are not certified by this report."
+  },
+  "oracle_actual": "Invoice report\n17.25 USD",
+  "owned_worker_finished": true,
+  "limits": "Existing host OS/system frameworks/permissions. Fresh dependency/private-home qualification."
+}

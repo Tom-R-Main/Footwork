@@ -1,0 +1,36 @@
+{
+  "passed": false,
+  "classification": "fresh permission state on previously provisioned guest",
+  "packet_sha256": "eef3632506680d74b21b511cec905d73de2324f951e924b0716f2309490f590d",
+  "source_commit": "21599c641e4c54cad137b3c49e11142c5c14e596",
+  "raw_archive_sha256": "2d9a03ef17016aa7894e8679c4fd1fbe492e667e335bff8cd4cf01e38ee65427",
+  "baseline_hashes_match": {
+    "permission-reset.txt": true,
+    "doctor-before-exit.txt": true,
+    "doctor-before-stderr.txt": true,
+    "denied-fixture-console.txt": true,
+    "denied-fixture-exit.txt": true,
+    "denied-resource-check.txt": true,
+    "footwork/output/doctor-before.json": true,
+    "footwork/output/install-v1/receipt.json": true
+  },
+  "durable_rows": [
+    [
+      "op_a3c8d3e60e2d",
+      "final",
+      "applied",
+      "sent"
+    ]
+  ],
+  "install": true,
+  "denied_baseline": true,
+  "observed_approved_grant": true,
+  "terminal_restart": true,
+  "strict_doctor_after": true,
+  "native": true,
+  "automatic_document_confirmation": false,
+  "fixture_exit": 6,
+  "manual_document_close": false,
+  "browser_listener_cleanup": true,
+  "disk_persistence": "not_checked"
+}

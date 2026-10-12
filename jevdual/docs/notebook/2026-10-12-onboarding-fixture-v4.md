@@ -71,3 +71,11 @@ Observed: UFU6 records two resolutions on one field, but the notebook reader rec
 Changes: only fixture/helper tests change. The failed guest archive is being exported before a separately frozen repair packet; no original receipt is changed and no native effect is replayed.
 Next: freeze the repair, obtain Claude review of source/artifact and original guest evidence, then perform the preregistered post-grant repair trial. UF4 remains open.
 Refs: output/u2-fixture-v4-dev/uf4-before.txt; output/u2-fixture-v4-dev/uf4-after.txt; UFU6; tests/test_capability_fixture.py
+
+## UF5 · prediction · 2026-10-12 15:08
+Revises: UF4
+Hypothesis: the reviewed stale-observation repair permits all U3 gates in one separately frozen complete permission-state journey, avoiding a composite of different artifacts.
+Test: use packet205577ee/source445a348 in a new guest root, verify pristine bytes and cold-install anew. With existing explicit guest permission authorization, reset only Terminal Accessibility through supported tccutil, hash denied doctor/resource-free refusal before the action-time approved switch, quit/relaunch Terminal and execute one installed append/replay/report trial and automatic cleanup. Retain failed U3v1. This replaces UF4's planned post-grant trial with a stricter full journey on the repaired artifact.
+Predicts: the same frozen artifact supplies every denial/grant/restart/native/cleanup gate, stale AX reads never replay a close, and cleanup confirms fresh window absence plus browser/listener/worker absence without manual close or extra grants.
+Against: any required gate fails, a read error substitutes for absence, action repeats, an unrelated resource is affected, or the artifact changes during measurement.
+Refs: U3-packet-v4-permission-journey.md; UF4; Claude1791832031158825000; results/u3-packet-v4-permission-20261012-v1
