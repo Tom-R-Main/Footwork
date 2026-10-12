@@ -80,6 +80,9 @@ class Operator:
             self._client_pin()
             if self.m["opened"]:
                 self.m.update(runner_status="paused", reason="Restarted; inspect the retained stage before explicit Resume")
+                active = self._job()
+                if active and active["status"] == "running":
+                    active.update(status="paused", error=self.m["reason"])
             self.m["opened"] = True
             if self.m["stage"]:
                 self._associate()
@@ -153,6 +156,7 @@ class Operator:
                 control_epoch = self.control_epoch
                 transport_epoch = self.transport_epoch
                 pinned = dict(self.m["body_identity"])
+                pinned["epoch"] = self.m["connection"]["epoch"]
             remote_identity = pinned
             try:
                 status, content = body_client.http_call(self.link.origin, "GET", "/identity", timeout=.8)
@@ -178,6 +182,9 @@ class Operator:
                 if (self.closing or self.transport_pending or control_epoch != self.control_epoch or
                         transport_epoch != self.transport_epoch or not self.link.state()["connected"]):
                     return False
+                if connection == "connected" and remote_identity["epoch"] != self.m["connection"]["epoch"]:
+                    self._body_epoch_changed(remote_identity["epoch"], ready, known_unknown=not ready)
+                    return ready
                 old = self.m["connection"]["state"]
                 self.body_ready = ready
                 self.m["connection"].update(state=connection, reason=error or "Body identity verified by read-only TCP health", epoch=remote_identity["epoch"])
@@ -205,6 +212,19 @@ class Operator:
         if job and job["status"] != "completed":
             job.update(status="unknown" if blocked else "paused", error=str(reason))
         self._event("halt", outcome=reason)
+
+    def _body_epoch_changed(self, epoch, ready, known_unknown=False):
+        previous = self.m["connection"]["epoch"]
+        reason = f"Body restarted from boot {previous} to {epoch}; check pending receipts and explicitly Resume for a fresh image"
+        self.body_ready = ready
+        self.m["connection"].update(state="connected", epoch=epoch, reason=reason)
+        self.cancel.set()
+        if self.m["stage"]:
+            self._uncertain(reason)
+        else:
+            self.control_epoch += 1
+            self._halt(reason, blocked=known_unknown)
+        self._event("body_epoch_changed", outcome=f"{previous} -> {epoch}")
 
     def _uncertain(self, reason):
         stage = self.m["stage"]
@@ -357,6 +377,7 @@ class Operator:
                 self._halt("Conservative network-command budget exhausted")
                 return None
             epoch = self.control_epoch
+            known_body_epoch = self.m["connection"]["epoch"]
             self.transport_pending = True
             self.transport_epoch += 1
         try:
@@ -365,6 +386,9 @@ class Operator:
                 if epoch != self.control_epoch or self.cancel.is_set() or self.closing:
                     return None
                 journal = self.client._load()
+                if journal["identity"]["epoch"] != known_body_epoch:
+                    self._body_epoch_changed(journal["identity"]["epoch"], ready=False)
+                    return None
                 self.m["connection"]["epoch"] = journal["identity"]["epoch"]
                 self.m["stage"] = {"operation": operation, "arguments": arguments, "context": context,
                     "before_commands": list(journal["commands"]), "command_id": None, "control_epoch": epoch}
@@ -405,7 +429,7 @@ class Operator:
                     self.m["runner_status"] = "paused"
                 self._save()
 
-    def _public_status(self):
+    def _public_status(self, include_identity=False):
         status = self.client.status()
         remote = status["server_state"]
         if remote.get("state") != "ready":
@@ -413,7 +437,7 @@ class Operator:
         pinned = self.m["body_identity"]
         if any(remote["identity"][k] != pinned[k] for k in body_client.IDENTITY_KEYS - {"epoch"}):
             raise protocol.Refusal("network status belongs to another pinned body")
-        return remote["bench"]
+        return (remote["bench"], remote["identity"]) if include_identity else remote["bench"]
 
     def _apply(self, envelope, result):
         with self.lock:
@@ -523,6 +547,9 @@ class Operator:
             self._apply(envelope, envelope["result"])
             with self.lock:
                 self.m.update(runner_status="paused", reason="Exact historical stage recovered; explicit Resume observes fresh evidence")
+                active = self._job()
+                if active and active["status"] != "completed":
+                    active.update(status="paused", error=None)
                 self.m["recovery"] = {"state": "recovered", "command_id": token, "operation": stage["operation"], "reason": self.m["reason"]}
                 self._event("reconciled", outcome=token)
         except Exception as exc:  # Untrusted/missing receipt cannot settle effects.
@@ -545,13 +572,15 @@ class Operator:
             self.transport_epoch += 1
             resume_epoch = self.control_epoch
         try:
-            self._public_status()
+            _, remote_identity = self._public_status(include_identity=True)
             with self.lock:
                 if (resume_epoch != self.control_epoch or self.closing or
                         self.m["connection"]["state"] != "connected"):
                     raise protocol.Refusal("control changed while Resume was reading body status")
                 self.control_epoch += 1
                 self.cancel.clear()
+                self.body_ready = True
+                self.m["connection"].update(epoch=remote_identity["epoch"], reason="Current body boot verified for explicit Resume")
                 self.m.update(runner_status="running", reason="Resumed; next decision receives a fresh TCP image")
                 self.m["recovery"] = {"state": "none", "command_id": None, "operation": None, "reason": "No pending command"}
                 self._event("resume")

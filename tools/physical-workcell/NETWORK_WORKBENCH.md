@@ -26,6 +26,10 @@ Use **Disconnect** to close the diagnostic link. The last image and completed re
 
 Restart the body by omitting `--initialize`; restart the host with the same root and exact port. Both identities persist. Body restart revokes leases. Host restart pauses the queue, keeps uncertain commands, and never replays them. Reloading the browser does not restart planning or reset the bench.
 
+A new body boot epoch also pauses planning when a fast restart escaped the outage poll. An earlier model decision cannot acquire authority to continue across that boundary. Pending historical commands keep their original epoch and identity: **Check receipt** reads their retained result, then **Resume** obtains a fresh observation. Workbench restart cancels its owned planner before releasing process ownership; its active unfinished job appears paused or uncertain as appropriate.
+
+For a repeatable mid-job restart trial, use `qualify_workbench_restarts.py run --root NEW_ROOT --source-commit COMMITTED_SOURCE_SHA`. The harness owns the body and workbench processes. Its `request` command checks the current planning or uncertain-command predicate before stopping a role, and restarts only that role at its retained root and port. Browser actions still perform receipt recovery and Resume. Run `score_workbench_restarts.py --root NEW_ROOT` after the harness finishes. These trials cover graceful process restarts; forced termination during native persistence needs a separate experiment.
+
 The link, client, queue, model inputs and receipts live beneath the host root. Native state and measurement SQLite remain beneath the separate body root. An independent post-trial scorer reads the native records after the trial processes stop; they are not model inputs. The previous local workbench uses different source files and roots.
 
 Qualification uses committed source:

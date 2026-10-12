@@ -51,6 +51,144 @@ class NetworkOperatorTests(unittest.TestCase):
             time.sleep(.02)
         self.assertTrue(predicate())
 
+    def restart_same_body(self):
+        identity = self.service.identity()
+        port = self.service.http.server_address[1]
+        self.service.close()
+        self.service = body_network.BodyService(self.body_root, port=port).start()
+        current = self.service.identity()
+        self.assertEqual(current["body_id"], identity["body_id"])
+        self.assertEqual(current["adapter_id"], identity["adapter_id"])
+        self.assertGreater(current["epoch"], identity["epoch"])
+        return current
+
+    def test_health_first_fast_body_reboot_withholds_old_model_decision(self):
+        entered, release = threading.Event(), threading.Event()
+        decisions = iter((action("move", -.25, 0), action()))
+        def policy(*_):
+            entered.set()
+            release.wait(5)
+            return next(decisions), {}
+        op = self.open(policy, worker=True)
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        self.assertTrue(entered.wait(10))
+        before = len(op._journal()["commands"])
+        current = self.restart_same_body()
+        try:
+            op._refresh_health()
+        finally:
+            release.set()
+        self.wait(lambda: not op.in_model and op.m["runner_status"] == "paused")
+        self.assertEqual(self.service.body.status()["generation"], 0)
+        self.assertEqual(len(op._journal()["commands"]), before)
+        self.assertEqual(op.state()["connection"]["epoch"], current["epoch"])
+        self.assertTrue(any(e["kind"] == "decision_withheld" for e in op.m["activity"]))
+        self.assertEqual(op.state()["jobs"][0]["status"], "paused")
+
+    def test_acquisition_first_reboot_cannot_authorize_old_decision_with_fresh_lease(self):
+        calls = []
+        before = []
+        old_challenges = []
+        def policy(challenge, *_):
+            calls.append(challenge)
+            if len(calls) == 1:
+                old_challenges.append(challenge["challenge_id"])
+                before.append(len(op._journal()["commands"]))
+                self.restart_same_body()
+                return action("move", -.25, 0), {}
+            return action(), {}
+        op = self.open(policy)
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        self.assertFalse(op._step())
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertEqual(self.service.body.status()["generation"], 0)
+        self.assertEqual(len(op._journal()["commands"]), before[0])
+        self.assertIsNone(op.m["stage"])
+        self.assertEqual(op._journal()["lease"]["epoch"], self.service.epoch)
+        op.resume()
+        self.assertFalse(op._step())
+        self.assertEqual(len(calls), 2)
+        self.assertNotEqual(calls[1]["challenge_id"], old_challenges[0])
+        self.assertEqual(calls[1]["observation"]["generation"], 0)
+        self.assertEqual(self.service.body.status()["generation"], 0)
+
+    def test_unknown_dispatch_survives_body_epoch_then_exact_recovery_and_resume(self):
+        decisions = iter((action("move", -.25, 0), action()))
+        op = self.open(lambda *_: (next(decisions), {}))
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        op.fault({"mode": "drop_after", "delay_s": 0})
+        self.assertFalse(op._step())
+        token = op.m["stage"]["command_id"]
+        journal = op._journal()
+        lease = journal["lease"]
+        count = len(journal["commands"])
+        current = self.restart_same_body()
+        op._refresh_health()
+        self.assertEqual(op.m["stage"]["command_id"], token)
+        self.assertEqual(op.state()["recovery"]["command_id"], token)
+        self.assertEqual(op.state()["runner_status"], "blocked")
+        self.assertEqual(op._journal()["lease"], lease)
+        self.assertEqual(op._journal()["pending_command_ids"], [token])
+        with self.assertRaises(protocol.Refusal):
+            op.resume()
+        op.reconcile()
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertEqual(op.state()["jobs"][0]["status"], "paused")
+        self.assertEqual(op.state()["connection"]["epoch"], current["epoch"])
+        self.assertEqual(op.m["applied_commands"].count(token), 1)
+        self.assertEqual(len(op._journal()["commands"]), count)
+        self.assertEqual(op._journal()["commands"][token]["send_count"], 1)
+        self.assertEqual(self.service.body.status()["generation"], 1)
+        with self.assertRaises(protocol.Refusal):
+            op.reconcile()
+        op.resume()
+        self.assertFalse(op._step())
+        self.assertEqual(self.service.body.status()["generation"], 1)
+        self.assertEqual(op._journal()["identity"]["epoch"], current["epoch"])
+
+    def test_graceful_host_restart_labels_unfinished_planning_as_paused(self):
+        entered = threading.Event()
+        def policy(challenge, history, directory, cancel):
+            entered.set()
+            cancel.wait(5)
+            return action("move", -.25, 0), {}
+        op = self.open(policy, worker=True)
+        op.enqueue(self.job())
+        self.assertTrue(entered.wait(10))
+        count = len(op._journal()["commands"])
+        op.close()
+        self.op = None
+        op = self.open(lambda *_: self.fail("restart automatically requested a model"), worker=True)
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertEqual(op.state()["jobs"][0]["status"], "paused")
+        self.assertEqual(len(op._journal()["commands"]), count)
+        self.assertEqual(self.service.body.status()["generation"], 0)
+        self.assertIsNone(op.m["stage"])
+
+    def test_acknowledged_second_boot_survives_outage_without_epoch_regression(self):
+        op = self.open()
+        op.health_stop.set()
+        op.health_worker.join(4)
+        current = self.restart_same_body()
+        op._refresh_health()
+        self.assertEqual(op.state()["runner_status"], "paused")
+        op.resume()
+        self.assertEqual(op.state()["connection"]["epoch"], current["epoch"])
+        self.assertEqual(op.state()["runner_status"], "running")
+        self.service.close()
+        self.service = None
+        op._refresh_health()
+        self.assertEqual(op.state()["connection"]["state"], "unavailable")
+        self.assertEqual(op.state()["connection"]["epoch"], current["epoch"])
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertEqual(len(op._journal()["commands"]), 0)
+
     def test_pause_wins_while_resume_waits_for_actual_socket_status(self):
         op = self.open()
         op.pause()

@@ -19,3 +19,10 @@ Observed: four new real-socket checks failed on the original runtime. Health-fir
 Inferred: boot identity alone does not invalidate a model decision, and runner recovery needs a consistent unfinished-job status. The original historical receipt mechanism remains useful.
 Next: repair the runtime epoch boundaries and labels, rerun affected real-socket checks, then freeze the actual browser restart trial.
 Refs: tools/physical-workcell/output/sim11-epoch-before-fix.log; tools/physical-workcell/output/sim11-preserved-baseline/preserved.json; tools/physical-workcell/test_network_operator.py
+
+## SIM11-U2 · update · 2026-10-12 14:09
+Resolves: SIM11-EPOCH = held
+Observed: all nineteen runtime socket checks passed after epoch invalidation and job-status corrections. The old decision is withheld on health-first and lease-read-first reboot paths, exact unknown history stays recoverable once, and a later outage preserves the last verified epoch. Eighty core/adapter/link/HTTP regressions and four restart-harness control/ownership checks also passed. Ruff, JavaScript syntax and diff checks passed. The harness now records exact roots, ports, stopped processes, boot epochs and command digests; its scorer requires actual browser recovery evidence and final native/SQLite/contact proof. No actual-model restart trial has run yet.
+Inferred: the epoch diagnosis is supported by failing and resolving socket evidence. The 103 mechanical checks establish readiness for the frozen browser trial, not its result.
+Next: commit all measured source, then interrupt two actual image-guided jobs at the four preregistered process boundaries.
+Refs: tools/physical-workcell/output/sim11-epoch-after-fix-runtime.log; tools/physical-workcell/output/sim11-core-network-regression.log; tools/physical-workcell/output/sim11-harness-tests-v1/unittest.log; tools/physical-workcell/qualify_workbench_restarts.py; tools/physical-workcell/score_workbench_restarts.py
