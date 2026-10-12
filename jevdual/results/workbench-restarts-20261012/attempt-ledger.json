@@ -1,0 +1,37 @@
+{
+  "actual_model_attempts": [
+    {
+      "additional_health_timeout_pause": true,
+      "attempt": 1,
+      "cancelled_calls": 3,
+      "commands": 83,
+      "completed_jobs": 2,
+      "model_calls": 29,
+      "owned_trial_processes_reaped": true,
+      "passed": true,
+      "restart_pairs": 4,
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2",
+      "source_commit": "d7072107d576d7a09643229ae584a3864d2fe0f6"
+    }
+  ],
+  "preserved_previous_product": "tools/physical-workcell/output/sim11-preserved-baseline/preserved.json",
+  "retained_development_failures": [
+    {
+      "diagnosis": "old decisions survived fast boot change; unfinished/recovered job labels were inconsistent",
+      "failed_checks": 4,
+      "log": "tools/physical-workcell/output/sim11-epoch-before-fix.log"
+    }
+  ],
+  "startup_attempts": [
+    {
+      "attempt": 1,
+      "model_calls": 0,
+      "observed_exit_code": 1,
+      "outcome": "refused before source freeze or process launch; full source SHA required",
+      "provenance": "Codex exec result chunk 1cd3d5; derived record, not reconstructed stdout",
+      "root": "tools/physical-workcell/output/sim11-browser-restarts-v1",
+      "source_argument": "d707210"
+    }
+  ],
+  "unmeasured_test_fixture_change": "The helper reader fixture moved from a temporary system directory to owned project output; measured source hashes stayed unchanged."
+}

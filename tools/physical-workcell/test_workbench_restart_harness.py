@@ -2,8 +2,8 @@
 import copy
 import subprocess
 import sys
-import tempfile
 import unittest
+import uuid
 from pathlib import Path
 
 import order_protocol as protocol
@@ -59,13 +59,14 @@ class RestartHarnessGuards(unittest.TestCase):
                 process.wait(timeout=3)
 
     def test_snapshot_reader_keeps_128k_journal_and_wire_limit_separate(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "journal.json"
-            path.write_bytes(protocol.encoded({"payload": "x" * 70000}))
-            path.chmod(0o600)
-            self.assertEqual(len(harness.read(path)["payload"]), 70000)
-            with self.assertRaises(protocol.Refusal):
-                protocol.decode(path.read_bytes())
+        directory = Path(__file__).resolve().parent / "output" / ("sim11-reader-" + uuid.uuid4().hex[:12])
+        directory.mkdir(mode=0o700)
+        path = directory / "journal.json"
+        path.write_bytes(protocol.encoded({"payload": "x" * 70000}))
+        path.chmod(0o600)
+        self.assertEqual(len(harness.read(path)["payload"]), 70000)
+        with self.assertRaises(protocol.Refusal):
+            protocol.decode(path.read_bytes())
 
 
 if __name__ == "__main__":

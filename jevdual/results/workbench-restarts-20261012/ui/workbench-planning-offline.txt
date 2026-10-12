@@ -1,0 +1,68 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button (disabled) ＋ New job, ID: new-job
+		8 container queue
+			52 checkbox Restart inspection 01 Working, Value: 0
+			53 checkbox Restart inspection 02 Queued, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		54 text Restart inspection 02
+		55 text Disconnected
+		16 button (disabled) Pause, ID: pause
+		56 text Failed to fetch
+		17 container Description: Body connection, ID: network-card
+			57 text Body connected
+			58 text Body identity verified by read-only TCP health
+			20 button (disabled) Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			22 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				23 text Test the simulated connection
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			59 text Last observation · Restart inspection 01
+			60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			61 text Last captured · generation 0 · disconnected
+		62 text QUEUED
+		63 text This job is queued. The agent will start when the bench is ready.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			64 text Pending
+			38 text The part’s visible footprint will be measured after its placement is verified.
+		39 container Activity
+			40 heading Activity, Value: 2, ID: activity-heading
+				41 text Activity
+			65 text 9 events
+			43 content list activity
+				66 container
+					67 text 02:10 PM AI planning requested Restart inspection 01
+				68 container
+					69 text 02:10 PM Camera observation received Restart inspection 01
+				70 container
+					71 text 02:10 PM Requesting camera observation
+				72 container
+					73 text 02:10 PM Inspection started Restart inspection 01
+				74 container
+					75 text 02:10 PM Preparing inspection
+				76 container
+					77 text 02:10 PM Agent resumed
+				78 container
+					79 text 02:10 PM Job queued Restart inspection 02
+				80 container
+					81 text 02:10 PM Job queued Restart inspection 01
+				82 container
+					83 text 02:10 PM Pause requested Pause requested; a command already admitted by this host may finish within body bounds
+		50 button (collapsed) Session details, Secondary Actions: Expand
+			51 text Session details
+		84 text 1 model requests · Reported tokens: 0 input / 0 output · Reporting incomplete (0 of 1 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

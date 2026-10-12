@@ -1,0 +1,27 @@
+{
+  "additional_checks": [
+    "Ruff",
+    "JavaScript syntax",
+    "notebook schema",
+    "diff check"
+  ],
+  "failed_final": 0,
+  "passed": 103,
+  "suites": [
+    {
+      "checks": 19,
+      "log": "tools/physical-workcell/output/sim11-epoch-after-fix-runtime.log",
+      "scope": "real-socket runtime, fast reboot epoch paths, historical recovery and job status"
+    },
+    {
+      "checks": 80,
+      "log": "tools/physical-workcell/output/sim11-core-network-regression.log",
+      "scope": "core/body/client/link/fault-matrix/HTTP regressions"
+    },
+    {
+      "checks": 4,
+      "log": "tools/physical-workcell/output/sim11-harness-tests-v2/unittest.log",
+      "scope": "restart control predicates, ownership and bounded readers; synthetic controls"
+    }
+  ]
+}

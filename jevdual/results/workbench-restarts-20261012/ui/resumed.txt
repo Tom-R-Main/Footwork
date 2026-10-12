@@ -1,0 +1,79 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			91 checkbox Restart inspection 01 Paused, Value: 1
+			92 checkbox Restart inspection 02 Queued, Value: 0
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		93 text Restart inspection 01
+		94 text Running
+		16 button Pause, ID: pause
+		17 container Description: Body connection, ID: network-card
+			95 text Body connected
+			96 text Current body boot verified for explicit Resume
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			68 container
+				69 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					70 text Test the simulated connection
+				71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				72 button Lose next reply, ID: fault-drop
+				73 button Delay next reply, ID: fault-delay
+				74 button Duplicate next command, ID: fault-duplicate
+				97 text No reply fault armed.
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			98 text Last observation · Restart inspection 01
+			60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			99 text Captured · generation 0
+		100 text AGENT
+		101 text Push the block right so its center enters the measurement zone.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			102 text Pending
+			38 text The part’s visible footprint will be measured after its placement is verified.
+		39 container Activity
+			40 heading Activity, Value: 2, ID: activity-heading
+				41 text Activity
+			103 text 24 events
+			90 content list activity
+				104 container
+					105 text 02:13 PM Requesting camera observation
+				106 container
+					107 text 02:13 PM Agent resumed
+				108 container
+					109 text 02:13 PM Command receipt recovered The agent remains paused until you resume.
+				110 container
+					111 text 02:13 PM Action receipt checked Restart inspection 01
+				112 container
+					113 text 02:13 PM Body reconnecting No command sent or replayed
+				114 container
+					115 text 02:13 PM Body disconnected Transport only; no body reset or replay
+				116 container
+					117 text 02:12 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt
+				118 container
+					119 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending
+				120 container
+					121 text 02:12 PM Sending a guarded action
+				122 container
+					123 text 02:12 PM Action proposal accepted Restart inspection 01
+				124 container
+					125 text 02:12 PM Checking the planned action
+				126 container
+					127 text 02:12 PM AI planning requested Restart inspection 01
+		50 button (collapsed) Session details, Secondary Actions: Expand
+			51 text Session details
+		128 text 2 model requests · Reported tokens: 13,063 input / 199 output · Reporting incomplete (1 of 2 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

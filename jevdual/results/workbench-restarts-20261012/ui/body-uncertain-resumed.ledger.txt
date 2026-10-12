@@ -1,0 +1,46 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			105 checkbox Restart inspection 01 Completed, Value: 0
+			106 checkbox Restart inspection 02 Paused, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		107 text Restart inspection 02
+		108 text Running
+		16 button Pause, ID: pause
+		17 container Description: Body connection, ID: network-card
+			109 text Body connected
+			110 text Current body boot verified for explicit Resume
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			68 container
+				69 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					70 text Test the simulated connection
+				71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				72 button Lose next reply, ID: fault-drop
+				73 button Delay next reply, ID: fault-delay
+				74 button Duplicate next command, ID: fault-duplicate
+				111 text No reply fault armed.
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			112 text Last observation · Restart inspection 02
+			60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			113 text Captured · generation 10
+		114 text AGENT
+		115 text Push the block right so its center reaches the measurement region.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			116 text Pending
+			104 text The part’s visible footprint will be measured after its placement is verified.
+[Main-panel excerpt; full browser capture is body-uncertain-resumed.txt]
