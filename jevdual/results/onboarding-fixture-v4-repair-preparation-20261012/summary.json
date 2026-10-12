@@ -1,0 +1,15 @@
+{
+  "source_commit": "445a348ff31243c2f3d90baae9ce209d89bd7eac",
+  "packet_sha256": "205577ee0848e9e68c8a15a9f25e1d308e820a054be449f631274ba7a9c7151d",
+  "packet_bytes": 312916,
+  "packet_members": 14,
+  "repeat_build_matches": true,
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "focused_checks_passed": 81,
+  "fixture_checks_passed": 55,
+  "ruff": "passed",
+  "claude_approval": "1791832031158825000",
+  "full_journey_approval": "1791832201147781000",
+  "guest_runtime_qualification": "pending",
+  "packet_path": "output/u3-packet-v4-repair-v1/footwork-onboarding-u2.zip"
+}
