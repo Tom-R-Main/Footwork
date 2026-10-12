@@ -91,3 +91,18 @@ Observed: user approves the repaired run's exact Terminal Accessibility grant. B
 Changes: the cause of the VM stop is unavailable. Its prior denied baseline and installed files require guest readback after boot; an unobserved state cannot count as grant or cleanup evidence.
 Next: observe guest login/session, preserve and verify pre-stop baseline bytes, then apply the already specifically approved grant once and continue same frozen artifact if eligibility remains established. Credentials remain with the human.
 Refs: CUA timeoutReached then inventory; tart list stopped/running; isolated tart run session80357; guest qualified-baseline.txt; UF5
+
+## UFU10 · update · 2026-10-12 15:31
+Resolves: UF5 = inconclusive
+Observed: human logs in after guest restart. All eight authoritative pre-stop baseline hashes match (UFU8's nine was a count error). Installed post-boot doctor exits0 reporting Accessibility granted, and Settings shows Terminal ON before root issues any grant click. Grant actor/time are unavailable. Thus this interrupted full journey cannot satisfy captured-transition qualification. No repaired native effect has occurred and no original result is regraded.
+Changes: preserve pre-stop and post-boot files. The already specifically approved repaired-run grant has not been performed by root; its authorization is retained. Establish another supported same-host denied baseline in distinct v3 names before that one approved click.
+Next: UF6; retain interruption separately and do not infer a TCC rollback cause or human action from ON state.
+Refs: guest post-boot-baseline.txt; guest doctor-post-boot.json; CUA Terminal ON observation; UF5
+
+## UF6 · prediction · 2026-10-12 15:31
+Revises: UF5
+Hypothesis: the same reviewed205577ee artifact can qualify the complete scoped permission journey when denial and the explicitly approved grant are captured consecutively without an intervening VM stop.
+Test: supported guest Terminal-only reset in separate v3 records; installed denied doctor and resource-free fixture refusal with same-command exit capture; hash baseline before observing OFF and applying the already approved ON click once. Visibly quit/relaunch Terminal, then one installed native/replay/report trial and automatic cleanup. Preserve interrupted UF5 and failed U3v1.
+Predicts: one source/artifact and a captured uninterrupted permission transition supply all required gates, with installed origins, one durable operation, exact oracle and automatic resource absence.
+Against: a transition is missing again, a required gate fails, input repeats to mask uncertainty, or another resource/permission is affected.
+Refs: UFU10; U3-packet-v4-permission-journey.md; source445a348; Claude1791832201147781000
