@@ -1,0 +1,264 @@
+{
+  "passed": true,
+  "source_commit": "d52d32d0dd6f6fd0b308ea6b9c6a271597c2fc39",
+  "effect_retry": false,
+  "configured_softcap_usd": 1.0,
+  "scheduling_reserve_usd": 2.0,
+  "limits": "One Claude Code host, existing authenticated account and existing macOS permissions. No general host, clean OS or disk persistence qualification.",
+  "oracle_before": "Invoice report\n",
+  "returncode": 0,
+  "timed_out": false,
+  "host": {
+    "valid_environment": true,
+    "tools_offered": [
+      "StructuredOutput",
+      "mcp__footwork__act",
+      "mcp__footwork__bind",
+      "mcp__footwork__observe",
+      "mcp__footwork__report",
+      "mcp__footwork__status"
+    ],
+    "mcp_servers": [
+      {
+        "name": "footwork",
+        "status": "connected",
+        "source": "dynamic"
+      }
+    ],
+    "model": "claude-opus-5-5",
+    "host_version": "2.1.296",
+    "calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__status",
+      "mcp__footwork__act",
+      "mcp__footwork__observe",
+      "mcp__footwork__report",
+      "StructuredOutput"
+    ],
+    "out_of_arm": [],
+    "final": "{\"completion\":\"completed\",\"operations\":[{\"operation\":\"op_741d45670d09\",\"disposition\":\"applied\"}],\"persistence\":\"not_checked\"}",
+    "result_is_error": false,
+    "result_subtype": "success",
+    "cost_usd": 0.09900719999999999,
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 10,
+        "outputTokens": 1029,
+        "cacheReadInputTokens": 29336,
+        "cacheCreationInputTokens": 9065,
+        "webSearchRequests": 0,
+        "costUSD": 0.09900719999999999,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 419,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "claim_review": null,
+    "schema_finalizer_offered": true,
+    "effect_calls": [
+      "mcp__footwork__bind",
+      "mcp__footwork__bind",
+      "mcp__footwork__status",
+      "mcp__footwork__act",
+      "mcp__footwork__observe",
+      "mcp__footwork__report"
+    ],
+    "structured_output_present": true,
+    "budget": {
+      "configured_softcap_usd": 1.0,
+      "scheduling_reserve_usd": 2.0,
+      "reported_cost_usd": 0.09900719999999999,
+      "available": true,
+      "finite": true,
+      "valid": true
+    }
+  },
+  "report": {
+    "accepted": true,
+    "returncode": 0,
+    "validated": {
+      "schema_version": "1",
+      "scope": "all_admitted_task_operations",
+      "validation": {
+        "accepted": true,
+        "reasons": []
+      },
+      "operation_completion": "completed",
+      "operations": [
+        {
+          "operation": "op_741d45670d09",
+          "state": "final",
+          "disposition": "applied",
+          "updated": 1791835734.906624,
+          "created": 1791835732.11695
+        }
+      ],
+      "persistence": "not_checked",
+      "current_state": "not_checked",
+      "task": "task_1ea760ed83ec4c7a88cdee3e2a62da40",
+      "snapshot_digest": "8afdbaa2a4f2cb3703dc1c4503c0dd5e38dcc200ce3b4b269d6c70802b54a6da",
+      "ledger_span": {
+        "first_created": 1791835732.11695,
+        "last_updated": 1791835734.906624,
+        "count": 1
+      },
+      "accepted_host_claim": "completed",
+      "as_of": 1791835751.512595,
+      "trusted_summary": "1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-12T20:08:52.116950+00:00 through 2026-10-12T20:08:54.906624+00:00. Current document state and disk persistence are not certified by this report."
+    }
+  },
+  "worker_absent": true,
+  "journal_rows": [
+    {
+      "id": "op_741d45670d09",
+      "state": "final",
+      "disposition": "applied",
+      "phase": "sent",
+      "execution_stage": "started"
+    }
+  ],
+  "runtime": {
+    "contexts": [
+      {
+        "role": "server",
+        "operation": null,
+        "pid": 95359,
+        "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv",
+        "modules": {
+          "jevdual": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+          ],
+          "jevdual.capability.execution_worker": null,
+          "cua_driver": null,
+          "mcp": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/mcp/__init__.py"
+          ],
+          "ApplicationServices": null,
+          "Quartz": null,
+          "Foundation": null
+        },
+        "cua_library": null,
+        "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-home",
+        "user_site_disabled": true,
+        "browser_telemetry_disabled": true,
+        "browser_cloud_sync_disabled": true,
+        "as_of_ns": 1791835719881086000
+      },
+      {
+        "role": "server",
+        "operation": null,
+        "pid": 95359,
+        "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv",
+        "modules": {
+          "jevdual": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+          ],
+          "jevdual.capability.execution_worker": null,
+          "cua_driver": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/__init__.py"
+          ],
+          "mcp": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/mcp/__init__.py"
+          ],
+          "ApplicationServices": null,
+          "Quartz": null,
+          "Foundation": null
+        },
+        "cua_library": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/libcua_driver_sdk.dylib",
+        "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-home",
+        "user_site_disabled": true,
+        "browser_telemetry_disabled": true,
+        "browser_cloud_sync_disabled": true,
+        "as_of_ns": 1791835723113013000
+      },
+      {
+        "role": "server",
+        "operation": null,
+        "pid": 95359,
+        "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv",
+        "modules": {
+          "jevdual": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+          ],
+          "jevdual.capability.execution_worker": null,
+          "cua_driver": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/__init__.py"
+          ],
+          "mcp": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/mcp/__init__.py"
+          ],
+          "ApplicationServices": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py"
+          ],
+          "Quartz": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Quartz/__init__.py"
+          ],
+          "Foundation": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Foundation/__init__.py"
+          ]
+        },
+        "cua_library": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/libcua_driver_sdk.dylib",
+        "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-home",
+        "user_site_disabled": true,
+        "browser_telemetry_disabled": true,
+        "browser_cloud_sync_disabled": true,
+        "as_of_ns": 1791835725507991000
+      },
+      {
+        "role": "worker",
+        "operation": "op_741d45670d09",
+        "pid": 97620,
+        "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv",
+        "modules": {
+          "jevdual": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py"
+          ],
+          "jevdual.capability.execution_worker": null,
+          "cua_driver": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/__init__.py"
+          ],
+          "mcp": null,
+          "ApplicationServices": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py"
+          ],
+          "Quartz": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Quartz/__init__.py"
+          ],
+          "Foundation": [
+            "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Foundation/__init__.py"
+          ]
+        },
+        "cua_library": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/libcua_driver_sdk.dylib",
+        "home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-home",
+        "user_site_disabled": true,
+        "browser_telemetry_disabled": true,
+        "browser_cloud_sync_disabled": true,
+        "as_of_ns": 1791835733222761000
+      }
+    ],
+    "registrations": [
+      {
+        "nonce": "7428a642714149f1857b3f834409d85f",
+        "operation_id": "op_741d45670d09",
+        "packet_digest": "39c0b829d152a5d7abd90149d7b0b91e9d9fcfd3747a39a85773c4c8d5b52575",
+        "pgid": 97620,
+        "pid": 97620,
+        "request_digest": "334befe675b6348da305da0b918336318e92c708c1d9b34f0e42e7d733d00954",
+        "start": "0x1.ab34f950798eep+30",
+        "version": 1
+      }
+    ],
+    "failures": []
+  },
+  "server_absent": true,
+  "oracle_actual": "Invoice report\n17.25 USD",
+  "elapsed_seconds": 33.11132416711189
+}

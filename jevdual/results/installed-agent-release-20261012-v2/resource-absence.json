@@ -1,0 +1,14 @@
+{
+  "fixture": {
+    "pid": 89273,
+    "absent": true
+  },
+  "browser": {
+    "pid": 89354,
+    "absent": true
+  },
+  "listener": {
+    "port": 63108,
+    "connect_ex": 61
+  }
+}

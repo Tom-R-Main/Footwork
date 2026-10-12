@@ -1,0 +1,36 @@
+{
+  "returncode": 1,
+  "report": {
+    "schema_version": "1",
+    "scope": "all_admitted_task_operations",
+    "validation": {
+      "accepted": false,
+      "reasons": [
+        "operation_set_mismatch",
+        "disposition_mismatch"
+      ]
+    },
+    "operation_completion": "completed",
+    "operations": [
+      {
+        "operation": "op_741d45670d09",
+        "state": "final",
+        "disposition": "applied",
+        "updated": 1791835734.906624,
+        "created": 1791835732.11695
+      }
+    ],
+    "persistence": "not_checked",
+    "current_state": "not_checked",
+    "task": "task_1ea760ed83ec4c7a88cdee3e2a62da40",
+    "snapshot_digest": "8afdbaa2a4f2cb3703dc1c4503c0dd5e38dcc200ce3b4b269d6c70802b54a6da",
+    "ledger_span": {
+      "first_created": 1791835732.11695,
+      "last_updated": 1791835734.906624,
+      "count": 1
+    },
+    "accepted_host_claim": null,
+    "as_of": 1791836148.593774,
+    "trusted_summary": "Host completion report rejected (operation_set_mismatch, disposition_mismatch). 1 recorded operations confirmed applied; 0 attempts confirmed no input. These are historical effects, not certification of the host job. Full task ledger: 1 records, 2026-10-12T20:08:52.116950+00:00 through 2026-10-12T20:08:54.906624+00:00. Current document state and disk persistence are not certified by this report."
+  }
+}

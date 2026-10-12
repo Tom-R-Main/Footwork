@@ -1,0 +1,1519 @@
+{
+  "source_commit": "445a348ff31243c2f3d90baae9ce209d89bd7eac",
+  "host": {
+    "platform": "Darwin",
+    "machine": "arm64"
+  },
+  "interpreter_requested": "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+  "wheel": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/artifacts/jevdual-0.0.1-py3-none-any.whl",
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "cache_initially_empty": true,
+  "system_site_packages": false,
+  "borrowed_dependencies": false,
+  "registry": "https://pypi.org/simple",
+  "binary_only": true,
+  "commands": [
+    {
+      "stage": "venv",
+      "argv": [
+        "/opt/homebrew/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/empty-cache",
+        "--no-python-downloads",
+        "venv",
+        "--python",
+        "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "install",
+      "argv": [
+        "/opt/homebrew/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "install",
+        "--python",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "--default-index",
+        "https://pypi.org/simple",
+        "--only-binary",
+        ":all:",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/artifacts/jevdual-0.0.1-py3-none-any.whl"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "consistency",
+      "argv": [
+        "/opt/homebrew/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "check",
+        "--python",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "inventory",
+      "argv": [
+        "/opt/homebrew/bin/uv",
+        "--no-config",
+        "--no-progress",
+        "--cache-dir",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/empty-cache",
+        "--no-python-downloads",
+        "pip",
+        "list",
+        "--python",
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "--format",
+        "json"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "origins",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "-I",
+        "-c",
+        "\nimport sys,json,importlib.metadata,importlib\nfrom pathlib import Path\nimport jevdual,jevdual.capability.execution_worker as worker\nfrom jevdual._native import BACKEND\nnames=(\"cua_driver\",\"psutil\",\"mcp\",\"ApplicationServices\",\"Quartz\",\"Foundation\",\"packaging\")\nmodules={n:str(importlib.import_module(n).__file__) for n in names}\nprint(json.dumps({\"version\":sys.version,\"prefix\":sys.prefix,\"base_prefix\":sys.base_prefix,\"python\":sys.executable,\"package\":jevdual.__file__,\"worker\":worker.__file__,\"backend\":BACKEND,\"module_origins\":modules,\"sys_path\":sys.path}))\n"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "doctor",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/footwork-capability",
+        "doctor"
+      ],
+      "returncode": 0
+    },
+    {
+      "stage": "wheel-tags",
+      "argv": [
+        "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+        "-I",
+        "-c",
+        "import json,importlib.metadata;print(json.dumps([{\"name\":d.metadata[\"Name\"],\"version\":d.version,\"tags\":[l[5:] for l in (d.read_text(\"WHEEL\") or \"\").splitlines() if l.startswith(\"Tag: \")]} for d in importlib.metadata.distributions()]))"
+      ],
+      "returncode": 0
+    }
+  ],
+  "passed": true,
+  "limits": "Fresh dependencies on existing host OS/interpreter, not a fresh machine or TCC permission database.",
+  "origins": {
+    "version": "3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "prefix": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv",
+    "base_prefix": "/Library/Frameworks/Python.framework/Versions/3.12",
+    "python": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+    "package": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+    "worker": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/capability/execution_worker.py",
+    "backend": "pure-python",
+    "module_origins": {
+      "cua_driver": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/cua_driver/__init__.py",
+      "psutil": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/psutil/__init__.py",
+      "mcp": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/mcp/__init__.py",
+      "ApplicationServices": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py",
+      "Quartz": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Quartz/__init__.py",
+      "Foundation": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Foundation/__init__.py",
+      "packaging": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/packaging/__init__.py"
+    },
+    "sys_path": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python312.zip",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12",
+      "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/lib-dynload",
+      "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+    ]
+  },
+  "doctor": {
+    "platform": "darwin",
+    "supported": true,
+    "runtime": {
+      "python_version": "3.12.6",
+      "python_requirement": ">=3.11,<4.0",
+      "python_compatible": true,
+      "interpreter": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/bin/python",
+      "architecture": "arm64",
+      "distribution": {
+        "version": "0.0.1",
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "loaded_modules": {
+        "jevdual": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/__init__.py",
+        "jevdual.capability.setup": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/jevdual/capability/setup.py",
+        "ApplicationServices": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/ApplicationServices/__init__.py",
+        "Quartz": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages/Quartz/__init__.py"
+      }
+    },
+    "dependencies": {
+      "browser-use": {
+        "version": "0.13.10",
+        "requirement": "==0.13.10",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "typesafe-sdk": {
+        "version": "0.7.4",
+        "requirement": "<1,>=0.7",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "orjson": {
+        "version": "3.13.0",
+        "requirement": ">=3.10",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "psutil": {
+        "version": "7.2.2",
+        "requirement": "==7.2.2",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "mcp": {
+        "version": "2.1.1",
+        "requirement": "==2.1.1",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "packaging": {
+        "version": "26.3",
+        "requirement": "<27,>=25",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "cua-driver": {
+        "version": "0.28.2",
+        "requirement": "==0.28.2",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "pyobjc-framework-applicationservices": {
+        "version": "12.2.2",
+        "requirement": ">=12",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "pyobjc-framework-quartz": {
+        "version": "12.2.2",
+        "requirement": ">=12",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      },
+      "pyobjc-framework-cocoa": {
+        "version": "12.2.2",
+        "requirement": ">=12",
+        "compatible": true,
+        "location": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/venv/lib/python3.12/site-packages"
+      }
+    },
+    "permissions": {
+      "accessibility": "granted",
+      "screen_recording": "granted"
+    },
+    "scope": "not_checked",
+    "journal": "not_checked",
+    "warnings": [],
+    "dependency_metadata": "installed distribution",
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "provider_account_required": false,
+    "rust_toolchain_required": false,
+    "blockers": [],
+    "prerequisite_status": "met",
+    "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks."
+  },
+  "inventory": [
+    {
+      "name": "aiofiles",
+      "version": "25.1.0"
+    },
+    {
+      "name": "aiohappyeyeballs",
+      "version": "2.7.1"
+    },
+    {
+      "name": "aiohttp",
+      "version": "3.14.3"
+    },
+    {
+      "name": "aiosignal",
+      "version": "1.4.0"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anthropic",
+      "version": "0.76.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.12.1"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "backoff",
+      "version": "2.2.1"
+    },
+    {
+      "name": "beautifulsoup4",
+      "version": "4.15.0"
+    },
+    {
+      "name": "browser-harness",
+      "version": "0.1.13"
+    },
+    {
+      "name": "browser-use",
+      "version": "0.13.10"
+    },
+    {
+      "name": "browser-use-sdk",
+      "version": "3.4.2"
+    },
+    {
+      "name": "bubus",
+      "version": "1.5.6"
+    },
+    {
+      "name": "cdp-use",
+      "version": "1.4.5"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.2"
+    },
+    {
+      "name": "click",
+      "version": "8.3.3"
+    },
+    {
+      "name": "cloudpickle",
+      "version": "3.1.2"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2"
+    },
+    {
+      "name": "cua-driver",
+      "version": "0.28.2"
+    },
+    {
+      "name": "cython",
+      "version": "3.3.0"
+    },
+    {
+      "name": "distro",
+      "version": "1.9.0"
+    },
+    {
+      "name": "docstring-parser",
+      "version": "0.18.0"
+    },
+    {
+      "name": "fetch-use",
+      "version": "0.4.0"
+    },
+    {
+      "name": "frozenlist",
+      "version": "1.8.0"
+    },
+    {
+      "name": "google-api-core",
+      "version": "2.29.0"
+    },
+    {
+      "name": "google-api-python-client",
+      "version": "2.188.0"
+    },
+    {
+      "name": "google-auth",
+      "version": "2.48.0"
+    },
+    {
+      "name": "google-auth-httplib2",
+      "version": "0.4.4"
+    },
+    {
+      "name": "google-auth-oauthlib",
+      "version": "1.2.4"
+    },
+    {
+      "name": "google-genai",
+      "version": "1.65.0"
+    },
+    {
+      "name": "googleapis-common-protos",
+      "version": "1.75.5"
+    },
+    {
+      "name": "groq",
+      "version": "1.0.0"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.13.1"
+    },
+    {
+      "name": "httplib2",
+      "version": "0.32.0"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "httpx2",
+      "version": "2.13.1"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "inquirerpy",
+      "version": "0.3.4"
+    },
+    {
+      "name": "jevdual",
+      "version": "0.0.1"
+    },
+    {
+      "name": "jiter",
+      "version": "0.17.0"
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0"
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1"
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.3"
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0"
+    },
+    {
+      "name": "markdownify",
+      "version": "1.2.2"
+    },
+    {
+      "name": "mcp",
+      "version": "2.1.1"
+    },
+    {
+      "name": "mcp-types",
+      "version": "2.1.1"
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2"
+    },
+    {
+      "name": "multidict",
+      "version": "6.9.1"
+    },
+    {
+      "name": "oauthlib",
+      "version": "4.0.0"
+    },
+    {
+      "name": "ollama",
+      "version": "0.6.1"
+    },
+    {
+      "name": "openai",
+      "version": "2.26.0"
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.1"
+    },
+    {
+      "name": "orjson",
+      "version": "3.13.0"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "pfzy",
+      "version": "0.3.4"
+    },
+    {
+      "name": "pillow",
+      "version": "12.3.0"
+    },
+    {
+      "name": "portalocker",
+      "version": "4.4.0"
+    },
+    {
+      "name": "posthog",
+      "version": "7.7.0"
+    },
+    {
+      "name": "prompt-toolkit",
+      "version": "3.0.53"
+    },
+    {
+      "name": "propcache",
+      "version": "0.5.4"
+    },
+    {
+      "name": "proto-plus",
+      "version": "1.29.0"
+    },
+    {
+      "name": "protobuf",
+      "version": "6.33.6"
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2"
+    },
+    {
+      "name": "pyasn1",
+      "version": "0.6.4"
+    },
+    {
+      "name": "pyasn1-modules",
+      "version": "0.4.2"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.11"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.5"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0"
+    },
+    {
+      "name": "pygments",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.15.1"
+    },
+    {
+      "name": "pyobjc-core",
+      "version": "12.2.2"
+    },
+    {
+      "name": "pyobjc-framework-applicationservices",
+      "version": "12.2.2"
+    },
+    {
+      "name": "pyobjc-framework-cocoa",
+      "version": "12.2.2"
+    },
+    {
+      "name": "pyobjc-framework-coretext",
+      "version": "12.2.2"
+    },
+    {
+      "name": "pyobjc-framework-quartz",
+      "version": "12.2.2"
+    },
+    {
+      "name": "pyotp",
+      "version": "2.9.0"
+    },
+    {
+      "name": "pyparsing",
+      "version": "3.3.3"
+    },
+    {
+      "name": "pypdf",
+      "version": "6.16.2"
+    },
+    {
+      "name": "python-dateutil",
+      "version": "2.9.0.post0"
+    },
+    {
+      "name": "python-docx",
+      "version": "1.2.0"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.2"
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32"
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0"
+    },
+    {
+      "name": "reportlab",
+      "version": "4.4.9"
+    },
+    {
+      "name": "requests",
+      "version": "2.33.0"
+    },
+    {
+      "name": "requests-oauthlib",
+      "version": "2.0.0"
+    },
+    {
+      "name": "rich",
+      "version": "14.3.3"
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.9.1"
+    },
+    {
+      "name": "rsa",
+      "version": "4.9.1"
+    },
+    {
+      "name": "screeninfo",
+      "version": "0.8.1"
+    },
+    {
+      "name": "six",
+      "version": "1.17.0"
+    },
+    {
+      "name": "sniffio",
+      "version": "1.3.1"
+    },
+    {
+      "name": "soupsieve",
+      "version": "3.0.3"
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.5.0"
+    },
+    {
+      "name": "starlette",
+      "version": "1.7.0"
+    },
+    {
+      "name": "tenacity",
+      "version": "9.1.4"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1"
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4"
+    },
+    {
+      "name": "typesafe-sdk",
+      "version": "0.7.4"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.15.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4"
+    },
+    {
+      "name": "uritemplate",
+      "version": "4.2.0"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0"
+    },
+    {
+      "name": "uuid7",
+      "version": "0.1.0"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0"
+    },
+    {
+      "name": "wcwidth",
+      "version": "0.9.2"
+    },
+    {
+      "name": "websockets",
+      "version": "15.0.1"
+    },
+    {
+      "name": "yarl",
+      "version": "1.25.1"
+    }
+  ],
+  "wheel_tags": [
+    {
+      "name": "anyio",
+      "version": "4.12.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "groq",
+      "version": "1.0.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "oauthlib",
+      "version": "4.0.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "cloudpickle",
+      "version": "3.1.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyobjc-framework-CoreText",
+      "version": "12.2.2",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "portalocker",
+      "version": "4.4.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.3",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "inquirerpy",
+      "version": "0.3.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "browser-harness",
+      "version": "0.1.13",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "prompt_toolkit",
+      "version": "3.0.53",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "soupsieve",
+      "version": "3.0.3",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jiter",
+      "version": "0.17.0",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "typesafe-sdk",
+      "version": "0.7.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jevdual",
+      "version": "0.0.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "google-api-python-client",
+      "version": "2.188.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "yarl",
+      "version": "1.25.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "posthog",
+      "version": "7.7.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "orjson",
+      "version": "3.13.0",
+      "tags": [
+        "cp312-cp312-macosx_15_0_arm64"
+      ]
+    },
+    {
+      "name": "google-auth-oauthlib",
+      "version": "1.2.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "requests",
+      "version": "2.33.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "PyJWT",
+      "version": "2.15.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.46.5",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "browser-use-sdk",
+      "version": "3.4.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyotp",
+      "version": "2.9.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "docstring_parser",
+      "version": "0.18.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "propcache",
+      "version": "0.5.4",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "mcp",
+      "version": "2.1.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "rich",
+      "version": "14.3.3",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "uritemplate",
+      "version": "4.2.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "reportlab",
+      "version": "4.4.9",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "tenacity",
+      "version": "9.1.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "aiofiles",
+      "version": "25.1.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyobjc-framework-Quartz",
+      "version": "12.2.2",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "aiohappyeyeballs",
+      "version": "2.7.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2",
+      "tags": [
+        "cp311-abi3-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "pyobjc-framework-Cocoa",
+      "version": "12.2.2",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "wcwidth",
+      "version": "0.9.2",
+      "tags": [
+        "cp310-abi3-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "googleapis-common-protos",
+      "version": "1.75.5",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "google-genai",
+      "version": "1.65.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "protobuf",
+      "version": "6.33.6",
+      "tags": [
+        "cp39-abi3-macosx_10_9_universal2"
+      ]
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "sniffio",
+      "version": "1.3.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "rsa",
+      "version": "4.9.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyasn1",
+      "version": "0.6.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "screeninfo",
+      "version": "0.8.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyobjc-framework-ApplicationServices",
+      "version": "12.2.2",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "fetch-use",
+      "version": "0.4.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "python-dateutil",
+      "version": "2.9.0.post0",
+      "tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "openai",
+      "version": "2.26.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyobjc-core",
+      "version": "12.2.2",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "click",
+      "version": "8.3.3",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "markdownify",
+      "version": "1.2.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "frozenlist",
+      "version": "1.8.0",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "uuid7",
+      "version": "0.1.0",
+      "tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.15.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "aiosignal",
+      "version": "1.4.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "browser-use",
+      "version": "0.13.10",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "google-auth-httplib2",
+      "version": "0.4.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pycparser",
+      "version": "3.11",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "google-auth",
+      "version": "2.48.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "bubus",
+      "version": "1.5.6",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "starlette",
+      "version": "1.7.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "distro",
+      "version": "1.9.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pfzy",
+      "version": "0.3.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.9.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "httplib2",
+      "version": "0.32.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "python-docx",
+      "version": "1.2.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "ollama",
+      "version": "0.6.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "websockets",
+      "version": "15.0.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "pypdf",
+      "version": "6.16.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "httpx2",
+      "version": "2.13.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.5.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "backoff",
+      "version": "2.2.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyasn1_modules",
+      "version": "0.4.2",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "google-api-core",
+      "version": "2.29.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "beautifulsoup4",
+      "version": "4.15.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2",
+      "tags": [
+        "cp36-abi3-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "aiohttp",
+      "version": "3.14.3",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "cdp-use",
+      "version": "1.4.5",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.2",
+      "tags": [
+        "cp312-cp312-macosx_10_13_universal2"
+      ]
+    },
+    {
+      "name": "pillow",
+      "version": "12.3.0",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "Cython",
+      "version": "3.3.0",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "proto-plus",
+      "version": "1.29.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.13.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pyparsing",
+      "version": "3.3.3",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "cua-driver",
+      "version": "0.28.2",
+      "tags": [
+        "py3-none-macosx_13_0_universal2"
+      ]
+    },
+    {
+      "name": "six",
+      "version": "1.17.0",
+      "tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "requests-oauthlib",
+      "version": "2.0.0",
+      "tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "multidict",
+      "version": "6.9.1",
+      "tags": [
+        "cp312-cp312-macosx_11_0_arm64"
+      ]
+    },
+    {
+      "name": "anthropic",
+      "version": "0.76.0",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "mcp-types",
+      "version": "2.1.1",
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "tags": [
+        "py3-none-any"
+      ]
+    }
+  ],
+  "cache_bytes_after_install": 391616193,
+  "private_state": {
+    "private-home": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-home",
+    "private-config": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-config",
+    "private-cache": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-cache",
+    "private-temp": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/installed-agent-release-20261012-v2/footwork/output/install-v1/private-temp"
+  }
+}

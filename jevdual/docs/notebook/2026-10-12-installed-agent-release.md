@@ -13,3 +13,16 @@ Test: after installed-host qualification and Claude raw review, freeze release i
 Predicts: repeatable bundles bind product and helper identities to both guest permission evidence and real-host task evidence, include MIT license/setup guidance, and disclose OS/host/persistence/pixel limits. The previous qualification packet remains immutable.
 Against: unqualified runtime bytes replace the candidate, evidence claims exceed their scope, extras/secrets enter inventory, the bundle cannot verify, or repeated builds differ.
 Refs: source445a348; wheel9bb0440d; scripts/build_onboarding_packet.py; docs/experiments/A2-installed-agent-release.md
+
+## IAU1 · update · 2026-10-12 16:15
+Observed: pristine14member v2 verification precedes its seven-stage fresh installation of115binaries. Strictdoctor0 confirms existing host permission prerequisites. Committed harnessd52d32d passes19root boundary tests and Ruff, then one actual Claude Code2.1.296 Opus5.5 session offers exactly five MCPtools plus StructuredOutput. It performs oneact op741d45670d09, exact independent AXoracle passes, one durable final/applied/sent row remains, and emitted installed reportadapter accepts final structuredclaims afterhostexit. Runtime server/worker origins/privateHOME and absence pass. Cost0.0990072 is retained. OneSIGINT confirms automaticdocument/browser/listener cleanup with fixtureexit0; independent fresh AXWindows succeeds with0matches, exactownedprocesses absent andlistenerrefused. An additional readonly adapter check rejects claims omitting the admitted operation.
+Changes: operator verifierflag error v1 and relativeconfigpath refusal v2 are retained before the one measured task; corrected setup uses pristineverification and absolutepaths. No native/model retry or newpermissiongrant occurs. Claude raw review pending; IA1 remainsopen.
+Next: independent review, then freeze the local release docs/evidence and build/check the candidate twice. Original A1 failures remainunchanged.
+Refs: results/installed-agent-release-20261012-v2; output/installed-agent-release-20261012-v2/evidence-manifest.json; docs/experiments/A2-installed-agent-release.md; d52d32d
+
+## IAU2 · update · 2026-10-12 16:17
+Resolves: IA1 = held
+Observed: Claude independently verifies all13raw evidence digests, exact offered/called tools/model/version, installed contexts, readonly single journal row, structured report/adapter-only publication and independent automatic-cleanup absence; approves with no blockers in1791836103010895000. Root readonly missing-operation report check rejects with exit1 and operation/disposition mismatches. Product445a348/wheel9bb0440d provenance is recorded separately from harnessd52d32d.
+Changes: release summaries add explicit host/OS/single-sample limits already established by the existing records; no receipt or prior failed outcome changes. Guest summary receives its existing Terminal/macOS26.6.2 scope metadata for artifact consumers.
+Next: commit release builder/docs/approved summaries, build twice, verify payload/RECORD/extraction and have Claude inspect the actual candidate. IA2 remainsopen.
+Refs: results/installed-agent-release-20261012-v2; results/u3-packet-v4-permission-20261012-v3/report.md; Claude1791836103010895000

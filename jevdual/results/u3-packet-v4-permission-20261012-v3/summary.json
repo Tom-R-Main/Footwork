@@ -59,5 +59,17 @@
   "review_messages": [
     "1791834939955400000",
     "1791835064888832000"
+  ],
+  "qualified_scope": "supported Terminal permission reset then captured grant on one previously provisioned SIP-enabled macOS26.6.2 guest",
+  "host": "Terminal",
+  "os": "macOS26.6.2/25G83",
+  "architecture": "arm64",
+  "python": "3.14.7",
+  "limitations": [
+    "not never-granted cold OS or first Chrome launch",
+    "not other responsible hosts/OS/MDM",
+    "not pixel capture",
+    "disk persistence not checked",
+    "failed U3v1 and interrupted UF5 preserved"
   ]
 }
