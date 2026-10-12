@@ -85,3 +85,9 @@ Observed: Claude independently verifies original raw evidence and its sole clean
 Changes: the public input wrapper invokes printf before eval, so separate later echo of the prior exit is invalid; initial exit files remain as operator logging errors. Only resource-free denial probes repeat in distinct v2 names, capturing actual exits in the same eval. A preliminary manifest glob includes itself; qualified-baseline.txt uses explicit groups and is the authoritative baseline. These do not change product source or permission state.
 Next: actual same-host grant confirmation, Terminal relaunch, installed native and automatic cleanup, export and independent receipt review. UF4/UF5 remain open; prior failed U3v1 is unchanged.
 Refs: guest footwork-u4-repair/qualified-baseline.txt; guest doctor-before-v2-exit.txt; guest denied-fixture-v2-exit.txt; Claude1791832201147781000
+
+## UFU9 · update · 2026-10-12 15:25
+Observed: user approves the repaired run's exact Terminal Accessibility grant. Before reaching the switch, CUA scroll/reconnection attempts time out. Fresh inventory then reports Tart not running and the isolated launcher reports the named guest stopped. No repaired grant action or native trial has been issued. Root restarts the same guest with its original no-clipboard/no-audio/no-USB flags and read-only qualification ISO; the VM viewer is observable again at boot.
+Changes: the cause of the VM stop is unavailable. Its prior denied baseline and installed files require guest readback after boot; an unobserved state cannot count as grant or cleanup evidence.
+Next: observe guest login/session, preserve and verify pre-stop baseline bytes, then apply the already specifically approved grant once and continue same frozen artifact if eligibility remains established. Credentials remain with the human.
+Refs: CUA timeoutReached then inventory; tart list stopped/running; isolated tart run session80357; guest qualified-baseline.txt; UF5
