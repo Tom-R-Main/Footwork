@@ -31,3 +31,14 @@ Test: delay an actual upstream health response past the caller deadline, issue r
 Predicts: delayed auxiliary results never become command proof; full status still reaches the body independently; expired probe callers cannot produce an unbounded read fanout; all workers exit before ownership release.
 Against: a probe annotation changes effect semantics, a cached response authorizes admission, outstanding readers grow with retries or workers survive cleanup.
 Refs: tools/physical-workcell/workbench_link.py; tools/physical-workcell/test_workbench_link.py
+
+## SIM12-U2 · update · 2026-10-12 15:00
+Observed: the original runtime failed a real-socket delayed healthy-state check, cancelling planning while the body remained ready. The original link also failed the repeated-probe test: six downstream probes created three concurrent upstream readers per path. Both meaningful failing logs are retained. Runtime repair uses fresh full ready status before every lease/stage and preserves planning on an inconclusive probe; link repair coalesces only annotated reads. An intermediate new-boot/delayed-state test found that unconfirmed readiness was being treated as known uncertainty; that classification was corrected and its failed output retained. A setup-only wrong interpreter path exited before the first runtime test and was not retained separately.
+Inferred: false cancellation and read fanout are reproduced mechanisms; the warm baseline still does not establish the physical cause of the historical slow response.
+Next: finish bounded probe cleanup and final control/admission regressions, freeze source, then drive the actual delayed-health browser trial.
+Refs: tools/physical-workcell/output/sim12-health-before-fix.log; tools/physical-workcell/output/sim12-link-before-fix.log; tools/physical-workcell/output/sim12-health-targeted-v2.log; tools/physical-workcell/output/sim12-health-targeted-v3.log
+
+## SIM12-TIME · update · 2026-10-12 15:00
+Observed: the U1, DELAY and FLIGHT headings contain 14:47 from precomposed text; the clock output for that write was 14:49. Commit 3de70f1 holds all three entries before the reproductions and repairs. Earlier text remains unchanged.
+Next: use the actual clock result when assembling later entries; Git settles prediction order.
+Refs: commit 3de70f1
