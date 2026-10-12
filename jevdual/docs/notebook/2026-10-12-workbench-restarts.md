@@ -13,3 +13,9 @@ Test: reproduce on real sockets by rebooting the same body while a model decisio
 Predicts: the original fast-reboot path admits the old decision; the repaired path pauses with no successor command, requires explicit Resume and a fresh observation, and retains exact unknown command identity for read-only recovery.
 Against: original code already pauses, repaired code sends the old decision, permanently blocks historical receipt lookup, or silently rotates authority while a command remains uncertain.
 Refs: tools/physical-workcell/network_operator_runtime.py; tools/physical-workcell/test_network_operator.py; docs/experiments/SIM11-workbench-restarts.md
+
+## SIM11-U1 · update · 2026-10-12 14:03
+Observed: four new real-socket checks failed on the original runtime. Health-first reboot let the old waiting model decision advance generation to one; acquisition-first reboot also admitted that decision under boot two. Historical uncertain dispatch stayed single-send across body reboot, but its recovered job remained labelled unknown. Graceful workbench restart left an unfinished job labelled running while its host was paused. Before-fix output is retained. The original completed product roots and source snapshot were preserved before stopping its verified idle owned processes.
+Inferred: boot identity alone does not invalidate a model decision, and runner recovery needs a consistent unfinished-job status. The original historical receipt mechanism remains useful.
+Next: repair the runtime epoch boundaries and labels, rerun affected real-socket checks, then freeze the actual browser restart trial.
+Refs: tools/physical-workcell/output/sim11-epoch-before-fix.log; tools/physical-workcell/output/sim11-preserved-baseline/preserved.json; tools/physical-workcell/test_network_operator.py
