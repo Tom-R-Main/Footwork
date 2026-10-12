@@ -1,0 +1,15 @@
+# Installed agent and release package
+
+## IA1 · prediction · 2026-10-12 16:03
+Hypothesis: a fresh dependency installation of the qualified9bb0440d wheel, attached by its generated isolated MCP command to real Claude Code, can perform one bounded browser-to-TextEdit append and produce structured completion accepted by the durable report adapter without source imports or duplicate input.
+Test: extract approved205577ee packet, verify pristine members, cold-install new private venv/cache, establish same responsible host prerequisites, start one owned fixture, generate per-job config. A committed harness offers only the five public tools to one fresh Claude Code session (Opus5.5 high,1USDsoftcap,2USDreserve,180secondstimeout). Require actual tool/model inventory, exact AX oracle, one durable operation, installed server/worker origins and private HOME, worker absence, structured claims validated by emitted adapter after host exit. Preserve raw transcript and any failure; no native or paid retry to improve outcome. Then one automatic fixture cleanup and independent resource absence. Test harness parsing/claims isolation before committing it.
+Predicts: actual host discovers the installed public catalog, performs exactly one scoped effect, claims historical completion honestly with persistence not_checked, and adapter validates against the same durable task/journal. Cleanup confirms exact resource absence.
+Against: source/development runtime supplies product imports, host uses other tools, native input repeats, report is absent/rejected, environment or cost is unavailable, or cleanup lacks confirmation.
+Refs: results/u3-packet-v4-permission-20261012-v3; docs/capability-packaging.md; scripts/capability_comparison_trial.py; original A1 failed answer acceptance preserved
+
+## IA2 · prediction · 2026-10-12 16:03
+Hypothesis: a finalized local release bundle can carry the already qualified wheel/helper bytes, deterministic inventory, installation/agent guide and evidence digests without implying broader release qualification.
+Test: after installed-host qualification and Claude raw review, freeze release instructions and qualification metadata in a committed source, build two bundles from an explicit allowlist, verify equal hashes and each member digest, independently verify wheel RECORD/runtime and helpers against qualified artifacts. Mark local candidate only; no registry publication, tag, push or merge in this package.
+Predicts: repeatable bundles bind product and helper identities to both guest permission evidence and real-host task evidence, include MIT license/setup guidance, and disclose OS/host/persistence/pixel limits. The previous qualification packet remains immutable.
+Against: unqualified runtime bytes replace the candidate, evidence claims exceed their scope, extras/secrets enter inventory, the bundle cannot verify, or repeated builds differ.
+Refs: source445a348; wheel9bb0440d; scripts/build_onboarding_packet.py; docs/experiments/A2-installed-agent-release.md
