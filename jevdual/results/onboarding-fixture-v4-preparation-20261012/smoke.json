@@ -1,0 +1,44 @@
+{
+  "artifact_sha256": "23e5e16fe5923c392b9d11e4601c390ff174234efd01af9a27653ed59b6a3d1e",
+  "profiles": {
+    "312": {
+      "member_verification": {
+        "verified": true,
+        "members": 14,
+        "source_commit": "1d72e51ef7c4c5a49dac6cfac44c95427fbeff01",
+        "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7"
+      },
+      "help_exits": {
+        "capability_clean_install.py": 0,
+        "capability_fixture.py": 0,
+        "capability_fixture_config.py": 0,
+        "capability_installed_trial.py": 0
+      },
+      "helper_imports": 7,
+      "git_invoked": false,
+      "receipt_source_commit": "1d72e51ef7c4c5a49dac6cfac44c95427fbeff01",
+      "intentional_uv_boundary_exit": 17
+    },
+    "314": {
+      "member_verification": {
+        "verified": true,
+        "members": 14,
+        "source_commit": "1d72e51ef7c4c5a49dac6cfac44c95427fbeff01",
+        "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7"
+      },
+      "help_exits": {
+        "capability_clean_install.py": 0,
+        "capability_fixture.py": 0,
+        "capability_fixture_config.py": 0,
+        "capability_installed_trial.py": 0
+      },
+      "helper_imports": 7,
+      "git_invoked": false,
+      "receipt_source_commit": "1d72e51ef7c4c5a49dac6cfac44c95427fbeff01",
+      "intentional_uv_boundary_exit": 17
+    }
+  },
+  "native_actions": "not_performed",
+  "installation": "stopped_at_external_uv_boundary",
+  "passed": true
+}
