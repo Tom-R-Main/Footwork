@@ -348,6 +348,15 @@ def completed_job_score(root, public, identity, sqlite):
         "measurement_receipt": measurement, "reset_receipt": reset, "model_calls": item["call_count"]}
 
 
+def measurement_score(native_root, native_gap=False):
+    database = native_root / "measurements.sqlite"
+    if native_gap and not database.exists():
+        require(not database.is_symlink(), "absent gap database cannot be a dangling symlink")
+        return {"role": "independent_read_only_sqlite_scorer", "count": 0, "rows": [],
+            "database_created": False, "reason": "Native gap occurred before the first computer measurement"}
+    return qualify_bench.sqlite_score(native_root)
+
+
 def ui_score(root, case, boundary, public, client):
     steps = {step["name"]: step for step in read(root / "ui-ledger.json")["steps"]}
     names = {"crash-offline", "crash-restored"} | ({"crash-blocked", "crash-still-blocked"} if case == "body-native-gap" else
@@ -417,7 +426,7 @@ def score(root):
     crash_result = boundary_score(root, boundary, identity, transport, events)
     calls = calls_score(root, public, transport, relay, gap_token)
     admissions = fresh_admissions(transport, relay, events)
-    sqlite = qualify_bench.sqlite_score(root / "body/bench")
+    sqlite = measurement_score(root / "body/bench", native_gap=bool(gap_token))
     native = native_gap_score(root, boundary, public, transport, calls, sqlite) if gap_token else completed_job_score(root, public, identity, sqlite)
     ui = ui_score(root, case, boundary, public, client)
     original = transport[boundary["command_id"]]

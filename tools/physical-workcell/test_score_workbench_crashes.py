@@ -1,5 +1,6 @@
 """Pure retained-evidence negative controls; never actual-model qualification."""
 import copy
+import sqlite3
 import unittest
 import uuid
 from pathlib import Path
@@ -24,6 +25,21 @@ def receipt(request):
 
 
 class CrashScorerTests(unittest.TestCase):
+    def test_only_native_gap_accepts_database_not_yet_created_without_writing(self):
+        root = scorer.BASE / "output" / ("sim13-score-missing-db-" + uuid.uuid4().hex[:10])
+        root.mkdir(mode=0o700)
+        result = scorer.measurement_score(root, native_gap=True)
+        self.assertEqual(result["count"], 0)
+        self.assertEqual(result["rows"], [])
+        self.assertIs(result["database_created"], False)
+        self.assertEqual(list(root.iterdir()), [])
+        with self.assertRaises(sqlite3.OperationalError):
+            scorer.measurement_score(root)
+        self.assertEqual(list(root.iterdir()), [])
+        protocol.create_file(root / "measurements.sqlite", b"")
+        with self.assertRaises(sqlite3.OperationalError):
+            scorer.measurement_score(root, native_gap=True)
+
     def test_terminal_envelope_rejects_digest_identity_and_epoch_substitution(self):
         request = command()
         good = receipt(request)
