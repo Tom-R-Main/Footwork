@@ -30,3 +30,15 @@ Refs: tools/physical-workcell/test_workbench_crash_runtime.py; tools/physical-wo
 Observed: source inspection identifies indexed lower receipts as the body's recovery proof. Existing before/after_dispatch barriers bracket lower dispatch; an external launcher can expose the deeper native-state-before-receipt gap. Host restart preserves sent command association at acknowledged boundaries, but arbitrary event-publication and pre-client-ID instruction windows have separate limitations. Independent Codex sessions can survive a host kill during active planning; selected command gates occur after planner completion and must prove no active planner.
 Next: exercise owned hard-kill regressions and freeze four actual browser cases: host in-flight with known receipt, body after native motion without receipt, and each role with an already-uncertain known command.
 Refs: tools/physical-workcell/body_network.py; tools/physical-workcell/network_operator_runtime.py; docs/experiments/SIM13-workbench-hard-crashes.md
+
+## SIM13-U2 · update · 2026-10-12 15:32
+Resolves: SIM13-NATIVE = held
+Observed: three body-launcher checks passed. SIGKILL after_native retained 867 native steps and a saved next generation, while Bench stayed busy and the Agent result remained absent. Ordinary restart advanced boot, preserved identities and returned unknown on repeated exact receipt reads; a fresh successor was refused and native/core evidence remained unchanged. SIGKILL after_dispatch recovered the exact indexed lower receipt read-only with one send and unchanged native state. All owned child service processes exited.
+Next: freeze the diagnostic launcher and browser harness, then exercise the same gap with an actual AI decision in the product.
+Refs: tools/physical-workcell/output/sim13-crash-body-first.log; tools/physical-workcell/output/sim13-crash-body-eb4582e2a4f8/conformance.json; tools/physical-workcell/output/sim13-crash-body-f9b6716db22e/conformance.json
+
+## SIM13-U3 · update · 2026-10-12 15:32
+Resolves: SIM13-HOST = held
+Observed: two host process/TCP checks passed. At an externally held completed-body reply, the registered workbench exited by SIGKILL with zero descendants; restart retained the exact original command, Check receipt applied once while paused, and explicit Resume obtained a new challenge. Exactly one dispatch POST and client send intent were retained. A separate event-fsync-before-manifest-publication kill reproduced FileExistsError on Resume; no effect command was sent, but arbitrary instruction-level recovery is not supported by that path.
+Next: test the selected acknowledged command gates in the actual browser; retain the event publication gap as an explicit limitation rather than silently excluding it or claiming complete crash recovery.
+Refs: tools/physical-workcell/output/sim13-host-crash-runtime-v1.log; tools/physical-workcell/output/sim13-host-crash-e1229762d6/conformance.json; tools/physical-workcell/output/sim13-host-crash-41308cad5f/conformance.json
