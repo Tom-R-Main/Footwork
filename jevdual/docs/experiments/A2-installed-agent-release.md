@@ -23,3 +23,9 @@ All required installation, actual host environment, exact historical effect, dur
 ## Evidence
 
 Private: output/installed-agent-release-20261012-v1. Sanitized: results/installed-agent-release-20261012-v1. Notebook: docs/notebook/2026-10-12-installed-agent-release.md.
+
+## Amendment · 2026-10-12 · before host execution
+
+Claude structured output may expose its schema finalizer `StructuredOutput` alongside the five MCP tools. Permit only that finalizer, which validates the requested report object and grants no resource effect. Require the exact five Footwork MCP tools, no other offered/called effect tools, and record the actual catalog. This replaces the literal five-total-tools inventory check without changing scope or completion requirements.
+
+A preparation CLI typo passed --root to a verifier requiring --packet-root, and the shell continued into dependency installation. No fixture or agent started. Retain v1 with this operator error; v2 first passes pristine14member verification, then performs its own fresh installation. Neither preparation contains a measured native/model task. The single paid/live attempt will be in v2.
