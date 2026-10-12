@@ -1,0 +1,63 @@
+{
+  "app_id": "676909dee6e1429abdcfa2e3698650cd",
+  "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+  "body_origin": "http://127.0.0.1:51387",
+  "browser_origin": "http://127.0.0.1:51389",
+  "case": "host-uncertain",
+  "owned_processes_exited": true,
+  "planner": "actual_codex_cli_images_over_TCP",
+  "processes": [
+    {
+      "boot": 1,
+      "exit_observed": true,
+      "group": 60446,
+      "initialized": true,
+      "log": "body-01.log",
+      "pid": 60446,
+      "port": 51387,
+      "returncode": 0,
+      "role": "body",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-uncertain-v1/body",
+      "stopped_time": 1791835655.0880818
+    },
+    {
+      "exit_observed": true,
+      "group": 60454,
+      "pid": 60454,
+      "returncode": 0,
+      "role": "initialization"
+    },
+    {
+      "boot": 1,
+      "children_after": [],
+      "children_before": [],
+      "exit_observed": true,
+      "group": 60458,
+      "initialized": false,
+      "log": "workbench-01.log",
+      "pid": 60458,
+      "port": 51389,
+      "returncode": -9,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-uncertain-v1/operator",
+      "signal": "SIGKILL",
+      "stopped_time": 1791835389.350252
+    },
+    {
+      "boot": 2,
+      "exit_observed": true,
+      "group": 72661,
+      "initialized": false,
+      "log": "workbench-02.log",
+      "pid": 72661,
+      "port": 51389,
+      "returncode": 0,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-uncertain-v1/operator",
+      "stopped_time": 1791835654.993075
+    }
+  ],
+  "ready": true,
+  "simulation": true,
+  "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+}

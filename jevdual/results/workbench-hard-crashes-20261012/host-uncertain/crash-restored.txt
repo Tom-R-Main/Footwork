@@ -1,0 +1,72 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51389/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51389/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button (disabled) ＋ New job, ID: new-job
+		8 checkbox Workbench crash while uncertain Needs attention, Value: 1
+	9 container
+		10 heading Bench, Value: 1
+			11 text Bench
+		12 text Workbench crash while uncertain
+		13 text Needs attention
+		14 button (disabled) Pause, ID: pause
+		15 text Restarted with a retained command stage; check its exact receipt
+		16 container Description: Body connection, ID: network-card
+			17 text Body connected
+			18 text Body identity verified by read-only TCP health
+			19 button Disconnect, ID: disconnect
+			20 button Check receipt, ID: reconcile
+			21 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				22 text Test the simulated connection
+		23 container Camera observation
+			24 text OVERHEAD CAMERA
+			25 text Last observation · Workbench crash while uncertain
+			26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			27 text Orange part Blue pusher Green task region
+			28 text Captured · generation 0
+		29 text OUTCOME UNCERTAIN
+		30 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.
+		31 container Job progress
+			32 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		33 container Measurement
+			34 heading Measurement, Value: 2, ID: measurement-heading
+				35 text Measurement
+			36 text Pending
+			37 text The part’s visible footprint will be measured after its placement is verified.
+		38 container Activity
+			39 heading Activity, Value: 2, ID: activity-heading
+				40 text Activity
+			41 text 16 events
+			42 content list activity
+				43 container
+					44 text 04:03 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt
+				45 container
+					46 text 04:02 PM Agent stopped for review reply is uncertain; reconcile exact command without resending
+				47 container
+					48 text 04:02 PM Sending a guarded action
+				49 container
+					50 text 04:02 PM Fresh body check verified The next command uses current body evidence.
+				51 container
+					52 text 04:02 PM Action proposal accepted Workbench crash while uncertain
+				53 container
+					54 text 04:02 PM Checking the planned action
+				55 container
+					56 text 04:02 PM Fresh body check verified The next command uses current body evidence.
+				57 container
+					58 text 04:02 PM AI planning requested Workbench crash while uncertain
+				59 container
+					60 text 04:02 PM Camera observation received Workbench crash while uncertain
+				61 container
+					62 text 04:02 PM Requesting camera observation
+				63 container
+					64 text 04:02 PM Fresh body check verified The next command uses current body evidence.
+				65 container
+					66 text 04:02 PM Inspection started Workbench crash while uncertain
+		67 button (collapsed) Session details, Secondary Actions: Expand
+			68 text Session details
+		69 text 1 model requests · Reported tokens: 13,071 input / 236 output
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51389/

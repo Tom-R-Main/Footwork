@@ -1,0 +1,1121 @@
+{
+  "before_count": 4,
+  "case": "test_workbench_crash_runtime.WorkbenchCrashRuntimeTests.test_sigkill_host_after_known_body_effect_recovers_exact_receipt_without_replay",
+  "challenges": [
+    {
+      "challenge_id": "challenge-b999f8f581a04dfdb0032544e739a4d7",
+      "generation": 0
+    },
+    {
+      "challenge_id": "challenge-43fe388fc4544ac0a1b88399629decbb",
+      "generation": 1
+    }
+  ],
+  "children_at_dispatch_gate": [],
+  "command_id": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+  "host_state": {
+    "active_job_id": "crash-one",
+    "activity": [
+      {
+        "intent": "Owned host crash",
+        "kind": "queued",
+        "outcome": "crash-one",
+        "seq": 1,
+        "time": 1791833349.30804
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "e4f618c574d296bc87d0df4ef85a53d966ad506e39d16c706f9716de545cc815"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "start_job",
+        "seq": 2,
+        "time": 1791833349.3356001
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "start_job",
+        "seq": 3,
+        "time": 1791833349.3797069
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "start_job: command-03d2e4ff739e460eb40a5a84c39a0568",
+        "seq": 4,
+        "time": 1791833349.4458508
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "62a26824a64a1ad4836505d1ebf8c2e49d6c801868bbc0e00e6c193b2fb7b5c1"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "observe",
+        "seq": 5,
+        "time": 1791833349.500184
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 6,
+        "time": 1791833349.5445702
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-a34e5f40ea694de88a0d00cccb96c44e",
+        "seq": 7,
+        "time": 1791833349.9674509
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "inference",
+        "outcome": "1",
+        "seq": 8,
+        "time": 1791833349.9699688
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "5bd7eb93f05938c05571fa2b706fde225bb9e8da1ea77b40db8f30b9db8bc03c"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "propose",
+        "seq": 9,
+        "time": 1791833349.985573
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "propose",
+        "seq": 10,
+        "time": 1791833350.012773
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "propose: command-be09796e714a4770a1ea65b8d4f77984",
+        "seq": 11,
+        "time": 1791833350.052333
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "fbf6db7e5e5dba748d8e7256eb53dfcce926613a6528673bdb094443dcd0bf31"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "dispatch",
+        "seq": 12,
+        "time": 1791833350.075737
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "dispatch",
+        "seq": 13,
+        "time": 1791833350.100466
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "Restarted with a retained command stage; check its exact receipt",
+        "seq": 14,
+        "time": 1791833350.6643
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "dispatch: command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+        "seq": 15,
+        "time": 1791833350.7481759
+      },
+      {
+        "intent": "",
+        "kind": "reconciled",
+        "outcome": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+        "seq": 16,
+        "time": 1791833350.749714
+      },
+      {
+        "intent": "",
+        "kind": "resume",
+        "outcome": "",
+        "seq": 17,
+        "time": 1791833350.77245
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "2a3f4fc1742686e469b4e44df8883079f89f9953429c8e7aa4d4cbf2cde05fcc"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "observe",
+        "seq": 18,
+        "time": 1791833350.7967832
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 19,
+        "time": 1791833350.830477
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-5ecd4e56fd0c483ba2b5eebe5dbcf613",
+        "seq": 20,
+        "time": 1791833351.033206
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "inference",
+        "outcome": "2",
+        "seq": 21,
+        "time": 1791833351.035726
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "Deterministic hard-crash conformance",
+        "seq": 22,
+        "time": 1791833351.039551
+      }
+    ],
+    "app_id": "5005ae5a09f54caf921b0d50efc1e21d",
+    "applied_commands": [
+      "command-03d2e4ff739e460eb40a5a84c39a0568",
+      "command-a34e5f40ea694de88a0d00cccb96c44e",
+      "command-be09796e714a4770a1ea65b8d4f77984",
+      "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+      "command-5ecd4e56fd0c483ba2b5eebe5dbcf613"
+    ],
+    "body_identity": {
+      "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+      "body_id": "c825e8a587194a60943c682034d8a9e0",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "body_origin": "http://127.0.0.1:64124",
+    "connection": {
+      "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+      "body_id": "c825e8a587194a60943c682034d8a9e0",
+      "epoch": 1,
+      "fault": null,
+      "reason": "Fresh pinned ready proof verified before command admission",
+      "state": "connected"
+    },
+    "frame": {
+      "generation": 1,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-crash-e1229762d6/host/client/images/challenge-43fe388fc4544ac0a1b88399629decbb-9f6339a75fcf48ca514a5e83f5fdc4ab26b70239e87cfc4a7d5d10be44830b32.png",
+      "sha256": "9f6339a75fcf48ca514a5e83f5fdc4ab26b70239e87cfc4a7d5d10be44830b32"
+    },
+    "jobs": [
+      {
+        "call_count": 2,
+        "disturbance_test": false,
+        "disturbed": false,
+        "error": "Deterministic hard-crash conformance",
+        "history": [
+          {
+            "action": {
+              "action": "move",
+              "intent": "Deterministic hard-crash conformance",
+              "target_x": -0.25,
+              "target_y": 0
+            },
+            "outcome": "executed",
+            "reason": ""
+          }
+        ],
+        "id": "crash-one",
+        "label": "Owned host crash",
+        "last_intent": "Deterministic hard-crash conformance",
+        "measurement": null,
+        "phase": "prepare",
+        "reset": null,
+        "status": "paused",
+        "target": "A"
+      }
+    ],
+    "link_origin": "http://127.0.0.1:64125",
+    "link_port": 64125,
+    "opened": true,
+    "reason": "Stopped; independent network body retained",
+    "recovery": {
+      "command_id": null,
+      "operation": null,
+      "reason": "No pending command",
+      "state": "none"
+    },
+    "runner_status": "stopped",
+    "sequence": 22,
+    "sources": {
+      "body_client.py": "40388c238192d923888c9852b363314801dcf65c7266aadc8c377d3810aeb33d",
+      "codex-action.schema.json": "e57197e4e73aa4c78145814a460ca77b9c6dc5e49aaf4c91adc0b521b7c3d833",
+      "codex-policy.md": "ce947200b2a652e0766b422f3b404bd5095ceb398569341466b2c5f4dd9647bc",
+      "codex_policy.py": "40fe73e01d97ee1e5cfdb813650b11edadbea29534784ab10cc1ef4e7f4d5418",
+      "network_bench_operator.html": "75ca82328967ea65cf3c3f7f7d60c109a4201099ae3a24d3834e0ecf19b4d897",
+      "network_bench_operator.py": "9079729ea4e8b56ccdf2a6d187b0c5d79a23a33688748fe55d92d10922500b40",
+      "network_operator_runtime.py": "001511aa25fef7f1078bce444b9a0f7d0a09d26d4e5fba9e9819ee3ed98cb6b9",
+      "order_protocol.py": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+      "workbench_link.py": "79571f62c5a9b5fb843a852bc34a2a509b0dc6dc1a6e091fa9f948ab98fae420"
+    },
+    "stage": null,
+    "usage": {
+      "calls": 2,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0
+    },
+    "version": 1
+  },
+  "original_body_receipt": {
+    "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+    "body_id": "c825e8a587194a60943c682034d8a9e0",
+    "command_id": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+    "protocol": "footwork.body/1",
+    "reason": null,
+    "receipt_scope": "retained_command_result",
+    "recorded_epoch": 1,
+    "request_sha256": "4bb621a7caca66ad01ffe6be451549dc6333e24b784f85ca74b3a6b998eb3c91",
+    "result": {
+      "next_observation": {
+        "challenge_id": "challenge-3c70ac6d24c741a8bd4c37b4051a0ca2",
+        "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-crash-e1229762d6/body/bench/images/000001-570812160c507693.png",
+        "observation": {
+          "bench_id": "c825e8a587194a60943c682034d8a9e0",
+          "calibration": {
+            "bbox_convention": "exclusive_max_pixel_edges",
+            "height": 360,
+            "image_center_world_xy": [
+              0.0,
+              0.0
+            ],
+            "image_x_direction": "world_positive_x",
+            "image_y_direction": "world_negative_y",
+            "meters_per_pixel": 0.0016666666666666666,
+            "projection": "orthographic",
+            "valid": true,
+            "validity_reason": "bound orthographic calibration",
+            "vertical_span_m": 0.6,
+            "width": 640,
+            "world_frame": "sim_world"
+          },
+          "generation": 1,
+          "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-crash-e1229762d6/body/bench/images/000001-570812160c507693.png",
+          "image_sha256": "9f6339a75fcf48ca514a5e83f5fdc4ab26b70239e87cfc4a7d5d10be44830b32",
+          "job_id": "crash-one",
+          "native_time_s": 2.3339999999999645,
+          "phase": "prepare",
+          "source_fingerprints": {
+            "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+            "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+            "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+            "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+            "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+            "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+            "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+            "mujoco_version": "3.15.0",
+            "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+            "state_spec": 16383,
+            "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+          },
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "05d9e7edda84f8e99f09ae66ce6d2dca314226cffcc88b6df658167d62d8e310",
+          "version": 1
+        },
+        "observation_sha256": "aa1c81325d9ebee8f598e346762467079ef66d2024ca79f98b1c41134dd01de8",
+        "sequence": 4,
+        "session_id": "ec0cf09291874cd1a0fe519ca9878e18",
+        "task": {
+          "bounds": {
+            "x_max": 0.18,
+            "x_min": -0.32,
+            "y_max": 0.15,
+            "y_min": -0.15
+          },
+          "home_zone": {
+            "x_max": -0.08,
+            "x_min": -0.16,
+            "y_max": 0.03,
+            "y_min": -0.03
+          },
+          "pusher_dimensions_m": {
+            "x": 0.04,
+            "y": 0.14
+          },
+          "zone": {
+            "x_max": 0.105,
+            "x_min": 0.035,
+            "y_max": 0.025,
+            "y_min": -0.025
+          }
+        }
+      },
+      "observation_scope": "snapshot_at_dispatch_result",
+      "outcome": "executed",
+      "proposal_id": "proposal-5c78c35087284888a2bfb0207d0d2eed",
+      "receipt": {
+        "bench_id": "c825e8a587194a60943c682034d8a9e0",
+        "command_speed_limit_m_s": 0.15,
+        "generation": 1,
+        "job_id": "crash-one",
+        "kind": "move",
+        "max_axis_actuator_force_n": 0.38456934164970424,
+        "native_steps": 667,
+        "native_time_s": 2.3339999999999645,
+        "operation_id": "agent-f7c5669b35e84a05bfc78cb5d33fa7fd",
+        "pusher_block_contact_samples": 0,
+        "state_sha256": "05d9e7edda84f8e99f09ae66ce6d2dca314226cffcc88b6df658167d62d8e310",
+        "target_xy": [
+          -0.25,
+          0.0
+        ]
+      }
+    },
+    "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+    "state": "completed"
+  },
+  "passed": true,
+  "policy": "explicitly_fake_diagnostic",
+  "processes": [
+    {
+      "exit_code": -9,
+      "pid": 3840
+    },
+    {
+      "exit_code": 0,
+      "pid": 3871
+    }
+  ],
+  "recovered": {
+    "active_job_id": "crash-one",
+    "activity": [
+      {
+        "intent": "Owned host crash",
+        "kind": "queued",
+        "outcome": "crash-one",
+        "seq": 1,
+        "time": 1791833349.30804
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "e4f618c574d296bc87d0df4ef85a53d966ad506e39d16c706f9716de545cc815"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "start_job",
+        "seq": 2,
+        "time": 1791833349.3356001
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "start_job",
+        "seq": 3,
+        "time": 1791833349.3797069
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "start_job: command-03d2e4ff739e460eb40a5a84c39a0568",
+        "seq": 4,
+        "time": 1791833349.4458508
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "62a26824a64a1ad4836505d1ebf8c2e49d6c801868bbc0e00e6c193b2fb7b5c1"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "observe",
+        "seq": 5,
+        "time": 1791833349.500184
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 6,
+        "time": 1791833349.5445702
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-a34e5f40ea694de88a0d00cccb96c44e",
+        "seq": 7,
+        "time": 1791833349.9674509
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "inference",
+        "outcome": "1",
+        "seq": 8,
+        "time": 1791833349.9699688
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "5bd7eb93f05938c05571fa2b706fde225bb9e8da1ea77b40db8f30b9db8bc03c"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "propose",
+        "seq": 9,
+        "time": 1791833349.985573
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "propose",
+        "seq": 10,
+        "time": 1791833350.012773
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "propose: command-be09796e714a4770a1ea65b8d4f77984",
+        "seq": 11,
+        "time": 1791833350.052333
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "fbf6db7e5e5dba748d8e7256eb53dfcce926613a6528673bdb094443dcd0bf31"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "dispatch",
+        "seq": 12,
+        "time": 1791833350.075737
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "dispatch",
+        "seq": 13,
+        "time": 1791833350.100466
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "Restarted with a retained command stage; check its exact receipt",
+        "seq": 14,
+        "time": 1791833350.6643
+      }
+    ],
+    "app_id": "5005ae5a09f54caf921b0d50efc1e21d",
+    "connection": {
+      "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+      "body_id": "c825e8a587194a60943c682034d8a9e0",
+      "epoch": 1,
+      "fault": null,
+      "reason": "Body identity verified by read-only TCP health",
+      "state": "connected"
+    },
+    "current_frame": {
+      "available": true,
+      "generation": 0,
+      "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "jobs": [
+      {
+        "call_count": 1,
+        "disturbance_test": false,
+        "error": "Restarted with a retained command stage; check its exact receipt",
+        "job_id": "crash-one",
+        "label": "Owned host crash",
+        "last_intent": "Deterministic hard-crash conformance",
+        "measurement": null,
+        "phase": "prepare",
+        "reset": null,
+        "status": "unknown",
+        "target": "A"
+      }
+    ],
+    "model_request_pending": false,
+    "pending_operation": "dispatch",
+    "readiness": {
+      "ready": false,
+      "reason": "Restarted with a retained command stage; check its exact receipt"
+    },
+    "recovery": {
+      "command_id": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+      "operation": "dispatch",
+      "reason": "Restarted with a retained command stage; check its exact receipt",
+      "state": "uncertain"
+    },
+    "runner_status": "blocked",
+    "simulation": true,
+    "transport_pending": false,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0,
+      "token_usage_complete": false
+    }
+  },
+  "relay": [
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "e4f618c574d296bc87d0df4ef85a53d966ad506e39d16c706f9716de545cc815",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "e4f618c574d296bc87d0df4ef85a53d966ad506e39d16c706f9716de545cc815",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/lease",
+      "request": {
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "duration_s": 30.0,
+        "expected_epoch": 1
+      },
+      "request_sha256": "390393d26bbbfaadc14c630028dcedc65987e21a62f2eff0d3a223f20b9f0c78",
+      "response_sha256": "f9182826c95c473cbbcb366a91cd51f3bfb7c5e9f1e53424f11b28d49cb4c1ff",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/commands",
+      "request": {
+        "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+        "arguments": {
+          "job_id": "crash-one",
+          "target_zone": {
+            "x_max": 0.105,
+            "x_min": 0.035,
+            "y_max": 0.025,
+            "y_min": -0.025
+          }
+        },
+        "body_id": "c825e8a587194a60943c682034d8a9e0",
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "command_id": "command-03d2e4ff739e460eb40a5a84c39a0568",
+        "epoch": 1,
+        "lease_id": "8eb668f30627421da8c5db08ba6e167c",
+        "operation": "start_job",
+        "protocol": "footwork.body/1",
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "request_sha256": "47c9e948e141f61db6abb5649205026f1aa38e6bd39171cec22e8b266313bb09",
+      "response_sha256": "5a6b4db9fca6759d1a5b1efd6ad1e5349c2f77f976f499d90b373970e5cbf127",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "62a26824a64a1ad4836505d1ebf8c2e49d6c801868bbc0e00e6c193b2fb7b5c1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/lease",
+      "request": {
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "duration_s": 30.0,
+        "expected_epoch": 1
+      },
+      "request_sha256": "390393d26bbbfaadc14c630028dcedc65987e21a62f2eff0d3a223f20b9f0c78",
+      "response_sha256": "bf7413e4f21552abbe404933240b3a4e3f237ecc361a0e0ab3a104a45e56db4f",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/commands",
+      "request": {
+        "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+        "arguments": {},
+        "body_id": "c825e8a587194a60943c682034d8a9e0",
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "command_id": "command-a34e5f40ea694de88a0d00cccb96c44e",
+        "epoch": 1,
+        "lease_id": "8d8a4b37f3c34b9dbeaa23b9e7397d96",
+        "operation": "observe",
+        "protocol": "footwork.body/1",
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "request_sha256": "2198bbada7932578c0150514205dfd089e3f738523bda232b91750d516313d79",
+      "response_sha256": "09712c09393a73d10d9d8a17229fa4e43d3df8974528eb390c2293c080229eb7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/images/challenge-b999f8f581a04dfdb0032544e739a4d7",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "5bd7eb93f05938c05571fa2b706fde225bb9e8da1ea77b40db8f30b9db8bc03c",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/lease",
+      "request": {
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "duration_s": 30.0,
+        "expected_epoch": 1
+      },
+      "request_sha256": "390393d26bbbfaadc14c630028dcedc65987e21a62f2eff0d3a223f20b9f0c78",
+      "response_sha256": "0fab0a96bfb25070fb9b3ba7ab87728be31ce0a92563c63f5525f288b084865f",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/commands",
+      "request": {
+        "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+        "arguments": {
+          "action": "move",
+          "challenge_id": "challenge-b999f8f581a04dfdb0032544e739a4d7",
+          "intent": "Deterministic hard-crash conformance",
+          "target_x": -0.25,
+          "target_y": 0.0
+        },
+        "body_id": "c825e8a587194a60943c682034d8a9e0",
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "command_id": "command-be09796e714a4770a1ea65b8d4f77984",
+        "epoch": 1,
+        "lease_id": "07e1a945baea4598b6a6b4e025f2baa5",
+        "operation": "propose",
+        "protocol": "footwork.body/1",
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "request_sha256": "4d756ee8c549f4b279b07c0962eeb0cfaf5e0d96d92900f449ebd9d831f985b0",
+      "response_sha256": "83fc5c7ff272a682b94ec3dcb216074f5ef138d9cbac7ab17c13cf6635428309",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "fbf6db7e5e5dba748d8e7256eb53dfcce926613a6528673bdb094443dcd0bf31",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/lease",
+      "request": {
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "duration_s": 30.0,
+        "expected_epoch": 1
+      },
+      "request_sha256": "390393d26bbbfaadc14c630028dcedc65987e21a62f2eff0d3a223f20b9f0c78",
+      "response_sha256": "e0d3fea867c8ddd2785f5eec2fc6763f5d0eacf852201a58a5a278c1e720598f",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/commands",
+      "request": {
+        "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+        "arguments": {
+          "proposal_id": "proposal-5c78c35087284888a2bfb0207d0d2eed"
+        },
+        "body_id": "c825e8a587194a60943c682034d8a9e0",
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "command_id": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+        "epoch": 1,
+        "lease_id": "8cc0cbe49c6c49c999d2a67e7ace38c8",
+        "operation": "dispatch",
+        "protocol": "footwork.body/1",
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "request_sha256": "4bb621a7caca66ad01ffe6be451549dc6333e24b784f85ca74b3a6b998eb3c91",
+      "response_sha256": "c739e418eac5204fcfacb4d352b0175babf96d1d8494d51931b38585ce872c5c",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "ab274e2e0cd265e0471237fdab72a162ea09663f096e87c65128c54d0f56c55c",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/commands/command-c2b7424f52d34ca0bc69c94f0cbb58a8?client_id=client-da07206d0f4e427a8f478eb3d661b900&lease_id=8cc0cbe49c6c49c999d2a67e7ace38c8&epoch=1&request_sha256=4bb621a7caca66ad01ffe6be451549dc6333e24b784f85ca74b3a6b998eb3c91",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "c739e418eac5204fcfacb4d352b0175babf96d1d8494d51931b38585ce872c5c",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "8d7713545f6438f7f9e2eaf795995da13d300e7da95adf3ed2301ebf73011026",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "2a3f4fc1742686e469b4e44df8883079f89f9953429c8e7aa4d4cbf2cde05fcc",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "bfd3c24404f92c534d2c51c8ec761aac769f7e74b0196be246a8d68f12790e94",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/lease",
+      "request": {
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "duration_s": 30.0,
+        "expected_epoch": 1
+      },
+      "request_sha256": "390393d26bbbfaadc14c630028dcedc65987e21a62f2eff0d3a223f20b9f0c78",
+      "response_sha256": "987ca5ad26a4a6643fdc9d19f8c5e7b59c377fd8ff62dd2ff097ff5da67f9c5b",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/commands",
+      "request": {
+        "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+        "arguments": {},
+        "body_id": "c825e8a587194a60943c682034d8a9e0",
+        "client_id": "client-da07206d0f4e427a8f478eb3d661b900",
+        "command_id": "command-5ecd4e56fd0c483ba2b5eebe5dbcf613",
+        "epoch": 1,
+        "lease_id": "011b4a9f2b9b4cebbc38da2f08fac7ce",
+        "operation": "observe",
+        "protocol": "footwork.body/1",
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "request_sha256": "fd900bb330347f99a41a1ff0fe3a0e19ceb2f8d997a3b95e1e03e1145f4041b3",
+      "response_sha256": "09704131ad52803e942fb6ee47136c1a07bc88b542682b94048eac2e33bf3b75",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/images/challenge-43fe388fc4544ac0a1b88399629decbb",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "9f6339a75fcf48ca514a5e83f5fdc4ab26b70239e87cfc4a7d5d10be44830b32",
+      "status": 200
+    }
+  ],
+  "settled": {
+    "active_job_id": "crash-one",
+    "activity": [
+      {
+        "intent": "Owned host crash",
+        "kind": "queued",
+        "outcome": "crash-one",
+        "seq": 1,
+        "time": 1791833349.30804
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "e4f618c574d296bc87d0df4ef85a53d966ad506e39d16c706f9716de545cc815"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "start_job",
+        "seq": 2,
+        "time": 1791833349.3356001
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "start_job",
+        "seq": 3,
+        "time": 1791833349.3797069
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "start_job: command-03d2e4ff739e460eb40a5a84c39a0568",
+        "seq": 4,
+        "time": 1791833349.4458508
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "62a26824a64a1ad4836505d1ebf8c2e49d6c801868bbc0e00e6c193b2fb7b5c1"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "observe",
+        "seq": 5,
+        "time": 1791833349.500184
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 6,
+        "time": 1791833349.5445702
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-a34e5f40ea694de88a0d00cccb96c44e",
+        "seq": 7,
+        "time": 1791833349.9674509
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "inference",
+        "outcome": "1",
+        "seq": 8,
+        "time": 1791833349.9699688
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "5bd7eb93f05938c05571fa2b706fde225bb9e8da1ea77b40db8f30b9db8bc03c"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "propose",
+        "seq": 9,
+        "time": 1791833349.985573
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "propose",
+        "seq": 10,
+        "time": 1791833350.012773
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "propose: command-be09796e714a4770a1ea65b8d4f77984",
+        "seq": 11,
+        "time": 1791833350.052333
+      },
+      {
+        "evidence": {
+          "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+          "body_id": "c825e8a587194a60943c682034d8a9e0",
+          "epoch": 1,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+          "state_sha256": "fbf6db7e5e5dba748d8e7256eb53dfcce926613a6528673bdb094443dcd0bf31"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "dispatch",
+        "seq": 12,
+        "time": 1791833350.075737
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "dispatch",
+        "seq": 13,
+        "time": 1791833350.100466
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "Restarted with a retained command stage; check its exact receipt",
+        "seq": 14,
+        "time": 1791833350.6643
+      },
+      {
+        "intent": "Owned host crash",
+        "kind": "rpc_applied",
+        "outcome": "dispatch: command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+        "seq": 15,
+        "time": 1791833350.7481759
+      },
+      {
+        "intent": "",
+        "kind": "reconciled",
+        "outcome": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+        "seq": 16,
+        "time": 1791833350.749714
+      }
+    ],
+    "app_id": "5005ae5a09f54caf921b0d50efc1e21d",
+    "connection": {
+      "adapter_id": "7207e9511a3241c291d7ebb313a1c98b",
+      "body_id": "c825e8a587194a60943c682034d8a9e0",
+      "epoch": 1,
+      "fault": null,
+      "reason": "Body identity verified by read-only TCP health",
+      "state": "connected"
+    },
+    "current_frame": {
+      "available": true,
+      "generation": 0,
+      "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "jobs": [
+      {
+        "call_count": 1,
+        "disturbance_test": false,
+        "error": null,
+        "job_id": "crash-one",
+        "label": "Owned host crash",
+        "last_intent": "Deterministic hard-crash conformance",
+        "measurement": null,
+        "phase": "prepare",
+        "reset": null,
+        "status": "paused",
+        "target": "A"
+      }
+    ],
+    "model_request_pending": false,
+    "pending_operation": null,
+    "readiness": {
+      "ready": false,
+      "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence"
+    },
+    "recovery": {
+      "command_id": "command-c2b7424f52d34ca0bc69c94f0cbb58a8",
+      "operation": "dispatch",
+      "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence",
+      "state": "recovered"
+    },
+    "runner_status": "paused",
+    "simulation": true,
+    "transport_pending": false,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0,
+      "token_usage_complete": false
+    }
+  }
+}

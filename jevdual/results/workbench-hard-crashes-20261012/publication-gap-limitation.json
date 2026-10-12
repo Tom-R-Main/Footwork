@@ -1,0 +1,123 @@
+{
+  "case": "test_workbench_crash_runtime.WorkbenchCrashRuntimeTests.test_publication_tail_sigkill_is_retained_as_explicit_recovery_limit",
+  "explicit_limit": {
+    "boundary": "event-fsync-before-manifest-publication",
+    "effect_commands": 0,
+    "error": "[Errno 17] File exists: '/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-crash-41308cad5f/host/events/000001.json'",
+    "sequence": 1
+  },
+  "host_state": {
+    "active_job_id": null,
+    "activity": [],
+    "app_id": "f35878562e5b4fca90b7650d88457722",
+    "applied_commands": [],
+    "body_identity": {
+      "adapter_id": "2e31732706cd415bb9b7bf1556693519",
+      "body_id": "1dac87ed0d63419291ced2d463bfa952",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "body_origin": "http://127.0.0.1:64095",
+    "connection": {
+      "adapter_id": "2e31732706cd415bb9b7bf1556693519",
+      "body_id": "1dac87ed0d63419291ced2d463bfa952",
+      "epoch": 1,
+      "fault": null,
+      "reason": "Current body boot verified for explicit Resume",
+      "state": "connected"
+    },
+    "frame": null,
+    "jobs": [],
+    "link_origin": "http://127.0.0.1:64096",
+    "link_port": 64096,
+    "opened": true,
+    "reason": "Stopped; independent network body retained",
+    "recovery": {
+      "command_id": null,
+      "operation": null,
+      "reason": "No pending command",
+      "state": "none"
+    },
+    "runner_status": "stopped",
+    "sequence": 1,
+    "sources": {
+      "body_client.py": "40388c238192d923888c9852b363314801dcf65c7266aadc8c377d3810aeb33d",
+      "codex-action.schema.json": "e57197e4e73aa4c78145814a460ca77b9c6dc5e49aaf4c91adc0b521b7c3d833",
+      "codex-policy.md": "ce947200b2a652e0766b422f3b404bd5095ceb398569341466b2c5f4dd9647bc",
+      "codex_policy.py": "40fe73e01d97ee1e5cfdb813650b11edadbea29534784ab10cc1ef4e7f4d5418",
+      "network_bench_operator.html": "75ca82328967ea65cf3c3f7f7d60c109a4201099ae3a24d3834e0ecf19b4d897",
+      "network_bench_operator.py": "9079729ea4e8b56ccdf2a6d187b0c5d79a23a33688748fe55d92d10922500b40",
+      "network_operator_runtime.py": "001511aa25fef7f1078bce444b9a0f7d0a09d26d4e5fba9e9819ee3ed98cb6b9",
+      "order_protocol.py": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+      "workbench_link.py": "79571f62c5a9b5fb843a852bc34a2a509b0dc6dc1a6e091fa9f948ab98fae420"
+    },
+    "stage": null,
+    "usage": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0
+    },
+    "version": 1
+  },
+  "passed": true,
+  "policy": "explicitly_fake_diagnostic",
+  "processes": [
+    {
+      "exit_code": -9,
+      "pid": 3836
+    }
+  ],
+  "relay": [
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "4ecbe1f02e97dc0d174795ba2c1d5e7774866343acc31c6a50ec70cba7a2d5c7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "4ecbe1f02e97dc0d174795ba2c1d5e7774866343acc31c6a50ec70cba7a2d5c7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "a6a8c676f1a95a061ee255139aa66a17f209a9c6613ec74a9a2d62ea79a8d0b4",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/identity",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "4ecbe1f02e97dc0d174795ba2c1d5e7774866343acc31c6a50ec70cba7a2d5c7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "a6a8c676f1a95a061ee255139aa66a17f209a9c6613ec74a9a2d62ea79a8d0b4",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/state",
+      "request": null,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "a6a8c676f1a95a061ee255139aa66a17f209a9c6613ec74a9a2d62ea79a8d0b4",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+{
+  "active_job_id": null,
+  "activity": [
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-ee93d3f247d2406e9c16bc9cceb5baea",
+      "seq": 114,
+      "time": 1791835307.0026329
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "e2f9d422da4f3927b2a6c065145d8a64dcde50661ef1b7ed5fecbca755585570"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 115,
+      "time": 1791835307.057111
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 116,
+      "time": 1791835307.096344
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-5fb23ca55f264d78bf167b94b63cebb6",
+      "seq": 117,
+      "time": 1791835307.363761
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "2166f11595605041ecf063921f5c75a661be367f3ccb097b69ea07e9972782d3"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 118,
+      "time": 1791835307.4151812
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 119,
+      "time": 1791835307.453429
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-a796455ffdbd4c628d805688f990dc0c",
+      "seq": 120,
+      "time": 1791835307.617884
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "inference",
+      "outcome": "12",
+      "seq": 121,
+      "time": 1791835307.6196811
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "926d9bb91bdfedf2517d706ceb5e07ff43e515b2de00d29d4aa93542f7e1d77f"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 122,
+      "time": 1791835315.3197892
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 123,
+      "time": 1791835315.358457
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-75ca7196ce15408a991d354d6a54027b",
+      "seq": 124,
+      "time": 1791835315.432659
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "5dc9b30e7bab56db8c09aec5c8f708244a1b42b753f3abb5534a01afa7b14d48"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 125,
+      "time": 1791835315.4861178
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 126,
+      "time": 1791835315.5229561
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-88277848bc1a40ce99c55e9fbac30e0d",
+      "seq": 127,
+      "time": 1791835315.735436
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "5482cf4616b4da8039670816f8768372efdfd9b4aa3dcc34adbbb0163e6603e6"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 128,
+      "time": 1791835315.794636
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 129,
+      "time": 1791835315.833333
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-ecfa531b21f24c108926c097aec3375f",
+      "seq": 130,
+      "time": 1791835316.0019488
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "inference",
+      "outcome": "13",
+      "seq": 131,
+      "time": 1791835316.003954
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "83785515d8712d59e2fe79abdbbe0919cbd469a8572a3f0e398896b7b9e0df45"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 132,
+      "time": 1791835322.645748
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 133,
+      "time": 1791835322.701047
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-ab8a3f9667c94b57b3a26986f9575b9a",
+      "seq": 134,
+      "time": 1791835322.7896929
+    },
+    {
+      "evidence": {
+        "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "1b377d68042b49486d16a6af5f28f4ab6cc015d43eb01f3fd9a679dcd4c28d7d"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 135,
+      "time": 1791835322.845699
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 136,
+      "time": 1791835322.886384
+    },
+    {
+      "intent": "Workbench crash mid-command",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-31d14b46fbed46338c061e12ddec1569",
+      "seq": 137,
+      "time": 1791835323.1926458
+    }
+  ],
+  "app_id": "89c50b76f8e840418305726a1a6ea473",
+  "connection": {
+    "adapter_id": "2ed3651897e14d4bbcf370f071beff20",
+    "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+    "epoch": 1,
+    "fault": null,
+    "reason": "Body identity verified by read-only TCP health",
+    "state": "connected"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 10,
+    "image_url": "/api/frame?generation=10&sha256=b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87"
+  },
+  "jobs": [
+    {
+      "call_count": 13,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "label": "Workbench crash mid-command",
+      "last_intent": "Finish reset now that the block center is in the home zone and the pusher is at its home position.",
+      "measurement": {
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "block_home_verified": true,
+        "generation": 10,
+        "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+        "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+        "kind": "finish_reset",
+        "native_time_s": 21.81399999999879,
+        "operation_id": "agent-1e41a624a0124550839549b25c0b46b0",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3174,
+        "reset_native_steps": 8140,
+        "state_sha256": "ff7af086a1eea92c53736c30a05c8102da4417d39f0423b48573218144fcb713"
+      },
+      "status": "completed",
+      "target": "A"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": null,
+  "readiness": {
+    "ready": true,
+    "reason": "Resumed; next decision receives a fresh TCP image"
+  },
+  "recovery": {
+    "command_id": null,
+    "operation": null,
+    "reason": "No pending command",
+    "state": "none"
+  },
+  "runner_status": "running",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 13,
+    "input_tokens": 169591,
+    "output_tokens": 2019,
+    "reported_calls": 13,
+    "token_usage_complete": true
+  }
+}
