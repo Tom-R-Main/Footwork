@@ -2,6 +2,7 @@
 
 Command payload bytes and identity headers pass unchanged. One-shot faults are
 local diagnostics. Ordinary read-only identity/state polling is not journaled.
+Tagged auxiliary reads are single flight per path; late replies are discarded.
 """
 import concurrent.futures
 import contextlib
@@ -21,6 +22,9 @@ import order_protocol as protocol
 
 MODES = {"drop_after", "delay_after", "duplicate"}
 MAX_EVENTS = 16384
+HEALTH_HEADER = "X-Footwork-Health-Probe"
+HEALTH_SOFT_SECONDS = .6
+HEALTH_HARD_SECONDS = 30
 
 
 class WorkbenchLink:
@@ -35,6 +39,79 @@ class WorkbenchLink:
         self._mutex = threading.RLock()
         self._manifest = None
         self._server = self._thread = self._fd = None
+        self._probe_flights = {}
+        self._probe_closing = False
+        self._probe_peak = 0
+
+    def _probe_read(self, path, headers, flight):
+        """Owned read-only socket, with an absolute deadline even for trickled replies."""
+        host, port = body_client.endpoint(self.upstream)
+        connection = http.client.HTTPConnection(host, port, timeout=HEALTH_HARD_SECONDS)
+        socket_lock, expired = threading.Lock(), threading.Event()
+        owned_socket = [None]
+
+        def expire():
+            expired.set()
+            with socket_lock:
+                transport = owned_socket[0]
+            if transport is not None:
+                with contextlib.suppress(OSError):
+                    transport.shutdown(socket.SHUT_RDWR)
+
+        timer = threading.Timer(max(0, flight["hard_deadline"] - time.monotonic()), expire)
+        timer.start()
+        try:
+            connection.connect()
+            with socket_lock:
+                owned_socket[0] = connection.sock
+            if expired.is_set():
+                raise TimeoutError("auxiliary body read exceeded its hard deadline")
+            connection.request("GET", path, headers=headers)
+            response = connection.getresponse()
+            length = response.getheader("Content-Length")
+            if length is not None and (not length.isdigit() or int(length) > protocol.MAX_BYTES):
+                raise protocol.Refusal("body response exceeds its bounded size")
+            content = response.read(protocol.MAX_BYTES + 1)
+            if expired.is_set():
+                raise TimeoutError("auxiliary body read exceeded its hard deadline")
+            if len(content) > protocol.MAX_BYTES:
+                raise protocol.Refusal("body response exceeds its bounded size")
+            if 300 <= response.status < 400:
+                raise protocol.Refusal("body redirects are refused")
+            flight["reply"] = response.status, content
+        except (OSError, http.client.HTTPException, protocol.Refusal, KeyError, TypeError, ValueError) as exc:
+            flight["error"] = exc
+        finally:
+            connection.close()
+            timer.cancel()
+            timer.join()
+            flight["finished_at"] = time.monotonic()
+            flight["done"].set()
+            # No journal writes or response reuse after an auxiliary caller expires.
+
+    def _probe(self, path, headers):
+        pending = (504, protocol.encoded({"version": 1, "kind": "health_read_pending", "path": path}))
+        deadline = time.monotonic() + HEALTH_SOFT_SECONDS
+        with self._mutex:
+            if self._probe_closing:
+                raise protocol.Refusal("link is closing")
+            previous = self._probe_flights.get(path)
+            if previous is not None:
+                if previous["thread"].is_alive():
+                    return pending
+                del self._probe_flights[path]
+            flight = {"done": threading.Event(), "hard_deadline": time.monotonic() + HEALTH_HARD_SECONDS}
+            thread = threading.Thread(target=self._probe_read, args=(path, dict(headers), flight),
+                                      name="workbench-health-" + path.removeprefix("/"))
+            flight["thread"] = thread
+            self._probe_flights[path] = flight
+            thread.start()
+            self._probe_peak = max(self._probe_peak, sum(item["thread"].is_alive() for item in self._probe_flights.values()))
+        if not flight["done"].wait(max(0, deadline - time.monotonic())) or flight["finished_at"] > deadline:
+            return pending
+        if "error" in flight:
+            raise flight["error"]
+        return flight["reply"]
 
     def _public(self, manifest=None):
         m = self._manifest if manifest is None else manifest
@@ -140,7 +217,7 @@ class WorkbenchLink:
                 def handle_request(self):
                     self.connection.settimeout(30)
                     try:
-                        payload, operation, command_id, headers, audit = self.validate_request()
+                        payload, operation, command_id, headers, audit, probe = self.validate_request()
                         with owner._mutex:
                             if not owner._manifest["connected"]:
                                 if audit:
@@ -170,7 +247,9 @@ class WorkbenchLink:
                                              http_status=status, response_sha256=protocol.sha(content))
                             return status, content
 
-                        if mode == "duplicate":
+                        if probe:
+                            status, content = owner._probe(self.path, headers)
+                        elif mode == "duplicate":
                             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
                                 replies = [pool.submit(forward, index) for index in (1, 2)]
                                 responses = [reply.result() for reply in replies]
@@ -208,6 +287,9 @@ class WorkbenchLink:
                     read_route = parsed.path in {"/identity", "/state"} or parsed.path.startswith(("/commands/", "/images/"))
                     if (self.command == "GET" and not read_route) or (self.command == "POST" and self.path not in {"/lease", "/commands"}):
                         raise protocol.Refusal("unsupported link route")
+                    probes = self.headers.get_all(HEALTH_HEADER, [])
+                    if probes and (probes != ["1"] or self.command != "GET" or self.path not in {"/identity", "/state"}):
+                        raise protocol.Refusal("auxiliary health annotation requires one exact read-only route")
                     for name in ("X-Body-Id", "X-Adapter-Id", "X-Source-Sha256"):
                         values = self.headers.get_all(name, [])
                         if len(values) > 1 or (parsed.path != "/identity" and len(values) != 1):
@@ -238,7 +320,7 @@ class WorkbenchLink:
                     headers = {key: value for key, value in self.headers.items() if key.lower() not in
                                {"host", "connection", "content-length", "transfer-encoding"}}
                     headers["Content-Length"] = str(length)
-                    return payload, operation, command_id, headers, parsed.path not in {"/identity", "/state"}
+                    return payload, operation, command_id, headers, parsed.path not in {"/identity", "/state"}, bool(probes)
 
             server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
             server.daemon_threads = False
@@ -252,6 +334,7 @@ class WorkbenchLink:
                 self._event("fault_cancelled_on_restart", _changes={"fault": None}, fault=cancelled)
             self._event("started", origin=self.origin, upstream=self.upstream, restarted=retained)
             self._server, self._fd = server, fd
+            self._probe_closing = False
             self._thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .1}, daemon=True)
             self._thread.start()
             return self
@@ -291,11 +374,18 @@ class WorkbenchLink:
 
     def close(self):
         if self._server is not None:
+            with self._mutex:
+                self._probe_closing = True
             self._server.shutdown()
             try:
                 self._server.server_close()
                 self._thread.join(timeout=2)
-                self._event("closed")
+                # Tagged callers finish at the soft bound; their upstream reads remain owned.
+                # Each worker's absolute hard deadline closes its socket before this join returns.
+                for flight in self._probe_flights.values():
+                    flight["thread"].join()
+                self._probe_flights.clear()
+                self._event("closed", health_readers_alive=0, health_readers_peak=self._probe_peak)
             finally:
                 self._server = None
                 os.close(self._fd)

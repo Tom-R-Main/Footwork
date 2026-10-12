@@ -42,3 +42,9 @@ Refs: tools/physical-workcell/output/sim12-health-before-fix.log; tools/physical
 Observed: the U1, DELAY and FLIGHT headings contain 14:47 from precomposed text; the clock output for that write was 14:49. Commit 3de70f1 holds all three entries before the reproductions and repairs. Earlier text remains unchanged.
 Next: use the actual clock result when assembling later entries; Git settles prediction order.
 Refs: commit 3de70f1
+
+## SIM12-U3 · update · 2026-10-12 15:05
+Resolves: SIM12-DELAY = held; SIM12-FLIGHT = held
+Observed: the repaired runtime passed all 26 real-socket/native checks, including fresh proof failure, changed boot, known uncertainty and explicit Pause during proof. The link passed 13 checks, bounding repeated delayed probes to one reader per path and joining them at close. Seven new harness/scorer checks passed. Before-fix failures remain retained.
+Next: freeze the measured source, then test two actual image-guided jobs with diagnostic delayed health replies and browser receipt recovery. SIM12-P1 remains open until the independent product score.
+Refs: tools/physical-workcell/output/sim12-runtime-final-v1.log; tools/physical-workcell/output/sim12-link-tests-final.log; tools/physical-workcell/output/sim12-harness-tests-v1/unittest.log

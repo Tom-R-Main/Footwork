@@ -16,6 +16,14 @@ ZONES = {"A": {"x_min": .035, "x_max": .105, "y_min": -.025, "y_max": .025},
          "B": {"x_min": .045, "x_max": .115, "y_min": -.025, "y_max": .025}}
 
 
+class _ProbePending(Exception):
+    """Auxiliary read is unconfirmed; it cannot revoke or grant authority."""
+
+
+class _BodyUnresolved(protocol.Refusal):
+    """A public body read returned known unresolved effects."""
+
+
 def sources():
     return {name: protocol.sha(protocol.read_bytes(BASE / name)) for name in (
         "network_operator_runtime.py", "network_bench_operator.py", "network_bench_operator.html",
@@ -133,10 +141,12 @@ class Operator:
         protocol.persist(self.root / "operator.json", self.m)
         self.saved_digest = protocol.sha(protocol.encoded(self.m))
 
-    def _event(self, kind, intent="", outcome=""):
+    def _event(self, kind, intent="", outcome="", evidence=None):
         self.m["sequence"] += 1
         value = {"seq": self.m["sequence"], "time": time.time(), "kind": kind,
                  "intent": str(intent)[:1000], "outcome": str(outcome)[:1000]}
+        if evidence is not None:
+            value["evidence"] = evidence
         protocol.create_file(self.root / "events" / f"{value['seq']:06d}.json", protocol.encoded(value))
         self.m["activity"] = (self.m["activity"] + [value])[-24:]
         self._save()
@@ -159,13 +169,13 @@ class Operator:
                 pinned["epoch"] = self.m["connection"]["epoch"]
             remote_identity = pinned
             try:
-                status, content = body_client.http_call(self.link.origin, "GET", "/identity", timeout=.8)
+                status, content = self._probe_read("/identity", {})
                 if status != 200:
                     raise protocol.Refusal("pinned body identity could not be verified")
                 remote_identity = body_client.identity(protocol.decode(content))
                 if any(remote_identity[k] != pinned[k] for k in body_client.IDENTITY_KEYS - {"epoch"}):
                     raise protocol.Refusal("pinned body or adapter identity changed")
-                status, content = body_client.http_call(self.link.origin, "GET", "/state", body_client.pinned_headers(pinned), timeout=.8)
+                status, content = self._probe_read("/state", body_client.pinned_headers(pinned))
                 remote = protocol.decode(content)
                 if status != 200 or remote["identity"] != remote_identity:
                     raise protocol.Refusal("pinned body state could not be verified")
@@ -173,6 +183,8 @@ class Operator:
                 error = None if ready else "Independent body has unresolved effects"
                 connection = "connected"
                 blocked = not ready
+            except (TimeoutError, _ProbePending):
+                ready, error, connection, blocked = False, "Health read delayed; fresh body proof is required before any command", "checking", False
             except protocol.Refusal as exc:
                 ready, error, connection, blocked = False, str(exc), "unavailable", True
             except (OSError, http.client.HTTPException, ValueError, KeyError) as exc:
@@ -182,18 +194,32 @@ class Operator:
                 if (self.closing or self.transport_pending or control_epoch != self.control_epoch or
                         transport_epoch != self.transport_epoch or not self.link.state()["connected"]):
                     return False
-                if connection == "connected" and remote_identity["epoch"] != self.m["connection"]["epoch"]:
-                    self._body_epoch_changed(remote_identity["epoch"], ready, known_unknown=not ready)
+                if connection in {"connected", "checking"} and remote_identity["epoch"] != self.m["connection"]["epoch"]:
+                    self._body_epoch_changed(remote_identity["epoch"], ready, known_unknown=blocked)
+                    if connection == "checking":
+                        self.m["connection"].update(state="checking", reason=error)
+                        self._save()
                     return ready
                 old = self.m["connection"]["state"]
                 self.body_ready = ready
                 self.m["connection"].update(state=connection, reason=error or "Body identity verified by read-only TCP health", epoch=remote_identity["epoch"])
-                if not ready and (old != connection or self.m["runner_status"] == "running"):
+                if not ready and connection != "checking" and (old != connection or self.m["runner_status"] == "running"):
                     self.cancel.set()
                     self.control_epoch += 1
                     self._halt(error, blocked=blocked)
                 self._save()
                 return ready
+
+    def _probe_read(self, path, headers):
+        status, content = body_client.http_call(self.link.origin, "GET", path,
+            {**headers, "X-Footwork-Health-Probe": "1"}, timeout=.8)
+        if status == 504:
+            pending = protocol.decode(content)
+            if (isinstance(pending, dict) and type(pending.get("version")) is int and
+                    pending == {"version": 1, "kind": "health_read_pending", "path": path}):
+                raise _ProbePending()
+            raise protocol.Refusal("health gateway returned an unverified pending response")
+        return status, content
 
     def _retain(self, path, value):
         content = protocol.encoded(value)
@@ -370,10 +396,14 @@ class Operator:
         with self.lock:
             self._identity()
             if (self.closing or self.cancel.is_set() or self.m["runner_status"] != "running" or
-                    self.m["connection"]["state"] != "connected" or not self.body_ready or self.m["stage"] or
+                    self.m["connection"]["state"] not in {"connected", "checking"} or self.m["stage"] or
                     context.get("decision_epoch", self.control_epoch) != self.control_epoch):
                 return None
-            if len(self.client._load()["commands"]) >= MAX_COMMANDS:
+            journal = self.client._load()
+            if journal["pending_command_ids"]:
+                self._halt("An unknown client command blocks fresh admission", blocked=True)
+                return None
+            if len(journal["commands"]) >= MAX_COMMANDS:
                 self._halt("Conservative network-command budget exhausted")
                 return None
             epoch = self.control_epoch
@@ -381,6 +411,16 @@ class Operator:
             self.transport_pending = True
             self.transport_epoch += 1
         try:
+            _, verified, proof = self._public_status(include_proof=True)
+            with self.lock:
+                if epoch != self.control_epoch or self.cancel.is_set() or self.closing:
+                    return None
+                if verified["epoch"] != known_body_epoch:
+                    self._body_epoch_changed(verified["epoch"], ready=True)
+                    return None
+                self.body_ready = True
+                self.m["connection"].update(state="connected", reason="Fresh pinned ready proof verified before command admission")
+                self._event("admission_proof", outcome=operation, evidence=proof)
             self.client.acquire(30)
             with self.lock:
                 if epoch != self.control_epoch or self.cancel.is_set() or self.closing:
@@ -391,7 +431,7 @@ class Operator:
                     return None
                 self.m["connection"]["epoch"] = journal["identity"]["epoch"]
                 self.m["stage"] = {"operation": operation, "arguments": arguments, "context": context,
-                    "before_commands": list(journal["commands"]), "command_id": None, "control_epoch": epoch}
+                    "before_commands": list(journal["commands"]), "command_id": None, "control_epoch": epoch, "proof": proof}
                 self._event("rpc_intent", outcome=operation)
             if operation == "start_job":
                 result = self.client.start_job(arguments["job_id"], arguments["target_zone"])
@@ -420,7 +460,10 @@ class Operator:
                         self._uncertain(str(exc))
                 else:
                     self.m["connection"].update(state="unavailable", reason=str(exc))
-                    self._halt(str(exc))
+                    self.body_ready = False
+                    self.cancel.set()
+                    self.control_epoch += 1
+                    self._halt(str(exc), blocked=isinstance(exc, _BodyUnresolved))
             return None
         finally:
             with self.lock:
@@ -429,14 +472,20 @@ class Operator:
                     self.m["runner_status"] = "paused"
                 self._save()
 
-    def _public_status(self, include_identity=False):
+    def _public_status(self, include_identity=False, include_proof=False):
         status = self.client.status()
         remote = status["server_state"]
+        if remote.get("state") == "unknown":
+            raise _BodyUnresolved("Independent body has unresolved effects; fresh commands are blocked")
         if remote.get("state") != "ready":
             raise protocol.Refusal("public network body state is unavailable or unresolved")
         pinned = self.m["body_identity"]
         if any(remote["identity"][k] != pinned[k] for k in body_client.IDENTITY_KEYS - {"epoch"}):
             raise protocol.Refusal("network status belongs to another pinned body")
+        if include_proof:
+            proof = {k: remote["identity"][k] for k in ("body_id", "adapter_id", "source_sha256", "epoch")}
+            proof["state_sha256"] = protocol.sha(protocol.encoded(remote))
+            return remote["bench"], remote["identity"], proof
         return (remote["bench"], remote["identity"]) if include_identity else remote["bench"]
 
     def _apply(self, envelope, result):
@@ -531,7 +580,7 @@ class Operator:
     def reconcile(self):
         with self.lock:
             self._identity()
-            if self.transport_pending or self.in_model or self.m["connection"]["state"] != "connected":
+            if self.transport_pending or self.in_model or self.m["connection"]["state"] not in {"connected", "checking"}:
                 raise protocol.Refusal("reconnect and wait for owned work before checking its receipt")
             token = self._associate() if self.m["stage"] else None
             if not token:
@@ -566,7 +615,7 @@ class Operator:
             self._identity()
             if self.closing or self.in_model or self.transport_pending or self.m["stage"] or self._journal()["pending_command_ids"]:
                 raise protocol.Refusal("settle the exact pending stage and wait for owned work before Resume")
-            if self.m["connection"]["state"] != "connected":
+            if self.m["connection"]["state"] not in {"connected", "checking"}:
                 raise protocol.Refusal("reconnect the pinned link before Resume")
             self.transport_pending = True
             self.transport_epoch += 1
@@ -575,12 +624,12 @@ class Operator:
             _, remote_identity = self._public_status(include_identity=True)
             with self.lock:
                 if (resume_epoch != self.control_epoch or self.closing or
-                        self.m["connection"]["state"] != "connected"):
+                        self.m["connection"]["state"] not in {"connected", "checking"}):
                     raise protocol.Refusal("control changed while Resume was reading body status")
                 self.control_epoch += 1
                 self.cancel.clear()
                 self.body_ready = True
-                self.m["connection"].update(epoch=remote_identity["epoch"], reason="Current body boot verified for explicit Resume")
+                self.m["connection"].update(state="connected", epoch=remote_identity["epoch"], reason="Current body boot verified for explicit Resume")
                 self.m.update(runner_status="running", reason="Resumed; next decision receives a fresh TCP image")
                 self.m["recovery"] = {"state": "none", "command_id": None, "operation": None, "reason": "No pending command"}
                 self._event("resume")

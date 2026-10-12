@@ -47,6 +47,7 @@ function activityCopy(item) {
   const titles = {observe:'Observed the bench',measurement:'Recorded measurement',reset:'Verified reset',pause:'Pause requested',resume:'Agent resumed',queued:'Job queued',start_intent:'Starting job',inference:'AI planning requested',decision_withheld:'Earlier model reply withheld',disturbance_intent:'Recovery trial started',dispatch:'Action submitted',completed:'Job completed',halt:'Agent stopped for review',shutdown_model_exit:'Model process stopped',shutdown_work_exit:'In-flight work stopped',disconnect:'Body disconnected',reconnect:'Body reconnecting',reconciled:'Command receipt recovered',fault_armed:'Reply fault armed',health_unavailable:'Body unavailable',unavailable:'Body unavailable',body_epoch_changed:'Body restarted'};
   if (item.kind === 'rpc_intent') return {title:requested[operation] || 'Sending a body request',detail:''};
   if (item.kind === 'rpc_applied') return {title:received[operation] || 'Body receipt checked',detail:typeof item.intent === 'string' ? item.intent : ''};
+  if (item.kind === 'admission_proof') return {title:'Fresh body check verified',detail:'The next command uses current body evidence.'};
   if (item.kind === 'reconciled') return {title:titles.reconciled,detail:'The agent remains paused until you resume.'};
   if (item.kind === 'fault_armed') return {title:titles.fault_armed,detail:({drop_after:'The next command reply will be lost.',delay_after:'The next command reply will be delayed.',duplicate:'The next command will be duplicated with the same identity.'}[operation] || 'A bounded simulation fault is ready.')};
   if (item.kind === 'queued') return {title:titles.queued,detail:typeof item.intent === 'string' ? item.intent : ''};
@@ -55,7 +56,7 @@ function activityCopy(item) {
 }
 function selectedJob() { return state?.jobs?.find(job => job.job_id === selectedId) || state?.jobs?.find(job => job.job_id === state.active_job_id) || state?.jobs?.at(-1) || null; }
 function controlAllowed() { return Boolean(appId && !identityChanged && !mutating); }
-function actionAllowed() { return Boolean(controlAllowed() && ['running','paused'].includes(state?.runner_status) && state?.connection?.state === 'connected' && !['uncertain','blocked'].includes(state?.recovery?.state)); }
+function actionAllowed() { return Boolean(controlAllowed() && ['running','paused'].includes(state?.runner_status) && ['connected','checking'].includes(state?.connection?.state) && !['uncertain','blocked'].includes(state?.recovery?.state)); }
 function render() {
   if (!state) return;
   const jobs = Array.isArray(state.jobs) ? state.jobs : [], job = selectedJob();
@@ -64,13 +65,13 @@ function render() {
   const connection = state.connection || {state:'unavailable'}, recovery = state.recovery || {state:'blocked'};
   const uncertain = ['uncertain','blocked'].includes(recovery.state);
   $('network-card').dataset.connection = connection.state;
-  text('connection-label', {connected:'Body connected',disconnected:'Body disconnected',unavailable:'Body unavailable'}[connection.state] || 'Checking body connection');
+  text('connection-label', {connected:'Body connected',checking:'Checking body',disconnected:'Body disconnected',unavailable:'Body unavailable'}[connection.state] || 'Checking body connection');
   $('connection-dot').style.background = connection.state === 'connected' ? '#457451' : '#b48235';
   text('connection-reason', connection.reason || (connection.state === 'connected' ? 'The same persistent body serves successive jobs.' : 'Last observations and results are retained. Reconnecting does not replay commands.'));
-  text('disconnect', connection.state === 'connected' ? 'Disconnect' : 'Reconnect');
+  text('disconnect', ['connected','checking'].includes(connection.state) ? 'Disconnect' : 'Reconnect');
   $('disconnect').disabled = !controlAllowed();
-  $('reconcile').disabled = !controlAllowed() || !uncertain || state.transport_pending || state.model_request_pending || connection.state !== 'connected';
-  for (const id of ['fault-drop','fault-delay','fault-duplicate']) $(id).disabled = !controlAllowed() || uncertain || connection.state !== 'connected' || !state.simulation || Boolean(connection.fault);
+  $('reconcile').disabled = !controlAllowed() || !uncertain || state.transport_pending || state.model_request_pending || !['connected','checking'].includes(connection.state);
+  for (const id of ['fault-drop','fault-delay','fault-duplicate']) $(id).disabled = !controlAllowed() || uncertain || !['connected','checking'].includes(connection.state) || !state.simulation || Boolean(connection.fault);
   text('fault-status', connection.fault ? ({drop_after:'The next command reply will be lost.',delay_after:'The next command reply will be delayed.',duplicate:'The next command will be duplicated with the same identity.'}[connection.fault.mode] || 'A diagnostic reply fault is armed.') : 'No reply fault armed.');
   $('runner-status').dataset.state = runner;
   text('runner-label', pausePending ? 'Pausing' : ({running:'Running',pausing:'Pausing',paused:'Paused',blocked:'Needs attention',stopped:'Stopped'}[runner] || 'Needs attention'));
@@ -101,7 +102,7 @@ function render() {
   if (job?.status === 'unknown') { intent = 'The outcome needs attention. Review the recorded evidence before continuing.'; intentLabel = 'Needs attention'; }
   if (recovery.state === 'recovered') { intent = 'The exact command receipt was recovered. The agent is paused until you resume.'; intentLabel = 'Receipt recovered'; }
   if (uncertain) { intent = 'The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.'; intentLabel = 'Outcome uncertain'; }
-  if (connection.state !== 'connected') { intent = 'The body connection is unavailable. The last camera observation is retained.'; intentLabel = 'Disconnected'; }
+  if (!['connected','checking'].includes(connection.state)) { intent = 'The body connection is unavailable. The last camera observation is retained.'; intentLabel = 'Disconnected'; }
   if (identityChanged) { intent = 'This application changed. Reload to reconnect before sending another action.'; intentLabel = 'Connection changed'; }
   text('intent', intent); text('intent-label', intentLabel);
   const phaseIndex = !job || job.status === 'queued' ? -1 : job.status === 'completed' || job.phase === 'completed' ? 4 : job.phase === 'resetting' ? 2 : job.phase === 'measured' ? 2 : 0;
@@ -130,6 +131,7 @@ function render() {
   else {
     if (uncertain) notice(recovery.reason || 'The command outcome is uncertain. Check its exact receipt before continuing.');
     else if (recovery.state === 'recovered') notice('Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.');
+    else if (connection.state === 'checking') notice('A health reply is delayed. Planning can continue; commands require a fresh body check.');
     else if (connection.state !== 'connected') notice(connection.reason || 'The body is disconnected. Cached observations and completed results remain historical.');
     else if (clientError) notice(clientError,'error');
     else if (job?.error) notice(readableError(job.error),'error');
@@ -139,11 +141,13 @@ function render() {
   }
   updateFrame(state.current_frame, working);
 }
+function frameStatus() { return state?.connection?.state === 'checking' ? 'Last captured · health unconfirmed' : state?.connection?.state !== 'connected' ? 'Retained · offline' : 'Captured'; }
 function updateFrame(frame, working) {
-  const offline = state?.connection?.state !== 'connected';
+  const checking = state?.connection?.state === 'checking';
+  const offline = !['connected','checking'].includes(state?.connection?.state);
   const available = Boolean(frame?.available && typeof frame.image_url === 'string');
   const active = state?.jobs?.find(job => job.job_id === state.active_job_id);
-  text('camera-label', offline ? 'Retained observation · body offline' : active ? `Last observation · ${active.label}` : 'Last camera observation');
+  text('camera-label', offline ? 'Retained observation · body offline' : checking ? 'Last observation · health unconfirmed' : active ? `Last observation · ${active.label}` : 'Last camera observation');
   if (!available) {
     if (loadedGeneration !== null) text('frame-caption', `Last captured · generation ${loadedGeneration} · current frame unavailable`);
     else { $('placeholder').hidden = false; text('placeholder', state?.jobs?.length ? 'Waiting for the next camera observation.' : 'Add an inspection to see the bench through the agent’s camera.'); text('frame-caption','No frame captured'); }
@@ -152,7 +156,7 @@ function updateFrame(frame, working) {
   let url;
   try { url = new URL(frame.image_url,location.href); if (url.origin !== location.origin || url.pathname !== '/api/frame') throw new Error(); } catch { notice('The camera returned an unexpected image address.','error'); return; }
   const key = `${frame.generation}:${url.href}`;
-  if (key === lastFrameKey) { text('frame-caption',`${offline ? 'Retained · offline' : 'Captured'} · generation ${loadedGeneration}`); return; }
+  if (key === lastFrameKey) { text('frame-caption',`${frameStatus()} · generation ${loadedGeneration}`); return; }
   if (key === frameLoadingKey) return;
   frameLoadingKey = key;
   const candidate = new Image();
@@ -160,7 +164,7 @@ function updateFrame(frame, working) {
     if (frameLoadingKey !== key || identityChanged) return;
     $('frame').src = url.href; $('frame').hidden = false; $('placeholder').hidden = true;
     loadedGeneration = frame.generation; lastFrameKey = key; frameLoadingKey = null;
-    text('frame-caption',`${state?.connection?.state !== 'connected' ? 'Retained · offline' : 'Captured'} · generation ${loadedGeneration}`);
+    text('frame-caption',`${frameStatus()} · generation ${loadedGeneration}`);
   };
   candidate.onerror = () => { if (frameLoadingKey !== key) return; frameLoadingKey = null; text('frame-caption', loadedGeneration !== null ? `Last captured · generation ${loadedGeneration} · refresh unavailable` : 'Camera image unavailable'); };
   candidate.src = url.href;
@@ -222,7 +226,7 @@ async function networkControl(path, body = {}) {
   catch (error) { clientError = `${error.message} The action was not retried automatically.`; }
   finally { render(); }
 }
-$('disconnect').addEventListener('click', () => networkControl(state?.connection?.state === 'connected' ? '/api/disconnect' : '/api/reconnect'));
+$('disconnect').addEventListener('click', () => networkControl(['connected','checking'].includes(state?.connection?.state) ? '/api/disconnect' : '/api/reconnect'));
 $('reconcile').addEventListener('click', () => networkControl('/api/reconcile'));
 $('fault-drop').addEventListener('click', () => networkControl('/api/fault',{mode:'drop_after',delay_s:0}));
 $('fault-delay').addEventListener('click', () => networkControl('/api/fault',{mode:'delay_after',delay_s:.8}));

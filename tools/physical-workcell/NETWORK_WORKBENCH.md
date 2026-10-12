@@ -24,6 +24,8 @@ Expand **Test the simulated connection** to lose, delay or duplicate the next di
 
 Use **Disconnect** to close the diagnostic link. The last image and completed results remain visible as retained evidence. **Reconnect** restores transport and leaves the agent paused. For an uncertain command, choose **Check receipt**. This reads the exact original result without resending its action. If the receipt proves what happened, choose **Resume** to obtain a fresh observation and continue. Missing proof stays blocked.
 
+**Checking body** means an auxiliary health reply is delayed. Planning may continue; every command still needs a fresh pinned body check before a lease and command stage are accepted. A cached image or old health result supplies no action authority. A known disconnect, changed boot or identity, unresolved effect, or failed command preflight still stops progress. Pause and uncertain-command recovery require the same explicit controls as before.
+
 Restart the body by omitting `--initialize`; restart the host with the same root and exact port. Both identities persist. Body restart revokes leases. Host restart pauses the queue, keeps uncertain commands, and never replays them. Reloading the browser does not restart planning or reset the bench.
 
 A new body boot epoch also pauses planning when a fast restart escaped the outage poll. An earlier model decision cannot acquire authority to continue across that boundary. Pending historical commands keep their original epoch and identity: **Check receipt** reads their retained result, then **Resume** obtains a fresh observation. Workbench restart cancels its owned planner before releasing process ownership; its active unfinished job appears paused or uncertain as appropriate.

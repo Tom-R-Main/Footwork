@@ -62,6 +62,200 @@ class NetworkOperatorTests(unittest.TestCase):
         self.assertGreater(current["epoch"], identity["epoch"])
         return current
 
+    def test_healthy_delayed_probe_preserves_model_then_requires_fresh_admission_proof(self):
+        entered, release = threading.Event(), threading.Event()
+        def policy(*_):
+            entered.set()
+            release.wait(8)
+            return action("move", -.25, 0), {}
+        op = self.open(policy)
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        worker = threading.Thread(target=op._step)
+        worker.start()
+        self.assertTrue(entered.wait(10))
+        epoch = op.control_epoch
+        boot = op.state()["connection"]["epoch"]
+        original = self.service.state
+        reads = []
+        def delayed_first_state():
+            reads.append(time.monotonic())
+            if len(reads) == 1:
+                time.sleep(1.1)
+            return original()
+        proofs = []
+        status = op.client.status
+        def fresh_status():
+            result = status()
+            proofs.append(result["server_state"])
+            return result
+        try:
+            with mock.patch.object(self.service, "state", side_effect=delayed_first_state):
+                self.assertFalse(op._refresh_health())
+                self.assertEqual(op.state()["connection"]["state"], "checking")
+                self.assertEqual(op.state()["connection"]["epoch"], boot)
+                self.assertEqual(op.control_epoch, epoch)
+                self.assertFalse(op.cancel.is_set())
+                self.assertFalse(op.body_ready)
+                self.assertEqual(op.state()["runner_status"], "running")
+                with mock.patch.object(op.client, "status", side_effect=fresh_status):
+                    release.set()
+                    worker.join(15)
+                self.assertFalse(worker.is_alive())
+                self.assertGreaterEqual(len(proofs), 2)  # Proposal and dispatch each need fresh proof.
+                self.assertTrue(all(p["state"] == "ready" for p in proofs))
+                self.assertEqual(self.service.body.status()["generation"], 1)
+                self.assertEqual(op.state()["runner_status"], "running")
+                self.assertEqual(op.state()["connection"]["state"], "connected")
+        finally:
+            release.set()
+            worker.join(15)
+
+    def test_checking_health_cannot_admit_when_fresh_tcp_proof_times_out(self):
+        op = self.open(lambda *_: self.fail("proof failure reached model"))
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        original = self.service.state
+        def delayed_state():
+            time.sleep(1.1)
+            return original()
+        with mock.patch.object(self.service, "state", side_effect=delayed_state):
+            self.assertFalse(op._refresh_health())
+            self.assertEqual(op.state()["connection"]["state"], "checking")
+            op.client.timeout = .05
+            self.assertFalse(op._step())
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertTrue(op.cancel.is_set())
+        self.assertIsNone(op.m["stage"])
+        self.assertEqual(len(op._journal()["commands"]), 0)
+        self.assertIsNone(op._journal()["lease"])
+        self.assertIsNone(self.service.body.status()["active_job"])
+
+    def test_checking_health_keeps_verified_boot_change_as_hard_veto(self):
+        op = self.open()
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        current = self.restart_same_body()
+        original = self.service.state
+        def delayed_state():
+            time.sleep(1.1)
+            return original()
+        with mock.patch.object(self.service, "state", side_effect=delayed_state):
+            self.assertFalse(op._refresh_health())
+        self.assertEqual(op.state()["connection"]["epoch"], current["epoch"])
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertTrue(op.cancel.is_set())
+        self.assertFalse(op._step())
+        self.assertEqual(len(op._journal()["commands"]), 0)
+
+    def test_checking_health_fresh_unknown_body_blocks_before_lease_or_stage(self):
+        op = self.open(lambda *_: self.fail("unknown body reached model"))
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        original = self.service.state
+        reads = []
+        def state_then_unknown():
+            reads.append(1)
+            if len(reads) == 1:
+                time.sleep(1.1)
+                return original()
+            result = original()
+            result["state"] = "unknown"
+            return result
+        with mock.patch.object(self.service, "state", side_effect=state_then_unknown):
+            self.assertFalse(op._refresh_health())
+            self.assertEqual(op.state()["connection"]["state"], "checking")
+            self.assertFalse(op._step())
+        self.assertEqual(op.state()["runner_status"], "blocked")
+        self.assertTrue(op.cancel.is_set())
+        self.assertIsNone(op.m["stage"])
+        self.assertEqual(len(op._journal()["commands"]), 0)
+        self.assertIsNone(op._journal()["lease"])
+
+    def test_pause_during_fresh_admission_proof_prevents_lease_and_command(self):
+        op = self.open(lambda *_: self.fail("paused admission reached model"))
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        entered, release = threading.Event(), threading.Event()
+        original = self.service.state
+        def delayed_state():
+            entered.set()
+            release.wait(5)
+            return original()
+        with mock.patch.object(self.service, "state", side_effect=delayed_state):
+            worker = threading.Thread(target=op._step)
+            worker.start()
+            try:
+                self.assertTrue(entered.wait(5))
+                self.assertTrue(op.state()["transport_pending"])
+                self.assertIsNone(op.m["stage"])
+                op.pause()
+            finally:
+                release.set()
+                worker.join(10)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertEqual(len(op._journal()["commands"]), 0)
+        self.assertIsNone(op._journal()["lease"])
+        self.assertIsNone(op.m["stage"])
+
+    def test_checking_does_not_release_unknown_and_exact_receipt_stays_paused(self):
+        decisions = iter((action("move", -.25, 0), action()))
+        op = self.open(lambda *_: (next(decisions), {}))
+        op.health_stop.set()
+        op.health_worker.join(4)
+        op.enqueue(self.job())
+        op.fault({"mode": "drop_after", "delay_s": 0})
+        self.assertFalse(op._step())
+        token = op.m["stage"]["command_id"]
+        journal = op._journal()
+        original = self.service.state
+        def delayed_state():
+            time.sleep(1.1)
+            return original()
+        with mock.patch.object(self.service, "state", side_effect=delayed_state):
+            self.assertFalse(op._refresh_health())
+        self.assertEqual(op.state()["connection"]["state"], "checking")
+        self.assertEqual(op.state()["runner_status"], "blocked")
+        self.assertEqual(op.m["stage"]["command_id"], token)
+        self.assertFalse(op._step())
+        with self.assertRaises(protocol.Refusal):
+            op.resume()
+        op.reconcile()
+        self.assertEqual(op.state()["runner_status"], "paused")
+        self.assertEqual(len(op._journal()["commands"]), len(journal["commands"]))
+        self.assertEqual(op._journal()["lease"], journal["lease"])
+        self.assertEqual(op._journal()["commands"][token]["send_count"], 1)
+        self.assertEqual(self.service.body.status()["generation"], 1)
+        op.resume()
+        self.assertEqual(op.state()["connection"]["state"], "connected")
+        self.assertFalse(op._step())
+        self.assertEqual(self.service.body.status()["generation"], 1)
+
+    def test_checking_followed_by_changed_source_identity_cancels_and_blocks(self):
+        op = self.open()
+        op.health_stop.set()
+        op.health_worker.join(4)
+        original = self.service.state
+        def delayed_state():
+            time.sleep(1.1)
+            return original()
+        with mock.patch.object(self.service, "state", side_effect=delayed_state):
+            self.assertFalse(op._refresh_health())
+        self.assertEqual(op.state()["connection"]["state"], "checking")
+        wrong_identity = self.service.identity()
+        wrong_identity["source_sha256"] = "0" * 64
+        with mock.patch.object(self.service, "identity", return_value=wrong_identity):
+            self.assertFalse(op._refresh_health())
+        self.assertEqual(op.state()["runner_status"], "blocked")
+        self.assertTrue(op.cancel.is_set())
+        self.assertEqual(len(op._journal()["commands"]), 0)
+
     def test_health_first_fast_body_reboot_withholds_old_model_decision(self):
         entered, release = threading.Event(), threading.Event()
         decisions = iter((action("move", -.25, 0), action()))
@@ -90,12 +284,14 @@ class NetworkOperatorTests(unittest.TestCase):
     def test_acquisition_first_reboot_cannot_authorize_old_decision_with_fresh_lease(self):
         calls = []
         before = []
+        old_leases = []
         old_challenges = []
         def policy(challenge, *_):
             calls.append(challenge)
             if len(calls) == 1:
                 old_challenges.append(challenge["challenge_id"])
                 before.append(len(op._journal()["commands"]))
+                old_leases.append(op._journal()["lease"])
                 self.restart_same_body()
                 return action("move", -.25, 0), {}
             return action(), {}
@@ -108,7 +304,7 @@ class NetworkOperatorTests(unittest.TestCase):
         self.assertEqual(self.service.body.status()["generation"], 0)
         self.assertEqual(len(op._journal()["commands"]), before[0])
         self.assertIsNone(op.m["stage"])
-        self.assertEqual(op._journal()["lease"]["epoch"], self.service.epoch)
+        self.assertEqual(op._journal()["lease"], old_leases[0])
         op.resume()
         self.assertFalse(op._step())
         self.assertEqual(len(calls), 2)
@@ -435,9 +631,12 @@ class NetworkOperatorTests(unittest.TestCase):
         op.health_worker.join(4)
         entered, release = threading.Event(), threading.Event()
         original = self.service.state
+        reads = []
         def delayed_health_state():
-            entered.set()
-            release.wait(5)
+            reads.append(1)
+            if len(reads) == 1:
+                entered.set()
+                release.wait(5)
             return original()
         with mock.patch.object(self.service, "state", side_effect=delayed_health_state):
             health = threading.Thread(target=op._refresh_health)
