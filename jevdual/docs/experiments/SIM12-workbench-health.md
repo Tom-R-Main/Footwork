@@ -17,3 +17,5 @@ Guardrails: no retries of effect commands; no stale-image or stale-health author
 Decision rule: adopt only after the original healthy-delay reproduction passes without unrequested Pause, recovery guards pass and the frozen browser/model trial independently passes. Otherwise retain evidence and report the exact unresolved boundary.
 
 Scope: same-Mac loopback simulation. The observed SIM11 health timeouts are historical evidence; their precise physical scheduling cause is not assumed.
+
+Result: held for the tested mechanism and scope. Frozen source `37ebfdb3054b977149d7b60b46254ddd852b749a` completed two actual image-guided jobs under 1.2-second auxiliary health delays, with zero unexpected halts or cancelled model calls. Independent scoring verified fresh pinned proof before all 83 commands, exact receipt recovery without resend, native placement, measurement and contact reset. Original runtime and probe-backlog failures remain retained; 117 distinct conformance checks passed. The historical scheduling cause remains unresolved. See [report](../../results/workbench-health-20261012/report.md).

@@ -1,0 +1,32 @@
+{
+  "measured_final_event": {
+    "intent": "Health inspection 02",
+    "kind": "rpc_applied",
+    "outcome": "dispatch: command-bd5377590da74532a8333ac5ca2a72b3",
+    "seq": 284,
+    "time": 1791832270.9544058
+  },
+  "health_passed": true,
+  "complete_jobs": 2,
+  "actual_model_calls": 27,
+  "commands": 83,
+  "cancelled": [],
+  "unexpected_halts": [],
+  "delayed_healthy_reads": 173,
+  "natural_upstream_long_reads": 0,
+  "fresh_proof_every_rpc": true,
+  "jobs": [
+    {
+      "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+      "model_calls": 14,
+      "reset_generation": 11,
+      "contact_samples": 3166
+    },
+    {
+      "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+      "model_calls": 13,
+      "reset_generation": 21,
+      "contact_samples": 3304
+    }
+  ]
+}

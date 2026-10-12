@@ -1,0 +1,74 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			60 checkbox Health inspection 01 Working, Value: 1
+			61 checkbox Health inspection 02 Queued, Value: 0
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		62 text Health inspection 01
+		63 text Running
+		16 button Pause, ID: pause
+		64 text A health reply is delayed. Planning can continue; commands require a fresh body check.
+		18 container Description: Body connection, ID: network-card
+			65 text Checking body
+			66 text Health read delayed; fresh body proof is required before any command
+			21 button Disconnect, ID: disconnect
+			22 button (disabled) Check receipt, ID: reconcile
+			23 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				24 text Test the simulated connection
+		25 container Camera observation
+			26 text OVERHEAD CAMERA
+			67 text Last observation · health unconfirmed
+			28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			29 text Orange part Blue pusher Green task region
+			68 text Last captured · health unconfirmed · generation 2
+		69 text AI IS PLANNING
+		70 text Planning the next move from the latest camera image.
+		33 container Job progress
+			34 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		35 container Measurement
+			36 heading Measurement, Value: 2, ID: measurement-heading
+				37 text Measurement
+			71 text Pending
+			39 text The part’s visible footprint will be measured after its placement is verified.
+		40 container Activity
+			41 heading Activity, Value: 2, ID: activity-heading
+				42 text Activity
+			72 text 24 events
+			59 content list activity
+				73 container
+					74 text 03:06 PM AI planning requested Health inspection 01
+				75 container
+					76 text 03:06 PM Camera observation received Health inspection 01
+				77 container
+					78 text 03:06 PM Requesting camera observation
+				79 container
+					80 text 03:06 PM Fresh body check verified The next command uses current body evidence.
+				81 container
+					82 text 03:06 PM Action receipt checked Health inspection 01
+				83 container
+					84 text 03:06 PM Sending a guarded action
+				85 container
+					86 text 03:06 PM Fresh body check verified The next command uses current body evidence.
+				87 container
+					88 text 03:06 PM Action proposal accepted Health inspection 01
+				89 container
+					90 text 03:06 PM Checking the planned action
+				91 container
+					92 text 03:06 PM Fresh body check verified The next command uses current body evidence.
+				93 container
+					94 text 03:06 PM AI planning requested Health inspection 01
+				95 container
+					96 text 03:06 PM Camera observation received Health inspection 01
+		44 button (collapsed) Session details, Secondary Actions: Expand
+			45 text Session details
+		97 text 3 model requests · Reported tokens: 25,735 input / 336 output · Reporting incomplete (2 of 3 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

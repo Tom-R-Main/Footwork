@@ -48,3 +48,21 @@ Resolves: SIM12-DELAY = held; SIM12-FLIGHT = held
 Observed: the repaired runtime passed all 26 real-socket/native checks, including fresh proof failure, changed boot, known uncertainty and explicit Pause during proof. The link passed 13 checks, bounding repeated delayed probes to one reader per path and joining them at close. Seven new harness/scorer checks passed. Before-fix failures remain retained.
 Next: freeze the measured source, then test two actual image-guided jobs with diagnostic delayed health replies and browser receipt recovery. SIM12-P1 remains open until the independent product score.
 Refs: tools/physical-workcell/output/sim12-runtime-final-v1.log; tools/physical-workcell/output/sim12-link-tests-final.log; tools/physical-workcell/output/sim12-harness-tests-v1/unittest.log
+
+## SIM12-U4 · update · 2026-10-12 15:15
+Resolves: SIM12-FLIGHT = held
+Observed: U3 combined two resolutions on one line; the notebook reader retained FLIGHT as open. Thirteen link checks independently passed the reader bound and cleanup. The actual trial also closed its link with zero owned readers, and its relay joined all workers after 685 requests with peak concurrency two.
+Next: retain the independent product score and close the package.
+Refs: tools/physical-workcell/output/sim12-link-tests-final.log; results/workbench-health-20261012/relay-cleanup.json; results/workbench-health-20261012/health-qualification-score.json
+
+## SIM12-U5 · update · 2026-10-12 15:15
+Resolves: SIM12-P1 = held
+Observed: frozen source 37ebfdb3054b977149d7b60b46254ddd852b749a completed two actual image-guided browser jobs with 27 model decisions, 83 commands and zero cancelled calls or unexpected halts. Independent scoring verified native placement, one SQLite measurement each, contact resets, exact image/proposal/receipt bindings, and fresh pinned admission proof for every command. The lost reply retained nineteen commands through disconnect, reconnect and exact receipt recovery; explicit Resume preceded new work. Browser reload sent nothing. The trial retained 173 healthy delayed replies and no naturally slow upstream read of at least 0.8 seconds. All four owned processes exited zero before scoring.
+Next: hand off the connected paused workbench with injection disabled; retain the supplemental exposure audit and limitations separately.
+Refs: results/workbench-health-20261012/health-qualification-score.json; results/workbench-health-20261012/qualification-score.json; results/workbench-health-20261012/summary.json; tools/physical-workcell/output/sim12-browser-health-v1/
+
+## SIM12-S1 · summary · 2026-10-12 15:15
+Established: a delayed auxiliary read caused a reproduced false cancellation, and repeated probes caused a reproduced reader backlog. The repair distinguishes checking from confirmed unsafe state, bounds probes, discards late replies and requires independent fresh status before each lease/stage. The actual product completed successive jobs under delays with exact receipt recovery. One hundred seventeen distinct conformance checks passed. After scoring, retained roots restarted for handoff at body boot two; administrative restart and relay replacement added guarded halt events after the measured event cutoff 284 while already paused, with no new model or effect commands.
+Uncertain: the precise scheduling cause of the original SIM11 delay remains unresolved. Warm baseline probes and this trial did not reproduce a naturally slow upstream reply. Simulation does not qualify hardware, sudden power loss or authenticated remote control. Saved qualification scores describe the stopped trial before handoff; the live journal subsequently contains administrative events.
+Decision: adopt the repair and leave the product paused, connected, with both completed results and no pending work. Keep frozen trial evidence and handoff evidence distinct.
+Refs: results/workbench-health-20261012/report.md; results/workbench-health-20261012/handoff.json; docs/experiments/SIM12-workbench-health.md; commit 37ebfdb

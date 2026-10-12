@@ -45,4 +45,6 @@ The harness prints the browser URL and owns both trial processes. Drive the reco
 
 This version binds to loopback and controls a simulation. The queue and model/command journals have finite budgets. It does not provide authenticated control across machines or qualify physical hardware.
 
+To qualify delayed health checks, run `qualify_workbench_health.py trial --root NEW_ROOT --source-commit COMMITTED_SOURCE_SHA`. Its owned relay delays only tagged auxiliary identity/state replies by 1.2 seconds. Full command checks and effect payloads pass through unchanged. Retain a `healthy_checking` browser step while a job runs, plus the usual uncertain-command recovery steps. The owned `health-relay-control.json` accepts `{"enabled":true,"paths":["/state"]}` to exercise state checks separately, or `{"enabled":false,"paths":[]}` to turn injection off. Stop through `stop-request.json`, then run `score_workbench_health.py --root NEW_ROOT`. The score checks fresh pinned proof before every command, zero unexpected halts or cancelled decisions, and joined health readers, in addition to native placement, measurement, reset and receipt recovery.
+
 References: [integration contract](NETWORK_WORKBENCH_CONTRACT.md), [body adapter](NETWORK_BODY.md), [preregistered experiment](../../jevdual/docs/experiments/SIM10-network-workbench.md).
