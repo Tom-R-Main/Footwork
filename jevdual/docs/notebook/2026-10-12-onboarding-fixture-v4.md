@@ -106,3 +106,9 @@ Test: supported guest Terminal-only reset in separate v3 records; installed deni
 Predicts: one source/artifact and a captured uninterrupted permission transition supply all required gates, with installed origins, one durable operation, exact oracle and automatic resource absence.
 Against: a transition is missing again, a required gate fails, input repeats to mask uncertainty, or another resource/permission is affected.
 Refs: UFU10; U3-packet-v4-permission-journey.md; source445a348; Claude1791832201147781000
+
+## UFU11 · update · 2026-10-12 15:39
+Observed: separate supported reset succeeds19:31:47Z; installed doctor1/refusal2 and resource absence0 are retained and eight baseline hashes printed before grant. Terminal is visibly OFF. Root issues one approved switch click after19:33:55Z; macOS presents an actual password-required Privacy & Security dialog. Human authenticates and reports completion; refreshed state shows ON before19:35:16Z observation. Root never enters credentials. Terminal Quit navigation initially leaves it running; its displayed Command-Q shortcut produces the owned-caffeinate confirmation, then confirmed termination visibly removes both owned Terminal windows. Relaunch is issued next.
+Changes: grant actors are root click plus human authentication; the session belongs to admin group. Earlier interrupted grant remains unavailable, not substituted into this transition. GUI menu attempts are operator transport events; no fixture or native effect has started.
+Next: installed strict doctor after actual Terminal relaunch, one native/replay/report trial, automatic cleanup and Claude raw-receipt review. UF6 remains open.
+Refs: guest hashes-final.txt; guest grant-v3.txt; CUA OFF/password dialog/ON/Terminal absence observations; UF6
