@@ -205,7 +205,7 @@ def test_all_markdown_links_resolve_inside_final_bundle(
     assert b"](../../installation.md)" in legacy
     assert b"](../../docs/capability-packaging.md)" not in legacy
     for name in builder.LEGACY_INSTALL_ATTACHMENTS:
-        assert files["footwork/evidence/fresh-install/" + name] == b'{"historical":true}'
+        assert json.loads(files["footwork/evidence/fresh-install/" + name]) == {"historical": True}
     qualification = json.loads(files["footwork/qualification.json"])
     assert qualification["legacy_evidence"]["role"] == "historical_context_only"
 
@@ -265,3 +265,79 @@ def test_candidate_member_tampering_is_rejected(builder, source_packet, monkeypa
     save_archive(tampered, files)
     with pytest.raises(ValueError, match="member differs"):
         builder.verify(tampered, packet, commit)
+
+
+def test_distributed_legacy_receipts_do_not_expose_personal_home_paths(
+    builder,
+    source_packet,
+    monkeypatch,
+):
+    packet, packet_files = source_packet
+    commit = mocked_release_source(builder, monkeypatch)
+    committed = builder.committed_bytes
+    original = json.dumps(
+        {
+            "python": "/Users/alice/.codex/worktrees/trial-one/footwork/output/install/venv/bin/python",
+            "nested": [{"argv": ["/home/bob/projects/footwork/output/install/venv/bin/python"]}],
+            "log": 'context={"home":"/Users/alice","cache":"/home/bob/.cache"}',
+            "oracle_actual": "Invoice report\n17.25 USD",
+        }
+    ).encode()
+
+    def with_personal_paths(requested, relative):
+        if relative == "jevdual/results/clean-installation-20261010/py312-installation.json":
+            return original
+        return committed(requested, relative)
+
+    monkeypatch.setattr(builder, "committed_bytes", with_personal_paths)
+    files = builder.inventory(packet, commit)
+    distributed = files["footwork/evidence/fresh-install/py312-installation.json"]
+    assert b"/Users/alice" not in distributed
+    assert b"/home/bob" not in distributed
+    assert json.loads(distributed)["oracle_actual"] == "Invoice report\n17.25 USD"
+    qualification = json.loads(files["footwork/qualification.json"])
+    derivation = qualification["legacy_evidence"]["derivations"][
+        "footwork/evidence/fresh-install/py312-installation.json"
+    ]
+    assert derivation["original_sha256"] == builder.sha(original)
+    assert derivation["derived_sha256"] == builder.sha(distributed)
+    assert (
+        builder.committed_bytes(commit, "jevdual/results/clean-installation-20261010/py312-installation.json")
+        == original
+    )
+    for name, data in packet_files.items():
+        if name.endswith(".whl") or "/scripts/" in name or name == "footwork/LICENSE":
+            assert files[name] == data
+
+
+def test_sanitized_json_preserves_urls_oracles_nonpath_text_and_multiple_identities(builder):
+    original = {
+        "first": "/Users/alice/.codex/worktrees/first/footwork/output/run.json",
+        "second": "/home/bob/projects/footwork/output/run.json",
+        "nested": [{"home": "/Users/charlie", "cache": "/home/dana/.cache/file"}],
+        "embedded": 'log={"path":"/Users/erin/projects/footwork/output/a.json"}',
+        "url": "https://example.test/Users/alice/path",
+        "file_url": "file:///Users/bob/path",
+        "text": "Users Alice, home Bob and Invoice report are ordinary words.",
+        "oracle": "Invoice report\n17.25 USD",
+        "number": 17.25,
+        "flag": False,
+        "none": None,
+    }
+    data = json.dumps(original).encode()
+    normalized = builder.sanitized_legacy_json(data)
+    result = json.loads(normalized)
+    assert result["first"] == "<WORKTREE>/output/run.json"
+    assert result["second"] == "<WORKTREE>/output/run.json"
+    assert result["nested"] == [{"home": "<HOST_HOME>", "cache": "<HOST_HOME>/.cache/file"}]
+    assert result["embedded"] == 'log={"path":"<WORKTREE>/output/a.json"}'
+    for key in ("url", "file_url", "text", "oracle", "number", "flag", "none"):
+        assert result[key] == original[key]
+    assert builder.sanitized_legacy_json(data) == normalized
+    assert json.loads(data) == original
+
+
+def test_sanitized_json_refuses_key_collision_instead_of_losing_evidence(builder):
+    data = json.dumps({"/Users/alice/file": "first", "/home/bob/file": "second"}).encode()
+    with pytest.raises(ValueError, match="keys collide"):
+        builder.sanitized_legacy_json(data)

@@ -73,6 +73,58 @@ def encoded(value: dict) -> bytes:
     return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode()
 
 
+def sanitized_legacy_json(data: bytes) -> bytes:
+    """Derive shareable receipts from their content, never from host environment.
+
+    URLs remain verbatim. Recognized Footwork project/worktree roots collapse to
+    WORKTREE; other personal Unix home roots collapse to HOST_HOME. These aliases
+    intentionally discard identity and are diagnostic copies, not raw evidence.
+    """
+    segment = r"[^/\s\\\"'<>]+"
+    home = r"/(?:Users|home)/" + segment
+    worktree = home + r"/(?:\.codex/worktrees/" + segment + r"/footwork|projects/footwork)"
+    boundary = r"(?=/|$|[\s\\\"'<>])"
+    pattern = re.compile(
+        r"(?P<url>[A-Za-z][A-Za-z0-9+.-]*://[^\s\"'<>]+)"
+        + r"|(?<![\w/])(?P<worktree>"
+        + worktree
+        + boundary
+        + r")"
+        + r"|(?<![\w/])(?P<home>"
+        + home
+        + r")"
+    )
+
+    def text(value: str) -> str:
+        return pattern.sub(
+            lambda match: (
+                match.group(0)
+                if match.group("url")
+                else "<WORKTREE>"
+                if match.group("worktree")
+                else "<HOST_HOME>"
+            ),
+            value,
+        )
+
+    def clean(value):
+        if isinstance(value, str):
+            return text(value)
+        if isinstance(value, list):
+            return [clean(item) for item in value]
+        if isinstance(value, dict):
+            result = {}
+            for key, item in value.items():
+                key = text(key)
+                if key in result:
+                    raise ValueError("Sanitized legacy JSON keys collide")
+                result[key] = clean(item)
+            return result
+        return value
+
+    return encoded(clean(json.loads(data)))
+
+
 def commit_identity(commit: str | None) -> str:
     commit = commit or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True).strip()
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
@@ -213,8 +265,16 @@ def inventory(packet: Path, source_commit: str | None = None) -> dict[str, bytes
         b"](../../docs/capability-packaging.md)", b"](../../installation.md)"
     )
     legacy_attachments = ["footwork/evidence/fresh-install/" + name for name in LEGACY_INSTALL_ATTACHMENTS]
+    legacy_derivations = {}
     for name, target in zip(LEGACY_INSTALL_ATTACHMENTS, legacy_attachments, strict=True):
-        files[target] = committed_bytes(commit, "jevdual/results/clean-installation-20261010/" + name)
+        source = "jevdual/results/clean-installation-20261010/" + name
+        original = committed_bytes(commit, source)
+        files[target] = sanitized_legacy_json(original)
+        legacy_derivations[target] = {
+            "source": source,
+            "original_sha256": sha(original),
+            "derived_sha256": sha(files[target]),
+        }
     summaries = {}
     summary_paths = {}
     for label, relative in EVIDENCE.items():
@@ -260,6 +320,13 @@ def inventory(packet: Path, source_commit: str | None = None) -> dict[str, bytes
             "role": "historical_context_only",
             "report": legacy_report,
             "attachments": legacy_attachments,
+            "derivations": legacy_derivations,
+            "placeholder_semantics": {
+                "<WORKTREE>": "Recognized personal Footwork project or Codex worktree root from evidence content.",
+                "<HOST_HOME>": "Other /Users/<name> or /home/<name> roots from evidence content.",
+                "identity": "Different original identities may share a placeholder; originals remain unchanged and are identified by SHA256.",
+                "urls": "Preserved verbatim; placeholders normalize diagnostic paths only.",
+            },
             "qualification": "Separate from current reviewed permission_journey and installed_agent evidence.",
         },
         "qualified_scopes": {
