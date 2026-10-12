@@ -64,3 +64,10 @@ Test: reproduce the observed stale AXRole child/window race against21599c6; then
 Predicts: stale reads cause no extra action; confirmation requires a subsequent fresh readable AXWindows snapshot proving the original identity absent. Persistent errors remain bounded unknown/error, foreign identity refuses, and real repaired fixture closes automatically.
 Against: an AX error alone confirms closure, a stale element is pressed again, an unrelated window is closed, retry exceeds the cleanup deadline, or live cleanup still lacks confirmation.
 Refs: UFU6; scripts/capability_fixture.py close_owned_document/discard_button; frozen21599c6
+
+## UFU7 · update · 2026-10-12 15:03
+Resolves: UF3 = failed
+Observed: UFU6 records two resolutions on one field, but the notebook reader recognizes only its first prediction. This single resolution makes the already observed failed U3v1 journey machine-readable. Worker boundary reproduction has five failures and one pass against21599c6; its narrow post-close invalid-observation retry passes55helper cases. Root independently reviews the diff and runs81combined checks, Ruff check/format and notebook validation successfully. AXPress errors remain terminal; confirmation still requires fresh readable absence and unchanged identity.
+Changes: only fixture/helper tests change. The failed guest archive is being exported before a separately frozen repair packet; no original receipt is changed and no native effect is replayed.
+Next: freeze the repair, obtain Claude review of source/artifact and original guest evidence, then perform the preregistered post-grant repair trial. UF4 remains open.
+Refs: output/u2-fixture-v4-dev/uf4-before.txt; output/u2-fixture-v4-dev/uf4-after.txt; UFU6; tests/test_capability_fixture.py

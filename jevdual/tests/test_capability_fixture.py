@@ -880,3 +880,129 @@ async def test_identity_uses_global_ax_reference_and_resets_default_even_on_shut
         with pytest.raises(expected):
             await module.scope_for(42, "http://127.0.0.1:1", document)
     assert calls == [1.0, 0]
+
+
+@pytest.mark.parametrize("stale_target", ["child", "window"])
+def test_close_stale_observation_requires_fresh_readable_absence(monkeypatch, tmp_path, stale_target):
+    import ApplicationServices
+
+    module, document, app, window, other, close, _, _, pressed = ax_world(monkeypatch, tmp_path)
+    child = {"AXRole": "AXGroup", "AXChildren": []}
+    window["AXChildren"] = [child]
+    original = ApplicationServices.AXUIElementCopyAttributeValue
+    observations = []
+
+    def press_close(element, _):
+        pressed.append(element)
+        return 0  # Closing is asynchronous; AX reference survives the press briefly.
+
+    def attribute(element, key, arg):
+        if key == "AXWindows":
+            observations.append(list(app["AXWindows"]))
+        stale = (
+            (element is child and key == "AXRole")
+            if stale_target == "child"
+            else (element is window and key == "AXDocument")
+        )
+        if pressed and stale:
+            app["AXWindows"].remove(window)
+            return -25202, None
+        return original(element, key, arg)
+
+    monkeypatch.setattr(ApplicationServices, "AXUIElementPerformAction", press_close)
+    monkeypatch.setattr(ApplicationServices, "AXUIElementCopyAttributeValue", attribute)
+    monkeypatch.setattr(module.time, "sleep", lambda _: None)
+    result = module.close_owned_document(43, document)
+    assert result["status"] == "confirmed", result
+    assert result["reason"] == "window_disappeared"
+    assert observations[-1] == [other]  # A new successful AXWindows read certifies absence.
+    assert pressed == [close]  # Never press the stale reference again.
+
+
+@pytest.mark.parametrize("fresh", ["persistent_invalid", "unreadable", "renamed", "reused"])
+def test_close_stale_retry_refuses_unconfirmed_or_changed_identity(monkeypatch, tmp_path, fresh):
+    import ApplicationServices
+
+    module, document, app, window, other, close, _, _, pressed = ax_world(monkeypatch, tmp_path)
+    child = {"AXRole": "AXGroup", "AXChildren": []}
+    window["AXChildren"] = [child]
+    original = ApplicationServices.AXUIElementCopyAttributeValue
+    stale, invalid_reads, elapsed = [False], [0], [0]
+
+    def clock():
+        value = elapsed[0]
+        elapsed[0] += 0.1
+        return value
+
+    monkeypatch.setattr(module.time, "monotonic", clock)
+    monkeypatch.setattr(module.time, "sleep", lambda _: None)
+    monkeypatch.setattr(
+        ApplicationServices, "AXUIElementPerformAction", lambda el, _: pressed.append(el) or 0
+    )
+
+    def attribute(element, key, arg):
+        if pressed and element is child and key == "AXRole":
+            stale[0] = True
+            invalid_reads[0] += 1
+            if fresh == "renamed":
+                window["AXDocument"] = other["AXDocument"]
+            elif fresh == "reused":
+                replacement = dict(window)
+                replacement["AXCloseButton"] = {"AXRole": "AXButton", "different": True}
+                app["AXWindows"] = [replacement, other]
+            return -25202, None
+        if stale[0] and fresh == "unreadable" and key == "AXWindows":
+            return -25211, None
+        return original(element, key, arg)
+
+    monkeypatch.setattr(ApplicationServices, "AXUIElementCopyAttributeValue", attribute)
+    result = module.close_owned_document(43, document)
+    assert result["status"] != "confirmed"
+    assert pressed == [close]
+    assert other in app["AXWindows"]
+    if fresh in ("renamed", "reused"):
+        assert result["reason"] == "document_identity_changed"
+    elif fresh == "unreadable":
+        assert result["reason"] == "ax_attribute_refused:AXWindows:-25211"
+
+    if fresh == "persistent_invalid":
+        assert invalid_reads[0] > 1
+        assert elapsed[0] < module.CLEANUP_SECONDS + 0.3
+
+
+def test_invalid_element_before_close_never_retries_or_presses(monkeypatch, tmp_path):
+    import ApplicationServices
+
+    module, document, _, window, _, _, _, _, pressed = ax_world(monkeypatch, tmp_path)
+    original = ApplicationServices.AXUIElementCopyAttributeValue
+    invalid_reads = []
+
+    def attribute(element, key, arg):
+        if element is window and key == "AXDocument":
+            invalid_reads.append(True)
+            return -25202, None
+        return original(element, key, arg)
+
+    monkeypatch.setattr(ApplicationServices, "AXUIElementCopyAttributeValue", attribute)
+    result = module.close_owned_document(43, document)
+    assert result["status"] == "error"
+    assert invalid_reads == [True] and not pressed
+
+
+def test_invalid_axpress_is_not_observation_retry(monkeypatch, tmp_path):
+    import ApplicationServices
+
+    module, document, _, _, _, close, _, discard, pressed = ax_world(monkeypatch, tmp_path, edited=True)
+    original = ApplicationServices.AXUIElementPerformAction
+
+    def action(element, name):
+        if element is discard:
+            pressed.append(element)
+            return -25202
+        return original(element, name)
+
+    monkeypatch.setattr(ApplicationServices, "AXUIElementPerformAction", action)
+    result = module.close_owned_document(43, document)
+    assert result["status"] == "error"
+    assert result["reason"] == "ax_press_refused:-25202"
+    assert pressed == [close, discard]

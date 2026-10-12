@@ -161,26 +161,41 @@ def close_owned_document(pid: int, document: Path) -> dict:
             raise FixtureFailure("document_cleanup", "close_button_changed", 6)
         press(close, deadline)
         discarded = False
+        last_invalid = None
         while time.monotonic() < deadline:
-            current = owned_window(app, document, deadline)
-            if current is None:
-                # Do not mistake a renamed/reused window for observed disappearance.
-                if window in (ax_attribute(app, "AXWindows", deadline=deadline) or ()):
+            try:
+                current = owned_window(app, document, deadline)
+                if current is None:
+                    # Do not mistake a renamed/reused window for observed disappearance.
+                    if window in (ax_attribute(app, "AXWindows", deadline=deadline) or ()):
+                        raise FixtureFailure("document_cleanup", "document_identity_changed", 6)
+                    return {"status": "confirmed", "reason": "window_disappeared", "pid": pid}
+                if current != window:
                     raise FixtureFailure("document_cleanup", "document_identity_changed", 6)
-                return {"status": "confirmed", "reason": "window_disappeared", "pid": pid}
-            if current != window:
-                raise FixtureFailure("document_cleanup", "document_identity_changed", 6)
-            discard = discard_button(window, deadline)
-            if discard is not None and not discarded:
-                if (
-                    owned_window(app, document, deadline) != window
-                    or discard_button(window, deadline) != discard
-                ):
-                    raise FixtureFailure("document_cleanup", "sheet_identity_changed", 6)
-                press(discard[1], deadline)
-                discarded = True
+                discard = discard_button(window, deadline)
+                if discard is not None and not discarded:
+                    if (
+                        owned_window(app, document, deadline) != window
+                        or discard_button(window, deadline) != discard
+                    ):
+                        raise FixtureFailure("document_cleanup", "sheet_identity_changed", 6)
+                    press(discard[1], deadline)
+                    discarded = True
+                last_invalid = None
+            except FixtureFailure as exc:
+                # A successful close can invalidate a previously observed child or
+                # window between reads. Only that observation error is retryable,
+                # only after the close press; it is never evidence of disappearance.
+                # Restart from fresh AXWindows and exact identity, never repeat AXPress.
+                if not (exc.reason.startswith("ax_attribute_refused:") and exc.reason.endswith(":-25202")):
+                    raise
+                last_invalid = exc.reason
             time.sleep(0.1)
-        return {"status": "unknown", "reason": "window_still_present", "pid": pid}
+        return {
+            "status": "unknown",
+            "reason": "invalid_element_unresolved" if last_invalid else "window_still_present",
+            "pid": pid,
+        }
     except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
         return {"status": "error", "reason": getattr(exc, "reason", type(exc).__name__), "pid": pid}
 
