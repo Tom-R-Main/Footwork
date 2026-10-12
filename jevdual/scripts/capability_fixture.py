@@ -8,7 +8,11 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
+import os
+import signal
+import stat
 import subprocess
 import threading
 import time
@@ -24,6 +28,7 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 BROWSER_STARTUP_SECONDS = 180
 IDENTITY_SECONDS = 30
 CLEANUP_SECONDS = 10
+MAX_DOCUMENT_BYTES = 1024 * 1024
 
 
 class FixtureFailure(Exception):
@@ -267,7 +272,19 @@ async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> 
                 else []
             )
             matching = []
+            if textedit:
+                from ApplicationServices import AXUIElementCreateApplication, AXUIElementSetMessagingTimeout
+
+                app = AXUIElementCreateApplication(textedit)
             for window in native_windows:
+                # The synchronous product lookup inherits this process timeout;
+                # recheck the phase budget for each window and refuse late results.
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise FixtureFailure("identity", "identity_deadline", 4)
+                error = AXUIElementSetMessagingTimeout(app, min(1.0, remaining))
+                if error:
+                    raise FixtureFailure("identity", f"ax_timeout_refused:{error}", 4)
                 try:
                     path = ax.document_path(textedit, window.window_id)
                     if path and str(Path(path).resolve()) == str(document.resolve()):
@@ -276,6 +293,8 @@ async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> 
                     if exc.reason != "window_missing":
                         raise
             if len(browser_windows) == 1 and len(matching) == 1:
+                if time.monotonic() >= deadline:
+                    raise FixtureFailure("identity", "identity_deadline", 4)
                 if browser is not None and browser.poll() is not None:
                     raise FixtureFailure("identity", "browser_exited", 4)
                 return {
@@ -293,12 +312,57 @@ async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> 
         await shutdown_driver(driver, "identity", time.monotonic() + 2)
 
 
+def document_snapshot(document: Path) -> dict:
+    """Hash bounded actual file bytes; this says nothing about unsaved AX text."""
+    directory_fd = file_fd = None
+    try:
+        directory_fd = os.open(document.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        file_fd = os.open(document.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory_fd)
+        before = os.fstat(file_fd)
+        if not stat.S_ISREG(before.st_mode):
+            return {"status": "refused", "reason": "not_regular"}
+        if before.st_size > MAX_DOCUMENT_BYTES:
+            return {"status": "refused", "reason": "file_too_large"}
+        payload = bytearray()
+        while len(payload) <= MAX_DOCUMENT_BYTES:
+            chunk = os.read(file_fd, min(65536, MAX_DOCUMENT_BYTES + 1 - len(payload)))
+            if not chunk:
+                break
+            payload.extend(chunk)
+        if len(payload) > MAX_DOCUMENT_BYTES:
+            return {"status": "refused", "reason": "file_too_large"}
+        after = os.fstat(file_fd)
+        current = os.stat(document.name, dir_fd=directory_fd, follow_symlinks=False)
+        identity = lambda value: (value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns)
+        if (
+            identity(before) != identity(after)
+            or identity(after) != identity(current)
+            or len(payload) != after.st_size
+        ):
+            return {"status": "refused", "reason": "file_changed"}
+        return {
+            "status": "observed",
+            "size_bytes": len(payload),
+            "sha256": hashlib.sha256(payload).hexdigest(),
+        }
+    except FileNotFoundError:
+        return {"status": "absent", "reason": "file_missing"}
+    except OSError as exc:
+        return {"status": "error", "reason": type(exc).__name__, "errno": exc.errno}
+    finally:
+        if file_fd is not None:
+            os.close(file_fd)
+        if directory_fd is not None:
+            os.close(directory_fd)
+
+
 def cleanup(browser, http, thread, logfile, document: Path, *, opened: bool, pid: int | None) -> dict:
     result = {
         "document": {"status": "not_started"},
         "browser": {"status": "not_started"},
         "listener": {"status": "not_started"},
     }
+    before = document_snapshot(document)
     if opened:
         try:
             observed_pid = asyncio.run(textedit_pid())
@@ -312,6 +376,8 @@ def cleanup(browser, http, thread, logfile, document: Path, *, opened: bool, pid
             )
         except Exception as exc:  # noqa: BLE001 - receipt boundary; independent cleanup must continue
             result["document"] = {"status": "error", "reason": getattr(exc, "reason", type(exc).__name__)}
+    result["document"]["file_before"] = before
+    result["document"]["file_after"] = document_snapshot(document)
     if browser is not None:
         try:
             if browser.poll() is None:
@@ -434,14 +500,18 @@ def main() -> None:
         record(root, "fixture-status.json", failure)
         print(json.dumps(failure), flush=True)
     finally:
-        shutdown = cleanup(browser, http, thread, logfile, document, opened=opened, pid=pid)
-        record(root, "cleanup.json", shutdown)
-        print(json.dumps({"shutdown": shutdown}), flush=True)
-        if (
-            any(item["status"] not in ("confirmed", "not_started") for item in shutdown.values())
-            and not exit_code
-        ):
-            exit_code = 6
+        previous_sigint = signal.signal(signal.SIGINT, signal.SIG_IGN)
+        try:
+            shutdown = cleanup(browser, http, thread, logfile, document, opened=opened, pid=pid)
+            record(root, "cleanup.json", shutdown)
+            print(json.dumps({"shutdown": shutdown}), flush=True)
+            if (
+                any(item["status"] not in ("confirmed", "not_started") for item in shutdown.values())
+                and not exit_code
+            ):
+                exit_code = 6
+        finally:
+            signal.signal(signal.SIGINT, previous_sigint)
     if exit_code:
         raise SystemExit(exit_code)
 

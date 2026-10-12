@@ -12,6 +12,17 @@ from types import SimpleNamespace
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def simulated_identity_timeout_api(monkeypatch):
+    # Scope tests use fake PIDs: never send an AX RPC to an unrelated real process.
+    import ApplicationServices
+
+    monkeypatch.setattr(
+        ApplicationServices, "AXUIElementCreateApplication", lambda pid: SimpleNamespace(pid=pid)
+    )
+    monkeypatch.setattr(ApplicationServices, "AXUIElementSetMessagingTimeout", lambda *args: 0)
+
+
 def fixture_module():
     path = Path(__file__).resolve().parents[1] / "scripts/capability_fixture.py"
     spec = importlib.util.spec_from_file_location("fixture_helper", path)
@@ -681,3 +692,132 @@ async def test_indefinite_driver_shutdown_is_cancelled(monkeypatch):
     assert not [
         task for task in asyncio.all_tasks() if task is not asyncio.current_task() and not task.done()
     ]
+
+
+@pytest.mark.asyncio
+async def test_scope_sets_process_timeout_and_rejects_late_document_identity(monkeypatch, tmp_path):
+    import ApplicationServices
+    import cua_driver
+    from jevdual import ax
+
+    module = fixture_module()
+    document = tmp_path / "owned.txt"
+    elapsed, timeouts = [0], []
+    monkeypatch.setattr(module.time, "monotonic", lambda: elapsed[0])
+    monkeypatch.setattr(
+        ApplicationServices,
+        "AXUIElementSetMessagingTimeout",
+        lambda app, timeout: timeouts.append((app.pid, timeout)) or 0,
+    )
+
+    class Driver:
+        async def list_apps(self, _):
+            return SimpleNamespace(apps=[SimpleNamespace(name="TextEdit", pid=43)])
+
+        async def list_windows(self, args):
+            return SimpleNamespace(windows=[SimpleNamespace(window_id=7)])
+
+        async def shutdown(self):
+            pass
+
+    def path(*args):
+        elapsed[0] = 31  # Synchronous native call returned beyond identity deadline.
+        return str(document)
+
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(ax, "document_path", path)
+    with pytest.raises(module.FixtureFailure) as failure:
+        await module.scope_for(42, "http://127.0.0.1:1", document)
+    assert failure.value.reason == "identity_deadline"
+    assert failure.value.exit_code == 4
+    assert timeouts == [(43, 1.0)]
+
+
+def test_cleanup_snapshots_actual_file_bytes_before_and_after_close(monkeypatch, tmp_path):
+    import hashlib
+
+    module = fixture_module()
+    document = tmp_path / "owned.txt"
+    before, after = b"actual on disk\n", b"different actual bytes\n"
+    document.write_bytes(before)
+
+    async def pid():
+        return 43
+
+    def close(*args):
+        document.write_bytes(after)
+        return {"status": "confirmed", "reason": "window_disappeared"}
+
+    monkeypatch.setattr(module, "textedit_pid", pid)
+    monkeypatch.setattr(module, "close_owned_document", close)
+    result = module.cleanup(None, None, None, None, document, opened=True, pid=43)["document"]
+    assert result["file_before"] == {
+        "status": "observed",
+        "size_bytes": len(before),
+        "sha256": hashlib.sha256(before).hexdigest(),
+    }
+    assert result["file_after"] == {
+        "status": "observed",
+        "size_bytes": len(after),
+        "sha256": hashlib.sha256(after).hexdigest(),
+    }
+    assert "text" not in result["file_before"]
+
+
+@pytest.mark.parametrize("kind", ["missing", "symlink", "large", "fifo"])
+def test_snapshot_refuses_unowned_or_unbounded_file_types(tmp_path, kind):
+    import os
+
+    module = fixture_module()
+    document = tmp_path / "owned.txt"
+    if kind == "symlink":
+        target = tmp_path / "other.txt"
+        target.write_text("unrelated")
+        document.symlink_to(target)
+    elif kind == "large":
+        document.write_bytes(b"x" * (module.MAX_DOCUMENT_BYTES + 1))
+    elif kind == "fifo":
+        os.mkfifo(document)
+    snapshot = module.document_snapshot(document)
+    assert snapshot["status"] != "observed"
+    assert "sha256" not in snapshot
+    if kind == "missing":
+        assert snapshot["status"] == "absent"
+    elif kind in ("large", "fifo"):
+        assert snapshot["status"] == "refused"
+
+
+@pytest.mark.parametrize("cleanup_fails", [False, True])
+def test_second_sigint_is_ignored_only_during_cleanup_and_handler_restored(
+    monkeypatch, tmp_path, cleanup_fails
+):
+    import signal
+
+    import ApplicationServices
+    from jevdual import posture
+
+    module = fixture_module()
+    previous = signal.getsignal(signal.SIGINT)
+    monkeypatch.setattr(posture, "screen_locked", lambda: False)
+    monkeypatch.setattr(ApplicationServices, "AXIsProcessTrusted", lambda: True)
+    monkeypatch.setattr(sys, "argv", ["fixture", "--run-dir", str(tmp_path / "run")])
+    # Fail before owning a server; only the final-cleanup SIGINT guard is exercised.
+    monkeypatch.setattr(module, "ThreadingHTTPServer", lambda *args: (_ for _ in ()).throw(OSError()))
+    observed = []
+
+    def cleanup(*args, **kwargs):
+        observed.append(signal.getsignal(signal.SIGINT))
+        signal.raise_signal(signal.SIGINT)  # Ignored: no second KeyboardInterrupt escapes.
+        if cleanup_fails:
+            raise RuntimeError("cleanup receipt fault")
+        return {
+            "document": {"status": "not_started"},
+            "browser": {"status": "not_started"},
+            "listener": {"status": "not_started"},
+        }
+
+    monkeypatch.setattr(module, "cleanup", cleanup)
+    with pytest.raises(RuntimeError if cleanup_fails else SystemExit):
+        module.main()
+    assert observed == [signal.SIG_IGN]
+    assert signal.getsignal(signal.SIGINT) == previous
