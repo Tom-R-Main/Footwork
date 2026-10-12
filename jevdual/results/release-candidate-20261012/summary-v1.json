@@ -1,0 +1,28 @@
+{
+  "repeated_bytes_equal": true,
+  "sha256": "47d87922b79d66207e7057b47e01d13013e844cbd075636c18e67605bd06abb6",
+  "members": 30,
+  "size_bytes": 341107,
+  "relative_links_verified": 18,
+  "unchanged_qualified_payloads": 10,
+  "release_source_commit": "5031b5034c4015104f8b0da54df1a720889bc0a7",
+  "qualified_product_source_commit": "445a348ff31243c2f3d90baae9ce209d89bd7eac",
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "local_candidate_only": true,
+  "passed": true,
+  "independent_review": "approved",
+  "qualification": "local candidate packaging only",
+  "host_qualification": "../installed-agent-release-20261012-v2",
+  "permission_qualification": "../u3-packet-v4-permission-20261012-v3",
+  "focused_checks": {
+    "installed_host": 19,
+    "release_builder": 16
+  },
+  "registry_publication": false,
+  "tag_created": false,
+  "push_or_merge": false,
+  "review_message": "1791836643188530000",
+  "scope": "local candidate v1",
+  "external_distribution": "not_ready_due_to_identifying_legacy_paths",
+  "sanitization_followup": "IA3"
+}

@@ -38,3 +38,21 @@ Test: replace absolute /Users/<name> and /home/<name> path prefixes in derived l
 Predicts: derivedJSON remainsvalid, source blobs unchanged and no host username/worktree layout appears in distributable evidence. Provenance records originals separately from derived digests.
 Against: an identifyinghomepath remains, legitimate nonpath fixture claims change, original evidence is edited, qualifiedpayloadbyteschange, or newbuild/verifier fails.
 Refs: ClaudeN1in1791836643188530000; scripts/build_release_candidate.py; IA2
+
+## IAU4 · update · 2026-10-12 16:32
+Resolves: IA3 = held
+Observed: old leaked-homepath boundary fails beforefix; corrected19releasecases and rootRuff pass. Finalderivedv2 sourced931559 builds twice byte-identically as8dc81c72,30members342599bytes. Root scans alltextmembers andnestedwheel with zeroidentifyinghomepaths, confirms18links and10unchangedqualifiedpayloads; consumerextractedverifier passes. Claude independently reproduces hash/extraction/qualifiedbytes/pathscan/JSONparse and all10original-versus-deriveddigestpairs; closesN1in1791837075792802000. Original evidence and47d87922v1 remainunchanged.
+Next: close IA2 on the reviewed localcandidate and retain the external-publication boundary.
+Refs: output/release-path-redaction-before.txt; output/release-path-redaction-after.txt; results/release-candidate-20261012; Claude1791837075792802000
+
+## IAU5 · update · 2026-10-12 16:32
+Resolves: IA2 = held
+Observed: finallocalpackaging8dc81c72 is reproducible, manifest/RECORD/sourceverified, extractedconsumerverified and independentlyapproved. It carries exactwheel9bb0440d/helperproduct445a348, frozenrelease sourced931559, setup/agentguide and truthful separateguest/realhost qualification limits. The actualhosttask/adapter/cleanup gatepassed once; no producteffect rerun occurred duringpackaging.
+Next: deliver the localartifact; registry/tag/push/merge andwiderqualification require a separate request.
+Refs: results/release-candidate-20261012/report.md; results/installed-agent-release-20261012-v2/report.md; results/u3-packet-v4-permission-20261012-v3/report.md
+
+## IAS1 · summary · 2026-10-12 16:32
+Established: one fresh realClaudeCode2.1.296 Opus5.5 session used the installed candidate, one scopedappend, one durableoperation and acceptedposthoststructuredreport; exactAXoracle/automaticcleanup andindependentabsence pass. Finalrelease8dc81c72 repeats byte-for-byte, has30verifiedmembers and18workinglinks, unchangedqualifiedwheel/helpers, derivedlegacyprivacy/provenance and independentClaudeapproval. Root19hostchecks/19releasechecks andRuff pass.
+Uncertain: this does not qualify realhostinterruption/restart in thislane, otherhosts/models/OS/MDM, arbitraryapps, pixelcapture, coldOS or diskpersistence. Dependencies andagentauthentication remainseparate prerequisites.
+Decision: close installed-host/localpackaging task as verified within its statedscope. Deliver localcandidate without publishingregistry/tag or changing Git remote. Preserve originalA1/U2/U3failures, interruptedjourneys and priorlocalbundle.
+Refs: results/installed-agent-release-20261012-v2; results/release-candidate-20261012; d52d32d; d931559; Claude1791837075792802000
