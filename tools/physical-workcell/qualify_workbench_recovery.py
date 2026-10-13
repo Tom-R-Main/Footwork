@@ -77,6 +77,54 @@ def request(root, action, role=None):
     return value
 
 
+def process_inventory():
+    rows = subprocess.check_output(["ps", "-axo", "pid=,ppid=,pgid=,lstart=,comm="], text=True)
+    result = []
+    for line in rows.splitlines():
+        parts = line.strip().split(None, 8)
+        if len(parts) != 9:
+            raise protocol.Refusal("process inventory has incomplete start identity")
+        result.append({"pid": int(parts[0]), "parent": int(parts[1]), "group": int(parts[2]),
+                       "started": " ".join(parts[3:8]), "command": parts[8]})
+    return result
+
+
+def process_identity(rows, pid):
+    found = [row for row in rows if row["pid"] == pid]
+    if len(found) != 1:
+        raise protocol.Refusal("exact live process identity is missing or duplicated")
+    return found[0]
+
+
+def absence_evidence(rows, identities, group):
+    return {"old_processes_absent": all(not any(row == old for row in rows) for old in identities),
+            "old_group_absent": not any(row["group"] == group for row in rows),
+            "same_pid_current_rows": [row for row in rows if row["pid"] in {old["pid"] for old in identities}],
+            "same_group_current_rows": [row for row in rows if row["group"] == group]}
+
+
+def retired_planner(root, boundary, timeout=20):
+    gate = boundary["gate"]
+    old = [gate["process_identities"][key] for key in ("guardian", "planner")]
+    directory = root / "operator/calls" / gate["call_directory"]
+    until = time.monotonic() + timeout
+    while time.monotonic() < until:
+        proof = absence_evidence(process_inventory(), old, gate["planner"]["planner_pgid"])
+        if proof["old_processes_absent"] and proof["old_group_absent"]:
+            break
+        time.sleep(.05)
+    else:
+        raise protocol.Refusal("prior guardian/planner identity or group remained live after restart")
+    host = read(root / "operator/operator.json")
+    if host["planner_owner"] == gate["planner"]["owner"]:
+        raise protocol.Refusal("restarted planner incarnation did not change")
+    proof.update(time=time.time(), old_identities=gate["process_identities"], old_owner=gate["planner"]["owner"],
+        new_owner=host["planner_owner"], old_call_files={path.name: protocol.sha(protocol.read_bytes(path, maximum=16 * 1024 * 1024))
+            for path in sorted(directory.iterdir()) if path.is_file() and path.name != "planner.lock"})
+    retain(root / "planner-retirement.json", proof)
+    return proof
+
+
 def validate_planning_gate(root, gate):
     directory = protocol.directory(root / "operator/calls" / gate["call_directory"])
     intent, live = read(directory / "planner-intent.json"), read(directory / "planner-process.json")
@@ -166,7 +214,7 @@ class Trial(previous.Trial):
                 value[key + "_error"] = str(exc)
         host = read(self.root / "operator" / "operator.json")
         client = body_client.read_journal(self.root / "operator" / "client" / "client.json")
-        value["host"] = {key: host[key] for key in ("app_id", "body_identity", "stage", "frame", "runner_status", "sequence", "usage")}
+        value["host"] = {key: host[key] for key in ("app_id", "body_identity", "stage", "frame", "runner_status", "sequence", "usage", "planner_owner")}
         commands = {}
         for command_id, entry in client["commands"].items():
             content = protocol.read_bytes(self.root / "operator" / "client" / "requests" / (command_id + ".json"))
@@ -197,11 +245,21 @@ class Trial(previous.Trial):
                 raise protocol.Refusal("publication gate lacks exact indexed executed dispatch")
         else:
             validate_planning_gate(self.root, gate)
+            rows = process_inventory()
+            gate["process_identities"] = {"host": process_identity(rows, process.pid),
+                "guardian": process_identity(rows, gate["planner"]["guardian_pid"]),
+                "planner": process_identity(rows, gate["planner"]["planner_pid"])}
+            if (gate["process_identities"]["guardian"]["parent"] != process.pid or
+                gate["process_identities"]["planner"]["parent"] != gate["planner"]["guardian_pid"]):
+                raise protocol.Refusal("planner process ancestry differs from recorded ownership")
         before_name, _ = self.snapshot("before", token)
         children = descendants(process.pid)
         entry = next(r for p, r in self.processes if p is process)
         if self.case == "host-planning":
             validate_planning_gate(self.root, gate)
+            rows = process_inventory()
+            if any(process_identity(rows, old["pid"]) != old for old in gate["process_identities"].values()):
+                raise protocol.Refusal("exact process start identity changed immediately before crash")
         os.kill(process.pid, signal.SIGKILL)  # ONLY host; guardian must reap its independent child.
         process.wait(timeout=5)
         if process.returncode != -9:
@@ -240,6 +298,8 @@ class Trial(previous.Trial):
                 time.sleep(.05)
             else:
                 raise protocol.Refusal("restart silently lost uncertainty or resumed planning")
+            if self.case == "host-planning":
+                retired_planner(self.root, self.boundary)
             name, snapshot = self.snapshot("restored", self.boundary["command_id"])
             self.boundary.update(restored_snapshot=name, new_epoch=snapshot["body_identity"]["epoch"])
             self.stops.pop(role)

@@ -59,13 +59,18 @@ class RecoveryTrialTests(unittest.TestCase):
         closure = {"owner": "incarnation", "guardian_pid": 333, "process_exit_observed": True, "group_closed": True}
         protocol.persist(call / "planner-closure.json", closure)
         snap = {"client": {"commands": {"old-observe": {"send_count": 1}}}, "posts": ["old-observe"],
-            "host": {"app_id": "app", "sequence": 4}, "body_identity": {"body_id": "body"}, "time": 20,
+            "host": {"app_id": "app", "sequence": 4, "planner_owner": "incarnation"}, "body_identity": {"body_id": "body"}, "time": 20,
             "public": {"model_request_pending": False, "runner_status": "paused", "recovery": {"command_id": None}}}
         protocol.persist(self.root / "snapshots/before.json", snap)
-        protocol.persist(self.root / "snapshots/restored.json", snap)
+        protocol.persist(self.root / "snapshots/restored.json", {**snap, "host": {**snap["host"], "planner_owner": "new-incarnation"}})
         boundary = {"case": "host-planning", "pre_snapshot": "before.json", "restored_snapshot": "restored.json",
             "process": {"pid": 123, "returncode": -9, "signal_target": "host_pid_only"},
-            "gate": {"pid": 123, "call_directory": "job-01", "planner": {"owner": "incarnation", "guardian_pid": 333}}}
+            "gate": {"pid": 123, "call_directory": "job-01", "planner": {"owner": "incarnation", "guardian_pid": 333},
+                "process_identities": {"guardian": {"pid": 333, "group": 333, "started": "old", "command": "guard", "parent": 123},
+                    "planner": {"pid": 334, "group": 334, "started": "old", "command": "codex", "parent": 333}}}}
+        protocol.persist(self.root / "planner-retirement.json", {"old_processes_absent": True, "old_group_absent": True,
+            "same_group_current_rows": [], "old_identities": boundary["gate"]["process_identities"], "old_owner": "incarnation",
+            "new_owner": "new-incarnation", "time": 19, "old_call_files": {"planner-closure.json": protocol.sha(protocol.read_bytes(call / "planner-closure.json"))}})
         transport = {"old-observe": {"relay": {"request": {"started_time": 1}}},
             "new-observe": {"relay": {"request": {"started_time": 31}}, "received": {"sequence": 2},
                 "request": {"operation": "observe"}, "result": {"result": {"challenge_id": "fresh"}}}}
@@ -91,6 +96,28 @@ class RecoveryTrialTests(unittest.TestCase):
         snap["client"]["commands"]["old-observe"]["send_count"] = 2
         protocol.persist(self.root / "snapshots/restored.json", snap)
         with self.assertRaises(protocol.Refusal):
+            scorer.boundary_score(self.root, boundary, transport, events)
+
+    def test_process_absence_uses_start_identity_and_checks_whole_group(self):
+        old = {"pid": 334, "group": 334, "started": "old", "command": "codex", "parent": 333}
+        reused = {**old, "started": "new", "group": 900}
+        evidence = harness.absence_evidence([reused], [old], 334)
+        self.assertTrue(evidence["old_processes_absent"])
+        self.assertTrue(evidence["old_group_absent"])
+        self.assertEqual(evidence["same_pid_current_rows"], [reused])
+        remaining = {**old, "pid": 777}
+        self.assertFalse(harness.absence_evidence([remaining], [old], 334)["old_group_absent"])
+
+    def test_changed_retired_call_files_or_live_group_fail_independent_scoring(self):
+        boundary, transport, events, _ = self.planner_boundary()
+        path = self.root / "planner-retirement.json"
+        proof = harness.read(path)
+        protocol.persist(path, {**proof, "old_group_absent": False})
+        with self.assertRaises(protocol.Refusal):
+            scorer.boundary_score(self.root, boundary, transport, events)
+        protocol.persist(path, proof)
+        protocol.persist(self.host / "calls/job-01/planner-closure.json", {"changed": True})
+        with self.assertRaises((protocol.Refusal, KeyError)):
             scorer.boundary_score(self.root, boundary, transport, events)
 
     def test_receipt_recovery_keeps_original_token_while_clearing_pending(self):

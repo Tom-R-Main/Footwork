@@ -170,6 +170,15 @@ def boundary_score(root, boundary, transport, events):
         require(closure["owner"] == gate["planner"]["owner"] and closure["guardian_pid"] == gate["planner"]["guardian_pid"] and
             closure["process_exit_observed"] is True and closure["group_closed"] is True and
             not restored["public"]["recovery"]["command_id"], "orphan planner was not retired before restart")
+        retirement = read(root / "planner-retirement.json")
+        require(retirement["old_processes_absent"] is True and retirement["old_group_absent"] is True and
+            retirement["same_group_current_rows"] == [] and retirement["old_identities"] == gate["process_identities"] and
+            retirement["old_owner"] == closure["owner"] == before["host"]["planner_owner"] and
+            retirement["new_owner"] == restored["host"]["planner_owner"] != retirement["old_owner"] and
+            retirement["time"] <= restored["time"] and retirement["old_call_files"] and
+            all(protocol.sha(protocol.read_bytes(directory / name, maximum=codex_policy.MAX_TRACE_BYTES)) == digest
+                for name, digest in retirement["old_call_files"].items()),
+            "old planner identities/group not independently absent, incarnation unchanged or retired call changed")
     before_resume = [r for r in transport.values() if r["relay"]["request"]["started_time"] < resumed["time"]]
     require(len(before_resume) == len(restored["client"]["commands"]), "a successor action preceded explicit Resume")
     later = sorted((r for r in transport.values() if r["relay"]["request"]["started_time"] >= resumed["time"]),
