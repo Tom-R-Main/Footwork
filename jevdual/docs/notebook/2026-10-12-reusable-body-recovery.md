@@ -68,3 +68,8 @@ Test: add exact CLI feature flags and bounded verified-owned child retirement wh
 Predicts: normal image-guided planning remains functional, actual startup has no shell-snapshot group, and all recorded old child identities/groups are gone before fresh planning; missing cleanup evidence refuses recovery rather than guessing or signalling unrelated processes.
 Against: shell-snapshot children still appear, an observed old writer survives successful retirement, an unrelated process is signalled, or the policy can no longer deliver its exact bounded image request.
 Refs: tools/physical-workcell/codex_policy.py; tools/physical-workcell/planner_guard.py; tools/physical-workcell/qualify_workbench_recovery.py
+
+## SIM14-U7 · update · 2026-10-12 22:55
+Observed: the final guardian development suite passed 25 checks. A controlled observed detached child withheld closure and blocked recovery while an unrelated process remained untouched. Missing, inconsistent, empty and truncated leader evidence is refused. Fourteen trial controls bind every captured child identity and group; exec, reparenting and group changes cannot be counted as exit. The UI now retains host-unavailable control vetoes and offline camera provenance across cached job selection. Review found no replay path or wrong-owner dispatch; unsampled detachment remains outside the evidence claim.
+Next: freeze final source, rerun publication and active-planning browser cases on fresh v2 roots, capture Running before arming a lost reply, and recheck native receipt-gap blocking.
+Refs: commit 76f4c9d; commit 434aa4c; commit 4f420df; tools/physical-workcell/output/sim14-planner-leader-proof-final.log
