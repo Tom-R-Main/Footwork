@@ -98,7 +98,7 @@ def process_identity(rows, pid):
 
 def same_process(row, old):
     # Reparenting or changing group is not proof of process exit.
-    return all(row.get(key) == old.get(key) for key in ("pid", "uid", "started", "command"))
+    return all(row.get(key) == old.get(key) for key in ("pid", "uid", "started"))
 
 
 def captured_descendants(rows, host_pid):
@@ -285,7 +285,7 @@ class Trial(previous.Trial):
             if any(process_identity(rows, old["pid"]) != old for old in gate["process_identities"].values()):
                 raise protocol.Refusal("exact process start identity changed immediately before crash")
             latest = captured_descendants(rows, process.pid)
-            observed = {tuple(row.get(key) for key in ("pid", "uid", "started", "command")): row
+            observed = {tuple(row.get(key) for key in ("pid", "uid", "started")): row
                 for row in gate["captured_descendants"] + latest}
             gate["captured_descendants"] = sorted(observed.values(), key=lambda row: row["pid"])
             children = gate["captured_descendants"]

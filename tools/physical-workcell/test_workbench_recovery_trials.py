@@ -126,7 +126,7 @@ class RecoveryTrialTests(unittest.TestCase):
 
     def test_reparented_detached_writer_cannot_be_inferred_to_have_exited(self):
         old = {"pid": 700, "uid": 501, "parent": 334, "group": 701, "started": "old", "command": "snapshot-writer"}
-        escaped = {**old, "parent": 1, "group": 900}
+        escaped = {**old, "parent": 1, "group": 900, "command": "another-executable-after-exec"}
         evidence = harness.captured_absence([escaped], [old])
         self.assertFalse(evidence["old_processes_absent"])
         self.assertTrue(evidence["every_captured_group_absent"])
