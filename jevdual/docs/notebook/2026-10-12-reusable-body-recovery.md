@@ -20,3 +20,9 @@ Test: shared contract tests with a minimal second operation vocabulary, existing
 Predicts: wire semantics and existing bounds remain unchanged, unknown bench operations stay refused, generic validation imports no bench implementation and every new authority-bearing source is pinned.
 Against: unknown commands are admitted, validation weakens, old roots silently migrate across source changes, or the reusable module still needs MuJoCo/bench operations to import.
 Refs: docs/experiments/SIM14-reusable-body-recovery.md; tools/physical-workcell/body_protocol.py
+
+## SIM14-U1 · update · 2026-10-12 22:21
+Observed: the pre-fix publication regression reproduced FileExistsError on Resume. The first guardian process regression refused cleanup proof because Darwin temporarily returned EPERM for a dead process group; this stayed blocked rather than granting success. Retrying that transient state while still requiring eventual ESRCH yielded three passing owned-process checks, including a planner and grandchild surviving host-only SIGKILL until the guardian retired them. Seven alternate-operation contract checks and 24 existing body/client checks passed in separate development runs.
+Inferred: the selected journal repair and parent-liveness mechanism have initial process evidence; actual image-guided browser recovery and stronger malformed-evidence checks remain required before adoption.
+Next: finish negative checks and source-pinning closure, freeze committed source, then run publication and active-planning browser recovery trials.
+Refs: tools/physical-workcell/output/sim14-publication-before.log; tools/physical-workcell/output/sim14-runtime-first.log; tools/physical-workcell/output/sim13-host-crash-3b0976e974/; tools/physical-workcell/test_body_contract.py
