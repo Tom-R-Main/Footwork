@@ -19,7 +19,8 @@ import order_protocol as protocol
 BASE = Path(__file__).resolve().parent
 REPO = BASE.parents[1]
 SOURCES = [BASE / name for name in (
-    "body_protocol.py", "body_network.py", "body_client.py", "network_fault_proxy.py",
+    "body_protocol.py", "body_contract.py", "bench_body_contract.py", "persistent_body_client.py",
+    "body_network.py", "body_client.py", "network_fault_proxy.py", "planner_guard.py",
     "qualify_network_body.py", "score_network_body.py", "codex_policy.py", "codex-policy.md",
     "codex-action.schema.json", "agent_bench.py", "bench.py", "measurement.py", "workcell.py",
     "image_guided.py", "episode_cases.py", "order_protocol.py", "scene.xml", "qualify_bench.py")]
