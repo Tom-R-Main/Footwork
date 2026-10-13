@@ -25,3 +25,7 @@ No pose-based success inference, silent resubmission, automatic Resume, weakened
 ## Decision rule
 
 Adopt only if focused regression and malformed-evidence checks pass and both new browser recovery cases preserve their original history without replay. Report any unsupported boundary explicitly. Separate contract reuse qualification from hardware support.
+
+## Amendment before final-source qualification · 2026-10-12 22:45
+
+The first publication run qualified its frozen source, and a planning run remains unqualified after a UI/readback timing race. The actual planning process tree included Codex shell-snapshot descendants outside the main planner group. Final qualification disables that startup feature and accounts for every recorded child identity and group before fresh planning. Existing single-send, exact-receipt, independent image and native measurement/reset criteria remain unchanged. The interrupted call and earlier attempts remain separately reported.
