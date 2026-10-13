@@ -3,5 +3,7 @@
   "notebook": "passed",
   "redaction_changed_files": 0,
   "diff_check": "passed",
-  "source_commit": "c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54"
+  "source_commit": "c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54",
+  "ruff_scope": "Changed production, diagnostic and test sources; archived byte-for-byte handoff helper snapshot excluded",
+  "archived_handoff_snapshot_lint": "Import ordering advisory only; snapshot preserves the running helper hash"
 }

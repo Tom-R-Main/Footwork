@@ -1,0 +1,12 @@
+{
+  "corrected_invocations": [
+    {
+      "check": "initial root Ruff path",
+      "reason": "Used two parent directories from jevdual instead of one; corrected to absolute paths"
+    },
+    {
+      "check": "archived helper snapshot",
+      "reason": "Standalone Ruff found import order in exact handoff source snapshot; production/test source scope passed separately. Archived helper preserves executed source bytes."
+    }
+  ]
+}
