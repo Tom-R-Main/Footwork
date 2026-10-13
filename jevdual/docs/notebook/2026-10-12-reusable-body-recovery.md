@@ -51,3 +51,8 @@ Observed: the current guardian retired a never-reading planner after host-only S
 Inferred: pipe capacity on this host may accommodate the bounded prompt. A multiplexed write still makes the liveness/watchdog check independent of platform pipe capacity, but this run does not prove a prior full-pipe failure.
 Next: measure the owned pipe capacity, preserve the passing baseline, implement bounded prompt delivery and run the policy/crash regressions before live qualification.
 Refs: tools/physical-workcell/output/sim14-planner-backpressure-before.log
+
+## SIM14-U5 · update · 2026-10-12 22:34
+Observed: the maximum valid 65536-byte prompt also completed the original blocking write before host death; the owned pipe had all bytes queued and cleanup succeeded. The revised nonblocking path was actually backpressured with 16384 bytes queued, yet host EOF retired its planner group. Twenty final focused tests passed, including exact full-prompt delivery. An intermediate observer saw a partially published closure file; startup and closure now publish atomically while ownership remains locked. Ten trial/scorer controls pass, and independent process/group absence, changed planner incarnation and stable retired-call files are retained before Resume.
+Next: freeze the combined committed sources, run both actual image-guided browser interruption cases and recheck the native receipt gap; preserve all interrupted calls and inspect exact sends after actors stop.
+Refs: commit c097da8; tools/physical-workcell/output/sim14-planner-backpressure-before-maxbound.log; tools/physical-workcell/output/sim14-planner-backpressure-final.log; tools/physical-workcell/output/sim14-planner-backpressure-final-v2.log; commit 6839c23
