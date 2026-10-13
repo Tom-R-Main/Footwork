@@ -78,14 +78,14 @@ def request(root, action, role=None):
 
 
 def process_inventory():
-    rows = subprocess.check_output(["ps", "-axo", "pid=,ppid=,pgid=,lstart=,comm="], text=True)
+    rows = subprocess.check_output(["ps", "-axo", "pid=,ppid=,pgid=,uid=,lstart=,comm="], text=True)
     result = []
     for line in rows.splitlines():
-        parts = line.strip().split(None, 8)
-        if len(parts) != 9:
+        parts = line.strip().split(None, 9)
+        if len(parts) != 10:
             raise protocol.Refusal("process inventory has incomplete start identity")
         result.append({"pid": int(parts[0]), "parent": int(parts[1]), "group": int(parts[2]),
-                       "started": " ".join(parts[3:8]), "command": parts[8]})
+                       "uid": int(parts[3]), "started": " ".join(parts[4:9]), "command": parts[9]})
     return result
 
 
@@ -96,8 +96,31 @@ def process_identity(rows, pid):
     return found[0]
 
 
+def same_process(row, old):
+    # Reparenting or changing group is not proof of process exit.
+    return all(row.get(key) == old.get(key) for key in ("pid", "uid", "started", "command"))
+
+
+def captured_descendants(rows, host_pid):
+    children, parents = [], {host_pid}
+    while True:
+        new = [row for row in rows if row["parent"] in parents and row["pid"] not in parents]
+        if not new:
+            return sorted(children, key=lambda row: row["pid"])
+        children.extend(new)
+        parents.update(row["pid"] for row in new)
+
+
+def captured_absence(rows, identities):
+    groups = sorted({row["group"] for row in identities})
+    evidence = absence_evidence(rows, identities, groups[0])
+    evidence.update(captured_groups=groups, every_captured_group_absent=not any(row["group"] in groups for row in rows),
+        captured_group_current_rows=[row for row in rows if row["group"] in groups])
+    return evidence
+
+
 def absence_evidence(rows, identities, group):
-    return {"old_processes_absent": all(not any(row == old for row in rows) for old in identities),
+    return {"old_processes_absent": all(not any(same_process(row, old) for row in rows) for old in identities),
             "old_group_absent": not any(row["group"] == group for row in rows),
             "same_pid_current_rows": [row for row in rows if row["pid"] in {old["pid"] for old in identities}],
             "same_group_current_rows": [row for row in rows if row["group"] == group]}
@@ -105,12 +128,12 @@ def absence_evidence(rows, identities, group):
 
 def retired_planner(root, boundary, timeout=20):
     gate = boundary["gate"]
-    old = [gate["process_identities"][key] for key in ("guardian", "planner")]
+    old = gate["captured_descendants"]
     directory = root / "operator/calls" / gate["call_directory"]
     until = time.monotonic() + timeout
     while time.monotonic() < until:
-        proof = absence_evidence(process_inventory(), old, gate["planner"]["planner_pgid"])
-        if proof["old_processes_absent"] and proof["old_group_absent"]:
+        proof = captured_absence(process_inventory(), old)
+        if proof["old_processes_absent"] and proof["every_captured_group_absent"]:
             break
         time.sleep(.05)
     else:
@@ -118,7 +141,7 @@ def retired_planner(root, boundary, timeout=20):
     host = read(root / "operator/operator.json")
     if host["planner_owner"] == gate["planner"]["owner"]:
         raise protocol.Refusal("restarted planner incarnation did not change")
-    proof.update(time=time.time(), old_identities=gate["process_identities"], old_owner=gate["planner"]["owner"],
+    proof.update(time=time.time(), captured_descendants=old, old_identities=gate["process_identities"], old_owner=gate["planner"]["owner"],
         new_owner=host["planner_owner"], old_call_files={path.name: protocol.sha(protocol.read_bytes(path, maximum=16 * 1024 * 1024))
             for path in sorted(directory.iterdir()) if path.is_file() and path.name != "planner.lock"})
     retain(root / "planner-retirement.json", proof)
@@ -249,6 +272,7 @@ class Trial(previous.Trial):
             gate["process_identities"] = {"host": process_identity(rows, process.pid),
                 "guardian": process_identity(rows, gate["planner"]["guardian_pid"]),
                 "planner": process_identity(rows, gate["planner"]["planner_pid"])}
+            gate["captured_descendants"] = captured_descendants(rows, process.pid)
             if (gate["process_identities"]["guardian"]["parent"] != process.pid or
                 gate["process_identities"]["planner"]["parent"] != gate["planner"]["guardian_pid"]):
                 raise protocol.Refusal("planner process ancestry differs from recorded ownership")
@@ -260,6 +284,11 @@ class Trial(previous.Trial):
             rows = process_inventory()
             if any(process_identity(rows, old["pid"]) != old for old in gate["process_identities"].values()):
                 raise protocol.Refusal("exact process start identity changed immediately before crash")
+            latest = captured_descendants(rows, process.pid)
+            observed = {tuple(row.get(key) for key in ("pid", "uid", "started", "command")): row
+                for row in gate["captured_descendants"] + latest}
+            gate["captured_descendants"] = sorted(observed.values(), key=lambda row: row["pid"])
+            children = gate["captured_descendants"]
         os.kill(process.pid, signal.SIGKILL)  # ONLY host; guardian must reap its independent child.
         process.wait(timeout=5)
         if process.returncode != -9:

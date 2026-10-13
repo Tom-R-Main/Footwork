@@ -14,6 +14,32 @@ from score_network_body import private_fields
 
 require, indexed = sim13.require, sim13.indexed
 
+def descendant_score(directory):
+    intent, startup, closure = [read(directory / name) for name in ("planner-intent.json", "planner-process.json", "planner-closure.json")]
+    proof, request = read(directory / "planner-descendants.json"), read(directory / "request.json")
+    require(set(proof) == {"version", "host_pid", "owner", "request_sha256", "guardian_pid", "complete", "observed", "remaining"} and
+        proof["version"] == 1 and proof["complete"] is True and proof["remaining"] == [] and
+        all(proof[key] == intent[key] == startup[key] == closure[key] for key in ("host_pid", "owner", "request_sha256")) and
+        proof["guardian_pid"] == startup["guardian_pid"] == closure["guardian_pid"],
+        "guardian descendant closure is not complete and bound to original planner")
+    identities = set()
+    require(isinstance(proof["observed"], list) and 0 < len(proof["observed"]) <= 64, "guardian descendant inventory missing or unbounded")
+    for row in proof["observed"]:
+        require(set(row) == {"pid", "parent", "group", "uid", "started"} and
+            all(type(row[k]) is int and row[k] > 0 for k in ("pid", "group")) and
+            type(row["uid"]) is int and row["uid"] >= 0 and type(row["parent"]) is int and row["parent"] >= 0 and
+            isinstance(row["started"], str) and 1 <= len(row["started"]) <= 64,
+            "guardian observed descendant identity is invalid")
+        key = (row["pid"], row["uid"], row["started"])
+        require(key not in identities, "guardian observed descendant identity repeated")
+        identities.add(key)
+    require(any(row["pid"] == startup["planner_pid"] for row in proof["observed"]), "actual planner is missing from descendant proof")
+    flags = request["flags"]
+    require(any(flags[n:n + 2] == ["--disable", "shell_snapshot"] for n in range(len(flags) - 1)),
+            "actual planner did not disable detached shell snapshot startup")
+    return proof
+
+
 def calls_score(root, public, transport, relay, gap_token, cancelled_directory=None):
     agent_root = root / "body/agent"
     manifest = read(agent_root / "agent.json")
@@ -40,6 +66,7 @@ def calls_score(root, public, transport, relay, gap_token, cancelled_directory=N
         expected = agent_bench.public_response({"current": {"job_id": packet["job_id"], "phase": packet["phase"],
             "generation": packet["generation"], "calibration": packet["calibration"], "task": challenge["task"]}, "recent_actions": reservation["history"][-12:]})
         require(prompt == expected and not private_fields(reservation) and not private_fields(prompt), "model received hidden pose or different task/history")
+        descendant_score(directory)
         if directory.name == cancelled_directory:
             request, intent = read(directory / "request.json"), read(directory / "planner-intent.json")
             live, closure = read(directory / "planner-process.json"), read(directory / "planner-closure.json")
@@ -171,7 +198,10 @@ def boundary_score(root, boundary, transport, events):
             closure["process_exit_observed"] is True and closure["group_closed"] is True and
             not restored["public"]["recovery"]["command_id"], "orphan planner was not retired before restart")
         retirement = read(root / "planner-retirement.json")
-        require(retirement["old_processes_absent"] is True and retirement["old_group_absent"] is True and
+        require(retirement["old_processes_absent"] is True and retirement["every_captured_group_absent"] is True and
+            retirement["captured_group_current_rows"] == [] and
+            retirement["captured_descendants"] == gate["captured_descendants"] == boundary["process"]["children_before"] and
+            retirement["captured_groups"] == sorted({row["group"] for row in gate["captured_descendants"]}) and
             retirement["same_group_current_rows"] == [] and retirement["old_identities"] == gate["process_identities"] and
             retirement["old_owner"] == closure["owner"] == before["host"]["planner_owner"] and
             retirement["new_owner"] == restored["host"]["planner_owner"] != retirement["old_owner"] and

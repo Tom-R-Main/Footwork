@@ -68,7 +68,11 @@ class RecoveryTrialTests(unittest.TestCase):
             "gate": {"pid": 123, "call_directory": "job-01", "planner": {"owner": "incarnation", "guardian_pid": 333},
                 "process_identities": {"guardian": {"pid": 333, "group": 333, "started": "old", "command": "guard", "parent": 123},
                     "planner": {"pid": 334, "group": 334, "started": "old", "command": "codex", "parent": 333}}}}
+        boundary["gate"]["captured_descendants"] = list(boundary["gate"]["process_identities"].values())
+        boundary["process"]["children_before"] = boundary["gate"]["captured_descendants"]
         protocol.persist(self.root / "planner-retirement.json", {"old_processes_absent": True, "old_group_absent": True,
+            "captured_descendants": boundary["gate"]["captured_descendants"], "captured_groups": [333, 334],
+            "every_captured_group_absent": True, "captured_group_current_rows": [],
             "same_group_current_rows": [], "old_identities": boundary["gate"]["process_identities"], "old_owner": "incarnation",
             "new_owner": "new-incarnation", "time": 19, "old_call_files": {"planner-closure.json": protocol.sha(protocol.read_bytes(call / "planner-closure.json"))}})
         transport = {"old-observe": {"relay": {"request": {"started_time": 1}}},
@@ -112,13 +116,51 @@ class RecoveryTrialTests(unittest.TestCase):
         boundary, transport, events, _ = self.planner_boundary()
         path = self.root / "planner-retirement.json"
         proof = harness.read(path)
-        protocol.persist(path, {**proof, "old_group_absent": False})
+        protocol.persist(path, {**proof, "every_captured_group_absent": False})
         with self.assertRaises(protocol.Refusal):
             scorer.boundary_score(self.root, boundary, transport, events)
         protocol.persist(path, proof)
         protocol.persist(self.host / "calls/job-01/planner-closure.json", {"changed": True})
         with self.assertRaises((protocol.Refusal, KeyError)):
             scorer.boundary_score(self.root, boundary, transport, events)
+
+    def test_reparented_detached_writer_cannot_be_inferred_to_have_exited(self):
+        old = {"pid": 700, "uid": 501, "parent": 334, "group": 701, "started": "old", "command": "snapshot-writer"}
+        escaped = {**old, "parent": 1, "group": 900}
+        evidence = harness.captured_absence([escaped], [old])
+        self.assertFalse(evidence["old_processes_absent"])
+        self.assertTrue(evidence["every_captured_group_absent"])
+        self.assertEqual(evidence["same_pid_current_rows"], [escaped])
+
+    def test_descendant_capture_and_retirement_covers_secondary_groups(self):
+        guardian = {"pid": 333, "parent": 123, "group": 333, "started": "old", "command": "guard"}
+        planner = {"pid": 334, "parent": 333, "group": 334, "started": "old", "command": "codex"}
+        detached = {"pid": 700, "parent": 334, "group": 700, "started": "old", "command": "zsh"}
+        captured = harness.captured_descendants([guardian, planner, detached], 123)
+        self.assertEqual(captured, [guardian, planner, detached])
+        evidence = harness.captured_absence([detached], captured)
+        self.assertFalse(evidence["every_captured_group_absent"])
+        self.assertEqual(evidence["captured_groups"], [333, 334, 700])
+
+    def test_guardian_descendant_proof_requires_bound_completion_and_snapshot_disabled(self):
+        call = self.host / "calls/descendant-control"
+        call.mkdir(parents=True)
+        binding = {"host_pid": 123, "owner": "old-owner", "request_sha256": "a" * 64}
+        protocol.persist(call / "planner-intent.json", binding)
+        protocol.persist(call / "planner-process.json", {**binding, "guardian_pid": 333, "planner_pid": 334})
+        protocol.persist(call / "planner-closure.json", {**binding, "guardian_pid": 333})
+        proof = {**binding, "guardian_pid": 333, "version": 1, "complete": True, "remaining": [],
+            "observed": [{"pid": 334, "uid": 501, "parent": 333, "group": 334, "started": "old"}]}
+        protocol.persist(call / "planner-descendants.json", proof)
+        protocol.persist(call / "request.json", {"flags": ["--disable", "shell_snapshot"]})
+        self.assertEqual(scorer.descendant_score(call), proof)
+        protocol.persist(call / "planner-descendants.json", {**proof, "complete": False})
+        with self.assertRaises(protocol.Refusal):
+            scorer.descendant_score(call)
+        protocol.persist(call / "planner-descendants.json", proof)
+        protocol.persist(call / "request.json", {"flags": ["--disable", "shell_tool"]})
+        with self.assertRaises(protocol.Refusal):
+            scorer.descendant_score(call)
 
     def test_receipt_recovery_keeps_original_token_while_clearing_pending(self):
         boundary, _, _, _ = self.planner_boundary()
