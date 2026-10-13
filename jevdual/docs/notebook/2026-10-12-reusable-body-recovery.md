@@ -38,3 +38,9 @@ Test: use an owned non-reading planner and a prompt larger than the pipe capacit
 Predicts: the current guardian cannot publish cleanup proof in the timeout, while bounded nonblocking delivery observes EOF and retires the group; normal policy and crash tests remain unchanged.
 Against: the current prompt write does not block under a verified full pipe, or the repaired guardian still fails to retire ownership after host death.
 Refs: tools/physical-workcell/planner_guard.py; docs/experiments/SIM14-reusable-body-recovery.md
+
+## SIM14-U3 · update · 2026-10-12 22:28
+Observed: the frozen runtime development checks passed 18 focused and 59 existing operator/HTTP/health regressions. Independent review found a blocking stdin write before the guardian liveness loop; it is a potential orphan-retirement availability gap rather than an observed effect replay. The live harness will retain independent process absence and owner-transition evidence in addition to guardian closure.
+Changes: SIM14-P4 was committed before its test; its heading time was mistyped as 22:30. The clock command immediately before that commit returned 2026-10-12 22:27; Git records the prediction order.
+Next: reproduce and repair the full-pipe case, strengthen the live ownership evidence, then freeze the final source before actual model trials.
+Refs: tools/physical-workcell/output/sim14-runtime-final.log; tools/physical-workcell/output/sim14-runtime-regression.log; commit 05f3c0d; commit fbdeb20
