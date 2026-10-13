@@ -1,7 +1,6 @@
 """Real SIGKILL host qualification at an externally withheld, known body reply.
 
-The deterministic planner is diagnostic only. The publication-tail case records
-an explicit current recovery limitation, rather than claiming arbitrary crashes.
+The deterministic planners are diagnostic only, never paid model evidence.
 """
 import argparse
 import json
@@ -16,9 +15,11 @@ import unittest
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from unittest.mock import patch
 
 import body_client
 import body_network
+import codex_policy
 import network_operator_runtime as runtime
 import order_protocol as protocol
 
@@ -62,6 +63,20 @@ def fixture(root, port, mode):
     if mode == "server":
         import network_bench_operator
         network_bench_operator.serve(root, port, policy)
+        return
+    if mode in {"planner", "planner-before"}:
+        import network_bench_operator
+        original_launch = codex_policy.subprocess.Popen
+        def launch_guard(*args, **kwargs):
+            argv = args[0]
+            if mode == "planner-before" and str(runtime.BASE / "planner_guard.py") in argv:
+                protocol.create_file(root / "pre-guardian.json", protocol.encoded({"pid": os.getpid()}))
+                os.kill(os.getpid(), signal.SIGSTOP)
+            return original_launch(*args, **kwargs)
+        with patch.object(codex_policy, "preflight", return_value={"available": True, "cli_version": codex_policy.EXPECTED_CLI}), \
+                patch.object(codex_policy.shutil, "which", return_value=str(root.parent / "fake-cli")), \
+                patch.object(codex_policy.subprocess, "Popen", side_effect=launch_guard):
+            network_bench_operator.serve(root, port, codex_policy.decide)
         return
     op = runtime.Operator(root, policy, start_worker=False)
     original = protocol.persist
@@ -244,7 +259,7 @@ class WorkbenchCrashRuntimeTests(unittest.TestCase):
         restarted.terminate()
         self.assertEqual(restarted.wait(10), 0)
 
-    def test_publication_tail_sigkill_is_retained_as_explicit_recovery_limit(self):
+    def test_publication_tail_sigkill_repairs_only_audit_index_without_replay(self):
         child = self.launch(0, "publication-tail")
         self.wait(lambda: (self.host / "tail-barrier.json").exists())
         marker = protocol.decode(protocol.read_bytes(self.host / "tail-barrier.json"))
@@ -255,17 +270,128 @@ class WorkbenchCrashRuntimeTests(unittest.TestCase):
         self.assertEqual(child.wait(5), -signal.SIGKILL)
         self.op = runtime.Operator(self.host, lambda *_: self.fail("tail restart ran planner"), start_worker=False)
         self.assertEqual(self.op.state()["runner_status"], "paused")
-        with self.assertRaises(FileExistsError) as refusal:
-            self.op.resume()
-        self.evidence["explicit_limit"] = {"boundary": "event-fsync-before-manifest-publication",
-            "error": str(refusal.exception), "sequence": marker["sequence"], "effect_commands": 0}
+        self.assertEqual(self.op.m["activity"][-1]["kind"], "journal_recovered")
+        self.op.resume()
+        self.assertEqual(self.op.state()["runner_status"], "running")
+        self.evidence["recovery"] = {"boundary": "event-fsync-before-manifest-publication",
+            "sequence": marker["sequence"], "effect_commands": 0}
         self.assertEqual(len(self.op._journal()["commands"]), 0)
+
+    def test_active_planner_host_sigkill_retires_group_and_resume_uses_fresh_image(self):
+        fake = self.root / "fake-cli"
+        fake.write_text("#!" + sys.executable + "\n" + '''import json,os,subprocess,sys,time
+from pathlib import Path
+args=sys.argv[1:]
+out=Path(args[args.index('--output-last-message')+1])
+call=out.parent
+sys.stdin.read()
+if call.name.endswith('-01'):
+    child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(120)'])
+    (call/'child-ready.json').write_text(json.dumps({'pid':os.getpid(),'child_pid':child.pid}))
+    while True:
+        print(json.dumps({'type':'diagnostic_heartbeat'}),flush=True)
+        time.sleep(.05)
+out.write_text(json.dumps({'action':'stop','target_x':None,'target_y':None,'intent':'Fresh fake planner after crash.'}))
+print(json.dumps({'type':'turn.completed','usage':{'input_tokens':20,'output_tokens':10}}))
+''')
+        fake.chmod(0o700)
+        port = free_port()
+        origin = f"http://127.0.0.1:{port}"
+        child = self.launch(port, "planner")
+        self.wait(lambda: self.read_state(origin) is not None)
+        initial = self.read_state(origin)
+        self.post(origin, initial["app_id"], "/api/jobs",
+            {"job_id": "planner-crash", "label": "Active planner crash", "target": "A", "disturbance_test": False})
+        call = self.host / "calls" / "planner-crash-01"
+        self.wait(lambda: (call / "child-ready.json").exists())
+        startup = protocol.decode(protocol.read_bytes(call / "planner-process.json"))
+        pids = protocol.decode(protocol.read_bytes(call / "child-ready.json"))
+        self.assertEqual(startup["planner_pid"], pids["pid"])
+        self.assertEqual(os.getpgid(pids["pid"]), startup["planner_pgid"])
+        self.assertEqual(os.getpgid(pids["child_pid"]), startup["planner_pgid"])
+        before = body_client.read_journal(self.host / "client" / "client.json")
+        challenge = protocol.decode(protocol.read_bytes(call / "reservation.json"))["challenge"]
+        owner = body_client.read_journal(self.host / "operator.json")["planner_owner"]
+        child.kill()  # Host PID only: the separate guardian must detect EOF.
+        self.assertEqual(child.wait(5), -signal.SIGKILL)
+        self.wait(lambda: (call / "planner-closure.json").exists(), timeout=12)
+        closure = protocol.decode(protocol.read_bytes(call / "planner-closure.json"))
+        self.assertEqual(closure["reason"], "host liveness pipe closed")
+        self.assertTrue(closure["group_closed"])
+        for pid in pids.values():
+            with self.assertRaises(ProcessLookupError):
+                os.kill(pid, 0)
+        before_bytes = (call / "events.jsonl").read_bytes()
+        self.launch(port, "planner")
+        self.wait(lambda: self.read_state(origin) is not None)
+        paused = self.read_state(origin)
+        self.assertEqual(paused["runner_status"], "paused")
+        self.assertEqual(paused["jobs"][0]["status"], "paused")
+        self.assertEqual(paused["activity"][-1]["kind"], "planner_retired")
+        self.assertNotEqual(body_client.read_journal(self.host / "operator.json")["planner_owner"], owner)
+        self.assertEqual(len(body_client.read_journal(self.host / "client" / "client.json")["commands"]), len(before["commands"]))
+        self.assertFalse((call / "decision.json").exists())
+        self.post(origin, initial["app_id"], "/api/resume", {})
+        next_call = self.host / "calls" / "planner-crash-02"
+        self.wait(lambda: (next_call / "decision.json").exists())
+        next_challenge = protocol.decode(protocol.read_bytes(next_call / "reservation.json"))["challenge"]
+        self.assertNotEqual(next_challenge["challenge_id"], challenge["challenge_id"])
+        self.assertEqual((call / "events.jsonl").read_bytes(), before_bytes)
+        self.assertEqual(self.body.body.status()["generation"], 0)
+        self.assertFalse(any(r["request"] and r["request"].get("operation") == "dispatch" for r in self.gate.records))
+        self.evidence.update(guardian=startup, closure=closure, paused=paused, no_dispatch=True,
+            challenge_before=challenge["challenge_id"], challenge_after=next_challenge["challenge_id"])
+
+    def test_host_sigkill_before_guardian_launch_keeps_reserved_budget_without_replay(self):
+        fake = self.root / "fake-cli"
+        fake.write_text("#!" + sys.executable + "\n" + '''import json,sys
+from pathlib import Path
+args=sys.argv[1:]
+sys.stdin.read()
+out=Path(args[args.index('--output-last-message')+1])
+out.write_text(json.dumps({'action':'stop','target_x':None,'target_y':None,'intent':'Fresh pre-launch recovery.'}))
+print(json.dumps({'type':'turn.completed','usage':{'input_tokens':20,'output_tokens':10}}))
+''')
+        fake.chmod(0o700)
+        port = free_port()
+        origin = f"http://127.0.0.1:{port}"
+        child = self.launch(port, "planner-before")
+        self.wait(lambda: self.read_state(origin) is not None)
+        initial = self.read_state(origin)
+        self.post(origin, initial["app_id"], "/api/jobs",
+            {"job_id": "planner-before", "label": "Planner pre-launch crash", "target": "A", "disturbance_test": False})
+        self.wait(lambda: (self.host / "pre-guardian.json").exists())
+        call = self.host / "calls" / "planner-before-01"
+        self.assertTrue((call / "planner-intent.json").exists())
+        self.assertFalse((call / "planner-process.json").exists())
+        before = body_client.read_journal(self.host / "client" / "client.json")
+        self.assertEqual(descendants(child.pid), [])
+        child.kill()
+        self.assertEqual(child.wait(5), -signal.SIGKILL)
+        self.launch(port, "planner")
+        self.wait(lambda: self.read_state(origin) is not None)
+        paused = self.read_state(origin)
+        self.assertEqual(paused["runner_status"], "paused")
+        self.assertEqual(paused["jobs"][0]["call_count"], 1)
+        self.assertEqual(paused["usage"]["calls"], 1)
+        self.assertEqual(paused["activity"][-1]["kind"], "planner_retired")
+        self.assertEqual(len(body_client.read_journal(self.host / "client" / "client.json")["commands"]), len(before["commands"]))
+        self.post(origin, initial["app_id"], "/api/resume", {})
+        next_call = self.host / "calls" / "planner-before-02"
+        self.wait(lambda: (next_call / "decision.json").exists())
+        first = protocol.decode(protocol.read_bytes(call / "reservation.json"))["challenge"]
+        second = protocol.decode(protocol.read_bytes(next_call / "reservation.json"))["challenge"]
+        self.assertNotEqual(first["challenge_id"], second["challenge_id"])
+        self.assertFalse((call / "decision.json").exists())
+        self.assertEqual(self.body.body.status()["generation"], 0)
+        self.evidence.update(paused=paused, pre_guardian_kill=True, no_dispatch=True,
+            challenge_before=first["challenge_id"], challenge_after=second["challenge_id"])
 
 
 if __name__ == "__main__":
     if "--fixture" in sys.argv:
         parser = argparse.ArgumentParser()
-        parser.add_argument("--fixture", choices=("server", "publication-tail"), required=True)
+        parser.add_argument("--fixture", choices=("server", "publication-tail", "planner", "planner-before"), required=True)
         parser.add_argument("--root", type=Path, required=True)
         parser.add_argument("--port", type=int, required=True)
         args = parser.parse_args()

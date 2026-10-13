@@ -20,7 +20,7 @@ ZONES = {"A": {"x_min": .035, "x_max": .105, "y_min": -.025, "y_max": .025},
 def sources():
     return {**agent.sources(), **{name: protocol.sha(protocol.read_bytes(BASE / name))
             for name in ("operator_runtime.py", "bench_operator.py", "codex_policy.py", "bench_operator.html",
-                         "codex-policy.md", "codex-action.schema.json")}}
+                         "planner_guard.py", "codex-policy.md", "codex-action.schema.json")}}
 
 
 def initialize(root):

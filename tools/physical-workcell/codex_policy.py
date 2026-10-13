@@ -1,17 +1,21 @@
 """Bounded image-only Codex CLI policy; it never dispatches bench actions."""
 
 import contextlib
+import fcntl
 import hashlib
 import json
 import os
 import shutil
 import signal
 import subprocess
+import sys
 import time
+import uuid
 from pathlib import Path
 
 import agent_bench
 import order_protocol as protocol
+import planner_guard
 
 BASE = Path(__file__).resolve().parent
 TIMEOUT_S = 100
@@ -63,7 +67,7 @@ def terminate(process):
     with contextlib.suppress(ProcessLookupError):
         os.killpg(process.pid, signal.SIGTERM)
     try:
-        process.wait(timeout=3)
+        process.wait(timeout=10)
     except subprocess.TimeoutExpired:
         with contextlib.suppress(ProcessLookupError):
             os.killpg(process.pid, signal.SIGKILL)
@@ -130,17 +134,34 @@ def decide(challenge, history, call_dir, cancel_event):
     metadata = {"provider": "codex_cli", "cli_version": readiness["cli_version"], "request_sha256": request_sha,
                 "image_sha256": packet["image_sha256"], "started_at": time.time(), "usage": None}
     agent_bench.bench.body.create_file(root / "request.json", protocol.encoded({**metadata, "flags": flags, "tools_enabled": False}))
+    reservation = protocol.decode(protocol.read_bytes(root / "reservation.json")) if (root / "reservation.json").exists() else {}
+    owner = reservation.get("planner_owner", uuid.uuid4().hex)
+    protocol.create_file(root / "planner-intent.json", protocol.encoded({"version": 1, "host_pid": os.getpid(),
+        "owner": owner, "request_sha256": request_sha}))
     started = time.monotonic()
     with (root / "events.jsonl").open("xb") as stdout, (root / "stderr.log").open("xb") as stderr:
+        lock_fd = planner_guard.lock_call(root)
         try:
-            process = subprocess.Popen([executable, "exec", *flags], stdin=subprocess.PIPE, stdout=stdout, stderr=stderr,
-                                       env=environment, start_new_session=True)
-        except OSError as exc:
+            fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lifetime_read, lifetime_write = os.pipe()
+        except BaseException:
+            os.close(lock_fd)
+            raise
+        try:
+            process = subprocess.Popen([sys.executable, str(BASE / "planner_guard.py"), "--root", str(root),
+                "--executable", executable, "--lifetime-fd", str(lifetime_read), "--lock-fd", str(lock_fd)],
+                stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr, env=environment,
+                start_new_session=True, close_fds=True, pass_fds=(lifetime_read, lock_fd))
+        except BaseException as exc:
+            for fd in (lifetime_read, lifetime_write, lock_fd):
+                os.close(fd)
+            if not isinstance(exc, OSError):
+                raise
             raise PolicyUnavailable("codex_cli_launch_failed") from exc
-        metadata["pid"] = process.pid
+        os.close(lifetime_read)
+        os.close(lock_fd)
+        metadata["guardian_pid"] = process.pid
         try:
-            process.stdin.write(prompt.encode())
-            process.stdin.close()
             while process.poll() is None:
                 if cancel_event.wait(.15):
                     raise PolicyCancelled("operator_pause_requested")
@@ -163,9 +184,16 @@ def decide(challenge, history, call_dir, cancel_event):
                 raise
             raise PolicyUnavailable("invalid_or_unavailable_model_result") from exc
         finally:
+            os.close(lifetime_write)
             terminate(process)
             metadata.update(elapsed_s=time.monotonic() - started, process_exit_observed=process.poll() is not None,
                             exit_code=process.poll())
+            closure = planner_guard.recover(root)
+            if closure is None or closure.get("group_closed") is not True:
+                raise PolicyUnavailable("planner_group_cleanup_unproven")
+            metadata["planner_cleanup"] = closure
+            startup = protocol.decode(protocol.read_bytes(root / "planner-process.json"))
+            metadata["pid"] = metadata["planner_pid"] = startup.get("planner_pid")
             protocol.persist(root / "outcome.json", metadata)
     metadata["outcome"] = "decision"
     protocol.persist(root / "outcome.json", metadata)

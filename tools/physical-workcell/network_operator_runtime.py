@@ -8,6 +8,7 @@ from pathlib import Path
 
 import body_client
 import order_protocol as protocol
+import planner_guard
 from workbench_link import WorkbenchLink
 
 BASE = Path(__file__).resolve().parent
@@ -27,7 +28,8 @@ class _BodyUnresolved(protocol.Refusal):
 def sources():
     return {name: protocol.sha(protocol.read_bytes(BASE / name)) for name in (
         "network_operator_runtime.py", "network_bench_operator.py", "network_bench_operator.html",
-        "workbench_link.py", "body_client.py", "order_protocol.py", "codex_policy.py", "codex-policy.md", "codex-action.schema.json")}
+        "workbench_link.py", "body_client.py", "persistent_body_client.py", "body_contract.py", "bench_body_contract.py",
+        "body_protocol.py", "order_protocol.py", "codex_policy.py", "planner_guard.py", "codex-policy.md", "codex-action.schema.json")}
 
 
 def initialize(root, body_origin, link_port=0):
@@ -75,12 +77,15 @@ class Operator:
         self.health_serial = threading.Lock()
         self.body_ready = False
         self.policy = policy
+        self.planner_owner = uuid.uuid4().hex
         self.owner = protocol.locked(self.root)
         self.owner.__enter__()
         self.link = self.client = None
         try:
             self.m = body_client.read_journal(self.root / "operator.json")
             self._identity()
+            recovered_tail = self._recover_events()
+            abandoned = self._recover_planners()
             self.link = WorkbenchLink(self.m["body_origin"], self.root / "link", port=self.m["link_port"]).start()
             if self.link.origin != self.m["link_origin"]:
                 raise protocol.Refusal("retained network link origin changed")
@@ -92,6 +97,7 @@ class Operator:
                 if active and active["status"] == "running":
                     active.update(status="paused", error=self.m["reason"])
             self.m["opened"] = True
+            self.m["planner_owner"] = self.planner_owner
             if self.m["stage"]:
                 self._associate()
                 self._uncertain("Restarted with a retained command stage; check its exact receipt")
@@ -101,6 +107,14 @@ class Operator:
                 self.m["connection"]["state"] = "disconnected"
                 self.m["runner_status"] = "paused"
             self._save()
+            if recovered_tail:
+                self._event("journal_recovered", outcome=f"Retained {recovered_tail} audit event(s); no command replayed")
+            if abandoned:
+                self.m["reason"] = "Prior planner retired; explicit Resume obtains a fresh image"
+                active = self._job()
+                if active and active["status"] == "paused":
+                    active["error"] = self.m["reason"]
+                self._event("planner_retired", outcome=self.m["reason"], evidence={"calls": abandoned})
             self._refresh_health()
             self.health_worker = threading.Thread(target=self._health_loop, daemon=True, name="network-health")
             self.health_worker.start()
@@ -129,6 +143,68 @@ class Operator:
     def _journal(self):
         return body_client.read_journal(self.root / "client" / "client.json")
 
+    def _recover_events(self):
+        """Repair an audit index, never reconstruct effects from event text."""
+        indexed = self.m["sequence"]
+        if type(indexed) is not int or not 0 <= indexed <= 4096:
+            raise protocol.Refusal("invalid workbench event sequence")
+        directory = protocol.directory(self.root / "events")
+        files = sorted(directory.iterdir())
+        if len(files) > 4096 or indexed > len(files):
+            raise protocol.Refusal("workbench event journal is incomplete or exceeds its bound")
+        events = []
+        for seq, path in enumerate(files, 1):
+            if path.name != f"{seq:06d}.json":
+                raise protocol.Refusal("workbench event sequence is not contiguous")
+            value = protocol.decode(protocol.read_bytes(path))
+            keys = {"seq", "time", "kind", "intent", "outcome"}
+            if not isinstance(value, dict) or set(value) not in (keys, keys | {"evidence"}):
+                raise protocol.Refusal("workbench event fields are invalid")
+            if (type(value["seq"]) is not int or value["seq"] != seq or
+                    not isinstance(value["kind"], str) or not 1 <= len(value["kind"]) <= 128 or
+                    any(not isinstance(value[k], str) or len(value[k]) > 1000 for k in ("intent", "outcome"))):
+                raise protocol.Refusal("workbench event identity is invalid")
+            protocol.finite(value["time"])
+            events.append(value)
+        if self.m["activity"] != events[max(0, indexed - 24):indexed]:
+            raise protocol.Refusal("workbench activity differs from its immutable event journal")
+        self.m["sequence"] = len(events)
+        self.m["activity"] = events[-24:]
+        return len(events) - indexed
+
+    def _recover_planners(self):
+        """Consume reservations as budget, not authority, and wait for cleanup."""
+        abandoned = []
+        calls = protocol.directory(self.root / "calls")
+        entries = sorted(calls.iterdir())
+        if len(entries) > MAX_TOTAL_CALLS:
+            raise protocol.Refusal("planner reservation budget exceeded")
+        counts = {}
+        for path in entries:
+            path = protocol.directory(path)
+            reservation = protocol.decode(protocol.read_bytes(path / "reservation.json"))
+            keys = {"job_id", "call", "challenge", "history"}
+            if not isinstance(reservation, dict) or set(reservation) not in (keys, keys | {"planner_owner"}):
+                raise protocol.Refusal("planner reservation fields are invalid")
+            job = self._job(reservation.get("job_id"))
+            count = reservation.get("call")
+            if job is None or type(count) is not int or not 1 <= count <= MAX_CALLS or path.name != f"{job['id']}-{count:02d}":
+                raise protocol.Refusal("planner reservation identity is invalid")
+            counts.setdefault(job["id"], set()).add(count)
+            closure = planner_guard.recover(path)
+            if closure and not (path / "outcome.json").exists():
+                abandoned.append({"call": path.name, "reason": closure["reason"]})
+        for job in self.m["jobs"]:
+            reserved = counts.get(job["id"], set())
+            maximum = max(reserved, default=0)
+            if reserved != set(range(1, maximum + 1)) or job["call_count"] > maximum:
+                raise protocol.Refusal("planner reservation sequence is inconsistent")
+            self.m["usage"]["calls"] += maximum - job["call_count"]
+            job["call_count"] = maximum
+        if self.m["usage"]["calls"] > MAX_TOTAL_CALLS:
+            raise protocol.Refusal("retained planner budget exceeded")
+        return abandoned
+
     def _client_pin(self):
         current = self.client._load()["identity"]
         if any(current[k] != self.m["body_identity"][k] for k in body_client.IDENTITY_KEYS - {"epoch"}):
@@ -142,6 +218,8 @@ class Operator:
         self.saved_digest = protocol.sha(protocol.encoded(self.m))
 
     def _event(self, kind, intent="", outcome="", evidence=None):
+        if self.m["sequence"] >= 4096:
+            raise protocol.Refusal("workbench event journal capacity exhausted")
         self.m["sequence"] += 1
         value = {"seq": self.m["sequence"], "time": time.time(), "kind": kind,
                  "intent": str(intent)[:1000], "outcome": str(outcome)[:1000]}
@@ -713,13 +791,18 @@ class Operator:
             self.m["usage"]["calls"] += 1
             call_dir = self.root / "calls" / f"{job_id}-{job['call_count']:02d}"
             call_dir.mkdir(mode=0o700)
-            self._retain(call_dir / "reservation.json", {"job_id": job_id, "call": job["call_count"], "challenge": challenge, "history": job["history"][-6:]})
+            self._retain(call_dir / "reservation.json", {"job_id": job_id, "call": job["call_count"], "challenge": challenge,
+                "history": job["history"][-6:], "planner_owner": self.planner_owner})
             call_epoch = self.control_epoch
             self.in_model = True
             self._event("inference", job["label"], str(job["call_count"]))
         try:
             action, metadata = self.policy(challenge, copy.deepcopy(job["history"][-6:]), call_dir, self.cancel)
-            self._retain(call_dir / "decision.json", {"action": action, "metadata": metadata})
+            with self.lock:
+                self._identity()
+                if self.m.get("planner_owner") != self.planner_owner:
+                    raise protocol.Refusal("planner owner changed before decision publication")
+                self._retain(call_dir / "decision.json", {"action": action, "metadata": metadata})
         finally:
             with self.lock:
                 self.in_model = False
