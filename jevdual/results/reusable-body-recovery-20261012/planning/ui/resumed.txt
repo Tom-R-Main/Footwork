@@ -1,0 +1,70 @@
+Browser tab: 6, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51419/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		65 checkbox Retire planner and recover reply Paused, Value: 1
+		9 text One bench. Successive jobs.
+		10 text The AI prepares the part, takes a measurement, and returns it home before the next job.
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		66 text Retire planner and recover reply
+		67 text Running
+		16 button Pause, ID: pause
+		68 text Prior planner retired; explicit Resume obtains a fresh image
+		18 container Description: Body connection, ID: network-card
+			69 text Body connected
+			70 text Current body boot verified for explicit Resume
+			21 button Disconnect, ID: disconnect
+			22 button (disabled) Check receipt, ID: reconcile
+			23 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				24 text Test the simulated connection
+		25 container Camera observation
+			26 text OVERHEAD CAMERA
+			71 text Last observation · Retire planner and recover reply
+			28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			29 text Orange part Blue pusher Green task region
+			72 text Captured · generation 0
+		73 text AGENT
+		74 text Waiting for the agent’s next observation.
+		33 container Job progress
+			34 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		35 container Measurement
+			36 heading Measurement, Value: 2, ID: measurement-heading
+				37 text Measurement
+			75 text Pending
+			39 text The part’s visible footprint will be measured after its placement is verified.
+		40 container Activity
+			41 heading Activity, Value: 2, ID: activity-heading
+				42 text Activity
+			76 text 10 events
+			44 content list activity
+				77 container
+					78 text 10:59 PM Agent resumed
+				79 container
+					80 text 10:58 PM Previous planner retired The previous planner has stopped. Resume to plan from a fresh camera image.
+				81 container
+					82 text 10:56 PM AI planning requested Retire planner and recover reply
+				83 container
+					84 text 10:56 PM Camera observation received Retire planner and recover reply
+				85 container
+					86 text 10:56 PM Requesting camera observation
+				87 container
+					88 text 10:56 PM Fresh body check verified The next command uses current body evidence.
+				89 container
+					90 text 10:56 PM Inspection started Retire planner and recover reply
+				91 container
+					92 text 10:56 PM Preparing inspection
+				93 container
+					94 text 10:56 PM Fresh body check verified The next command uses current body evidence.
+				95 container
+					96 text 10:56 PM Job queued Retire planner and recover reply
+		63 button (collapsed) Session details, Secondary Actions: Expand
+			64 text Session details
+		97 text 1 model requests · Reported tokens: 0 input / 0 output · Reporting incomplete (0 of 1 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/

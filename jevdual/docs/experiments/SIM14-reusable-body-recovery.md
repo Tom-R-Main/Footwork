@@ -29,3 +29,11 @@ Adopt only if focused regression and malformed-evidence checks pass and both new
 ## Amendment before final-source qualification · 2026-10-12 22:45
 
 The first publication run qualified its frozen source, and a planning run remains unqualified after a UI/readback timing race. The actual planning process tree included Codex shell-snapshot descendants outside the main planner group. Final qualification disables that startup feature and accounts for every recorded child identity and group before fresh planning. Existing single-send, exact-receipt, independent image and native measurement/reset criteria remain unchanged. The interrupted call and earlier attempts remain separately reported.
+
+## Result
+
+Adopted for the selected simulated boundaries. On committed source `c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54`, all three final browser cases passed independent post-stop scoring. Two completed measurement/contact-reset cycles and one intentionally blocked native receipt gap retained 29 actual image decisions, one interrupted reservation and 91 commands, each with one wire POST. Retained development/regression logs cover 152 unique passing tests. The shared client was also exercised with a second simulated camera-pointing vocabulary over TCP.
+
+The initial expected blocked-stdin failure did not reproduce on this Mac; the improved path was tested under partial input-delivery backpressure. Actual CLI startup included transient node/git groups after shell snapshots were disabled; every captured identity/group was absent before continuation. Unobserved detachment, arbitrary instruction windows, power loss and real hardware remain outside qualification. A prior passing publication predecessor and an unqualified planning UI/readback race are reported separately.
+
+Evidence: `jevdual/results/reusable-body-recovery-20261012/report.md`, `summary.json`, the three case score files and `attempt-ledger.json`. Saved qualification describes stopped trials before the separate live handoff.

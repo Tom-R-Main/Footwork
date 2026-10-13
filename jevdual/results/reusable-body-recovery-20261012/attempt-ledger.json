@@ -1,0 +1,20 @@
+[
+  {
+    "root": "sim14-publication-v1",
+    "source_commit": "eed92cc10c9081f22cf5560031fd145254ca4af9",
+    "qualification": "historical passing predecessor",
+    "decisions": 13,
+    "commands": 40,
+    "reason": "Final guardian inventory and offline UI changes required a new measured source."
+  },
+  {
+    "root": "sim14-planning-v1",
+    "source_commit": "eed92cc10c9081f22cf5560031fd145254ca4af9",
+    "qualification": "unqualified capture race",
+    "reservations": 2,
+    "decisions": 1,
+    "interrupted": 1,
+    "commands": 5,
+    "reason": "Running UI capture and later API state raced a lost dispatch reply; original captures preserved. Exact receipt recovered read-only; stopped without job completion."
+  }
+]

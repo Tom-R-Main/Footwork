@@ -1,0 +1,46 @@
+{
+  "source_commit": "c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54",
+  "cases": [
+    {
+      "case": "publication",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2",
+      "passed": true,
+      "reservations": 14,
+      "interrupted": 0,
+      "decisions": 14,
+      "commands": 43,
+      "completed_cycles": 1,
+      "safely_blocked": false,
+      "event_cutoff": 149
+    },
+    {
+      "case": "planning",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-planning-v2",
+      "passed": true,
+      "reservations": 15,
+      "interrupted": 1,
+      "decisions": 14,
+      "commands": 44,
+      "completed_cycles": 1,
+      "safely_blocked": false,
+      "event_cutoff": 154
+    },
+    {
+      "case": "native-gap",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1",
+      "passed": true,
+      "reservations": 1,
+      "interrupted": 0,
+      "decisions": 1,
+      "commands": 4,
+      "completed_cycles": 0,
+      "safely_blocked": true,
+      "event_cutoff": 19
+    }
+  ],
+  "decisions": 29,
+  "interrupted": 1,
+  "commands": 91,
+  "completed_cycles": 2,
+  "passing_test_identifiers": 152
+}

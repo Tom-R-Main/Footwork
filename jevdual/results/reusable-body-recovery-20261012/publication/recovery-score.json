@@ -1,0 +1,566 @@
+{
+  "admissions": [
+    {
+      "command_id": "command-6a3f77b6799e42f79e802c7069d4f1ec",
+      "passed": true,
+      "proof_event": 2
+    },
+    {
+      "command_id": "command-6184aa30e497418e8416b68ef4b0c87e",
+      "passed": true,
+      "proof_event": 5
+    },
+    {
+      "command_id": "command-0eb32e67ff4943979c667f45701af419",
+      "passed": true,
+      "proof_event": 9
+    },
+    {
+      "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+      "passed": true,
+      "proof_event": 12
+    },
+    {
+      "command_id": "command-0112b4d76e234e00a72bc248dbeb97c7",
+      "passed": true,
+      "proof_event": 20
+    },
+    {
+      "command_id": "command-2198897f165f4a1da7b0a3ca5e181d74",
+      "passed": true,
+      "proof_event": 24
+    },
+    {
+      "command_id": "command-09e69ad7c8eb402a8afa0afbe2c07ed5",
+      "passed": true,
+      "proof_event": 27
+    },
+    {
+      "command_id": "command-595ea7ba5c6f4604a8c77ef32473a284",
+      "passed": true,
+      "proof_event": 30
+    },
+    {
+      "command_id": "command-eaafe005cb894f6d8e76154fedf101e0",
+      "passed": true,
+      "proof_event": 34
+    },
+    {
+      "command_id": "command-f031c3b324e0455796d09f27d38030da",
+      "passed": true,
+      "proof_event": 37
+    },
+    {
+      "command_id": "command-3dfb3a3579b14b59b03c6f77c05fbf7a",
+      "passed": true,
+      "proof_event": 40
+    },
+    {
+      "command_id": "command-9f6aa399a0324089a50edcde725cd4f9",
+      "passed": true,
+      "proof_event": 44
+    },
+    {
+      "command_id": "command-c2c7736a9e5f4f7884e76b71fdc3426e",
+      "passed": true,
+      "proof_event": 47
+    },
+    {
+      "command_id": "command-8bac74b0999343098a7fdfa1ea1d286f",
+      "passed": true,
+      "proof_event": 50
+    },
+    {
+      "command_id": "command-cef7fcccbbfb4ff5a386b3edb53d126c",
+      "passed": true,
+      "proof_event": 54
+    },
+    {
+      "command_id": "command-97f9bc09a708441db34225bf3ed4717b",
+      "passed": true,
+      "proof_event": 57
+    },
+    {
+      "command_id": "command-c75b90b9776b4fa69476343684e06d30",
+      "passed": true,
+      "proof_event": 60
+    },
+    {
+      "command_id": "command-b28a6b2d77444f468a2078943ac2b2fd",
+      "passed": true,
+      "proof_event": 64
+    },
+    {
+      "command_id": "command-7546bd1cad864fc19dc4663d373ba7b7",
+      "passed": true,
+      "proof_event": 67
+    },
+    {
+      "command_id": "command-71a49a7f398c482a8ea879b6ce415b32",
+      "passed": true,
+      "proof_event": 70
+    },
+    {
+      "command_id": "command-86a881f49b55477b80266213e0a23a11",
+      "passed": true,
+      "proof_event": 74
+    },
+    {
+      "command_id": "command-ee34fbb0d81b4ebf9f5563ccf149b3c9",
+      "passed": true,
+      "proof_event": 77
+    },
+    {
+      "command_id": "command-a112a64649334572a922c9bb42e18837",
+      "passed": true,
+      "proof_event": 80
+    },
+    {
+      "command_id": "command-da177becbb0c471e8858d465658c238e",
+      "passed": true,
+      "proof_event": 84
+    },
+    {
+      "command_id": "command-05229f8323fb47948ec8f06a4e8bfd0b",
+      "passed": true,
+      "proof_event": 87
+    },
+    {
+      "command_id": "command-aa1e6fa4fe9c4adb861246aa454e92c4",
+      "passed": true,
+      "proof_event": 90
+    },
+    {
+      "command_id": "command-f068bdf4e6d84d6c9267ce6e0bc540d3",
+      "passed": true,
+      "proof_event": 94
+    },
+    {
+      "command_id": "command-18963848635b4a69b89107f589013601",
+      "passed": true,
+      "proof_event": 97
+    },
+    {
+      "command_id": "command-dbb8187065264bc79d611a821a954e79",
+      "passed": true,
+      "proof_event": 100
+    },
+    {
+      "command_id": "command-bb8e4592a615416381e6b7b2016a7144",
+      "passed": true,
+      "proof_event": 104
+    },
+    {
+      "command_id": "command-45714737b58846deb2c7487445d1a6c2",
+      "passed": true,
+      "proof_event": 107
+    },
+    {
+      "command_id": "command-56c12b4ec539446baa274bc4afea7a0d",
+      "passed": true,
+      "proof_event": 110
+    },
+    {
+      "command_id": "command-9a7127dbd95c46ff81d0e7fcd283de7f",
+      "passed": true,
+      "proof_event": 114
+    },
+    {
+      "command_id": "command-393a47142aeb4c789ee2722ae79992c9",
+      "passed": true,
+      "proof_event": 117
+    },
+    {
+      "command_id": "command-eb7c688252724d42bf7dfdab84841d20",
+      "passed": true,
+      "proof_event": 120
+    },
+    {
+      "command_id": "command-cb41c1601faf44de9c84f0c74f0593e6",
+      "passed": true,
+      "proof_event": 124
+    },
+    {
+      "command_id": "command-5f74b9dd5b4042e0ba10e22b7ebd5639",
+      "passed": true,
+      "proof_event": 127
+    },
+    {
+      "command_id": "command-fda4688de77f4621be0fef063d3be610",
+      "passed": true,
+      "proof_event": 130
+    },
+    {
+      "command_id": "command-af88ba2ef5854c978be55561a7e8f131",
+      "passed": true,
+      "proof_event": 134
+    },
+    {
+      "command_id": "command-f0807bf65ea94cceb62c15ff010dc8ef",
+      "passed": true,
+      "proof_event": 137
+    },
+    {
+      "command_id": "command-83cd8e8a10694db7a532503aa41c7377",
+      "passed": true,
+      "proof_event": 140
+    },
+    {
+      "command_id": "command-8ca707790e514e0c9ae33cb1f11d4c51",
+      "passed": true,
+      "proof_event": 144
+    },
+    {
+      "command_id": "command-22709a65620240edb98fba24d06d9cd1",
+      "passed": true,
+      "proof_event": 147
+    }
+  ],
+  "browser": {
+    "offline_then_paused": true,
+    "passed": true,
+    "steps": [
+      "crash-offline",
+      "restored",
+      "recovered",
+      "resumed",
+      "completed"
+    ]
+  },
+  "calls": [
+    {
+      "action": "move",
+      "call": 1,
+      "camera_generation": 0,
+      "challenge_id": "challenge-7d780d4d02634b3cb2140c637af0004b",
+      "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+      "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 50178,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-29b7df0a14ad4747b5301091b0500015"
+    },
+    {
+      "action": "move",
+      "call": 2,
+      "camera_generation": 1,
+      "challenge_id": "challenge-d4b31bfc0ae24544881a5e709bafddc8",
+      "command_id": "command-09e69ad7c8eb402a8afa0afbe2c07ed5",
+      "image_sha256": "a831bd4576c7fa2d1ccf8d5369de1a242e0292a976ad40da9c39304dd00d96e5",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 57077,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-3a80198b21aa488ba1f2fae281f492f2"
+    },
+    {
+      "action": "move",
+      "call": 3,
+      "camera_generation": 2,
+      "challenge_id": "challenge-b2bd04fa4e8d48a5bb5214cac3dc2b6d",
+      "command_id": "command-f031c3b324e0455796d09f27d38030da",
+      "image_sha256": "42819fa0bc8837bbd91f1098939426208f093b3ed7e6a2e198d725dd1e53787e",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 57649,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-654eac8936af4b7598a8e9e4ea58dfdf"
+    },
+    {
+      "action": "measure",
+      "call": 4,
+      "camera_generation": 3,
+      "challenge_id": "challenge-0875a6703fc04606a3849d91bc6943ec",
+      "command_id": "command-c2c7736a9e5f4f7884e76b71fdc3426e",
+      "image_sha256": "37eff0642da366ea639079d52a540617d36eb1bede2b25aa8eceba7cd7bf4d04",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 57996,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-6ef797fc330e4eedb8c0b403376c18bd"
+    },
+    {
+      "action": "begin_reset",
+      "call": 5,
+      "camera_generation": 3,
+      "challenge_id": "challenge-8efa70a2954541e097c6274c5af08e64",
+      "command_id": "command-97f9bc09a708441db34225bf3ed4717b",
+      "image_sha256": "37eff0642da366ea639079d52a540617d36eb1bede2b25aa8eceba7cd7bf4d04",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 58452,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-a277a9dbf58a43e6a82fa460a1ef3d7f"
+    },
+    {
+      "action": "move",
+      "call": 6,
+      "camera_generation": 3,
+      "challenge_id": "challenge-9a1c0a191dca4e8094ba3ddcfddc0141",
+      "command_id": "command-7546bd1cad864fc19dc4663d373ba7b7",
+      "image_sha256": "37eff0642da366ea639079d52a540617d36eb1bede2b25aa8eceba7cd7bf4d04",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 58844,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-7a4d663128eb424fa2f2aeaf2366af1e"
+    },
+    {
+      "action": "move",
+      "call": 7,
+      "camera_generation": 4,
+      "challenge_id": "challenge-e1fe261eb919433ab6f81bf20b7aed87",
+      "command_id": "command-ee34fbb0d81b4ebf9f5563ccf149b3c9",
+      "image_sha256": "df8b742937dd5949abd341de5f0a5c53b4096266806e9f3c3bb4182d14001b8e",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 59259,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-c328b496beb04670a67221d694e6cafa"
+    },
+    {
+      "action": "move",
+      "call": 8,
+      "camera_generation": 5,
+      "challenge_id": "challenge-a08e2db587164c2f9adb81971de618cd",
+      "command_id": "command-05229f8323fb47948ec8f06a4e8bfd0b",
+      "image_sha256": "6190b019f225c3b7dbaa4974798da798787bbba6ade79b197f6fd8c5e3547e46",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 59531,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-0810c410eb1340a58ce077c08b6e5cd4"
+    },
+    {
+      "action": "move",
+      "call": 9,
+      "camera_generation": 6,
+      "challenge_id": "challenge-a423bb0fe310430e99b090ec7814a901",
+      "command_id": "command-18963848635b4a69b89107f589013601",
+      "image_sha256": "bc7ea7cf98607fc2dcc490c5d234b59ad266652809ed972d188650a5a1a66d97",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 61738,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-166a209655fb44d5a074602a53927221"
+    },
+    {
+      "action": "move",
+      "call": 10,
+      "camera_generation": 7,
+      "challenge_id": "challenge-f55bc50820fc416badae9d491bbed7dd",
+      "command_id": "command-45714737b58846deb2c7487445d1a6c2",
+      "image_sha256": "c4955a67bf00f4aedca9f61177cc50e16550508bb1469aaee9dd3cec6a3f3668",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 62315,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-871b02928832456fa6e5704af906b4fb"
+    },
+    {
+      "action": "move",
+      "call": 11,
+      "camera_generation": 8,
+      "challenge_id": "challenge-550731604f584fd49c9f3cc8a3413162",
+      "command_id": "command-393a47142aeb4c789ee2722ae79992c9",
+      "image_sha256": "02f1e6f71facb02e05c11bf02a7f7895180c14b2ccd90eded1d75f5c999b2c94",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 62728,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-709789e64895425883e94ecaed8c4f22"
+    },
+    {
+      "action": "move",
+      "call": 12,
+      "camera_generation": 9,
+      "challenge_id": "challenge-2c52a7c75c3649328f120d41d2c93a17",
+      "command_id": "command-5f74b9dd5b4042e0ba10e22b7ebd5639",
+      "image_sha256": "a70748b1f83625d7774f1002736b9d8ab101cd20e1852fb69e2aa66e63e63627",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 63144,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-337ba4a08d7f4584b0bbe7d18a2f652e"
+    },
+    {
+      "action": "move",
+      "call": 13,
+      "camera_generation": 10,
+      "challenge_id": "challenge-c5ff5b474fa54342a48c750c791a18a2",
+      "command_id": "command-f0807bf65ea94cceb62c15ff010dc8ef",
+      "image_sha256": "3a0658fbcc98db2233e01c3cf4d4dcf31eaaca13ff25f778165da8d6bb180be0",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 63415,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-8f11ad94d02a4f36806fd3431fee2f9e"
+    },
+    {
+      "action": "finish_reset",
+      "call": 14,
+      "camera_generation": 11,
+      "challenge_id": "challenge-effbdd97f4fc4c558af4a6d71ec899b8",
+      "command_id": "command-22709a65620240edb98fba24d06d9cd1",
+      "image_sha256": "970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "model_pid": 63652,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-fd7a9242a4a04f068a9d4019bd0d9bff"
+    }
+  ],
+  "cancelled_calls": 0,
+  "case": "host-publication",
+  "completed_cycles": 1,
+  "crash": {
+    "fresh_challenge": "challenge-d4b31bfc0ae24544881a5e709bafddc8",
+    "host_pid_only": true,
+    "original_commands_preserved": true,
+    "passed": true,
+    "resume_sequence": 19
+  },
+  "event_cutoff": 149,
+  "native": {
+    "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+    "measurement_receipt": {
+      "bench_id": "88ef33b6618f41f58507907680f0bde8",
+      "generation": 3,
+      "image_sha256": "37eff0642da366ea639079d52a540617d36eb1bede2b25aa8eceba7cd7bf4d04",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "measurement": {
+        "block_box": [
+          339,
+          159,
+          381,
+          201
+        ],
+        "block_center_xy": [
+          0.06666666666666667,
+          0.0
+        ],
+        "centroid_pixel_xy": [
+          359.0486674391657,
+          179.5393974507532
+        ],
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "native_time_s": 6.73599999999948,
+      "operation_id": "agent-d27c560eecf9487081d0d4a85806b55d",
+      "source_kind": "mujoco_simulation",
+      "state_sha256": "ca31851fa25da5c7518815e74b94b7a340ce26faf94063a0608582f1347c8961",
+      "version": 1,
+      "worker_pid": 58433
+    },
+    "measurement_state": {
+      "block_center_in_zone": true,
+      "block_xyz": [
+        0.06580395103635941,
+        -1.528921713631715e-10,
+        0.03499573045536986
+      ],
+      "external_force_cleared": true,
+      "generation": 3,
+      "native_time_s": 6.73599999999948,
+      "pusher_home": false,
+      "pusher_xyz": [
+        -0.07999996926244182,
+        8.447581403450109e-28,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "ca31851fa25da5c7518815e74b94b7a340ce26faf94063a0608582f1347c8961"
+    },
+    "model_calls": 14,
+    "passed": true,
+    "reset_receipt": {
+      "bench_id": "88ef33b6618f41f58507907680f0bde8",
+      "block_home_verified": true,
+      "generation": 11,
+      "image_sha256": "970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f",
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "kind": "finish_reset",
+      "native_time_s": 23.61399999999779,
+      "operation_id": "agent-42b2d69f655d4ecdaf4ca1bfa5bfd41e",
+      "pusher_home_verified": true,
+      "reset_contact_samples": 3132,
+      "reset_native_steps": 8439,
+      "state_sha256": "c88451508675d9e3a033cfcf0d8c626f353001ea20783eb3877b655452423257"
+    },
+    "reset_state": {
+      "block_center_in_zone": true,
+      "block_xyz": [
+        -0.1157663460696213,
+        -2.428032397192988e-09,
+        0.03499573045536987
+      ],
+      "external_force_cleared": true,
+      "generation": 11,
+      "native_time_s": 23.61399999999779,
+      "pusher_home": true,
+      "pusher_xyz": [
+        -0.3,
+        3.071149644023488e-08,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "c88451508675d9e3a033cfcf0d8c626f353001ea20783eb3877b655452423257"
+    }
+  },
+  "owned_processes_exited": true,
+  "passed": true,
+  "scope": "selected event publication and active-planning host SIGKILL; loopback simulation",
+  "single_wire_post_every_command": true,
+  "source_commit": "c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54",
+  "source_unchanged": true,
+  "sqlite": {
+    "count": 1,
+    "role": "independent_read_only_sqlite_scorer",
+    "rows": [
+      {
+        "bench_id": "88ef33b6618f41f58507907680f0bde8",
+        "generation": 3,
+        "image_sha256": "37eff0642da366ea639079d52a540617d36eb1bede2b25aa8eceba7cd7bf4d04",
+        "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+        "operation_id": "agent-d27c560eecf9487081d0d4a85806b55d",
+        "receipt": {
+          "bench_id": "88ef33b6618f41f58507907680f0bde8",
+          "generation": 3,
+          "image_sha256": "37eff0642da366ea639079d52a540617d36eb1bede2b25aa8eceba7cd7bf4d04",
+          "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+          "measurement": {
+            "block_box": [
+              339,
+              159,
+              381,
+              201
+            ],
+            "block_center_xy": [
+              0.06666666666666667,
+              0.0
+            ],
+            "centroid_pixel_xy": [
+              359.0486674391657,
+              179.5393974507532
+            ],
+            "footprint_area_m2": 0.004794444444444444,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1726
+          },
+          "native_time_s": 6.73599999999948,
+          "operation_id": "agent-d27c560eecf9487081d0d4a85806b55d",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "ca31851fa25da5c7518815e74b94b7a340ce26faf94063a0608582f1347c8961",
+          "version": 1,
+          "worker_pid": 58433
+        },
+        "state_sha256": "ca31851fa25da5c7518815e74b94b7a340ce26faf94063a0608582f1347c8961"
+      }
+    ]
+  },
+  "transport_command_count": 43,
+  "version": 1
+}

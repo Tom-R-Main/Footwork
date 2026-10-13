@@ -1,0 +1,50 @@
+{
+  "boundaries": [
+    {
+      "case": "body-native-gap",
+      "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+      "finished_snapshot": "000004-finished.json",
+      "gate": {
+        "barrier": "after_native",
+        "bench_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+        "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+        "diagnostic_source_sha256": "9163ad618c7a92efc1306bdeca2488ce5b10835edcb77eec062fa8490e0557ea",
+        "manifest_generation": 0,
+        "native_generation": 1,
+        "native_state_sha256": "3dd31d583a8b7ec3f4a7fa51f403baa50fda8f9839a705a1787505c87464e425",
+        "native_steps": 1550,
+        "native_time_s": 4.0999999999997705,
+        "operation_id": "agent-f38f26f75d5948c98118fc8c65842276",
+        "pid": 53902,
+        "proposal_id": "proposal-28a486115a0242468ba8651ede499eb6",
+        "pusher_block_contact_samples": 3164,
+        "request_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+        "version": 1
+      },
+      "new_epoch": 2,
+      "offline_snapshot": "000002-offline.json",
+      "old_epoch": 1,
+      "pre_snapshot": "000001-before.json",
+      "process": {
+        "boot": 1,
+        "children_after": [],
+        "children_before": [],
+        "exit_observed": true,
+        "group": 53902,
+        "initialized": true,
+        "log": "body-01.log",
+        "pid": 53902,
+        "port": 51423,
+        "returncode": -9,
+        "role": "body",
+        "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/body",
+        "signal": "SIGKILL",
+        "stopped_time": 1791860466.394902
+      },
+      "request_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+      "restored_snapshot": "000003-restored.json",
+      "role": "body"
+    }
+  ],
+  "case": "body-native-gap"
+}

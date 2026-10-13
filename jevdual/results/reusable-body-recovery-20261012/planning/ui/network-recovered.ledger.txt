@@ -1,0 +1,53 @@
+Browser tab: 6, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51419/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		77 checkbox Retire planner and recover reply Paused, Value: 1
+		9 text One bench. Successive jobs.
+		10 text The AI prepares the part, takes a measurement, and returns it home before the next job.
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		78 text Retire planner and recover reply
+		79 text Paused
+		16 button Resume, ID: pause
+		80 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.
+		18 container Description: Body connection, ID: network-card
+			81 text Body connected
+			82 text Body identity verified by read-only TCP health
+			21 button Disconnect, ID: disconnect
+			22 button (disabled) Check receipt, ID: reconcile
+			70 container
+				71 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					72 text Test the simulated connection
+				73 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				74 button Lose next reply, ID: fault-drop
+				75 button Delay next reply, ID: fault-delay
+				76 button Duplicate next command, ID: fault-duplicate
+				83 text No reply fault armed.
+		25 container Camera observation
+			26 text OVERHEAD CAMERA
+			84 text Last observation · Retire planner and recover reply
+			28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			29 text Orange part Blue pusher Green task region
+			85 text Captured · generation 3
+		86 text RECEIPT RECOVERED
+		87 text The exact command receipt was recovered. The agent is paused until you resume.
+		33 container Job progress
+			34 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		35 container Measurement
+			36 heading Measurement, Value: 2, ID: measurement-heading
+				37 text Measurement
+			88 text Recorded
+			89 container measurement-result
+				90 text 1,726
+				91 text Orange pixels
+				92 container
+					93 text 4,794.4
+					94 text mm²
+				95 text Apparent footprint
+				96 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
