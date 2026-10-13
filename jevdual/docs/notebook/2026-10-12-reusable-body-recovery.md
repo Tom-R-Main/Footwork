@@ -31,3 +31,10 @@ Refs: tools/physical-workcell/output/sim14-publication-before.log; tools/physica
 Observed: extraction review caught a zone-validation mismatch: the storage helper did not include the bench's reachable-region bounds. The bench schema now retains those exact bounds with a regression case. The first legacy network-fault suite was invalidated by a concurrent whitespace edit; that attempt remains retained. A frozen rerun passed all 43 schema/body/client/network checks. The shared transport import test excludes bench, agent_bench, MuJoCo and numpy; the alternate simulated operation vocabulary exercises actual TCP reply-loss/client-restart recovery and incomplete lower-proof blocking. The extraction is committed as ee77644.
 Next: complete runtime regressions and independent review, then freeze the combined implementation and live trial sources.
 Refs: tools/physical-workcell/output/sim14-body-contract-conformance-v2.json; tools/physical-workcell/output/sim14-body-contract-conformance-v2.log; tools/physical-workcell/test_body_contract.py
+
+## SIM14-P4 · prediction · 2026-10-12 22:30
+Hypothesis: a blocking prompt write can prevent the guardian from observing host death if its planner never reads stdin; multiplexing nonblocking prompt delivery with host liveness preserves bounded retirement.
+Test: use an owned non-reading planner and a prompt larger than the pipe capacity, kill the host only, then verify group retirement and closed ownership. Run before and after the bounded delivery change.
+Predicts: the current guardian cannot publish cleanup proof in the timeout, while bounded nonblocking delivery observes EOF and retires the group; normal policy and crash tests remain unchanged.
+Against: the current prompt write does not block under a verified full pipe, or the repaired guardian still fails to retire ownership after host death.
+Refs: tools/physical-workcell/planner_guard.py; docs/experiments/SIM14-reusable-body-recovery.md
