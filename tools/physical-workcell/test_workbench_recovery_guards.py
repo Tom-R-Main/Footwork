@@ -115,7 +115,9 @@ class RecoveryGuardTests(unittest.TestCase):
         protocol.create_file(call / "planner-closure.json", protocol.encoded({k: v for k, v in {
             **startup, "group_closed": True, "process_exit_observed": True, "reason": "completed", "exit_code": 0}.items()
             if k not in {"planner_pid", "planner_pgid"}}))
-        proof = {**base, "guardian_pid": os.getpid(), "version": 1, "complete": True, "observed": [], "remaining": []}
+        proof = {**base, "guardian_pid": os.getpid(), "version": 1, "complete": True,
+                 "observed": [{"pid": 12345, "parent": os.getpid(), "group": 12345, "uid": os.getuid(),
+                               "started": "Bounded identity fixture"}], "remaining": []}
         return call, proof
 
     def test_spawned_planner_without_descendant_proof_refuses(self):
@@ -130,6 +132,20 @@ class RecoveryGuardTests(unittest.TestCase):
             with self.subTest(change=change):
                 protocol.persist(call / "planner-descendants.json", {**proof, **change})
                 with self.assertRaises(protocol.Refusal):
+                    planner_guard.recover(call)
+
+    def test_empty_complete_descendant_proof_refuses(self):
+        call, proof = self.spawned_planner_proof()
+        protocol.persist(call / "planner-descendants.json", {**proof, "observed": []})
+        with self.assertRaisesRegex(protocol.Refusal, "inconsistent"):
+            planner_guard.recover(call)
+
+    def test_truncated_or_unbound_leader_descendant_proof_refuses(self):
+        call, proof = self.spawned_planner_proof()
+        for change in ({"pid": 54321}, {"group": 54321}, {"parent": os.getpid() + 1}):
+            with self.subTest(change=change):
+                protocol.persist(call / "planner-descendants.json", {**proof, "observed": [{**proof["observed"][0], **change}]})
+                with self.assertRaisesRegex(protocol.Refusal, "spawned leader"):
                     planner_guard.recover(call)
 
 

@@ -93,7 +93,7 @@ def _verify_descendants(root, intent, startup):
         "planner descendant proof")
     if (type(value["version"]) is not int or value["version"] != 1 or not _bound_record(value, intent) or
             value["guardian_pid"] != startup["guardian_pid"] or value["complete"] is not True or value["remaining"] != [] or
-            not isinstance(value["observed"], list) or len(value["observed"]) > MAX_DESCENDANTS):
+            not isinstance(value["observed"], list) or not value["observed"] or len(value["observed"]) > MAX_DESCENDANTS):
         raise protocol.Refusal("planner descendant cleanup proof is inconsistent")
     identities = set()
     for row in value["observed"]:
@@ -106,6 +106,9 @@ def _verify_descendants(root, intent, startup):
         if key in identities:
             raise protocol.Refusal("planner descendant identity is repeated")
         identities.add(key)
+    if not any(row["pid"] == startup["planner_pid"] and row["group"] == startup["planner_pgid"] and
+               row["parent"] == startup["guardian_pid"] for row in value["observed"]):
+        raise protocol.Refusal("planner descendant proof omits its spawned leader identity")
 
 
 def lock_call(root):
