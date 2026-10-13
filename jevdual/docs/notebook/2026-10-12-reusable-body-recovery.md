@@ -44,3 +44,10 @@ Observed: the frozen runtime development checks passed 18 focused and 59 existin
 Changes: SIM14-P4 was committed before its test; its heading time was mistyped as 22:30. The clock command immediately before that commit returned 2026-10-12 22:27; Git records the prediction order.
 Next: reproduce and repair the full-pipe case, strengthen the live ownership evidence, then freeze the final source before actual model trials.
 Refs: tools/physical-workcell/output/sim14-runtime-final.log; tools/physical-workcell/output/sim14-runtime-regression.log; commit 05f3c0d; commit fbdeb20
+
+## SIM14-U4 · update · 2026-10-12 22:30
+Resolves: SIM14-P4 = failed
+Observed: the current guardian retired a never-reading planner after host-only SIGKILL with a valid 60000-byte prompt; cleanup completed in the retained pre-change test. The expected blocked write was not reproduced on this Mac.
+Inferred: pipe capacity on this host may accommodate the bounded prompt. A multiplexed write still makes the liveness/watchdog check independent of platform pipe capacity, but this run does not prove a prior full-pipe failure.
+Next: measure the owned pipe capacity, preserve the passing baseline, implement bounded prompt delivery and run the policy/crash regressions before live qualification.
+Refs: tools/physical-workcell/output/sim14-planner-backpressure-before.log
