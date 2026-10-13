@@ -33,7 +33,7 @@
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
-let appId = null, state = null, selectedId = null, polling = false, mutating = false, identityChanged = false, pausePending = false, lastFrameKey = null, loadedGeneration = null, frameLoadingKey = null, clientError = null;
+let appId = null, state = null, selectedId = null, polling = false, mutating = false, hostUnavailable = false, identityChanged = false, pausePending = false, lastFrameKey = null, loadedGeneration = null, frameLoadingKey = null, clientError = null;
 const jobOptions = new Map();
 const statuses = {queued:'Queued',running:'Working',paused:'Paused',completed:'Completed',unknown:'Needs attention'};
 function text(id, value) { $(id).textContent = value; }
@@ -57,7 +57,7 @@ function activityCopy(item) {
   return {title:typeof item.intent === 'string' && item.intent.trim() ? item.intent : titles[item.kind] || 'Bench update',detail:typeof item.outcome === 'string' ? item.outcome : item.outcome ? readableError(item.outcome) : ''};
 }
 function selectedJob() { return state?.jobs?.find(job => job.job_id === selectedId) || state?.jobs?.find(job => job.job_id === state.active_job_id) || state?.jobs?.at(-1) || null; }
-function controlAllowed() { return Boolean(appId && !identityChanged && !mutating); }
+function controlAllowed() { return Boolean(appId && !hostUnavailable && !identityChanged && !mutating); }
 function actionAllowed() { return Boolean(controlAllowed() && ['running','paused'].includes(state?.runner_status) && ['connected','checking'].includes(state?.connection?.state) && !['uncertain','blocked'].includes(state?.recovery?.state)); }
 function render() {
   if (!state) return;
@@ -76,7 +76,7 @@ function render() {
   for (const id of ['fault-drop','fault-delay','fault-duplicate']) $(id).disabled = !controlAllowed() || uncertain || !['connected','checking'].includes(connection.state) || !state.simulation || Boolean(connection.fault);
   text('fault-status', connection.fault ? ({drop_after:'The next command reply will be lost.',delay_after:'The next command reply will be delayed.',duplicate:'The next command will be duplicated with the same identity.'}[connection.fault.mode] || 'A diagnostic reply fault is armed.') : 'No reply fault armed.');
   $('runner-status').dataset.state = runner;
-  text('runner-label', pausePending ? 'Pausing' : ({running:'Running',pausing:'Pausing',paused:'Paused',blocked:'Needs attention',stopped:'Stopped'}[runner] || 'Needs attention'));
+  text('runner-label', hostUnavailable ? 'Disconnected' : pausePending ? 'Pausing' : ({running:'Running',pausing:'Pausing',paused:'Paused',blocked:'Needs attention',stopped:'Stopped'}[runner] || 'Needs attention'));
   $('pause').disabled = !actionAllowed() || pausePending || runner === 'stopped' || runner === 'pausing';
   text('pause', runner === 'paused' ? 'Resume' : 'Pause');
   $('new-job').disabled = !actionAllowed();
@@ -90,7 +90,7 @@ function render() {
     button.append(title,meta); button.addEventListener('click', () => { selectedId = item.job_id; render(); }); queue.append(button);
   }
   const isActive = job && job.job_id === state.active_job_id;
-  const working = isActive && job.status === 'running' && runner === 'running';
+  const working = !hostUnavailable && isActive && job.status === 'running' && runner === 'running';
   const planning = working && state.model_request_pending === true;
   $('working').dataset.working = String(Boolean(planning));
   let intent = 'Add a job to prepare, measure and reset the bench.';
@@ -105,6 +105,7 @@ function render() {
   if (recovery.state === 'recovered') { intent = 'The exact command receipt was recovered. The agent is paused until you resume.'; intentLabel = 'Receipt recovered'; }
   if (uncertain) { intent = 'The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.'; intentLabel = 'Outcome uncertain'; }
   if (!['connected','checking'].includes(connection.state)) { intent = 'The body connection is unavailable. The last camera observation is retained.'; intentLabel = 'Disconnected'; }
+  if (hostUnavailable) { intent = 'The camera image and job status are from the workbench’s last reply. Reconnect before continuing.'; intentLabel = 'Workbench offline'; }
   if (identityChanged) { intent = 'This application changed. Reload to reconnect before sending another action.'; intentLabel = 'Connection changed'; }
   text('intent', intent); text('intent-label', intentLabel);
   const phaseIndex = !job || job.status === 'queued' ? -1 : job.status === 'completed' || job.phase === 'completed' ? 4 : job.phase === 'resetting' ? 2 : job.phase === 'measured' ? 2 : 0;
@@ -131,7 +132,8 @@ function render() {
   text('details', `Application: ${appId}\nRunner: ${runner}\nJob: ${job?.job_id || 'None'}\nPhase: ${job?.phase || 'None'}\nModel requests for job: ${job?.call_count || 0}\nBody: ${connection.body_id || 'Unavailable'}\nAdapter: ${connection.adapter_id || 'Unavailable'}\nConnection epoch: ${connection.epoch ?? 'Unknown'}\nRecovery: ${recovery.state}\nPending command: ${recovery.command_id || 'None'}`);
   if (identityChanged) notice('The application changed. Reload the bench before sending another action.','error');
   else {
-    if (uncertain) notice(recovery.reason || 'The command outcome is uncertain. Check its exact receipt before continuing.');
+    if (hostUnavailable) notice('The workbench is unavailable. The last camera image and job status are retained.','error');
+    else if (uncertain) notice(recovery.reason || 'The command outcome is uncertain. Check its exact receipt before continuing.');
     else if (recovery.state === 'recovered') notice('Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.');
     else if (connection.state === 'checking') notice('A health reply is delayed. Planning can continue; commands require a fresh body check.');
     else if (connection.state !== 'connected') notice(connection.reason || 'The body is disconnected. Cached observations and completed results remain historical.');
@@ -141,6 +143,7 @@ function render() {
     else if (runner === 'blocked') notice('The agent stopped because the outcome could not be verified. Review its last observation and activity.');
     else notice('');
   }
+  if (hostUnavailable) text('connection-reason','Last known body status. The workbench cannot check it while disconnected.');
   updateFrame(state.current_frame, working);
 }
 function frameStatus() { return state?.connection?.state === 'checking' ? 'Last captured · health unconfirmed' : state?.connection?.state !== 'connected' ? 'Retained · offline' : 'Captured'; }
@@ -180,8 +183,9 @@ async function refresh() {
     const next = await response.json();
     if (typeof next.app_id !== 'string' || !next.app_id) throw new Error('The bench did not provide its application identity.');
     if (appId && appId !== next.app_id) { identityChanged = true; notice('The application changed. Reload the bench before sending another action.','error'); render(); return; }
-    appId = next.app_id; state = next; if (state.runner_status === 'paused') pausePending = false; render();
+    hostUnavailable = false; appId = next.app_id; state = next; if (state.runner_status === 'paused') pausePending = false; render();
   } catch (error) {
+    hostUnavailable = true; render();
     notice('The workbench is unavailable. The last camera image and job status are retained.','error');
     for (const id of ['new-job','pause','repeat','disconnect','reconcile','fault-drop','fault-delay','fault-duplicate']) $(id).disabled = true;
     text('runner-label','Disconnected');
