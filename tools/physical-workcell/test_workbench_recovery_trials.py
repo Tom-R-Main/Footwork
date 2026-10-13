@@ -93,6 +93,24 @@ class RecoveryTrialTests(unittest.TestCase):
         with self.assertRaises(protocol.Refusal):
             scorer.boundary_score(self.root, boundary, transport, events)
 
+    def test_receipt_recovery_keeps_original_token_while_clearing_pending(self):
+        boundary, _, _, _ = self.planner_boundary()
+        boundary.update(case="host-publication", command_id=self.token)
+        paused = {"runner_status": "paused", "model_request_pending": False,
+            "recovery": {"state": "uncertain", "command_id": self.token}}
+        steps = [{"name": "crash-offline", "time": 21, "offline": True, "state": None, "visible_text": "Disconnected"},
+            {"name": "restored", "time": 22, "offline": False, "state": paused, "visible_text": "Uncertain paused", "client_commands": 4},
+            {"name": "recovered", "time": 23, "offline": False, "state": {**paused, "recovery": {"state": "recovered", "command_id": self.token}},
+                "visible_text": "Receipt recovered", "client_commands": 4, "pending_command_ids": []},
+            {"name": "resumed", "time": 24, "offline": False, "state": {"runner_status": "running"}, "visible_text": "Running"},
+            {"name": "completed", "time": 25, "offline": False, "state": {"jobs": [{"status": "completed"}]}, "visible_text": "Completed"}]
+        protocol.persist(self.root / "ui-ledger.json", {"steps": steps})
+        self.assertTrue(scorer.ui_score(self.root, boundary)["passed"])
+        steps[2]["client_commands"] += 1
+        protocol.persist(self.root / "ui-ledger.json", {"steps": steps})
+        with self.assertRaises(protocol.Refusal):
+            scorer.ui_score(self.root, boundary)
+
     def test_reuses_exact_prior_wire_relay_and_indexed_command(self):
         import qualify_workbench_crashes as previous
         self.assertIs(harness.HeldReplyRelay, previous.HeldReplyRelay)

@@ -201,7 +201,9 @@ def ui_score(root, boundary):
                 "browser did not show original command uncertainty and receipt recovery")
         recovered = named["recovered"]
         require(not recovered["offline"] and recovered["state"]["runner_status"] == "paused" and
-            not recovered["state"]["recovery"]["command_id"] and "receipt recovered" in recovered["visible_text"].lower() and
+            recovered["state"]["recovery"]["state"] == "recovered" and
+            recovered["state"]["recovery"]["command_id"] == boundary["command_id"] and not recovered["pending_command_ids"] and
+            "receipt recovered" in recovered["visible_text"].lower() and
             recovered["client_commands"] == restored_step["client_commands"] and restored_step["time"] < recovered["time"] < resumed["time"],
             "receipt recovery did not stay paused without new commands")
     return {"passed": True, "steps": [s["name"] for s in steps], "offline_then_paused": True}
