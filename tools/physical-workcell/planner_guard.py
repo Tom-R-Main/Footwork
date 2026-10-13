@@ -155,7 +155,7 @@ def supervise(root, executable, lifetime_fd, lock_fd):
     try:
         # Publish before spawning: missing closure after this point is ambiguous
         # and restart refuses even if a guardian was itself killed.
-        protocol.create_file(root / "planner-process.json", protocol.encoded({**closure, "host_pid": intent["host_pid"]}))
+        protocol.persist(root / "planner-process.json", {**closure, "host_pid": intent["host_pid"]})
         readable, _, _ = select.select([lifetime_fd], [], [], 0)
         if readable and not os.read(lifetime_fd, 1):
             reason = "host exited before planner startup"
@@ -164,11 +164,13 @@ def supervise(root, executable, lifetime_fd, lock_fd):
                 stdout=sys.stdout, stderr=sys.stderr, start_new_session=True, close_fds=True)
             protocol.persist(root / "planner-process.json", {**closure, "host_pid": intent["host_pid"],
                 "planner_pid": child.pid, "planner_pgid": child.pid})
-            child.stdin.write(protocol.read_bytes(root / "prompt.txt"))
-            child.stdin.close()
+            prompt = protocol.read_bytes(root / "prompt.txt")
+            sent = 0
+            os.set_blocking(child.stdin.fileno(), False)
             started = time.monotonic()
             while child.poll() is None:
-                readable, _, _ = select.select([lifetime_fd], [], [], .05)
+                writable = [child.stdin.fileno()] if sent < len(prompt) else []
+                readable, ready, _ = select.select([lifetime_fd], writable, [], .05)
                 if readable and not os.read(lifetime_fd, 1):
                     reason = "host liveness pipe closed"
                     break
@@ -178,6 +180,18 @@ def supervise(root, executable, lifetime_fd, lock_fd):
                 if time.monotonic() - started > 105:
                     reason = "planner watchdog timeout"
                     break
+                if ready:
+                    try:
+                        sent += os.write(child.stdin.fileno(), prompt[sent:sent + 4096])
+                    except BlockingIOError:
+                        pass
+                    except BrokenPipeError:
+                        reason = "planner failed"
+                        break
+                    if sent == len(prompt):
+                        child.stdin.close()
+            if reason == "completed" and sent != len(prompt):
+                reason = "planner failed"
             if reason == "completed" and child.returncode != 0:
                 reason = "planner failed"
     except Exception:
@@ -189,7 +203,7 @@ def supervise(root, executable, lifetime_fd, lock_fd):
                 _close_group(child)
             closure.update(reason=reason, exit_code=child.returncode if child else None,
                            process_exit_observed=True, group_closed=True)
-            protocol.create_file(root / "planner-closure.json", protocol.encoded(closure))
+            protocol.persist(root / "planner-closure.json", closure)
         finally:
             os.close(lifetime_fd)
             os.close(lock_fd)
