@@ -10,6 +10,7 @@ import uuid
 from pathlib import Path
 
 import order_protocol as protocol
+import planner_guard
 
 BASE = Path(__file__).resolve().parent
 
@@ -38,6 +39,78 @@ def fixture(root):
 
 
 class PlannerBackpressureTests(unittest.TestCase):
+    def test_observed_detached_descendant_withholds_closure_without_signalling_unrelated_process(self):
+        root = BASE / "output" / ("sim14-planner-detached-" + uuid.uuid4().hex[:10])
+        root.mkdir(mode=0o700)
+        fake = root / "fake-cli"
+        fake.write_text("#!" + sys.executable + "\n" + '''import json,os,subprocess,sys,time
+from pathlib import Path
+root=Path(sys.argv[-1])
+child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(120)'],start_new_session=True)
+(root/'.detached-ready.json').write_text(json.dumps({'pid':os.getpid(),'detached_pid':child.pid}))
+(root/'.detached-ready.json').replace(root/'detached-ready.json')
+while True:
+    time.sleep(.1)
+''')
+        fake.chmod(0o700)
+        sink = (root / "host.log").open("wb")
+        host = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), "--fixture", str(root)], stdout=sink, stderr=subprocess.STDOUT)
+        unrelated = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(120)"], start_new_session=True)
+        known = None
+        startup = None
+        evidence = {"fake_policy": True, "passed": False}
+        try:
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline:
+                if (root / "detached-ready.json").exists() and (root / "planner-descendants.json").exists():
+                    ready = protocol.decode(protocol.read_bytes(root / "detached-ready.json"))
+                    proof = protocol.decode(protocol.read_bytes(root / "planner-descendants.json"))
+                    known = next((row for row in proof["observed"] if row["pid"] == ready["detached_pid"]), None)
+                    if known:
+                        break
+                time.sleep(.02)
+            self.assertIsNotNone(known)
+            startup = protocol.decode(protocol.read_bytes(root / "planner-process.json"))
+            self.assertEqual(startup["host_pid"], host.pid)
+            self.assertNotEqual(known["group"], startup["planner_pgid"])
+            self.assertEqual(known["group"], known["pid"])
+            host.kill()
+            self.assertEqual(host.wait(5), -signal.SIGKILL)
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline:
+                try:
+                    os.kill(startup["guardian_pid"], 0)
+                except ProcessLookupError:
+                    break
+                time.sleep(.02)
+            self.assertFalse((root / "planner-closure.json").exists())
+            proof = protocol.decode(protocol.read_bytes(root / "planner-descendants.json"))
+            self.assertFalse(proof["complete"])
+            self.assertIn(known["pid"], [row["pid"] for row in proof["remaining"]])
+            with self.assertRaisesRegex(protocol.Refusal, "without group cleanup"):
+                planner_guard.recover(root)
+            self.assertIsNone(unrelated.poll())
+            self.assertTrue(planner_guard._same_process(planner_guard._processes().get(known["pid"]), known))
+            evidence.update(passed=True, proof=proof, unrelated_alive=True, detached_alive=True)
+        finally:
+            if host.poll() is None:
+                host.kill()
+                host.wait(5)
+            unrelated.terminate()
+            unrelated.wait(5)
+            if known and planner_guard._same_process(planner_guard._processes().get(known["pid"]), known):
+                os.killpg(known["group"], signal.SIGKILL)
+            if startup:
+                for key in ("planner_pid", "guardian_pid"):
+                    pid = startup[key]
+                    try:
+                        if os.getpgid(pid) == pid:
+                            os.killpg(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+            sink.close()
+            protocol.create_file(root / "conformance.json", protocol.encoded(evidence))
+
     def test_nonblocking_delivery_preserves_entire_maximum_bound_prompt(self):
         root = BASE / "output" / ("sim14-planner-delivery-" + uuid.uuid4().hex[:10])
         root.mkdir(mode=0o700)

@@ -122,7 +122,7 @@ def decide(challenge, history, call_dir, cancel_event):
         agent_bench.bench.body.create_file(root / name, content)
     request_sha = hashlib.sha256(prompt.encode() + image + instructions + schema).hexdigest()
     flags = ["--ignore-user-config", "--ignore-rules", "--ephemeral", "--skip-git-repo-check", "--sandbox", "read-only",
-             "--disable", "shell_tool", "--disable", "unified_exec", "--disable", "hooks", "--disable", "multi_agent",
+             "--disable", "shell_tool", "--disable", "shell_snapshot", "--disable", "unified_exec", "--disable", "hooks", "--disable", "multi_agent",
              "--disable", "apps", "--disable", "image_generation", "--disable", "view_image", "--disable", "code_mode_host",
              "-c", "tools.view_image=false", "-c", 'web_search="disabled"', "-c", "project_doc_max_bytes=0",
              "-c", "approval_policy=\"never\"", "-c", 'model_reasoning_effort="low"',

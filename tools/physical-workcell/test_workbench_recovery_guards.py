@@ -106,6 +106,32 @@ class RecoveryGuardTests(unittest.TestCase):
         with self.assertRaisesRegex(protocol.Refusal, "have no intent"):
             planner_guard.recover(call)
 
+    def spawned_planner_proof(self):
+        call, intent = self.planner()
+        base = {k: intent[k] for k in ("host_pid", "owner", "request_sha256")}
+        startup = {**base, "guardian_pid": os.getpid(), "process_exit_observed": False, "group_closed": False,
+                   "planner_pid": 12345, "planner_pgid": 12345}
+        protocol.create_file(call / "planner-process.json", protocol.encoded(startup))
+        protocol.create_file(call / "planner-closure.json", protocol.encoded({k: v for k, v in {
+            **startup, "group_closed": True, "process_exit_observed": True, "reason": "completed", "exit_code": 0}.items()
+            if k not in {"planner_pid", "planner_pgid"}}))
+        proof = {**base, "guardian_pid": os.getpid(), "version": 1, "complete": True, "observed": [], "remaining": []}
+        return call, proof
+
+    def test_spawned_planner_without_descendant_proof_refuses(self):
+        call, _ = self.spawned_planner_proof()
+        with self.assertRaises(protocol.Refusal):
+            planner_guard.recover(call)
+
+    def test_inconsistent_or_incomplete_descendant_proof_refuses(self):
+        call, proof = self.spawned_planner_proof()
+        for change in ({"owner": "other"}, {"complete": False}, {"remaining": [{}]}, {"version": True},
+                       {"guardian_pid": os.getpid() + 1}, {"observed": [{}]}):
+            with self.subTest(change=change):
+                protocol.persist(call / "planner-descendants.json", {**proof, **change})
+                with self.assertRaises(protocol.Refusal):
+                    planner_guard.recover(call)
+
 
 if __name__ == "__main__":
     unittest.main()

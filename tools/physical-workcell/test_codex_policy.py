@@ -48,6 +48,7 @@ args=sys.argv[1:]
 assert '--ignore-user-config' in args and '--ephemeral' in args
 assert args[args.index('--sandbox')+1]=='read-only'
 assert 'shell_tool' in args and 'tools.view_image=false' in args
+assert args[args.index('shell_snapshot')-1]=='--disable'
 assert 'web_search="disabled"' in args
 png=Path(args[args.index('--image')+1]).read_bytes()
 assert png.startswith(b'\\x89PNG')
