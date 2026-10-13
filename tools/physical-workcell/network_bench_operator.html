@@ -182,9 +182,13 @@ async function refresh() {
     if (appId && appId !== next.app_id) { identityChanged = true; notice('The application changed. Reload the bench before sending another action.','error'); render(); return; }
     appId = next.app_id; state = next; if (state.runner_status === 'paused') pausePending = false; render();
   } catch (error) {
-    notice(error.message || 'Connection interrupted. The last observation is retained.','error');
+    notice('The workbench is unavailable. The last camera image and job status are retained.','error');
     for (const id of ['new-job','pause','repeat','disconnect','reconcile','fault-drop','fault-delay','fault-duplicate']) $(id).disabled = true;
     text('runner-label','Disconnected');
+    text('intent-label','Workbench offline');
+    text('intent','The camera image and job status are from the workbench’s last reply. Reconnect before continuing.');
+    text('connection-reason','Last known body status. The workbench cannot check it while disconnected.');
+    $('working').dataset.working = 'false';
     if (loadedGeneration !== null) text('frame-caption',`Last captured · generation ${loadedGeneration} · disconnected`);
   } finally { polling = false; }
 }
