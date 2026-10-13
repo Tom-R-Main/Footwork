@@ -146,13 +146,13 @@ function render() {
   if (hostUnavailable) text('connection-reason','Last known body status. The workbench cannot check it while disconnected.');
   updateFrame(state.current_frame, working);
 }
-function frameStatus() { return state?.connection?.state === 'checking' ? 'Last captured · health unconfirmed' : state?.connection?.state !== 'connected' ? 'Retained · offline' : 'Captured'; }
+function frameStatus() { return hostUnavailable ? 'Retained · workbench offline' : state?.connection?.state === 'checking' ? 'Last captured · health unconfirmed' : state?.connection?.state !== 'connected' ? 'Retained · offline' : 'Captured'; }
 function updateFrame(frame, working) {
   const checking = state?.connection?.state === 'checking';
   const offline = !['connected','checking'].includes(state?.connection?.state);
   const available = Boolean(frame?.available && typeof frame.image_url === 'string');
   const active = state?.jobs?.find(job => job.job_id === state.active_job_id);
-  text('camera-label', offline ? 'Retained observation · body offline' : checking ? 'Last observation · health unconfirmed' : active ? `Last observation · ${active.label}` : 'Last camera observation');
+  text('camera-label', hostUnavailable ? 'Retained observation · workbench offline' : offline ? 'Retained observation · body offline' : checking ? 'Last observation · health unconfirmed' : active ? `Last observation · ${active.label}` : 'Last camera observation');
   if (!available) {
     if (loadedGeneration !== null) text('frame-caption', `Last captured · generation ${loadedGeneration} · current frame unavailable`);
     else { $('placeholder').hidden = false; text('placeholder', state?.jobs?.length ? 'Waiting for the next camera observation.' : 'Add an inspection to see the bench through the agent’s camera.'); text('frame-caption','No frame captured'); }
