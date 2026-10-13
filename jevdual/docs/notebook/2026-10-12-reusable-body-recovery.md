@@ -26,3 +26,8 @@ Observed: the pre-fix publication regression reproduced FileExistsError on Resum
 Inferred: the selected journal repair and parent-liveness mechanism have initial process evidence; actual image-guided browser recovery and stronger malformed-evidence checks remain required before adoption.
 Next: finish negative checks and source-pinning closure, freeze committed source, then run publication and active-planning browser recovery trials.
 Refs: tools/physical-workcell/output/sim14-publication-before.log; tools/physical-workcell/output/sim14-runtime-first.log; tools/physical-workcell/output/sim13-host-crash-3b0976e974/; tools/physical-workcell/test_body_contract.py
+
+## SIM14-U2 · update · 2026-10-12 22:25
+Observed: extraction review caught a zone-validation mismatch: the storage helper did not include the bench's reachable-region bounds. The bench schema now retains those exact bounds with a regression case. The first legacy network-fault suite was invalidated by a concurrent whitespace edit; that attempt remains retained. A frozen rerun passed all 43 schema/body/client/network checks. The shared transport import test excludes bench, agent_bench, MuJoCo and numpy; the alternate simulated operation vocabulary exercises actual TCP reply-loss/client-restart recovery and incomplete lower-proof blocking. The extraction is committed as ee77644.
+Next: complete runtime regressions and independent review, then freeze the combined implementation and live trial sources.
+Refs: tools/physical-workcell/output/sim14-body-contract-conformance-v2.json; tools/physical-workcell/output/sim14-body-contract-conformance-v2.log; tools/physical-workcell/test_body_contract.py
