@@ -111,6 +111,13 @@ def captured_descendants(rows, host_pid):
         parents.update(row["pid"] for row in new)
 
 
+def merge_captures(earlier, latest):
+    # Retain every sampled group, including a prior group after exec/setsid.
+    observed = {tuple(row.get(key) for key in ("pid", "uid", "started", "group")): row
+        for row in earlier + latest}
+    return sorted(observed.values(), key=lambda row: (row["pid"], row["group"]))
+
+
 def captured_absence(rows, identities):
     groups = sorted({row["group"] for row in identities})
     evidence = absence_evidence(rows, identities, groups[0])
@@ -285,9 +292,7 @@ class Trial(previous.Trial):
             if any(process_identity(rows, old["pid"]) != old for old in gate["process_identities"].values()):
                 raise protocol.Refusal("exact process start identity changed immediately before crash")
             latest = captured_descendants(rows, process.pid)
-            observed = {tuple(row.get(key) for key in ("pid", "uid", "started")): row
-                for row in gate["captured_descendants"] + latest}
-            gate["captured_descendants"] = sorted(observed.values(), key=lambda row: row["pid"])
+            gate["captured_descendants"] = merge_captures(gate["captured_descendants"], latest)
             children = gate["captured_descendants"]
         os.kill(process.pid, signal.SIGKILL)  # ONLY host; guardian must reap its independent child.
         process.wait(timeout=5)

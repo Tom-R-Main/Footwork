@@ -132,6 +132,15 @@ class RecoveryTrialTests(unittest.TestCase):
         self.assertTrue(evidence["every_captured_group_absent"])
         self.assertEqual(evidence["same_pid_current_rows"], [escaped])
 
+    def test_merge_retains_every_group_across_sets_id_or_exec(self):
+        old = {"pid": 700, "uid": 501, "parent": 334, "group": 701, "started": "old", "command": "snapshot-writer"}
+        later = {**old, "parent": 1, "group": 900, "command": "changed-by-exec"}
+        captured = harness.merge_captures([old], [later])
+        self.assertEqual({row["group"] for row in captured}, {701, 900})
+        evidence = harness.captured_absence([{**old, "pid": 702}], captured)
+        self.assertFalse(evidence["every_captured_group_absent"])
+        self.assertEqual(evidence["captured_groups"], [701, 900])
+
     def test_descendant_capture_and_retirement_covers_secondary_groups(self):
         guardian = {"pid": 333, "parent": 123, "group": 333, "started": "old", "command": "guard"}
         planner = {"pid": 334, "parent": 333, "group": 334, "started": "old", "command": "codex"}
