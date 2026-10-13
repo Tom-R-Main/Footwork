@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import agent_bench as agent
 import bench
+import body_contract as contract
 import body_protocol as wire
 import order_protocol as storage
 
@@ -19,7 +20,7 @@ BASE = Path(__file__).resolve().parent
 
 def sources():
     return {**agent.sources(), **{name: storage.sha(storage.read_bytes(BASE / name))
-            for name in ("body_protocol.py", "body_network.py")}}
+            for name in ("body_contract.py", "bench_body_contract.py", "body_protocol.py", "body_network.py")}}
 
 
 def source_sha():
@@ -212,12 +213,7 @@ class BodyService:
                     time.monotonic() < self.lease["expires_at"])
 
     def acquire(self, value):
-        storage.fields(value, ("client_id", "expected_epoch", "duration_s"), "lease request")
-        wire.identity(value["client_id"])
-        wire.epoch(value["expected_epoch"])
-        duration = wire.finite(value["duration_s"])
-        if not .05 <= duration <= 30:
-            raise wire.Refusal("lease duration must be between 0.05 and 30 seconds")
+        duration = contract.validate_lease_request(value)
         with self.lock:
             self._identity_guard()
             if self.closed or value["expected_epoch"] != self.epoch:
@@ -230,11 +226,7 @@ class BodyService:
 
     def reconcile(self, command_id, value):
         wire.identity(command_id)
-        storage.fields(value, ("client_id", "lease_id", "epoch", "request_sha256"), "reconcile query")
-        for key in ("client_id", "lease_id"):
-            wire.identity(value[key])
-        wire.epoch(value["epoch"])
-        wire.digest(value["request_sha256"])
+        contract.validate_reconcile(value)
         with self.lock:
             self._identity_guard()
             record = self.records.get(command_id)
