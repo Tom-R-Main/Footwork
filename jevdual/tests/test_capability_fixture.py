@@ -6,6 +6,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
 
@@ -50,6 +51,9 @@ def fixture_module():
     spec = importlib.util.spec_from_file_location("fixture_helper", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    # Every test-local timing override must stay off the shared stdlib module,
+    # including asyncio's event-loop clock and any background library threads.
+    module.time = SimpleNamespace(monotonic=time.monotonic, sleep=time.sleep)
     return module
 
 
@@ -323,8 +327,19 @@ def test_changed_document_remaining_window_is_not_confirmed_disappearance(monkey
 
 def fake_clock(monkeypatch, module, *, step=1):
     ticks = iter(range(10000))
-    monkeypatch.setattr(module.time, "monotonic", lambda: next(ticks) * step)
-    monkeypatch.setattr(module.time, "sleep", lambda _: None)
+    monkeypatch.setattr(
+        module, "time", SimpleNamespace(monotonic=lambda: next(ticks) * step, sleep=lambda _: None)
+    )
+
+
+def test_fake_clock_preserves_process_wide_time_functions(monkeypatch):
+    real_monotonic, real_sleep = time.monotonic, time.sleep
+    module = fixture_module()
+    fake_clock(monkeypatch, module, step=2)
+    assert time.monotonic is real_monotonic
+    assert time.sleep is real_sleep
+    assert module.time is not time
+    assert [module.time.monotonic() for _ in range(3)] == [0, 2, 4]
 
 
 def test_browser_readiness_waits_for_private_profile_endpoint(monkeypatch, tmp_path):

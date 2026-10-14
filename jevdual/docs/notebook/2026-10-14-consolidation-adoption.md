@@ -67,3 +67,9 @@ Test: preserve hostedrun38609371553, add a regression that the fixture clock lea
 Predicts: originalclock-isolation regression fails thenpasses; readiness stillwaits40syntheticpolls andstrictdeadline/endpointchecks remainasserted; LinuxCIStopIteration disappears.
 Against: global clockswerealreadyisolated, localclockstillfails, startupassertions mustbeweakened, orCIexposesproductbehaviorfailure.
 Refs: output/consolidation-ci-failure-v2.log; tests/test_capability_fixture.py:fake_clock; hostedrun38609371553
+
+## CA11 · update · 2026-10-14 13:54
+Observed: the new clock-isolation regression fails before andpassesafter replacing only the loadedfixturemodule's time binding. All existing timingpatches now affect thatlocal namespace. Native fixture57 and controlledLinux-import56 tests pass, withoneexistingmac-gate skip. Readiness stillasserts40polls andexactendpoint; deadline/refusal assertions areunchanged. Actual hostedLinux confirmation remains pending.
+Inferred: sharedstdlib-clock mutation was an isolation defect and isremoved without changing product/helper/qualifiedartifact bytes; the nextCIrun must establish whether it caused the hostedStopIteration.
+Next: push the boundedtest-only correction andinspect currentCI beforemerge.
+Refs: output/consolidation-ci-failure-v2.log; tests/test_capability_fixture.py:test_fake_clock_preserves_process_wide_time_functions; worker clockbefore/after evidence inoutput/consolidation-20261014
