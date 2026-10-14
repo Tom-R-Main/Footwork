@@ -1,0 +1,16 @@
+{
+  "action": "start-role",
+  "expect": {
+    "active_job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+    "app_id": "878fad93039a4e86b4dcc5529f118f20",
+    "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+    "model_request_pending": false,
+    "recovery_command_id": null,
+    "runner_status": "paused",
+    "usage_calls": 15
+  },
+  "predicate": "none",
+  "requested_time": 1791829008.869165,
+  "role": "body",
+  "sequence": 6
+}

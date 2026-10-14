@@ -1,0 +1,116 @@
+{
+  "isolated_transport_scan": {
+    "max_s": 0.029363750014454126,
+    "median_s": 0.020804957952350378,
+    "samples": [
+      {
+        "bytes_read": 576223,
+        "counts": {
+          "canonical_request_digest": 664,
+          "intent.json": 83,
+          "result.json": 166
+        },
+        "elapsed_s": 0.02449941704981029,
+        "iteration": 0,
+        "records": 83,
+        "unresolved_count": 0
+      },
+      {
+        "bytes_read": 576223,
+        "counts": {
+          "canonical_request_digest": 664,
+          "intent.json": 83,
+          "result.json": 166
+        },
+        "elapsed_s": 0.020804957952350378,
+        "iteration": 1,
+        "records": 83,
+        "unresolved_count": 0
+      },
+      {
+        "bytes_read": 576223,
+        "counts": {
+          "canonical_request_digest": 664,
+          "intent.json": 83,
+          "result.json": 166
+        },
+        "elapsed_s": 0.029363750014454126,
+        "iteration": 2,
+        "records": 83,
+        "unresolved_count": 0
+      },
+      {
+        "bytes_read": 576223,
+        "counts": {
+          "canonical_request_digest": 664,
+          "intent.json": 83,
+          "result.json": 166
+        },
+        "elapsed_s": 0.019083166029304266,
+        "iteration": 3,
+        "records": 83,
+        "unresolved_count": 0
+      },
+      {
+        "bytes_read": 576223,
+        "counts": {
+          "canonical_request_digest": 664,
+          "intent.json": 83,
+          "result.json": 166
+        },
+        "elapsed_s": 0.018134792102500796,
+        "iteration": 4,
+        "records": 83,
+        "unresolved_count": 0
+      }
+    ],
+    "scope": "copied immutable command journal only; no service/native constructor or effects"
+  },
+  "no_model_calls": true,
+  "no_native_actions": true,
+  "routes": {
+    "direct_identity": {
+      "max_connect_s": 0.003117375075817108,
+      "max_headers_s": 0.07855645893141627,
+      "max_s": 0.0818679581861943,
+      "median_s": 0.025921083986759186,
+      "min_s": 0.022658249828964472,
+      "samples": 8,
+      "successes": 8
+    },
+    "direct_state": {
+      "max_connect_s": 0.00038674985989928246,
+      "max_headers_s": 0.13627387513406575,
+      "max_s": 0.13670033309608698,
+      "median_s": 0.09210818749852479,
+      "min_s": 0.08545674988999963,
+      "samples": 8,
+      "successes": 8
+    },
+    "linked_identity": {
+      "max_connect_s": 0.000262250192463398,
+      "max_headers_s": 0.03264912497252226,
+      "max_s": 0.03301991708576679,
+      "median_s": 0.02526693802792579,
+      "min_s": 0.024027250008657575,
+      "samples": 8,
+      "successes": 8
+    },
+    "linked_state": {
+      "max_connect_s": 0.00039504189044237137,
+      "max_headers_s": 0.12115875002928078,
+      "max_s": 0.12164500006474555,
+      "median_s": 0.09428881213534623,
+      "min_s": 0.0896729591768235,
+      "samples": 8,
+      "successes": 8
+    }
+  },
+  "samples": 32,
+  "sequential_requests": true,
+  "source_sha256": {
+    "body_client.py": "40388c238192d923888c9852b363314801dcf65c7266aadc8c377d3810aeb33d",
+    "body_network.py": "95fd21597bcdd9e982a698859cd1219ae4522062e332c50fea233629dbfb343c",
+    "workbench_link.py": "578d94684463bcb3d7f2d45d9ba68abcd27d8a27f7f39538323a269e251c330e"
+  }
+}

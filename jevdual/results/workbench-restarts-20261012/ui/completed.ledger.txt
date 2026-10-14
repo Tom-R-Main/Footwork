@@ -1,0 +1,54 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			140 checkbox Restart inspection 01 Completed, Value: 0
+			141 checkbox Restart inspection 02 Completed, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		142 text Restart inspection 02
+		143 text Running
+		16 button Pause, ID: pause
+		17 container Description: Body connection, ID: network-card
+			144 text Body connected
+			145 text Body identity verified by read-only TCP health
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			68 container
+				69 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					70 text Test the simulated connection
+				71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				72 button Lose next reply, ID: fault-drop
+				73 button Delay next reply, ID: fault-delay
+				74 button Duplicate next command, ID: fault-duplicate
+				146 text No reply fault armed.
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			147 text Last camera observation
+			60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			148 text Captured · generation 20
+		149 text COMPLETED
+		150 text Measurement recorded and reset verified. The bench is ready for another job.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			151 text Historical result
+			132 container measurement-result
+				152 text 1,729
+				134 text Orange pixels
+				135 container
+					153 text 4,802.8
+					137 text mm²
+				138 text Apparent footprint
+				139 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+			154 button Repeat job, ID: repeat
+[Main-panel excerpt; full browser capture is completed.txt]

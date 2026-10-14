@@ -1,0 +1,870 @@
+{
+  "passed": true,
+  "source_commit": "9a5d2f8bfac8088b13c63052887e0c0c2e9d5c7e",
+  "guard_sources_unchanged": true,
+  "attempt": 1,
+  "successful_cycles": 2,
+  "AI_host": "Codex multimodal assistant in this conversation",
+  "AI_proposals": 29,
+  "image_presentations": 31,
+  "all_proposals_bind_presented_images": true,
+  "refused_stale_measurements": 1,
+  "unknown_outcomes": 0,
+  "disturbance": {
+    "before": {
+      "role": "independent_native_state_scorer",
+      "generation": 12,
+      "state_sha256": "c5eb98e5389520f67d0a5696115aa8d7d7a2ae63ded866d4f74b1716a02128fc",
+      "native_time_s": 31.415999999993467,
+      "block_xyz": [
+        0.07578820807466202,
+        -2.3639510932334726e-09,
+        0.03499573045536971
+      ],
+      "pusher_xyz": [
+        -0.299999969238987,
+        3.5114932976316857e-36,
+        0.06
+      ],
+      "block_center_in_zone": true,
+      "pusher_home": true,
+      "external_force_cleared": true
+    },
+    "after": {
+      "role": "independent_native_state_scorer",
+      "generation": 13,
+      "state_sha256": "1816ee306f82952178fe88ac2857976ccd1594d917628fad36a438f79183280b",
+      "native_time_s": 32.57599999999385,
+      "block_xyz": [
+        -0.0572428260016602,
+        -2.363914289828072e-09,
+        0.034995730455369856
+      ],
+      "pusher_xyz": [
+        -0.2999999999999935,
+        7.426712930285049e-43,
+        0.06
+      ],
+      "block_center_in_zone": false,
+      "pusher_home": true,
+      "external_force_cleared": true
+    },
+    "displacement_x_m": -0.13303103407632222
+  },
+  "actions": [
+    {
+      "sequence": 5,
+      "job_id": "ai-ordinary",
+      "generation": 0,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-e4339df93bb44cf9827aaa89ca5e2d0c",
+        "intent": "Push the visible orange block right toward the center of the green measurement region.",
+        "observation_sha256": "16db335110b8ec1dcb8abbd79eff6e896a9e2b202021915e1d08db2f199011f5",
+        "operation_id": "agent-aeb2273d6d6a4f539555071890b542f7",
+        "proposal_id": "proposal-5c78049d2f0644859cfc4f961d0e408e",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.015,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-aeb2273d6d6a4f539555071890b542f7",
+        "kind": "move",
+        "generation": 1,
+        "native_time_s": 4.0999999999997705,
+        "native_steps": 1550,
+        "pusher_block_contact_samples": 3164,
+        "max_axis_actuator_force_n": 1.2780714513550784,
+        "state_sha256": "3dd31d583a8b7ec3f4a7fa51f403baa50fda8f9839a705a1787505c87464e425"
+      },
+      "challenge_image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    {
+      "sequence": 9,
+      "job_id": "ai-ordinary",
+      "generation": 1,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-0a7f171f17d0440aba49e0b394ca6981",
+        "intent": "The block is centered in the measurement region; retract the pusher left, away from the block, to clear the image.",
+        "observation_sha256": "440ac82d3e2e12b6ee77d2bb487c4b6b714c248917bdd8b336f6ce38c1bf30e4",
+        "operation_id": "agent-201690e6fe504ef39f50055e592eed1f",
+        "proposal_id": "proposal-6e348696878b4aef835229d6577cb5d5",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-201690e6fe504ef39f50055e592eed1f",
+        "kind": "move",
+        "generation": 2,
+        "native_time_s": 7.199999999999429,
+        "native_steps": 1550,
+        "pusher_block_contact_samples": 64,
+        "max_axis_actuator_force_n": 0.5633864611553108,
+        "state_sha256": "17c6620f9eeb3b3c3a6e787215e843c7a8bfa66eb3c56f8693c3477b2eb5d9c9"
+      },
+      "challenge_image_sha256": "cb4221e600bbb24aec549f49924fc9224876a1ad8d04159fe0cc3798658d8357"
+    },
+    {
+      "sequence": 13,
+      "job_id": "ai-ordinary",
+      "generation": 2,
+      "proposal": {
+        "action": "measure",
+        "challenge_id": "challenge-b946ac2ff9d74070b5f3efbed673b58d",
+        "intent": "The orange block center remains in the green region and the pusher is clear; run the computer measurement.",
+        "observation_sha256": "b302e99abe05b60bed706ecf0d96f6bd29e514a9f410145162091369562d8743",
+        "operation_id": "agent-62ebb86d89f941daab3a059aa53fd695",
+        "proposal_id": "proposal-632b712fdcd646679f954f6f4abb6e37",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-62ebb86d89f941daab3a059aa53fd695",
+        "kind": "measure",
+        "generation": 2,
+        "state_sha256": "17c6620f9eeb3b3c3a6e787215e843c7a8bfa66eb3c56f8693c3477b2eb5d9c9"
+      },
+      "challenge_image_sha256": "8d5e38c9bbef1250112550bdea0dee41bd573dd7cb2d42278be9eeda5590b159"
+    },
+    {
+      "sequence": 17,
+      "job_id": "ai-ordinary",
+      "generation": 2,
+      "proposal": {
+        "action": "begin_reset",
+        "challenge_id": "challenge-37730e6485b945b4a30e5ae544e5a91d",
+        "intent": "The verified measurement is saved; begin returning the block and pusher to their home positions.",
+        "observation_sha256": "90e4f830c218c32a5a548d2afacebb237f03e76a55d9303e71611a662299eb33",
+        "operation_id": "agent-ae2a5100d3fc4fbcb76023e5ced0f9a0",
+        "proposal_id": "proposal-08212ee8faa04bbdaecadb14da534852",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "generation": 2,
+        "native_time_s": 7.199999999999429
+      },
+      "challenge_image_sha256": "8d5e38c9bbef1250112550bdea0dee41bd573dd7cb2d42278be9eeda5590b159"
+    },
+    {
+      "sequence": 21,
+      "job_id": "ai-ordinary",
+      "generation": 2,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-fe85036078c24be39d7e21b9ad462286",
+        "intent": "Move the pusher into the upper bypass lane so it can reach the right side of the block without crossing it.",
+        "observation_sha256": "fe39e48543c6acc01d0c6a1517a460da78e39efff54d923177790c352ee6c2a5",
+        "operation_id": "agent-da74795104e8433d84ca03c55a5a9f3e",
+        "proposal_id": "proposal-0b967a31699f4f67aa758ee98001a948",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-da74795104e8433d84ca03c55a5a9f3e",
+        "kind": "move",
+        "generation": 3,
+        "native_time_s": 9.101999999999709,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128570206,
+        "state_sha256": "213816189f73ad2af9c338b8c204e0b238e4e11d6893995b1fead34a8a63d491"
+      },
+      "challenge_image_sha256": "8d5e38c9bbef1250112550bdea0dee41bd573dd7cb2d42278be9eeda5590b159"
+    },
+    {
+      "sequence": 25,
+      "job_id": "ai-ordinary",
+      "generation": 3,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-859f365ee5294dac81a68cf58fb8d5be",
+        "intent": "The pusher is visibly above the block; cross the clear lane to a position just beyond its right face.",
+        "observation_sha256": "4e35f1762c23b98fce7181f23c806c6c8de3d4738a23170c60d70174797abb9a",
+        "operation_id": "agent-375e8bb74d4f4dc7b1b3dfabad8d83b1",
+        "proposal_id": "proposal-e1daead845b74cd68a6e2ebd57f81e17",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.14,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-375e8bb74d4f4dc7b1b3dfabad8d83b1",
+        "kind": "move",
+        "generation": 4,
+        "native_time_s": 13.036000000001023,
+        "native_steps": 1967,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38525092330498,
+        "state_sha256": "b36c073315154f2c4412cf7923dec065ec428566b7e7dccda023c35c90b3f1a8"
+      },
+      "challenge_image_sha256": "09026909d3489122b3f84704a9072495ec2288b7ccd0e2d1f6029521293335ea"
+    },
+    {
+      "sequence": 29,
+      "job_id": "ai-ordinary",
+      "generation": 4,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-0e224d3ea5de42699bc1abc4e84d87b5",
+        "intent": "The pusher is to the right of the orange block with clearance; lower it into the block's horizontal pushing lane.",
+        "observation_sha256": "fd5522f5296936afe5adfed7d4ae8f736194be2af57d0f5e8fcd5cc7d5d77034",
+        "operation_id": "agent-e891c9fd8986410a806f80ba59238880",
+        "proposal_id": "proposal-e8a48a05e9624798a66b82795c401f84",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.14,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-e891c9fd8986410a806f80ba59238880",
+        "kind": "move",
+        "generation": 5,
+        "native_time_s": 14.938000000001658,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128571205,
+        "state_sha256": "451ed25d727f1acf2e8d38507093aa9de9aa8c055c51ffe0832c2fa72f225858"
+      },
+      "challenge_image_sha256": "c62187cd908d71592bdd7193b83ec80666e6f350e90968204d2d87a7169d12dc"
+    },
+    {
+      "sequence": 33,
+      "job_id": "ai-ordinary",
+      "generation": 5,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-98c4443f685c43bca0555096bbe64d57",
+        "intent": "Push left from the block's right side, bringing its center back into the home region near x=-0.12.",
+        "observation_sha256": "a09ead8b0c746828364df389adba823a8de3851c166deebff772d7f06562003a",
+        "operation_id": "agent-eecc4e58e7ae47df8088761be7f5ea25",
+        "proposal_id": "proposal-92ef08cad3d549d4a63649d345b5daa1",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.065,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-eecc4e58e7ae47df8088761be7f5ea25",
+        "kind": "move",
+        "generation": 6,
+        "native_time_s": 17.306000000001287,
+        "native_steps": 1184,
+        "pusher_block_contact_samples": 3108,
+        "max_axis_actuator_force_n": 1.346867858248153,
+        "state_sha256": "a1b40541b3203c3066b0020b486ff538bdf4fee5604232eb0a2ab425ce7383d7"
+      },
+      "challenge_image_sha256": "e6f35d68a39eccb69ef08ffb81de2aed231bbe097a530bc31bb48ffda662a3f1"
+    },
+    {
+      "sequence": 37,
+      "job_id": "ai-ordinary",
+      "generation": 6,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-3abc7266237042b68e06877018787ccd",
+        "intent": "The block is back at home; back the pusher slightly right to release contact before going around it.",
+        "observation_sha256": "27add33dac2fb680e42be390ee8c161959090d554e00e341b075af6b7dc828ed",
+        "operation_id": "agent-3c86afdd8a704441a66a717fabb9ad30",
+        "proposal_id": "proposal-b85d03dc400444c082fdecbab78e9a37",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.035,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-3c86afdd8a704441a66a717fabb9ad30",
+        "kind": "move",
+        "generation": 7,
+        "native_time_s": 18.50800000000062,
+        "native_steps": 601,
+        "pusher_block_contact_samples": 66,
+        "max_axis_actuator_force_n": 0.5646407287582988,
+        "state_sha256": "1302ea1009ef1d9d21b30ced5086ad9dc29b48de393d967df67e3ee5b7ac1a81"
+      },
+      "challenge_image_sha256": "6c4785ad11fbf959867ca24381e9caf3a051c777b86c8e5357697aa2cdea5f67"
+    },
+    {
+      "sequence": 41,
+      "job_id": "ai-ordinary",
+      "generation": 7,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-d5633b65146f4065bb710dda3ee037dd",
+        "intent": "There is now a visible gap beside the home block; lift the pusher into the bypass lane without dragging it.",
+        "observation_sha256": "e21f0e55f8037de4d27502219301f2b0083a00a91c692b99ba9141591d2e1eda",
+        "operation_id": "agent-1f592c90c3b74e08bc1620fe7067c84c",
+        "proposal_id": "proposal-f07bff4deb78444898958ab4dc5734dc",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.035,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-1f592c90c3b74e08bc1620fe7067c84c",
+        "kind": "move",
+        "generation": 8,
+        "native_time_s": 20.409999999999567,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128570206,
+        "state_sha256": "3624577cb56ac84d63ed54a8a7d8d3dbfbb3cec0060bc2605f9af177790e155a"
+      },
+      "challenge_image_sha256": "6a03bda6c21d45a6c0de319fa273262335ebcf36de34e1f4a41bee1604479d49"
+    },
+    {
+      "sequence": 45,
+      "job_id": "ai-ordinary",
+      "generation": 8,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-ccab1d2dc0e345ee9071c7fbdcb72f95",
+        "intent": "The pusher is above the block; traverse left through the clear bypass lane toward its home column.",
+        "observation_sha256": "432fd403dc293c58ebba6f62f8b83375a6912f1ebca74e9f1255e146123a203c",
+        "operation_id": "agent-94497e62b78c470588dde1d8788ed008",
+        "proposal_id": "proposal-7ac22a5b098b44aa83322a3b25eeff64",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-94497e62b78c470588dde1d8788ed008",
+        "kind": "move",
+        "generation": 9,
+        "native_time_s": 23.177999999998033,
+        "native_steps": 1384,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38504787816081887,
+        "state_sha256": "0c6cbcb3b882d727eff2c704d68a051975a1e937c3679af12f3191993d40a051"
+      },
+      "challenge_image_sha256": "fa76012ace8a01cde6bb10e4742798a428ccbd9a868bf7bc97a9447e0cfc866e"
+    },
+    {
+      "sequence": 49,
+      "job_id": "ai-ordinary",
+      "generation": 9,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-7851634f3566401f954ebae1f6e29e88",
+        "intent": "The pusher has cleared the block on the left; descend to its home position.",
+        "observation_sha256": "18828d79e20f454ceb7e1c0692b20736f6e8ce090292c6eaa4b838e9fbe957d6",
+        "operation_id": "agent-e088c59467614556aaea8da9b9c8d32d",
+        "proposal_id": "proposal-026bb7d6f7f340ed960566c81bac830c",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-e088c59467614556aaea8da9b9c8d32d",
+        "kind": "move",
+        "generation": 10,
+        "native_time_s": 25.07999999999698,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128571205,
+        "state_sha256": "aafe7bd44fe197a436c786478e803f5600e9356a85b524d8f8ba32237c0f8efc"
+      },
+      "challenge_image_sha256": "cda2378ead3e165186825aa560540c8495d01f07acff067406513a16ee92db65"
+    },
+    {
+      "sequence": 53,
+      "job_id": "ai-ordinary",
+      "generation": 10,
+      "proposal": {
+        "action": "finish_reset",
+        "challenge_id": "challenge-93a8a4f678e947648e4fa8062ce4203b",
+        "intent": "The image shows the orange block in its home region and the blue pusher at home; request independent reset verification.",
+        "observation_sha256": "56b763e47095f854b68d2788490b3bb1aabd55b94628db7d191ba264e9125797",
+        "operation_id": "agent-c0a81c03a9114aa2b68b127755699f4c",
+        "proposal_id": "proposal-1d2f0b6f0dde4fd4af7b38314b3ee4ff",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-c0a81c03a9114aa2b68b127755699f4c",
+        "kind": "finish_reset",
+        "generation": 10,
+        "native_time_s": 25.07999999999698,
+        "state_sha256": "aafe7bd44fe197a436c786478e803f5600e9356a85b524d8f8ba32237c0f8efc",
+        "block_home_verified": true,
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3174,
+        "reset_native_steps": 8940
+      },
+      "challenge_image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87"
+    },
+    {
+      "sequence": 58,
+      "job_id": "ai-disturbed",
+      "generation": 10,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-4af4aec17ab440c48a0852b7041b60d0",
+        "intent": "Push the home block into the second job's green region, which is slightly farther right than the first target.",
+        "observation_sha256": "52fd733ecb953954823b1aed211fdab04665dd55423b11e3cb525d4b57f97264",
+        "operation_id": "agent-60980668f692471f8a01870d0547380a",
+        "proposal_id": "proposal-ddd3e71640aa402bbb40883d692c4f4f",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.025,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-60980668f692471f8a01870d0547380a",
+        "kind": "move",
+        "generation": 11,
+        "native_time_s": 28.247999999995223,
+        "native_steps": 1584,
+        "pusher_block_contact_samples": 3178,
+        "max_axis_actuator_force_n": 1.3153962165348574,
+        "state_sha256": "3e55b7e0bf2ef8517aaf3066b75ee6a6433a92aa15dbb4f8f5d788beab29f821"
+      },
+      "challenge_image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+    },
+    {
+      "sequence": 62,
+      "job_id": "ai-disturbed",
+      "generation": 11,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-1ce07c2c0e8b4af0897468a2d7aabfb0",
+        "intent": "The block appears centered in the new green region; pull the pusher left away from contact before measuring.",
+        "observation_sha256": "c385b080a7448784f2e6bbb13ab9a21a5ddbf8ac0c7bc2ff7d54a6fd361efd3b",
+        "operation_id": "agent-184b6f968ae04876917143e5a717fb7a",
+        "proposal_id": "proposal-4756082b5edc4f24b076334707a98d64",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-184b6f968ae04876917143e5a717fb7a",
+        "kind": "move",
+        "generation": 12,
+        "native_time_s": 31.415999999993467,
+        "native_steps": 1584,
+        "pusher_block_contact_samples": 66,
+        "max_axis_actuator_force_n": 0.569265513047462,
+        "state_sha256": "c5eb98e5389520f67d0a5696115aa8d7d7a2ae63ded866d4f74b1716a02128fc"
+      },
+      "challenge_image_sha256": "0d42c93fef97b6bf1ded19965b65518e43b873916c9e8bc1d8300debf130f9fa"
+    },
+    {
+      "sequence": 66,
+      "job_id": "ai-disturbed",
+      "generation": 12,
+      "proposal": {
+        "action": "measure",
+        "challenge_id": "challenge-c2d34501db714daa970aa0cfa132270a",
+        "intent": "The latest image shows the block prepared in the second measurement region with the pusher clear; measure it.",
+        "observation_sha256": "2a65106d4fae92eaf4041ed249ef41fb2c5c35004002fe3189977d8511f53d91",
+        "operation_id": "agent-1651b0bc149b40c5bf581c666d4f99e1",
+        "proposal_id": "proposal-28b240a0c5e944c8b2ab0e793835d374",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "refused",
+      "reason": "observation is stale or foreign; no requested effect dispatched",
+      "receipt_summary": {},
+      "challenge_image_sha256": "126a049946a82dda474c3ec72f2da13b50e2a5e5d1686cc4c408251f75e06d9d"
+    },
+    {
+      "sequence": 70,
+      "job_id": "ai-disturbed",
+      "generation": 13,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-0a4a355152664f8690b4e6cc5c4d03c4",
+        "intent": "The fresh image shows the block displaced left of the green region while the pusher remains left; push it right back toward the target center.",
+        "observation_sha256": "ad507cb4b1ecd5fac93a34b3680eb581d0eafbefea96e16d18ee59c4e916afdc",
+        "operation_id": "agent-069bca35f676423a99b8ce98a5fc1061",
+        "proposal_id": "proposal-b1d32f971dcc4472a9382e1c4303c4a2",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.028,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-069bca35f676423a99b8ce98a5fc1061",
+        "kind": "move",
+        "generation": 14,
+        "native_time_s": 35.76399999999774,
+        "native_steps": 1594,
+        "pusher_block_contact_samples": 2794,
+        "max_axis_actuator_force_n": 1.371068465268717,
+        "state_sha256": "fec6ff3846f7112235a07ec03a974ba3468ba9852bc9e7ebf63f572dda064cf4"
+      },
+      "challenge_image_sha256": "ba1d19598b817acd57a746150d30d4755b48a80287fd362d3a24ce6a0e244d45"
+    },
+    {
+      "sequence": 74,
+      "job_id": "ai-disturbed",
+      "generation": 14,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-48c16468357b44d4a3565bf9e8511e1e",
+        "intent": "The corrective push has brought the block back to the green region; clear the pusher left before a fresh measurement.",
+        "observation_sha256": "59569198225d2fcadd937aebee144237c640e0be9f328b072e7bea1fa7aee7ce",
+        "operation_id": "agent-47235fb2ba1e483db4fd3985073c7f12",
+        "proposal_id": "proposal-d31079ad8f9b41df9d9693fed7b1d10c",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-47235fb2ba1e483db4fd3985073c7f12",
+        "kind": "move",
+        "generation": 15,
+        "native_time_s": 38.95200000000164,
+        "native_steps": 1594,
+        "pusher_block_contact_samples": 66,
+        "max_axis_actuator_force_n": 0.5679920156839486,
+        "state_sha256": "4dd44356d2ac0116aed5dbff1f314ddf300da024850c26ad61191a1672b895c9"
+      },
+      "challenge_image_sha256": "6fc50ac16b71d7a5f11e88c85c3fa2ef13df8374291e764e5e3c7213a38f8c25"
+    },
+    {
+      "sequence": 78,
+      "job_id": "ai-disturbed",
+      "generation": 15,
+      "proposal": {
+        "action": "measure",
+        "challenge_id": "challenge-5a89495500094ccda58a991a9a27f494",
+        "intent": "The fresh image verifies recovered placement with the pusher clear; measure this current state rather than retrying the stale proposal.",
+        "observation_sha256": "d5e448fbe007cc42f9bf85384f5b77046b5b366b38f9016c64375dc832b5d10e",
+        "operation_id": "agent-5dd59ada282f46c6aa679674b91c2983",
+        "proposal_id": "proposal-653340c1067b4593b341d0a5c17f5fe3",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-5dd59ada282f46c6aa679674b91c2983",
+        "kind": "measure",
+        "generation": 15,
+        "state_sha256": "4dd44356d2ac0116aed5dbff1f314ddf300da024850c26ad61191a1672b895c9"
+      },
+      "challenge_image_sha256": "b9a5cd587ca0afbcf85dbb7708030f9914fc7be82d9f29317563c4a7cd204e2f"
+    },
+    {
+      "sequence": 82,
+      "job_id": "ai-disturbed",
+      "generation": 15,
+      "proposal": {
+        "action": "begin_reset",
+        "challenge_id": "challenge-e8114cfa482c4499ada30283ad6d51aa",
+        "intent": "The recovered measurement has been saved and verified; start the second job's contact reset.",
+        "observation_sha256": "96291545eb9577454635f8003039c389aa429bc02d088dd420ee27f0da2f9139",
+        "operation_id": "agent-cd76880c390b4870804c1752de7787ee",
+        "proposal_id": "proposal-f730ddc0014d4c8cbc2ab377fc58d592",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "generation": 15,
+        "native_time_s": 38.95200000000164
+      },
+      "challenge_image_sha256": "b9a5cd587ca0afbcf85dbb7708030f9914fc7be82d9f29317563c4a7cd204e2f"
+    },
+    {
+      "sequence": 86,
+      "job_id": "ai-disturbed",
+      "generation": 15,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-a5477a6495ee49c991b30693bdd152ab",
+        "intent": "Lift the home pusher into the clear upper lane to approach the recovered block from the right.",
+        "observation_sha256": "dffc9cb0085484f265fd45c35b1d5641912e2f85ee453cd5294d9e52dd017b44",
+        "operation_id": "agent-b2b139c73743438a88f7d8fdd6b69ae6",
+        "proposal_id": "proposal-bbfb051bac274a30a9883640b7163e88",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-b2b139c73743438a88f7d8fdd6b69ae6",
+        "kind": "move",
+        "generation": 16,
+        "native_time_s": 40.854000000003964,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128570206,
+        "state_sha256": "96ea71954529f457c436bd3374a38c98f1c8354db6ced335c39ae71a6d815a9a"
+      },
+      "challenge_image_sha256": "b9a5cd587ca0afbcf85dbb7708030f9914fc7be82d9f29317563c4a7cd204e2f"
+    },
+    {
+      "sequence": 90,
+      "job_id": "ai-disturbed",
+      "generation": 16,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-8132b582443e4392b135133800f6b3c9",
+        "intent": "The pusher is clear above the block; cross right far enough to leave a gap beside the second target's block.",
+        "observation_sha256": "78923d47db657e6c3f2d4793eddd26247e254bb64c3f71414cabeee413f6cc49",
+        "operation_id": "agent-31f5d3447bdc4c959f8fcebcda292837",
+        "proposal_id": "proposal-26c0c918565744a78dd5e62adca22618",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.155,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-31f5d3447bdc4c959f8fcebcda292837",
+        "kind": "move",
+        "generation": 17,
+        "native_time_s": 44.888000000008894,
+        "native_steps": 2017,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38525380916615404,
+        "state_sha256": "73f71645ea2ac92f6ee314c4208739ee09cde971373bf3afc8c0d2ca5456179a"
+      },
+      "challenge_image_sha256": "9c6a5951995c9196fd2cb636f7cf6d44888a91202dc61bcf74b3097a0923830c"
+    },
+    {
+      "sequence": 94,
+      "job_id": "ai-disturbed",
+      "generation": 17,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-98023517d0234bca96066852a972469d",
+        "intent": "The blue pusher is beyond the orange block's right face; descend into the pushing lane while keeping that clearance.",
+        "observation_sha256": "19b732785404802032a73291f1b61efeb7b05e112feb65dc04ae2e71be48de0d",
+        "operation_id": "agent-ade0665e21b74c3a888bc087b70df0e7",
+        "proposal_id": "proposal-599e463aa13545c9961af251ce562581",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": 0.155,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-ade0665e21b74c3a888bc087b70df0e7",
+        "kind": "move",
+        "generation": 18,
+        "native_time_s": 46.79000000001122,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128571205,
+        "state_sha256": "66f43add681d9afd93b778fee054d903b0be84d874a7c944b296f6a8fb14d418"
+      },
+      "challenge_image_sha256": "184c403f4a7eeccbd82ba7247128604e475e92229f2db1d6c96595d7fbdd0941"
+    },
+    {
+      "sequence": 98,
+      "job_id": "ai-disturbed",
+      "generation": 18,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-4d9640297ce040beac29488d78a43013",
+        "intent": "Push the recovered block left from its right side until its center returns to the home region.",
+        "observation_sha256": "2edf60f18ae1b4be9e3536086c02d267ec09c2a972c3dd8da23fd679d05b1f08",
+        "operation_id": "agent-e75a593f49e44507bb78388cf36a687e",
+        "proposal_id": "proposal-b955e6b92c10430eb6bc1c05d15feeaf",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.065,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-e75a593f49e44507bb78388cf36a687e",
+        "kind": "move",
+        "generation": 19,
+        "native_time_s": 49.258000000014235,
+        "native_steps": 1234,
+        "pusher_block_contact_samples": 3140,
+        "max_axis_actuator_force_n": 1.2698356367073558,
+        "state_sha256": "a0f0ec383589971e1a03613b651bb9b030fb16d15642875f5554b664be229fb4"
+      },
+      "challenge_image_sha256": "3ef275d26144f92492c90735f8bebdd5cfdcc989da6423ae83715a010873d5f8"
+    },
+    {
+      "sequence": 102,
+      "job_id": "ai-disturbed",
+      "generation": 19,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-20c6400e862f450684f04802b6e8cb11",
+        "intent": "The block is at home again; release the pusher's right-side contact before moving it around the block.",
+        "observation_sha256": "1ba35b89bcd2551e61231066feb5d688806a5be3916fe599ff08dd847518e5a5",
+        "operation_id": "agent-d2ea0866d79243d998331c5f7ba4b0e5",
+        "proposal_id": "proposal-8e37df41a1bf47c4bbbbbcf29266c18b",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.035,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-d2ea0866d79243d998331c5f7ba4b0e5",
+        "kind": "move",
+        "generation": 20,
+        "native_time_s": 50.460000000015704,
+        "native_steps": 601,
+        "pusher_block_contact_samples": 66,
+        "max_axis_actuator_force_n": 0.5646353795216896,
+        "state_sha256": "44f23a1582a444feccb9c870e249463f06b097700bac4b5a471964a8fdefc14f"
+      },
+      "challenge_image_sha256": "bf70dba8e16f7cc3324ef2e5e39d2d5408b83df9f0c03f2f446a57659cb8255a"
+    },
+    {
+      "sequence": 106,
+      "job_id": "ai-disturbed",
+      "generation": 20,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-6ecc3179fac541d48f6c295b638a8a16",
+        "intent": "The gap beside the home block is clear; lift the pusher into the bypass lane for its return.",
+        "observation_sha256": "11c5e1c85f31671ec78c8f20be556a3940fad0a838ca924c53b9ffd8ed8cf8b4",
+        "operation_id": "agent-445f007c1d7e4533b5ca3e26c25b3f4f",
+        "proposal_id": "proposal-58c8f40bc83b47eb975aeeda1762123e",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.035,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-445f007c1d7e4533b5ca3e26c25b3f4f",
+        "kind": "move",
+        "generation": 21,
+        "native_time_s": 52.36200000001803,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128570206,
+        "state_sha256": "fa265d62672cca23c53812efa31387d66592aa20bef95347a97743dbfd86db2e"
+      },
+      "challenge_image_sha256": "6f0d26dda31720cc658216254a63289a4e7804cb2339d2a7489e0365be6f3114"
+    },
+    {
+      "sequence": 110,
+      "job_id": "ai-disturbed",
+      "generation": 21,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-e7b2a397392a416c9bedd0dd02496dd1",
+        "intent": "Cross left above the block, keeping vertical clearance until the pusher reaches its home column.",
+        "observation_sha256": "ead667059eb30587f4e4644db3b4395669edd7ddb304978bac7eaae418eda53e",
+        "operation_id": "agent-4fa1490cdd1048ecb09a04719ecbb068",
+        "proposal_id": "proposal-c786d2479b654bb39beefb874fbd61be",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.135
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-4fa1490cdd1048ecb09a04719ecbb068",
+        "kind": "move",
+        "generation": 22,
+        "native_time_s": 55.13000000002141,
+        "native_steps": 1384,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38504787816081887,
+        "state_sha256": "793337af114683113d0dbbb19022f7b01d00569444efb89c7f11f1b091b69c92"
+      },
+      "challenge_image_sha256": "1505aeadca7409c872c4e3edf9a58508ad3c89e3f5911644449d5f542117d248"
+    },
+    {
+      "sequence": 114,
+      "job_id": "ai-disturbed",
+      "generation": 22,
+      "proposal": {
+        "action": "move",
+        "challenge_id": "challenge-b0dca65c9e7a434a8dad5ea5fd803784",
+        "intent": "The pusher is safely left of the block; return it downward to its home position.",
+        "observation_sha256": "6190a3ace769eb3de80e4fdc76f524591d9072ea8284c233454631c21efcdf53",
+        "operation_id": "agent-6e0ac39e73c046f3b6270133fbff055c",
+        "proposal_id": "proposal-d555c91721ed4ed2992bb92aaf808a53",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": -0.3,
+        "target_y": 0.0
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-6e0ac39e73c046f3b6270133fbff055c",
+        "kind": "move",
+        "generation": 23,
+        "native_time_s": 57.032000000023736,
+        "native_steps": 951,
+        "pusher_block_contact_samples": 0,
+        "max_axis_actuator_force_n": 0.38448407128571205,
+        "state_sha256": "6eecc4d33c156d2bc623608fecc63b5c4282a95fd37c531bf87ec5571d073f30"
+      },
+      "challenge_image_sha256": "94f2de9164d14475774f68d3f5860562d35d3bd09ff9f26349f1d6a4008db583"
+    },
+    {
+      "sequence": 118,
+      "job_id": "ai-disturbed",
+      "generation": 23,
+      "proposal": {
+        "action": "finish_reset",
+        "challenge_id": "challenge-9292c66d94af4c4b93b74f186a0262c3",
+        "intent": "Both visible bodies have returned home after recovery and measurement; verify and complete the second reset.",
+        "observation_sha256": "877139c7001ac604742bfdbc012509a0d1489d468fdebad0d2a39a8ad04dd793",
+        "operation_id": "agent-1fc92aa65ba3418eb400ecf69497e103",
+        "proposal_id": "proposal-dbeab904c5274b8ab4d351a2800ca15f",
+        "session_id": "e663f891cbb84bb5ba355213708165af",
+        "target_x": null,
+        "target_y": null
+      },
+      "outcome": "executed",
+      "reason": null,
+      "receipt_summary": {
+        "operation_id": "agent-1fc92aa65ba3418eb400ecf69497e103",
+        "kind": "finish_reset",
+        "generation": 23,
+        "native_time_s": 57.032000000023736,
+        "state_sha256": "6eecc4d33c156d2bc623608fecc63b5c4282a95fd37c531bf87ec5571d073f30",
+        "block_home_verified": true,
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3206,
+        "reset_native_steps": 9040
+      },
+      "challenge_image_sha256": "a834aeb17495159a215c0d6a51becde2e50afd38f47316aaa1a8c414d4af0bd4"
+    }
+  ]
+}

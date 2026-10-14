@@ -1,0 +1,216 @@
+{
+  "steps": [
+    {
+      "browser_action": "Observed exact body hard-crash outage before restart",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-offline",
+      "offline": false,
+      "pending_command_ids": [
+        "command-75be3033b3774dfb8ebee666241a36e8"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/crash-offline.png",
+      "state": {
+        "active_job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+        "app_id": "b5e77e75097547d49daef66ce7d92528",
+        "connection": {
+          "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+          "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Remote end closed connection without response",
+          "state": "unavailable"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Remote end closed connection without response",
+            "job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+            "label": "Native receipt gap",
+            "last_intent": "Push the block right so its center enters the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-75be3033b3774dfb8ebee666241a36e8",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791835077.2167869,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51381/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51381/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t54 checkbox Native receipt gap Paused, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t55 text Native receipt gap\n\t\t56 text Paused\n\t\t14 button (disabled) Resume, ID: pause\n\t\t57 text reply is uncertain; reconcile exact command without resending\n\t\t15 container Description: Body connection, ID: network-card\n\t\t\t58 text Body unavailable\n\t\t\t59 text Remote end closed connection without response\n\t\t\t18 button Reconnect, ID: disconnect\n\t\t\t19 button (disabled) Check receipt, ID: reconcile\n\t\t\t20 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t21 text Test the simulated connection\n\t\t22 container Camera observation\n\t\t\t23 text OVERHEAD CAMERA\n\t\t\t60 text Retained observation \u00b7 body offline\n\t\t\t53 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t26 text Orange part Blue pusher Green task region\n\t\t\t61 text Retained \u00b7 offline \u00b7 generation 0\n\t\t62 text DISCONNECTED\n\t\t63 text The body connection is unavailable. The last camera observation is retained.\n\t\t30 container Job progress\n\t\t\t31 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t32 container Measurement\n\t\t\t33 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t34 text Measurement\n\t\t\t64 text Pending\n\t\t\t36 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Restored ordinary body retained boot-two unresolved original command",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-restored",
+      "offline": false,
+      "pending_command_ids": [
+        "command-75be3033b3774dfb8ebee666241a36e8"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/crash-restored.png",
+      "state": {
+        "active_job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+        "app_id": "b5e77e75097547d49daef66ce7d92528",
+        "connection": {
+          "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+          "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Independent body has unresolved effects",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+            "job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+            "label": "Native receipt gap",
+            "last_intent": "Push the block right so its center enters the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-75be3033b3774dfb8ebee666241a36e8",
+          "operation": "dispatch",
+          "reason": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791835090.132874,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51381/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51381/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t54 checkbox Native receipt gap Needs attention, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t55 text Native receipt gap\n\t\t56 text Needs attention\n\t\t14 button (disabled) Pause, ID: pause\n\t\t57 text Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image\n\t\t15 container Description: Body connection, ID: network-card\n\t\t\t58 text Body connected\n\t\t\t59 text Independent body has unresolved effects\n\t\t\t18 button Disconnect, ID: disconnect\n\t\t\t19 button Check receipt, ID: reconcile\n\t\t\t20 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t21 text Test the simulated connection\n\t\t22 container Camera observation\n\t\t\t23 text OVERHEAD CAMERA\n\t\t\t60 text Last observation \u00b7 Native receipt gap\n\t\t\t53 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t26 text Orange part Blue pusher Green task region\n\t\t\t61 text Captured \u00b7 generation 0\n\t\t62 text OUTCOME UNCERTAIN\n\t\t63 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t30 container Job progress\n\t\t\t31 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t32 container Measurement\n\t\t\t33 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t34 text Measurement\n\t\t\t64 text Pending\n\t\t\t36 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Exact receipt remained unknown; no completion or new command",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-blocked",
+      "offline": false,
+      "pending_command_ids": [
+        "command-75be3033b3774dfb8ebee666241a36e8"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/crash-blocked.png",
+      "state": {
+        "active_job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+        "app_id": "b5e77e75097547d49daef66ce7d92528",
+        "connection": {
+          "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+          "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Independent body has unresolved effects",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "accepted intent has no verified terminal proof",
+            "job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+            "label": "Native receipt gap",
+            "last_intent": "Push the block right so its center enters the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-75be3033b3774dfb8ebee666241a36e8",
+          "operation": "dispatch",
+          "reason": "accepted intent has no verified terminal proof",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791835101.869333,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51381/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51381/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t54 checkbox Native receipt gap Needs attention, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t55 text Native receipt gap\n\t\t56 text Needs attention\n\t\t14 button (disabled) Pause, ID: pause\n\t\t57 text accepted intent has no verified terminal proof\n\t\t15 container Description: Body connection, ID: network-card\n\t\t\t58 text Body connected\n\t\t\t59 text Independent body has unresolved effects\n\t\t\t18 button Disconnect, ID: disconnect\n\t\t\t19 button Check receipt, ID: reconcile\n\t\t\t20 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t21 text Test the simulated connection\n\t\t22 container Camera observation\n\t\t\t23 text OVERHEAD CAMERA\n\t\t\t60 text Last observation \u00b7 Native receipt gap\n\t\t\t53 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t26 text Orange part Blue pusher Green task region\n\t\t\t61 text Captured \u00b7 generation 0\n\t\t62 text OUTCOME UNCERTAIN\n\t\t63 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t30 container Job progress\n\t\t\t31 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t32 container Measurement\n\t\t\t33 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t34 text Measurement\n\t\t\t64 text Pending\n\t\t\t36 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Another exact read left pending identity and four commands unchanged; continuation disabled",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-still-blocked",
+      "offline": false,
+      "pending_command_ids": [
+        "command-75be3033b3774dfb8ebee666241a36e8"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/crash-still-blocked.png",
+      "state": {
+        "active_job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+        "app_id": "b5e77e75097547d49daef66ce7d92528",
+        "connection": {
+          "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+          "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Independent body has unresolved effects",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "accepted intent has no verified terminal proof",
+            "job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+            "label": "Native receipt gap",
+            "last_intent": "Push the block right so its center enters the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-75be3033b3774dfb8ebee666241a36e8",
+          "operation": "dispatch",
+          "reason": "accepted intent has no verified terminal proof",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791835113.817038,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51381/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51381/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t54 checkbox Native receipt gap Needs attention, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t55 text Native receipt gap\n\t\t56 text Needs attention\n\t\t14 button (disabled) Pause, ID: pause\n\t\t57 text accepted intent has no verified terminal proof\n\t\t15 container Description: Body connection, ID: network-card\n\t\t\t58 text Body connected\n\t\t\t59 text Independent body has unresolved effects\n\t\t\t18 button Disconnect, ID: disconnect\n\t\t\t19 button Check receipt, ID: reconcile\n\t\t\t20 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t21 text Test the simulated connection\n\t\t22 container Camera observation\n\t\t\t23 text OVERHEAD CAMERA\n\t\t\t60 text Last observation \u00b7 Native receipt gap\n\t\t\t53 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t26 text Orange part Blue pusher Green task region\n\t\t\t61 text Captured \u00b7 generation 0\n\t\t62 text OUTCOME UNCERTAIN\n\t\t63 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t30 container Job progress\n\t\t\t31 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t32 container Measurement\n\t\t\t33 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t34 text Measurement\n\t\t\t64 text Pending\n\t\t\t36 text The part\u2019s visible footprint will be measured after its placement is verified."
+    }
+  ]
+}

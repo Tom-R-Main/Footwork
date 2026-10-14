@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {"type": "string", "enum": ["move", "measure", "begin_reset", "finish_reset", "stop"]},
+    "target_x": {"type": ["number", "null"]},
+    "target_y": {"type": ["number", "null"]},
+    "intent": {"type": "string"}
+  },
+  "required": ["action", "target_x", "target_y", "intent"],
+  "additionalProperties": false
+}

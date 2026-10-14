@@ -1,0 +1,591 @@
+{
+  "source_kind": "mujoco_simulation",
+  "source_commit": "ece54ae2b55506f52bc234d05e8dfaf1ec00c94a",
+  "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+  "implementation_sha256": "810d343cf500526ac884badc31bae095f819a3c3e469a3d4a3155c7a20960d3b",
+  "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1",
+  "checks": [
+    {
+      "label": "initial",
+      "command_args": [
+        "init",
+        "--work-order",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/inputs/work-order.json",
+        "--work-order-sha256",
+        "c4a5b752bff6bf7638d48c7376f1a1d950c8ccd8597c58997eee1831b57e2877"
+      ],
+      "exit_code": 0,
+      "result": {
+        "block_center_in_zone": false,
+        "block_xyz": [
+          -0.11999998822184511,
+          1.630059551357049e-11,
+          0.03499573045537004
+        ],
+        "claims": [
+          "native_simulator_state_observation"
+        ],
+        "frame": "sim_world",
+        "generation": 0,
+        "order_id": "footwork-stage-block-001",
+        "phase": "ready",
+        "physical_condition_verified": false,
+        "pusher_xyz": [
+          -0.3,
+          0.0,
+          0.06
+        ],
+        "simulation_time_s": 1.0000000000000007,
+        "source_kind": "mujoco_simulation",
+        "state_authority": "current_persisted_simulator_state",
+        "state_sha256": "3a8c7d1b2c047630a067a0590f939c066b6c621349b6021d26609c85b2e4644b",
+        "target_zone": {
+          "x_max": 0.26,
+          "x_min": 0.18,
+          "y_max": 0.04,
+          "y_min": -0.04
+        }
+      }
+    },
+    {
+      "label": "before-render",
+      "command_args": [
+        "render"
+      ],
+      "exit_code": 0,
+      "result": {
+        "generation": 0,
+        "height": 360,
+        "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/render-000000.png",
+        "image_sha256": "5238c61efa5d4b1ec098c6c6f87c0b864b427376a44874b033b0c8a1484ec597",
+        "simulator_state_sha256": "3a8c7d1b2c047630a067a0590f939c066b6c621349b6021d26609c85b2e4644b",
+        "source_kind": "mujoco_simulation",
+        "width": 640
+      }
+    },
+    {
+      "label": "premature-completion",
+      "command_args": [
+        "complete",
+        "--token",
+        "early-001"
+      ],
+      "exit_code": 2,
+      "result": {
+        "source_kind": "mujoco_simulation",
+        "phase": "refused",
+        "reason": "observed block center is not in the work-order zone; no software result was created",
+        "claims": []
+      }
+    },
+    {
+      "label": "contact-motion",
+      "command_args": [
+        "act",
+        "--token",
+        "move-001",
+        "--expected-generation",
+        "0",
+        "--target-x",
+        "0.15",
+        "--target-y",
+        "0"
+      ],
+      "exit_code": 0,
+      "result": {
+        "observation": {
+          "block_center_in_zone": true,
+          "block_xyz": [
+            0.20075701935390755,
+            -8.394987444074871e-11,
+            0.03499834119111764
+          ],
+          "claims": [
+            "native_simulator_state_observation"
+          ],
+          "frame": "sim_world",
+          "generation": 1,
+          "order_id": "footwork-stage-block-001",
+          "phase": "ready",
+          "physical_condition_verified": true,
+          "pusher_xyz": [
+            0.14575969206037903,
+            -2.3249397224564703e-19,
+            0.06
+          ],
+          "simulation_time_s": 4.999999999999671,
+          "source_kind": "mujoco_simulation",
+          "state_authority": "current_persisted_simulator_state",
+          "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "target_zone": {
+            "x_max": 0.26,
+            "x_min": 0.18,
+            "y_max": 0.04,
+            "y_min": -0.04
+          }
+        },
+        "operation": {
+          "after_generation": 1,
+          "after_state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "before_state_sha256": "3a8c7d1b2c047630a067a0590f939c066b6c621349b6021d26609c85b2e4644b",
+          "controller_evidence": {
+            "command_speed_limit_m_s": 0.15,
+            "max_axis_actuator_force_n": 1.278071451355089,
+            "native_steps": 2000,
+            "pusher_block_contact_samples": 4192
+          },
+          "historical_motion_outcome": "executed",
+          "intent_time_unix": 1791661017.950069,
+          "phase": "executed",
+          "physical_readback": {
+            "block_center_in_zone": true,
+            "block_xyz": [
+              0.20075701935390755,
+              -8.394987444074871e-11,
+              0.03499834119111764
+            ],
+            "pusher_xyz": [
+              0.14575969206037903,
+              -2.3249397224564703e-19,
+              0.06
+            ]
+          },
+          "request": {
+            "expected_generation": 0,
+            "kind": "act",
+            "target_x": 0.15,
+            "target_y": 0.0
+          },
+          "source_kind": "mujoco_simulation",
+          "token": "move-001"
+        },
+        "replayed": false,
+        "source_kind": "mujoco_simulation"
+      }
+    },
+    {
+      "label": "fresh-process-observation",
+      "command_args": [
+        "observe"
+      ],
+      "exit_code": 0,
+      "result": {
+        "block_center_in_zone": true,
+        "block_xyz": [
+          0.20075701935390755,
+          -8.394987444074871e-11,
+          0.03499834119111764
+        ],
+        "claims": [
+          "native_simulator_state_observation"
+        ],
+        "frame": "sim_world",
+        "generation": 1,
+        "order_id": "footwork-stage-block-001",
+        "phase": "ready",
+        "physical_condition_verified": true,
+        "pusher_xyz": [
+          0.14575969206037903,
+          -2.3249397224564703e-19,
+          0.06
+        ],
+        "simulation_time_s": 4.999999999999671,
+        "source_kind": "mujoco_simulation",
+        "state_authority": "current_persisted_simulator_state",
+        "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+        "target_zone": {
+          "x_max": 0.26,
+          "x_min": 0.18,
+          "y_max": 0.04,
+          "y_min": -0.04
+        }
+      }
+    },
+    {
+      "label": "stale-generation",
+      "command_args": [
+        "act",
+        "--token",
+        "stale-001",
+        "--expected-generation",
+        "0",
+        "--target-x",
+        "0.1",
+        "--target-y",
+        "0"
+      ],
+      "exit_code": 2,
+      "result": {
+        "source_kind": "mujoco_simulation",
+        "phase": "refused",
+        "reason": "observation generation is stale; observe again",
+        "claims": []
+      }
+    },
+    {
+      "label": "out-of-bounds",
+      "command_args": [
+        "act",
+        "--token",
+        "bounds-001",
+        "--expected-generation",
+        "1",
+        "--target-x",
+        "1",
+        "--target-y",
+        "0"
+      ],
+      "exit_code": 2,
+      "result": {
+        "source_kind": "mujoco_simulation",
+        "phase": "refused",
+        "reason": "pusher target is outside the admitted workspace",
+        "claims": []
+      }
+    },
+    {
+      "label": "after-render",
+      "command_args": [
+        "render"
+      ],
+      "exit_code": 0,
+      "result": {
+        "generation": 1,
+        "height": 360,
+        "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/render-000001.png",
+        "image_sha256": "76649d3f99a8046a03bde722a3049891b1b766d1ede37040c517bb67bb75e848",
+        "simulator_state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+        "source_kind": "mujoco_simulation",
+        "width": 640
+      }
+    },
+    {
+      "label": "conditional-completion",
+      "command_args": [
+        "complete",
+        "--token",
+        "finish-001"
+      ],
+      "exit_code": 0,
+      "result": {
+        "observation": {
+          "block_center_in_zone": true,
+          "block_xyz": [
+            0.20075701935390755,
+            -8.394987444074871e-11,
+            0.03499834119111764
+          ],
+          "claims": [
+            "native_simulator_state_observation"
+          ],
+          "current_software_artifact_check": {
+            "claims": [
+              "current_artifact_byte_equality"
+            ],
+            "detail": "current bytes equal the digest-bound expected source",
+            "expected_bytes": 1193,
+            "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/expected-order.json",
+            "expected_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "limit_bytes": 1048576,
+            "observed_bytes": 1193,
+            "observed_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "ok": true,
+            "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/order.json",
+            "source_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f"
+          },
+          "frame": "sim_world",
+          "generation": 1,
+          "historical_software_outcome": "staged",
+          "order_id": "footwork-stage-block-001",
+          "phase": "completed",
+          "physical_condition_verified": true,
+          "pusher_xyz": [
+            0.14575969206037903,
+            -2.3249397224564703e-19,
+            0.06
+          ],
+          "simulation_time_s": 4.999999999999671,
+          "source_kind": "mujoco_simulation",
+          "state_authority": "current_persisted_simulator_state",
+          "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "target_zone": {
+            "x_max": 0.26,
+            "x_min": 0.18,
+            "y_max": 0.04,
+            "y_min": -0.04
+          }
+        },
+        "operation": {
+          "artifact_check": {
+            "claims": [
+              "current_artifact_byte_equality"
+            ],
+            "detail": "current bytes equal the digest-bound expected source",
+            "expected_bytes": 1193,
+            "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/expected-order.json",
+            "expected_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "limit_bytes": 1048576,
+            "observed_bytes": 1193,
+            "observed_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "ok": true,
+            "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/order.json",
+            "source_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f"
+          },
+          "historical_software_outcome": "staged",
+          "intent_time_unix": 1791661018.626794,
+          "phase": "staged",
+          "physical_readback": {
+            "block_center_in_zone": true,
+            "block_xyz": [
+              0.20075701935390755,
+              -8.394987444074871e-11,
+              0.03499834119111764
+            ],
+            "pusher_xyz": [
+              0.14575969206037903,
+              -2.3249397224564703e-19,
+              0.06
+            ]
+          },
+          "request": {
+            "kind": "complete",
+            "work_order_sha256": "c4a5b752bff6bf7638d48c7376f1a1d950c8ccd8597c58997eee1831b57e2877"
+          },
+          "result_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "token": "finish-001"
+        },
+        "replayed": false,
+        "source_kind": "mujoco_simulation"
+      }
+    },
+    {
+      "label": "repeated-motion-token",
+      "command_args": [
+        "act",
+        "--token",
+        "move-001",
+        "--expected-generation",
+        "0",
+        "--target-x",
+        "0.15",
+        "--target-y",
+        "0"
+      ],
+      "exit_code": 0,
+      "result": {
+        "observation": {
+          "block_center_in_zone": true,
+          "block_xyz": [
+            0.20075701935390755,
+            -8.394987444074871e-11,
+            0.03499834119111764
+          ],
+          "claims": [
+            "native_simulator_state_observation"
+          ],
+          "current_software_artifact_check": {
+            "claims": [
+              "current_artifact_byte_equality"
+            ],
+            "detail": "current bytes equal the digest-bound expected source",
+            "expected_bytes": 1193,
+            "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/expected-order.json",
+            "expected_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "limit_bytes": 1048576,
+            "observed_bytes": 1193,
+            "observed_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "ok": true,
+            "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/order.json",
+            "source_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f"
+          },
+          "frame": "sim_world",
+          "generation": 1,
+          "historical_software_outcome": "staged",
+          "order_id": "footwork-stage-block-001",
+          "phase": "completed",
+          "physical_condition_verified": true,
+          "pusher_xyz": [
+            0.14575969206037903,
+            -2.3249397224564703e-19,
+            0.06
+          ],
+          "simulation_time_s": 4.999999999999671,
+          "source_kind": "mujoco_simulation",
+          "state_authority": "current_persisted_simulator_state",
+          "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "target_zone": {
+            "x_max": 0.26,
+            "x_min": 0.18,
+            "y_max": 0.04,
+            "y_min": -0.04
+          }
+        },
+        "operation": {
+          "after_generation": 1,
+          "after_state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "before_state_sha256": "3a8c7d1b2c047630a067a0590f939c066b6c621349b6021d26609c85b2e4644b",
+          "controller_evidence": {
+            "command_speed_limit_m_s": 0.15,
+            "max_axis_actuator_force_n": 1.278071451355089,
+            "native_steps": 2000,
+            "pusher_block_contact_samples": 4192
+          },
+          "historical_motion_outcome": "executed",
+          "intent_time_unix": 1791661017.950069,
+          "phase": "executed",
+          "physical_readback": {
+            "block_center_in_zone": true,
+            "block_xyz": [
+              0.20075701935390755,
+              -8.394987444074871e-11,
+              0.03499834119111764
+            ],
+            "pusher_xyz": [
+              0.14575969206037903,
+              -2.3249397224564703e-19,
+              0.06
+            ]
+          },
+          "request": {
+            "expected_generation": 0,
+            "kind": "act",
+            "target_x": 0.15,
+            "target_y": 0.0
+          },
+          "source_kind": "mujoco_simulation",
+          "token": "move-001"
+        },
+        "replayed": false,
+        "source_kind": "mujoco_simulation"
+      }
+    },
+    {
+      "label": "repeated-completion-token",
+      "command_args": [
+        "complete",
+        "--token",
+        "finish-001"
+      ],
+      "exit_code": 0,
+      "result": {
+        "observation": {
+          "block_center_in_zone": true,
+          "block_xyz": [
+            0.20075701935390755,
+            -8.394987444074871e-11,
+            0.03499834119111764
+          ],
+          "claims": [
+            "native_simulator_state_observation"
+          ],
+          "current_software_artifact_check": {
+            "claims": [
+              "current_artifact_byte_equality"
+            ],
+            "detail": "current bytes equal the digest-bound expected source",
+            "expected_bytes": 1193,
+            "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/expected-order.json",
+            "expected_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "limit_bytes": 1048576,
+            "observed_bytes": 1193,
+            "observed_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "ok": true,
+            "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/order.json",
+            "source_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f"
+          },
+          "frame": "sim_world",
+          "generation": 1,
+          "historical_software_outcome": "staged",
+          "order_id": "footwork-stage-block-001",
+          "phase": "completed",
+          "physical_condition_verified": true,
+          "pusher_xyz": [
+            0.14575969206037903,
+            -2.3249397224564703e-19,
+            0.06
+          ],
+          "simulation_time_s": 4.999999999999671,
+          "source_kind": "mujoco_simulation",
+          "state_authority": "current_persisted_simulator_state",
+          "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "target_zone": {
+            "x_max": 0.26,
+            "x_min": 0.18,
+            "y_max": 0.04,
+            "y_min": -0.04
+          }
+        },
+        "operation": {
+          "artifact_check": {
+            "claims": [
+              "current_artifact_byte_equality"
+            ],
+            "detail": "current bytes equal the digest-bound expected source",
+            "expected_bytes": 1193,
+            "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/expected-order.json",
+            "expected_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "limit_bytes": 1048576,
+            "observed_bytes": 1193,
+            "observed_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+            "ok": true,
+            "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/order.json",
+            "source_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f"
+          },
+          "historical_software_outcome": "staged",
+          "intent_time_unix": 1791661018.626794,
+          "phase": "staged",
+          "physical_readback": {
+            "block_center_in_zone": true,
+            "block_xyz": [
+              0.20075701935390755,
+              -8.394987444074871e-11,
+              0.03499834119111764
+            ],
+            "pusher_xyz": [
+              0.14575969206037903,
+              -2.3249397224564703e-19,
+              0.06
+            ]
+          },
+          "request": {
+            "kind": "complete",
+            "work_order_sha256": "c4a5b752bff6bf7638d48c7376f1a1d950c8ccd8597c58997eee1831b57e2877"
+          },
+          "result_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "95629caca4dca0408800ca3cb6ec6a48b8db2af5a19b0828d866e210b4e33afc",
+          "token": "finish-001"
+        },
+        "replayed": false,
+        "source_kind": "mujoco_simulation"
+      }
+    },
+    {
+      "label": "independent-public-footwork-check",
+      "exit_code": 0,
+      "result": {
+        "claims": [
+          "current_artifact_byte_equality"
+        ],
+        "detail": "current bytes equal the digest-bound expected source",
+        "expected_bytes": 1193,
+        "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/expected-order.json",
+        "expected_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+        "limit_bytes": 1048576,
+        "observed_bytes": 1193,
+        "observed_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f",
+        "ok": true,
+        "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/demo-v1/order.json",
+        "source_sha256": "978bd2888c4677bdaf7e97c826fbb86cfd052a086932b203208e64e4397e650f"
+      }
+    }
+  ],
+  "all_assertions_passed": true,
+  "limits": [
+    "simulator ground truth; no learned vision",
+    "one XY pusher; no robot hardware",
+    "local work-order file; no external project update"
+  ]
+}

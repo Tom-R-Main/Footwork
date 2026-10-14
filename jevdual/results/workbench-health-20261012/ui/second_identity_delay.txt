@@ -1,0 +1,87 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			125 checkbox Health inspection 01 Completed, Value: 0
+			126 checkbox Health inspection 02 Working, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		127 text Health inspection 02
+		128 text Running
+		16 button Pause, ID: pause
+		129 text A health reply is delayed. Planning can continue; commands require a fresh body check.
+		18 container Description: Body connection, ID: network-card
+			130 text Checking body
+			131 text Health read delayed; fresh body proof is required before any command
+			21 button Disconnect, ID: disconnect
+			22 button (disabled) Check receipt, ID: reconcile
+			66 container
+				67 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					68 text Test the simulated connection
+				69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				70 button Lose next reply, ID: fault-drop
+				71 button Delay next reply, ID: fault-delay
+				72 button Duplicate next command, ID: fault-duplicate
+				132 text No reply fault armed.
+		25 container Camera observation
+			26 text OVERHEAD CAMERA
+			133 text Last observation · health unconfirmed
+			28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			29 text Orange part Blue pusher Green task region
+			134 text Last captured · health unconfirmed · generation 21
+		135 text AI IS PLANNING
+		136 text Planning the next move from the latest camera image.
+		33 container Job progress
+			34 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		35 container Measurement
+			36 heading Measurement, Value: 2, ID: measurement-heading
+				37 text Measurement
+			137 text Historical result
+			117 container measurement-result
+				138 text 1,729
+				119 text Orange pixels
+				120 container
+					139 text 4,802.8
+					122 text mm²
+				123 text Apparent footprint
+				124 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+		40 container Activity
+			41 heading Activity, Value: 2, ID: activity-heading
+				42 text Activity
+			140 text 24 events
+			104 content list activity
+				141 container
+					142 text 03:11 PM AI planning requested Health inspection 02
+				143 container
+					144 text 03:11 PM Camera observation received Health inspection 02
+				145 container
+					146 text 03:11 PM Requesting camera observation
+				147 container
+					148 text 03:11 PM Fresh body check verified The next command uses current body evidence.
+				149 container
+					150 text 03:11 PM Action receipt checked Health inspection 02
+				151 container
+					152 text 03:11 PM Sending a guarded action
+				153 container
+					154 text 03:11 PM Fresh body check verified The next command uses current body evidence.
+				155 container
+					156 text 03:11 PM Action proposal accepted Health inspection 02
+				157 container
+					158 text 03:11 PM Checking the planned action
+				159 container
+					160 text 03:11 PM Fresh body check verified The next command uses current body evidence.
+				161 container
+					162 text 03:10 PM AI planning requested Health inspection 02
+				163 container
+					164 text 03:10 PM Camera observation received Health inspection 02
+		44 button (collapsed) Session details, Secondary Actions: Expand
+			45 text Session details
+		165 text 27 model requests · Reported tokens: 339,682 input / 4,017 output · Reporting incomplete (26 of 27 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

@@ -1,0 +1,216 @@
+{
+  "steps": [
+    {
+      "browser_action": "Observed body unavailable after native motion saved without completion receipt",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-offline",
+      "offline": false,
+      "pending_command_ids": [
+        "command-20204cceb73b473eb66857af0b813c1d"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/ui/crash-offline.png",
+      "state": {
+        "active_job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+        "app_id": "536221822098429cac997e554389c561",
+        "connection": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Remote end closed connection without response",
+          "state": "unavailable"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Remote end closed connection without response",
+            "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+            "label": "Missing native receipt stays blocked",
+            "last_intent": "Push the block right so its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791860545.301014,
+      "visible_text": "Browser tab: 7, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51425/\".\n0 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51425/\n\t1 container\n\t\t2 text Footwork Bench\n\t\t3 text SIMULATION\n\t4 container Jobs\n\t\t5 text WORK QUEUE\n\t\t6 button (disabled) \uff0b New job, ID: new-job\n\t\t47 checkbox Missing native receipt stays blocked Paused, Value: 1\n\t\t8 text One bench. Successive jobs.\n\t\t9 text The AI prepares the part, takes a measurement, and returns it home before the next job.\n\t10 container\n\t\t11 heading Bench, Value: 1\n\t\t\t12 text Bench\n\t\t48 text Missing native receipt stays blocked\n\t\t49 text Paused\n\t\t15 button (disabled) Resume, ID: pause\n\t\t50 text reply is uncertain; reconcile exact command without resending\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t51 text Body unavailable\n\t\t\t52 text Remote end closed connection without response\n\t\t\t19 button Reconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t53 text Retained observation \u00b7 body offline\n\t\t\t54 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t55 text Retained \u00b7 offline \u00b7 generation 0\n\t\t56 text DISCONNECTED\n\t\t57 text The body connection is unavailable. The last camera observation is retained.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t58 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "New body boot retains exact unresolved command and disables continuation",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-restored",
+      "offline": false,
+      "pending_command_ids": [
+        "command-20204cceb73b473eb66857af0b813c1d"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/ui/crash-restored.png",
+      "state": {
+        "active_job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+        "app_id": "536221822098429cac997e554389c561",
+        "connection": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Independent body has unresolved effects",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+            "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+            "label": "Missing native receipt stays blocked",
+            "last_intent": "Push the block right so its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+          "operation": "dispatch",
+          "reason": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791860804.216393,
+      "visible_text": "Browser tab: 7, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51425/\".\n0 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51425/\n\t1 container\n\t\t2 text Footwork Bench\n\t\t3 text SIMULATION\n\t4 container Jobs\n\t\t5 text WORK QUEUE\n\t\t6 button (disabled) \uff0b New job, ID: new-job\n\t\t55 checkbox Missing native receipt stays blocked Needs attention, Value: 1\n\t\t8 text One bench. Successive jobs.\n\t\t9 text The AI prepares the part, takes a measurement, and returns it home before the next job.\n\t10 container\n\t\t11 heading Bench, Value: 1\n\t\t\t12 text Bench\n\t\t56 text Missing native receipt stays blocked\n\t\t57 text Needs attention\n\t\t15 button (disabled) Pause, ID: pause\n\t\t58 text Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t59 text Body connected\n\t\t\t60 text Independent body has unresolved effects\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t61 text Last observation \u00b7 Missing native receipt stays blocked\n\t\t\t54 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t62 text Captured \u00b7 generation 0\n\t\t63 text OUTCOME UNCERTAIN\n\t\t64 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t65 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Clicked Check receipt; missing native completion proof remains uncertain and commands unchanged",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-blocked",
+      "offline": false,
+      "pending_command_ids": [
+        "command-20204cceb73b473eb66857af0b813c1d"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/ui/crash-blocked.png",
+      "state": {
+        "active_job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+        "app_id": "536221822098429cac997e554389c561",
+        "connection": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Independent body has unresolved effects",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "accepted intent has no verified terminal proof",
+            "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+            "label": "Missing native receipt stays blocked",
+            "last_intent": "Push the block right so its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+          "operation": "dispatch",
+          "reason": "accepted intent has no verified terminal proof",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791860945.7255082,
+      "visible_text": "Browser tab: 7, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51425/\".\n0 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51425/\n\t1 container\n\t\t2 text Footwork Bench\n\t\t3 text SIMULATION\n\t4 container Jobs\n\t\t5 text WORK QUEUE\n\t\t6 button (disabled) \uff0b New job, ID: new-job\n\t\t55 checkbox Missing native receipt stays blocked Needs attention, Value: 1\n\t\t8 text One bench. Successive jobs.\n\t\t9 text The AI prepares the part, takes a measurement, and returns it home before the next job.\n\t10 container\n\t\t11 heading Bench, Value: 1\n\t\t\t12 text Bench\n\t\t56 text Missing native receipt stays blocked\n\t\t57 text Needs attention\n\t\t15 button (disabled) Pause, ID: pause\n\t\t58 text Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t59 text Body connected\n\t\t\t60 text Independent body has unresolved effects\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t61 text Last observation \u00b7 Missing native receipt stays blocked\n\t\t\t54 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t62 text Captured \u00b7 generation 0\n\t\t63 text OUTCOME UNCERTAIN\n\t\t64 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t65 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Repeated exact Check receipt; same unresolved token, no new commands or continuation",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-still-blocked",
+      "offline": false,
+      "pending_command_ids": [
+        "command-20204cceb73b473eb66857af0b813c1d"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/ui/crash-still-blocked.png",
+      "state": {
+        "active_job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+        "app_id": "536221822098429cac997e554389c561",
+        "connection": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Independent body has unresolved effects",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "accepted intent has no verified terminal proof",
+            "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+            "label": "Missing native receipt stays blocked",
+            "last_intent": "Push the block right so its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+          "operation": "dispatch",
+          "reason": "accepted intent has no verified terminal proof",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791861030.412361,
+      "visible_text": "Browser tab: 7, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51425/\".\n0 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51425/\n\t1 container\n\t\t2 text Footwork Bench\n\t\t3 text SIMULATION\n\t4 container Jobs\n\t\t5 text WORK QUEUE\n\t\t6 button (disabled) \uff0b New job, ID: new-job\n\t\t68 checkbox Missing native receipt stays blocked Needs attention, Value: 1\n\t\t8 text One bench. Successive jobs.\n\t\t9 text The AI prepares the part, takes a measurement, and returns it home before the next job.\n\t10 container\n\t\t11 heading Bench, Value: 1\n\t\t\t12 text Bench\n\t\t69 text Missing native receipt stays blocked\n\t\t70 text Needs attention\n\t\t15 button (disabled) Pause, ID: pause\n\t\t71 text accepted intent has no verified terminal proof\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t72 text Body connected\n\t\t\t73 text Independent body has unresolved effects\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t74 text Last observation \u00b7 Missing native receipt stays blocked\n\t\t\t54 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t75 text Captured \u00b7 generation 0\n\t\t76 text OUTCOME UNCERTAIN\n\t\t77 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t78 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    }
+  ]
+}

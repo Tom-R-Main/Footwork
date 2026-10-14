@@ -1,0 +1,290 @@
+{
+  "active_job_id": null,
+  "activity": [
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-3f9612fde2f84937923d289833d1cd95",
+      "seq": 131,
+      "time": 1791860859.06847
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "9b96fd8f2ab49f4a8b8ec92a9b8651061a73355c22526098ce3ca044ed4dd440"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 132,
+      "time": 1791860859.122879
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 133,
+      "time": 1791860859.162477
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-eca41d65274f4d50a46869065ea7bad5",
+      "seq": 134,
+      "time": 1791860859.371604
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "d291139d0c6ba08c36f28acac8990f595344de8d206c27712639b5b5af8b1eb9"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 135,
+      "time": 1791860859.427273
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 136,
+      "time": 1791860859.468482
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-65e5701648ce496aa2a1433078aabc7f",
+      "seq": 137,
+      "time": 1791860859.645217
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "inference",
+      "outcome": "14",
+      "seq": 138,
+      "time": 1791860859.646932
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "94bb8b8563324b4d327c8070a8e1cf99c5a133b5a104fd99fd3c2942c9d8e71a"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 139,
+      "time": 1791860867.169062
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 140,
+      "time": 1791860867.212686
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-96098171ac4447cf9cb6a7b2facb798d",
+      "seq": 141,
+      "time": 1791860867.295264
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "6fed8287d24fddf7219a4010d559602cf9635bb8478a086949e4e3b3ce1676cd"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 142,
+      "time": 1791860867.361056
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 143,
+      "time": 1791860867.4049459
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-3d83235444f841cdbba5d555c9d5246d",
+      "seq": 144,
+      "time": 1791860867.637874
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "510775598cb2b10ed20272d4daadd242ac0e590c38dd52fbfddf9c5381986ecc"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 145,
+      "time": 1791860867.700633
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 146,
+      "time": 1791860867.7447581
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-047b4fe7d49c425c84abf5b3840b8f46",
+      "seq": 147,
+      "time": 1791860867.9181042
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "inference",
+      "outcome": "15",
+      "seq": 148,
+      "time": 1791860867.9198852
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "d96a40d00cc5f53d52e520d2589d9974be0c73d045b8b23e49d9e8faddb12074"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 149,
+      "time": 1791860874.962473
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 150,
+      "time": 1791860875.005901
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-4f154fdba3aa4493846a014f77143055",
+      "seq": 151,
+      "time": 1791860875.085974
+    },
+    {
+      "evidence": {
+        "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+        "body_id": "d2820395d03d485492e1225f1972a12d",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "357b8fa432c119b488a0055f0626a482438a04263bc4c3849910d503196533c3"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 152,
+      "time": 1791860875.1431081
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 153,
+      "time": 1791860875.183298
+    },
+    {
+      "intent": "Retire planner and recover reply",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-8ef12068ba8a4f199cd3e55144180692",
+      "seq": 154,
+      "time": 1791860875.4448261
+    }
+  ],
+  "app_id": "3e44f35fead1476292e3976e8a3e6b63",
+  "connection": {
+    "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+    "body_id": "d2820395d03d485492e1225f1972a12d",
+    "epoch": 1,
+    "fault": null,
+    "reason": "Body identity verified by read-only TCP health",
+    "state": "connected"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 11,
+    "image_url": "/api/frame?generation=11&sha256=970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f"
+  },
+  "jobs": [
+    {
+      "call_count": 15,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "0bc391fc-81d4-4d6a-a267-965b153f8cab",
+      "label": "Retire planner and recover reply",
+      "last_intent": "Finish reset now that the block is centered in the home zone and the pusher is at its home position.",
+      "measurement": {
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "d2820395d03d485492e1225f1972a12d",
+        "block_home_verified": true,
+        "generation": 11,
+        "image_sha256": "970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f",
+        "job_id": "0bc391fc-81d4-4d6a-a267-965b153f8cab",
+        "kind": "finish_reset",
+        "native_time_s": 22.94799999999816,
+        "operation_id": "agent-e8c188b67ec74303916d4a975c30c34e",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3132,
+        "reset_native_steps": 8206,
+        "state_sha256": "31f1e85639b1f4712ff98a8b2c3158de32f0e08e3204141921cfac1648fe0b6e"
+      },
+      "status": "completed",
+      "target": "A"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": null,
+  "readiness": {
+    "ready": true,
+    "reason": "Resumed; next decision receives a fresh TCP image"
+  },
+  "recovery": {
+    "command_id": null,
+    "operation": null,
+    "reason": "No pending command",
+    "state": "none"
+  },
+  "runner_status": "running",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 15,
+    "input_tokens": 183745,
+    "output_tokens": 2157,
+    "reported_calls": 14,
+    "token_usage_complete": false
+  }
+}

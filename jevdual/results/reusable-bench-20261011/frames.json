@@ -1,0 +1,816 @@
+[
+  {
+    "job": "ordinary",
+    "generation": 0,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000000-06bd7f2dbe3bd2be.png",
+    "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+    "rgb_block_xy": [
+      -0.12,
+      0.0
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 1,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000001-30fbc0a36b75bdfa.png",
+    "image_sha256": "f19c8850898f1bbfb79f6d4fe8724cfef401e13249e4d22ed351add263297567",
+    "rgb_block_xy": [
+      -0.12,
+      0.0
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 2,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000002-efb1219bec6b6113.png",
+    "image_sha256": "607499232ce734cc4da64b2efe4e2f6e2e5206f1cd323287588b38a49c9b531b",
+    "rgb_block_xy": [
+      -0.06916666666666667,
+      0.0
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 3,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000003-00f7e4f0eea3b611.png",
+    "image_sha256": "16cfb44f7f3e8100544be9f5e5be350c47ba9304267ea9cd11f9ce31619877a6",
+    "rgb_block_xy": [
+      0.016666666666666666,
+      0.0
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 4,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000004-a88d5d7a2e045d5d.png",
+    "image_sha256": "797f84e48d5cce42f7a9336d70d468a5b81af79df2e77bc8a612f40ec4b6146c",
+    "rgb_block_xy": [
+      0.06666666666666667,
+      0.0
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 5,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000005-a4778ca8afdbb83d.png",
+    "image_sha256": "0650fc6d562b1e06b4742a96194052ac9b8cafad894a1b40b6ce13a091f31790",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 6,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000006-2a5f0b33b6c4e3c8.png",
+    "image_sha256": "60cd3bd5c2575c1b40a8421d8d4c72507e6f7276281c5702e650e803caf520d1",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 7,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000007-555f34018372553c.png",
+    "image_sha256": "a97491eeb6bc704d87ac6f336a4f5e538763683c1b6f6c93808a2bf27662604b",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 8,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000008-bb489d76e963cbc1.png",
+    "image_sha256": "a021eaaed22fab98554c6fddfb50a9bcb288ddffa5fd3bbfc33f05cc179b9f5a",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 9,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000009-f07256f72f9915a4.png",
+    "image_sha256": "da6d4b2a65d22e2b78580638a84588cf5123a4a680f17ff34c2519a4e75c4926",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 10,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000010-0b2530ff4f75f930.png",
+    "image_sha256": "1b9d4add8c9bd4d38631e7976a414ae702820d8527e41993b172c092992d8639",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 11,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000011-2036ca40d713f438.png",
+    "image_sha256": "21fe1a646ee0bf63a025ef29db8bf162ba5add5a1945981de7aca61ee448de16",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 11,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000011-739139d81e2184d5.png",
+    "image_sha256": "21fe1a646ee0bf63a025ef29db8bf162ba5add5a1945981de7aca61ee448de16",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 12,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000012-433bece52239539a.png",
+    "image_sha256": "03cf8ba125406470564e6eed02faef19f9f3c82e0a90a67f6fd647c88e290c7d",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 13,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000013-40aaf089d6d5cee8.png",
+    "image_sha256": "da6d4b2a65d22e2b78580638a84588cf5123a4a680f17ff34c2519a4e75c4926",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 14,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000014-adf208b26ff0bf6c.png",
+    "image_sha256": "5b5b1cbeb670b2f88143d7858214b19a9086270cb4b04fae612c950701407001",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 15,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000015-c3c45ea02c8fdd51.png",
+    "image_sha256": "cfab87bf495bd7c27d64ebd2fdac7ff6e398fc2e5831413be8e0ccffa71aca57",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 16,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000016-7240c0d26977cec8.png",
+    "image_sha256": "4ddd3216a9eb4d56ba1834db452402eb24cc61a33519f876e77ecd820cbfa082",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 17,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000017-b1f524520b7575d5.png",
+    "image_sha256": "e80ff80f87c553bbdfa02906775795ccd5d5fa488eae639004308f36a9f35d42",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 18,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000018-ec5331ff64196736.png",
+    "image_sha256": "5350b6e41e31f601321915a36020f830496bcff7215f55b0560a046238b5bd72",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 19,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000019-3c567d3d406eead2.png",
+    "image_sha256": "657231f938f06043dd271c6b4021d1d3daff9fae939710d203bea29c40fb2f06",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 20,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000020-50e0b4cbe8e57f3d.png",
+    "image_sha256": "51b513444102708859d9bd6d90c663597f1e33ff91c3b89ed52cc0b7d863f368",
+    "rgb_block_xy": [
+      -0.0075,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 21,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000021-9d69c38d2f08a75e.png",
+    "image_sha256": "8b0ad2b3dfcbf3f17d2ae73bf32e1a6403750c540b18d8b13d4ea1c94e46fa74",
+    "rgb_block_xy": [
+      -0.09333333333333332,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 22,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000022-4b0363b952560fdf.png",
+    "image_sha256": "ac8e4fbca11ce2d968b6e713dbd79de4e3634d7af3a4de687a5e12b2a0140c16",
+    "rgb_block_xy": [
+      -0.11666666666666665,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 23,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000023-e705832977801ee6.png",
+    "image_sha256": "c3070feb09a26394068db158583f088d965b830eddc3596295208ef1f71dd49f",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 24,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000024-d64998dcd881c151.png",
+    "image_sha256": "12120a17ecae93fd3dcfbd12c5973f75505c562e085bcf8c759983b00e623c9f",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 25,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000025-70efbaf4f4c1295b.png",
+    "image_sha256": "1d32b533cd710a71767e184b2f3778d6436734b3da56c62c83ffa612517d1d55",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 26,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000026-2681f7d655fb5cd9.png",
+    "image_sha256": "e72aaa93ee103b5a9c832b60319f66a60cd79350430e12394d1afac5926d4fd8",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 27,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000027-930259e07434b01d.png",
+    "image_sha256": "c631922bd41d53a2ee464c3159699244fe8f6ad8b498b8d135bebec14738db47",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 28,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000028-a777a546f8daaf58.png",
+    "image_sha256": "76dd16f818d93de4466541e2ec844528328f3fa2bf36f1c54667bb42cfc5613d",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "ordinary",
+    "generation": 29,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000029-287882198cb6a568.png",
+    "image_sha256": "8541989ea39a283f4a94c00dad6404c12083ec3518652a863b0aea9f1fec18b9",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 29,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000029-501600c40ffa9d0c.png",
+    "image_sha256": "8541989ea39a283f4a94c00dad6404c12083ec3518652a863b0aea9f1fec18b9",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 30,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000030-0f96bb0f89fdcc9d.png",
+    "image_sha256": "94eafbcd7bc044a229799895f695dd6edc5c4dcb0660427c6c6db3b16a19d4f4",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 31,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000031-1c9c9b5ad2e0e3f1.png",
+    "image_sha256": "cba782ece218cc172746794534d23047445079e7931fdcd928227542aa8f4b4c",
+    "rgb_block_xy": [
+      -0.06833333333333333,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 32,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000032-b59e1ab1afbcf81d.png",
+    "image_sha256": "a5a191b09de9c1d32f19edbebb6d529d395cef06f0eb65810816e11efd34bbeb",
+    "rgb_block_xy": [
+      0.017499999999999998,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 33,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000033-36b1d94f25bbd325.png",
+    "image_sha256": "f6d017a563f47ffa33990f31ed9e3407700e2a7ad6e5632c597b26d3192574fa",
+    "rgb_block_xy": [
+      0.06666666666666667,
+      0.0016666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 34,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000034-39cb9fbfe5a52493.png",
+    "image_sha256": "ae2a7791cca842c763cfb925ba225ca9ef33477106e0f3d6aec0e8f1acee1c00",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 35,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000035-8cc7a1d56799bce1.png",
+    "image_sha256": "5223adda47471ac2562612281410ff3396147e7e85848e44d8f2b69d928989d2",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 36,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000036-18382a237ba2db75.png",
+    "image_sha256": "1226116c3478aca946fec896fe1a196063627c3ffa0da3e4e3682d2fad49c011",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 37,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000037-19a2674cc0238337.png",
+    "image_sha256": "ea5151cf0e988785f34a15a02ed461db9d7c3455715bc5fb536a6e92eb3b10ef",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 38,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000038-c790198948e89617.png",
+    "image_sha256": "bb26cfe741f3a0aa63a9499b0ed12d94040cc12e11c6d741c058e1508c73a068",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 39,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000039-95f5380378b3015c.png",
+    "image_sha256": "ce811e5ac5053f7a3d24f54d1974a5368dc3a585a591ceebb811fa5c8f09151c",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 40,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000040-12feb76f804f3905.png",
+    "image_sha256": "6b882e01b655351f945ad7e0819eb40545803a3dcdeae5c1b5688475cc5f0cf7",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 41,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000041-12feb76f804f3905.png",
+    "image_sha256": "0eb29d55f0e6adbb1f6d8c146ce12ace779e202cad6ef9dbe27d1a7f3e263e11",
+    "rgb_block_xy": [
+      -0.065,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 42,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000042-ad5fd4bf34953b81.png",
+    "image_sha256": "b26333302c61e7effe06418e6b4a99001683029ebd93f84097eccb56e193fdd4",
+    "rgb_block_xy": [
+      -0.065,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 43,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000043-b7fa4cc4b8656c4c.png",
+    "image_sha256": "23d84ce93a234bae465e517f2bc7bdd0fb3f0932f4abfc4282fc963f9a974867",
+    "rgb_block_xy": [
+      -0.065,
+      0.003333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 44,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000044-b9d6c88c4c2ee242.png",
+    "image_sha256": "8c30a7499c1211a124511e0975cff592091cf119a5d268e3ae756e4244583540",
+    "rgb_block_xy": [
+      0.021666666666666664,
+      0.005833333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 45,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000045-6739afa4617b2728.png",
+    "image_sha256": "1f9020149f3ae06d4924714ed55255139664cc88b8dbd2930d28da19161713dd",
+    "rgb_block_xy": [
+      0.06583333333333333,
+      0.005833333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 46,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000046-c416190568c01c84.png",
+    "image_sha256": "bef433ddb2e49bf51c463f5e15e4ad3a8607a45031367ef1ed6e50b102d7a01f",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 47,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000047-c7c59c956a22767c.png",
+    "image_sha256": "4207d9cfbbd69a6056a2ba1c3fdfad0242ea4f5612c9ecab6f12e81d405403e7",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 48,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000048-007b5293052819d7.png",
+    "image_sha256": "25958b371397ae09b5db16a8096fd14b8a9dbc6328ca9d7ca01d80e5e0baddb7",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 49,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000049-84f47e85023670b0.png",
+    "image_sha256": "75716e1ce4cfe9c339c365621fbd180815e71e82226ba2625b2d74cb2906f10a",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 50,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000050-9f1d6a6991037984.png",
+    "image_sha256": "583f4b48ea7f4eb3aaa80d2a2647091874e9a2efe2e764ff41cc57d1caa23f1b",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 51,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000051-6947b83c2a1168ce.png",
+    "image_sha256": "2dedc20f86a88162febee4d3558954e4ba15c2880bc63dd23733cf8ee487fd3a",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 52,
+    "phase": "prepare",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000052-f36f14f20ec8a394.png",
+    "image_sha256": "4a3a1f6bed1d0140562fd77a0b71d21f95db426f05fa78b77eb692fda4e44de9",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 52,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000052-e09d3bb49a8cdb26.png",
+    "image_sha256": "4a3a1f6bed1d0140562fd77a0b71d21f95db426f05fa78b77eb692fda4e44de9",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 53,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000053-341ad57abdf5c712.png",
+    "image_sha256": "732442781cdeeb13e29b5abc96ef0e4eeec51b5eb948065c5a55f2feee6a37f0",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 54,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000054-4ca922f532bd2de4.png",
+    "image_sha256": "583f4b48ea7f4eb3aaa80d2a2647091874e9a2efe2e764ff41cc57d1caa23f1b",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 55,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000055-7c5ce8e1da419d8c.png",
+    "image_sha256": "32a954b258aba9b7174a326728620189dd1142bbe29326016f729ebe83c7fcdb",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 56,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000056-983326261a6980ec.png",
+    "image_sha256": "88df40cea202c24c9cb3ec3566ea6b4b6569dd16e1ee732f61d26113b6f632a4",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 57,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000057-e0b94e8d5cd07b27.png",
+    "image_sha256": "2d5803034688a3496fa732e606f353a6f60a47e4d6b9048f4d91dda9aeecaa64",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 58,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000058-9f2588d5ab096b2f.png",
+    "image_sha256": "86d7f60782324b6ca790e4c4364407ae9867e42ed7bc9e3225a8d810d16e5e21",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 59,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000059-adf77f852de53898.png",
+    "image_sha256": "f0742e5fb1a676ed0d54d5221e48dea24c32d56bc2348b56d62c1cefb8725930",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 60,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000060-11e0696ff8c5878e.png",
+    "image_sha256": "c8df37ff3fede29aca872075e12c4b814ce4ad70ff74b09839bc23987aebb5fb",
+    "rgb_block_xy": [
+      0.06833333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 61,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000061-ae660f641a88ecf5.png",
+    "image_sha256": "d26192b0557a96643992ed0078b1702d77964a2fe181bef52f4ce829ebcd6bd3",
+    "rgb_block_xy": [
+      -0.008333333333333333,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 62,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000062-03897b2eccf26725.png",
+    "image_sha256": "b80a7cf7b0157535e5a915374e28523d4d1b9b59dd3a9115ba76b85d113b32f4",
+    "rgb_block_xy": [
+      -0.09499999999999999,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 63,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000063-e985c24723298300.png",
+    "image_sha256": "c4442c8fff03db2a4f88c719b3210578905d3f390cfb8ea3e926af1ceef62786",
+    "rgb_block_xy": [
+      -0.11666666666666665,
+      0.006666666666666666
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 64,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000064-b40c47852c9d4dbe.png",
+    "image_sha256": "9ca73ad9c28b9f315e483733c8cc6bff7de90011e88b4aea28b26acc27d823ec",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 65,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000065-27c5bce78d40e889.png",
+    "image_sha256": "d0e0753954f101c93383f791183531dc21c693fcef2549105a411d5a58a68b8f",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 66,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000066-b9dc4e82191a348e.png",
+    "image_sha256": "7f264612e0349b0602cb15295fdd36a6ff24045552ff009f15db5a68c1b1ccd0",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 67,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000067-9b79ad9bb4417c1f.png",
+    "image_sha256": "eef7c9c849c60f39b433499b0fd318c1be3701cb0759c462a42bbde7ea3688c9",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 68,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000068-7417495961f6da42.png",
+    "image_sha256": "30cc27cd5539b3af2e2cbc96ee59658e56fd968239e0edc7998fe80f7a84f68f",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 69,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000069-05e669438b6c79e1.png",
+    "image_sha256": "d97413424bef2b40359c564dff587baedc7b5372dbdc9e1636be64af366f9dce",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  },
+  {
+    "job": "disturbed",
+    "generation": 70,
+    "phase": "resetting",
+    "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim6-qualified-20261011-v1/bench/images/000070-1328c34380b1fb45.png",
+    "image_sha256": "502d9069172166fc632ef00f9983fb5c5115b043a0ef20ef7cb667b7ada67b40",
+    "rgb_block_xy": [
+      -0.11833333333333333,
+      0.008333333333333333
+    ]
+  }
+]

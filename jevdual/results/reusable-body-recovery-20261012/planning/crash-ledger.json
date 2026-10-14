@@ -1,0 +1,194 @@
+{
+  "boundaries": [
+    {
+      "case": "host-planning",
+      "command_id": null,
+      "finished_snapshot": "000004-finished.json",
+      "gate": {
+        "barrier": "actual_codex_planning_with_live_guardian",
+        "call_directory": "0bc391fc-81d4-4d6a-a267-965b153f8cab-01",
+        "captured_descendants": [
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+            "group": 50189,
+            "parent": 49761,
+            "pid": 50189,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          {
+            "command": "node",
+            "group": 50191,
+            "parent": 50189,
+            "pid": 50191,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          {
+            "command": "/Users/thomasmain/.nvm/versions/node/v22.17.1/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/bin/codex",
+            "group": 50191,
+            "parent": 50191,
+            "pid": 50194,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          {
+            "command": "node",
+            "group": 50226,
+            "parent": 50194,
+            "pid": 50226,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 501
+          },
+          {
+            "command": "(git)",
+            "group": 50311,
+            "parent": 50194,
+            "pid": 50311,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 501
+          },
+          {
+            "command": "(ps)",
+            "group": 50189,
+            "parent": 50189,
+            "pid": 50312,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 0
+          },
+          {
+            "command": "(git)",
+            "group": 50311,
+            "parent": 50311,
+            "pid": 50313,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 501
+          }
+        ],
+        "command_id": null,
+        "diagnostic_sha256": "a97bd24b6320995f5ef2ef1b4e06ec1392f3f51987b551c45759612efa874a18",
+        "pid": 49761,
+        "planner": {
+          "group_closed": false,
+          "guardian_pid": 50189,
+          "host_pid": 49761,
+          "owner": "f23b991cbd0a42f68913ce99df3a6f22",
+          "planner_pgid": 50191,
+          "planner_pid": 50191,
+          "process_exit_observed": false,
+          "request_sha256": "007700010812b697c0d21776587eada6f6dbc91c689139148e39073ac0a787af"
+        },
+        "process_identities": {
+          "guardian": {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+            "group": 50189,
+            "parent": 49761,
+            "pid": 50189,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          "host": {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+            "group": 49761,
+            "parent": 49648,
+            "pid": 49761,
+            "started": "Mon Oct 12 22:55:34 2026",
+            "uid": 501
+          },
+          "planner": {
+            "command": "node",
+            "group": 50191,
+            "parent": 50189,
+            "pid": 50191,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          }
+        },
+        "request_sha256": "007700010812b697c0d21776587eada6f6dbc91c689139148e39073ac0a787af",
+        "time": 1791860179.310709,
+        "version": 1
+      },
+      "new_epoch": 1,
+      "offline_snapshot": "000002-offline.json",
+      "old_epoch": 1,
+      "pre_snapshot": "000001-before.json",
+      "process": {
+        "boot": 1,
+        "children_before": [
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python",
+            "group": 50189,
+            "parent": 49761,
+            "pid": 50189,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          {
+            "command": "node",
+            "group": 50191,
+            "parent": 50189,
+            "pid": 50191,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          {
+            "command": "/Users/thomasmain/.nvm/versions/node/v22.17.1/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/bin/codex",
+            "group": 50191,
+            "parent": 50191,
+            "pid": 50194,
+            "started": "Mon Oct 12 22:56:18 2026",
+            "uid": 501
+          },
+          {
+            "command": "node",
+            "group": 50226,
+            "parent": 50194,
+            "pid": 50226,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 501
+          },
+          {
+            "command": "(git)",
+            "group": 50311,
+            "parent": 50194,
+            "pid": 50311,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 501
+          },
+          {
+            "command": "(ps)",
+            "group": 50189,
+            "parent": 50189,
+            "pid": 50312,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 0
+          },
+          {
+            "command": "(git)",
+            "group": 50311,
+            "parent": 50311,
+            "pid": 50313,
+            "started": "Mon Oct 12 22:56:19 2026",
+            "uid": 501
+          }
+        ],
+        "exit_observed": true,
+        "group": 49761,
+        "initialized": false,
+        "log": "workbench-01.log",
+        "pid": 49761,
+        "port": 51419,
+        "returncode": -9,
+        "role": "workbench",
+        "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-planning-v2/operator",
+        "signal": "SIGKILL",
+        "signal_target": "host_pid_only",
+        "stopped_time": 1791860179.482004
+      },
+      "request_sha256": "007700010812b697c0d21776587eada6f6dbc91c689139148e39073ac0a787af",
+      "restored_snapshot": "000003-restored.json",
+      "role": "workbench"
+    }
+  ],
+  "case": "host-planning"
+}

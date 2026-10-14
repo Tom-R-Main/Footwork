@@ -1,0 +1,992 @@
+{
+  "body_identity": {
+    "adapter_id": "96943574039142dda13cb620decfddf0",
+    "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+    "epoch": 2,
+    "protocol": "footwork.body/1",
+    "simulation": true,
+    "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+  },
+  "body_state": {
+    "bench": {
+      "active_job": {
+        "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+        "moves": 1,
+        "phase": "prepare",
+        "started_generation": 10,
+        "started_native_time_s": 21.679999999998863,
+        "target_zone": {
+          "x_max": 0.115,
+          "x_min": 0.045,
+          "y_max": 0.025,
+          "y_min": -0.025
+        }
+      },
+      "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "diagnostic_enabled": true,
+      "generation": 11,
+      "jobs": {
+        "20eb6586-e73a-4db4-aaac-db3e5d537329": {
+          "completed_generation": 10,
+          "completed_native_time_s": 21.679999999998863,
+          "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+          "measurement_operation_id": "agent-8831a976a3b7434db04d4fbcbe36a532",
+          "measurement_receipt": {
+            "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+            "generation": 2,
+            "image_sha256": "bdee3bf2ea5af18d557cb6560b766242a409cd25ac852273ce2724825f12decb",
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "native_time_s": 5.46799999999962,
+            "operation_id": "agent-8831a976a3b7434db04d4fbcbe36a532",
+            "source_kind": "mujoco_simulation",
+            "state_sha256": "7ed25a4cf203dc0ebbb58dc4acdaec8b9dd83be0ccd7d6be0d34c6c74ff8cdd9",
+            "version": 1,
+            "worker_pid": 51928
+          },
+          "moves": 10,
+          "phase": "completed",
+          "reset_receipt": {
+            "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+            "block_home_verified": true,
+            "generation": 10,
+            "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "kind": "finish_reset",
+            "native_time_s": 21.679999999998863,
+            "operation_id": "agent-e8227a121d794919a11b4e108dff63f6",
+            "pusher_home_verified": true,
+            "reset_contact_samples": 3174,
+            "reset_native_steps": 8106,
+            "state_sha256": "f403fd1d61afe7bb83d4a4ff3dd9aa56936c5dbe9d0a709af793549130097d0e"
+          },
+          "reset_started_generation": 2,
+          "started_generation": 0,
+          "started_native_time_s": 1.0000000000000007,
+          "target_zone": {
+            "x_max": 0.105,
+            "x_min": 0.035,
+            "y_max": 0.025,
+            "y_min": -0.025
+          }
+        }
+      },
+      "native_time_s": 24.847999999997107,
+      "source_fingerprints": {
+        "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+        "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+        "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+        "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+        "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+        "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+        "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+        "mujoco_version": "3.15.0",
+        "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+        "state_spec": 16383,
+        "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+      },
+      "source_kind": "mujoco_simulation",
+      "state": "ready",
+      "unresolved_effect": null,
+      "version": 1
+    },
+    "identity": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 2,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "lease": {
+      "client_id": "client-6c734bbe900342329bb34c0d4dcc485b",
+      "epoch": 2,
+      "expires_in_s": 16.92054991587065,
+      "lease_id": "8acd97f5a9dc48b583d6d3097f60b1ba"
+    },
+    "state": "ready",
+    "unresolved_commands": []
+  },
+  "client": {
+    "commands": {
+      "command-015d5d03d0624f14ba43d889871c45ee": {
+        "operation": "propose",
+        "request_sha256": "072a32a019c848228f49953e695f6a220d0db7743fdda906011df8ed8f71c3a0",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-097e6bec1ce24ef2bc8f37c40f80d98f": {
+        "operation": "dispatch",
+        "request_sha256": "3df0298afc1f4e44d60b2b3f7d3cf13c0277600682f0f0d6359cf0ae1cfb9488",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-0e35d66b16a64168b11d255a1d871e71": {
+        "operation": "observe",
+        "request_sha256": "ac2992d20493bd10b8fbebea63151c6d075a4704088b321b909ce4a44388b331",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-1936c404000d4b55a094c49a2fd9eeb3": {
+        "operation": "observe",
+        "request_sha256": "7eda001e48f71d8279c5770cf2633237f092c1b0bb35aa15e19f3667c6116eb2",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-1e2386315d6c4c7692405dac7dfa7bd1": {
+        "operation": "propose",
+        "request_sha256": "29daaf4dd4f38db1720d0a28f833caa5084b170118c8cd781a1aba9ce7d1746b",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-210150e3ac9f45adae24e89f22a66286": {
+        "operation": "dispatch",
+        "request_sha256": "674d3fa1ea7146ddb31fb4e1dccd69d009a30437e56cafc56ae48019202f991d",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-24230a0f96bc4e84a84f720b1c974054": {
+        "operation": "dispatch",
+        "request_sha256": "4725aa167fe57d46a1c6674fa63a1f97413421451a44826ee954952e11c63158",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-248b9798493e4a43a51259929e135e29": {
+        "operation": "observe",
+        "request_sha256": "bed21822b73961a780adf48cc0912e8038574b180a5f0ad976f2a01ebe37703a",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-2a6e74bdbe424b3caa700dc047365a1c": {
+        "operation": "dispatch",
+        "request_sha256": "c8c822c9fba17ecf981cb86e65485f2678e917c7266fda736ef3d0b0635b5f9c",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-2d0b436b61124502a9d8558816bda68d": {
+        "operation": "observe",
+        "request_sha256": "d565247b59ff983b0e8056739a7312553ff11a86e0c2ade2e57ae03e2794e389",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-3083d955014b4e5282809a47046c53db": {
+        "operation": "propose",
+        "request_sha256": "f4ffd63b2254e4e91e23fdfb9eb6e1ac0e5f0701d7ba7617f575083cbc2fffec",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-36da4220dfcd4e85b9a4cee555ccd7aa": {
+        "operation": "start_job",
+        "request_sha256": "7ea11721570fb77e340b4f2e0d66e64ab5b136d5478b26c44a967be1d86256eb",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-38a300b989a649fd9ee243704cdc65a9": {
+        "operation": "observe",
+        "request_sha256": "97c7881b3b3eac3f20e327de6d1e0a23e94b8b06415bc43b0b2d00a298a1778f",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-40c6a8a1f1a04ea7bec902767b57387a": {
+        "operation": "observe",
+        "request_sha256": "7bb39849a52b98bf039deebb6371d28ece55c04faed9809c9866c6babae4ef26",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-40dfcee9c7d24d5b88eacf3ad4ef9a4e": {
+        "operation": "propose",
+        "request_sha256": "22fd8eae4d69f51771a01dd11df73ca52f7ab75a37cf657e5ce13d4231112a6c",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-553be6e82b274944b5e6ea9e2cd3902e": {
+        "operation": "propose",
+        "request_sha256": "1e1cc0fede8a9f595d8146da49dce6138da32f9261916b1613f46392318f3a1e",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-5ca0b6a7e99f4263b2239a95b02ca7e7": {
+        "operation": "propose",
+        "request_sha256": "8110ae8d9f624a89419f3229a1f13a47f9f17249df601237cfd4cae5224a07ee",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-5ced22700795486fa68a50fcda4767b8": {
+        "operation": "propose",
+        "request_sha256": "9ee7328d2661197fbca4b2fb342317a403245d5db32515b19b398e1b10ba27e9",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-5e27abcb6c914c5ca0ae77ddee974bbc": {
+        "operation": "dispatch",
+        "request_sha256": "b150863371975909061c5c284297745de818973ef9bb4483fe276d83230c4974",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-7661dbdae1c34bd797ca17b3b5321a5e": {
+        "operation": "propose",
+        "request_sha256": "c1470e90804d516b6bd51b0dc825b1d06f699223e0b0d117e66da0ce8d97f463",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-7ce7b5eb9b5b4b1d953e624d2312327b": {
+        "operation": "dispatch",
+        "request_sha256": "b6b3bf3339bf5881e47f71f7eb5f514f3e287587f62fe505bbd2d9950828acc4",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-84c016d3c2564ecea6025edaea7d23e7": {
+        "operation": "propose",
+        "request_sha256": "e7af49a829ed12157954efd8c9a4d13b89e2cd991bd0254fa3377a8ea20b2aff",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-8c948c9df6074ee5969ef8b19a3eaddb": {
+        "operation": "propose",
+        "request_sha256": "658c7671a0d062cc75c20b2112e39826075affea6d5d60a183135b399050218d",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-933c11248d6a48079ead24676a2df7fb": {
+        "operation": "observe",
+        "request_sha256": "8e249e904c29f91de3ef73aa9fa15d6517e2d6983edfdc0a097e8eda8fc67f59",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-9dd2a0c9603f4667956ec976e822b74a": {
+        "operation": "observe",
+        "request_sha256": "3652535d33974b64aba2aba0d5df03b66c1c9075c9069c7b673874f332e0bbcb",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-9f8d9402f1d74504b579f39b9c793576": {
+        "operation": "propose",
+        "request_sha256": "1c6f1885adbe13c8b3ab749812e10139310fcbadf478b3debaa8bc025bda45b0",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-aa19aa0c97ee4d8bb8ab6ab1c175e8ee": {
+        "operation": "dispatch",
+        "request_sha256": "21d9f088823463acf90956ee026ac32de41b84cd1f3bfc9f7473836ec6d08a97",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-ab4679dd21e14ce08f70b1ef63bd5868": {
+        "operation": "observe",
+        "request_sha256": "c7cfb9cf1ffa949ed60ad3b3aef61884cfd959107a56129d23c7758714a971d8",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-b17181d5918a492a916e0e3c5a2f3a11": {
+        "operation": "propose",
+        "request_sha256": "56ce449d1a0416dc5e7f1830c50887e493606e6f935dd72cfb0fff054a2b7042",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-b182534626d34766a52d5e11d48239e7": {
+        "operation": "observe",
+        "request_sha256": "5ad3e108bbf0076da2cd4442bc2cb513b7a3b03a3eb9e6ebcb9365da6617d48a",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-bdc662ab7f4645d79c02f84921f3c9f6": {
+        "operation": "dispatch",
+        "request_sha256": "0ccb54ee47fa858a87eb10bcfb069c345b29db8fad61669c1e58751549e43dc0",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-c80c18cc647b45fe8e9faf2fa890283c": {
+        "operation": "dispatch",
+        "request_sha256": "0bf907eb26ef2015935816cf5887a6e465a729aecc183a4fa10cca5ad47334cd",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-c8be0caf76504410a68a595296d56bd3": {
+        "operation": "observe",
+        "request_sha256": "d5867b3b7dab8738fe2bcc2e878c120a9651fe09dc13d102dacf63d5e6e3b564",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-cf898dd6e56a4d8bb0a5894371f9ba81": {
+        "operation": "dispatch",
+        "request_sha256": "bd591cd9646fb80860bc791d8b9d02fd3695a496ead456ceb7f903185883edc9",
+        "send_count": 1,
+        "state": "unknown"
+      },
+      "command-d9922eefd392420b96bf0a62d7eea982": {
+        "operation": "dispatch",
+        "request_sha256": "7440f248c466bc7ce206c2354a5852ad1cdf7f9372457b367879d24984766480",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-df199bef22b442168d0a42242c00c5c4": {
+        "operation": "observe",
+        "request_sha256": "14d1cb1ec52d8e8d520981b293408d72ff6fb592324b6a3da695f0254f04c636",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-e19f5d23dd944e40b806e930f7d44b35": {
+        "operation": "dispatch",
+        "request_sha256": "788dac06d5863a4a6363c4e9b6c16f38bea0eb4bdea7658fd4f83f732a59583a",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-e1af2fbe5a254692bf212769ddfea045": {
+        "operation": "observe",
+        "request_sha256": "9efbed5e6627632a03212e000b633a1ab1e8692aaa81c4340c7b76536a2af8a3",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-e897a3cba83b4d83b460a556be5e459b": {
+        "operation": "observe",
+        "request_sha256": "0b35d9142df3fc25df922ec8c0812e7ad7460346f7389fb80bace9904ec147bb",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-ede04073e3654f4fa17f0a0056db9004": {
+        "operation": "dispatch",
+        "request_sha256": "8d4f2e531917f1b2ebb0b3ac9e9c7bc8640874a5709a1dbf0cf755db56cd6a28",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-ef48ba673c2b4ae08b09fbbc4c56fca8": {
+        "operation": "start_job",
+        "request_sha256": "6a500fe4198f0aadde08c1859e8020d7833ca1fa0529fbdbac4c8f17aa957a60",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-f008b852a29348218bc57e931887b963": {
+        "operation": "dispatch",
+        "request_sha256": "46b71d8afc3b366718a29d00919e73d3d7bc8199558f2c6345c38d602084c454",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-f0d26ac5d6914f1bb038a57ee515b7f0": {
+        "operation": "observe",
+        "request_sha256": "6f52c77b4617240c34fa8b76ec854925153b81d241bdf354519ee685ea333e05",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-f4c202be91064d3e8f4c929f1175450e": {
+        "operation": "propose",
+        "request_sha256": "425fe924fe46c38097155ffde315f426490bb4d8ee43f16cd7454fe52af7bf3d",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-f7b8d8e5cddb47ecbac988938ccee2a0": {
+        "operation": "observe",
+        "request_sha256": "bf279c09f19252bbda950361945a6b143fb96c87ce278b567860295e4a263f7c",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-fda8dcacccc940c493511804050cc0ec": {
+        "operation": "propose",
+        "request_sha256": "db632f120ae418bddfaca319ffc50e98d0d206def22a9d0c3655c39423aa1717",
+        "send_count": 1,
+        "state": "completed"
+      }
+    },
+    "identity": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 2,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "lease": {
+      "client_id": "client-6c734bbe900342329bb34c0d4dcc485b",
+      "duration_s": 30.0,
+      "epoch": 2,
+      "lease_id": "8acd97f5a9dc48b583d6d3097f60b1ba"
+    },
+    "pending_command_ids": [
+      "command-cf898dd6e56a4d8bb0a5894371f9ba81"
+    ]
+  },
+  "host": {
+    "app_id": "878fad93039a4e86b4dcc5529f118f20",
+    "body_identity": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "frame": {
+      "generation": 10,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2/operator/client/images/challenge-28dc527b5ab349cab70e9bea9dbea92a-118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa.png",
+      "sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+    },
+    "runner_status": "blocked",
+    "sequence": 127,
+    "stage": {
+      "arguments": {
+        "proposal_id": "proposal-2fc20beaf42745488b7a16af3afeaf6d"
+      },
+      "before_commands": [
+        "command-015d5d03d0624f14ba43d889871c45ee",
+        "command-097e6bec1ce24ef2bc8f37c40f80d98f",
+        "command-0e35d66b16a64168b11d255a1d871e71",
+        "command-1936c404000d4b55a094c49a2fd9eeb3",
+        "command-1e2386315d6c4c7692405dac7dfa7bd1",
+        "command-210150e3ac9f45adae24e89f22a66286",
+        "command-24230a0f96bc4e84a84f720b1c974054",
+        "command-248b9798493e4a43a51259929e135e29",
+        "command-2a6e74bdbe424b3caa700dc047365a1c",
+        "command-2d0b436b61124502a9d8558816bda68d",
+        "command-3083d955014b4e5282809a47046c53db",
+        "command-36da4220dfcd4e85b9a4cee555ccd7aa",
+        "command-38a300b989a649fd9ee243704cdc65a9",
+        "command-40c6a8a1f1a04ea7bec902767b57387a",
+        "command-40dfcee9c7d24d5b88eacf3ad4ef9a4e",
+        "command-553be6e82b274944b5e6ea9e2cd3902e",
+        "command-5ca0b6a7e99f4263b2239a95b02ca7e7",
+        "command-5ced22700795486fa68a50fcda4767b8",
+        "command-5e27abcb6c914c5ca0ae77ddee974bbc",
+        "command-7661dbdae1c34bd797ca17b3b5321a5e",
+        "command-7ce7b5eb9b5b4b1d953e624d2312327b",
+        "command-84c016d3c2564ecea6025edaea7d23e7",
+        "command-8c948c9df6074ee5969ef8b19a3eaddb",
+        "command-933c11248d6a48079ead24676a2df7fb",
+        "command-9dd2a0c9603f4667956ec976e822b74a",
+        "command-9f8d9402f1d74504b579f39b9c793576",
+        "command-aa19aa0c97ee4d8bb8ab6ab1c175e8ee",
+        "command-ab4679dd21e14ce08f70b1ef63bd5868",
+        "command-b17181d5918a492a916e0e3c5a2f3a11",
+        "command-b182534626d34766a52d5e11d48239e7",
+        "command-bdc662ab7f4645d79c02f84921f3c9f6",
+        "command-c80c18cc647b45fe8e9faf2fa890283c",
+        "command-c8be0caf76504410a68a595296d56bd3",
+        "command-d9922eefd392420b96bf0a62d7eea982",
+        "command-df199bef22b442168d0a42242c00c5c4",
+        "command-e19f5d23dd944e40b806e930f7d44b35",
+        "command-e1af2fbe5a254692bf212769ddfea045",
+        "command-e897a3cba83b4d83b460a556be5e459b",
+        "command-ede04073e3654f4fa17f0a0056db9004",
+        "command-ef48ba673c2b4ae08b09fbbc4c56fca8",
+        "command-f008b852a29348218bc57e931887b963",
+        "command-f0d26ac5d6914f1bb038a57ee515b7f0",
+        "command-f4c202be91064d3e8f4c929f1175450e",
+        "command-f7b8d8e5cddb47ecbac988938ccee2a0",
+        "command-fda8dcacccc940c493511804050cc0ec"
+      ],
+      "command_id": "command-cf898dd6e56a4d8bb0a5894371f9ba81",
+      "context": {
+        "action": {
+          "action": "move",
+          "intent": "Push the block right so its center reaches the measurement region.",
+          "target_x": 0.025,
+          "target_y": 0.0
+        },
+        "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2/operator/calls/c922a26d-9121-4d7e-82e1-7b61b0e42161-02",
+        "decision_epoch": 7,
+        "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161"
+      },
+      "control_epoch": 7,
+      "operation": "dispatch"
+    },
+    "usage": {
+      "calls": 16,
+      "input_tokens": 185456,
+      "output_tokens": 2222,
+      "reported_calls": 14
+    }
+  },
+  "posts": [
+    {
+      "command_id": "command-36da4220dfcd4e85b9a4cee555ccd7aa",
+      "payload_sha256": "7ea11721570fb77e340b4f2e0d66e64ab5b136d5478b26c44a967be1d86256eb",
+      "sequence": 8
+    },
+    {
+      "command_id": "command-e897a3cba83b4d83b460a556be5e459b",
+      "payload_sha256": "0b35d9142df3fc25df922ec8c0812e7ad7460346f7389fb80bace9904ec147bb",
+      "sequence": 16
+    },
+    {
+      "command_id": "command-933c11248d6a48079ead24676a2df7fb",
+      "payload_sha256": "8e249e904c29f91de3ef73aa9fa15d6517e2d6983edfdc0a097e8eda8fc67f59",
+      "sequence": 31
+    },
+    {
+      "command_id": "command-1e2386315d6c4c7692405dac7dfa7bd1",
+      "payload_sha256": "29daaf4dd4f38db1720d0a28f833caa5084b170118c8cd781a1aba9ce7d1746b",
+      "sequence": 43
+    },
+    {
+      "command_id": "command-24230a0f96bc4e84a84f720b1c974054",
+      "payload_sha256": "4725aa167fe57d46a1c6674fa63a1f97413421451a44826ee954952e11c63158",
+      "sequence": 51
+    },
+    {
+      "command_id": "command-0e35d66b16a64168b11d255a1d871e71",
+      "payload_sha256": "ac2992d20493bd10b8fbebea63151c6d075a4704088b321b909ce4a44388b331",
+      "sequence": 67
+    },
+    {
+      "command_id": "command-fda8dcacccc940c493511804050cc0ec",
+      "payload_sha256": "db632f120ae418bddfaca319ffc50e98d0d206def22a9d0c3655c39423aa1717",
+      "sequence": 79
+    },
+    {
+      "command_id": "command-5e27abcb6c914c5ca0ae77ddee974bbc",
+      "payload_sha256": "b150863371975909061c5c284297745de818973ef9bb4483fe276d83230c4974",
+      "sequence": 87
+    },
+    {
+      "command_id": "command-c8be0caf76504410a68a595296d56bd3",
+      "payload_sha256": "d5867b3b7dab8738fe2bcc2e878c120a9651fe09dc13d102dacf63d5e6e3b564",
+      "sequence": 95
+    },
+    {
+      "command_id": "command-f4c202be91064d3e8f4c929f1175450e",
+      "payload_sha256": "425fe924fe46c38097155ffde315f426490bb4d8ee43f16cd7454fe52af7bf3d",
+      "sequence": 107
+    },
+    {
+      "command_id": "command-e19f5d23dd944e40b806e930f7d44b35",
+      "payload_sha256": "788dac06d5863a4a6363c4e9b6c16f38bea0eb4bdea7658fd4f83f732a59583a",
+      "sequence": 115
+    },
+    {
+      "command_id": "command-1936c404000d4b55a094c49a2fd9eeb3",
+      "payload_sha256": "7eda001e48f71d8279c5770cf2633237f092c1b0bb35aa15e19f3667c6116eb2",
+      "sequence": 123
+    },
+    {
+      "command_id": "command-8c948c9df6074ee5969ef8b19a3eaddb",
+      "payload_sha256": "658c7671a0d062cc75c20b2112e39826075affea6d5d60a183135b399050218d",
+      "sequence": 135
+    },
+    {
+      "command_id": "command-bdc662ab7f4645d79c02f84921f3c9f6",
+      "payload_sha256": "0ccb54ee47fa858a87eb10bcfb069c345b29db8fad61669c1e58751549e43dc0",
+      "sequence": 143
+    },
+    {
+      "command_id": "command-e1af2fbe5a254692bf212769ddfea045",
+      "payload_sha256": "9efbed5e6627632a03212e000b633a1ab1e8692aaa81c4340c7b76536a2af8a3",
+      "sequence": 151
+    },
+    {
+      "command_id": "command-b17181d5918a492a916e0e3c5a2f3a11",
+      "payload_sha256": "56ce449d1a0416dc5e7f1830c50887e493606e6f935dd72cfb0fff054a2b7042",
+      "sequence": 163
+    },
+    {
+      "command_id": "command-2a6e74bdbe424b3caa700dc047365a1c",
+      "payload_sha256": "c8c822c9fba17ecf981cb86e65485f2678e917c7266fda736ef3d0b0635b5f9c",
+      "sequence": 171
+    },
+    {
+      "command_id": "command-df199bef22b442168d0a42242c00c5c4",
+      "payload_sha256": "14d1cb1ec52d8e8d520981b293408d72ff6fb592324b6a3da695f0254f04c636",
+      "sequence": 179
+    },
+    {
+      "command_id": "command-5ca0b6a7e99f4263b2239a95b02ca7e7",
+      "payload_sha256": "8110ae8d9f624a89419f3229a1f13a47f9f17249df601237cfd4cae5224a07ee",
+      "sequence": 191
+    },
+    {
+      "command_id": "command-f008b852a29348218bc57e931887b963",
+      "payload_sha256": "46b71d8afc3b366718a29d00919e73d3d7bc8199558f2c6345c38d602084c454",
+      "sequence": 199
+    },
+    {
+      "command_id": "command-2d0b436b61124502a9d8558816bda68d",
+      "payload_sha256": "d565247b59ff983b0e8056739a7312553ff11a86e0c2ade2e57ae03e2794e389",
+      "sequence": 207
+    },
+    {
+      "command_id": "command-40dfcee9c7d24d5b88eacf3ad4ef9a4e",
+      "payload_sha256": "22fd8eae4d69f51771a01dd11df73ca52f7ab75a37cf657e5ce13d4231112a6c",
+      "sequence": 219
+    },
+    {
+      "command_id": "command-aa19aa0c97ee4d8bb8ab6ab1c175e8ee",
+      "payload_sha256": "21d9f088823463acf90956ee026ac32de41b84cd1f3bfc9f7473836ec6d08a97",
+      "sequence": 227
+    },
+    {
+      "command_id": "command-b182534626d34766a52d5e11d48239e7",
+      "payload_sha256": "5ad3e108bbf0076da2cd4442bc2cb513b7a3b03a3eb9e6ebcb9365da6617d48a",
+      "sequence": 235
+    },
+    {
+      "command_id": "command-84c016d3c2564ecea6025edaea7d23e7",
+      "payload_sha256": "e7af49a829ed12157954efd8c9a4d13b89e2cd991bd0254fa3377a8ea20b2aff",
+      "sequence": 247
+    },
+    {
+      "command_id": "command-ede04073e3654f4fa17f0a0056db9004",
+      "payload_sha256": "8d4f2e531917f1b2ebb0b3ac9e9c7bc8640874a5709a1dbf0cf755db56cd6a28",
+      "sequence": 255
+    },
+    {
+      "command_id": "command-f0d26ac5d6914f1bb038a57ee515b7f0",
+      "payload_sha256": "6f52c77b4617240c34fa8b76ec854925153b81d241bdf354519ee685ea333e05",
+      "sequence": 263
+    },
+    {
+      "command_id": "command-5ced22700795486fa68a50fcda4767b8",
+      "payload_sha256": "9ee7328d2661197fbca4b2fb342317a403245d5db32515b19b398e1b10ba27e9",
+      "sequence": 275
+    },
+    {
+      "command_id": "command-7ce7b5eb9b5b4b1d953e624d2312327b",
+      "payload_sha256": "b6b3bf3339bf5881e47f71f7eb5f514f3e287587f62fe505bbd2d9950828acc4",
+      "sequence": 283
+    },
+    {
+      "command_id": "command-9dd2a0c9603f4667956ec976e822b74a",
+      "payload_sha256": "3652535d33974b64aba2aba0d5df03b66c1c9075c9069c7b673874f332e0bbcb",
+      "sequence": 291
+    },
+    {
+      "command_id": "command-3083d955014b4e5282809a47046c53db",
+      "payload_sha256": "f4ffd63b2254e4e91e23fdfb9eb6e1ac0e5f0701d7ba7617f575083cbc2fffec",
+      "sequence": 303
+    },
+    {
+      "command_id": "command-097e6bec1ce24ef2bc8f37c40f80d98f",
+      "payload_sha256": "3df0298afc1f4e44d60b2b3f7d3cf13c0277600682f0f0d6359cf0ae1cfb9488",
+      "sequence": 311
+    },
+    {
+      "command_id": "command-38a300b989a649fd9ee243704cdc65a9",
+      "payload_sha256": "97c7881b3b3eac3f20e327de6d1e0a23e94b8b06415bc43b0b2d00a298a1778f",
+      "sequence": 319
+    },
+    {
+      "command_id": "command-553be6e82b274944b5e6ea9e2cd3902e",
+      "payload_sha256": "1e1cc0fede8a9f595d8146da49dce6138da32f9261916b1613f46392318f3a1e",
+      "sequence": 331
+    },
+    {
+      "command_id": "command-d9922eefd392420b96bf0a62d7eea982",
+      "payload_sha256": "7440f248c466bc7ce206c2354a5852ad1cdf7f9372457b367879d24984766480",
+      "sequence": 339
+    },
+    {
+      "command_id": "command-f7b8d8e5cddb47ecbac988938ccee2a0",
+      "payload_sha256": "bf279c09f19252bbda950361945a6b143fb96c87ce278b567860295e4a263f7c",
+      "sequence": 347
+    },
+    {
+      "command_id": "command-7661dbdae1c34bd797ca17b3b5321a5e",
+      "payload_sha256": "c1470e90804d516b6bd51b0dc825b1d06f699223e0b0d117e66da0ce8d97f463",
+      "sequence": 359
+    },
+    {
+      "command_id": "command-c80c18cc647b45fe8e9faf2fa890283c",
+      "payload_sha256": "0bf907eb26ef2015935816cf5887a6e465a729aecc183a4fa10cca5ad47334cd",
+      "sequence": 367
+    },
+    {
+      "command_id": "command-248b9798493e4a43a51259929e135e29",
+      "payload_sha256": "bed21822b73961a780adf48cc0912e8038574b180a5f0ad976f2a01ebe37703a",
+      "sequence": 375
+    },
+    {
+      "command_id": "command-015d5d03d0624f14ba43d889871c45ee",
+      "payload_sha256": "072a32a019c848228f49953e695f6a220d0db7743fdda906011df8ed8f71c3a0",
+      "sequence": 387
+    },
+    {
+      "command_id": "command-210150e3ac9f45adae24e89f22a66286",
+      "payload_sha256": "674d3fa1ea7146ddb31fb4e1dccd69d009a30437e56cafc56ae48019202f991d",
+      "sequence": 395
+    },
+    {
+      "command_id": "command-ef48ba673c2b4ae08b09fbbc4c56fca8",
+      "payload_sha256": "6a500fe4198f0aadde08c1859e8020d7833ca1fa0529fbdbac4c8f17aa957a60",
+      "sequence": 403
+    },
+    {
+      "command_id": "command-ab4679dd21e14ce08f70b1ef63bd5868",
+      "payload_sha256": "c7cfb9cf1ffa949ed60ad3b3aef61884cfd959107a56129d23c7758714a971d8",
+      "sequence": 411
+    },
+    {
+      "command_id": "command-40c6a8a1f1a04ea7bec902767b57387a",
+      "payload_sha256": "7bb39849a52b98bf039deebb6371d28ece55c04faed9809c9866c6babae4ef26",
+      "sequence": 480
+    },
+    {
+      "command_id": "command-9f8d9402f1d74504b579f39b9c793576",
+      "payload_sha256": "1c6f1885adbe13c8b3ab749812e10139310fcbadf478b3debaa8bc025bda45b0",
+      "sequence": 492
+    },
+    {
+      "command_id": "command-cf898dd6e56a4d8bb0a5894371f9ba81",
+      "payload_sha256": "bd591cd9646fb80860bc791d8b9d02fd3695a496ead456ceb7f903185883edc9",
+      "sequence": 500
+    }
+  ],
+  "processes": {
+    "body": 71324,
+    "workbench": 39967
+  },
+  "public": {
+    "active_job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+    "activity": [
+      {
+        "intent": "Restart inspection 01",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-248b9798493e4a43a51259929e135e29",
+        "seq": 104,
+        "time": 1791828938.604191
+      },
+      {
+        "intent": "Restart inspection 01",
+        "kind": "inference",
+        "outcome": "14",
+        "seq": 105,
+        "time": 1791828938.608861
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "propose",
+        "seq": 106,
+        "time": 1791828950.833822
+      },
+      {
+        "intent": "Restart inspection 01",
+        "kind": "rpc_applied",
+        "outcome": "propose: command-015d5d03d0624f14ba43d889871c45ee",
+        "seq": 107,
+        "time": 1791828950.9307368
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "dispatch",
+        "seq": 108,
+        "time": 1791828950.97887
+      },
+      {
+        "intent": "Restart inspection 01",
+        "kind": "rpc_applied",
+        "outcome": "dispatch: command-210150e3ac9f45adae24e89f22a66286",
+        "seq": 109,
+        "time": 1791828951.468124
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "start_job",
+        "seq": 110,
+        "time": 1791828951.5941691
+      },
+      {
+        "intent": "Restart inspection 02",
+        "kind": "rpc_applied",
+        "outcome": "start_job: command-ef48ba673c2b4ae08b09fbbc4c56fca8",
+        "seq": 111,
+        "time": 1791828951.745876
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 112,
+        "time": 1791828951.8522959
+      },
+      {
+        "intent": "Restart inspection 02",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-ab4679dd21e14ce08f70b1ef63bd5868",
+        "seq": 113,
+        "time": 1791828952.1878028
+      },
+      {
+        "intent": "Restart inspection 02",
+        "kind": "inference",
+        "outcome": "1",
+        "seq": 114,
+        "time": 1791828952.191465
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "Remote end closed connection without response",
+        "seq": 115,
+        "time": 1791828953.570592
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "operator_pause_requested",
+        "seq": 116,
+        "time": 1791828953.590626
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+        "seq": 117,
+        "time": 1791829010.0203352
+      },
+      {
+        "intent": "",
+        "kind": "body_epoch_changed",
+        "outcome": "1 -> 2",
+        "seq": 118,
+        "time": 1791829010.021775
+      },
+      {
+        "intent": "",
+        "kind": "fault_armed",
+        "outcome": "drop_after",
+        "seq": 119,
+        "time": 1791829019.593674
+      },
+      {
+        "intent": "",
+        "kind": "resume",
+        "outcome": "",
+        "seq": 120,
+        "time": 1791829019.920613
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 121,
+        "time": 1791829019.99926
+      },
+      {
+        "intent": "Restart inspection 02",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-40c6a8a1f1a04ea7bec902767b57387a",
+        "seq": 122,
+        "time": 1791829020.389618
+      },
+      {
+        "intent": "Restart inspection 02",
+        "kind": "inference",
+        "outcome": "2",
+        "seq": 123,
+        "time": 1791829020.392122
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "propose",
+        "seq": 124,
+        "time": 1791829028.703949
+      },
+      {
+        "intent": "Restart inspection 02",
+        "kind": "rpc_applied",
+        "outcome": "propose: command-9f8d9402f1d74504b579f39b9c793576",
+        "seq": 125,
+        "time": 1791829028.798069
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "dispatch",
+        "seq": 126,
+        "time": 1791829028.864546
+      },
+      {
+        "intent": "",
+        "kind": "halt",
+        "outcome": "reply is uncertain; reconcile exact command without resending",
+        "seq": 127,
+        "time": 1791829029.1331468
+      }
+    ],
+    "app_id": "878fad93039a4e86b4dcc5529f118f20",
+    "connection": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 2,
+      "fault": null,
+      "reason": "Body identity verified by read-only TCP health",
+      "state": "connected"
+    },
+    "current_frame": {
+      "available": true,
+      "generation": 10,
+      "image_url": "/api/frame?generation=10&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+    },
+    "jobs": [
+      {
+        "call_count": 14,
+        "disturbance_test": false,
+        "error": null,
+        "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "label": "Restart inspection 01",
+        "last_intent": "Request verification with the block centered in the home zone and the pusher at its home position.",
+        "measurement": {
+          "footprint_area_m2": 0.004794444444444444,
+          "method": "simulated_orange_RGB_footprint",
+          "orange_pixel_count": 1726
+        },
+        "phase": "completed",
+        "reset": {
+          "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "block_home_verified": true,
+          "generation": 10,
+          "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+          "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+          "kind": "finish_reset",
+          "native_time_s": 21.679999999998863,
+          "operation_id": "agent-e8227a121d794919a11b4e108dff63f6",
+          "pusher_home_verified": true,
+          "reset_contact_samples": 3174,
+          "reset_native_steps": 8106,
+          "state_sha256": "f403fd1d61afe7bb83d4a4ff3dd9aa56936c5dbe9d0a709af793549130097d0e"
+        },
+        "status": "completed",
+        "target": "A"
+      },
+      {
+        "call_count": 2,
+        "disturbance_test": false,
+        "error": "reply is uncertain; reconcile exact command without resending",
+        "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+        "label": "Restart inspection 02",
+        "last_intent": "Push the block right so its center reaches the measurement region.",
+        "measurement": null,
+        "phase": "prepare",
+        "reset": null,
+        "status": "unknown",
+        "target": "B"
+      }
+    ],
+    "model_request_pending": false,
+    "pending_operation": "dispatch",
+    "readiness": {
+      "ready": false,
+      "reason": "reply is uncertain; reconcile exact command without resending"
+    },
+    "recovery": {
+      "command_id": "command-cf898dd6e56a4d8bb0a5894371f9ba81",
+      "operation": "dispatch",
+      "reason": "reply is uncertain; reconcile exact command without resending",
+      "state": "uncertain"
+    },
+    "runner_status": "blocked",
+    "simulation": true,
+    "transport_pending": false,
+    "usage": {
+      "calls": 16,
+      "input_tokens": 185456,
+      "output_tokens": 2222,
+      "reported_calls": 14,
+      "token_usage_complete": false
+    }
+  },
+  "time": 1791829041.853085
+}

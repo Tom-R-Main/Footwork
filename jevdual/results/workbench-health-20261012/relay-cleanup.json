@@ -1,0 +1,8 @@
+{
+  "active_workers": 0,
+  "completed_workers": 685,
+  "peak_workers": 2,
+  "request_count": 685,
+  "server_thread_exited": true,
+  "worker_bound": 8
+}

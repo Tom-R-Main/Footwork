@@ -1,0 +1,34 @@
+{
+  "action_performed": true,
+  "after": "000001-after.json",
+  "before": "000001-before.json",
+  "passed": true,
+  "process": {
+    "boot": 1,
+    "exit_observed": true,
+    "initialized": false,
+    "log": "workbench-01.log",
+    "pid": 25794,
+    "port": 51377,
+    "returncode": 0,
+    "role": "workbench",
+    "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2/operator",
+    "stopped_time": 1791828631.66827
+  },
+  "request": {
+    "action": "stop-role",
+    "expect": {
+      "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+      "app_id": "878fad93039a4e86b4dcc5529f118f20",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "model_request_pending": true,
+      "recovery_command_id": null,
+      "runner_status": "running",
+      "usage_calls": 1
+    },
+    "predicate": "planning",
+    "requested_time": 1791828631.2835982,
+    "role": "workbench",
+    "sequence": 1
+  }
+}

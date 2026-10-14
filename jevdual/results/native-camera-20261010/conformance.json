@@ -1,0 +1,26 @@
+{
+  "source_sha256": {
+    "tools/camera-capture-experiment/capture.py": "5eb774018193a206e2fab836c801b5c10ec35d4d07170cb69967161d668c1c7b",
+    "tools/camera-capture-experiment/permission.swift": "71887f8fed0c51f4c539b2cce98c7c826a4b7c641c6ddbdc72f560f636161f56",
+    "tools/camera-capture-experiment/test_capture.py": "debef8d9115a87e2d0f93ac33c6c6b9f70f09adddb3e520cedfa3cc112171231",
+    "tools/camera-capture-experiment/README.md": "34108f3c8c5e378eaf314c6d9aec70e25bca5508098ef9d19e78c52b2ec95b5f"
+  },
+  "preregistration_commit": "fb090bd",
+  "conformance": {
+    "command": "python3 -m unittest discover -s tools/camera-capture-experiment -p 'test_*.py' -v",
+    "exit_code": 0,
+    "tests": 18,
+    "runtime_boundary": "synthetic camera/process fixtures; real ffprobe on generated image, no live camera"
+  },
+  "lint": {
+    "command": "uv run --no-sync ruff check ../tools/camera-capture-experiment",
+    "cwd": "jevdual",
+    "exit_code": 0
+  },
+  "notebook_check": {
+    "command": "uv run --no-sync python -m evals.notebook docs/notebook --check",
+    "cwd": "jevdual",
+    "exit_code": 0
+  },
+  "live_acquisition": "pending"
+}

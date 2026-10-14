@@ -1,0 +1,87 @@
+# Reusable body contract and interrupted host recovery
+
+## SIM14-P1 · prediction · 2026-10-12 22:14
+Hypothesis: a validated contiguous event tail can be reconciled against the retained manifest without replaying effects or treating an unpublished event as completion proof.
+Test: reproduce SIM13 event-fsync-before-manifest SIGKILL, then test the repair, malformed/gapped/conflicting tails and a browser restart followed by explicit Resume; inspect command IDs and wire sends.
+Predicts: restart retains the original history, pauses, refuses inconsistent evidence and allocates the next unused journal sequence; explicit Resume obtains a fresh observation without repeating an existing command.
+Against: FileExistsError persists, history is overwritten, a tail grants effect completion, a command identity is discarded or an effect is replayed.
+Refs: docs/experiments/SIM14-reusable-body-recovery.md; tools/physical-workcell/test_workbench_crash_runtime.py
+
+## SIM14-P2 · prediction · 2026-10-12 22:14
+Hypothesis: durable planner process ownership combined with restart fencing prevents an independent child left by host SIGKILL from producing an actionable old decision.
+Test: externally SIGKILL an owned host during active child planning; restart its retained root, verify ownership before cleanup, test identity mismatch and partial ownership records, then explicitly Resume with fresh image evidence in the browser.
+Predicts: old planner authority is revoked, verified owned children retire before new planning, unresolved ownership fails closed, the job stays paused and the old observation cannot be dispatched.
+Against: an unrelated process is signalled, a live old writer survives successful recovery, an old decision dispatches or recovery resumes automatically.
+Refs: docs/experiments/SIM14-reusable-body-recovery.md; tools/physical-workcell/codex_policy.py; tools/physical-workcell/network_operator_runtime.py
+
+## SIM14-P3 · prediction · 2026-10-12 22:14
+Hypothesis: extracting identity, lease, command-envelope and receipt validation behind an operation-contract seam preserves strict bench behavior while allowing a non-bench operation schema without simulation imports.
+Test: shared contract tests with a minimal second operation vocabulary, existing invalid body command tests and the network/client/operator recovery suites; inspect source-pinning closure.
+Predicts: wire semantics and existing bounds remain unchanged, unknown bench operations stay refused, generic validation imports no bench implementation and every new authority-bearing source is pinned.
+Against: unknown commands are admitted, validation weakens, old roots silently migrate across source changes, or the reusable module still needs MuJoCo/bench operations to import.
+Refs: docs/experiments/SIM14-reusable-body-recovery.md; tools/physical-workcell/body_protocol.py
+
+## SIM14-U1 · update · 2026-10-12 22:21
+Observed: the pre-fix publication regression reproduced FileExistsError on Resume. The first guardian process regression refused cleanup proof because Darwin temporarily returned EPERM for a dead process group; this stayed blocked rather than granting success. Retrying that transient state while still requiring eventual ESRCH yielded three passing owned-process checks, including a planner and grandchild surviving host-only SIGKILL until the guardian retired them. Seven alternate-operation contract checks and 24 existing body/client checks passed in separate development runs.
+Inferred: the selected journal repair and parent-liveness mechanism have initial process evidence; actual image-guided browser recovery and stronger malformed-evidence checks remain required before adoption.
+Next: finish negative checks and source-pinning closure, freeze committed source, then run publication and active-planning browser recovery trials.
+Refs: tools/physical-workcell/output/sim14-publication-before.log; tools/physical-workcell/output/sim14-runtime-first.log; tools/physical-workcell/output/sim13-host-crash-3b0976e974/; tools/physical-workcell/test_body_contract.py
+
+## SIM14-U2 · update · 2026-10-12 22:25
+Observed: extraction review caught a zone-validation mismatch: the storage helper did not include the bench's reachable-region bounds. The bench schema now retains those exact bounds with a regression case. The first legacy network-fault suite was invalidated by a concurrent whitespace edit; that attempt remains retained. A frozen rerun passed all 43 schema/body/client/network checks. The shared transport import test excludes bench, agent_bench, MuJoCo and numpy; the alternate simulated operation vocabulary exercises actual TCP reply-loss/client-restart recovery and incomplete lower-proof blocking. The extraction is committed as ee77644.
+Next: complete runtime regressions and independent review, then freeze the combined implementation and live trial sources.
+Refs: tools/physical-workcell/output/sim14-body-contract-conformance-v2.json; tools/physical-workcell/output/sim14-body-contract-conformance-v2.log; tools/physical-workcell/test_body_contract.py
+
+## SIM14-P4 · prediction · 2026-10-12 22:30
+Hypothesis: a blocking prompt write can prevent the guardian from observing host death if its planner never reads stdin; multiplexing nonblocking prompt delivery with host liveness preserves bounded retirement.
+Test: use an owned non-reading planner and a prompt larger than the pipe capacity, kill the host only, then verify group retirement and closed ownership. Run before and after the bounded delivery change.
+Predicts: the current guardian cannot publish cleanup proof in the timeout, while bounded nonblocking delivery observes EOF and retires the group; normal policy and crash tests remain unchanged.
+Against: the current prompt write does not block under a verified full pipe, or the repaired guardian still fails to retire ownership after host death.
+Refs: tools/physical-workcell/planner_guard.py; docs/experiments/SIM14-reusable-body-recovery.md
+
+## SIM14-U3 · update · 2026-10-12 22:28
+Observed: the frozen runtime development checks passed 18 focused and 59 existing operator/HTTP/health regressions. Independent review found a blocking stdin write before the guardian liveness loop; it is a potential orphan-retirement availability gap rather than an observed effect replay. The live harness will retain independent process absence and owner-transition evidence in addition to guardian closure.
+Changes: SIM14-P4 was committed before its test; its heading time was mistyped as 22:30. The clock command immediately before that commit returned 2026-10-12 22:27; Git records the prediction order.
+Next: reproduce and repair the full-pipe case, strengthen the live ownership evidence, then freeze the final source before actual model trials.
+Refs: tools/physical-workcell/output/sim14-runtime-final.log; tools/physical-workcell/output/sim14-runtime-regression.log; commit 05f3c0d; commit fbdeb20
+
+## SIM14-U4 · update · 2026-10-12 22:30
+Resolves: SIM14-P4 = failed
+Observed: the current guardian retired a never-reading planner after host-only SIGKILL with a valid 60000-byte prompt; cleanup completed in the retained pre-change test. The expected blocked write was not reproduced on this Mac.
+Inferred: pipe capacity on this host may accommodate the bounded prompt. A multiplexed write still makes the liveness/watchdog check independent of platform pipe capacity, but this run does not prove a prior full-pipe failure.
+Next: measure the owned pipe capacity, preserve the passing baseline, implement bounded prompt delivery and run the policy/crash regressions before live qualification.
+Refs: tools/physical-workcell/output/sim14-planner-backpressure-before.log
+
+## SIM14-U5 · update · 2026-10-12 22:34
+Observed: the maximum valid 65536-byte prompt also completed the original blocking write before host death; the owned pipe had all bytes queued and cleanup succeeded. The revised nonblocking path was actually backpressured with 16384 bytes queued, yet host EOF retired its planner group. Twenty final focused tests passed, including exact full-prompt delivery. An intermediate observer saw a partially published closure file; startup and closure now publish atomically while ownership remains locked. Ten trial/scorer controls pass, and independent process/group absence, changed planner incarnation and stable retired-call files are retained before Resume.
+Next: freeze the combined committed sources, run both actual image-guided browser interruption cases and recheck the native receipt gap; preserve all interrupted calls and inspect exact sends after actors stop.
+Refs: commit c097da8; tools/physical-workcell/output/sim14-planner-backpressure-before-maxbound.log; tools/physical-workcell/output/sim14-planner-backpressure-final.log; tools/physical-workcell/output/sim14-planner-backpressure-final-v2.log; commit 6839c23
+
+## SIM14-U6 · update · 2026-10-12 22:45
+Observed: publication-v1 passed post-stop scoring on eed92cc with one completed measurement/reset cycle, 13 image-guided decisions and 40 single-send commands. Planning-v1 proved main-group retirement and paused restart, but its resumed UI/API capture raced the deliberately lost reply: the screenshot showed Running while the later recorded service state was blocked. That attempt was recovered read-only and stopped incomplete; it is unqualified. Its crash trace also captured Codex shell-snapshot children in a separate process group, which the main-group proof did not account for. Read-only process inspection now finds those recorded PIDs absent; the installed CLI lists shell_snapshot as enabled by default.
+Next: retain both versions, remove the unnecessary startup snapshot, account for every observed child/group at retirement and rerun final-source browser qualification.
+Refs: tools/physical-workcell/output/sim14-publication-v1/recovery-score.json; tools/physical-workcell/output/sim14-planning-v1/attempt-status.json; tools/physical-workcell/output/sim14-planning-v1/process-ledger.json
+
+## SIM14-P5 · prediction · 2026-10-12 22:45
+Hypothesis: disabling Codex shell snapshots removes its incidental detached startup group, while complete observed-child ownership accounting detects any surviving writer that a main-group-only proof misses.
+Test: add exact CLI feature flags and bounded verified-owned child retirement where needed; run a controlled detached-child regression and final actual Codex crash gates. Bind every observed descendant identity/group to read-only absence proof before Resume, and preserve prior trials.
+Predicts: normal image-guided planning remains functional, actual startup has no shell-snapshot group, and all recorded old child identities/groups are gone before fresh planning; missing cleanup evidence refuses recovery rather than guessing or signalling unrelated processes.
+Against: shell-snapshot children still appear, an observed old writer survives successful retirement, an unrelated process is signalled, or the policy can no longer deliver its exact bounded image request.
+Refs: tools/physical-workcell/codex_policy.py; tools/physical-workcell/planner_guard.py; tools/physical-workcell/qualify_workbench_recovery.py
+
+## SIM14-U7 · update · 2026-10-12 22:55
+Observed: the final guardian development suite passed 25 checks. A controlled observed detached child withheld closure and blocked recovery while an unrelated process remained untouched. Missing, inconsistent, empty and truncated leader evidence is refused. Fourteen trial controls bind every captured child identity and group; exec, reparenting and group changes cannot be counted as exit. The UI now retains host-unavailable control vetoes and offline camera provenance across cached job selection. Review found no replay path or wrong-owner dispatch; unsampled detachment remains outside the evidence claim.
+Next: freeze final source, rerun publication and active-planning browser cases on fresh v2 roots, capture Running before arming a lost reply, and recheck native receipt-gap blocking.
+Refs: commit 76f4c9d; commit 434aa4c; commit 4f420df; tools/physical-workcell/output/sim14-planner-leader-proof-final.log
+
+## SIM14-U8 · update · 2026-10-12 23:29
+Resolves: SIM14-P1 = held; SIM14-P2 = held; SIM14-P3 = held; SIM14-P5 = held
+Observed: three final actual browser cases passed post-stop scoring on c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54. Publication-v2 recovered the exact original receipt and completed its cycle. Planning-v2 independently proved every captured child identity/group absent, changed owner and stable retired-call files, then completed measurement/reset after read-only recovery of a lost measurement reply. Shell-snapshot zsh startup disappeared; transient node/git groups were still observed and all were accounted for. Native-gap-v1 retained its original uncertain command through a new body boot and two receipt checks, with no successor or reset. The final cases contain 29 image-guided decisions, one interrupted reservation and 91 single-send commands. The retained test logs contain 152 unique passing identifiers. A cached job click during host outage kept action controls disabled and camera provenance offline.
+Next: keep the recovered product paused and connected, preserve scored snapshots before handoff and close the package with its limits.
+Refs: results/reusable-body-recovery-20261012/summary.json; results/reusable-body-recovery-20261012/publication/recovery-score.json; results/reusable-body-recovery-20261012/planning/recovery-score.json; results/reusable-body-recovery-20261012/native-gap/hard-crash-score.json
+
+## SIM14-S1 · summary · 2026-10-12 23:29
+Established: selected host event-publication and active-planning hard crashes recover without action replay. Valid audit tails repair their index; incomplete command and planner proof fail closed. Shared identity/lease/envelope/single-send transport is separated from bench operation schemas and verified with a second simulated TCP vocabulary. Two completed cycles and one safely blocked native receipt gap are independently scored; all trial actors were reaped. The live planning-v2 root was restarted only after scoring: paused, connected at body epoch two, one completed job, no stage or model pending, 44 commands unchanged and identical native manifest hash. A handoff-only bounded loopback forwarder preserves the retained transport origin with no faults, cache, retries, health-log budget or trial deadline.
+Uncertain: arbitrary instruction-level/client publication windows, power loss, unobserved detach/reparenting between process inventories, hardware safety and authenticated cross-machine control remain unqualified. Observed detached survivors block recovery instead of being signalled from stored PIDs. Current identity admission remains simulation-only; journal/job budgets remain finite. The native receipt gap has no automatic release. The original blocked-stdin failure prediction did not reproduce on this Mac; prior attempts and the capture race remain separate from final metrics.
+Decision: retain the reusable contract and guarded planner/journal recovery; hand back the completed paused simulation and its evidence. Hardware adapters must supply and qualify their own operation schemas, bounds and independent effects proof.
+Refs: results/reusable-body-recovery-20261012/report.md; results/reusable-body-recovery-20261012/attempt-ledger.json; results/reusable-body-recovery-20261012/handoff.json; tools/physical-workcell/output/sim14-handoff/forwarder.py

@@ -1,0 +1,290 @@
+{
+  "active_job_id": null,
+  "activity": [
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-74b3b95dec2746d48110346646c76136",
+      "seq": 116,
+      "time": 1791835522.543715
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "523fb1fbe8aa5668536aaccfa1ad4f90bdd1f8a43abdcdc89979320c1f28f386"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 117,
+      "time": 1791835522.595297
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 118,
+      "time": 1791835522.635673
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-455db4ba7be24f0f86007a5e078d859c",
+      "seq": 119,
+      "time": 1791835522.881181
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "2cfb9f85218990633d443312264b1c0932395f2efdee1ab957b1afb4a6cc2a4a"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 120,
+      "time": 1791835522.935346
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 121,
+      "time": 1791835522.975528
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-4fa58c52e18449049cd127551c10d65a",
+      "seq": 122,
+      "time": 1791835523.1529238
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "inference",
+      "outcome": "12",
+      "seq": 123,
+      "time": 1791835523.1555321
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "80985a144bda35c03b9eecc3714c9543a952fecafeaf5f978acee3abb5f9f65d"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 124,
+      "time": 1791835530.8459678
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 125,
+      "time": 1791835530.885638
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-e508dc3e450d45ecb4718799a04de88a",
+      "seq": 126,
+      "time": 1791835530.965694
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "5acae7b5c983ea1999c46262c8c7d948e040bf21bcc8a02342f5beb0fd1bcfc3"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 127,
+      "time": 1791835531.021473
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 128,
+      "time": 1791835531.063702
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-d13efa2ea6fd403c88c117fbb2965866",
+      "seq": 129,
+      "time": 1791835531.3077571
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "996feeb0e6749ea7e79dda4cd906c7f659bc829a4be722ab5fd3c3712ecc3b74"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 130,
+      "time": 1791835531.364406
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 131,
+      "time": 1791835531.4072561
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-f9d526ca594e4ae2ad902fb383f55b43",
+      "seq": 132,
+      "time": 1791835531.589549
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "inference",
+      "outcome": "13",
+      "seq": 133,
+      "time": 1791835531.59181
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "1c66858fa03bcc744b6b022536d3233761b27dd324d32864a7d9350ffc3c42ce"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 134,
+      "time": 1791835537.6027908
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 135,
+      "time": 1791835537.647042
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-36ff9689326e44828768e0d99e2605ab",
+      "seq": 136,
+      "time": 1791835537.7378528
+    },
+    {
+      "evidence": {
+        "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+        "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "e73ac7e746b7b7194cfb6daba9641212bf2205d50d0151528e4bf6385d29abdf"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 137,
+      "time": 1791835537.796623
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 138,
+      "time": 1791835537.8384042
+    },
+    {
+      "intent": "Workbench crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-ab8fd2b2180747feaa57a5758a01254e",
+      "seq": 139,
+      "time": 1791835538.263912
+    }
+  ],
+  "app_id": "676909dee6e1429abdcfa2e3698650cd",
+  "connection": {
+    "adapter_id": "41ef5e837de74370ab407737c6bd61a7",
+    "body_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+    "epoch": 1,
+    "fault": null,
+    "reason": "Body identity verified by read-only TCP health",
+    "state": "connected"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 10,
+    "image_url": "/api/frame?generation=10&sha256=612118c97622874a02927de51dfa015cd96bfdc46dbc7c11146a229288798f12"
+  },
+  "jobs": [
+    {
+      "call_count": 13,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "e0ac9b38-db3e-4ba3-911d-f68e78762aec",
+      "label": "Workbench crash while uncertain",
+      "last_intent": "Finish the reset now that the block center is in the home zone and the pusher is at its home position.",
+      "measurement": {
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "2fa4eeaf21ac4effa12582df7a7c8061",
+        "block_home_verified": true,
+        "generation": 10,
+        "image_sha256": "612118c97622874a02927de51dfa015cd96bfdc46dbc7c11146a229288798f12",
+        "job_id": "e0ac9b38-db3e-4ba3-911d-f68e78762aec",
+        "kind": "finish_reset",
+        "native_time_s": 21.943999999998717,
+        "operation_id": "agent-f367be891109464b8c33dd8c992de912",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 2986,
+        "reset_native_steps": 8205,
+        "state_sha256": "bcf29e5d41bc6334624f8f04b0bb0bdf4f3dda8e08e52bd9e10b31b37d71ac62"
+      },
+      "status": "completed",
+      "target": "A"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": null,
+  "readiness": {
+    "ready": true,
+    "reason": "Resumed; next decision receives a fresh TCP image"
+  },
+  "recovery": {
+    "command_id": null,
+    "operation": null,
+    "reason": "No pending command",
+    "state": "none"
+  },
+  "runner_status": "running",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 13,
+    "input_tokens": 170285,
+    "output_tokens": 2031,
+    "reported_calls": 13,
+    "token_usage_complete": true
+  }
+}

@@ -1,0 +1,81 @@
+Browser tab: 6, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51419/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 checkbox Retire planner and recover reply Completed, Value: 1
+		9 text One bench. Successive jobs.
+		10 text The AI prepares the part, takes a measurement, and returns it home before the next job.
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		14 text Retire planner and recover reply
+		15 text Paused
+		16 button Resume, ID: pause
+		17 container Description: Body connection, ID: network-card
+			18 text Body connected
+			19 text Body identity verified by read-only TCP health
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			22 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				23 text Test the simulated connection
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			26 text Last camera observation
+			27 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			29 text Captured · generation 11
+		30 text COMPLETED
+		31 text Measurement recorded and reset verified. The bench is ready for another job.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			37 text Historical result
+			38 container measurement-result
+				39 text 1,726
+				40 text Orange pixels
+				41 container
+					42 text 4,794.4
+					43 text mm²
+				44 text Apparent footprint
+				45 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+			46 button Repeat job, ID: repeat
+		47 container Activity
+			48 heading Activity, Value: 2, ID: activity-heading
+				49 text Activity
+			50 text 24 events
+			51 content list activity
+				52 container
+					53 text 11:24 PM Body restarted 1 -> 2
+				54 container
+					55 text 11:24 PM Agent stopped for review Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image
+				56 container
+					57 text 11:24 PM Previous planner retired The previous planner has stopped. Resume to plan from a fresh camera image.
+				58 container
+					59 text 11:07 PM Action receipt checked Retire planner and recover reply
+				60 container
+					61 text 11:07 PM Sending a guarded action
+				62 container
+					63 text 11:07 PM Fresh body check verified The next command uses current body evidence.
+				64 container
+					65 text 11:07 PM Action proposal accepted Retire planner and recover reply
+				66 container
+					67 text 11:07 PM Checking the planned action
+				68 container
+					69 text 11:07 PM Fresh body check verified The next command uses current body evidence.
+				70 container
+					71 text 11:07 PM AI planning requested Retire planner and recover reply
+				72 container
+					73 text 11:07 PM Camera observation received Retire planner and recover reply
+				74 container
+					75 text 11:07 PM Requesting camera observation
+		76 button (collapsed) Session details, Secondary Actions: Expand
+			77 text Session details
+		78 text 15 model requests · Reported tokens: 183,745 input / 2,157 output · Reporting incomplete (14 of 15 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/

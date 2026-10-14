@@ -1,0 +1,36 @@
+{
+  "actual_browser_faults": [
+    {
+      "client_POSTs": 1,
+      "client_send_count": 1,
+      "command_id": "command-85f915f500a54459b605d7bb546a8cba",
+      "delay_s": null,
+      "forwarded_count": 1,
+      "mode": "dropped_after",
+      "retained_command_state": "completed",
+      "same_reply": null
+    },
+    {
+      "client_POSTs": 1,
+      "client_send_count": 1,
+      "command_id": "command-0b59b5fe6d674a12b1ba2d56b7c83833",
+      "delay_s": null,
+      "forwarded_count": 2,
+      "mode": "duplicate_replies",
+      "retained_command_state": "completed",
+      "same_reply": true
+    },
+    {
+      "client_POSTs": 1,
+      "client_send_count": 1,
+      "command_id": "command-9e3ed3f1ec7c45acb5ed2ad4e17b640f",
+      "delay_s": 0.8,
+      "forwarded_count": 1,
+      "mode": "delay_after",
+      "retained_command_state": "completed",
+      "same_reply": null
+    }
+  ],
+  "native_receipt_binding": "qualification-score.json",
+  "recovery_ledger": "ui-ledger.json"
+}

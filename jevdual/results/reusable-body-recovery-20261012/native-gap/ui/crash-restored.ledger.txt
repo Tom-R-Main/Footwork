@@ -1,0 +1,40 @@
+Browser tab: 7, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51425/".
+0 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51425/
+	1 container
+		2 text Footwork Bench
+		3 text SIMULATION
+	4 container Jobs
+		5 text WORK QUEUE
+		6 button (disabled) ＋ New job, ID: new-job
+		55 checkbox Missing native receipt stays blocked Needs attention, Value: 1
+		8 text One bench. Successive jobs.
+		9 text The AI prepares the part, takes a measurement, and returns it home before the next job.
+	10 container
+		11 heading Bench, Value: 1
+			12 text Bench
+		56 text Missing native receipt stays blocked
+		57 text Needs attention
+		15 button (disabled) Pause, ID: pause
+		58 text Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image
+		16 container Description: Body connection, ID: network-card
+			59 text Body connected
+			60 text Independent body has unresolved effects
+			19 button Disconnect, ID: disconnect
+			20 button Check receipt, ID: reconcile
+			21 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				22 text Test the simulated connection
+		23 container Camera observation
+			24 text OVERHEAD CAMERA
+			61 text Last observation · Missing native receipt stays blocked
+			54 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			27 text Orange part Blue pusher Green task region
+			62 text Captured · generation 0
+		63 text OUTCOME UNCERTAIN
+		64 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.
+		31 container Job progress
+			32 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		33 container Measurement
+			34 heading Measurement, Value: 2, ID: measurement-heading
+				35 text Measurement
+			65 text Pending
+			37 text The part’s visible footprint will be measured after its placement is verified.

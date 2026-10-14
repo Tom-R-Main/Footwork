@@ -1,0 +1,87 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			105 checkbox Health inspection 01 Paused, Value: 1
+			106 checkbox Health inspection 02 Queued, Value: 0
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		107 text Health inspection 01
+		108 text Paused
+		16 button Resume, ID: pause
+		109 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.
+		18 container Description: Body connection, ID: network-card
+			110 text Body connected
+			111 text Body identity verified by read-only TCP health
+			21 button Disconnect, ID: disconnect
+			22 button (disabled) Check receipt, ID: reconcile
+			66 container
+				67 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					68 text Test the simulated connection
+				69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				70 button Lose next reply, ID: fault-drop
+				71 button Delay next reply, ID: fault-delay
+				72 button Duplicate next command, ID: fault-duplicate
+				112 text No reply fault armed.
+		25 container Camera observation
+			26 text OVERHEAD CAMERA
+			113 text Last observation · Health inspection 01
+			28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			29 text Orange part Blue pusher Green task region
+			114 text Captured · generation 3
+		115 text RECEIPT RECOVERED
+		116 text The exact command receipt was recovered. The agent is paused until you resume.
+		33 container Job progress
+			34 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		35 container Measurement
+			36 heading Measurement, Value: 2, ID: measurement-heading
+				37 text Measurement
+			117 text Recorded
+			79 container measurement-result
+				118 text 1,726
+				81 text Orange pixels
+				82 container
+					119 text 4,794.4
+					84 text mm²
+				85 text Apparent footprint
+				86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+		40 container Activity
+			41 heading Activity, Value: 2, ID: activity-heading
+				42 text Activity
+			120 text 24 events
+			104 content list activity
+				121 container
+					122 text 03:07 PM Command receipt recovered The agent remains paused until you resume.
+				123 container
+					124 text 03:07 PM Action receipt checked Health inspection 01
+				125 container
+					126 text 03:07 PM Body reconnecting No command sent or replayed
+				127 container
+					128 text 03:07 PM Body disconnected Transport only; no body reset or replay
+				129 container
+					130 text 03:06 PM Agent stopped for review reply is uncertain; reconcile exact command without resending
+				131 container
+					132 text 03:06 PM Sending a guarded action
+				133 container
+					134 text 03:06 PM Fresh body check verified The next command uses current body evidence.
+				135 container
+					136 text 03:06 PM Action proposal accepted Health inspection 01
+				137 container
+					138 text 03:06 PM Checking the planned action
+				139 container
+					140 text 03:06 PM Fresh body check verified The next command uses current body evidence.
+				141 container
+					142 text 03:06 PM Reply fault armed The next command reply will be lost.
+				143 container
+					144 text 03:06 PM AI planning requested Health inspection 01
+		44 button (collapsed) Session details, Secondary Actions: Expand
+			45 text Session details
+		145 text 6 model requests · Reported tokens: 78,086 input / 888 output
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

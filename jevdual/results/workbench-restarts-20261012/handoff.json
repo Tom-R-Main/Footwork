@@ -1,0 +1,38 @@
+{
+  "processes": [
+    {
+      "role": "body",
+      "pid": 8139,
+      "arguments": [
+        "body_network.py",
+        "--root",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2/body",
+        "--port",
+        "51373"
+      ]
+    },
+    {
+      "role": "workbench",
+      "pid": 8145,
+      "arguments": [
+        "network_bench_operator.py",
+        "serve",
+        "--root",
+        "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2/operator",
+        "--port",
+        "51377",
+        "--backend",
+        "codex"
+      ]
+    }
+  ],
+  "browser_origin": "http://127.0.0.1:51377",
+  "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+  "app_id": "878fad93039a4e86b4dcc5529f118f20",
+  "epoch": 4,
+  "runner_status": "paused",
+  "client_commands": 83,
+  "completed_jobs": 2,
+  "model_request_pending": false,
+  "source_commit": "d7072107d576d7a09643229ae584a3864d2fe0f6"
+}

@@ -1,0 +1,60 @@
+{
+  "source_commit": "b9941ef",
+  "participants": {
+    "deterministic_rgb": {
+      "scheduled": 6,
+      "attempted": 6,
+      "ordinary_attempted": 3,
+      "ordinary_completed": 3,
+      "completed_all": 3,
+      "unresolved": 3,
+      "failed": 0,
+      "setup_failed": 0,
+      "driver_failed": 0,
+      "incorrect_completion_claims": 0,
+      "visual_false_positives": 0,
+      "interventions_declared": 0,
+      "motion_executed_count": 11,
+      "elapsed_s": {
+        "ordinary-a": 1.1415338516235352,
+        "ordinary-b": 1.3485901355743408,
+        "ordinary-c": 1.3220341205596924,
+        "low-light": 0.1085669994354248,
+        "occlusion": 0.1074056625366211,
+        "camera-shift": 0.10839080810546875
+      }
+    },
+    "fresh_host": {
+      "scheduled": 6,
+      "attempted": 6,
+      "ordinary_attempted": 3,
+      "ordinary_completed": 3,
+      "completed_all": 3,
+      "unresolved": 3,
+      "failed": 0,
+      "setup_failed": 0,
+      "driver_failed": 0,
+      "incorrect_completion_claims": 0,
+      "visual_false_positives": 0,
+      "interventions_declared": 0,
+      "motion_executed_count": 13,
+      "elapsed_s": {
+        "ordinary-a": 66.88709688186646,
+        "ordinary-b": 49.85168480873108,
+        "ordinary-c": 55.4614360332489,
+        "low-light": 11.956594228744507,
+        "occlusion": 12.454973936080933,
+        "camera-shift": 10.831374168395996
+      }
+    }
+  },
+  "first_use_setup_issues": {
+    "deterministic_rgb": 0,
+    "fresh_host": 1
+  },
+  "limits": [
+    "one fresh context and six cases; no statistical comparison",
+    "baseline single process; host model and CLI round trips; elapsed times descriptive",
+    "fixed colors and bounded forward pusher; no hardware/app/control-service qualification"
+  ]
+}

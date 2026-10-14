@@ -1,0 +1,11 @@
+{
+  "source_commit": "37ebfdb3054b977149d7b60b46254ddd852b749a",
+  "before_fix": [
+    "tools/physical-workcell/output/sim12-health-before-fix.log",
+    "tools/physical-workcell/output/sim12-link-before-fix.log"
+  ],
+  "intermediate_failure": "tools/physical-workcell/output/sim12-health-targeted-v2.log",
+  "setup_only_unretained": "Wrong relative interpreter path exited127 before tests; reported in notebook SIM12-U2",
+  "actual_trial": "tools/physical-workcell/output/sim12-browser-health-v1",
+  "historical_warm_probes": "32 sequential reads succeeded; physical scheduling cause of original SIM11 timeout remains unresolved"
+}

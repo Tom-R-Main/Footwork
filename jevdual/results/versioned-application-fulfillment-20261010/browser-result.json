@@ -1,0 +1,58 @@
+{
+  "source_commit": "bd896e1786406dc06cab65dcb9255934fd5ad196",
+  "classification": "actual isolated browser + root image-guided host proposals + native simulation + separate persisted SQLite readback",
+  "app_id": "609f629c251e40a29b2db363cb2d9f32",
+  "order_id": "desk-stage-001",
+  "leased_revision": 1,
+  "fulfilled_revision": 2,
+  "effect_count": 1,
+  "moves": 4,
+  "admitted_actions": 5,
+  "native_steps": 3484,
+  "native_contact_samples": 9890,
+  "public_rgb_generations": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "final_rgb_center_m": [
+    0.19583333333333333,
+    0.005833333333333333
+  ],
+  "application_receipt": {
+    "app_id": "609f629c251e40a29b2db363cb2d9f32",
+    "committed_time_unix": 1791675824.074699,
+    "completion_operation_id": "fulfill-3e04eadf0a0e49cdb0a129db756ed781",
+    "fulfilled_revision": 2,
+    "lease_id": "24d56730083145d59b07fa1f4bcf2d4e",
+    "leased_revision": 1,
+    "order_id": "desk-stage-001",
+    "physical_completion_id": "stage-22a96ebafcb4404eb13478fb966f848b",
+    "physical_proof": {
+      "accepted_incarnation": "172b048b98204a3487c6902368b424c0",
+      "artifact_sha256": "6b9e6edded2471349354bec3d632bf81e186ea9c191d582ea68f2c22615f4d9d",
+      "controller_incarnation": "172b048b98204a3487c6902368b424c0",
+      "generation": 4,
+      "historical": true,
+      "image_sha256": "0f943c8669de3e35d64936bc01afef80a792095df2233592d567086edf6584c9",
+      "operation_id": "stage-22a96ebafcb4404eb13478fb966f848b",
+      "source_kind": "mujoco_simulation",
+      "state_sha256": "95f9c3e2c3c6113f12f5eb486443b8010a9382b3f8972d3e2450b4a1130ca495",
+      "verified_time_unix": 1791675824.0734122
+    },
+    "state": "fulfilled",
+    "work_order_sha256": "3f93b8004097cd730b72a4d9a78523d42f0cf6057d5e1a4a0e1b8b8eb98baada"
+  },
+  "browser_reload_persisted": true,
+  "evidence_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/b5-browser-20261010",
+  "screenshot": "browser-fulfilled.jpg",
+  "cleanup": {
+    "app_stopped": true,
+    "controller_process_stopped": true,
+    "controller_socket_absent": true,
+    "tab_closed": true,
+    "native_stop_claim": false
+  }
+}

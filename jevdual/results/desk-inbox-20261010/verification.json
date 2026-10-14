@@ -1,0 +1,57 @@
+{
+  "source_commit": "6e93c35",
+  "preregistration_commits": [
+    "e62fb47",
+    "3e63656"
+  ],
+  "conformance": {
+    "tests": 31,
+    "pytest_exit_code": 0,
+    "ruff_exit_code": 0
+  },
+  "synthetic_real_vision": {
+    "printed_three_lines": "exact match",
+    "normal_calibration_three_lines": "exact match with up",
+    "mirrored_calibration_three_lines": "exact match with upMirrored; same resulting text digest as normal",
+    "blank": "needs_text; acceptance refused; no note",
+    "wrong_approval_digest": "refused before note creation",
+    "tampered_saved_fixture": "current unknown; historical saved preserved; repeated accept did not overwrite/replay"
+  },
+  "live_paper": {
+    "source_kind": "native_camera_frame",
+    "capture_run": "tools/camera-capture-experiment/output/desk-paper-v1",
+    "desk_run": "tools/desk-inbox-experiment/output/live-paper-v1",
+    "camera_sha256": "afd69ee24f1252dccbabd9956717106447927db2044ce596f769c53f61a5327c",
+    "raw_ocr_sha256": "9e86fa8843213b560211b2d9fe43e5983c5de0fc0c10f77fd97880967525dc3d",
+    "raw_ocr_bytes": 180,
+    "reviewed_sha256": "6d4fb067193c2c1f48d3e57c130fee9cf9540651c7b77946e020b13a8e71847c",
+    "reviewed_bytes": 187,
+    "user_review": "explicitly confirmed corrected transcription; retained original header",
+    "mirror_observation": "calibration text reads normally in raw frame; no mirror correction used",
+    "ocr_accuracy": "raw handwritten OCR contained spacing, punctuation/case and word errors; separate correction required",
+    "state": "saved",
+    "fresh_process_repeat_accept_status": "same manifest; one note; candidate retained unchanged",
+    "independent_footwork_check": {
+      "claims": [
+        "current_artifact_byte_equality"
+      ],
+      "detail": "current bytes equal the digest-bound expected source",
+      "expected_bytes": 187,
+      "expected_file": "/Users/thomasmain/projects/footwork/tools/desk-inbox-experiment/output/live-paper-v1/reviewed.txt",
+      "expected_sha256": "6d4fb067193c2c1f48d3e57c130fee9cf9540651c7b77946e020b13a8e71847c",
+      "limit_bytes": 1048576,
+      "observed_bytes": 187,
+      "observed_sha256": "6d4fb067193c2c1f48d3e57c130fee9cf9540651c7b77946e020b13a8e71847c",
+      "ok": true,
+      "path": "/Users/thomasmain/projects/footwork/tools/desk-inbox-experiment/output/live-paper-v1/inbox/note.txt",
+      "source_sha256": "6d4fb067193c2c1f48d3e57c130fee9cf9540651c7b77946e020b13a8e71847c"
+    },
+    "changed_mirror_request": "refused without manifest change"
+  },
+  "limits": [
+    "No paid provider or robot control",
+    "No calibrated handwriting accuracy or automatic task execution",
+    "No authenticated review identity, hardware identity, or exposure freshness",
+    "Images and note contents stay private/ignored"
+  ]
+}

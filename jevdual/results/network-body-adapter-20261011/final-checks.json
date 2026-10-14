@@ -1,0 +1,24 @@
+{
+  "actual_proxy_faults_bound": {
+    "delay_after": 1,
+    "drop_after": 1,
+    "duplicate": 1,
+    "duplicate_exact_payload_and_reply": true,
+    "lost_dispatch_single_POST_single_read_only_GET": true
+  },
+  "all_owned_model_and_service_pids_absent": true,
+  "max_axis_actuator_force_n": 1.45171519700936,
+  "model_processes": 27,
+  "motion_receipts": 21,
+  "original_browser_product": {
+    "active_job_id": null,
+    "completed_jobs": 2,
+    "model_request_pending": false,
+    "runner_status": "running",
+    "url": "http://127.0.0.1:64370"
+  },
+  "original_browser_server_preserved": true,
+  "passed": true,
+  "proxy_closed": true,
+  "source_unchanged": true
+}

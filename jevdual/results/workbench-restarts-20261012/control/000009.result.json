@@ -1,0 +1,22 @@
+{
+  "action_performed": false,
+  "after": "000009-after.json",
+  "before": "000009-before.json",
+  "passed": true,
+  "request": {
+    "action": "finish",
+    "expect": {
+      "active_job_id": null,
+      "app_id": "878fad93039a4e86b4dcc5529f118f20",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "model_request_pending": false,
+      "recovery_command_id": null,
+      "runner_status": "running",
+      "usage_calls": 29
+    },
+    "predicate": "none",
+    "requested_time": 1791829364.559857,
+    "role": null,
+    "sequence": 9
+  }
+}

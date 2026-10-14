@@ -1,0 +1,282 @@
+{
+  "body_command": null,
+  "body_identity": {
+    "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+    "body_id": "d2820395d03d485492e1225f1972a12d",
+    "epoch": 1,
+    "protocol": "footwork.body/1",
+    "simulation": true,
+    "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+  },
+  "body_state": {
+    "bench": {
+      "active_job": {
+        "job_id": "0bc391fc-81d4-4d6a-a267-965b153f8cab",
+        "moves": 0,
+        "phase": "prepare",
+        "started_generation": 0,
+        "started_native_time_s": 1.0000000000000007,
+        "target_zone": {
+          "x_max": 0.105,
+          "x_min": 0.035,
+          "y_max": 0.025,
+          "y_min": -0.025
+        }
+      },
+      "bench_id": "d2820395d03d485492e1225f1972a12d",
+      "diagnostic_enabled": true,
+      "generation": 0,
+      "jobs": {},
+      "native_time_s": 1.0000000000000007,
+      "source_fingerprints": {
+        "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+        "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+        "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+        "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+        "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+        "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+        "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+        "mujoco_version": "3.15.0",
+        "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+        "state_spec": 16383,
+        "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+      },
+      "source_kind": "mujoco_simulation",
+      "state": "ready",
+      "unresolved_effect": null,
+      "version": 1
+    },
+    "identity": {
+      "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+      "body_id": "d2820395d03d485492e1225f1972a12d",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "lease": {
+      "client_id": "client-7d500c79f03142ecb999bacab4d5a0a2",
+      "epoch": 1,
+      "expires_in_s": 0,
+      "lease_id": "9f787a7440f84c489233400d2f929518"
+    },
+    "state": "ready",
+    "unresolved_commands": []
+  },
+  "client": {
+    "commands": {
+      "command-3f6a2226f09f40d3a50d6b5c8d4a5f7c": {
+        "operation": "observe",
+        "request_sha256": "aca734b224de4e8d8632c57c911cb12abac39464d0fef4eb6f3f879eb1e390c9",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-6e87e72b25954bf8ae8571cb370485ca": {
+        "operation": "start_job",
+        "request_sha256": "824c68663aad317b4329f1c6a6224342440c9f9361f12bda6c8c50988da641ab",
+        "send_count": 1,
+        "state": "completed"
+      }
+    },
+    "identity": {
+      "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+      "body_id": "d2820395d03d485492e1225f1972a12d",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "lease": {
+      "client_id": "client-7d500c79f03142ecb999bacab4d5a0a2",
+      "duration_s": 30.0,
+      "epoch": 1,
+      "lease_id": "9f787a7440f84c489233400d2f929518"
+    },
+    "pending_command_ids": []
+  },
+  "host": {
+    "app_id": "3e44f35fead1476292e3976e8a3e6b63",
+    "body_identity": {
+      "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+      "body_id": "d2820395d03d485492e1225f1972a12d",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "frame": {
+      "generation": 0,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-planning-v2/operator/client/images/challenge-ba75092e251246d5a1a4fb7262a8a6ea-4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7.png",
+      "sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "planner_owner": "83ffafef07084b55a7dee3512d706ca7",
+    "runner_status": "paused",
+    "sequence": 9,
+    "stage": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0
+    }
+  },
+  "label": "restored",
+  "posts": [
+    {
+      "command_id": "command-6e87e72b25954bf8ae8571cb370485ca",
+      "payload_sha256": "824c68663aad317b4329f1c6a6224342440c9f9361f12bda6c8c50988da641ab",
+      "sequence": 8
+    },
+    {
+      "command_id": "command-3f6a2226f09f40d3a50d6b5c8d4a5f7c",
+      "payload_sha256": "aca734b224de4e8d8632c57c911cb12abac39464d0fef4eb6f3f879eb1e390c9",
+      "sequence": 16
+    }
+  ],
+  "processes": {
+    "body": 49738,
+    "workbench": 56155
+  },
+  "public": {
+    "active_job_id": "0bc391fc-81d4-4d6a-a267-965b153f8cab",
+    "activity": [
+      {
+        "intent": "Retire planner and recover reply",
+        "kind": "queued",
+        "outcome": "0bc391fc-81d4-4d6a-a267-965b153f8cab",
+        "seq": 1,
+        "time": 1791860178.2600389
+      },
+      {
+        "evidence": {
+          "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+          "body_id": "d2820395d03d485492e1225f1972a12d",
+          "epoch": 1,
+          "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+          "state_sha256": "9f2ea4a53b7fb698ae92d96b09a8bca23606c20f2937a470dbd6f205534216e1"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "start_job",
+        "seq": 2,
+        "time": 1791860178.269863
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "start_job",
+        "seq": 3,
+        "time": 1791860178.281921
+      },
+      {
+        "intent": "Retire planner and recover reply",
+        "kind": "rpc_applied",
+        "outcome": "start_job: command-6e87e72b25954bf8ae8571cb370485ca",
+        "seq": 4,
+        "time": 1791860178.295229
+      },
+      {
+        "evidence": {
+          "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+          "body_id": "d2820395d03d485492e1225f1972a12d",
+          "epoch": 1,
+          "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+          "state_sha256": "701dd8e778fe5bb6994985e7c2f28e3fb68a48851aaad24d968b795811594e44"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "observe",
+        "seq": 5,
+        "time": 1791860178.30598
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 6,
+        "time": 1791860178.3193002
+      },
+      {
+        "intent": "Retire planner and recover reply",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-3f6a2226f09f40d3a50d6b5c8d4a5f7c",
+        "seq": 7,
+        "time": 1791860178.5038688
+      },
+      {
+        "intent": "Retire planner and recover reply",
+        "kind": "inference",
+        "outcome": "1",
+        "seq": 8,
+        "time": 1791860178.505256
+      },
+      {
+        "evidence": {
+          "calls": [
+            {
+              "call": "0bc391fc-81d4-4d6a-a267-965b153f8cab-01",
+              "reason": "host liveness pipe closed"
+            }
+          ]
+        },
+        "intent": "",
+        "kind": "planner_retired",
+        "outcome": "Prior planner retired; explicit Resume obtains a fresh image",
+        "seq": 9,
+        "time": 1791860318.091291
+      }
+    ],
+    "app_id": "3e44f35fead1476292e3976e8a3e6b63",
+    "connection": {
+      "adapter_id": "ad2772b543f9415b96d4efde0013d9ab",
+      "body_id": "d2820395d03d485492e1225f1972a12d",
+      "epoch": 1,
+      "fault": null,
+      "reason": "Body identity verified by read-only TCP health",
+      "state": "connected"
+    },
+    "current_frame": {
+      "available": true,
+      "generation": 0,
+      "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "jobs": [
+      {
+        "call_count": 1,
+        "disturbance_test": false,
+        "error": "Prior planner retired; explicit Resume obtains a fresh image",
+        "job_id": "0bc391fc-81d4-4d6a-a267-965b153f8cab",
+        "label": "Retire planner and recover reply",
+        "last_intent": "",
+        "measurement": null,
+        "phase": "prepare",
+        "reset": null,
+        "status": "paused",
+        "target": "A"
+      }
+    ],
+    "model_request_pending": false,
+    "pending_operation": null,
+    "readiness": {
+      "ready": false,
+      "reason": "Prior planner retired; explicit Resume obtains a fresh image"
+    },
+    "recovery": {
+      "command_id": null,
+      "operation": null,
+      "reason": "No uncertain command",
+      "state": "none"
+    },
+    "runner_status": "paused",
+    "simulation": true,
+    "transport_pending": false,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0,
+      "token_usage_complete": false
+    }
+  },
+  "time": 1791860318.1755378
+}

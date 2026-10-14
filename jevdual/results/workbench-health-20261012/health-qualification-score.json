@@ -1,0 +1,1164 @@
+{
+  "base_qualification": {
+    "browser_transitions_passed": true,
+    "completed_cycles": 2,
+    "lost_reply_reconciled_without_resend": true,
+    "model_boundaries_passed": true,
+    "passed": true,
+    "source_unchanged": true
+  },
+  "cancelled_model_calls": [],
+  "fresh_admission_proofs": [
+    {
+      "command_id": "command-accc773656494216b8991d02cab9b603",
+      "command_sequence": 16,
+      "lease_sequence": 15,
+      "operation": "start_job",
+      "passed": true,
+      "proof_event": 2,
+      "state_read_sequence": 13
+    },
+    {
+      "command_id": "command-85d8b423ec7c4a53bb1987fb1a62bdf6",
+      "command_sequence": 20,
+      "lease_sequence": 19,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 5,
+      "state_read_sequence": 17
+    },
+    {
+      "command_id": "command-b93638f4643f4d35b5cde6fde06ed807",
+      "command_sequence": 32,
+      "lease_sequence": 31,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 10,
+      "state_read_sequence": 29
+    },
+    {
+      "command_id": "command-a44e60b9d8c24bdaa49e479c4b0ef780",
+      "command_sequence": 36,
+      "lease_sequence": 35,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 13,
+      "state_read_sequence": 33
+    },
+    {
+      "command_id": "command-79dcaf5d02e048449c681748167c446a",
+      "command_sequence": 40,
+      "lease_sequence": 39,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 16,
+      "state_read_sequence": 37
+    },
+    {
+      "command_id": "command-069d2460341443e69bbcd0b5f39b91f2",
+      "command_sequence": 49,
+      "lease_sequence": 48,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 20,
+      "state_read_sequence": 46
+    },
+    {
+      "command_id": "command-20fde1f33f97495cade8fce105d16ae4",
+      "command_sequence": 53,
+      "lease_sequence": 52,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 23,
+      "state_read_sequence": 50
+    },
+    {
+      "command_id": "command-107896fd188d4b72be6d2a6debd2ba0c",
+      "command_sequence": 57,
+      "lease_sequence": 56,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 26,
+      "state_read_sequence": 54
+    },
+    {
+      "command_id": "command-1bc0e6eb4e064fe1b7b66dfbf750968a",
+      "command_sequence": 68,
+      "lease_sequence": 67,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 30,
+      "state_read_sequence": 65
+    },
+    {
+      "command_id": "command-70f9b8c19b59452693061139bda6c71b",
+      "command_sequence": 72,
+      "lease_sequence": 71,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 33,
+      "state_read_sequence": 69
+    },
+    {
+      "command_id": "command-16683e1227d84968879714ddd0556488",
+      "command_sequence": 76,
+      "lease_sequence": 75,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 36,
+      "state_read_sequence": 73
+    },
+    {
+      "command_id": "command-1fb29328cf0a4c7e800022c949b77f7a",
+      "command_sequence": 85,
+      "lease_sequence": 84,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 40,
+      "state_read_sequence": 82
+    },
+    {
+      "command_id": "command-f1e1760598fa4cd89339d2d2091f8d1a",
+      "command_sequence": 89,
+      "lease_sequence": 88,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 43,
+      "state_read_sequence": 86
+    },
+    {
+      "command_id": "command-1a4dc2ad405846ecbdfaed4b2d825f3e",
+      "command_sequence": 94,
+      "lease_sequence": 93,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 46,
+      "state_read_sequence": 91
+    },
+    {
+      "command_id": "command-55007cfbc1d7410d92d582397af2555b",
+      "command_sequence": 103,
+      "lease_sequence": 102,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 50,
+      "state_read_sequence": 100
+    },
+    {
+      "command_id": "command-ee7b8dee4444416c98f550c3e5a7c01f",
+      "command_sequence": 107,
+      "lease_sequence": 106,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 53,
+      "state_read_sequence": 104
+    },
+    {
+      "command_id": "command-77279a97fd4a4ff2aee720c0b7a46c40",
+      "command_sequence": 111,
+      "lease_sequence": 110,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 56,
+      "state_read_sequence": 108
+    },
+    {
+      "command_id": "command-3211cda07dda4c5c8dd2cc700fdaad98",
+      "command_sequence": 121,
+      "lease_sequence": 120,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 61,
+      "state_read_sequence": 118
+    },
+    {
+      "command_id": "command-e52c9ef5005a410fb80600b4ad7f947a",
+      "command_sequence": 125,
+      "lease_sequence": 124,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 64,
+      "state_read_sequence": 122
+    },
+    {
+      "command_id": "command-97245de4fa73480c87503051fc90a8a9",
+      "command_sequence": 179,
+      "lease_sequence": 178,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 72,
+      "state_read_sequence": 176
+    },
+    {
+      "command_id": "command-5457db2a5bcf4cd3ba1b306e5182ede1",
+      "command_sequence": 200,
+      "lease_sequence": 199,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 76,
+      "state_read_sequence": 197
+    },
+    {
+      "command_id": "command-d4045c653de542aea3cd3f100603a0dd",
+      "command_sequence": 204,
+      "lease_sequence": 203,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 79,
+      "state_read_sequence": 201
+    },
+    {
+      "command_id": "command-127c700baa7e4224a9f4d4d1654380fc",
+      "command_sequence": 208,
+      "lease_sequence": 207,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 82,
+      "state_read_sequence": 205
+    },
+    {
+      "command_id": "command-12d35e26325248a5881960ffcbd97a6f",
+      "command_sequence": 223,
+      "lease_sequence": 222,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 86,
+      "state_read_sequence": 220
+    },
+    {
+      "command_id": "command-fb95362e732c42c793f505dd7673ea38",
+      "command_sequence": 227,
+      "lease_sequence": 226,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 89,
+      "state_read_sequence": 224
+    },
+    {
+      "command_id": "command-5365431f8f094a738c04898a662544f5",
+      "command_sequence": 231,
+      "lease_sequence": 230,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 92,
+      "state_read_sequence": 228
+    },
+    {
+      "command_id": "command-1ca372f4627f44ca820de2e16d58a939",
+      "command_sequence": 246,
+      "lease_sequence": 245,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 96,
+      "state_read_sequence": 243
+    },
+    {
+      "command_id": "command-8074e0e06a9d46f68b944f8a3949a7d5",
+      "command_sequence": 250,
+      "lease_sequence": 249,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 99,
+      "state_read_sequence": 247
+    },
+    {
+      "command_id": "command-58c9af8646c94c0b9e453fb32e4622f1",
+      "command_sequence": 254,
+      "lease_sequence": 253,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 102,
+      "state_read_sequence": 251
+    },
+    {
+      "command_id": "command-706d43a193d349b0abb2a1a2e213670d",
+      "command_sequence": 269,
+      "lease_sequence": 268,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 106,
+      "state_read_sequence": 266
+    },
+    {
+      "command_id": "command-f01b770705654cf0b746795ef56a5e51",
+      "command_sequence": 273,
+      "lease_sequence": 272,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 109,
+      "state_read_sequence": 270
+    },
+    {
+      "command_id": "command-01c5b18c0f4848ab83a3a506c6164bd7",
+      "command_sequence": 277,
+      "lease_sequence": 276,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 112,
+      "state_read_sequence": 274
+    },
+    {
+      "command_id": "command-455161d907e44cc2a0c00c4713404a47",
+      "command_sequence": 292,
+      "lease_sequence": 291,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 116,
+      "state_read_sequence": 289
+    },
+    {
+      "command_id": "command-c085b10cc40c44539a927aa06c7a4339",
+      "command_sequence": 296,
+      "lease_sequence": 295,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 119,
+      "state_read_sequence": 293
+    },
+    {
+      "command_id": "command-7c91d1e39cc047049a3c4453e8b35923",
+      "command_sequence": 300,
+      "lease_sequence": 299,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 122,
+      "state_read_sequence": 297
+    },
+    {
+      "command_id": "command-02d0ee9bb015446e974769918792b02f",
+      "command_sequence": 313,
+      "lease_sequence": 312,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 126,
+      "state_read_sequence": 310
+    },
+    {
+      "command_id": "command-15941d3c6bb74b9a8916ec43a2fe0e1f",
+      "command_sequence": 317,
+      "lease_sequence": 316,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 129,
+      "state_read_sequence": 314
+    },
+    {
+      "command_id": "command-f615d864a28e4af88536d43c26a06e7c",
+      "command_sequence": 321,
+      "lease_sequence": 320,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 132,
+      "state_read_sequence": 318
+    },
+    {
+      "command_id": "command-d11cdb7e2538490784e2e8a2425572b7",
+      "command_sequence": 334,
+      "lease_sequence": 333,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 136,
+      "state_read_sequence": 331
+    },
+    {
+      "command_id": "command-cdf687139f2e43cab73f3afa8053018d",
+      "command_sequence": 338,
+      "lease_sequence": 337,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 139,
+      "state_read_sequence": 335
+    },
+    {
+      "command_id": "command-6db96f5e11fc4baebb1607c174a5898f",
+      "command_sequence": 342,
+      "lease_sequence": 341,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 142,
+      "state_read_sequence": 339
+    },
+    {
+      "command_id": "command-000b1a6737a14842a6b79c23e0a5ca92",
+      "command_sequence": 357,
+      "lease_sequence": 356,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 146,
+      "state_read_sequence": 354
+    },
+    {
+      "command_id": "command-72de9f33d999438198fc8b176ee89f6d",
+      "command_sequence": 361,
+      "lease_sequence": 360,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 149,
+      "state_read_sequence": 358
+    },
+    {
+      "command_id": "command-155208c1dd824b43a411bf0d9f879dc9",
+      "command_sequence": 366,
+      "lease_sequence": 365,
+      "operation": "start_job",
+      "passed": true,
+      "proof_event": 152,
+      "state_read_sequence": 363
+    },
+    {
+      "command_id": "command-debb71a7f11f45b1b2093c2da309bb26",
+      "command_sequence": 370,
+      "lease_sequence": 369,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 155,
+      "state_read_sequence": 367
+    },
+    {
+      "command_id": "command-8fe46178c8564d2b8af7b48dd51ceb69",
+      "command_sequence": 387,
+      "lease_sequence": 386,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 159,
+      "state_read_sequence": 384
+    },
+    {
+      "command_id": "command-1fdd5229845447258a05de892ad29824",
+      "command_sequence": 391,
+      "lease_sequence": 390,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 162,
+      "state_read_sequence": 388
+    },
+    {
+      "command_id": "command-7e14ebef15814262bf16ee0a417469ea",
+      "command_sequence": 395,
+      "lease_sequence": 394,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 165,
+      "state_read_sequence": 392
+    },
+    {
+      "command_id": "command-a6931c3bf281480fb0dd090384b20178",
+      "command_sequence": 408,
+      "lease_sequence": 407,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 169,
+      "state_read_sequence": 405
+    },
+    {
+      "command_id": "command-5a3fb52b0a34409da8c43ce284d498f8",
+      "command_sequence": 412,
+      "lease_sequence": 411,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 172,
+      "state_read_sequence": 409
+    },
+    {
+      "command_id": "command-6371aeae6cdb432c851d1a095b64f85e",
+      "command_sequence": 416,
+      "lease_sequence": 415,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 175,
+      "state_read_sequence": 413
+    },
+    {
+      "command_id": "command-020d09130bdf4e10b2e30aed41ee93fd",
+      "command_sequence": 433,
+      "lease_sequence": 432,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 179,
+      "state_read_sequence": 430
+    },
+    {
+      "command_id": "command-185d0f856fbc4990be03fb5a4d680444",
+      "command_sequence": 437,
+      "lease_sequence": 436,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 182,
+      "state_read_sequence": 434
+    },
+    {
+      "command_id": "command-271d260ff225464ca18069efe6b89a3f",
+      "command_sequence": 442,
+      "lease_sequence": 441,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 185,
+      "state_read_sequence": 439
+    },
+    {
+      "command_id": "command-8bc103965b3b4b548f0ab2a4f6529315",
+      "command_sequence": 455,
+      "lease_sequence": 454,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 189,
+      "state_read_sequence": 452
+    },
+    {
+      "command_id": "command-52b299434a2a4354ae1a0c27f7afda73",
+      "command_sequence": 459,
+      "lease_sequence": 458,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 192,
+      "state_read_sequence": 456
+    },
+    {
+      "command_id": "command-b50b8172d84a4c2ca69c1b13799c0cd3",
+      "command_sequence": 463,
+      "lease_sequence": 462,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 195,
+      "state_read_sequence": 460
+    },
+    {
+      "command_id": "command-55878c3e64e7438786d949269a3ca632",
+      "command_sequence": 478,
+      "lease_sequence": 477,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 199,
+      "state_read_sequence": 475
+    },
+    {
+      "command_id": "command-3c4907bffd1043b7841f4f7a81e14c2e",
+      "command_sequence": 482,
+      "lease_sequence": 481,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 202,
+      "state_read_sequence": 479
+    },
+    {
+      "command_id": "command-a3d1bf0c87ed4d748bcfddf5acbcdbc8",
+      "command_sequence": 486,
+      "lease_sequence": 485,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 205,
+      "state_read_sequence": 483
+    },
+    {
+      "command_id": "command-c2820c925b7b43e48231001f02731ba6",
+      "command_sequence": 501,
+      "lease_sequence": 500,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 209,
+      "state_read_sequence": 498
+    },
+    {
+      "command_id": "command-8a9753d1c9604e3094a1478b421465f0",
+      "command_sequence": 505,
+      "lease_sequence": 504,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 212,
+      "state_read_sequence": 502
+    },
+    {
+      "command_id": "command-c21a6cfb3b154f799bb67d2695787ef8",
+      "command_sequence": 509,
+      "lease_sequence": 508,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 215,
+      "state_read_sequence": 506
+    },
+    {
+      "command_id": "command-6d7f70c0e5b14d6494d7eb02930b9d66",
+      "command_sequence": 524,
+      "lease_sequence": 523,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 219,
+      "state_read_sequence": 521
+    },
+    {
+      "command_id": "command-7d2c4e20bc454be996d99dc7edeea280",
+      "command_sequence": 528,
+      "lease_sequence": 527,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 222,
+      "state_read_sequence": 525
+    },
+    {
+      "command_id": "command-3352c7fd2fb14ffcaf69c1b27c6c53d9",
+      "command_sequence": 532,
+      "lease_sequence": 531,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 225,
+      "state_read_sequence": 529
+    },
+    {
+      "command_id": "command-896ce409c627486b9104d8d7415cefd3",
+      "command_sequence": 551,
+      "lease_sequence": 550,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 229,
+      "state_read_sequence": 548
+    },
+    {
+      "command_id": "command-1875feda0eaf4c058b771536779ccd62",
+      "command_sequence": 555,
+      "lease_sequence": 554,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 232,
+      "state_read_sequence": 552
+    },
+    {
+      "command_id": "command-844f1072836b419fa30a4c4f4a8697f1",
+      "command_sequence": 559,
+      "lease_sequence": 558,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 235,
+      "state_read_sequence": 556
+    },
+    {
+      "command_id": "command-7d6435405eaf4824b97108643856b361",
+      "command_sequence": 572,
+      "lease_sequence": 571,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 239,
+      "state_read_sequence": 569
+    },
+    {
+      "command_id": "command-7408e15ea38244a592d2800662c2b3c8",
+      "command_sequence": 576,
+      "lease_sequence": 575,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 242,
+      "state_read_sequence": 573
+    },
+    {
+      "command_id": "command-3cdfb3055b044aeeb059afc8731dac9c",
+      "command_sequence": 580,
+      "lease_sequence": 579,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 245,
+      "state_read_sequence": 577
+    },
+    {
+      "command_id": "command-59ebc979948340c1bceb69a8e01ac2aa",
+      "command_sequence": 597,
+      "lease_sequence": 596,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 249,
+      "state_read_sequence": 594
+    },
+    {
+      "command_id": "command-7761812fccc94a208c8f3e2dc26c28ec",
+      "command_sequence": 601,
+      "lease_sequence": 600,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 252,
+      "state_read_sequence": 598
+    },
+    {
+      "command_id": "command-2e37938e1f6a4a63b928572e1cf365af",
+      "command_sequence": 605,
+      "lease_sequence": 604,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 255,
+      "state_read_sequence": 602
+    },
+    {
+      "command_id": "command-e6cd1a382110409ab381d5fd4c4cc3b0",
+      "command_sequence": 620,
+      "lease_sequence": 619,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 259,
+      "state_read_sequence": 617
+    },
+    {
+      "command_id": "command-34752e8b30564841a21d087d561a5930",
+      "command_sequence": 624,
+      "lease_sequence": 623,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 262,
+      "state_read_sequence": 621
+    },
+    {
+      "command_id": "command-c966c8b893db42eb84c5b0616acca391",
+      "command_sequence": 628,
+      "lease_sequence": 627,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 265,
+      "state_read_sequence": 625
+    },
+    {
+      "command_id": "command-c8ad5019377e44159aef0ee22364b18f",
+      "command_sequence": 638,
+      "lease_sequence": 637,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 269,
+      "state_read_sequence": 635
+    },
+    {
+      "command_id": "command-10a03ed616ea4d96a26e96ae0973c32b",
+      "command_sequence": 642,
+      "lease_sequence": 641,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 272,
+      "state_read_sequence": 639
+    },
+    {
+      "command_id": "command-6b6e57d717d249c7811ef4708c6b8667",
+      "command_sequence": 646,
+      "lease_sequence": 645,
+      "operation": "observe",
+      "passed": true,
+      "proof_event": 275,
+      "state_read_sequence": 643
+    },
+    {
+      "command_id": "command-594d54e2793d428bbb42f80713e94ed3",
+      "command_sequence": 655,
+      "lease_sequence": 654,
+      "operation": "propose",
+      "passed": true,
+      "proof_event": 279,
+      "state_read_sequence": 652
+    },
+    {
+      "command_id": "command-bd5377590da74532a8333ac5ca2a72b3",
+      "command_sequence": 659,
+      "lease_sequence": 658,
+      "operation": "dispatch",
+      "passed": true,
+      "proof_event": 282,
+      "state_read_sequence": 656
+    }
+  ],
+  "fresh_proof_every_rpc": true,
+  "genuine_upstream_long_read_count": 0,
+  "genuine_upstream_long_reads": [],
+  "healthy_injected_long_read_count": 173,
+  "healthy_injected_long_reads": [
+    {
+      "injected_elapsed_s": 1.2040192501153797,
+      "path": "/identity",
+      "sequence": 2,
+      "upstream_elapsed_s": 0.002776124980300665
+    },
+    {
+      "injected_elapsed_s": 1.2024811250157654,
+      "path": "/identity",
+      "sequence": 3,
+      "upstream_elapsed_s": 0.005044083809480071
+    },
+    {
+      "injected_elapsed_s": 1.2039304592180997,
+      "path": "/identity",
+      "sequence": 4,
+      "upstream_elapsed_s": 0.0035592911299318075
+    },
+    {
+      "injected_elapsed_s": 1.2020084999967366,
+      "path": "/identity",
+      "sequence": 5,
+      "upstream_elapsed_s": 0.0029993748757988214
+    },
+    {
+      "injected_elapsed_s": 1.2050337500404567,
+      "path": "/identity",
+      "sequence": 6,
+      "upstream_elapsed_s": 0.0033572500105947256
+    },
+    {
+      "injected_elapsed_s": 1.203755582915619,
+      "path": "/identity",
+      "sequence": 7,
+      "upstream_elapsed_s": 0.09075575019232929
+    },
+    {
+      "injected_elapsed_s": 1.2050538749899715,
+      "path": "/identity",
+      "sequence": 8,
+      "upstream_elapsed_s": 0.0031042909249663353
+    },
+    {
+      "injected_elapsed_s": 1.203882124973461,
+      "path": "/identity",
+      "sequence": 9,
+      "upstream_elapsed_s": 0.0031348341144621372
+    },
+    {
+      "injected_elapsed_s": 1.204291749978438,
+      "path": "/identity",
+      "sequence": 10,
+      "upstream_elapsed_s": 0.005035291891545057
+    },
+    {
+      "injected_elapsed_s": 1.2027659590821713,
+      "path": "/identity",
+      "sequence": 11,
+      "upstream_elapsed_s": 0.002828457858413458
+    },
+    {
+      "injected_elapsed_s": 1.2050365000031888,
+      "path": "/identity",
+      "sequence": 12,
+      "upstream_elapsed_s": 0.003178749931976199
+    },
+    {
+      "injected_elapsed_s": 1.201763124903664,
+      "path": "/identity",
+      "sequence": 22,
+      "upstream_elapsed_s": 0.00289629097096622
+    },
+    {
+      "injected_elapsed_s": 1.2055749581195414,
+      "path": "/identity",
+      "sequence": 23,
+      "upstream_elapsed_s": 0.002508667064830661
+    },
+    {
+      "injected_elapsed_s": 1.205075625097379,
+      "path": "/identity",
+      "sequence": 24,
+      "upstream_elapsed_s": 0.003260375000536442
+    },
+    {
+      "injected_elapsed_s": 1.2044482911005616,
+      "path": "/identity",
+      "sequence": 25,
+      "upstream_elapsed_s": 0.003892249893397093
+    },
+    {
+      "injected_elapsed_s": 1.204990333179012,
+      "path": "/identity",
+      "sequence": 26,
+      "upstream_elapsed_s": 0.003343291115015745
+    },
+    {
+      "injected_elapsed_s": 1.2049401660915464,
+      "path": "/identity",
+      "sequence": 27,
+      "upstream_elapsed_s": 0.0034893339034169912
+    },
+    {
+      "injected_elapsed_s": 1.204629332991317,
+      "path": "/identity",
+      "sequence": 28,
+      "upstream_elapsed_s": 0.003361874958500266
+    },
+    {
+      "injected_elapsed_s": 1.2040073750540614,
+      "path": "/identity",
+      "sequence": 42,
+      "upstream_elapsed_s": 0.00299987499602139
+    },
+    {
+      "injected_elapsed_s": 1.2035016249865294,
+      "path": "/identity",
+      "sequence": 43,
+      "upstream_elapsed_s": 0.0031940829940140247
+    },
+    {
+      "injected_elapsed_s": 1.2012091248761863,
+      "path": "/identity",
+      "sequence": 44,
+      "upstream_elapsed_s": 0.004062541993334889
+    },
+    {
+      "injected_elapsed_s": 1.2042698750738055,
+      "path": "/identity",
+      "sequence": 45,
+      "upstream_elapsed_s": 0.002662374870851636
+    },
+    {
+      "injected_elapsed_s": 1.2008610831107944,
+      "path": "/identity",
+      "sequence": 59,
+      "upstream_elapsed_s": 0.0025203339755535126
+    },
+    {
+      "injected_elapsed_s": 1.2012784169055521,
+      "path": "/identity",
+      "sequence": 60,
+      "upstream_elapsed_s": 0.009544290835037827
+    },
+    {
+      "injected_elapsed_s": 1.2050834170076996,
+      "path": "/identity",
+      "sequence": 61,
+      "upstream_elapsed_s": 0.0035029591526836157
+    },
+    {
+      "injected_elapsed_s": 1.2050489170942456,
+      "path": "/identity",
+      "sequence": 62,
+      "upstream_elapsed_s": 0.0033430408220738173
+    },
+    {
+      "injected_elapsed_s": 1.200188459130004,
+      "path": "/identity",
+      "sequence": 63,
+      "upstream_elapsed_s": 0.004118707962334156
+    },
+    {
+      "injected_elapsed_s": 1.2050984590314329,
+      "path": "/identity",
+      "sequence": 64,
+      "upstream_elapsed_s": 0.007497084094211459
+    },
+    {
+      "injected_elapsed_s": 1.2025703340768814,
+      "path": "/identity",
+      "sequence": 78,
+      "upstream_elapsed_s": 0.0029468329157680273
+    },
+    {
+      "injected_elapsed_s": 1.2046614589635283,
+      "path": "/identity",
+      "sequence": 79,
+      "upstream_elapsed_s": 0.009623541962355375
+    },
+    {
+      "injected_elapsed_s": 1.2050566668622196,
+      "path": "/identity",
+      "sequence": 80,
+      "upstream_elapsed_s": 0.003390332916751504
+    },
+    {
+      "injected_elapsed_s": 1.2048170422203839,
+      "path": "/identity",
+      "sequence": 81,
+      "upstream_elapsed_s": 0.00339320907369256
+    },
+    {
+      "injected_elapsed_s": 1.2029053340665996,
+      "path": "/identity",
+      "sequence": 96,
+      "upstream_elapsed_s": 0.012598375091329217
+    },
+    {
+      "injected_elapsed_s": 1.2034727919381112,
+      "path": "/identity",
+      "sequence": 97,
+      "upstream_elapsed_s": 0.01664000004529953
+    },
+    {
+      "injected_elapsed_s": 1.2048349999822676,
+      "path": "/identity",
+      "sequence": 98,
+      "upstream_elapsed_s": 0.019909291993826628
+    },
+    {
+      "injected_elapsed_s": 1.2022679159417748,
+      "path": "/identity",
+      "sequence": 99,
+      "upstream_elapsed_s": 0.016452833777293563
+    },
+    {
+      "injected_elapsed_s": 1.2038175829220563,
+      "path": "/identity",
+      "sequence": 113,
+      "upstream_elapsed_s": 0.013531167060136795
+    },
+    {
+      "injected_elapsed_s": 1.2040615831501782,
+      "path": "/identity",
+      "sequence": 114,
+      "upstream_elapsed_s": 0.013567666988819838
+    },
+    {
+      "injected_elapsed_s": 1.2006667500827461,
+      "path": "/identity",
+      "sequence": 115,
+      "upstream_elapsed_s": 0.021057708887383342
+    },
+    {
+      "injected_elapsed_s": 1.2005423330701888,
+      "path": "/identity",
+      "sequence": 116,
+      "upstream_elapsed_s": 0.014461665879935026
+    },
+    {
+      "injected_elapsed_s": 1.204718666849658,
+      "path": "/identity",
+      "sequence": 117,
+      "upstream_elapsed_s": 0.017344833118841052
+    },
+    {
+      "injected_elapsed_s": 1.2039870421867818,
+      "path": "/identity",
+      "sequence": 126,
+      "upstream_elapsed_s": 0.019155291141942143
+    },
+    {
+      "injected_elapsed_s": 1.2014507499989122,
+      "path": "/identity",
+      "sequence": 127,
+      "upstream_elapsed_s": 0.012994375079870224
+    },
+    {
+      "injected_elapsed_s": 1.2014389999676496,
+      "path": "/identity",
+      "sequence": 128,
+      "upstream_elapsed_s": 0.02700358279980719
+    },
+    {
+      "injected_elapsed_s": 1.2036458330694586,
+      "path": "/identity",
+      "sequence": 129,
+      "upstream_elapsed_s": 0.01330141699872911
+    },
+    {
+      "injected_elapsed_s": 1.2067252080887556,
+      "path": "/identity",
+      "sequence": 130,
+      "upstream_elapsed_s": 0.024299542186781764
+    },
+    {
+      "injected_elapsed_s": 1.2093212499748915,
+      "path": "/identity",
+      "sequence": 131,
+      "upstream_elapsed_s": 0.033242583042010665
+    },
+    {
+      "injected_elapsed_s": 1.2037583331111819,
+      "path": "/identity",
+      "sequence": 132,
+      "upstream_elapsed_s": 0.0233499170280993
+    },
+    {
+      "injected_elapsed_s": 1.2021812500897795,
+      "path": "/identity",
+      "sequence": 133,
+      "upstream_elapsed_s": 0.023109209025278687
+    },
+    {
+      "injected_elapsed_s": 1.2020818751771003,
+      "path": "/state",
+      "sequence": 211,
+      "upstream_elapsed_s": 0.04533958388492465
+    },
+    {
+      "injected_elapsed_s": 1.2005837499164045,
+      "path": "/state",
+      "sequence": 213,
+      "upstream_elapsed_s": 0.04676191695034504
+    },
+    {
+      "injected_elapsed_s": 1.2046695840544999,
+      "path": "/state",
+      "sequence": 215,
+      "upstream_elapsed_s": 0.04107379191555083
+    },
+    {
+      "injected_elapsed_s": 1.2013546251691878,
+      "path": "/state",
+      "sequence": 217,
+      "upstream_elapsed_s": 0.04071483411826193
+    },
+    {
+      "injected_elapsed_s": 1.2013900419697165,
+      "path": "/state",
+      "sequence": 219,
+      "upstream_elapsed_s": 0.041966750053688884
+    },
+    {
+      "injected_elapsed_s": 1.2015124999452382,
+      "path": "/state",
+      "sequence": 234,
+      "upstream_elapsed_s": 0.04945133300498128
+    },
+    {
+      "injected_elapsed_s": 1.2010567500256002,
+      "path": "/state",
+      "sequence": 236,
+      "upstream_elapsed_s": 0.04513141606003046
+    },
+    {
+      "injected_elapsed_s": 1.2007370002102107,
+      "path": "/state",
+      "sequence": 238,
+      "upstream_elapsed_s": 0.046239792136475444
+    },
+    {
+      "injected_elapsed_s": 1.2003611251711845,
+      "path": "/state",
+      "sequence": 240,
+      "upstream_elapsed_s": 0.05429583298973739
+    },
+    {
+      "injected_elapsed_s": 1.20504245813936,
+      "path": "/state",
+      "sequence": 242,
+      "upstream_elapsed_s": 0.04574579210020602
+    },
+    {
+      "injected_elapsed_s": 1.202794292010367,
+      "path": "/state",
+      "sequence": 257,
+      "upstream_elapsed_s": 0.04627279192209244
+    },
+    {
+      "injected_elapsed_s": 1.2046860409900546,
+      "path": "/state",
+      "sequence": 259,
+      "upstream_elapsed_s": 0.04723550006747246
+    },
+    {
+      "injected_elapsed_s": 1.2001820839941502,
+      "path": "/state",
+      "sequence": 261,
+      "upstream_elapsed_s": 0.047370166052132845
+    },
+    {
+      "injected_elapsed_s": 1.2050447911024094,
+      "path": "/state",
+      "sequence": 263,
+      "upstream_elapsed_s": 0.04227699991315603
+    },
+    {
+      "injected_elapsed_s": 1.2012766250409186,
+      "path": "/state",
+      "sequence": 265,
+      "upstream_elapsed_s": 0.056063625030219555
+    }
+  ],
+  "owned_readers_exited": true,
+  "passed": true,
+  "relay_cleanup": {
+    "active_workers": 0,
+    "completed_workers": 685,
+    "peak_workers": 2,
+    "request_count": 685,
+    "server_thread_exited": true,
+    "worker_bound": 8
+  },
+  "relay_evidence_valid": true,
+  "scope": "same-Mac loopback simulation; 1.2s diagnostic auxiliary read delay",
+  "soft_checking_visible_while_running": true,
+  "unexpected_halts": []
+}

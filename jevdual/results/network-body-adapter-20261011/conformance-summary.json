@@ -1,0 +1,37 @@
+{
+  "AI_evidence": false,
+  "checks": 65,
+  "core_checks": 29,
+  "network_checks": 36,
+  "passed": true,
+  "suites": [
+    {
+      "checks": 13,
+      "log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-terminal-pointer-after-fix.log",
+      "log_sha256": "bf9c2b85544b0d531bec433d33b02dead4441da7cfea3fd08b786d2a85c06cc3",
+      "passed": true,
+      "suite": "server"
+    },
+    {
+      "checks": 11,
+      "log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-tests-v4/unittest.log",
+      "log_sha256": "cb6fe9cb99ae76fe875e0b8568dc47c6f5b9fb4bed22b51e4899085174fd7413",
+      "passed": true,
+      "suite": "client"
+    },
+    {
+      "checks": 12,
+      "log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9-matrix-v3/unittest.log",
+      "log_sha256": "9bfd71157bfe218e82a275ecebaf46f30bc5b2037ae5c9de7085d973addafbd1",
+      "passed": true,
+      "suite": "fault-matrix"
+    },
+    {
+      "checks": 29,
+      "log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-core-regression.log",
+      "log_sha256": "9ff1fd78da76bc2ff9ce1e146ced78641d99714536e3ee2ad0932e7922629ecb",
+      "passed": true,
+      "suite": "unchanged-core"
+    }
+  ]
+}

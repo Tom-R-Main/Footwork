@@ -1,0 +1,63 @@
+{
+  "app_id": "b5e77e75097547d49daef66ce7d92528",
+  "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+  "body_origin": "http://127.0.0.1:51379",
+  "browser_origin": "http://127.0.0.1:51381",
+  "case": "body-native-gap",
+  "owned_processes_exited": true,
+  "planner": "actual_codex_cli_images_over_TCP",
+  "processes": [
+    {
+      "boot": 1,
+      "children_after": [],
+      "children_before": [],
+      "exit_observed": true,
+      "group": 43977,
+      "initialized": true,
+      "log": "body-01.log",
+      "pid": 43977,
+      "port": 51379,
+      "returncode": -9,
+      "role": "body",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/body",
+      "signal": "SIGKILL",
+      "stopped_time": 1791835058.545259
+    },
+    {
+      "exit_observed": true,
+      "group": 43979,
+      "pid": 43979,
+      "returncode": 0,
+      "role": "initialization"
+    },
+    {
+      "boot": 1,
+      "exit_observed": true,
+      "group": 43980,
+      "initialized": false,
+      "log": "workbench-01.log",
+      "pid": 43980,
+      "port": 51381,
+      "returncode": 0,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/operator",
+      "stopped_time": 1791835114.376377
+    },
+    {
+      "boot": 2,
+      "exit_observed": true,
+      "group": 45066,
+      "initialized": false,
+      "log": "body-02.log",
+      "pid": 45066,
+      "port": 51379,
+      "returncode": 0,
+      "role": "body",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-native-gap-v3/body",
+      "stopped_time": 1791835114.471107
+    }
+  ],
+  "ready": true,
+  "simulation": true,
+  "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+}

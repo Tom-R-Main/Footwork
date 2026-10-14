@@ -1,0 +1,12 @@
+{
+  "previous_root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2",
+  "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+  "app_id": "878fad93039a4e86b4dcc5529f118f20",
+  "completed_jobs": 2,
+  "source_commit": "3de70f1de65a74e9285f651418852fe88672d2a4",
+  "preserved_sources": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim12-preserved-baseline/source",
+  "stopped_owned_pids": [
+    8139,
+    8145
+  ]
+}

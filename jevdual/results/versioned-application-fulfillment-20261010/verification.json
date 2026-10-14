@@ -1,0 +1,59 @@
+{
+  "phase": "complete",
+  "prior_controller_regressions": {
+    "controller_tests": 18,
+    "controller_seconds": 34.144,
+    "other_physical_tests": 50,
+    "other_seconds": 15.742,
+    "result": "passed"
+  },
+  "prior_runtime_hashes_unchanged": true,
+  "commands": [
+    {
+      "command": "tools/physical-workcell/.venv/bin/python -m unittest discover -s tools/physical-workcell -p test_controller.py",
+      "cwd": "/Users/thomasmain/projects/footwork"
+    },
+    {
+      "command": ".venv/bin/python -m unittest test_workcell test_image_guided test_episode_cases test_episode_runner",
+      "cwd": "/Users/thomasmain/projects/footwork/tools/physical-workcell"
+    }
+  ],
+  "browser_trial": "passed",
+  "independent_trials": "7/7 passed",
+  "backend_conformance": {
+    "corrected_full_suite_tests": 16,
+    "seconds": 37.054,
+    "result": "passed",
+    "pre_fix_identity_regression": "tools/physical-workcell/output/a56bb315a/conformance.json",
+    "pre_fix_identity_regression_result": "failed; two effects before app identity checking",
+    "final_suite_tests": 16,
+    "final_seconds": 38.746,
+    "final_source_suite": "tools/physical-workcell/output/s5backend-final-f2190c5/suite-result.json"
+  },
+  "adapter_conformance": {
+    "final_suite_tests": 11,
+    "seconds": 37.086,
+    "result": "passed",
+    "log": "tools/physical-workcell/output/h5-adapter-final-suite/unittest.log",
+    "previous_failed_attempts": [
+      "tools/physical-workcell/output/h5-receipt-before-type-fix/unittest.log",
+      "tools/physical-workcell/output/h5-receipt-before-type-fix-v2/unittest.log"
+    ]
+  },
+  "total_affected_checks": 95,
+  "lint": "Ruff passed",
+  "browser_cleanup": {
+    "app_stopped": true,
+    "controller_process_stopped": true,
+    "controller_socket_absent": true,
+    "tab_closed": true,
+    "native_stop_claim": false
+  },
+  "notebook_check_exit_code": 0,
+  "result_redaction_files_changed": 0,
+  "runtime_source_unchanged": true,
+  "screen_at_close": {
+    "IOConsoleLocked": false,
+    "on_console": true
+  }
+}

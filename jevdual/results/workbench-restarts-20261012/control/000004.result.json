@@ -1,0 +1,17 @@
+{
+  "action_performed": true,
+  "after": "000004-after.json",
+  "before": "000004-before.json",
+  "passed": true,
+  "pid": 39967,
+  "predicate": "uncertain",
+  "request": {
+    "action": "start-role",
+    "expect": null,
+    "predicate": "none",
+    "requested_time": 1791828779.372716,
+    "role": "workbench",
+    "sequence": 4
+  },
+  "stopped_sequence": 3
+}

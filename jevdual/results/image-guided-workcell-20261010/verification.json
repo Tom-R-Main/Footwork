@@ -1,0 +1,30 @@
+{
+  "source_commit": "f96ac4a",
+  "checks": [
+    {
+      "command": "tools/physical-workcell/.venv/bin/python -m unittest discover -s tools/physical-workcell -p test_*.py -v",
+      "exit_code": 0,
+      "tests": 26,
+      "duration_seconds": 9.281,
+      "outcome": "OK; actual renderer/engine conformance and SIM1 regressions"
+    },
+    {
+      "command": "jevdual/.venv/bin/ruff check tools/physical-workcell",
+      "exit_code": 0,
+      "outcome": "All checks passed"
+    },
+    {
+      "command": "uv run python -m evals.notebook docs/notebook --check",
+      "exit_code": 0,
+      "outcome": "Notebook format and prediction resolution checks passed"
+    }
+  ],
+  "source_sha256": {
+    "image_guided.py": "d77da7013cefd6ea3344878332450b1835a207716fa0ed0fdb42f5f376334494",
+    "proposal.schema.json": "4f632336093c6b9d81741a4deff879b07eea7c9290eb34cbfa75ed84359b90e6",
+    "test_image_guided.py": "17915d8c426b29973b97065180c7cab848581a579562f5763bffb675d7f8eb1d",
+    "test_workcell.py": "dc5687ce21e69a34f5d7c65e3036e5b42202f7a6e10adb92611fe8c279751ee9",
+    "workcell.py": "810d343cf500526ac884badc31bae095f819a3c3e469a3d4a3155c7a20960d3b",
+    "scene.xml": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f"
+  }
+}

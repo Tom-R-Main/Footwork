@@ -1,0 +1,88 @@
+{
+  "source_commit": "419a677",
+  "run": "tools/workbench-notes/output/footwork/camera-experiment-001",
+  "project": {
+    "label": "footwork",
+    "namespace": "codex_app",
+    "project_id": "abe2a667-dedc-4f3f-9863-62f3d80188bd",
+    "root": "/Users/thomasmain/projects/footwork"
+  },
+  "source_kind": "native_camera_frame",
+  "reviewed_note_sha256": "6d4fb067193c2c1f48d3e57c130fee9cf9540651c7b77946e020b13a8e71847c",
+  "source_note_bytes_unchanged": true,
+  "metadata_authorship": "caller_supplied",
+  "proposed_check_outcome": "not_run",
+  "fresh_process_repeat_status": "same manifest and artifacts; recorded with passing checks",
+  "project_filter_list_count": 1,
+  "independent_artifact_checks": {
+    "json": {
+      "claims": [
+        "current_artifact_byte_equality"
+      ],
+      "detail": "current bytes equal the digest-bound expected source",
+      "expected_bytes": 3286,
+      "expected_file": "/Users/thomasmain/projects/footwork/tools/workbench-notes/output/footwork/camera-experiment-001/expected-record.json",
+      "expected_sha256": "3225dd83166a1e05015e718addf7cbf7e2b5cabf556f1f972bb5f95805ea1192",
+      "limit_bytes": 1048576,
+      "observed_bytes": 3286,
+      "observed_sha256": "3225dd83166a1e05015e718addf7cbf7e2b5cabf556f1f972bb5f95805ea1192",
+      "ok": true,
+      "path": "/Users/thomasmain/projects/footwork/tools/workbench-notes/output/footwork/camera-experiment-001/record.json",
+      "source_sha256": "3225dd83166a1e05015e718addf7cbf7e2b5cabf556f1f972bb5f95805ea1192"
+    },
+    "md": {
+      "claims": [
+        "current_artifact_byte_equality"
+      ],
+      "detail": "current bytes equal the digest-bound expected source",
+      "expected_bytes": 2557,
+      "expected_file": "/Users/thomasmain/projects/footwork/tools/workbench-notes/output/footwork/camera-experiment-001/expected-record.md",
+      "expected_sha256": "963388580ad2de282bbb25bc90507e99e8d29ba027a555b92014119e3884f397",
+      "limit_bytes": 1048576,
+      "observed_bytes": 2557,
+      "observed_sha256": "963388580ad2de282bbb25bc90507e99e8d29ba027a555b92014119e3884f397",
+      "ok": true,
+      "path": "/Users/thomasmain/projects/footwork/tools/workbench-notes/output/footwork/camera-experiment-001/record.md",
+      "source_sha256": "963388580ad2de282bbb25bc90507e99e8d29ba027a555b92014119e3884f397"
+    }
+  },
+  "context_at_initial_link": {
+    "current_git_head": "419a6772ece9551bd4f136bd99291eae9b2082de",
+    "head_state": "unchanged",
+    "recorded_git_head": "419a6772ece9551bd4f136bd99291eae9b2082de",
+    "references": [
+      {
+        "bytes": 2091,
+        "line": 14,
+        "path": "tools/desk-inbox-experiment/recognize.swift",
+        "recorded_sha256": "340d9969f84f4bc892483c2a7fd4786f6bf4a6fef964f9cf6ba9b956389d2b85",
+        "sha256": "340d9969f84f4bc892483c2a7fd4786f6bf4a6fef964f9cf6ba9b956389d2b85",
+        "state": "unchanged"
+      },
+      {
+        "bytes": 3781,
+        "line": 1,
+        "path": "jevdual/docs/experiments/DI1-desk-paper-inbox.md",
+        "recorded_sha256": "6d7ad55ccb422a10d6db9ab478d4d1226844030b8bb6dd9029998cf6857db0fd",
+        "sha256": "6d7ad55ccb422a10d6db9ab478d4d1226844030b8bb6dd9029998cf6857db0fd",
+        "state": "unchanged"
+      },
+      {
+        "bytes": 5028,
+        "line": 1,
+        "path": "jevdual/results/desk-inbox-20261010/report.md",
+        "recorded_sha256": "1612860abe55216f7b0bda454eb5fb8ad16e485b4c49421b52ac2c1a3e481e90",
+        "sha256": "1612860abe55216f7b0bda454eb5fb8ad16e485b4c49421b52ac2c1a3e481e90",
+        "state": "unchanged"
+      }
+    ],
+    "state": "unchanged"
+  },
+  "no_new_camera_ocr_or_action_execution": true,
+  "limits": [
+    "Catalog is explicit caller-supplied metadata, not an authenticated project service",
+    "Context snapshot does not certify current future actions",
+    "No remote task/project write or physical actuation",
+    "Private note and image contents excluded from committed report"
+  ]
+}

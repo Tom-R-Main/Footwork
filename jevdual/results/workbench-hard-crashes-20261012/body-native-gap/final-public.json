@@ -1,0 +1,217 @@
+{
+  "active_job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+  "activity": [
+    {
+      "intent": "Native receipt gap",
+      "kind": "queued",
+      "outcome": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+      "seq": 1,
+      "time": 1791835047.683784
+    },
+    {
+      "evidence": {
+        "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+        "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "52a9c089bd013ee808472a9cc1de933fad029439e485bf9606240fdfb8487b5e"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "start_job",
+      "seq": 2,
+      "time": 1791835047.695808
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "start_job",
+      "seq": 3,
+      "time": 1791835047.712679
+    },
+    {
+      "intent": "Native receipt gap",
+      "kind": "rpc_applied",
+      "outcome": "start_job: command-663dbaafabb14da3a669b48bb9553570",
+      "seq": 4,
+      "time": 1791835047.728537
+    },
+    {
+      "evidence": {
+        "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+        "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "7b8399348d9fa8e6e1e6573bf9d07bdc82482bcdccd7458307c5bc22723a1e4c"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 5,
+      "time": 1791835047.738585
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 6,
+      "time": 1791835047.749055
+    },
+    {
+      "intent": "Native receipt gap",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-9c2e7e53730d4631af8b0a67d75cfae1",
+      "seq": 7,
+      "time": 1791835047.939627
+    },
+    {
+      "intent": "Native receipt gap",
+      "kind": "inference",
+      "outcome": "1",
+      "seq": 8,
+      "time": 1791835047.940761
+    },
+    {
+      "evidence": {
+        "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+        "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "1b366e3018a1133393ae3a46e2f8b09a8e431d38771713f144ac24fb3a2ecf31"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 9,
+      "time": 1791835058.287901
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 10,
+      "time": 1791835058.300809
+    },
+    {
+      "intent": "Native receipt gap",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-d95207ee8a044205a894f2c9b82a3090",
+      "seq": 11,
+      "time": 1791835058.3190558
+    },
+    {
+      "evidence": {
+        "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+        "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "b884589566fdd766264a460448e106ce2b22d82e7ac991f82ec7571030b0c82c"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 12,
+      "time": 1791835058.3283992
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 13,
+      "time": 1791835058.340769
+    },
+    {
+      "intent": "",
+      "kind": "halt",
+      "outcome": "reply is uncertain; reconcile exact command without resending",
+      "seq": 14,
+      "time": 1791835058.543595
+    },
+    {
+      "intent": "",
+      "kind": "halt",
+      "outcome": "Remote end closed connection without response",
+      "seq": 15,
+      "time": 1791835058.706333
+    },
+    {
+      "intent": "",
+      "kind": "halt",
+      "outcome": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+      "seq": 16,
+      "time": 1791835077.872034
+    },
+    {
+      "intent": "",
+      "kind": "body_epoch_changed",
+      "outcome": "1 -> 2",
+      "seq": 17,
+      "time": 1791835077.872892
+    },
+    {
+      "intent": "",
+      "kind": "halt",
+      "outcome": "accepted intent has no verified terminal proof",
+      "seq": 18,
+      "time": 1791835092.821545
+    },
+    {
+      "intent": "",
+      "kind": "halt",
+      "outcome": "accepted intent has no verified terminal proof",
+      "seq": 19,
+      "time": 1791835106.157421
+    }
+  ],
+  "app_id": "b5e77e75097547d49daef66ce7d92528",
+  "connection": {
+    "adapter_id": "269e54e660064fca9f42f52cc08637cb",
+    "body_id": "f10bb5d611aa45b0a38c67c3bfa04706",
+    "epoch": 2,
+    "fault": null,
+    "reason": "Independent body has unresolved effects",
+    "state": "connected"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 0,
+    "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+  },
+  "jobs": [
+    {
+      "call_count": 1,
+      "disturbance_test": false,
+      "error": "accepted intent has no verified terminal proof",
+      "job_id": "9ec6b77d-78c4-4c3f-89ff-004c016ae4f9",
+      "label": "Native receipt gap",
+      "last_intent": "Push the block right so its center enters the measurement region.",
+      "measurement": null,
+      "phase": "prepare",
+      "reset": null,
+      "status": "unknown",
+      "target": "A"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": "dispatch",
+  "readiness": {
+    "ready": false,
+    "reason": "accepted intent has no verified terminal proof"
+  },
+  "recovery": {
+    "command_id": "command-75be3033b3774dfb8ebee666241a36e8",
+    "operation": "dispatch",
+    "reason": "accepted intent has no verified terminal proof",
+    "state": "uncertain"
+  },
+  "runner_status": "blocked",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 1,
+    "input_tokens": 13087,
+    "output_tokens": 175,
+    "reported_calls": 1,
+    "token_usage_complete": true
+  }
+}

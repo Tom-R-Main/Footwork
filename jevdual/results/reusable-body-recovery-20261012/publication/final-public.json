@@ -1,0 +1,290 @@
+{
+  "active_job_id": null,
+  "activity": [
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-cb41c1601faf44de9c84f0c74f0593e6",
+      "seq": 126,
+      "time": 1791860479.652856
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "738f29f8f5e9fd312ae3f99f4c188ddd39987a2a58116f33edcd588aba07ff6a"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 127,
+      "time": 1791860479.706536
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 128,
+      "time": 1791860479.746814
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-5f74b9dd5b4042e0ba10e22b7ebd5639",
+      "seq": 129,
+      "time": 1791860479.963549
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "fa0dc5a06088d32b1b15e65152d9a50bd0ad228ffbbfdae8bf728e6c6714a296"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 130,
+      "time": 1791860480.022887
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 131,
+      "time": 1791860480.065069
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-fda4688de77f4621be0fef063d3be610",
+      "seq": 132,
+      "time": 1791860480.2281978
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "inference",
+      "outcome": "13",
+      "seq": 133,
+      "time": 1791860480.229849
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "3b298b9527f5e8cb07c8b7db3b171d9f6278051e3eec85fe4a7f148d795c6910"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 134,
+      "time": 1791860485.8839219
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 135,
+      "time": 1791860485.9236622
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-af88ba2ef5854c978be55561a7e8f131",
+      "seq": 136,
+      "time": 1791860486.004915
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "2ba31eac98e12130060a434a8cf7dbb24aede37a43a776e3326506fc1974bb55"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 137,
+      "time": 1791860486.078175
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 138,
+      "time": 1791860486.122886
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-f0807bf65ea94cceb62c15ff010dc8ef",
+      "seq": 139,
+      "time": 1791860486.393727
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "8b5eb923352a524eba5d884851c9c3b8380b3c1e18a11a8c78e75205ba313389"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 140,
+      "time": 1791860486.456125
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 141,
+      "time": 1791860486.497833
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-83cd8e8a10694db7a532503aa41c7377",
+      "seq": 142,
+      "time": 1791860486.685514
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "inference",
+      "outcome": "14",
+      "seq": 143,
+      "time": 1791860486.6878562
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "eef7f4f099d1744601db548ad504b9195160a4f86c8147c42bf328ace295337e"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 144,
+      "time": 1791860494.4948008
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 145,
+      "time": 1791860494.537086
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-8ca707790e514e0c9ae33cb1f11d4c51",
+      "seq": 146,
+      "time": 1791860494.624099
+    },
+    {
+      "evidence": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "e16a3012af9b0ca0e4d640f641f7ecd78fd72a84052f5d45fea96fa846a77f69"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 147,
+      "time": 1791860494.680424
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 148,
+      "time": 1791860494.719587
+    },
+    {
+      "intent": "Recover interrupted move history",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-22709a65620240edb98fba24d06d9cd1",
+      "seq": 149,
+      "time": 1791860495.0038579
+    }
+  ],
+  "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+  "connection": {
+    "adapter_id": "6d17e55437444025af20a6cc32e00464",
+    "body_id": "88ef33b6618f41f58507907680f0bde8",
+    "epoch": 1,
+    "fault": null,
+    "reason": "Body identity verified by read-only TCP health",
+    "state": "connected"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 11,
+    "image_url": "/api/frame?generation=11&sha256=970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f"
+  },
+  "jobs": [
+    {
+      "call_count": 14,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+      "label": "Recover interrupted move history",
+      "last_intent": "Verify the block center and pusher are both at their home positions.",
+      "measurement": {
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "88ef33b6618f41f58507907680f0bde8",
+        "block_home_verified": true,
+        "generation": 11,
+        "image_sha256": "970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f",
+        "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+        "kind": "finish_reset",
+        "native_time_s": 23.61399999999779,
+        "operation_id": "agent-42b2d69f655d4ecdaf4ca1bfa5bfd41e",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3132,
+        "reset_native_steps": 8439,
+        "state_sha256": "c88451508675d9e3a033cfcf0d8c626f353001ea20783eb3877b655452423257"
+      },
+      "status": "completed",
+      "target": "A"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": null,
+  "readiness": {
+    "ready": true,
+    "reason": "Resumed; next decision receives a fresh TCP image"
+  },
+  "recovery": {
+    "command_id": null,
+    "operation": null,
+    "reason": "No pending command",
+    "state": "none"
+  },
+  "runner_status": "running",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 14,
+    "input_tokens": 182740,
+    "output_tokens": 2070,
+    "reported_calls": 14,
+    "token_usage_complete": true
+  }
+}

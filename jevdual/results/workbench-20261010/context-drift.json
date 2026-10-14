@@ -1,0 +1,10 @@
+{
+  "state": "recorded",
+  "historical_recorded_outcome": "recorded",
+  "context_state": "changed",
+  "recorded_git_head": "419a6772ece9551bd4f136bd99291eae9b2082de",
+  "current_git_head_at_observation": "49904e361f37f4d87f985b4cd8d73a21d8b4527c",
+  "references_unchanged": true,
+  "artifact_checks_passed": true,
+  "changed_context_does_not_imply_changed_record": true
+}
