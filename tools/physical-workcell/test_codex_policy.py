@@ -1,6 +1,8 @@
 """Policy conformance uses a labelled fake CLI; it is not live model evidence."""
 
 import json
+import signal
+import subprocess
 import sys
 import tempfile
 import threading
@@ -13,6 +15,30 @@ import operator_runtime
 
 
 class PolicyTests(unittest.TestCase):
+    def test_delayed_guardian_cleanup_can_publish_before_forced_kill(self):
+        class Guardian:
+            pid = 12345
+            closed = False
+            waits = 0
+
+            def poll(self):
+                return None
+
+            def wait(self, timeout):
+                # Group retirement plus descendant proof can exceed ten seconds.
+                self.waits += 1
+                if self.waits == 1 and timeout < 12:
+                    raise subprocess.TimeoutExpired("labelled guardian", timeout)
+                if self.waits == 1:
+                    self.closed = True
+                return 0
+
+        process = Guardian()
+        with patch.object(policy.os, "killpg") as signals:
+            policy.terminate(process)
+        self.assertTrue(process.closed)
+        self.assertEqual(signals.call_args_list, [unittest.mock.call(process.pid, signal.SIGTERM)])
+
     def test_closed_action_schema_finite_targets_and_no_success_flag(self):
         valid = {"action": "move", "target_x": .01, "target_y": 0, "intent": "Push into the task region."}
         self.assertEqual(policy.validate_action(valid), valid)

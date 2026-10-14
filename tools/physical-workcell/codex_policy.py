@@ -19,6 +19,8 @@ import planner_guard
 
 BASE = Path(__file__).resolve().parent
 TIMEOUT_S = 100
+# Leave room for the guardian's bounded group retirement and descendant proof.
+TERMINATE_GRACE_S = 15
 MAX_TRACE_BYTES = 1024 * 1024
 MAX_RESULT_BYTES = 8192
 EXPECTED_CLI = "codex-cli 0.147.0"
@@ -67,7 +69,7 @@ def terminate(process):
     with contextlib.suppress(ProcessLookupError):
         os.killpg(process.pid, signal.SIGTERM)
     try:
-        process.wait(timeout=10)
+        process.wait(timeout=TERMINATE_GRACE_S)
     except subprocess.TimeoutExpired:
         with contextlib.suppress(ProcessLookupError):
             os.killpg(process.pid, signal.SIGKILL)
