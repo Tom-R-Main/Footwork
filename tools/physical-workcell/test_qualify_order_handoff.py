@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+import controller
 import qualify_order_handoff as qualifier
 
 
@@ -21,7 +22,9 @@ class QualifierBoundaryTests(unittest.TestCase):
         fixture = qualifier.Fixture("test_real_contact_fulfillment_commits_exact_version_and_receipt")
         fixture.control = self.directory / "control"
         fixture.control.mkdir(mode=0o700)
-        binding = {"controller_dir": str(fixture.control), "socket_path": str(bound_socket)}
+        binding = {"version": 1, "source_kind": controller.body.SOURCE_KIND,
+                   "controller_sha256": qualifier.sha(qualifier.CONTROLLER.read_bytes()),
+                   "controller_dir": str(fixture.control), "socket_path": str(bound_socket)}
         (fixture.control / "controller-binding.json").write_text(json.dumps(binding))
         (fixture.control / "controller-binding.json").chmod(0o600)
         fixture.expected_native_pid = None
@@ -61,6 +64,25 @@ class QualifierBoundaryTests(unittest.TestCase):
         with (mock.patch.object(qualifier, "expected_socket_path", return_value=expected, create=True),
               self.assertRaisesRegex(RuntimeError, "binding")):
             fixture.cleanup()
+
+    def assert_wrong_source_refuses_absence(self, key, value):
+        socket = self.directory / "absent.sock"
+        fixture = self.fixture(socket)
+        binding_path = fixture.control / "controller-binding.json"
+        binding = json.loads(binding_path.read_bytes())
+        binding[key] = value
+        binding_path.write_text(json.dumps(binding))
+        with (mock.patch.object(qualifier, "expected_socket_path", return_value=socket),
+              self.assertRaisesRegex(RuntimeError, "binding")):
+            fixture.cleanup()
+        self.assertIsNone(fixture.events[-1]["socket_exists"])
+        self.assertFalse(fixture.events[-1]["socket_absence_verified"])
+
+    def test_wrong_simulation_source_kind_cannot_prove_socket_absence(self):
+        self.assert_wrong_source_refuses_absence("source_kind", "physical_hardware")
+
+    def test_wrong_controller_source_hash_cannot_prove_socket_absence(self):
+        self.assert_wrong_source_refuses_absence("controller_sha256", "0" * 64)
 
     def test_cleanup_dangling_socket_entry_is_not_misreported_absent(self):
         socket = self.directory / "dangling.sock"

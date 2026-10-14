@@ -27,6 +27,7 @@ SOURCE_FILES = ('qualify_order_handoff.py', 'test_order_app.py', 'order_app.py',
 
 
 def freeze(commit):
+    """Bind the named SOURCE_FILES only; no transitive or live qualification claim."""
     repo = BASE.parents[1]
     if subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo, text=True).strip() != commit:
         raise ValueError('requested source freeze differs from current HEAD')
@@ -48,11 +49,15 @@ def expected_socket_path(control):
 
 
 def bound_socket_path(control):
+    import controller
+
     control = protocol.directory(control)
     binding = protocol.decode(protocol.read_bytes(control / 'controller-binding.json'))
     expected = expected_socket_path(control)
-    if (not isinstance(binding, dict) or binding.get('controller_dir') != str(control)
-            or binding.get('socket_path') != str(expected)):
+    if (not isinstance(binding, dict) or type(binding.get('version')) is not int or binding.get('version') != 1
+            or binding.get('source_kind') != controller.body.SOURCE_KIND
+            or binding.get('controller_sha256') != protocol.sha(protocol.read_bytes(CONTROLLER))
+            or binding.get('controller_dir') != str(control) or binding.get('socket_path') != str(expected)):
         raise ValueError('controller/socket binding is invalid')
     return expected
 
