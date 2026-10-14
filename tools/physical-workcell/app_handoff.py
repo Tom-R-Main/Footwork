@@ -373,6 +373,8 @@ def submit(handoff, operation_id, proposal_file, proposal_sha256):
     if not isinstance(proposal_sha256, str) or protocol.sha(content) != proposal_sha256:
         raise Refusal("proposal bytes differ from their approved digest")
     proposal = protocol.decode(content)
+    if not isinstance(proposal, dict):
+        raise Refusal("proposal must be a JSON object")
     with protocol.locked(handoff):
         record = load(handoff)
         if operation_id in record["operations"]:

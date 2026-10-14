@@ -17,12 +17,44 @@ import traceback
 import urllib.parse
 from pathlib import Path
 
+import order_protocol as protocol
 from test_order_app import BASE, CONTROLLER, OrderApplicationTests, encoded, sha
 
 HANDOFF = BASE / 'app_handoff.py'
 SOURCE_FILES = ('qualify_order_handoff.py', 'test_order_app.py', 'order_app.py', 'order_protocol.py',
                 'order_app.html', 'app_handoff.py', 'controller.py', 'episode_runner.py',
                 'workcell.py', 'image_guided.py', 'episode_cases.py', 'proposal.schema.json', 'scene.xml')
+
+
+def freeze(commit):
+    repo = BASE.parents[1]
+    if subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo, text=True).strip() != commit:
+        raise ValueError('requested source freeze differs from current HEAD')
+    sources = {}
+    for name in SOURCE_FILES:
+        path = BASE / name
+        content = protocol.read_bytes(path)
+        relative = path.relative_to(repo).as_posix()
+        if subprocess.check_output(['git', 'show', f'{commit}:{relative}'], cwd=repo) != content:
+            raise ValueError('source differs from named commit: ' + relative)
+        sources[name] = sha(content)
+    return sources
+
+
+def expected_socket_path(control):
+    import controller
+
+    return controller.socket_path(control)
+
+
+def bound_socket_path(control):
+    control = protocol.directory(control)
+    binding = protocol.decode(protocol.read_bytes(control / 'controller-binding.json'))
+    expected = expected_socket_path(control)
+    if (not isinstance(binding, dict) or binding.get('controller_dir') != str(control)
+            or binding.get('socket_path') != str(expected)):
+        raise ValueError('controller/socket binding is invalid')
+    return expected
 
 
 class Fixture(OrderApplicationTests):
@@ -124,12 +156,26 @@ class Fixture(OrderApplicationTests):
                     process.wait(timeout=4)
         for handle in self.handles:
             handle.close()
+        bound, socket_exists = None, None
+        if self.control is not None:
+            try:
+                bound = bound_socket_path(self.control)
+                try:
+                    bound.lstat()
+                    socket_exists = True
+                except FileNotFoundError:
+                    socket_exists = False
+                if socket_exists:
+                    errors.append('bound controller socket remains after cleanup')
+            except (OSError, ValueError) as exc:
+                errors.append('controller socket cleanup unconfirmed: ' + str(exc))
         self.event({'kind': 'owned_process_cleanup',
                     'processes': [{'pid': p.pid, 'exit_code': p.poll()} for p in self.processes],
                     'all_parent_handles_exited': all(p.poll() is not None for p in self.processes),
                     'adapter_stop_observed': self.adapter_stopped,
-                    'socket_exists': bool(self.control and (BASE / 'output/.s' /
-                        (sha(str(self.control).encode())[:20] + '.sock')).exists())})
+                    'socket_path': str(bound) if bound is not None else None,
+                    'socket_exists': socket_exists,
+                    'socket_absence_verified': bound is not None and socket_exists is False})
         if errors:
             raise RuntimeError('adapter cleanup unconfirmed: ' + '; '.join(errors))
 
@@ -316,11 +362,9 @@ def main():
     output = Path(os.path.abspath(args.output_dir))
     if BASE / 'output' not in output.parents or output.exists():
         raise ValueError('qualification needs a new owned output directory; no episode rerun')
-    commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=BASE).decode().strip()
-    if commit != args.source_commit:
-        raise ValueError('requested source freeze differs from current HEAD')
+    commit = args.source_commit
+    sources = freeze(commit)
     output.mkdir(mode=0o700)
-    sources = {name: hashlib.sha256((BASE / name).read_bytes()).hexdigest() for name in SOURCE_FILES}
     result = {'source_commit': commit, 'source_sha256': sources, 'fixture_source': 'test_order_app.OrderApplicationTests transport helpers',
               'classification': 'independent public API/adapter/native integration diagnostics; no AI benchmark',
               'browser_scope': 'parent separately owns actual browser evidence', 'cases': []}

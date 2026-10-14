@@ -2,12 +2,14 @@
 
 import copy
 import importlib.util
+import io
 import json
 import os
 import signal
 import socket
 import sqlite3
 import subprocess
+import tempfile
 import time
 import unittest
 import urllib.error
@@ -15,6 +17,7 @@ import urllib.parse
 import urllib.request
 import uuid
 from pathlib import Path
+from unittest import mock
 
 BASE = Path(__file__).resolve().parent
 SPEC = importlib.util.spec_from_file_location("handoff_test", BASE / "app_handoff.py")
@@ -22,6 +25,45 @@ handoff = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(handoff)
 protocol = handoff.protocol
 PYTHON = BASE / ".venv/bin/python"
+
+
+class ProposalShapeTests(unittest.TestCase):
+    def test_nonobject_proposals_refuse_before_lock_guard_or_controller_effects(self):
+        with tempfile.TemporaryDirectory(prefix="proposal-shape-", dir=protocol.OUTPUT) as temporary:
+            directory = Path(temporary)
+            record = {"operations": {}, "phase": "prepared", "lease": {"run_dir": "episode"}}
+            for index, value in enumerate((None, [], 42, "proposal", True)):
+                with self.subTest(value=value):
+                    proposal = directory / f"proposal-{index}.json"
+                    content = protocol.encoded(value)
+                    protocol.create_file(proposal, content)
+                    with (mock.patch.object(protocol, "locked") as locked,
+                          mock.patch.object(handoff, "load", return_value=record),
+                          mock.patch.object(handoff, "guard", return_value={"guard_current": True}) as guard,
+                          mock.patch.object(handoff, "controller_health", return_value={}) as health,
+                          mock.patch.object(handoff, "owned", return_value=True),
+                          mock.patch.object(handoff, "controller") as controller):
+                        with self.assertRaises(handoff.Refusal):
+                            handoff.submit(directory, "shape", proposal, protocol.sha(content))
+                        locked.assert_not_called()
+                        guard.assert_not_called()
+                        health.assert_not_called()
+                        controller.assert_not_called()
+
+    def test_public_cli_returns_typed_nonobject_refusal_without_handoff_writes(self):
+        with tempfile.TemporaryDirectory(prefix="proposal-cli-", dir=protocol.OUTPUT) as temporary:
+            directory = Path(temporary)
+            proposal = directory / "proposal.json"
+            content = protocol.encoded([])
+            protocol.create_file(proposal, content)
+            before = {path.name: path.read_bytes() for path in directory.iterdir()}
+            output = io.StringIO()
+            with mock.patch("sys.stdout", output):
+                code = handoff.main(["submit", "--handoff-dir", str(directory), "--operation-id", "shape",
+                                     "--proposal-file", str(proposal), "--proposal-sha256", protocol.sha(content)])
+            self.assertEqual(code, 2)
+            self.assertEqual(json.loads(output.getvalue()), {"phase": "refused", "reason": "proposal must be a JSON object"})
+            self.assertEqual({path.name: path.read_bytes() for path in directory.iterdir()}, before)
 
 
 class HandoffTests(unittest.TestCase):

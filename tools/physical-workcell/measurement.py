@@ -116,6 +116,25 @@ def run(root, operation_id, packet_file, packet_sha256):
     path = root / "measurements.sqlite"
     if path.is_symlink():
         raise body.Refusal("measurement database cannot be a symlink")
+    created = False
+    try:
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+            created = True
+        except FileExistsError:
+            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    except OSError as exc:
+        raise body.Refusal("measurement database cannot be opened safely") from exc
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise body.Refusal("measurement database must be an owned private regular file")
+        if created:
+            os.fsync(fd)
+    finally:
+        os.close(fd)
+    if created:
+        protocol.sync_directory(root)
     with sqlite3.connect(path) as connection:
         connection.execute(SCHEMA)
         previous = connection.execute("SELECT receipt_json FROM measurements WHERE operation_id=?", (operation_id,)).fetchone()
@@ -127,7 +146,6 @@ def run(root, operation_id, packet_file, packet_sha256):
         connection.execute("INSERT INTO measurements VALUES (?,?,?,?,?,?,?)", (
             operation_id, result["job_id"], result["bench_id"], result["generation"], result["image_sha256"],
             result["state_sha256"], body.encoded(result).decode()))
-    path.chmod(0o600)
     return result
 
 
