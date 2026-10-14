@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 import subprocess
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -29,13 +30,52 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def verify_committed_wheel(name: str, data: bytes, commit: str, project: Path) -> None:
+    """Verify runtime bytes against the requested immutable source, not the checkout."""
+    output = project / "output"
+    output.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="packet-wheel-check-", dir=output) as temporary:
+        root = Path(temporary)
+        package = root / "jevdual"
+        package.mkdir()
+        entries = subprocess.check_output(
+            ["git", "ls-tree", "-r", "-z", commit, "--", "jevdual/python/jevdual"], cwd=project
+        ).split(b"\0")
+        paths = ["LICENSE", "jevdual/pyproject.toml"]
+        for entry in entries:
+            if not entry:
+                continue
+            relative = entry.split(b"\t", 1)[1].decode()
+            if relative.endswith(".py") or relative == "jevdual/python/jevdual/arbiter.toml":
+                paths.append(relative)
+        for relative in paths:
+            entries = subprocess.check_output(
+                ["git", "ls-tree", "-z", commit, "--", relative], cwd=project
+            ).split(b"\0")
+            entries = [entry for entry in entries if entry]
+            if len(entries) != 1:
+                raise ValueError("Committed wheel source file is absent: " + relative)
+            metadata, path = entries[0].split(b"\t", 1)
+            mode, kind, _ = metadata.split()
+            if mode not in (b"100644", b"100755") or kind != b"blob" or path.decode() != relative:
+                raise ValueError("Committed wheel source must be a regular file")
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(subprocess.check_output(["git", "show", commit + ":" + relative], cwd=project))
+        wheel = root / Path(name).name
+        wheel.write_bytes(data)
+        verify_wheel(wheel, package)
+
+
 def inventory(wheel: Path, source_commit: str | None = None) -> dict[str, bytes]:
-    verify_wheel(wheel, PROJECT / "jevdual")
     source_commit = (
         source_commit or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True).strip()
     )
     if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
         raise ValueError("A full immutable source commit is required")
+    if wheel.is_symlink() or not wheel.is_file():
+        raise ValueError("Wheel must be a regular nonsymlink file")
+    verify_committed_wheel(wheel.name, wheel.read_bytes(), source_commit, PROJECT)
     sources = {
         "footwork/LICENSE": PROJECT / "LICENSE",
         "footwork/README.md": PROJECT / "jevdual/docs/independent-onboarding.md",

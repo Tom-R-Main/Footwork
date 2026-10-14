@@ -7,6 +7,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -148,3 +149,75 @@ def test_guest_verifier_checks_extracted_payload(tmp_path, mutation):
     else:
         assert run.returncode == 1
         assert "verification failed" in run.stderr
+
+
+def test_frozen_packet_uses_committed_runtime_after_later_changes(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_capability_wheel as wheels
+    import build_onboarding_packet as packets
+
+    project = tmp_path / "project"
+    project.mkdir()
+    package = project / "jevdual"
+    package.mkdir()
+    (project / "LICENSE").write_text("MIT fixture license")
+    (package / "pyproject.toml").write_text(
+        '[project]\nname="jevdual"\nversion="0.0.1"\ndescription="fixture"\n'
+        'requires-python=">=3.11"\ndependencies=[]\n'
+        '[project.scripts]\nfootwork-capability="jevdual.capability.cli:main"\n'
+    )
+    for relative in wheels.REQUIRED:
+        path = package / "python" / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# frozen runtime fixture\n")
+    for relative in (
+        "docs/independent-onboarding.md",
+        "docs/onboarding-vm-plan.md",
+        "docs/capability-packaging.md",
+        *("scripts/" + name for name in packets.HELPERS),
+    ):
+        path = package / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("frozen helper or instructions\n")
+
+    def git(*arguments):
+        return subprocess.check_output(
+            ["git", "-c", "user.name=Packet Fixture", "-c", "user.email=fixture@example.invalid", *arguments],
+            cwd=project,
+            text=True,
+        ).strip()
+
+    git("init", "--quiet")
+    git("add", "LICENSE", "jevdual")
+    git("commit", "--quiet", "-m", "freeze fixture")
+    frozen = git("rev-parse", "HEAD")
+    monkeypatch.setattr(packets, "PROJECT", project)
+    wheel = wheels.build(package, tmp_path / "wheel")
+    packet = packets.build(wheel, tmp_path / "packet")
+    packet_bytes = packet.read_bytes()
+
+    (package / "python/jevdual/capability/cli.py").write_text("# changed runtime\n")
+    (package / "python/jevdual/later.py").write_text("# added after qualification\n")
+    git("add", "jevdual")
+    git("commit", "--quiet", "-m", "later runtime")
+    with pytest.raises(ValueError, match="inventory"):
+        wheels.verify(wheel, package)
+    assert packets.verify(packet, wheel, frozen)["source_commit"] == frozen
+    with pytest.raises(ValueError, match="inventory"):
+        packets.verify(packet, wheel)
+
+    # A replacement runtime with valid RECORD hashes still cannot borrow the old provenance.
+    replacement = wheels.build(package, tmp_path / "replacement")
+    with pytest.raises(ValueError, match="inventory"):
+        packets.verify(packet, replacement, frozen)
+    corrupted = tmp_path / "corrupted" / wheel.name
+    corrupted.parent.mkdir()
+    with zipfile.ZipFile(wheel) as original, zipfile.ZipFile(corrupted, "w") as modified:
+        for name in original.namelist():
+            data = original.read(name)
+            if name == "jevdual/capability/cli.py":
+                data += b"# tampered payload\n"
+            modified.writestr(name, data)
+    with pytest.raises(ValueError, match="Artifact bytes differ"):
+        packets.verify(packet, corrupted, frozen)
+    assert packet.read_bytes() == packet_bytes

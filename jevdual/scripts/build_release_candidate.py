@@ -12,12 +12,11 @@ import json
 import re
 import stat
 import subprocess
-import tempfile
 import zipfile
 from pathlib import Path, PurePosixPath
 
-from build_capability_wheel import verify as verify_wheel
 from build_onboarding_packet import HELPERS
+from build_onboarding_packet import verify_committed_wheel as verify_packet_wheel
 
 PROJECT = Path(__file__).resolve().parents[2]
 QUALIFIED_PACKET_SHA = "205577ee0848e9e68c8a15a9f25e1d308e820a054be449f631274ba7a9c7151d"
@@ -209,29 +208,7 @@ def qualification_packet(path: Path) -> tuple[dict[str, bytes], dict]:
 
 def verify_committed_wheel(name: str, data: bytes, commit: str) -> None:
     """Compare against the release commit, even after later runtime changes."""
-    output = PROJECT / "output"
-    output.mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="release-wheel-check-", dir=output) as temporary:
-        root = Path(temporary)
-        package = root / "jevdual"
-        package.mkdir()
-        entries = subprocess.check_output(
-            ["git", "ls-tree", "-r", "-z", commit, "--", "jevdual/python/jevdual"], cwd=PROJECT
-        ).split(b"\0")
-        paths = ["LICENSE", "jevdual/pyproject.toml"]
-        for entry in entries:
-            if not entry:
-                continue
-            relative = entry.split(b"\t", 1)[1].decode()
-            if relative.endswith(".py") or relative == "jevdual/python/jevdual/arbiter.toml":
-                paths.append(relative)
-        for relative in paths:
-            target = root / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(committed_bytes(commit, relative))
-        wheel = root / PurePosixPath(name).name
-        wheel.write_bytes(data)
-        verify_wheel(wheel, package)
+    verify_packet_wheel(name, data, commit, PROJECT)
 
 
 def approved_summary(data: bytes, label: str) -> dict:
