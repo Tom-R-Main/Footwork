@@ -22,6 +22,13 @@ episode. Clients can submit, disconnect, read status and request cancellation; r
 execution history stays separate from current state and stop evidence.
 See [SIM4 evidence and limits](../../jevdual/results/independent-controller-20261010/report.md).
 
+The October 14 consolidation moves controller sockets to a short, private per-user runtime directory
+and extends the planner guardian's cleanup grace. Earlier controller and handoff qualifications describe
+their recorded source commits. The changed source is checked by conformance tests; those historical
+results do not qualify the current revision. Existing controller bindings remain tied to their exact
+source and socket identity. Observed detached planner survivors withhold cleanup proof and block recovery;
+the guardian does not signal processes from retained PID records.
+
 The [browser work-order application](ORDER_APP.md) connects an immutable order revision to
 that controller through [public handoff tools](app_handoff.py). It shows native RGB, checks
 physical staging before fulfillment, and saves the application result in SQLite. Editing or

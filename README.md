@@ -17,6 +17,12 @@ The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the pro
 from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
 
+For an agent integration, start with [capability installation](jevdual/docs/capability-packaging.md)
+and the [agent-host recipe](jevdual/docs/installed-agent-host.md). The wheel supplies five MCP tools
+for one scoped browser-to-TextEdit job on macOS, with durable operation results and validated completion
+reports. It needs existing Python, uv, Chrome and applicable host permissions. The current candidate
+does not discover arbitrary apps; its disposable fixture helpers derive the identifiers for that test job.
+
 Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
 timestamped evidence through an existing tab/CDP adapter. They are dependency-free ESM helpers,
 separate from the Python driver and verification gates. Their contract is tested offline; live
