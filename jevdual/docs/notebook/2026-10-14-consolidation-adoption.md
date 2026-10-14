@@ -33,3 +33,24 @@ Test: reproduce reviewer inventory mismatch using the qualified wheel and source
 Predicts: exact old wheel and packet verify against their frozen source; altered wheel bytes or a mismatched commit still refuse; current-source default remains correctly verified.
 Against: verification accepts tampering, silently uses current source, introduces circular imports, or changes the preserved packet.
 Refs: jevdual/scripts/build_onboarding_packet.py:inventory; jevdual/scripts/build_release_candidate.py:verify_committed_wheel; independent reviewer source445a348 inventory mismatch
+
+## CA6 · update · 2026-10-14 13:22
+Resolves: CA4 = held
+Observed: the same full physical suite passes 314 tests after the private socket repair, including 10 new long-path and hostile-directory regressions. Controller restart/unknown-effect scenarios and AgentBench fresh output setup pass. Hosted Linux CI remains a separate portability check pending on PR3. The reference chrome-devtools-mcp daemon also uses a short per-user temporary runtime directory because of POSIX socket path limits.
+Inferred: coupling the socket location to checkout length caused the startup failures; shortening only its private namespace repairs that constraint while retaining source/controller identity and safety refusals.
+Next: complete current CI and independent review, remediate actionable findings, then merge PR3.
+Refs: bce67ed; output/consolidation-physical.log; output/consolidation-physical-rerun.log; tools/physical-workcell/test_controller.py:SocketPathTests; chrome-devtools-mcp/src/daemon/utils.ts:getRuntimeHome
+
+## CA7 · update · 2026-10-14 13:22
+Resolves: CA5 = held
+Observed: frozen old packet verification failed before the change and passes afterwards; 34 packet/release tests pass, including frozen-source divergence and tampering. Approved packet205577 and candidate8dc81c72 retain their original digests. A first new-test assertion mismatched only the existing error wording and is retained separately.
+Inferred: immutable source reconstruction resolves the verification regression without changing either qualified artifact.
+Next: merge after review/CI; preserve exact original artifacts for the adoption handoff.
+Refs: 57ed816; output/consolidation-20261014/packet-before.txt; output/consolidation-20261014/packet-after.json; output/consolidation-20261014/release-after.json; output/consolidation-20261014/packet-fix-tests.txt; output/consolidation-20261014/packet-fix-tests-v2.txt
+
+## CA8 · prediction · 2026-10-14 13:25
+Hypothesis: current Linux CI errors arise from a macOS-only import in a synthetic test fixture, and the actionable static-review gaps can be repaired without changing the immutable qualified artifact or weakening fail-closed simulation behavior.
+Test: replace only unavailable native test dependencies with explicit fakes while keeping Mac coverage real; correct order-handoff cleanup to the bound socket and freeze source bytes; score adoption by exact ZIP/wheel and manifest commit; snapshot archive bytes once, reject unsafe ZIP metadata and noncommit source objects; privatize measurement database creation and reject nonobject proposals; evaluate planner cleanup findings against declared retirement scope and add bounded regressions where supported. Run original affected suites, full Linux CI, notebook/lint and independent remediation review. Preserve first CI failure and the exact Opus review.
+Predicts: all 54 unavailable-module errors disappear without dropping synthetic safety tests; cleanup observes the actual bound socket; dirty qualification is refused; verifier tampering, symlink archive and malformed source/proposal cases refuse; initial artifacts stay byte-identical.
+Against: tests are skipped to hide a behavior failure, safety assertions are weakened, archive identity changes, cleanup still targets a stale path, or new regressions appear.
+Refs: PR3; output/consolidation-ci-failure.log; output/consolidation-opus-review/response.json; review target57ed816
