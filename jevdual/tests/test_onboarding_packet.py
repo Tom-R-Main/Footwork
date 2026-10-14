@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
+import stat
 import subprocess
 import sys
 import zipfile
@@ -221,3 +223,111 @@ def test_frozen_packet_uses_committed_runtime_after_later_changes(tmp_path, monk
     with pytest.raises(ValueError, match="Artifact bytes differ"):
         packets.verify(packet, corrupted, frozen)
     assert packet.read_bytes() == packet_bytes
+
+
+def test_packet_inventory_uses_one_verified_wheel_snapshot(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_onboarding_packet as packets
+
+    wheel = tmp_path / "fixture.whl"
+    original = b"first immutable snapshot"
+    wheel.write_bytes(original)
+    monkeypatch.setattr(packets, "PROJECT", tmp_path)
+    monkeypatch.setattr(packets, "commit_identity", lambda commit, project: COMMIT)
+    monkeypatch.setattr(packets, "committed_bytes", lambda *args: b"fixture source")
+
+    def verified_then_replaced(name, data, commit, project):
+        assert data == original
+        wheel.write_bytes(b"concurrent replacement")
+
+    monkeypatch.setattr(packets, "verify_committed_wheel", verified_then_replaced)
+    files = packets.inventory(wheel, COMMIT)
+    assert files["footwork/artifacts/fixture.whl"] == original
+    assert json.loads(files["footwork/MANIFEST.json"])["wheel_sha256"] == hashlib.sha256(original).hexdigest()
+
+
+@pytest.mark.parametrize("mode", [stat.S_IFLNK, stat.S_IFDIR, stat.S_IFIFO, stat.S_IFCHR])
+def test_packet_verifier_refuses_unsafe_member_modes(tmp_path, monkeypatch, mode):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_onboarding_packet as packets
+
+    path = tmp_path / "packet.zip"
+    entry = zipfile.ZipInfo("footwork/payload")
+    entry.create_system = 3
+    entry.external_attr = (mode | 0o600) << 16
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr(entry, b"same expected bytes")
+    monkeypatch.setattr(packets, "inventory", lambda *args: {entry.filename: b"same expected bytes"})
+    with pytest.raises(ValueError, match="Unsafe"):
+        packets.verify(path, tmp_path / "unused-wheel", COMMIT)
+
+
+def test_snapshot_refuses_symlink_and_observed_mutation(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_onboarding_packet as packets
+
+    path = tmp_path / "artifact"
+    path.write_bytes(b"original")
+    link = tmp_path / "link"
+    link.symlink_to(path)
+    with pytest.raises(ValueError, match="nonsymlink"):
+        packets.snapshot(link)
+    directory = tmp_path / "directory"
+    directory.mkdir()
+    fifo = tmp_path / "fifo"
+    os.mkfifo(fifo, 0o600)
+    for nonregular in (directory, fifo):
+        with pytest.raises(ValueError, match="regular"):
+            packets.snapshot(nonregular)
+    original = packets.os.fdopen
+
+    class MutatingRead:
+        def __init__(self, *args):
+            self.source = original(*args)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            self.source.close()
+
+        def fileno(self):
+            return self.source.fileno()
+
+        def read(self, size):
+            data = self.source.read(size)
+            path.write_bytes(b"replacement after read")
+            return data
+
+    monkeypatch.setattr(packets.os, "fdopen", MutatingRead)
+    with pytest.raises(ValueError, match="changed during snapshot"):
+        packets.snapshot(path)
+
+
+def test_source_identity_rejects_tree_and_blob_objects(monkeypatch):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_onboarding_packet as packets
+    import build_release_candidate as release
+
+    project = SCRIPTS.parents[1]
+    for expression in ("HEAD^{tree}", "HEAD:LICENSE"):
+        identity = subprocess.check_output(["git", "rev-parse", expression], cwd=project, text=True).strip()
+        with pytest.raises(ValueError, match="commit object"):
+            packets.commit_identity(identity, project)
+        with pytest.raises(ValueError, match="commit object"):
+            release.commit_identity(identity)
+        with pytest.raises(ValueError, match="commit object"):
+            packets.committed_bytes(identity, "LICENSE", project)
+        with pytest.raises(ValueError, match="commit object"):
+            release.committed_bytes(identity, "LICENSE")
+
+
+def test_archive_size_budget_refuses_compressed_oversize(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_onboarding_packet as packets
+
+    path = tmp_path / "oversize.zip"
+    with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("footwork/oversize", b"x" * (8 * 1024 * 1024 + 1))
+    with pytest.raises(ValueError, match="bounded candidate size"):
+        packets.parse_archive(path.read_bytes())

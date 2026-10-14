@@ -10,12 +10,12 @@ import argparse
 import hashlib
 import json
 import re
-import stat
-import subprocess
 import zipfile
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
-from build_onboarding_packet import HELPERS
+from build_onboarding_packet import HELPERS, parse_archive, snapshot
+from build_onboarding_packet import commit_identity as packet_commit_identity
+from build_onboarding_packet import committed_bytes as packet_committed_bytes
 from build_onboarding_packet import verify_committed_wheel as verify_packet_wheel
 
 PROJECT = Path(__file__).resolve().parents[2]
@@ -125,61 +125,21 @@ def sanitized_legacy_json(data: bytes) -> bytes:
 
 
 def commit_identity(commit: str | None) -> str:
-    commit = commit or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True).strip()
-    if not re.fullmatch(r"[0-9a-f]{40}", commit):
-        raise ValueError("A full immutable source commit is required")
-    return commit
+    return packet_commit_identity(commit, PROJECT)
 
 
 def committed_bytes(commit: str, relative: str) -> bytes:
-    entries = subprocess.check_output(
-        ["git", "ls-tree", "-z", commit, "--", relative], cwd=PROJECT, stderr=subprocess.PIPE
-    ).split(b"\0")
-    entries = [entry for entry in entries if entry]
-    if len(entries) != 1:
-        raise ValueError("Committed source file is absent: " + relative)
-    metadata, name = entries[0].split(b"\t", 1)
-    mode, kind, _ = metadata.split()
-    if mode not in (b"100644", b"100755") or kind != b"blob" or name.decode() != relative:
-        raise ValueError("Committed source must be a regular file")
-    return subprocess.check_output(
-        ["git", "show", commit + ":" + relative], cwd=PROJECT, stderr=subprocess.PIPE
-    )
+    return packet_committed_bytes(commit, relative, PROJECT)
 
 
 def read_archive(path: Path) -> dict[str, bytes]:
-    if path.is_symlink() or not path.is_file():
-        raise ValueError("Archive must be a regular nonsymlink file")
-    files = {}
-    total = 0
-    with zipfile.ZipFile(path) as archive:
-        for entry in archive.infolist():
-            name = entry.filename
-            parts = PurePosixPath(name)
-            mode = entry.external_attr >> 16
-            if (
-                name in files
-                or parts.is_absolute()
-                or ".." in parts.parts
-                or parts.as_posix() != name
-                or len(parts.parts) < 2
-                or parts.parts[0] != "footwork"
-                or "\\" in name
-                or entry.is_dir()
-                or stat.S_ISLNK(mode)
-                or stat.S_IFMT(mode) not in (0, stat.S_IFREG)
-            ):
-                raise ValueError("Unsafe or duplicate archive member")
-            total += entry.file_size
-            if entry.file_size > 8 * 1024 * 1024 or total > 16 * 1024 * 1024:
-                raise ValueError("Archive exceeds bounded candidate size")
-            files[name] = archive.read(entry)
-    return files
+    return parse_archive(snapshot(path))
 
 
 def qualification_packet(path: Path) -> tuple[dict[str, bytes], dict]:
-    files = read_archive(path)
-    if sha(path.read_bytes()) != QUALIFIED_PACKET_SHA:
+    data = snapshot(path)
+    files = parse_archive(data)
+    if sha(data) != QUALIFIED_PACKET_SHA:
         raise ValueError("Qualification packet differs from the immutable reviewed packet")
     manifest = json.loads(files.get("footwork/MANIFEST.json", b"null"))
     if not isinstance(manifest, dict) or manifest.get("source_commit") != QUALIFIED_PRODUCT_COMMIT:
@@ -330,7 +290,8 @@ def inventory(packet: Path, source_commit: str | None = None) -> dict[str, bytes
 
 def verify(candidate: Path, packet: Path, source_commit: str | None = None) -> dict:
     expected = inventory(packet, source_commit)
-    actual = read_archive(candidate)
+    candidate_data = snapshot(candidate)
+    actual = parse_archive(candidate_data)
     if set(actual) != set(expected):
         raise ValueError("Release candidate inventory differs")
     for name, data in expected.items():
@@ -339,7 +300,7 @@ def verify(candidate: Path, packet: Path, source_commit: str | None = None) -> d
     manifest = json.loads(actual["footwork/MANIFEST.json"])
     return {
         "verified": True,
-        "sha256": sha(candidate.read_bytes()),
+        "sha256": sha(candidate_data),
         "members": len(actual),
         "source_commit": manifest["source_commit"],
         "wheel_sha256": manifest["wheel_sha256"],

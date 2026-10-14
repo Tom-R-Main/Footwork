@@ -172,8 +172,46 @@ def mocked_release_source(builder, monkeypatch, agent_changes=None):
         return blobs[relative]
 
     monkeypatch.setattr(builder, "committed_bytes", committed)
+    monkeypatch.setattr(
+        builder,
+        "commit_identity",
+        lambda requested: commit if requested == commit else pytest.fail("unexpected fixture commit"),
+    )
     monkeypatch.setattr(builder, "verify_committed_wheel", lambda name, data, requested: None)
     return commit
+
+
+def test_qualification_packet_hash_and_parse_share_snapshot(builder, source_packet, monkeypatch):
+    packet, files = source_packet
+    original = packet.read_bytes()
+
+    def read_then_replace(path):
+        assert path == packet
+        packet.write_bytes(b"concurrent replacement")
+        return original
+
+    monkeypatch.setattr(builder, "snapshot", read_then_replace)
+    parsed, manifest = builder.qualification_packet(packet)
+    assert parsed == files
+    assert manifest["source_commit"] == builder.QUALIFIED_PRODUCT_COMMIT
+
+
+def test_candidate_verifier_hash_and_parse_share_snapshot(builder, source_packet, monkeypatch, tmp_path):
+    packet, _ = source_packet
+    commit = mocked_release_source(builder, monkeypatch)
+    candidate = builder.build(packet, tmp_path / "candidate", commit)
+    original = candidate.read_bytes()
+    expected_hash = builder.sha(original)
+    real_snapshot = builder.snapshot
+
+    def read_then_replace(path):
+        data = real_snapshot(path)
+        if path == candidate:
+            candidate.write_bytes(b"concurrent replacement")
+        return data
+
+    monkeypatch.setattr(builder, "snapshot", read_then_replace)
+    assert builder.verify(candidate, packet, commit)["sha256"] == expected_hash
 
 
 def test_all_markdown_links_resolve_inside_final_bundle(
