@@ -60,3 +60,10 @@ Observed: full source Python rerun passes1594 with27skips/12browserdeselections;
 Inferred: fixes close the observed setup, provenance and bounded-input gaps while preserving existing fail-closed semantics. Observed detached planner survivors intentionally withhold closure; signalling retained identities would broaden the tested authority. The15secondhostgrace repairs supported delayed guardian publication without promising universal cleanup.
 Next: push one consolidated remediation update, inspect current hostedCI and all review threads, retain qualification commits through a true merge, then consolidate primary checkout. A3 remains gated on user8GiBavailableRAM; no VM or adoption model task has started.
 Refs: f34ce57; 0e97555; 9cf0c97; 0e5a59a; output/consolidation-pytest-final.log; output/consolidation-physical-final.log; output/consolidation-20261014/archive-hardening-tests-final-v2.txt; output/consolidation-20261014/qualifier-source-identity; output/release-publication-scan-reviewed.json
+
+## CA10 · prediction · 2026-10-14 13:50
+Hypothesis: Linux's remaining browser-readiness test failure comes from fake_clock replacing the shared process-wide time.monotonic/time.sleep, allowing unrelated background code to consume the finite tick iterator, rather than from product browser startup behavior.
+Test: preserve hostedrun38609371553, add a regression that the fixture clock leaves process-wide time functions unchanged, then replace only the loaded fixture module's time binding with an explicit local clock. Run all fixture tests and current hostedCI without changing runtime/helpers/qualifiedZIP.
+Predicts: originalclock-isolation regression fails thenpasses; readiness stillwaits40syntheticpolls andstrictdeadline/endpointchecks remainasserted; LinuxCIStopIteration disappears.
+Against: global clockswerealreadyisolated, localclockstillfails, startupassertions mustbeweakened, orCIexposesproductbehaviorfailure.
+Refs: output/consolidation-ci-failure-v2.log; tests/test_capability_fixture.py:fake_clock; hostedrun38609371553
