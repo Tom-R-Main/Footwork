@@ -7,7 +7,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
 import pytest
 
@@ -15,7 +15,26 @@ import pytest
 @pytest.fixture(autouse=True)
 def simulated_identity_timeout_api(monkeypatch):
     # Scope tests use fake PIDs: never send an AX RPC to an unrelated real process.
-    import ApplicationServices
+    if sys.platform == "darwin":
+        import ApplicationServices
+    else:
+        # Linux CI has no PyObjC framework. Model only this suite's explicit AX
+        # seam; unconfigured queries/actions must fail instead of granting access.
+        ApplicationServices = ModuleType("ApplicationServices")
+
+        def unconfigured(*args):
+            raise AssertionError("synthetic AX call requires an explicit test response")
+
+        for name in (
+            "AXUIElementCreateApplication",
+            "AXUIElementCreateSystemWide",
+            "AXUIElementSetMessagingTimeout",
+            "AXUIElementCopyAttributeValue",
+            "AXUIElementPerformAction",
+            "AXIsProcessTrusted",
+        ):
+            setattr(ApplicationServices, name, unconfigured)
+        monkeypatch.setitem(sys.modules, "ApplicationServices", ApplicationServices)
 
     monkeypatch.setattr(
         ApplicationServices, "AXUIElementCreateApplication", lambda pid: SimpleNamespace(pid=pid)
@@ -180,6 +199,27 @@ def ax_world(monkeypatch, tmp_path, *, edited=False):
     )
     monkeypatch.setattr(ApplicationServices, "AXUIElementPerformAction", action)
     return module, document, app, window, other, close, sheet, discard, pressed
+
+
+def test_linux_without_native_framework_runs_exact_owned_cleanup(monkeypatch, tmp_path):
+    original = sys.modules["ApplicationServices"]
+    with monkeypatch.context() as linux:
+        linux.setattr(sys, "platform", "linux")
+        linux.setitem(sys.modules, "ApplicationServices", None)  # Native import must fail.
+        simulated_identity_timeout_api.__wrapped__(linux)
+        api = sys.modules["ApplicationServices"]
+        assert isinstance(api, ModuleType)
+        assert api is not original
+        with pytest.raises(AssertionError, match="explicit test response"):
+            api.AXIsProcessTrusted()
+        with pytest.raises(AssertionError, match="explicit test response"):
+            api.AXUIElementPerformAction({}, "AXPress")
+        module, document, app, _window, other, close, _sheet, _discard, pressed = ax_world(linux, tmp_path)
+        result = module.close_owned_document(43, document)
+        assert result["status"] == "confirmed"
+        assert pressed == [close]
+        assert app["AXWindows"] == [other]
+    assert sys.modules["ApplicationServices"] is original
 
 
 @pytest.mark.parametrize("edited", [False, True])
