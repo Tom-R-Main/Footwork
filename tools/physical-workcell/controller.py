@@ -21,6 +21,9 @@ SPEC.loader.exec_module(episode)
 vision, body, Refusal = episode.vision, episode.body, episode.Refusal
 MAX_RPC = 8192
 TERMINAL = {"executed", "staged", "cancelled", "refused", "unknown"}
+# Do not use TMPDIR: macOS's per-session path (or a long checkout) can exhaust
+# sockaddr_un. The OS temporary directory has a stable, short canonical path.
+SOCKET_PARENT = Path("/private/tmp" if sys.platform == "darwin" else "/tmp")
 
 
 def operation_path(control, operation_id):
@@ -34,9 +37,23 @@ def request_path(control, operation_id):
 
 
 def socket_path(control, create=False):
-    # Darwin's sockaddr_un is short. Keep the derived owned socket under the existing output.
-    directory = body.directory(body.OUTPUT / ".s", create=create)
-    path = directory / (body.sha(str(control).encode())[:20] + ".sock")
+    # A shared ancestor must be trusted and sticky; our own namespace must be
+    # private. Never follow a socket-directory symlink or chmod an existing path.
+    for parent in (*reversed(SOCKET_PARENT.parents), SOCKET_PARENT):
+        info = parent.lstat()
+        if (not stat.S_ISDIR(info.st_mode) or info.st_uid not in {0, os.getuid()} or
+                (info.st_mode & 0o022 and not info.st_mode & stat.S_ISVTX)):
+            raise Refusal("Unix socket ancestors must be trusted directories without symlinks")
+    directory = SOCKET_PARENT / f"fw-c-{os.getuid()}"
+    if create:
+        try:
+            directory.mkdir(mode=0o700)
+        except FileExistsError:
+            pass
+    info = directory.lstat()
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+        raise Refusal("Unix socket directory must be owned, private and free of symlinks")
+    path = directory / (body.sha(str(control).encode()) + ".sock")
     if len(os.fsencode(path)) >= 104:
         raise Refusal("owned Unix socket path exceeds the platform bound")
     return path

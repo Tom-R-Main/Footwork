@@ -15,8 +15,7 @@ ZONE = {"x_min": .04, "x_max": .10, "y_min": -.025, "y_max": .025}
 
 class AgentBenchTests(unittest.TestCase):
     def setUp(self):
-        self.root = agent.BASE / "output" / ("a7test-" + uuid.uuid4().hex[:10])
-        self.root.mkdir(mode=0o700)
+        self.root = agent.bench.body.directory(agent.BASE / "output" / ("a7test-" + uuid.uuid4().hex[:10]), create=True)
         self.bench_dir = self.root / "bench"
         agent.bench.initialize(self.bench_dir, diagnostic_enabled=True)
         self.bench = agent.bench.Bench(self.bench_dir)

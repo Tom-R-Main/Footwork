@@ -11,14 +11,124 @@ import signal
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 import unittest
 import uuid
 from pathlib import Path
+from unittest import mock
 
 BASE = Path(__file__).resolve().parent
 CONTROLLER = BASE / "controller.py"
 TERMINAL = {"executed", "staged", "cancelled", "refused", "unknown"}
+
+
+class SocketPathTests(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("controller_socket_dev", CONTROLLER)
+        self.controller = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.controller)
+        self.temporary = tempfile.TemporaryDirectory(prefix="", dir=self.controller.SOCKET_PARENT)
+        self.addCleanup(self.temporary.cleanup)
+        self.parent = Path(self.temporary.name).resolve()
+        self.patch = mock.patch.object(self.controller, "SOCKET_PARENT", self.parent, create=True)
+        self.patch.start()
+        self.addCleanup(self.patch.stop)
+        self.directory = self.parent / f"fw-c-{os.getuid()}"
+        self.control = BASE / "output" / ("long-checkout-" + "a" * 180) / "controller"
+
+    def test_long_control_path_has_stable_private_bindable_socket(self):
+        path = self.controller.socket_path(self.control, create=True)
+        self.assertEqual(path, self.controller.socket_path(self.control))
+        self.assertEqual(path.parent, self.directory)
+        self.assertLess(len(os.fsencode(path)), 104)
+        self.assertEqual(self.directory.stat().st_mode & 0o777, 0o700)
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as listener:
+            listener.bind(str(path))
+            os.chmod(path, 0o600)
+            listener.listen(1)
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as caller:
+                caller.connect(str(path))
+                connection, _ = listener.accept()
+                connection.close()
+        path.unlink()
+
+    def test_control_identities_have_distinct_full_digest_names(self):
+        one = self.controller.socket_path(self.control, create=True)
+        two = self.controller.socket_path(self.control.parent / "other")
+        self.assertNotEqual(one, two)
+        self.assertEqual(one.name, self.controller.body.sha(str(self.control).encode()) + ".sock")
+
+    def test_missing_runtime_directory_is_not_created_by_read(self):
+        with self.assertRaises(FileNotFoundError):
+            self.controller.socket_path(self.control)
+        self.assertFalse(self.directory.exists())
+
+    def test_runtime_directory_symlink_is_refused_without_touching_target(self):
+        target = self.parent / "target"
+        target.mkdir(mode=0o700)
+        self.directory.symlink_to(target, target_is_directory=True)
+        with self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+        self.assertTrue(self.directory.is_symlink())
+        self.assertEqual(list(target.iterdir()), [])
+
+    def test_runtime_directory_regular_file_is_refused_without_repair(self):
+        self.directory.write_bytes(b"unrelated")
+        with self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+        self.assertEqual(self.directory.read_bytes(), b"unrelated")
+
+    def test_runtime_directory_unsafe_mode_is_refused_without_chmod(self):
+        self.directory.mkdir(mode=0o700)
+        self.directory.chmod(0o755)
+        with self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+        self.assertEqual(self.directory.stat().st_mode & 0o777, 0o755)
+
+    def test_runtime_directory_foreign_owner_is_refused(self):
+        self.directory.mkdir(mode=0o700)
+        original = Path.lstat
+
+        def foreign(path):
+            value = original(path)
+            if path == self.directory:
+                fields = list(value)
+                fields[4] = os.getuid() + 1
+                return os.stat_result(fields)
+            return value
+
+        with mock.patch.object(Path, "lstat", foreign), self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+
+    def test_shared_parent_without_sticky_bit_is_refused(self):
+        self.parent.chmod(0o777)
+        with self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+        self.assertFalse(self.directory.exists())
+
+    def test_symlinked_socket_parent_is_refused(self):
+        link = self.parent / "alias"
+        link.symlink_to(self.parent, target_is_directory=True)
+        with mock.patch.object(self.controller, "SOCKET_PARENT", link), self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+        self.assertFalse(self.directory.exists())
+
+    def test_symlink_winning_directory_creation_race_is_refused(self):
+        target = self.parent / "race-target"
+        target.mkdir(mode=0o700)
+        original = Path.mkdir
+
+        def replace(path, *args, **kwargs):
+            if path == self.directory:
+                path.symlink_to(target, target_is_directory=True)
+                raise FileExistsError("another actor created the directory")
+            return original(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "mkdir", replace), self.assertRaises(self.controller.Refusal):
+            self.controller.socket_path(self.control, create=True)
+        self.assertTrue(self.directory.is_symlink())
+        self.assertEqual(list(target.iterdir()), [])
 
 
 class ControllerProcessTests(unittest.TestCase):
@@ -95,7 +205,7 @@ class ControllerProcessTests(unittest.TestCase):
         control = control or self.control
         binding = self.body.decoded(self.body.read_bytes(control / "controller-binding.json"))
         path = Path(binding["socket_path"])
-        self.assertTrue(path.is_relative_to(self.body.OUTPUT))
+        self.assertEqual(path.parent, Path("/private/tmp" if sys.platform == "darwin" else "/tmp") / f"fw-c-{os.getuid()}")
         self.assertLess(len(os.fsencode(path)), 104)
         return path
 
