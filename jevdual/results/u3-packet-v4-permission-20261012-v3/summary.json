@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "runtime_gates_passed": true,
+  "independent_review": "approved",
+  "classification": "fresh dependencies and permission state on previously provisioned guest",
+  "packet_sha256": "205577ee0848e9e68c8a15a9f25e1d308e820a054be449f631274ba7a9c7151d",
+  "source_commit": "445a348ff31243c2f3d90baae9ce209d89bd7eac",
+  "raw_archive_sha256": "ca81a5c1b2f103e844f099bf2fa426623b099ef54e7f26af617dd94ac2a8914e",
+  "baseline_hashes_match": {
+    "reset-v3.txt": true,
+    "doctor-denied-v3-exit.txt": true,
+    "doctor-denied-v3-stderr.txt": true,
+    "denied-fixture-v3-console.txt": true,
+    "denied-fixture-v3-exit.txt": true,
+    "footwork/output/doctor-denied-v3.json": true,
+    "footwork/output/install-v1/receipt.json": true,
+    "no-resources-v3.txt": true
+  },
+  "durable_rows": [
+    [
+      "op_c16fcfb1b382",
+      "final",
+      "applied",
+      "sent"
+    ]
+  ],
+  "install": true,
+  "denied_baseline": true,
+  "observed_approved_grant": true,
+  "grant_actors": [
+    "Codex switch click",
+    "human guest authentication"
+  ],
+  "terminal_restart": true,
+  "strict_doctor_after": true,
+  "native": true,
+  "automatic_document_confirmation": true,
+  "fixture_exit": 0,
+  "manual_document_close": false,
+  "browser_listener_cleanup": true,
+  "owned_worker_absent": true,
+  "disk_persistence": "not_checked",
+  "previous_runs": {
+    "U3v1": "failed",
+    "UF5": "inconclusive after VM interruption"
+  },
+  "frozen_helper_hashes_match": {
+    "jevdual/scripts/capability_clean_install.py": true,
+    "jevdual/scripts/capability_fixture_config.py": true,
+    "jevdual/scripts/capability_fixture.py": true,
+    "jevdual/scripts/capability_host_trial.py": true,
+    "jevdual/scripts/capability_installed_trial.py": true,
+    "jevdual/scripts/capability_interrupt_trial.py": true,
+    "jevdual/scripts/capability_restart_trial.py": true,
+    "jevdual/scripts/verify_onboarding_packet.py": true
+  },
+  "supplemental_archive_sha256": "2eee22a345b48000a953c8f4199454a2506524daf5086f1bd1ad4c0e3b1697d7",
+  "reviewer_model": "claude-opus-5-5 (reviewer-reported)",
+  "review_messages": [
+    "1791834939955400000",
+    "1791835064888832000"
+  ],
+  "qualified_scope": "supported Terminal permission reset then captured grant on one previously provisioned SIP-enabled macOS26.6.2 guest",
+  "host": "Terminal",
+  "os": "macOS26.6.2/25G83",
+  "architecture": "arm64",
+  "python": "3.14.7",
+  "limitations": [
+    "not never-granted cold OS or first Chrome launch",
+    "not other responsible hosts/OS/MDM",
+    "not pixel capture",
+    "disk persistence not checked",
+    "failed U3v1 and interrupted UF5 preserved"
+  ]
+}

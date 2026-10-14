@@ -1,0 +1,105 @@
+{
+  "suites": [
+    {
+      "suite": "runtime",
+      "passed": true,
+      "tests": 20,
+      "elapsed_s": 14.404,
+      "cases": [
+        "test_cancelled_reply_stays_withheld_after_event_clears (test_operator_runtime.OperatorTests.test_cancelled_reply_stays_withheld_after_event_clears)",
+        "test_frame_identity_changes_when_zone_repaint_keeps_generation (test_operator_runtime.OperatorTests.test_frame_identity_changes_when_zone_repaint_keeps_generation)",
+        "test_get_state_and_frame_do_not_capture_or_call_model (test_operator_runtime.OperatorTests.test_get_state_and_frame_do_not_capture_or_call_model)",
+        "test_global_reserved_call_budget_blocks_starting_another_job (test_operator_runtime.OperatorTests.test_global_reserved_call_budget_blocks_starting_another_job)",
+        "test_http_origin_identity_duplicate_keys_and_body_schema (test_operator_runtime.OperatorTests.test_http_origin_identity_duplicate_keys_and_body_schema)",
+        "test_interrupted_start_intent_blocks_restart_without_replay (test_operator_runtime.OperatorTests.test_interrupted_start_intent_blocks_restart_without_replay)",
+        "test_invalid_finish_reset_refuses_native_guard (test_operator_runtime.OperatorTests.test_invalid_finish_reset_refuses_native_guard)",
+        "test_model_cannot_claim_completion_or_bypass_guard (test_operator_runtime.OperatorTests.test_model_cannot_claim_completion_or_bypass_guard)",
+        "test_model_unavailable_pauses_counts_attempt_and_never_completes (test_operator_runtime.OperatorTests.test_model_unavailable_pauses_counts_attempt_and_never_completes)",
+        "test_mutated_operator_manifest_and_fabricated_completion_refuse (test_operator_runtime.OperatorTests.test_mutated_operator_manifest_and_fabricated_completion_refuse)",
+        "test_new_identity_bound_to_separate_persistent_bench (test_operator_runtime.OperatorTests.test_new_identity_bound_to_separate_persistent_bench)",
+        "test_pause_between_outer_loop_check_and_step_admission_starts_nothing (test_operator_runtime.OperatorTests.test_pause_between_outer_loop_check_and_step_admission_starts_nothing)",
+        "test_pause_during_model_prevents_late_reply_dispatch (test_operator_runtime.OperatorTests.test_pause_during_model_prevents_late_reply_dispatch)",
+        "test_queue_validation_duplicate_and_path_schema (test_operator_runtime.OperatorTests.test_queue_validation_duplicate_and_path_schema)",
+        "test_restart_retains_body_and_queue_without_replay (test_operator_runtime.OperatorTests.test_restart_retains_body_and_queue_without_replay)",
+        "test_shutdown_cancelled_model_exit_persists_stopped_after_worker_exits (test_operator_runtime.OperatorTests.test_shutdown_cancelled_model_exit_persists_stopped_after_worker_exits)",
+        "test_source_change_refuses_mutation (test_operator_runtime.OperatorTests.test_source_change_refuses_mutation)",
+        "test_stop_decision_pauses_without_completion (test_operator_runtime.OperatorTests.test_stop_decision_pauses_without_completion)",
+        "test_two_jobs_replay_public_action_fixture_and_disturbance_guard (test_operator_runtime.OperatorTests.test_two_jobs_replay_public_action_fixture_and_disturbance_guard)",
+        "test_unknown_native_blocks_resume_and_no_reset (test_operator_runtime.OperatorTests.test_unknown_native_blocks_resume_and_no_reset)"
+      ],
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-pause-admission-after-fix-runtime.log"
+    },
+    {
+      "suite": "policy",
+      "passed": true,
+      "tests": 3,
+      "elapsed_s": 0.559,
+      "cases": [
+        "test_closed_action_schema_finite_targets_and_no_success_flag (test_codex_policy.PolicyTests.test_closed_action_schema_finite_targets_and_no_success_flag)",
+        "test_fake_cli_bound_image_schema_tool_isolation_and_reservation (test_codex_policy.PolicyTests.test_fake_cli_bound_image_schema_tool_isolation_and_reservation)",
+        "test_usage_optional_and_any_tool_event_refuses (test_codex_policy.PolicyTests.test_usage_optional_and_any_tool_event_refuses)"
+      ],
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-final-policy-tests.log"
+    },
+    {
+      "suite": "agent",
+      "passed": true,
+      "tests": 15,
+      "elapsed_s": 3.689,
+      "cases": [
+        "test_challenge_has_only_images_task_and_public_observation (test_agent_bench.AgentBenchTests.test_challenge_has_only_images_task_and_public_observation)",
+        "test_changed_challenge_image_refuses (test_agent_bench.AgentBenchTests.test_changed_challenge_image_refuses)",
+        "test_changed_proposal_refuses_before_dispatch (test_agent_bench.AgentBenchTests.test_changed_proposal_refuses_before_dispatch)",
+        "test_error_after_real_move_stays_unknown_even_if_bench_ready (test_agent_bench.AgentBenchTests.test_error_after_real_move_stays_unknown_even_if_bench_ready)",
+        "test_foreign_challenge_and_unsafe_identity_refuse (test_agent_bench.AgentBenchTests.test_foreign_challenge_and_unsafe_identity_refuse)",
+        "test_measurement_placement_refusal_does_not_create_sqlite (test_agent_bench.AgentBenchTests.test_measurement_placement_refusal_does_not_create_sqlite)",
+        "test_measurement_worker_failure_retains_unknown_and_blocks_replay (test_agent_bench.AgentBenchTests.test_measurement_worker_failure_retains_unknown_and_blocks_replay)",
+        "test_move_executes_once_duplicate_returns_exact_result (test_agent_bench.AgentBenchTests.test_move_executes_once_duplicate_returns_exact_result)",
+        "test_nonfinite_and_conflicting_arguments_never_create_proposal (test_agent_bench.AgentBenchTests.test_nonfinite_and_conflicting_arguments_never_create_proposal)",
+        "test_proposal_persists_intent_without_effect (test_agent_bench.AgentBenchTests.test_proposal_persists_intent_without_effect)",
+        "test_public_cli_measurement_reset_and_status_strip_detector_locations (test_agent_bench.AgentBenchTests.test_public_cli_measurement_reset_and_status_strip_detector_locations)",
+        "test_source_change_and_foreign_bench_identity_block_dispatch (test_agent_bench.AgentBenchTests.test_source_change_and_foreign_bench_identity_block_dispatch)",
+        "test_stale_move_refuses_and_returns_fresh_image (test_agent_bench.AgentBenchTests.test_stale_move_refuses_and_returns_fresh_image)",
+        "test_unresolved_intent_blocks_same_and_new_proposal (test_agent_bench.AgentBenchTests.test_unresolved_intent_blocks_same_and_new_proposal)",
+        "test_wrong_reset_phase_preserves_bench (test_agent_bench.AgentBenchTests.test_wrong_reset_phase_preserves_bench)"
+      ],
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-final-agent-tests.log"
+    },
+    {
+      "suite": "bench",
+      "passed": true,
+      "tests": 14,
+      "elapsed_s": 5.049,
+      "cases": [
+        "test_corrupted_image_refuses_measurement_and_does_not_create_a_database (test_bench.BenchBehaviorTests.test_corrupted_image_refuses_measurement_and_does_not_create_a_database)",
+        "test_corrupted_native_state_never_causes_an_implicit_reset (test_bench.BenchBehaviorTests.test_corrupted_native_state_never_causes_an_implicit_reset)",
+        "test_corrupted_retained_model_refuses_without_recreating_the_body (test_bench.BenchBehaviorTests.test_corrupted_retained_model_refuses_without_recreating_the_body)",
+        "test_corrupted_source_binding_refuses_without_a_new_generation (test_bench.BenchBehaviorTests.test_corrupted_source_binding_refuses_without_a_new_generation)",
+        "test_diagnostic_force_needs_explicit_enablement_and_finite_bounds (test_bench.BenchBehaviorTests.test_diagnostic_force_needs_explicit_enablement_and_finite_bounds)",
+        "test_exact_motion_replay_retains_one_native_effect_and_conflicts_refuse (test_bench.BenchBehaviorTests.test_exact_motion_replay_retains_one_native_effect_and_conflicts_refuse)",
+        "test_external_force_invalidates_stale_motion_and_measurement_before_dispatch (test_bench.BenchBehaviorTests.test_external_force_invalidates_stale_motion_and_measurement_before_dispatch)",
+        "test_foreign_or_modified_observation_cannot_authorize_a_motion (test_bench.BenchBehaviorTests.test_foreign_or_modified_observation_cannot_authorize_a_motion)",
+        "test_measurement_column_corruption_is_not_hidden_by_an_unchanged_receipt (test_bench.BenchBehaviorTests.test_measurement_column_corruption_is_not_hidden_by_an_unchanged_receipt)",
+        "test_measurement_is_a_separate_process_with_exact_persisted_image_binding (test_bench.BenchBehaviorTests.test_measurement_is_a_separate_process_with_exact_persisted_image_binding)",
+        "test_measurement_receipt_corruption_refuses_historical_replay (test_bench.BenchBehaviorTests.test_measurement_receipt_corruption_refuses_historical_replay)",
+        "test_measurement_replay_is_historical_and_does_not_run_another_worker (test_bench.BenchBehaviorTests.test_measurement_replay_is_historical_and_does_not_run_another_worker)",
+        "test_retained_interrupted_intent_blocks_all_new_dispatch (test_bench.BenchBehaviorTests.test_retained_interrupted_intent_blocks_all_new_dispatch)",
+        "test_successive_job_gate_requires_measurement_and_verified_reset (test_bench.BenchBehaviorTests.test_successive_job_gate_requires_measurement_and_verified_reset)"
+      ],
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-final-bench-tests.log"
+    },
+    {
+      "suite": "scorer",
+      "passed": true,
+      "tests": 2,
+      "elapsed_s": 0.004,
+      "cases": [
+        "test_out_of_zone_refusal_does_not_count_as_stale_even_with_force (test_score_operator.ScorerTests.test_out_of_zone_refusal_does_not_count_as_stale_even_with_force)",
+        "test_refused_measure_and_later_move_do_not_prove_any_force (test_score_operator.ScorerTests.test_refused_measure_and_later_move_do_not_prove_any_force)"
+      ],
+      "private_log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim8-score-repair-tests.log"
+    }
+  ],
+  "total_tests": 54,
+  "scope": "labelled conformance; fake policies are not actual AI completion evidence"
+}

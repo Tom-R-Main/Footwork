@@ -1,0 +1,10 @@
+{
+  "owned_pids_absent": {
+    "24765": true,
+    "24766": true,
+    "42605": true
+  },
+  "fixture_loopback_closed": true,
+  "document_closed_by_operator": "exact fixture-v2 title observed then closed using native CUA; persistence not checked",
+  "automation_grant": "declined"
+}

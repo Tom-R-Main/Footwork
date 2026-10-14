@@ -1,0 +1,29 @@
+{
+  "reviewer": "Claude through authorized mailbox",
+  "model_attestation": "claude-opus-5-5 (reviewer-reported)",
+  "initial_message": "1791834939955400000",
+  "final_message": "1791835064888832000",
+  "verdict": "approved; worker absence condition discharged",
+  "inspected": [
+    "raw archive digest",
+    "packet/source identity",
+    "denied baseline and timing",
+    "grant actor and authentication",
+    "Terminal relaunch",
+    "installed server and worker origins",
+    "exact oracle",
+    "same-token replay",
+    "single read-only durable operation",
+    "accepted completion report",
+    "automatic cleanup",
+    "independent owned process/listener absence",
+    "eight unchanged helper hashes"
+  ],
+  "claim_limits": [
+    "supported permission reset then captured grant on previously provisioned guest",
+    "Terminal/macOS26.6.2/Chrome155/Python3.14.7 only",
+    "disk persistence not checked",
+    "Screen Recording/pixel routes not qualified",
+    "earlier failed and interrupted runs not regraded"
+  ]
+}

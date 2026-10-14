@@ -1,0 +1,17 @@
+{
+  "reviewer": "Claude via authorized mailbox",
+  "runtime_approval": "1791836103010895000",
+  "first_local_bundle_approval": "1791836643188530000",
+  "final_bundle_approval": "1791837075792802000",
+  "verdict": "final local release packaging approved; N1 closed",
+  "sha256": "8dc81c724bf617a9f3aa4833f250d5124b9e8c5e9a1c504c67d634080f44fd1f",
+  "checks_independently_reproduced": [
+    "repeatable ZIP",
+    "30-member extracted verifier",
+    "10 unchanged qualified payloads",
+    "outer/nested-wheel path scan",
+    "all evidence JSON parse",
+    "10 original/derived evidence hash pairs"
+  ],
+  "limits": "same scoped host and guest permissions; no registry, tag, push or merge"
+}

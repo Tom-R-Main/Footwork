@@ -1,0 +1,758 @@
+{
+  "steps": [
+    {
+      "browser_action": "Observed active image planning with Checking body under tagged 1.2 second reply delay",
+      "client_commands": 11,
+      "name": "healthy_checking",
+      "pending_command_ids": [],
+      "screenshot": "healthy_checking.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Health read delayed; fresh body proof is required before any command",
+          "state": "checking"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 3,
+          "image_url": "/api/frame?generation=3&sha256=abd56127579f6a8c8dd685d44e7d633a4b7f230837d5892d1b0d10b71bbddd4b"
+        },
+        "jobs": [
+          {
+            "call_count": 4,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Retract the pusher left to clear contact before measuring the centered block.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "running",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": true,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No uncertain command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791832001.6553578,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t60 checkbox Health inspection 01 Working, Value: 1\n\t\t\t61 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t62 text Health inspection 01\n\t\t63 text Running\n\t\t16 button Pause, ID: pause\n\t\t64 text A health reply is delayed. Planning can continue; commands require a fresh body check.\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t65 text Checking body\n\t\t\t66 text Health read delayed; fresh body proof is required before any command\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t23 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t24 text Test the simulated connection\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t67 text Last observation \u00b7 health unconfirmed\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t68 text Last captured \u00b7 health unconfirmed \u00b7 generation 2\n\t\t69 text AI IS PLANNING\n\t\t70 text Planning the next move from the latest camera image.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t71 text Pending\n\t\t\t39 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Lost exactly one dispatch reply in the browser; successor blocked",
+      "client_commands": 19,
+      "name": "uncertain",
+      "pending_command_ids": [
+        "command-e52c9ef5005a410fb80600b4ad7f947a"
+      ],
+      "screenshot": "uncertain.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Health read delayed; fresh body proof is required before any command",
+          "state": "checking"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 3,
+          "image_url": "/api/frame?generation=3&sha256=abd56127579f6a8c8dd685d44e7d633a4b7f230837d5892d1b0d10b71bbddd4b"
+        },
+        "jobs": [
+          {
+            "call_count": 6,
+            "disturbance_test": false,
+            "error": "reply is uncertain; reconcile exact command without resending",
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Move the pusher into the upper bypass lane before crossing to the block's right side.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "resetting",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e52c9ef5005a410fb80600b4ad7f947a",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791832029.627487,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t87 checkbox Health inspection 01 Needs attention, Value: 1\n\t\t\t88 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t89 text Health inspection 01\n\t\t90 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t91 text reply is uncertain; reconcile exact command without resending\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t92 text Checking body\n\t\t\t93 text Health read delayed; fresh body proof is required before any command\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t71 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t72 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t94 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t95 text Last observation \u00b7 health unconfirmed\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t96 text Last captured \u00b7 health unconfirmed \u00b7 generation 3\n\t\t97 text OUTCOME UNCERTAIN\n\t\t98 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t99 text Historical result\n\t\t\t79 container measurement-result\n\t\t\t\t100 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t101 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Clicked Disconnect with the exact pending command retained",
+      "client_commands": 19,
+      "name": "disconnected",
+      "pending_command_ids": [
+        "command-e52c9ef5005a410fb80600b4ad7f947a"
+      ],
+      "screenshot": "disconnected.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Diagnostic link disconnected; cached observations are retained",
+          "state": "disconnected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 3,
+          "image_url": "/api/frame?generation=3&sha256=abd56127579f6a8c8dd685d44e7d633a4b7f230837d5892d1b0d10b71bbddd4b"
+        },
+        "jobs": [
+          {
+            "call_count": 6,
+            "disturbance_test": false,
+            "error": "reply is uncertain; reconcile exact command without resending",
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Move the pusher into the upper bypass lane before crossing to the block's right side.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "resetting",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e52c9ef5005a410fb80600b4ad7f947a",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791832038.488682,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t87 checkbox Health inspection 01 Needs attention, Value: 1\n\t\t\t88 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t89 text Health inspection 01\n\t\t90 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t91 text reply is uncertain; reconcile exact command without resending\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t92 text Body disconnected\n\t\t\t93 text Diagnostic link disconnected; cached observations are retained\n\t\t\t21 button Reconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t71 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t72 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t94 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t95 text Retained observation \u00b7 body offline\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t96 text Retained \u00b7 offline \u00b7 generation 3\n\t\t97 text DISCONNECTED\n\t\t98 text The body connection is unavailable. The last camera observation is retained.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t99 text Historical result\n\t\t\t79 container measurement-result\n\t\t\t\t100 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t101 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Observed Check receipt disabled offline; no effect or receipt request sent",
+      "client_commands": 19,
+      "name": "offline_receipt",
+      "pending_command_ids": [
+        "command-e52c9ef5005a410fb80600b4ad7f947a"
+      ],
+      "screenshot": "offline_receipt.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Diagnostic link disconnected; cached observations are retained",
+          "state": "disconnected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 3,
+          "image_url": "/api/frame?generation=3&sha256=abd56127579f6a8c8dd685d44e7d633a4b7f230837d5892d1b0d10b71bbddd4b"
+        },
+        "jobs": [
+          {
+            "call_count": 6,
+            "disturbance_test": false,
+            "error": "reply is uncertain; reconcile exact command without resending",
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Move the pusher into the upper bypass lane before crossing to the block's right side.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "resetting",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e52c9ef5005a410fb80600b4ad7f947a",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791832047.263253,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t105 checkbox Health inspection 01 Needs attention, Value: 1\n\t\t\t106 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t107 text Health inspection 01\n\t\t108 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t109 text reply is uncertain; reconcile exact command without resending\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t110 text Body disconnected\n\t\t\t111 text Diagnostic link disconnected; cached observations are retained\n\t\t\t21 button Reconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t71 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t72 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t112 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t113 text Retained observation \u00b7 body offline\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t114 text Retained \u00b7 offline \u00b7 generation 3\n\t\t115 text DISCONNECTED\n\t\t116 text The body connection is unavailable. The last camera observation is retained.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t117 text Historical result\n\t\t\t79 container measurement-result\n\t\t\t\t118 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t119 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Clicked Reconnect; same pending command retained and runner still stopped",
+      "client_commands": 19,
+      "name": "reconnected",
+      "pending_command_ids": [
+        "command-e52c9ef5005a410fb80600b4ad7f947a"
+      ],
+      "screenshot": "reconnected.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 3,
+          "image_url": "/api/frame?generation=3&sha256=abd56127579f6a8c8dd685d44e7d633a4b7f230837d5892d1b0d10b71bbddd4b"
+        },
+        "jobs": [
+          {
+            "call_count": 6,
+            "disturbance_test": false,
+            "error": "reply is uncertain; reconcile exact command without resending",
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Move the pusher into the upper bypass lane before crossing to the block's right side.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "resetting",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e52c9ef5005a410fb80600b4ad7f947a",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791832056.7812228,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t105 checkbox Health inspection 01 Needs attention, Value: 1\n\t\t\t106 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t107 text Health inspection 01\n\t\t108 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t109 text reply is uncertain; reconcile exact command without resending\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t110 text Body connected\n\t\t\t111 text Body identity verified by read-only TCP health\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t71 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t72 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t112 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t113 text Last observation \u00b7 Health inspection 01\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t114 text Captured \u00b7 generation 3\n\t\t115 text OUTCOME UNCERTAIN\n\t\t116 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t117 text Recorded\n\t\t\t79 container measurement-result\n\t\t\t\t118 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t119 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Clicked Check receipt; exact result recovered while paused with unchanged command count",
+      "client_commands": 19,
+      "name": "recovered",
+      "pending_command_ids": [],
+      "screenshot": "recovered.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 3,
+          "image_url": "/api/frame?generation=3&sha256=abd56127579f6a8c8dd685d44e7d633a4b7f230837d5892d1b0d10b71bbddd4b"
+        },
+        "jobs": [
+          {
+            "call_count": 6,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Move the pusher into the upper bypass lane before crossing to the block's right side.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "resetting",
+            "reset": null,
+            "status": "paused",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e52c9ef5005a410fb80600b4ad7f947a",
+          "operation": "dispatch",
+          "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence",
+          "state": "recovered"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791832066.375594,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t105 checkbox Health inspection 01 Paused, Value: 1\n\t\t\t106 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t107 text Health inspection 01\n\t\t108 text Paused\n\t\t16 button Resume, ID: pause\n\t\t109 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t110 text Body connected\n\t\t\t111 text Body identity verified by read-only TCP health\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button Lose next reply, ID: fault-drop\n\t\t\t\t71 button Delay next reply, ID: fault-delay\n\t\t\t\t72 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t112 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t113 text Last observation \u00b7 Health inspection 01\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t114 text Captured \u00b7 generation 3\n\t\t115 text RECEIPT RECOVERED\n\t\t116 text The exact command receipt was recovered. The agent is paused until you resume.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t117 text Recorded\n\t\t\t79 container measurement-result\n\t\t\t\t118 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t119 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Explicit Resume checks body boot and obtains a fresh camera image",
+      "client_commands": 20,
+      "name": "resumed",
+      "pending_command_ids": [],
+      "screenshot": "resumed.png",
+      "state": {
+        "active_job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 4,
+          "image_url": "/api/frame?generation=4&sha256=6d7772846a1b09beea21e40b6dbcbfd87a77a3c2bb5158871088d89f9fc03518"
+        },
+        "jobs": [
+          {
+            "call_count": 7,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Move the pusher into the upper bypass lane before crossing to the block's right side.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "resetting",
+            "reset": null,
+            "status": "running",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": true,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791832078.293568,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t105 checkbox Health inspection 01 Paused, Value: 1\n\t\t\t106 checkbox Health inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t107 text Health inspection 01\n\t\t108 text Running\n\t\t16 button Pause, ID: pause\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t109 text Body connected\n\t\t\t110 text Current body boot verified for explicit Resume\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button Lose next reply, ID: fault-drop\n\t\t\t\t71 button Delay next reply, ID: fault-delay\n\t\t\t\t72 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t111 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t112 text Last observation \u00b7 Health inspection 01\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t113 text Captured \u00b7 generation 3\n\t\t114 text AGENT\n\t\t115 text Move the pusher into the upper bypass lane before crossing to the block's right side.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t116 text Recorded\n\t\t\t79 container measurement-result\n\t\t\t\t117 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t118 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Observed second job still running and AI planning under identity-only health delay",
+      "client_commands": 83,
+      "name": "successive_checking",
+      "pending_command_ids": [],
+      "screenshot": "second_identity_delay.png",
+      "state": {
+        "active_job_id": null,
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Health read delayed; fresh body proof is required before any command",
+          "state": "checking"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 21,
+          "image_url": "/api/frame?generation=21&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Finish reset with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "eea757a5363c43ca81de4a2f78715534",
+              "block_home_verified": true,
+              "generation": 11,
+              "image_sha256": "e47008c08f81d1ed137d87f021a4273e354a0c3d79e0c9b1da21e6dbeaf28429",
+              "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+              "kind": "finish_reset",
+              "native_time_s": 22.28199999999853,
+              "operation_id": "agent-53ec814ec65e409f894ccaf9c1dd2c2a",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3166,
+              "reset_native_steps": 7940,
+              "state_sha256": "0de60aca2a69c72c36eb8396ce0c3e420c60000ca6190ec36315207e14c804a4"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 13,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "Verify the block center is in the home zone and the pusher is at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004802777777777777,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1729
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "eea757a5363c43ca81de4a2f78715534",
+              "block_home_verified": true,
+              "generation": 21,
+              "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+              "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+              "kind": "finish_reset",
+              "native_time_s": 43.03000000000662,
+              "operation_id": "agent-6ec3f611bd9042a5b9a1acc3867b74e7",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3304,
+              "reset_native_steps": 8106,
+              "state_sha256": "d3bdf81922c73fc0177d3453905a0376c365e73434d7708da14061adba34ddf7"
+            },
+            "status": "completed",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791832279.422046,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t125 checkbox Health inspection 01 Completed, Value: 0\n\t\t\t126 checkbox Health inspection 02 Working, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t127 text Health inspection 02\n\t\t128 text Running\n\t\t16 button Pause, ID: pause\n\t\t129 text A health reply is delayed. Planning can continue; commands require a fresh body check.\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t130 text Checking body\n\t\t\t131 text Health read delayed; fresh body proof is required before any command\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button Lose next reply, ID: fault-drop\n\t\t\t\t71 button Delay next reply, ID: fault-delay\n\t\t\t\t72 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t132 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t133 text Last observation \u00b7 health unconfirmed\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t134 text Last captured \u00b7 health unconfirmed \u00b7 generation 21\n\t\t135 text AI IS PLANNING\n\t\t136 text Planning the next move from the latest camera image.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t137 text Historical result\n\t\t\t117 container measurement-result\n\t\t\t\t138 text 1,729\n\t\t\t\t119 text Orange pixels\n\t\t\t\t120 container\n\t\t\t\t\t139 text 4,802.8\n\t\t\t\t\t122 text mm\u00b2\n\t\t\t\t123 text Apparent footprint\n\t\t\t\t124 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment."
+    },
+    {
+      "browser_action": "Both actual image-guided jobs completed their measurement and contact reset",
+      "client_commands": 83,
+      "name": "completed",
+      "pending_command_ids": [],
+      "screenshot": "completed.png",
+      "state": {
+        "active_job_id": null,
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Health read delayed; fresh body proof is required before any command",
+          "state": "checking"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 21,
+          "image_url": "/api/frame?generation=21&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Finish reset with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "eea757a5363c43ca81de4a2f78715534",
+              "block_home_verified": true,
+              "generation": 11,
+              "image_sha256": "e47008c08f81d1ed137d87f021a4273e354a0c3d79e0c9b1da21e6dbeaf28429",
+              "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+              "kind": "finish_reset",
+              "native_time_s": 22.28199999999853,
+              "operation_id": "agent-53ec814ec65e409f894ccaf9c1dd2c2a",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3166,
+              "reset_native_steps": 7940,
+              "state_sha256": "0de60aca2a69c72c36eb8396ce0c3e420c60000ca6190ec36315207e14c804a4"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 13,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "Verify the block center is in the home zone and the pusher is at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004802777777777777,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1729
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "eea757a5363c43ca81de4a2f78715534",
+              "block_home_verified": true,
+              "generation": 21,
+              "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+              "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+              "kind": "finish_reset",
+              "native_time_s": 43.03000000000662,
+              "operation_id": "agent-6ec3f611bd9042a5b9a1acc3867b74e7",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3304,
+              "reset_native_steps": 8106,
+              "state_sha256": "d3bdf81922c73fc0177d3453905a0376c365e73434d7708da14061adba34ddf7"
+            },
+            "status": "completed",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791832296.68832,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t125 checkbox Health inspection 01 Completed, Value: 0\n\t\t\t126 checkbox Health inspection 02 Completed, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t127 text Health inspection 02\n\t\t128 text Running\n\t\t16 button Pause, ID: pause\n\t\t129 text A health reply is delayed. Planning can continue; commands require a fresh body check.\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t130 text Checking body\n\t\t\t131 text Health read delayed; fresh body proof is required before any command\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t66 container\n\t\t\t\t67 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t68 text Test the simulated connection\n\t\t\t\t69 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t70 button Lose next reply, ID: fault-drop\n\t\t\t\t71 button Delay next reply, ID: fault-delay\n\t\t\t\t72 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t132 text No reply fault armed.\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t133 text Last observation \u00b7 health unconfirmed\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t134 text Last captured \u00b7 health unconfirmed \u00b7 generation 21\n\t\t135 text COMPLETED\n\t\t136 text Measurement recorded and reset verified. The bench is ready for another job.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t137 text Historical result\n\t\t\t117 container measurement-result\n\t\t\t\t138 text 1,729\n\t\t\t\t119 text Orange pixels\n\t\t\t\t120 container\n\t\t\t\t\t139 text 4,802.8\n\t\t\t\t\t122 text mm\u00b2\n\t\t\t\t123 text Apparent footprint\n\t\t\t\t124 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment.\n\t\t\t140 button Repeat job, ID: repeat"
+    },
+    {
+      "browser_action": "Reloaded the browser; both completed jobs and command count retained",
+      "client_commands": 83,
+      "name": "reloaded",
+      "pending_command_ids": [],
+      "screenshot": "reloaded.png",
+      "state": {
+        "active_job_id": null,
+        "app_id": "433d80f43f4148ef87d341b6d117396d",
+        "connection": {
+          "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+          "body_id": "eea757a5363c43ca81de4a2f78715534",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Health read delayed; fresh body proof is required before any command",
+          "state": "checking"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 21,
+          "image_url": "/api/frame?generation=21&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+            "label": "Health inspection 01",
+            "last_intent": "Finish reset with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "eea757a5363c43ca81de4a2f78715534",
+              "block_home_verified": true,
+              "generation": 11,
+              "image_sha256": "e47008c08f81d1ed137d87f021a4273e354a0c3d79e0c9b1da21e6dbeaf28429",
+              "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+              "kind": "finish_reset",
+              "native_time_s": 22.28199999999853,
+              "operation_id": "agent-53ec814ec65e409f894ccaf9c1dd2c2a",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3166,
+              "reset_native_steps": 7940,
+              "state_sha256": "0de60aca2a69c72c36eb8396ce0c3e420c60000ca6190ec36315207e14c804a4"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 13,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+            "label": "Health inspection 02",
+            "last_intent": "Verify the block center is in the home zone and the pusher is at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004802777777777777,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1729
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "eea757a5363c43ca81de4a2f78715534",
+              "block_home_verified": true,
+              "generation": 21,
+              "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+              "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+              "kind": "finish_reset",
+              "native_time_s": 43.03000000000662,
+              "operation_id": "agent-6ec3f611bd9042a5b9a1acc3867b74e7",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3304,
+              "reset_native_steps": 8106,
+              "state_sha256": "d3bdf81922c73fc0177d3453905a0376c365e73434d7708da14061adba34ddf7"
+            },
+            "status": "completed",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791832310.4273899,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t9 checkbox Health inspection 01 Completed, Value: 0\n\t\t\t10 checkbox Health inspection 02 Completed, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t14 text Health inspection 02\n\t\t15 text Running\n\t\t16 button Pause, ID: pause\n\t\t17 text A health reply is delayed. Planning can continue; commands require a fresh body check.\n\t\t18 container Description: Body connection, ID: network-card\n\t\t\t19 text Checking body\n\t\t\t20 text Health read delayed; fresh body proof is required before any command\n\t\t\t21 button Disconnect, ID: disconnect\n\t\t\t22 button (disabled) Check receipt, ID: reconcile\n\t\t\t23 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t24 text Test the simulated connection\n\t\t25 container Camera observation\n\t\t\t26 text OVERHEAD CAMERA\n\t\t\t27 text Last observation \u00b7 health unconfirmed\n\t\t\t28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t29 text Orange part Blue pusher Green task region\n\t\t\t30 text Last captured \u00b7 health unconfirmed \u00b7 generation 21\n\t\t31 text COMPLETED\n\t\t32 text Measurement recorded and reset verified. The bench is ready for another job.\n\t\t33 container Job progress\n\t\t\t34 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t35 container Measurement\n\t\t\t36 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t37 text Measurement\n\t\t\t38 text Historical result\n\t\t\t39 container measurement-result\n\t\t\t\t40 text 1,729\n\t\t\t\t41 text Orange pixels\n\t\t\t\t42 container\n\t\t\t\t\t43 text 4,802.8\n\t\t\t\t\t44 text mm\u00b2\n\t\t\t\t45 text Apparent footprint\n\t\t\t\t46 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment.\n\t\t\t47 button Repeat job, ID: repeat"
+    }
+  ]
+}

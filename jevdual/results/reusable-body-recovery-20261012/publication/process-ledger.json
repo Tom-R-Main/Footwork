@@ -1,0 +1,63 @@
+{
+  "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+  "body_id": "88ef33b6618f41f58507907680f0bde8",
+  "body_origin": "http://127.0.0.1:51411",
+  "browser_origin": "http://127.0.0.1:51413",
+  "case": "host-publication",
+  "owned_processes_exited": true,
+  "planner": "actual_codex_cli_images_over_TCP",
+  "processes": [
+    {
+      "boot": 1,
+      "exit_observed": true,
+      "group": 49737,
+      "initialized": true,
+      "log": "body-01.log",
+      "pid": 49737,
+      "port": 51411,
+      "returncode": 0,
+      "role": "body",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/body",
+      "stopped_time": 1791861031.430909
+    },
+    {
+      "exit_observed": true,
+      "group": 49754,
+      "pid": 49754,
+      "returncode": 0,
+      "role": "initialization"
+    },
+    {
+      "boot": 1,
+      "children_before": [],
+      "exit_observed": true,
+      "group": 49762,
+      "initialized": false,
+      "log": "workbench-01.log",
+      "pid": 49762,
+      "port": 51413,
+      "returncode": -9,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/operator",
+      "signal": "SIGKILL",
+      "signal_target": "host_pid_only",
+      "stopped_time": 1791860187.418896
+    },
+    {
+      "boot": 2,
+      "exit_observed": true,
+      "group": 56151,
+      "initialized": false,
+      "log": "workbench-02.log",
+      "pid": 56151,
+      "port": 51413,
+      "returncode": 0,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/operator",
+      "stopped_time": 1791861031.2593348
+    }
+  ],
+  "ready": true,
+  "simulation": true,
+  "source_commit": "c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54"
+}

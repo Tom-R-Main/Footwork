@@ -1,0 +1,63 @@
+{
+  "app_id": "89c50b76f8e840418305726a1a6ea473",
+  "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+  "body_origin": "http://127.0.0.1:51379",
+  "browser_origin": "http://127.0.0.1:51381",
+  "case": "host-inflight",
+  "owned_processes_exited": true,
+  "planner": "actual_codex_cli_images_over_TCP",
+  "processes": [
+    {
+      "boot": 1,
+      "exit_observed": true,
+      "group": 47144,
+      "initialized": true,
+      "log": "body-01.log",
+      "pid": 47144,
+      "port": 51379,
+      "returncode": 0,
+      "role": "body",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-inflight-v1/body",
+      "stopped_time": 1791835576.369768
+    },
+    {
+      "exit_observed": true,
+      "group": 47150,
+      "pid": 47150,
+      "returncode": 0,
+      "role": "initialization"
+    },
+    {
+      "boot": 1,
+      "children_after": [],
+      "children_before": [],
+      "exit_observed": true,
+      "group": 47151,
+      "initialized": false,
+      "log": "workbench-01.log",
+      "pid": 47151,
+      "port": 51381,
+      "returncode": -9,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-inflight-v1/operator",
+      "signal": "SIGKILL",
+      "stopped_time": 1791835155.305744
+    },
+    {
+      "boot": 2,
+      "exit_observed": true,
+      "group": 52144,
+      "initialized": false,
+      "log": "workbench-02.log",
+      "pid": 52144,
+      "port": 51381,
+      "returncode": 0,
+      "role": "workbench",
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-inflight-v1/operator",
+      "stopped_time": 1791835576.215932
+    }
+  ],
+  "ready": true,
+  "simulation": true,
+  "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+}

@@ -1,0 +1,30 @@
+{
+  "source_kind": "synthetic_fixture",
+  "generator_sha256": "3f1d8d8d6a369709429f71da3449f9b69fc27dfe644a27be847a7e7d07080d6a",
+  "images": {
+    "printed-note.png": "740cfe0c4055553b732356cbee75c7797919fc3f3624d9e8f9459a626609edeb",
+    "blank.png": "a6c04d1da5a290c892b9aa0a837cdbb19c7015bf5a744512754578c4bc06f2b7",
+    "normal-calibration.png": "8cf6377c803c75b66500bfa7c1364e852320f8f50becca5e60e04398574f081a",
+    "mirror-note.png": "c01b5aa2d71bfd4f895af215c6e01eb4baf722a45a0226b175e36ce02faad121"
+  },
+  "expected_lines": {
+    "printed-note.png": [
+      "Buy coffee",
+      "Measure desk",
+      "Fix camera"
+    ],
+    "normal-calibration.png": [
+      "LEFT 123 RIGHT",
+      "Buy coffee",
+      "Measure desk"
+    ],
+    "mirror-note.png": [
+      "LEFT 123 RIGHT",
+      "Buy coffee",
+      "Measure desk"
+    ],
+    "blank.png": []
+  },
+  "fixture_directory": "jevdual/output/desk-inbox-verification",
+  "live_camera_evidence": false
+}

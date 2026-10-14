@@ -1,0 +1,280 @@
+{
+  "steps": [
+    {
+      "browser_action": "Body SIGKILL while already uncertain; original command retained and controls disabled offline",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-offline",
+      "offline": false,
+      "pending_command_ids": [
+        "command-e5c36cc3c08b4a35bff768b4fd4b4c1a"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-uncertain-v1/crash-offline.png",
+      "state": {
+        "active_job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+        "app_id": "e11a02dabf3c4d4ebc2f18306acee827",
+        "connection": {
+          "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+          "body_id": "207f0a8bffac445d9174de448e2bb310",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Remote end closed connection without response",
+          "state": "unavailable"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=e04fce801726a6603b0861767416a62245306e22ba40245e9a838f7547461d22"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Remote end closed connection without response",
+            "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+            "label": "Body crash while uncertain",
+            "last_intent": "Approach the block from the left to establish pushing contact.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e5c36cc3c08b4a35bff768b4fd4b4c1a",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791835474.1391869,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51385/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51385/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t69 checkbox Body crash while uncertain Paused, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Body crash while uncertain\n\t\t71 text Paused\n\t\t14 button (disabled) Resume, ID: pause\n\t\t72 text reply is uncertain; reconcile exact command without resending\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t73 text Body unavailable\n\t\t\t74 text Remote end closed connection without response\n\t\t\t19 button Reconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t75 text Retained observation \u00b7 body offline\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t76 text Retained \u00b7 offline \u00b7 generation 0\n\t\t77 text DISCONNECTED\n\t\t78 text The body connection is unavailable. The last camera observation is retained.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t79 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "New body boot two verified; original epoch-one command still uncertain with four commands",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-restored",
+      "offline": false,
+      "pending_command_ids": [
+        "command-e5c36cc3c08b4a35bff768b4fd4b4c1a"
+      ],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-uncertain-v1/crash-restored.png",
+      "state": {
+        "active_job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+        "app_id": "e11a02dabf3c4d4ebc2f18306acee827",
+        "connection": {
+          "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+          "body_id": "207f0a8bffac445d9174de448e2bb310",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=e04fce801726a6603b0861767416a62245306e22ba40245e9a838f7547461d22"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+            "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+            "label": "Body crash while uncertain",
+            "last_intent": "Approach the block from the left to establish pushing contact.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e5c36cc3c08b4a35bff768b4fd4b4c1a",
+          "operation": "dispatch",
+          "reason": "Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791835494.481312,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51385/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51385/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t69 checkbox Body crash while uncertain Needs attention, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Body crash while uncertain\n\t\t71 text Needs attention\n\t\t14 button (disabled) Pause, ID: pause\n\t\t72 text Body restarted from boot 1 to 2; check pending receipts and explicitly Resume for a fresh image\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t73 text Body connected\n\t\t\t74 text Body identity verified by read-only TCP health\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t75 text Last observation \u00b7 Body crash while uncertain\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t76 text Captured \u00b7 generation 0\n\t\t77 text OUTCOME UNCERTAIN\n\t\t78 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t79 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Exact historical receipt recovered under boot two; original single-send command applied once while paused",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "crash-recovered",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-uncertain-v1/crash-recovered.png",
+      "state": {
+        "active_job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+        "app_id": "e11a02dabf3c4d4ebc2f18306acee827",
+        "connection": {
+          "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+          "body_id": "207f0a8bffac445d9174de448e2bb310",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=e04fce801726a6603b0861767416a62245306e22ba40245e9a838f7547461d22"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+            "label": "Body crash while uncertain",
+            "last_intent": "Approach the block from the left to establish pushing contact.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-e5c36cc3c08b4a35bff768b4fd4b4c1a",
+          "operation": "dispatch",
+          "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence",
+          "state": "recovered"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791835515.389875,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51385/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51385/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t69 checkbox Body crash while uncertain Paused, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Body crash while uncertain\n\t\t71 text Paused\n\t\t14 button Resume, ID: pause\n\t\t72 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t73 text Body connected\n\t\t\t74 text Body identity verified by read-only TCP health\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t75 text Last observation \u00b7 Body crash while uncertain\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t76 text Captured \u00b7 generation 0\n\t\t77 text RECEIPT RECOVERED\n\t\t78 text The exact command receipt was recovered. The agent is paused until you resume.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t79 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Explicit Resume after exact historical receipt; fresh boot-two observation precedes next model decision",
+      "cached_public": null,
+      "client_commands": 8,
+      "name": "crash-resumed",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-uncertain-v1/crash-resumed.png",
+      "state": {
+        "active_job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+        "app_id": "e11a02dabf3c4d4ebc2f18306acee827",
+        "connection": {
+          "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+          "body_id": "207f0a8bffac445d9174de448e2bb310",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 2,
+          "image_url": "/api/frame?generation=2&sha256=22ae5bec477c39b83aae68206ee8f6128596fc92c4d98b7b6d2d0baf1653f115"
+        },
+        "jobs": [
+          {
+            "call_count": 3,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+            "label": "Body crash while uncertain",
+            "last_intent": "Push the block right until its center reaches the target region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "running",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": true,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791835533.851417,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51385/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51385/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t69 checkbox Body crash while uncertain Paused, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Body crash while uncertain\n\t\t71 text Running\n\t\t14 button Pause, ID: pause\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t72 text Body connected\n\t\t\t73 text Current body boot verified for explicit Resume\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t74 text Last observation \u00b7 Body crash while uncertain\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t75 text Captured \u00b7 generation 0\n\t\t76 text AGENT\n\t\t77 text Approach the block from the left to establish pushing contact.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t78 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Completed measurement and contact reset after exact old-boot receipt recovery and explicit Resume",
+      "cached_public": null,
+      "client_commands": 43,
+      "name": "crash-completed",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-body-uncertain-v1/crash-completed.png",
+      "state": {
+        "active_job_id": null,
+        "app_id": "e11a02dabf3c4d4ebc2f18306acee827",
+        "connection": {
+          "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+          "body_id": "207f0a8bffac445d9174de448e2bb310",
+          "epoch": 2,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 11,
+          "image_url": "/api/frame?generation=11&sha256=f1f55d68054e3cef293a001bb81dce414a4d68e20906ec8016bef30710e279c2"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+            "label": "Body crash while uncertain",
+            "last_intent": "Verify the block center and pusher are both at their home positions.",
+            "measurement": {
+              "footprint_area_m2": 0.004802777777777777,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1729
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "207f0a8bffac445d9174de448e2bb310",
+              "block_home_verified": true,
+              "generation": 11,
+              "image_sha256": "f1f55d68054e3cef293a001bb81dce414a4d68e20906ec8016bef30710e279c2",
+              "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+              "kind": "finish_reset",
+              "native_time_s": 23.213999999998013,
+              "operation_id": "agent-f2057f13b90b472bb82aac1ee127d0db",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3302,
+              "reset_native_steps": 8272,
+              "state_sha256": "fc6daf8af8b292628a339301286a35f53b6006ae10a86a01630c65d88855d589"
+            },
+            "status": "completed",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791835682.8787332,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51385/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51385/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t76 checkbox Body crash while uncertain Completed, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t77 text Body crash while uncertain\n\t\t78 text Running\n\t\t14 button Pause, ID: pause\n\t\t15 container Description: Body connection, ID: network-card\n\t\t\t79 text Body connected\n\t\t\t80 text Body identity verified by read-only TCP health\n\t\t\t18 button Disconnect, ID: disconnect\n\t\t\t19 button (disabled) Check receipt, ID: reconcile\n\t\t\t20 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t21 text Test the simulated connection\n\t\t22 container Camera observation\n\t\t\t23 text OVERHEAD CAMERA\n\t\t\t81 text Last camera observation\n\t\t\t25 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t26 text Orange part Blue pusher Green task region\n\t\t\t82 text Captured \u00b7 generation 11\n\t\t83 text COMPLETED\n\t\t84 text Measurement recorded and reset verified. The bench is ready for another job.\n\t\t30 container Job progress\n\t\t\t31 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t32 container Measurement\n\t\t\t33 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t34 text Measurement\n\t\t\t85 text Historical result\n\t\t\t36 container measurement-result\n\t\t\t\t86 text 1,729\n\t\t\t\t38 text Orange pixels\n\t\t\t\t39 container\n\t\t\t\t\t87 text 4,802.8\n\t\t\t\t\t41 text mm\u00b2\n\t\t\t\t42 text Apparent footprint\n\t\t\t\t43 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment.\n\t\t\t44 button Repeat job, ID: repeat"
+    }
+  ]
+}

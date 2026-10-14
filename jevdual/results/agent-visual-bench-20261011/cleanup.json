@@ -1,0 +1,19 @@
+{
+  "background_controller_started": false,
+  "all_cli_and_measurement_processes_synchronous_and_waited": true,
+  "measurement_workers": [
+    {
+      "job_id": "ai-ordinary",
+      "worker_pid": 84953,
+      "exit_code": 0
+    },
+    {
+      "job_id": "ai-disturbed",
+      "worker_pid": 87908,
+      "exit_code": 0
+    }
+  ],
+  "final_bench_idle": true,
+  "unknown_outcomes": 0,
+  "evidence_retained": true
+}

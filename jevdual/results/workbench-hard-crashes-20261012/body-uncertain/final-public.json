@@ -1,0 +1,290 @@
+{
+  "active_job_id": null,
+  "activity": [
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-5871909fdd9b477486f804b01c5677b3",
+      "seq": 128,
+      "time": 1791835614.577631
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "99ec2fe9445b2874e1fb113047489467a0e717ac18b6fc3994d49511a5baf247"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 129,
+      "time": 1791835614.632127
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 130,
+      "time": 1791835614.6712341
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-455decef6f9b4d48ab0114d35a2e95ed",
+      "seq": 131,
+      "time": 1791835614.917127
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "5c013aaa63ab12c99c78cd5a441299a2e7f602b3985da0fdaa8621637e647c45"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 132,
+      "time": 1791835614.972838
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 133,
+      "time": 1791835615.011183
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-8e601cdcf0fa4f2b8748baadfa1c035c",
+      "seq": 134,
+      "time": 1791835615.182611
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "inference",
+      "outcome": "13",
+      "seq": 135,
+      "time": 1791835615.184774
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "692c097f899ead88c151dfcdc0b5edce71e09eac8a9b2e7993e541b513ef49f5"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 136,
+      "time": 1791835621.043094
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 137,
+      "time": 1791835621.0999281
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-1914503963ec4f7f8c10fb4eeeefd2d1",
+      "seq": 138,
+      "time": 1791835621.243658
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "85fa0f2799cd81bab1328d1c1fb79b445f5dda750a354c48bba7b3baa544d57f"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 139,
+      "time": 1791835621.3027751
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 140,
+      "time": 1791835621.342958
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-b243249bded4499190b3f29b745e5f7f",
+      "seq": 141,
+      "time": 1791835621.591145
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "e93937247b8a705485750d7db0d48286c55e0da4d48168f03a2509150e6b4ee5"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 142,
+      "time": 1791835621.659114
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 143,
+      "time": 1791835621.72001
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-d9b91cabf536484ba939a2cf36bebde2",
+      "seq": 144,
+      "time": 1791835622.023156
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "inference",
+      "outcome": "14",
+      "seq": 145,
+      "time": 1791835622.026342
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "72fb7524b0581a0456c82ad73004591676ebb5772c33cb82d9f48c2a79871bf1"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 146,
+      "time": 1791835627.806038
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 147,
+      "time": 1791835627.855956
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-806fbe2219b5474bba9aa975b0232c03",
+      "seq": 148,
+      "time": 1791835627.959668
+    },
+    {
+      "evidence": {
+        "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+        "body_id": "207f0a8bffac445d9174de448e2bb310",
+        "epoch": 2,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "3b5b1ab31826196ed721322482d7ee376ca1ee60de36adb00955de69b9b5c3b4"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 149,
+      "time": 1791835628.068774
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 150,
+      "time": 1791835628.121517
+    },
+    {
+      "intent": "Body crash while uncertain",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-74d3a5af7dbb4d61a227ea5e2787cf13",
+      "seq": 151,
+      "time": 1791835628.626026
+    }
+  ],
+  "app_id": "e11a02dabf3c4d4ebc2f18306acee827",
+  "connection": {
+    "adapter_id": "676c2d289c0442109c4fe197a1edec4a",
+    "body_id": "207f0a8bffac445d9174de448e2bb310",
+    "epoch": 2,
+    "fault": null,
+    "reason": "Body identity verified by read-only TCP health",
+    "state": "connected"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 11,
+    "image_url": "/api/frame?generation=11&sha256=f1f55d68054e3cef293a001bb81dce414a4d68e20906ec8016bef30710e279c2"
+  },
+  "jobs": [
+    {
+      "call_count": 14,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+      "label": "Body crash while uncertain",
+      "last_intent": "Verify the block center and pusher are both at their home positions.",
+      "measurement": {
+        "footprint_area_m2": 0.004802777777777777,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1729
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "207f0a8bffac445d9174de448e2bb310",
+        "block_home_verified": true,
+        "generation": 11,
+        "image_sha256": "f1f55d68054e3cef293a001bb81dce414a4d68e20906ec8016bef30710e279c2",
+        "job_id": "86e7b28a-0f74-42e9-86a0-e0f9e767a21c",
+        "kind": "finish_reset",
+        "native_time_s": 23.213999999998013,
+        "operation_id": "agent-f2057f13b90b472bb82aac1ee127d0db",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3302,
+        "reset_native_steps": 8272,
+        "state_sha256": "fc6daf8af8b292628a339301286a35f53b6006ae10a86a01630c65d88855d589"
+      },
+      "status": "completed",
+      "target": "B"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": null,
+  "readiness": {
+    "ready": true,
+    "reason": "Resumed; next decision receives a fresh TCP image"
+  },
+  "recovery": {
+    "command_id": null,
+    "operation": null,
+    "reason": "No pending command",
+    "state": "none"
+  },
+  "runner_status": "running",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 14,
+    "input_tokens": 181686,
+    "output_tokens": 2058,
+    "reported_calls": 14,
+    "token_usage_complete": true
+  }
+}

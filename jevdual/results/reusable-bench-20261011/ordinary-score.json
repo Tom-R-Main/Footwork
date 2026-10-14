@@ -1,0 +1,207 @@
+{
+  "continuity": {
+    "after": {
+      "active_job": null,
+      "bench_id": "92d5adce82a146aeb8df71651fa03959",
+      "diagnostic_enabled": true,
+      "generation": 29,
+      "jobs": {
+        "ordinary": {
+          "completed_generation": 29,
+          "completed_native_time_s": 45.39800000000952,
+          "job_id": "ordinary",
+          "measurement_operation_id": "ordinary-measurement",
+          "measurement_receipt": {
+            "bench_id": "92d5adce82a146aeb8df71651fa03959",
+            "generation": 11,
+            "image_sha256": "21fe1a646ee0bf63a025ef29db8bf162ba5add5a1945981de7aca61ee448de16",
+            "job_id": "ordinary",
+            "measurement": {
+              "block_box": [
+                340,
+                158,
+                382,
+                200
+              ],
+              "block_center_xy": [
+                0.06833333333333333,
+                0.0016666666666666666
+              ],
+              "centroid_pixel_xy": [
+                360.0243619489559,
+                178.52088167053364
+              ],
+              "footprint_area_m2": 0.0047888888888888885,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1724
+            },
+            "native_time_s": 17.980000000000913,
+            "operation_id": "ordinary-measurement",
+            "source_kind": "mujoco_simulation",
+            "state_sha256": "c60f9a77a055cbf592c8e6e7180701e833e78c31afc648f53808e0e4f38fe2ef",
+            "version": 1,
+            "worker_pid": 58696
+          },
+          "moves": 29,
+          "phase": "completed",
+          "reset_receipt": {
+            "bench_id": "92d5adce82a146aeb8df71651fa03959",
+            "block_home_verified": true,
+            "generation": 29,
+            "image_sha256": "8541989ea39a283f4a94c00dad6404c12083ec3518652a863b0aea9f1fec18b9",
+            "job_id": "ordinary",
+            "kind": "finish_reset",
+            "native_time_s": 45.39800000000952,
+            "operation_id": "ordinary-reset",
+            "pusher_home_verified": true,
+            "reset_contact_samples": 6757,
+            "reset_native_steps": 13709,
+            "state_sha256": "716fba0b934c91016341803c109073fafab195b147eb3670fa6cd2ab8f693833"
+          },
+          "reset_started_generation": 11,
+          "started_generation": 0,
+          "started_native_time_s": 1.0000000000000007,
+          "target_zone": {
+            "x_max": 0.105,
+            "x_min": 0.035,
+            "y_max": 0.025,
+            "y_min": -0.025
+          }
+        }
+      },
+      "native_time_s": 45.39800000000952,
+      "source_fingerprints": {
+        "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+        "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+        "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+        "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+        "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+        "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+        "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+        "mujoco_version": "3.15.0",
+        "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+        "state_spec": 16383,
+        "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+      },
+      "source_kind": "mujoco_simulation",
+      "state": "ready",
+      "unresolved_effect": null,
+      "version": 1
+    },
+    "before": {
+      "active_job": null,
+      "bench_id": "92d5adce82a146aeb8df71651fa03959",
+      "diagnostic_enabled": true,
+      "generation": 0,
+      "jobs": {},
+      "native_time_s": 1.0000000000000007,
+      "source_fingerprints": {
+        "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+        "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+        "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+        "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+        "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+        "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+        "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+        "mujoco_version": "3.15.0",
+        "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+        "state_spec": 16383,
+        "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+      },
+      "source_kind": "mujoco_simulation",
+      "state": "ready",
+      "unresolved_effect": null,
+      "version": 1
+    }
+  },
+  "job_id": "ordinary",
+  "measurement_state": {
+    "block_center_in_zone": true,
+    "block_xyz": [
+      0.06765083286533137,
+      0.0012302134613647513,
+      0.03499573045536985
+    ],
+    "external_force_cleared": true,
+    "generation": 11,
+    "native_time_s": 17.980000000000913,
+    "pusher_home": true,
+    "pusher_xyz": [
+      -0.3,
+      2.7238600186678546e-08,
+      0.06
+    ],
+    "role": "independent_native_state_scorer",
+    "state_sha256": "c60f9a77a055cbf592c8e6e7180701e833e78c31afc648f53808e0e4f38fe2ef"
+  },
+  "motion_count": 29,
+  "native_motion_steps": 22199,
+  "passed": true,
+  "planner_role": "frozen_deterministic_color_RGB_host",
+  "recovery": null,
+  "reset_contact_samples": 6619,
+  "reset_state": {
+    "block_center_in_zone": true,
+    "block_xyz": [
+      -0.117918137735966,
+      0.002774860913929776,
+      0.03499573045536985
+    ],
+    "external_force_cleared": true,
+    "generation": 29,
+    "native_time_s": 45.39800000000952,
+    "pusher_home": true,
+    "pusher_xyz": [
+      -0.3,
+      2.7238600186678546e-08,
+      0.06
+    ],
+    "role": "independent_native_state_scorer",
+    "state_sha256": "716fba0b934c91016341803c109073fafab195b147eb3670fa6cd2ab8f693833"
+  },
+  "sqlite": {
+    "count": 1,
+    "role": "independent_read_only_sqlite_scorer",
+    "rows": [
+      {
+        "bench_id": "92d5adce82a146aeb8df71651fa03959",
+        "generation": 11,
+        "image_sha256": "21fe1a646ee0bf63a025ef29db8bf162ba5add5a1945981de7aca61ee448de16",
+        "job_id": "ordinary",
+        "operation_id": "ordinary-measurement",
+        "receipt": {
+          "bench_id": "92d5adce82a146aeb8df71651fa03959",
+          "generation": 11,
+          "image_sha256": "21fe1a646ee0bf63a025ef29db8bf162ba5add5a1945981de7aca61ee448de16",
+          "job_id": "ordinary",
+          "measurement": {
+            "block_box": [
+              340,
+              158,
+              382,
+              200
+            ],
+            "block_center_xy": [
+              0.06833333333333333,
+              0.0016666666666666666
+            ],
+            "centroid_pixel_xy": [
+              360.0243619489559,
+              178.52088167053364
+            ],
+            "footprint_area_m2": 0.0047888888888888885,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1724
+          },
+          "native_time_s": 17.980000000000913,
+          "operation_id": "ordinary-measurement",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "c60f9a77a055cbf592c8e6e7180701e833e78c31afc648f53808e0e4f38fe2ef",
+          "version": 1,
+          "worker_pid": 58696
+        },
+        "state_sha256": "c60f9a77a055cbf592c8e6e7180701e833e78c31afc648f53808e0e4f38fe2ef"
+      }
+    ]
+  }
+}

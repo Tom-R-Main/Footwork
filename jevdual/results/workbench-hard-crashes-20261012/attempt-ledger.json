@@ -1,0 +1,33 @@
+{
+  "actual_attempts": [
+    {
+      "root": "tools/physical-workcell/output/sim13-body-native-gap-v1",
+      "source": "38b9b146017c39e593cfedd251df223d754134c9",
+      "status": "independent scorer failure: no measurement DB before any measurement",
+      "calls": 1,
+      "retained_failure": "score-first-failure.log",
+      "capture_limitation": "v2 capture helper overwrote three v1 offline-capture files; original UI ledger and other v1 captures remain"
+    },
+    {
+      "root": "tools/physical-workcell/output/sim13-body-native-gap-v2",
+      "source": "4e2dd74d27ec07f0b5a42039e0f30016402cf050",
+      "status": "not qualified: capture output root mismatch; recorder refused missing file",
+      "calls": 1,
+      "retained_failure": "capture-error.json"
+    },
+    {
+      "root": "tools/physical-workcell/output/sim13-body-native-gap-v3",
+      "source": "4e2dd74d27ec07f0b5a42039e0f30016402cf050",
+      "status": "passed independent safe-block score",
+      "calls": 1
+    }
+  ],
+  "other_qualified_attempts": [
+    "tools/physical-workcell/output/sim13-host-inflight-v1",
+    "tools/physical-workcell/output/sim13-body-uncertain-v1",
+    "tools/physical-workcell/output/sim13-host-uncertain-v1"
+  ],
+  "fixture_failure": "tools/physical-workcell/output/sim13-crash-scorer-negative-v1.log",
+  "publication_gap": "publication-gap-limitation.json",
+  "total_actual_calls_including_unqualified_attempts": 43
+}

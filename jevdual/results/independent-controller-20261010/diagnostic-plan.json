@@ -1,0 +1,43 @@
+{
+  "preregistered_commit": "c78d2a4",
+  "mode": "headless actual-process diagnostic; not robot or model qualification",
+  "required_scenarios": [
+    {
+      "id": "disconnect",
+      "expected": "durable submit survives caller loss; repeated identity changes no native state"
+    },
+    {
+      "id": "active-return",
+      "expected": "nonterminal status while execution proceeds; observation busy without image authority"
+    },
+    {
+      "id": "cancel-before-dispatch",
+      "expected": "cancelled with no native operation or generation change"
+    },
+    {
+      "id": "cancel-during-motion",
+      "expected": "retained bounded stop evidence for cancelled, otherwise truthful unknown"
+    },
+    {
+      "id": "lost-controller-result",
+      "expected": "restart reconciles intact exact lower terminal receipts without dispatch"
+    },
+    {
+      "id": "controller-kill",
+      "expected": "new incarnation retains unknown interrupted operation; no replay"
+    },
+    {
+      "id": "satisfied-scene-without-history",
+      "expected": "current placement cannot create missing execution history"
+    },
+    {
+      "id": "physical-and-computer",
+      "expected": "image-derived contact movement plus fresh visual/native gate and checked saved order"
+    }
+  ],
+  "scope_limits": [
+    "SIM4 does not repair a pending vision wrapper from a native-only terminal receipt",
+    "no hardware, camera, desktop interaction, production capability-service integration or real app workflow",
+    "shared filesystem permission boundary; no adversarial isolation claim"
+  ]
+}

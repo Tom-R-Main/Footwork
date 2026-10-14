@@ -1,0 +1,70 @@
+{
+  "reviewed_target": "57ed816a9f30f122e8be6a6635a9f3a96069f2a8",
+  "review_model": "claude-opus-5-5",
+  "scope": "static changed implementation and selected tests/docs; no historical artifact reads by reviewer",
+  "findings": [
+    {
+      "id": 1,
+      "resolution": "Use a true merge and verify445a348/d931559 ancestry onmain aftermerge; no squash or requiredrefdeletion."
+    },
+    {
+      "id": 2,
+      "resolution": "A3 scoring explicitlybinds ZIP+wheeldigests and distinguishes bundlemanifestcommit from qualifiedproductcommit."
+    },
+    {
+      "id": 3,
+      "resolution": "Cleanup validates exactsocket location plusinteger version/simulationsourcekind/currentcontrollerhash; mismatches stayunconfirmed. NamedSOURCE_FILES freeze checkscommitbytes beforeeffects. Independentpeer P2resolved."
+    },
+    {
+      "id": 4,
+      "resolution": "Physical README labels historicalsourcecommit qualification versus changedheadconformance."
+    },
+    {
+      "id": 5,
+      "resolution": "ExactZIPandnestedwheel scan104textmembers; matchesonly genericmetadata pathplaceholders and genericcodefileURLconstruction; noidentifyingpaths/address/account/privatehostname."
+    },
+    {
+      "id": 6,
+      "resolution": "Single bounded snapshotbytes feedverify/inventory/hash; mutationregressionspass."
+    },
+    {
+      "id": 7,
+      "resolution": "Sharedstrictarchiveparser rejectsunsafe modes/members/sizes; regressionpasses."
+    },
+    {
+      "id": 8,
+      "resolution": "Commitobjectsrequired; NULls-tree andcat-fileblob reads; tree/blobrefusals pass."
+    },
+    {
+      "id": 9,
+      "resolution": "Exclusive0600 databasecreation beforeSQLiteopen; unsafeexistingfilesrefused without takeover; corruption/history/duplicates tests pass."
+    },
+    {
+      "id": 10,
+      "resolution": "Observed escapeddescendants intentionallywithholdclosure andblockrecovery; retainedPIDsignalling wouldbroadenauthority and contradict existingtestcontract. Retainfailclosedbehavior anddocumentit. Guardian grace15s repairs supportedtimeoutcase; newregression failsbefore/passafter."
+    },
+    {
+      "id": 11,
+      "resolution": "Nonobjectproposalrefuses beforeguard/controller/effects; CLIboundedrefusal pass."
+    },
+    {
+      "id": 12,
+      "resolution": "Immutablebundlefriction notcoachedaround; A3recordsactualadoption attempt and demonstratedfailures before futureartifactrepair."
+    },
+    {
+      "id": 13,
+      "resolution": "Informationalexistingfailclosedlimits retained; no automatic unknown-bodyrelease or unobserveddetachmentclaim."
+    }
+  ],
+  "gate": "All actionable scoped review findings repaired or explicitly resolved within existingauthority. CurrenthostedCIand true-mergeancestry checks pending; A3user8GiBRAMgate pending.",
+  "verification": {
+    "source_python": "1594passed27skipped12browserdeselected,80.28s",
+    "physical_simulation": "330passed269.527s at0e5a59a beforefinal2produceridentitytests",
+    "packet_release_targeted": "44passed; exact205577and8dcverify",
+    "simulation_boundary_targeted": "42passed afterfinalproduceridentityrepair; two newregressions before2fail after10pass",
+    "fixture_native": "56passed",
+    "fixture_linux_import_simulation": "55passed1existingmacgateSkipped; actualLinuxCIpending",
+    "review_model_cost_usd": 3.615095,
+    "review_call_count": 1
+  }
+}

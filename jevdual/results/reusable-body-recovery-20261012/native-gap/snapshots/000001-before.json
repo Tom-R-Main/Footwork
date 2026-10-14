@@ -1,0 +1,329 @@
+{
+  "body_command": {
+    "digest_valid": true,
+    "intent": {
+      "request": {
+        "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+        "arguments": {
+          "proposal_id": "proposal-28a486115a0242468ba8651ede499eb6"
+        },
+        "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+        "client_id": "client-99cf4b51858b41f49568551e639d3311",
+        "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+        "epoch": 1,
+        "lease_id": "cf9403073fc842869dd638f8403d963b",
+        "operation": "dispatch",
+        "protocol": "footwork.body/1",
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+      },
+      "request_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+      "result_sha256": null
+    },
+    "terminal": null
+  },
+  "body_identity": null,
+  "body_state": null,
+  "client": {
+    "commands": {
+      "command-19630ef4ff684508b4053bffd3261aca": {
+        "operation": "propose",
+        "request_sha256": "cb7928d05b419594331d63a3bef90d42e440e4a3ef6b9623a6d5c4939231f429",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-20204cceb73b473eb66857af0b813c1d": {
+        "operation": "dispatch",
+        "request_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+        "send_count": 1,
+        "state": "unknown"
+      },
+      "command-58f43389dab14ea1af8f011dcac3b415": {
+        "operation": "observe",
+        "request_sha256": "4ce1073576807cdceabb307c865c5a51f4a5a2577ddba3ad19d24332c3b4f894",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-7c7f1616df1245399a248717c004c424": {
+        "operation": "start_job",
+        "request_sha256": "5e674b785e9d70d9894c809ba1bdf202cc84bdbed725e4175cf32d38bad96d8a",
+        "send_count": 1,
+        "state": "completed"
+      }
+    },
+    "identity": {
+      "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+      "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "lease": {
+      "client_id": "client-99cf4b51858b41f49568551e639d3311",
+      "duration_s": 30.0,
+      "epoch": 1,
+      "lease_id": "cf9403073fc842869dd638f8403d963b"
+    },
+    "pending_command_ids": [
+      "command-20204cceb73b473eb66857af0b813c1d"
+    ]
+  },
+  "host": {
+    "app_id": "536221822098429cac997e554389c561",
+    "body_identity": {
+      "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+      "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "frame": {
+      "generation": 0,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/operator/client/images/challenge-c4a2aac3e0e44153bb8a38ba9a847b50-4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7.png",
+      "sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "runner_status": "running",
+    "sequence": 13,
+    "stage": {
+      "arguments": {
+        "proposal_id": "proposal-28a486115a0242468ba8651ede499eb6"
+      },
+      "before_commands": [
+        "command-19630ef4ff684508b4053bffd3261aca",
+        "command-58f43389dab14ea1af8f011dcac3b415",
+        "command-7c7f1616df1245399a248717c004c424"
+      ],
+      "command_id": null,
+      "context": {
+        "action": {
+          "action": "move",
+          "intent": "Push the block right so its center reaches the measurement region.",
+          "target_x": 0.015,
+          "target_y": 0.0
+        },
+        "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-native-gap-v1/operator/calls/f86aaa43-84f4-4074-98d1-5b2a52c98280-01",
+        "decision_epoch": 0,
+        "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280"
+      },
+      "control_epoch": 0,
+      "operation": "dispatch",
+      "proof": {
+        "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+        "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "e5c43221ed1c25504133986f98a2f894eb2f6b38e9e095b8f3ed209f9b10e859"
+      }
+    },
+    "usage": {
+      "calls": 1,
+      "input_tokens": 12607,
+      "output_tokens": 194,
+      "reported_calls": 1
+    }
+  },
+  "label": "before",
+  "posts": [
+    {
+      "command_id": "command-7c7f1616df1245399a248717c004c424",
+      "payload_sha256": "5e674b785e9d70d9894c809ba1bdf202cc84bdbed725e4175cf32d38bad96d8a",
+      "sequence": 8
+    },
+    {
+      "command_id": "command-58f43389dab14ea1af8f011dcac3b415",
+      "payload_sha256": "4ce1073576807cdceabb307c865c5a51f4a5a2577ddba3ad19d24332c3b4f894",
+      "sequence": 16
+    },
+    {
+      "command_id": "command-19630ef4ff684508b4053bffd3261aca",
+      "payload_sha256": "cb7928d05b419594331d63a3bef90d42e440e4a3ef6b9623a6d5c4939231f429",
+      "sequence": 28
+    },
+    {
+      "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+      "payload_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+      "sequence": 36
+    }
+  ],
+  "processes": {
+    "body": 53902,
+    "workbench": 54014
+  },
+  "public": {
+    "active_job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+    "activity": [
+      {
+        "intent": "Missing native receipt stays blocked",
+        "kind": "queued",
+        "outcome": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+        "seq": 1,
+        "time": 1791860458.630235
+      },
+      {
+        "evidence": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 1,
+          "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+          "state_sha256": "4dc75e6883288bfe4e51f1e294b4b8038c3615b279b0a9f4a56db5c0ad416c97"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "start_job",
+        "seq": 2,
+        "time": 1791860458.641203
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "start_job",
+        "seq": 3,
+        "time": 1791860458.654922
+      },
+      {
+        "intent": "Missing native receipt stays blocked",
+        "kind": "rpc_applied",
+        "outcome": "start_job: command-7c7f1616df1245399a248717c004c424",
+        "seq": 4,
+        "time": 1791860458.670542
+      },
+      {
+        "evidence": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 1,
+          "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+          "state_sha256": "25fe15ee4cbe707cc7b0b6c17cad92924f2d036f63ebced3d77f032e64d845d4"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "observe",
+        "seq": 5,
+        "time": 1791860458.679942
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "observe",
+        "seq": 6,
+        "time": 1791860458.692619
+      },
+      {
+        "intent": "Missing native receipt stays blocked",
+        "kind": "rpc_applied",
+        "outcome": "observe: command-58f43389dab14ea1af8f011dcac3b415",
+        "seq": 7,
+        "time": 1791860458.866333
+      },
+      {
+        "intent": "Missing native receipt stays blocked",
+        "kind": "inference",
+        "outcome": "1",
+        "seq": 8,
+        "time": 1791860458.8678331
+      },
+      {
+        "evidence": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 1,
+          "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+          "state_sha256": "8a574b41e61612e1c3e1485e09bfc9ee7e16ad5fb7b4c54b51ec9de900d52995"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "propose",
+        "seq": 9,
+        "time": 1791860466.171602
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "propose",
+        "seq": 10,
+        "time": 1791860466.1831439
+      },
+      {
+        "intent": "Missing native receipt stays blocked",
+        "kind": "rpc_applied",
+        "outcome": "propose: command-19630ef4ff684508b4053bffd3261aca",
+        "seq": 11,
+        "time": 1791860466.199779
+      },
+      {
+        "evidence": {
+          "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+          "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+          "epoch": 1,
+          "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+          "state_sha256": "e5c43221ed1c25504133986f98a2f894eb2f6b38e9e095b8f3ed209f9b10e859"
+        },
+        "intent": "",
+        "kind": "admission_proof",
+        "outcome": "dispatch",
+        "seq": 12,
+        "time": 1791860466.209346
+      },
+      {
+        "intent": "",
+        "kind": "rpc_intent",
+        "outcome": "dispatch",
+        "seq": 13,
+        "time": 1791860466.2203572
+      }
+    ],
+    "app_id": "536221822098429cac997e554389c561",
+    "connection": {
+      "adapter_id": "6c2d8f9b74544957a632173cfe554639",
+      "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+      "epoch": 1,
+      "fault": null,
+      "reason": "Fresh pinned ready proof verified before command admission",
+      "state": "connected"
+    },
+    "current_frame": {
+      "available": true,
+      "generation": 0,
+      "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "jobs": [
+      {
+        "call_count": 1,
+        "disturbance_test": false,
+        "error": null,
+        "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+        "label": "Missing native receipt stays blocked",
+        "last_intent": "Push the block right so its center reaches the measurement region.",
+        "measurement": null,
+        "phase": "prepare",
+        "reset": null,
+        "status": "running",
+        "target": "A"
+      }
+    ],
+    "model_request_pending": false,
+    "pending_operation": "dispatch",
+    "readiness": {
+      "ready": true,
+      "reason": "Ready for a network inspection"
+    },
+    "recovery": {
+      "command_id": null,
+      "operation": null,
+      "reason": "No uncertain command",
+      "state": "none"
+    },
+    "runner_status": "running",
+    "simulation": true,
+    "transport_pending": true,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 12607,
+      "output_tokens": 194,
+      "reported_calls": 1,
+      "token_usage_complete": true
+    }
+  },
+  "time": 1791860466.34336
+}

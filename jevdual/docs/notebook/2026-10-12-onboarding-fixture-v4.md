@@ -1,0 +1,139 @@
+# Onboarding fixture v4
+
+## UF1 · prediction · 2026-10-12 13:56
+Hypothesis: closing the unique fixture document by exact AXDocument identity and its AXCloseButton, with any discard button confined to its observed attached save sheet, removes the Automation grant while preserving unrelated documents.
+Test: first reproduce the old cleanup limitation in boundary scenarios; cover exact-path duplicates, same-name other paths, changed identity, attached versus unrelated sheets, unsuccessful AX presses and verified window disappearance. Then run the frozen new helper on the disposable guest with Automation declined and an edited owned document; check its receipt and independent owned-resource absence.
+Predicts: the exact owned window closes automatically with only existing Accessibility, no Apple Event/Automation route executes, and ambiguous/changed/unobservable targets refuse without closing another window. Cleanup remains independent of browser/listener shutdown.
+Against: another window or app-level dialog is acted on, the helper claims closure without observed disappearance, leaks the owned browser/listener on AX failure, or needs an extra permission.
+Refs: results/u2-independent-onboarding-20261011-v1; results/u2-independent-onboarding-20261011-v2-dev; local Arc CUA6b353039 benchmarks/workflows.py:533; Claude1791753660836044000
+
+## UF2 · prediction · 2026-10-12 13:56
+Hypothesis: separately bounded owned-browser startup readiness followed by the unchanged unique-window identity deadline classifies slow first launch without weakening resource identity.
+Test: first preserve a slow-start/ambiguous-identity failing scenario against the old helper. Exercise delayed readiness, browser exit, startup timeout, missing/ambiguous windows and successful unique identity; freeze packetv4 and run its installed public path after normal Chrome verification. Keep every failure in distinct fresh run directories.
+Predicts: delayed startup gets its own phase and bounded typed receipt/exit, identity ambiguity still refuses after its own deadline, a stopped browser never emits ready, and setup failures run bounded owned cleanup without traceback-only reporting.
+Against: a late or foreign browser/window is adopted, ambiguous identity becomes authorized, timeout remains unclassified, or launch failure bypasses cleanup.
+Refs: scripts/capability_fixture.py; local Chrome DevTools MCPf08dbe152502d66e75fa07fb2588dc0feb42bc20 src/BrowserManager.ts; UO5 in docs/notebook/2026-10-10-independent-onboarding.md
+
+## UF3 · prediction · 2026-10-12 13:56
+Hypothesis: a source-frozen packetv4 with the unchanged reviewed wheel permits a separately recorded denied-to-granted guest Terminal journey and fully automatic owned cleanup.
+Test: build twice and verify exact inventory/source binding, review the artifact with Claude, then run an independently recorded guest permission journey with denied doctor/refusal, captured authorized grant, host restart, installed append/replay/report and automatic cleanup. Use the existing disposable guest only after an approved supported per-host Accessibility reset; preserve its v1/v2 evidence and label this as fresh permission state on a previously provisioned guest, not a newly cold OS.
+Predicts: packet hashes repeat, denied fixture creates no resources, captured same-host grant and post-restart strict doctor pass, native oracle holds one effect/row, and cleanup confirms the exact document/browser/listener/worker without operator close or Automation grant.
+Against: packet depends on runtime source/Git, grant remains uncaptured, native effect duplicates, cleanup is manual or needs extra access, or earlier failed evidence is regraded.
+Refs: docs/experiments/U2-independent-onboarding.md; docs/independent-onboarding.md; results/u2-independent-onboarding-20261011-v2-dev
+
+## UFU1 · update · 2026-10-12 14:19
+Observed: the old Automation-denied main-boundary scenario leaves the exact owned AX window open; the new helper closes that window and preserves a same-name other-path window. Root reviews the worker diff and69focused helper/onboarding/packaging checks pass, with Ruff and notebook valid. Source3d0984d includes review notes on synchronous AX read deadlines, second-SIGINT cleanup protection and bounded actual file snapshots. Both final packet builds match14members and03dc0079; installed3.12/3.14 help/import/member/provenance preparation smokes pass without Git, stopping at an intentional uv stub. Claude approves initial23e5e16f artifact; final03dc0079 confirmation is pending. Guest unlock, SIP/prerequisite provenance and bounded awake hold are observed; no v4 guest effect or permission reset has occurred.
+Changes: initial developer validation used a stale editable environment, then a relative source path failed the subprocess CLI check; absolute worktree PYTHONPATH corrected the probe without product/test changes. Guest close-preference defaults key is absent and GUI search yields no result; effective preference remains unverified rather than inferred off.
+Next: complete final Claude artifact confirmation, transfer pristine v4, cold-install new guest dependencies, obtain explicit guest Terminal-only reset approval, then capture denial/grant/restart and installed automatic-cleanup evidence. UF1/UF2/UF3 remain open pending their real guest boundary.
+Refs: results/onboarding-fixture-v4-preparation-20261012; output/u2-fixture-v4-dev/baseline-automation-behavior.txt; output/u2-packet-v4-final; Claude1791828646123834000; U3-packet-v4-permission-journey.md
+
+## UFU2 · update · 2026-10-12 14:20
+Observed: Claude confirms exact03dc0079 artifact for U3 but identifies an N3 API semantic error: AXUIElementSetMessagingTimeout applies only to the supplied element, not new equal application references created by product lookup. Apple documentation independently confirms the system-wide element is required for this process's global AX timeout and setting0 resets its default. Current pre/post checks refuse late identities but the prior inferred one-second native RPC bound is not established. No v4 guest effect/reset has occurred.
+Inferred: the process-local system-wide timeout, scoped to identity collection and reset to default during teardown, should cover those internal references without changing OS permissions; this remains under existing UF2 and needs corrected boundary verification before a new freeze.
+Next: correct the setter scope and cleanup restoration, retain old artifacts and refreeze the reviewed qualification candidate. Do not claim restoring an unknown previous custom timeout.
+Refs: Claude1791829172719781000; https://developer.apple.com/documentation/applicationservices/1459345-axuielementsetmessagingtimeout; source3d0984d; UF2
+
+## UFU3 · update · 2026-10-12 14:32
+Observed: corrected process-global AX timeout checks pass with47helper cases and73combined checks. Claude approves the exact final packet eef3632506680d74b21b511cec905d73de2324f951e924b0716f2309490f590d, frozen at21599c6, with no blockers. The one-shot VM sender has closed after transferring312685bytes; guest hash and pristine verification match14members and the unchanged wheel9bb0440d. A new private guest environment completes all seven cold-install stages with exit0 and an actual passed receipt. The guest is unlocked and no v4 fixture/native effect/reset has occurred.
+Changes: final-r2 is the sole guest qualification candidate; earlier preparation artifacts remain preserved. This is fresh installation state on the existing macOS26.6.2 guest, not a newly cold OS. Existing Terminal Accessibility has not yet been cleared; explicit supported per-host reset approval is pending.
+Next: after reset approval, capture denied strict doctor and resource-free fixture refusal, retain their hashes before the actual grant, then record the same-host permission transition and restart before installed native and automatic-cleanup checks. UF1/UF2/UF3 remain open.
+Refs: results/onboarding-fixture-v4-preparation-20261012; output/u2-packet-v4-final-r2; Claude1791829509202848000; guest footwork-u4/packet-verification.txt; guest footwork-u4/footwork/output/install-v1/receipt.json
+
+## UFU4 · update · 2026-10-12 14:39
+Observed: after specific user approval, supported guest Terminal-only Accessibility reset exits0 at18:34:59Z. Installed strict doctor reports accessibility_not_granted and exits1; frozen denied fixture exits2 with its explicit pre-resource refusal, and its directory is absent. At18:38:15Z the eight denial/install baseline hashes are retained and visibly printed before grant. The actual guest Accessibility pane shows Terminal OFF; action-time grant confirmation is pending.
+Changes: a long public shell-input command was truncated with repeated characters by the VM input transport and was never executed. The owned shell was closed, its caffeinate hold ended, and another same-host shell now uses shorter commands and a new bounded awake hold. A preliminary hash glob included its own manifest; baseline-hashes.txt corrects this with explicit denial file groups, preserving the preliminary file. No product effect, permission grant, or qualifying fixture has occurred.
+Next: capture the approved same-host ON transition, restart Terminal, then run installed strict doctor, fixture, native/replay/report and automatic cleanup. UF1/UF2/UF3 remain open.
+Refs: guest permission-reset.txt; guest baseline-hashes.txt; guest doctor-before-exit.txt; guest denied-fixture-console.txt; guest denied-resource-check.txt; CUA Accessibility OFF observation; U3-packet-v4-permission-journey.md
+
+## UFU5 · update · 2026-10-12 14:51
+Observed: user approves the actual Terminal Accessibility grant. Codex clicks that exact guest switch after the18:40:09Z clock reading; refreshed UI visibly shows ON. No authentication prompt appears. Terminal is visibly quit and relaunched before installed strict doctor exits0, reporting Accessibility granted and Screen Recording not_granted. Frozen fixture-v1 reports ready in its hold phase; exact installed config generation exits0. The installed native trial has now started once; its outcome and automatic cleanup remain unobserved.
+Changes: public-command transport truncation recurs on a long diagnostic readback; unexecuted input is discarded by closing only the owned shell. Short octal commands and explicit shell variables now preserve exact paths and arguments, which are visibly read back before the native trial. Plain special-character input was also refused without launching the intended hold; a short octal hold succeeds. These are operator transport events, not permission or product failures.
+Next: retain trial result without repeating an uncertain effect, signal the exact owned fixture once, inspect automatic cleanup and absence, then export raw evidence for independent Claude review. UF1/UF2/UF3 remain open.
+Refs: guest permission-grant.txt; guest terminal-restarted.txt; guest doctor-after-exit.txt; guest footwork/output/doctor-after.json; guest footwork/output/fixture-v1/fixture-status.json; guest config-exit.txt; U3-packet-v4-permission-journey.md
+
+## UFU6 · update · 2026-10-12 14:55
+Resolves: UF1 = failed; UF3 = failed
+Observed: installed native-v1 exits0 and reports passed with its actual installed worker observed. Exact fixture PID52621 receives one SIGINT. The document disappears visually without an operator close; cleanup nevertheless records ax_attribute_refused:AXRole:-25202 and exits6. Owned browser52622 and listener cleanup are confirmed. File snapshots change from15to24bytes. Thus the required automatic confirmation gate fails; original frozen run-v1 remains failed and no new grant or native effect is retried.
+Inferred: after successful close, a previously observed AX window or child becomes invalid while cleanup is inspecting its sheet tree. Invalid-element evidence must trigger bounded fresh observation, never substitute for absence.
+Next: export immutable raw-v1 evidence; reproduce the close-versus-read race before correcting it, obtain Claude review, and qualify a separate frozen repair run. UF2 awaits final source/receipt review.
+Refs: guest native-exit.txt; guest native-console.txt; guest footwork/output/fixture-v1/cleanup.json; guest fixture-exit.txt; guest cleanup-signal.txt; CUA document disappearance
+
+## UF4 · prediction · 2026-10-12 14:55
+Hypothesis: a narrow bounded retry of invalid AX element errors after AXPress permits fresh same-application window enumeration to confirm actual disappearance, without allowing read errors or changed identity to certify cleanup.
+Test: reproduce the observed stale AXRole child/window race against21599c6; then cover a fresh readable absent window, unreadable AXWindows, persistent invalid element, renamed/reused identity and unrelated windows. Correct only fixture/helper tests, review with Claude and run a separately frozen fixture/native/automatic-cleanup trial on the same granted guest. Retain failed U3v1; a post-grant repair trial is not a new first-use pass.
+Predicts: stale reads cause no extra action; confirmation requires a subsequent fresh readable AXWindows snapshot proving the original identity absent. Persistent errors remain bounded unknown/error, foreign identity refuses, and real repaired fixture closes automatically.
+Against: an AX error alone confirms closure, a stale element is pressed again, an unrelated window is closed, retry exceeds the cleanup deadline, or live cleanup still lacks confirmation.
+Refs: UFU6; scripts/capability_fixture.py close_owned_document/discard_button; frozen21599c6
+
+## UFU7 · update · 2026-10-12 15:03
+Resolves: UF3 = failed
+Observed: UFU6 records two resolutions on one field, but the notebook reader recognizes only its first prediction. This single resolution makes the already observed failed U3v1 journey machine-readable. Worker boundary reproduction has five failures and one pass against21599c6; its narrow post-close invalid-observation retry passes55helper cases. Root independently reviews the diff and runs81combined checks, Ruff check/format and notebook validation successfully. AXPress errors remain terminal; confirmation still requires fresh readable absence and unchanged identity.
+Changes: only fixture/helper tests change. The failed guest archive is being exported before a separately frozen repair packet; no original receipt is changed and no native effect is replayed.
+Next: freeze the repair, obtain Claude review of source/artifact and original guest evidence, then perform the preregistered post-grant repair trial. UF4 remains open.
+Refs: output/u2-fixture-v4-dev/uf4-before.txt; output/u2-fixture-v4-dev/uf4-after.txt; UFU6; tests/test_capability_fixture.py
+
+## UF5 · prediction · 2026-10-12 15:08
+Revises: UF4
+Hypothesis: the reviewed stale-observation repair permits all U3 gates in one separately frozen complete permission-state journey, avoiding a composite of different artifacts.
+Test: use packet205577ee/source445a348 in a new guest root, verify pristine bytes and cold-install anew. With existing explicit guest permission authorization, reset only Terminal Accessibility through supported tccutil, hash denied doctor/resource-free refusal before the action-time approved switch, quit/relaunch Terminal and execute one installed append/replay/report trial and automatic cleanup. Retain failed U3v1. This replaces UF4's planned post-grant trial with a stricter full journey on the repaired artifact.
+Predicts: the same frozen artifact supplies every denial/grant/restart/native/cleanup gate, stale AX reads never replay a close, and cleanup confirms fresh window absence plus browser/listener/worker absence without manual close or extra grants.
+Against: any required gate fails, a read error substitutes for absence, action repeats, an unrelated resource is affected, or the artifact changes during measurement.
+Refs: U3-packet-v4-permission-journey.md; UF4; Claude1791832031158825000; results/u3-packet-v4-permission-20261012-v1
+
+## UFU8 · update · 2026-10-12 15:15
+Observed: Claude independently verifies original raw evidence and its sole cleanup failure, then approves exact205577ee for full UF5. New guest root footwork-u4-repair verifies14pristine members and cold-installs all seven stages,115packages. Supported Terminal-only reset succeeds19:11:29Z. Denied installed doctor/refusal are observed with no fixture directory. Corrected same-command exit capture retains doctor1/refusal2/absence0, with nine baseline hashes visibly printed before grant. No repaired native effect has occurred.
+Changes: the public input wrapper invokes printf before eval, so separate later echo of the prior exit is invalid; initial exit files remain as operator logging errors. Only resource-free denial probes repeat in distinct v2 names, capturing actual exits in the same eval. A preliminary manifest glob includes itself; qualified-baseline.txt uses explicit groups and is the authoritative baseline. These do not change product source or permission state.
+Next: actual same-host grant confirmation, Terminal relaunch, installed native and automatic cleanup, export and independent receipt review. UF4/UF5 remain open; prior failed U3v1 is unchanged.
+Refs: guest footwork-u4-repair/qualified-baseline.txt; guest doctor-before-v2-exit.txt; guest denied-fixture-v2-exit.txt; Claude1791832201147781000
+
+## UFU9 · update · 2026-10-12 15:25
+Observed: user approves the repaired run's exact Terminal Accessibility grant. Before reaching the switch, CUA scroll/reconnection attempts time out. Fresh inventory then reports Tart not running and the isolated launcher reports the named guest stopped. No repaired grant action or native trial has been issued. Root restarts the same guest with its original no-clipboard/no-audio/no-USB flags and read-only qualification ISO; the VM viewer is observable again at boot.
+Changes: the cause of the VM stop is unavailable. Its prior denied baseline and installed files require guest readback after boot; an unobserved state cannot count as grant or cleanup evidence.
+Next: observe guest login/session, preserve and verify pre-stop baseline bytes, then apply the already specifically approved grant once and continue same frozen artifact if eligibility remains established. Credentials remain with the human.
+Refs: CUA timeoutReached then inventory; tart list stopped/running; isolated tart run session80357; guest qualified-baseline.txt; UF5
+
+## UFU10 · update · 2026-10-12 15:31
+Resolves: UF5 = inconclusive
+Observed: human logs in after guest restart. All eight authoritative pre-stop baseline hashes match (UFU8's nine was a count error). Installed post-boot doctor exits0 reporting Accessibility granted, and Settings shows Terminal ON before root issues any grant click. Grant actor/time are unavailable. Thus this interrupted full journey cannot satisfy captured-transition qualification. No repaired native effect has occurred and no original result is regraded.
+Changes: preserve pre-stop and post-boot files. The already specifically approved repaired-run grant has not been performed by root; its authorization is retained. Establish another supported same-host denied baseline in distinct v3 names before that one approved click.
+Next: UF6; retain interruption separately and do not infer a TCC rollback cause or human action from ON state.
+Refs: guest post-boot-baseline.txt; guest doctor-post-boot.json; CUA Terminal ON observation; UF5
+
+## UF6 · prediction · 2026-10-12 15:31
+Revises: UF5
+Hypothesis: the same reviewed205577ee artifact can qualify the complete scoped permission journey when denial and the explicitly approved grant are captured consecutively without an intervening VM stop.
+Test: supported guest Terminal-only reset in separate v3 records; installed denied doctor and resource-free fixture refusal with same-command exit capture; hash baseline before observing OFF and applying the already approved ON click once. Visibly quit/relaunch Terminal, then one installed native/replay/report trial and automatic cleanup. Preserve interrupted UF5 and failed U3v1.
+Predicts: one source/artifact and a captured uninterrupted permission transition supply all required gates, with installed origins, one durable operation, exact oracle and automatic resource absence.
+Against: a transition is missing again, a required gate fails, input repeats to mask uncertainty, or another resource/permission is affected.
+Refs: UFU10; U3-packet-v4-permission-journey.md; source445a348; Claude1791832201147781000
+
+## UFU11 · update · 2026-10-12 15:39
+Observed: separate supported reset succeeds19:31:47Z; installed doctor1/refusal2 and resource absence0 are retained and eight baseline hashes printed before grant. Terminal is visibly OFF. Root issues one approved switch click after19:33:55Z; macOS presents an actual password-required Privacy & Security dialog. Human authenticates and reports completion; refreshed state shows ON before19:35:16Z observation. Root never enters credentials. Terminal Quit navigation initially leaves it running; its displayed Command-Q shortcut produces the owned-caffeinate confirmation, then confirmed termination visibly removes both owned Terminal windows. Relaunch is issued next.
+Changes: grant actors are root click plus human authentication; the session belongs to admin group. Earlier interrupted grant remains unavailable, not substituted into this transition. GUI menu attempts are operator transport events; no fixture or native effect has started.
+Next: installed strict doctor after actual Terminal relaunch, one native/replay/report trial, automatic cleanup and Claude raw-receipt review. UF6 remains open.
+Refs: guest hashes-final.txt; guest grant-v3.txt; CUA OFF/password dialog/ON/Terminal absence observations; UF6
+
+## UFU12 · update · 2026-10-12 15:59
+Resolves: UF4 = held
+Observed: repaired installed native trial exits0 with exact oracle, same-token replay, one durable final/applied/sent row and accepted completion. One SIGINT to owned fixture1355 confirms exact document window disappearance, browser1356 and listener cleanup, fixtureexit0. Independent fixture/browser/worker2248 absence and HTTP refusal pass. All eight helper hashes match the frozen manifest. Five failing stale-read reproduction cases against21599c6 and55corrected helper cases establish the boundary distinction; live repaired cleanup supplies the missing confirmation. No operator document close or repeated native effect occurs.
+Inferred: the observed stale-observation mechanism is addressed within the tested boundary; the live pass does not establish every possible AX race.
+Next: retain failed UF1/UF3 and interrupted UF5; close final UF6 with independent raw review.
+Refs: results/u3-packet-v4-permission-20261012-v3; output/u3-export-v3; source445a348; UFU7
+
+## UFU13 · update · 2026-10-12 15:59
+Resolves: UF2 = held
+Observed: frozen browser startup reports ready for owned1356 and private CDP49153 before exact fixture scope/hold. Boundary checks cover delayed readiness, startup exit/timeout, unique versus ambiguous identity and cleanup. Both original and repaired live runs reach the owned browser/native path. Claude independently approves final raw receipts; readiness never substitutes for identity.
+Next: retain normal live readiness evidence separately from simulated startup failure coverage; no cold Chrome launch claim.
+Refs: results/u3-packet-v4-permission-20261012-v3/startup.json; tests/test_capability_fixture.py; UFU3; Claude1791835064888832000
+
+## UFU14 · update · 2026-10-12 15:59
+Resolves: UF6 = held
+Observed: all required gates pass on exact205577ee/source445a348. Eight final pre-grant baseline hashes match; actual OFF/password-dialog/ON and Terminal shutdown/relaunch are observed. Claude independently checks raw94member archive and two-member supplement, read-only journal, installed origins and all eight unchanged helpers; final1791835064888832000 discharges worker absence and approves scoped qualification. Reviewer reports modelclaude-opus-5-5. Disk persistence remains not_checked and Screen Recording remains not_granted.
+Next: close this package with its exact host/OS limits; recommend external agent installation qualification next.
+Refs: results/u3-packet-v4-permission-20261012-v3; Claude1791834939955400000; Claude1791835064888832000; UFU10
+
+## UFS1 · summary · 2026-10-12 15:59
+Established: fixes built and reviewed; repaired frozen packet exercised through supported permission reset, captured approved grant with human authentication, actual Terminal restart, installed native/replay/report and automatic owned cleanup on one SIP-enabled macOS26.6.2 guest. Raw export and independent Opus5.5 reviewer-reported review pass. UF1/UF3 remain failed, UF5 inconclusive, UF2/UF4/UF6 held; no earlier result is regraded.
+Uncertain: cold OS/first Chrome launch, other responsible hosts or OS versions, MDM, pixel capture and saved-file persistence are not qualified. Actual VM stop cause and interrupted grant actor remain unavailable.
+Decision: accept this scoped permission-state journey. Next recommended package is a real external-agent installation and first bounded task on the candidate; keep broader release claims behind that evidence.
+Refs: results/u3-packet-v4-permission-20261012-v3/report.md; results/u3-packet-v4-permission-20261012-v1; source445a348

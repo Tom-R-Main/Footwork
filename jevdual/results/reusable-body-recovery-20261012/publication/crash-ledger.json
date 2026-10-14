@@ -1,0 +1,46 @@
+{
+  "boundaries": [
+    {
+      "case": "host-publication",
+      "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+      "finished_snapshot": "000004-finished.json",
+      "gate": {
+        "barrier": "rpc_applied_event_before_manifest",
+        "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+        "diagnostic_sha256": "a97bd24b6320995f5ef2ef1b4e06ec1392f3f51987b551c45759612efa874a18",
+        "event_sequence": 14,
+        "event_sha256": "84ca3163950c0874f6239ab7f81d3a7e0c21a938f40fd858c88faa23fc8bb496",
+        "manifest_sequence": 13,
+        "manifest_sha256": "628817f9c0e858d12f0e801399021bd731e8b8d1a2bd64b9df86e4b3608a64f3",
+        "pid": 49762,
+        "request_sha256": "134c80ce5b51c6d125d0be700af5e42afec26e95ea6032a3b3c69b0abf1659c6",
+        "time": 1791860187.3617659,
+        "version": 1
+      },
+      "new_epoch": 1,
+      "offline_snapshot": "000002-offline.json",
+      "old_epoch": 1,
+      "pre_snapshot": "000001-before.json",
+      "process": {
+        "boot": 1,
+        "children_before": [],
+        "exit_observed": true,
+        "group": 49762,
+        "initialized": false,
+        "log": "workbench-01.log",
+        "pid": 49762,
+        "port": 51413,
+        "returncode": -9,
+        "role": "workbench",
+        "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/operator",
+        "signal": "SIGKILL",
+        "signal_target": "host_pid_only",
+        "stopped_time": 1791860187.418896
+      },
+      "request_sha256": "134c80ce5b51c6d125d0be700af5e42afec26e95ea6032a3b3c69b0abf1659c6",
+      "restored_snapshot": "000003-restored.json",
+      "role": "workbench"
+    }
+  ],
+  "case": "host-publication"
+}

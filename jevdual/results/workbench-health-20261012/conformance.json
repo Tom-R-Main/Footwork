@@ -1,0 +1,15 @@
+{
+  "runtime": {
+    "passed": 26,
+    "log": "tools/physical-workcell/output/sim12-runtime-final-v1.log"
+  },
+  "core_network_HTTP_including_link": {
+    "passed": 84,
+    "log": "tools/physical-workcell/output/sim12-core-network-regression.log"
+  },
+  "harness_scorer": {
+    "passed": 7,
+    "log": "tools/physical-workcell/output/sim12-harness-tests-v1/unittest.log"
+  },
+  "total_distinct_suite_checks": 117
+}

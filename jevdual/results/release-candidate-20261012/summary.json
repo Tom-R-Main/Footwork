@@ -1,0 +1,32 @@
+{
+  "repeated_bytes_equal": true,
+  "sha256": "8dc81c724bf617a9f3aa4833f250d5124b9e8c5e9a1c504c67d634080f44fd1f",
+  "members": 30,
+  "size_bytes": 342599,
+  "relative_links_verified": 18,
+  "unchanged_qualified_payloads": 10,
+  "release_source_commit": "d9315593886c17196db477db969f21481fc10e8d",
+  "qualified_product_source_commit": "445a348ff31243c2f3d90baae9ce209d89bd7eac",
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "identifying_home_paths": 0,
+  "scan_includes_nested_wheel": true,
+  "derived_legacy_attachments": 10,
+  "local_candidate_only": true,
+  "passed": true,
+  "independent_review": "approved",
+  "qualification": "local candidate packaging only",
+  "host_qualification": "../installed-agent-release-20261012-v2",
+  "permission_qualification": "../u3-packet-v4-permission-20261012-v3",
+  "focused_checks": {
+    "installed_host": 19,
+    "release_builder": 19
+  },
+  "registry_publication": false,
+  "tag_created": false,
+  "push_or_merge": false,
+  "previous_local_candidate": "summary-v1.json",
+  "original_evidence_preserved": true,
+  "review_message": "1791837075792802000",
+  "sanitization_note": "N1 closed; original/derived hashes independently verified",
+  "candidate_path": "output/release-candidate-20261012-v2/build-one/footwork-capability-0.0.1-macos-arm64-candidate.zip"
+}

@@ -107,3 +107,7 @@ The summary describes the configured task's admitted operation history as of its
 The local chrome-devtools-mcp package verifier checks the artifact produced for publication rather than trusting a source file list. This builder applies that mechanism to its actual wheel; it copies no upstream source. The license metadata follows [PEP 639](https://peps.python.org/pep-0639/): `License-File: LICENSE` resolves under the wheel's `.dist-info/licenses/` directory.
 
 The setup improvements use the structured prerequisite/error mechanism in local Cua, ambient-configuration isolation in Hermes, and exact emitted-command MCP discovery in Open Computer Use. Implementations are independent. Newer reference versions are not dependency upgrades; Footwork retains its pinned seams. The newer Cua doctor also performs legacy-file cleanup, so it is not used as a read-only verifier here.
+
+## Qualified local candidate
+
+The repaired guest permission-reset journey and one installed Claude Code task both passed with independent review. See [the guest report](../results/u3-packet-v4-permission-20261012-v3/report.md) and [the real-host report](../results/installed-agent-release-20261012-v2/report.md). The local release bundle preserves wheel9bb0440d and helper source445a348; its manifest identifies release documentation separately. It includes an [agent-host recipe](installed-agent-host.md) and exact qualification limits. Public registry publication, other hosts, pixel capture and disk persistence are separate gates.

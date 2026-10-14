@@ -1,0 +1,87 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			140 checkbox Restart inspection 01 Completed, Value: 0
+			141 checkbox Restart inspection 02 Paused, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		142 text Restart inspection 02
+		143 text Running
+		16 button Pause, ID: pause
+		144 text timed out
+		17 container Description: Body connection, ID: network-card
+			145 text Body connected
+			146 text Current body boot verified for explicit Resume
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			68 container
+				69 button (expanded) Test the simulated connection, Secondary Actions: Collapse
+					70 text Test the simulated connection
+				71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.
+				72 button Lose next reply, ID: fault-drop
+				73 button Delay next reply, ID: fault-delay
+				74 button Duplicate next command, ID: fault-duplicate
+				147 text No reply fault armed.
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			148 text Last observation · Restart inspection 02
+			60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			149 text Captured · generation 20
+		150 text AGENT
+		151 text Lower the pusher from the bypass lane to its home position while the block remains centered in the home zone.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			152 text Recorded
+			132 container measurement-result
+				153 text 1,729
+				134 text Orange pixels
+				135 container
+					154 text 4,802.8
+					137 text mm²
+				138 text Apparent footprint
+				139 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+		39 container Activity
+			40 heading Activity, Value: 2, ID: activity-heading
+				41 text Activity
+			155 text 24 events
+			118 content list activity
+				156 container
+					157 text 02:21 PM Agent resumed
+				158 container
+					159 text 02:20 PM Agent stopped for review timed out
+				160 container
+					161 text 02:20 PM Agent stopped for review timed out
+				162 container
+					163 text 02:20 PM Agent stopped for review timed out
+				164 container
+					165 text 02:20 PM Agent stopped for review timed out
+				166 container
+					167 text 02:20 PM Agent stopped for review operator_pause_requested
+				168 container
+					169 text 02:20 PM Agent stopped for review timed out
+				170 container
+					171 text 02:19 PM AI planning requested Restart inspection 02
+				172 container
+					173 text 02:19 PM Camera observation received Restart inspection 02
+				174 container
+					175 text 02:19 PM Requesting camera observation
+				176 container
+					177 text 02:19 PM Action receipt checked Restart inspection 02
+				178 container
+					179 text 02:19 PM Sending a guarded action
+		50 button (collapsed) Session details, Secondary Actions: Expand
+			51 text Session details
+		180 text 28 model requests · Reported tokens: 329,774 input / 3,851 output · Reporting incomplete (25 of 28 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

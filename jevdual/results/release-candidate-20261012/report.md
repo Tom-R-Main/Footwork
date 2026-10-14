@@ -1,0 +1,11 @@
+The final local release package passed artifact checks and independent Claude review. Message 1791837075792802000 approves the exact derived bundle and closes the path-disclosure note.
+
+Frozen release source d931559 preserves the qualified product from source 445a348. Two builds produce identical ZIP bytes, SHA256 8dc81c724bf617a9f3aa4833f250d5124b9e8c5e9a1c504c67d634080f44fd1f, with 30 members and 342599 bytes. Every manifest digest and wheel RECORD/runtime byte verifies against committed source. The wheel, eight helpers and MIT license remain byte-identical to the approved qualification packet. The extracted consumer verifier passes and all 18 relative Markdown links resolve.
+
+The bundle contains setup and agent-host instructions, exact product/release/harness provenance, reviewed guest and real-host evidence summaries, and separately labeled historical installation context. Ten legacy evidence files are derived display copies with stable path placeholders and original/derived SHA256 records. The scan finds zero identifying home paths across text members and inside the wheel. Original committed evidence and the first approved local bundle remain unchanged. Before correction, the leaked-path boundary test failed; afterward, 19 release checks and Ruff pass. The independent installed-host harness has 19 passing checks.
+
+The guest evidence covers the supported Terminal permission reset and captured grant on macOS 26.6.2. The real-host evidence covers one Claude Code 2.1.296 Opus 5.5 clean task on already-granted macOS 26.5.1. It used one native effect, one durable journal operation and the enforced completion adapter, followed by automatic cleanup. Disk persistence, pixel routes, other agent hosts and a cold OS are not qualified; earlier failures and interruptions remain preserved.
+
+The wheel excludes dependencies, which install from PyPI using existing Python/uv/Chrome prerequisites. The bundle excludes caches, virtual environments, browser profiles, credentials, raw transcripts and operational databases. This is a local release candidate; no registry publication, tag, push or merge occurred.
+
+Artifact: output/release-candidate-20261012-v2/build-one/footwork-capability-0.0.1-macos-arm64-candidate.zip. SHA256SUMS and the extracted manifest accompany it. Both previous local packaging and original runtime evidence remain preserved.

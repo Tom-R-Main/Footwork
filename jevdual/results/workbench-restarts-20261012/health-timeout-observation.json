@@ -1,0 +1,11 @@
+{
+  "cause": "unresolved; do not infer a specific network or scheduler cause",
+  "evidence": [
+    "ui/transient-health-pause.txt",
+    "ui/transient-health-resumed.txt",
+    "qualification-score.json"
+  ],
+  "observed": "Health reads timed out during second-job reset and cancelled one additional model call; later read-only identity returned in 0.023494 seconds and connection was connected. Explicit Resume took a fresh observation and the job completed.",
+  "replayed_commands": 0,
+  "source_edited_during_trial": false
+}

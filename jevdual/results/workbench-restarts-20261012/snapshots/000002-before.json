@@ -1,0 +1,140 @@
+{
+  "body_identity": {
+    "adapter_id": "96943574039142dda13cb620decfddf0",
+    "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+    "epoch": 1,
+    "protocol": "footwork.body/1",
+    "simulation": true,
+    "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+  },
+  "body_state": {
+    "bench": {
+      "active_job": {
+        "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "moves": 0,
+        "phase": "prepare",
+        "started_generation": 0,
+        "started_native_time_s": 1.0000000000000007,
+        "target_zone": {
+          "x_max": 0.105,
+          "x_min": 0.035,
+          "y_max": 0.025,
+          "y_min": -0.025
+        }
+      },
+      "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "diagnostic_enabled": true,
+      "generation": 0,
+      "jobs": {},
+      "native_time_s": 1.0000000000000007,
+      "source_fingerprints": {
+        "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+        "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+        "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+        "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+        "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+        "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+        "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+        "mujoco_version": "3.15.0",
+        "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+        "state_spec": 16383,
+        "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+      },
+      "source_kind": "mujoco_simulation",
+      "state": "ready",
+      "unresolved_effect": null,
+      "version": 1
+    },
+    "identity": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "lease": {
+      "client_id": "client-6c734bbe900342329bb34c0d4dcc485b",
+      "epoch": 1,
+      "expires_in_s": 0,
+      "lease_id": "08011306c044435da2272672ebbe5ba5"
+    },
+    "state": "ready",
+    "unresolved_commands": []
+  },
+  "client": {
+    "commands": {
+      "command-36da4220dfcd4e85b9a4cee555ccd7aa": {
+        "operation": "start_job",
+        "request_sha256": "7ea11721570fb77e340b4f2e0d66e64ab5b136d5478b26c44a967be1d86256eb",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-e897a3cba83b4d83b460a556be5e459b": {
+        "operation": "observe",
+        "request_sha256": "0b35d9142df3fc25df922ec8c0812e7ad7460346f7389fb80bace9904ec147bb",
+        "send_count": 1,
+        "state": "completed"
+      }
+    },
+    "identity": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "lease": {
+      "client_id": "client-6c734bbe900342329bb34c0d4dcc485b",
+      "duration_s": 30.0,
+      "epoch": 1,
+      "lease_id": "08011306c044435da2272672ebbe5ba5"
+    },
+    "pending_command_ids": []
+  },
+  "host": {
+    "app_id": "878fad93039a4e86b4dcc5529f118f20",
+    "body_identity": {
+      "adapter_id": "96943574039142dda13cb620decfddf0",
+      "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+    },
+    "frame": {
+      "generation": 0,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim11-browser-restarts-v2/operator/client/images/challenge-134e7f48aa154ee1843c5a5d9250af9b-4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7.png",
+      "sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "runner_status": "stopped",
+    "sequence": 10,
+    "stage": null,
+    "usage": {
+      "calls": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "reported_calls": 0
+    }
+  },
+  "posts": [
+    {
+      "command_id": "command-36da4220dfcd4e85b9a4cee555ccd7aa",
+      "payload_sha256": "7ea11721570fb77e340b4f2e0d66e64ab5b136d5478b26c44a967be1d86256eb",
+      "sequence": 8
+    },
+    {
+      "command_id": "command-e897a3cba83b4d83b460a556be5e459b",
+      "payload_sha256": "0b35d9142df3fc25df922ec8c0812e7ad7460346f7389fb80bace9904ec147bb",
+      "sequence": 16
+    }
+  ],
+  "processes": {
+    "body": 25787,
+    "workbench": null
+  },
+  "public": null,
+  "public_error": "[Errno 61] Connection refused",
+  "time": 1791828682.949166
+}

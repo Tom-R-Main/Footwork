@@ -1,0 +1,13 @@
+{
+  "task": "task_a5de7021e73f434e8713e86c651d73f7",
+  "source": {
+    "pid": 24766,
+    "window_id": 237,
+    "url": "http://127.0.0.1:49175/"
+  },
+  "destination": {
+    "pid": 2817,
+    "window_id": 235,
+    "document": "/Users/tom/footwork-u2/footwork/output/fixture-v2/fixture-v2-invoice.txt"
+  }
+}

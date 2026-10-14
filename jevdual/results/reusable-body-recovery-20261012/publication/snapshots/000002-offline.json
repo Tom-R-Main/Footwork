@@ -1,0 +1,321 @@
+{
+  "body_command": {
+    "digest_valid": true,
+    "intent": {
+      "request": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "arguments": {
+          "proposal_id": "proposal-29b7df0a14ad4747b5301091b0500015"
+        },
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "client_id": "client-ee0f30ca70e9419296b602113d7775b9",
+        "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+        "epoch": 1,
+        "lease_id": "f20a8e34e125480bab75c54183bb9355",
+        "operation": "dispatch",
+        "protocol": "footwork.body/1",
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+      },
+      "request_sha256": "134c80ce5b51c6d125d0be700af5e42afec26e95ea6032a3b3c69b0abf1659c6",
+      "result_sha256": "f664cc35200c51b3992589dc2f86f7e525cb3d1cffa1370430908a865cfb097e"
+    },
+    "terminal": {
+      "adapter_id": "6d17e55437444025af20a6cc32e00464",
+      "body_id": "88ef33b6618f41f58507907680f0bde8",
+      "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+      "protocol": "footwork.body/1",
+      "reason": null,
+      "receipt_scope": "retained_command_result",
+      "recorded_epoch": 1,
+      "request_sha256": "134c80ce5b51c6d125d0be700af5e42afec26e95ea6032a3b3c69b0abf1659c6",
+      "result": {
+        "next_observation": {
+          "challenge_id": "challenge-401b1194fabd45e28164ac2a3bfa08fd",
+          "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/body/bench/images/000001-688c5044eacced6b.png",
+          "observation": {
+            "bench_id": "88ef33b6618f41f58507907680f0bde8",
+            "calibration": {
+              "bbox_convention": "exclusive_max_pixel_edges",
+              "height": 360,
+              "image_center_world_xy": [
+                0.0,
+                0.0
+              ],
+              "image_x_direction": "world_positive_x",
+              "image_y_direction": "world_negative_y",
+              "meters_per_pixel": 0.0016666666666666666,
+              "projection": "orthographic",
+              "valid": true,
+              "validity_reason": "bound orthographic calibration",
+              "vertical_span_m": 0.6,
+              "width": 640,
+              "world_frame": "sim_world"
+            },
+            "generation": 1,
+            "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/body/bench/images/000001-688c5044eacced6b.png",
+            "image_sha256": "a831bd4576c7fa2d1ccf8d5369de1a242e0292a976ad40da9c39304dd00d96e5",
+            "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+            "native_time_s": 2.8339999999999095,
+            "phase": "prepare",
+            "source_fingerprints": {
+              "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+              "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+              "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+              "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+              "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+              "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+              "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+              "mujoco_version": "3.15.0",
+              "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+              "state_spec": 16383,
+              "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+            },
+            "source_kind": "mujoco_simulation",
+            "state_sha256": "217fecedff3930f0e05f3a872d63789b89e7f1fdcfdd1475052ac27b7c8d72d7",
+            "version": 1
+          },
+          "observation_sha256": "5029c0a5b6f9473d370102217058277a925969ce964a35f14d48ecaa34087491",
+          "sequence": 4,
+          "session_id": "2658977143f14c54a5f37a582fadb568",
+          "task": {
+            "bounds": {
+              "x_max": 0.18,
+              "x_min": -0.32,
+              "y_max": 0.15,
+              "y_min": -0.15
+            },
+            "home_zone": {
+              "x_max": -0.08,
+              "x_min": -0.16,
+              "y_max": 0.03,
+              "y_min": -0.03
+            },
+            "pusher_dimensions_m": {
+              "x": 0.04,
+              "y": 0.14
+            },
+            "zone": {
+              "x_max": 0.105,
+              "x_min": 0.035,
+              "y_max": 0.025,
+              "y_min": -0.025
+            }
+          }
+        },
+        "observation_scope": "snapshot_at_dispatch_result",
+        "outcome": "executed",
+        "proposal_id": "proposal-29b7df0a14ad4747b5301091b0500015",
+        "receipt": {
+          "bench_id": "88ef33b6618f41f58507907680f0bde8",
+          "command_speed_limit_m_s": 0.15,
+          "generation": 1,
+          "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+          "kind": "move",
+          "max_axis_actuator_force_n": 0.38503045596822894,
+          "native_steps": 917,
+          "native_time_s": 2.8339999999999095,
+          "operation_id": "agent-3cff47d83674457d9a0f353e7802863f",
+          "pusher_block_contact_samples": 0,
+          "state_sha256": "217fecedff3930f0e05f3a872d63789b89e7f1fdcfdd1475052ac27b7c8d72d7",
+          "target_xy": [
+            -0.175,
+            0.0
+          ]
+        }
+      },
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+      "state": "completed"
+    }
+  },
+  "body_identity": {
+    "adapter_id": "6d17e55437444025af20a6cc32e00464",
+    "body_id": "88ef33b6618f41f58507907680f0bde8",
+    "epoch": 1,
+    "protocol": "footwork.body/1",
+    "simulation": true,
+    "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+  },
+  "body_state": {
+    "bench": {
+      "active_job": {
+        "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+        "moves": 1,
+        "phase": "prepare",
+        "started_generation": 0,
+        "started_native_time_s": 1.0000000000000007,
+        "target_zone": {
+          "x_max": 0.105,
+          "x_min": 0.035,
+          "y_max": 0.025,
+          "y_min": -0.025
+        }
+      },
+      "bench_id": "88ef33b6618f41f58507907680f0bde8",
+      "diagnostic_enabled": true,
+      "generation": 1,
+      "jobs": {},
+      "native_time_s": 2.8339999999999095,
+      "source_fingerprints": {
+        "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+        "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+        "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+        "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+        "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+        "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+        "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+        "mujoco_version": "3.15.0",
+        "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+        "state_spec": 16383,
+        "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+      },
+      "source_kind": "mujoco_simulation",
+      "state": "ready",
+      "unresolved_effect": null,
+      "version": 1
+    },
+    "identity": {
+      "adapter_id": "6d17e55437444025af20a6cc32e00464",
+      "body_id": "88ef33b6618f41f58507907680f0bde8",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "lease": {
+      "client_id": "client-ee0f30ca70e9419296b602113d7775b9",
+      "epoch": 1,
+      "expires_in_s": 29.81952941697091,
+      "lease_id": "f20a8e34e125480bab75c54183bb9355"
+    },
+    "state": "ready",
+    "unresolved_commands": []
+  },
+  "client": {
+    "commands": {
+      "command-0eb32e67ff4943979c667f45701af419": {
+        "operation": "propose",
+        "request_sha256": "7aa96a1b5a27d086843fb21726afe9457ebc6ec442304c1d0e169000387b6126",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-6184aa30e497418e8416b68ef4b0c87e": {
+        "operation": "observe",
+        "request_sha256": "986f5d45a1f3aaaf691d2d5b1fc9d263bc3ec6951711d4084404e934d594c540",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-64fbd4a32ea94706b5cd8a3269debf04": {
+        "operation": "dispatch",
+        "request_sha256": "134c80ce5b51c6d125d0be700af5e42afec26e95ea6032a3b3c69b0abf1659c6",
+        "send_count": 1,
+        "state": "completed"
+      },
+      "command-6a3f77b6799e42f79e802c7069d4f1ec": {
+        "operation": "start_job",
+        "request_sha256": "1910f73d909279fb9fe270813c8e8fe6f15630420d3da4fe0b18fac3c15bef7d",
+        "send_count": 1,
+        "state": "completed"
+      }
+    },
+    "identity": {
+      "adapter_id": "6d17e55437444025af20a6cc32e00464",
+      "body_id": "88ef33b6618f41f58507907680f0bde8",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "lease": {
+      "client_id": "client-ee0f30ca70e9419296b602113d7775b9",
+      "duration_s": 30.0,
+      "epoch": 1,
+      "lease_id": "f20a8e34e125480bab75c54183bb9355"
+    },
+    "pending_command_ids": []
+  },
+  "host": {
+    "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+    "body_identity": {
+      "adapter_id": "6d17e55437444025af20a6cc32e00464",
+      "body_id": "88ef33b6618f41f58507907680f0bde8",
+      "epoch": 1,
+      "protocol": "footwork.body/1",
+      "simulation": true,
+      "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691"
+    },
+    "frame": {
+      "generation": 0,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/operator/client/images/challenge-7d780d4d02634b3cb2140c637af0004b-4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7.png",
+      "sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+    },
+    "planner_owner": "9ceffbe2186a44f4a0017f64900d82b3",
+    "runner_status": "running",
+    "sequence": 13,
+    "stage": {
+      "arguments": {
+        "proposal_id": "proposal-29b7df0a14ad4747b5301091b0500015"
+      },
+      "before_commands": [
+        "command-0eb32e67ff4943979c667f45701af419",
+        "command-6184aa30e497418e8416b68ef4b0c87e",
+        "command-6a3f77b6799e42f79e802c7069d4f1ec"
+      ],
+      "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+      "context": {
+        "action": {
+          "action": "move",
+          "intent": "Approach the block from the left to establish contact for a rightward push.",
+          "target_x": -0.175,
+          "target_y": 0.0
+        },
+        "call_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/operator/calls/9740c402-0754-4052-9a0e-55cc99c93600-01",
+        "decision_epoch": 0,
+        "job_id": "9740c402-0754-4052-9a0e-55cc99c93600"
+      },
+      "control_epoch": 0,
+      "operation": "dispatch",
+      "proof": {
+        "adapter_id": "6d17e55437444025af20a6cc32e00464",
+        "body_id": "88ef33b6618f41f58507907680f0bde8",
+        "epoch": 1,
+        "source_sha256": "9b1a1c7843da38da19b35aee16e8899b4f02887f75fab361cea78b74087ee691",
+        "state_sha256": "765c2bb33a6534296ca1b1d8fbb79414ebc70eb6626b170cbfaf8165710380bc"
+      }
+    },
+    "usage": {
+      "calls": 1,
+      "input_tokens": 13057,
+      "output_tokens": 168,
+      "reported_calls": 1
+    }
+  },
+  "label": "offline",
+  "posts": [
+    {
+      "command_id": "command-6a3f77b6799e42f79e802c7069d4f1ec",
+      "payload_sha256": "1910f73d909279fb9fe270813c8e8fe6f15630420d3da4fe0b18fac3c15bef7d",
+      "sequence": 8
+    },
+    {
+      "command_id": "command-6184aa30e497418e8416b68ef4b0c87e",
+      "payload_sha256": "986f5d45a1f3aaaf691d2d5b1fc9d263bc3ec6951711d4084404e934d594c540",
+      "sequence": 16
+    },
+    {
+      "command_id": "command-0eb32e67ff4943979c667f45701af419",
+      "payload_sha256": "7aa96a1b5a27d086843fb21726afe9457ebc6ec442304c1d0e169000387b6126",
+      "sequence": 28
+    },
+    {
+      "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+      "payload_sha256": "134c80ce5b51c6d125d0be700af5e42afec26e95ea6032a3b3c69b0abf1659c6",
+      "sequence": 36
+    }
+  ],
+  "processes": {
+    "body": 49737,
+    "workbench": null
+  },
+  "public": null,
+  "time": 1791860187.418903
+}

@@ -14,7 +14,7 @@ import threading
 from pathlib import Path
 
 import psutil
-from capability_clean_install import isolated_environment
+from capability_clean_install import isolated_environment, source_commit
 from capability_host_trial import ax_document_text, ax_reset_text
 from capability_interrupt_trial import Server, destination_target
 from capability_restart_trial import _rows, _wait_no_worker
@@ -99,6 +99,7 @@ def main() -> int:
     root = args.run_dir.resolve()
     if not root.is_relative_to(PROJECT / "output"):
         parser.error("owned output directory required")
+    provenance = source_commit(PROJECT)
     root.mkdir(parents=True, mode=0o700, exist_ok=False)
     cwd = root / "outside-source"
     cwd.mkdir(mode=0o700)
@@ -326,9 +327,7 @@ def main() -> int:
                 )
         result = {
             "passed": True,
-            "source_commit": subprocess.check_output(
-                ["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True
-            ).strip(),
+            "source_commit": provenance,
             "origins": origins,
             "actual_runtime_contexts": actual_contexts,
             "emitted_configuration_checked": configured is not None,

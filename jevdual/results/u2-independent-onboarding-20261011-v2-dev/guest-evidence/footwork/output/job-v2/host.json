@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "footwork": {
+      "command": "/Users/tom/footwork-u2/footwork/output/install-v1/venv/bin/python",
+      "env": {
+        "PYTHONPATH": "",
+        "PYTHONHOME": "",
+        "PYTHONNOUSERSITE": "1",
+        "ANONYMIZED_TELEMETRY": "false",
+        "BROWSER_USE_CLOUD_SYNC": "false"
+      },
+      "args": [
+        "-I",
+        "-m",
+        "jevdual.capability.cli",
+        "server",
+        "--scope",
+        "/Users/tom/footwork-u2/footwork/output/job-v2/scope.json",
+        "--journal",
+        "/Users/tom/footwork-u2/footwork/output/job-v2/operations.sqlite"
+      ]
+    }
+  }
+}

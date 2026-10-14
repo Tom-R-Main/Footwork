@@ -1,0 +1,112 @@
+{
+  "source_commit": "bd896e1786406dc06cab65dcb9255934fd5ad196",
+  "attempted": 7,
+  "passed": 7,
+  "source_unchanged": true,
+  "raw_evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/s5-independent-20261010-v1/qualification.json",
+  "raw_sha256": "647d6dab77eff0d5225d5df5802e58c83a076e2500d01da395c5911c4ee73df4",
+  "classification": "independent public API/adapter/native integration diagnostics; no AI benchmark",
+  "cases": [
+    {
+      "case_id": "01-normal-http-native",
+      "passed": true,
+      "expected_outcome": "fulfilled",
+      "app_revision": 4,
+      "app_state": "fulfilled",
+      "effect_count": 1,
+      "native_steps_before_cancel": null,
+      "verified_stop": null,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    },
+    {
+      "case_id": "02-edit-during-motion",
+      "passed": true,
+      "expected_outcome": "stale_fulfillment_refused",
+      "app_revision": 4,
+      "app_state": "open",
+      "effect_count": 0,
+      "native_steps_before_cancel": 179,
+      "verified_stop": true,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    },
+    {
+      "case_id": "03-cancel-during-motion",
+      "passed": true,
+      "expected_outcome": "stale_fulfillment_refused",
+      "app_revision": 4,
+      "app_state": "cancelled",
+      "effect_count": 0,
+      "native_steps_before_cancel": 186,
+      "verified_stop": true,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    },
+    {
+      "case_id": "04-lost-app-reply",
+      "passed": true,
+      "expected_outcome": "one_effect_historical_reconciliation",
+      "app_revision": 4,
+      "app_state": "fulfilled",
+      "effect_count": 1,
+      "native_steps_before_cancel": null,
+      "verified_stop": null,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    },
+    {
+      "case_id": "05-identity-and-authority",
+      "passed": true,
+      "expected_outcome": "wrong_identity_flags_paths_and_unsupported_evidence_refused",
+      "app_revision": 3,
+      "app_state": "open",
+      "effect_count": 0,
+      "native_steps_before_cancel": null,
+      "verified_stop": null,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    },
+    {
+      "case_id": "06-restart-history",
+      "passed": true,
+      "expected_outcome": "same_identity_history_no_redispatch",
+      "app_revision": 4,
+      "app_state": "fulfilled",
+      "effect_count": 1,
+      "native_steps_before_cancel": null,
+      "verified_stop": null,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    },
+    {
+      "case_id": "07-current-artifact",
+      "passed": true,
+      "expected_outcome": "historical_stage_current_artifact_refuses_new_fulfillment",
+      "app_revision": 3,
+      "app_state": "open",
+      "effect_count": 0,
+      "native_steps_before_cancel": null,
+      "verified_stop": null,
+      "all_parent_handles_exited": true,
+      "adapter_stop_observed": true,
+      "socket_absent": true
+    }
+  ],
+  "actual_browser": {
+    "passed": true,
+    "effect_count": 1,
+    "fulfilled_revision": 2
+  },
+  "failures_preserved": [
+    "tools/physical-workcell/output/a56bb315a/conformance.json",
+    "tools/physical-workcell/output/h5-receipt-before-type-fix/unittest.log",
+    "tools/physical-workcell/output/h5-receipt-before-type-fix-v2/unittest.log"
+  ]
+}

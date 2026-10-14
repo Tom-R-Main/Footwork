@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Work orders · Footwork</title>
+<style>
+  :root { color-scheme: light; font-family: system-ui, sans-serif; color: #213128; background: #f2f4ef; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  main { max-width: 1120px; margin: 0 auto; padding: 38px 24px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; margin-bottom: 30px; }
+  h1 { margin: 0; font-size: 30px; letter-spacing: -.035em; }
+  h2 { margin: 0; font-size: 21px; overflow-wrap: anywhere; }
+  h3 { margin: 24px 0 12px; font-size: 15px; }
+  p { line-height: 1.5; }
+  .muted { color: #65716a; font-size: 14px; }
+  .simulation { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #65716a; }
+  .layout { display: grid; grid-template-columns: minmax(290px, .8fr) minmax(360px, 1.2fr); gap: 24px; align-items: start; }
+  .panel { background: #fff; border: 1px solid #d8e0d5; border-radius: 12px; padding: 24px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .state { padding: 5px 10px; border-radius: 20px; background: #eaf1e8; font-size: 12px; font-weight: 600; text-transform: capitalize; }
+  .state[data-state="cancelled"] { background: #f8ece7; color: #954b31; }
+  .state[data-state="fulfilled"] { background: #dcefdc; color: #2d6036; }
+  .region { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 22px; }
+  .coordinate { padding: 12px; background: #f5f7f3; border-radius: 7px; }
+  .coordinate small { display: block; color: #65716a; margin-bottom: 5px; }
+  button { font: inherit; font-size: 14px; padding: 10px 14px; border: 1px solid #b8c8b6; border-radius: 7px; background: #fff; color: #254a2b; cursor: pointer; }
+  button.primary { background: #254a2b; color: #fff; border-color: #254a2b; }
+  button.danger { color: #954b31; border-color: #ddc4ba; }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible, input:focus-visible { outline: 3px solid #a4c498; outline-offset: 2px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lease { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e1e6dd; }
+  .lease code { display: block; overflow-wrap: anywhere; font-size: 12px; margin: 9px 0; }
+  .frame { background: #19232a; border-radius: 8px; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; overflow: hidden; margin: 18px 0 12px; }
+  .frame img { display: block; width: 100%; height: auto; }
+  .placeholder { color: #c0cdc4; text-align: center; padding: 20px; font-size: 14px; }
+  .notice { margin-top: 24px; min-height: 24px; line-height: 1.5; font-size: 14px; }
+  .notice[data-kind="error"] { color: #954b31; }
+  .notice[data-kind="success"] { color: #2d6036; }
+  form { margin: 18px 0; padding: 18px; border: 1px solid #d8e0d5; border-radius: 8px; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  label { display: grid; gap: 6px; font-size: 12px; color: #65716a; }
+  input { width: 100%; font: inherit; font-size: 14px; padding: 8px; border: 1px solid #b8c8b6; border-radius: 5px; }
+  footer { margin-top: 28px; color: #65716a; font-size: 12px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; gap: 8px; } main { padding: 24px 16px; } }
+</style>
+</head>
+<body>
+<main>
+  <header><div><h1>Work orders</h1><p class="muted">Bind an order, stage the part, then verify fulfillment.</p></div><span class="simulation">MuJoCo simulation</span></header>
+  <div class="layout">
+    <section class="panel" aria-label="Current order">
+      <div class="row"><h2 id="order-id">Loading order…</h2><span id="state" class="state"></span></div>
+      <p id="revision" class="muted"></p>
+      <p id="project" class="muted"></p>
+      <h3>Requested staging region</h3>
+      <div class="region" id="region"></div>
+      <div class="actions"><button id="bind" class="primary">Bind current revision</button><button id="edit">Edit target</button><button id="cancel" class="danger">Cancel order</button></div>
+      <form id="edit-form" hidden>
+        <div class="fields">
+          <label>X minimum (m)<input id="x_min" type="number" step="0.001" min="-0.35" max="0.35" required></label>
+          <label>X maximum (m)<input id="x_max" type="number" step="0.001" min="-0.35" max="0.35" required></label>
+          <label>Y minimum (m)<input id="y_min" type="number" step="0.001" min="-0.2" max="0.2" required></label>
+          <label>Y maximum (m)<input id="y_max" type="number" step="0.001" min="-0.2" max="0.2" required></label>
+        </div><button class="primary" type="submit">Save target</button>
+      </form>
+      <div id="lease-panel" class="lease" hidden>
+        <h3 id="lease-title">Bound for physical work</h3><p id="lease-summary" class="muted"></p>
+        <details><summary class="muted">Lease identity</summary><code id="lease-id"></code></details>
+        <div class="actions" style="margin-top:16px"><button id="fulfill" class="primary">Verify and fulfill</button><button id="refresh">Refresh evidence</button></div>
+      </div>
+      <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    </section>
+    <section class="panel" aria-label="Simulated workcell">
+      <div class="row"><h2>Workcell</h2><span class="simulation">Actual rendered RGB</span></div>
+      <div class="frame"><img id="frame" alt="Current simulated part, pusher and staging region" hidden><p id="placeholder" class="placeholder">Bind the current order to connect its workcell.</p></div>
+      <p id="frame-status" class="muted">No current physical evidence.</p>
+      <p class="muted">Orange: part · Blue: pusher · Green: staging region</p>
+      <p class="muted">Physical work is performed through the bound handoff tools. Verification checks the current controller evidence and saved artifact before updating this order.</p>
+    </section>
+  </div>
+  <footer>Local diagnostic · Changes and cancellation advance the order revision. A stale lease cannot fulfill it.</footer>
+</main>
+<script>
+  const element = id => document.getElementById(id);
+  let appId, order, lease, frameUrl, frameGeneration, updating = false, evidenceAvailable = false;
+  const coordinates = ['x_min', 'x_max', 'y_min', 'y_max'];
+  const notice = (text, kind = '') => { element('notice').textContent = text; element('notice').dataset.kind = kind; };
+  async function api(path, body) {
+    const response = await fetch(path, body === undefined ? {cache:'no-store'} : {method:'POST', headers:{'Content-Type':'application/json', 'X-Footwork-App-ID':appId}, body:JSON.stringify(body)});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.reason || 'Current evidence is unavailable.');
+    if (appId && data.app_id !== appId) throw new Error('Application identity changed. Reload before continuing.');
+    return data;
+  }
+  const path = action => '/api/orders/' + encodeURIComponent(order.order_id) + (action ? '/' + action : '');
+  function storageKey(kind) { return ['footwork-order', appId, order.order_id, kind].join(':'); }
+  function setLease(next) {
+    if (!lease || lease.lease_id !== next.lease_id) {
+      if (frameUrl) URL.revokeObjectURL(frameUrl);
+      frameUrl = undefined; frameGeneration = undefined; evidenceAvailable = false;
+      element('frame').removeAttribute('src'); element('frame').hidden = true;
+      element('placeholder').hidden = false; element('placeholder').textContent = 'Waiting for the assigned workcell.';
+      element('frame-status').textContent = 'No current physical evidence for bound revision ' + next.expected_revision + '.';
+    }
+    lease = next;
+  }
+  function render() {
+    element('order-id').textContent = order.order_id;
+    element('state').textContent = order.state;
+    element('state').dataset.state = order.state;
+    element('revision').textContent = 'Revision ' + order.revision + ' · Part: ' + order.part_id;
+    element('project').textContent = order.project.namespace + ' / ' + order.project.project_id;
+    element('region').replaceChildren();
+    for (const key of coordinates) {
+      const box = document.createElement('div'); box.className = 'coordinate';
+      const label = document.createElement('small'); label.textContent = key.replace('_', ' ');
+      const value = document.createElement('span'); value.textContent = order.target_zone[key].toFixed(3) + ' m';
+      box.append(label, value); element('region').append(box);
+    }
+    const open = order.state === 'open';
+    for (const id of ['bind','edit','cancel']) element(id).disabled = !open || updating;
+    element('lease-panel').hidden = !lease;
+    const currentLease = lease && lease.expected_revision === order.revision && open;
+    element('fulfill').disabled = !currentLease || updating || !evidenceAvailable;
+    if (lease) {
+      element('lease-id').textContent = lease.lease_id;
+      element('lease-summary').textContent = currentLease ? 'Bound to revision ' + lease.expected_revision + '. Inspect physical evidence before fulfillment.' : order.state === 'fulfilled' ? 'Application fulfillment is saved. Physical evidence below may change later.' : 'This lease belongs to an earlier revision. Bind the current order before further work.';
+      element('lease-title').textContent = order.state === 'fulfilled' ? 'Fulfillment recorded' : currentLease ? 'Bound for physical work' : 'Lease no longer current';
+    }
+  }
+  async function refreshOrder() { order = (await api(path())).order; render(); }
+  async function refreshFrame() {
+    if (!lease) return;
+    try {
+      const response = await fetch('/api/leases/' + lease.lease_id + '/frame', {cache:'no-store'});
+      if (!response.ok) { const error = await response.json(); throw new Error(error.reason); }
+      const blob = await response.blob();
+      if (frameUrl) URL.revokeObjectURL(frameUrl);
+      frameUrl = URL.createObjectURL(blob); frameGeneration = response.headers.get('X-Image-Generation');
+      element('frame').src = frameUrl; element('frame').hidden = false; element('placeholder').hidden = true;
+      const recognized = response.headers.get('X-Perception-State') === 'recognized';
+      const calibrated = response.headers.get('X-Calibration-Valid') === 'true';
+      evidenceAvailable = recognized && calibrated;
+      element('frame').alt = 'Observed simulated part, pusher and staging region at generation ' + frameGeneration;
+      element('frame-status').textContent = 'Current observed generation ' + frameGeneration + ' · Bound revision ' + lease.expected_revision + (evidenceAvailable ? ' · MuJoCo simulation' : ' · Recognition or calibration unsupported; verification blocked.');
+    } catch (error) {
+      evidenceAvailable = false;
+      element('frame').alt = 'Last observed simulated workcell at generation ' + frameGeneration + '; current evidence unavailable';
+      element('frame-status').textContent = frameUrl ? 'Last observed generation ' + frameGeneration + ' · Bound revision ' + lease.expected_revision + ' · Current evidence unavailable.' : 'Current workcell evidence unavailable: ' + error.message;
+      if (!frameUrl) element('placeholder').textContent = 'Waiting for the assigned workcell.';
+    }
+    render();
+  }
+  async function action(work) {
+    if (updating) return;
+    updating = true; render();
+    try { await work(); } catch (error) { notice(error.message, 'error'); }
+    finally { updating = false; await refreshOrder().catch(error => notice(error.message, 'error')); render(); }
+  }
+  element('bind').onclick = () => action(async () => {
+    const key = storageKey('bind-' + order.revision);
+    let operationId = localStorage.getItem(key);
+    if (!operationId) { operationId = 'bind-' + crypto.randomUUID(); localStorage.setItem(key, operationId); }
+    const data = await api(path('bind'), {expected_revision:order.revision, binding_operation_id:operationId});
+    setLease(data.lease); localStorage.setItem(storageKey('lease'), lease.lease_id);
+    notice('Current order is bound. The handoff can now stage the part.'); render(); await refreshFrame();
+  });
+  element('edit').onclick = () => {
+    for (const key of coordinates) element(key).value = order.target_zone[key];
+    element('edit-form').hidden = !element('edit-form').hidden;
+  };
+  element('edit-form').onsubmit = event => {
+    event.preventDefault(); action(async () => {
+      const zone = Object.fromEntries(coordinates.map(key => [key, Number(element(key).value)]));
+      if (!Object.values(zone).every(Number.isFinite)) throw new Error('Enter finite target coordinates.');
+      await api(path('edit'), {expected_revision:order.revision, target_zone:zone});
+      element('edit-form').hidden = true; notice('Target updated. The previous lease is no longer current.');
+    });
+  };
+  element('cancel').onclick = () => action(async () => {
+    await api(path('cancel'), {expected_revision:order.revision}); notice('Order cancelled. Admitted physical motion is not rolled back.');
+  });
+  element('refresh').onclick = () => action(async () => { await refreshOrder(); await refreshFrame(); });
+  element('fulfill').onclick = () => action(async () => {
+    notice('Checking current physical evidence…');
+    const data = await api(path('fulfill'), {lease_id:lease.lease_id, completion_operation_id:lease.completion_operation_id});
+    order = data.current_order; notice('Fulfillment verified and saved for this order.', 'success'); render(); await refreshFrame();
+  });
+  (async () => {
+    try {
+      const health = await api('/api/health'); appId = health.app_id;
+      order = (await api('/api/orders')).orders[0];
+      if (!order) throw new Error('No order is available.');
+      const previous = localStorage.getItem(storageKey('lease'));
+      if (previous) setLease((await api('/api/leases/' + previous)).lease);
+      render(); await refreshFrame();
+    } catch (error) { notice(error.message, 'error'); }
+  })();
+  setInterval(async () => {
+    if (!order || !lease || updating) return;
+    updating = true;
+    try { await refreshOrder(); await refreshFrame(); }
+    catch (error) { evidenceAvailable = false; notice(error.message, 'error'); }
+    finally { updating = false; render(); }
+  }, 3000);
+</script>
+</body>
+</html>

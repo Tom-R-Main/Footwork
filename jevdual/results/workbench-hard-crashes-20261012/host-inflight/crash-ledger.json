@@ -1,0 +1,45 @@
+{
+  "boundaries": [
+    {
+      "case": "host-inflight",
+      "command_id": "command-2af21401c7314a818b232beb8fa76cd6",
+      "finished_snapshot": "000004-finished.json",
+      "gate": {
+        "barrier": "body_receipt_before_link_reply",
+        "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "command_id": "command-2af21401c7314a818b232beb8fa76cd6",
+        "epoch": 1,
+        "proposal_id": "proposal-a5b9f1eebd6d4aaf8f142caee11074d3",
+        "relay_sequence": 68,
+        "request_sha256": "7db7148e228e381277df038f4f18641a0fcf4051343687b5bd1dd4acdd275156",
+        "response_sha256": "ba9906a224d35543840c26921578a9d939dd364a8a38cd112d84e4753e2fd4db",
+        "time": 1791835155.247614,
+        "version": 1
+      },
+      "new_epoch": 1,
+      "offline_snapshot": "000002-offline.json",
+      "old_epoch": 1,
+      "pre_snapshot": "000001-before.json",
+      "process": {
+        "boot": 1,
+        "children_after": [],
+        "children_before": [],
+        "exit_observed": true,
+        "group": 47151,
+        "initialized": false,
+        "log": "workbench-01.log",
+        "pid": 47151,
+        "port": 51381,
+        "returncode": -9,
+        "role": "workbench",
+        "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-inflight-v1/operator",
+        "signal": "SIGKILL",
+        "stopped_time": 1791835155.305744
+      },
+      "request_sha256": "7db7148e228e381277df038f4f18641a0fcf4051343687b5bd1dd4acdd275156",
+      "restored_snapshot": "000003-restored.json",
+      "role": "workbench"
+    }
+  ],
+  "case": "host-inflight"
+}

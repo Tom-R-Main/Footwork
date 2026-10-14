@@ -1,0 +1,196 @@
+{
+  "events": [
+    {
+      "diagnostic_gate": "after_native",
+      "identity": {
+        "adapter_id": "e7e64d7025ab4cc380116a156fc8d2eb",
+        "body_id": "81f6633447fb481ea7f1d71db89c6b6d",
+        "epoch": 1,
+        "protocol": "footwork.body/1",
+        "simulation": true,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "kind": "ready",
+      "launcher": "crash_body.py",
+      "pid": 5434
+    },
+    {
+      "kind": "stopped_barrier",
+      "marker": {
+        "barrier": "after_native",
+        "bench_id": "81f6633447fb481ea7f1d71db89c6b6d",
+        "command_id": "command-e5285f01f46f40bb835735c306172cac",
+        "diagnostic_source_sha256": "9163ad618c7a92efc1306bdeca2488ce5b10835edcb77eec062fa8490e0557ea",
+        "manifest_generation": 0,
+        "native_generation": 1,
+        "native_state_sha256": "3f9c81b61415826a5127bf21026fffb5d4155b58bf7a9dff2c34563105d3327b",
+        "native_steps": 867,
+        "native_time_s": 2.7339999999999205,
+        "operation_id": "agent-9ee076336dc54db98e7b57b734efa415",
+        "pid": 5434,
+        "proposal_id": "proposal-0a2c2b53ce2944b98250e144bf6e1397",
+        "pusher_block_contact_samples": 0,
+        "request_sha256": "833667a9208a72786e8aecefaadbe53a384555623f3b28fbe4744be03b76ac23",
+        "version": 1
+      }
+    },
+    {
+      "command_id": "command-e5285f01f46f40bb835735c306172cac",
+      "kind": "SIGKILL",
+      "pid": 5434,
+      "returncode": -9
+    },
+    {
+      "diagnostic_gate": null,
+      "identity": {
+        "adapter_id": "e7e64d7025ab4cc380116a156fc8d2eb",
+        "body_id": "81f6633447fb481ea7f1d71db89c6b6d",
+        "epoch": 2,
+        "protocol": "footwork.body/1",
+        "simulation": true,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "kind": "ready",
+      "launcher": "body_network.py",
+      "pid": 5451
+    },
+    {
+      "advanced": {
+        "block_xyz": [
+          -0.11999998846068155,
+          -1.428075558873589e-10,
+          0.03499573045536993
+        ],
+        "pusher_xyz": [
+          -0.19000003075014832,
+          0.0,
+          0.06
+        ],
+        "time_s": 2.7339999999999205
+      },
+      "before": {
+        "block_xyz": [
+          -0.11999998822184511,
+          1.630059551357049e-11,
+          0.03499573045537004
+        ],
+        "pusher_xyz": [
+          -0.3,
+          0.0,
+          0.06
+        ],
+        "time_s": 1.0000000000000007
+      },
+      "exact_single_send": true,
+      "kind": "blocked_after_native",
+      "marker": {
+        "barrier": "after_native",
+        "bench_id": "81f6633447fb481ea7f1d71db89c6b6d",
+        "command_id": "command-e5285f01f46f40bb835735c306172cac",
+        "diagnostic_source_sha256": "9163ad618c7a92efc1306bdeca2488ce5b10835edcb77eec062fa8490e0557ea",
+        "manifest_generation": 0,
+        "native_generation": 1,
+        "native_state_sha256": "3f9c81b61415826a5127bf21026fffb5d4155b58bf7a9dff2c34563105d3327b",
+        "native_steps": 867,
+        "native_time_s": 2.7339999999999205,
+        "operation_id": "agent-9ee076336dc54db98e7b57b734efa415",
+        "pid": 5434,
+        "proposal_id": "proposal-0a2c2b53ce2944b98250e144bf6e1397",
+        "pusher_block_contact_samples": 0,
+        "request_sha256": "833667a9208a72786e8aecefaadbe53a384555623f3b28fbe4744be03b76ac23",
+        "version": 1
+      },
+      "public_state": {
+        "identity": {
+          "adapter_id": "e7e64d7025ab4cc380116a156fc8d2eb",
+          "body_id": "81f6633447fb481ea7f1d71db89c6b6d",
+          "epoch": 1,
+          "protocol": "footwork.body/1",
+          "simulation": true,
+          "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+        },
+        "lease": {
+          "client_id": "client-53d30a2e789d4169887ab245b1d03380",
+          "duration_s": 30.0,
+          "epoch": 1,
+          "lease_id": "24b3a58899484b829247a929b71b955f"
+        },
+        "pending_command_ids": [
+          "command-e5285f01f46f40bb835735c306172cac"
+        ],
+        "server_state": {
+          "bench": {
+            "active_job": {
+              "job_id": "job",
+              "moves": 0,
+              "phase": "prepare",
+              "started_generation": 0,
+              "started_native_time_s": 1.0000000000000007,
+              "target_zone": {
+                "x_max": 0.1,
+                "x_min": 0.04,
+                "y_max": 0.025,
+                "y_min": -0.025
+              }
+            },
+            "bench_id": "81f6633447fb481ea7f1d71db89c6b6d",
+            "diagnostic_enabled": true,
+            "generation": 0,
+            "jobs": {},
+            "native_time_s": 1.0000000000000007,
+            "source_fingerprints": {
+              "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+              "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+              "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+              "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+              "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+              "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+              "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+              "mujoco_version": "3.15.0",
+              "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+              "state_spec": 16383,
+              "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+            },
+            "source_kind": "mujoco_simulation",
+            "state": "unknown",
+            "unresolved_effect": {
+              "generation": 0,
+              "kind": "move",
+              "operation_id": "agent-9ee076336dc54db98e7b57b734efa415"
+            },
+            "version": 1
+          },
+          "identity": {
+            "adapter_id": "e7e64d7025ab4cc380116a156fc8d2eb",
+            "body_id": "81f6633447fb481ea7f1d71db89c6b6d",
+            "epoch": 2,
+            "protocol": "footwork.body/1",
+            "simulation": true,
+            "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+          },
+          "lease": null,
+          "state": "unknown",
+          "unresolved_commands": [
+            "command-e5285f01f46f40bb835735c306172cac"
+          ]
+        }
+      },
+      "state_unchanged": true
+    }
+  ],
+  "passed": true,
+  "processes": [
+    {
+      "pid": 5434,
+      "returncode": -9
+    },
+    {
+      "pid": 5451,
+      "returncode": -9
+    }
+  ],
+  "processes_reaped": true,
+  "scenario_kind": "actual_process_SIGKILL_TCP_native",
+  "sources_unchanged": true,
+  "test_id": "test_crash_body.CrashBodyTests.test_after_native_SIGKILL_retains_real_actuation_but_stays_unknown_without_replay"
+}

@@ -1,0 +1,79 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51385/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51385/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		76 checkbox Body crash while uncertain Completed, Value: 1
+	9 container
+		10 heading Bench, Value: 1
+			11 text Bench
+		77 text Body crash while uncertain
+		78 text Running
+		14 button Pause, ID: pause
+		15 container Description: Body connection, ID: network-card
+			79 text Body connected
+			80 text Body identity verified by read-only TCP health
+			18 button Disconnect, ID: disconnect
+			19 button (disabled) Check receipt, ID: reconcile
+			20 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				21 text Test the simulated connection
+		22 container Camera observation
+			23 text OVERHEAD CAMERA
+			81 text Last camera observation
+			25 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			26 text Orange part Blue pusher Green task region
+			82 text Captured · generation 11
+		83 text COMPLETED
+		84 text Measurement recorded and reset verified. The bench is ready for another job.
+		30 container Job progress
+			31 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		32 container Measurement
+			33 heading Measurement, Value: 2, ID: measurement-heading
+				34 text Measurement
+			85 text Historical result
+			36 container measurement-result
+				86 text 1,729
+				38 text Orange pixels
+				39 container
+					87 text 4,802.8
+					41 text mm²
+				42 text Apparent footprint
+				43 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+			44 button Repeat job, ID: repeat
+		45 container Activity
+			46 heading Activity, Value: 2, ID: activity-heading
+				47 text Activity
+			88 text 24 events
+			49 content list activity
+				89 container
+					90 text 04:07 PM Action receipt checked Body crash while uncertain
+				91 container
+					92 text 04:07 PM Sending a guarded action
+				93 container
+					94 text 04:07 PM Fresh body check verified The next command uses current body evidence.
+				95 container
+					96 text 04:07 PM Action proposal accepted Body crash while uncertain
+				97 container
+					98 text 04:07 PM Checking the planned action
+				99 container
+					100 text 04:07 PM Fresh body check verified The next command uses current body evidence.
+				101 container
+					102 text 04:07 PM AI planning requested Body crash while uncertain
+				103 container
+					104 text 04:07 PM Camera observation received Body crash while uncertain
+				105 container
+					106 text 04:07 PM Requesting camera observation
+				107 container
+					108 text 04:07 PM Fresh body check verified The next command uses current body evidence.
+				109 container
+					110 text 04:07 PM Action receipt checked Body crash while uncertain
+				111 container
+					112 text 04:07 PM Sending a guarded action
+		74 button (collapsed) Session details, Secondary Actions: Expand
+			75 text Session details
+		113 text 14 model requests · Reported tokens: 181,686 input / 2,058 output
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51385/

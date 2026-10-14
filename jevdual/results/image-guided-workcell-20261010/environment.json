@@ -1,0 +1,11 @@
+{
+  "source_kind": "mujoco_simulation",
+  "python": "3.12.6",
+  "mujoco": "3.15.0",
+  "numpy": "2.5.3",
+  "work_order_sha256": "4c09d883e84b18c1d47adfc1674bfcaf05c8dd7aa03194f41e0e763df1138b1b",
+  "planner": "current Codex session views RGB packets and submits structured decisions",
+  "provider_api_calls": 0,
+  "physical_hardware_effects": 0,
+  "external_project_writes": 0
+}

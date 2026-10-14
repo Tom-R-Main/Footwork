@@ -1,0 +1,194 @@
+{
+  "artifact_sha256": "8dc81c724bf617a9f3aa4833f250d5124b9e8c5e9a1c504c67d634080f44fd1f",
+  "text_members_scanned": 104,
+  "findings": {
+    "home_path": [
+      {
+        "member": "footwork/qualification.json",
+        "count": 2
+      }
+    ],
+    "file_url": [
+      {
+        "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/session.py",
+        "count": 1
+      }
+    ],
+    "private_host_name": [],
+    "account_name": [],
+    "email": []
+  },
+  "at_sign_matches": [
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/arbiter.py",
+      "count": 6
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/authorize.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/ax.py",
+      "count": 1
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/bridge.py",
+      "count": 1
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/browser_driver.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/capability/backend.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/capability/contracts.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/capability/journal.py",
+      "count": 6
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/capability/observations.py",
+      "count": 1
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/capability/service.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/carry.py",
+      "count": 10
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/cli.py",
+      "count": 4
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/coexist.py",
+      "count": 8
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/completion.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/contract.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/crossloop.py",
+      "count": 14
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/decisions.py",
+      "count": 7
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/delivery.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/desktop.py",
+      "count": 6
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/desktop_s2.py",
+      "count": 1
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/effects.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/evidence.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/grants.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/ledger.py",
+      "count": 1
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/menu.py",
+      "count": 4
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/native.py",
+      "count": 6
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/patch.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/policy.py",
+      "count": 5
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/posture.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/progress.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/receipts.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/s1.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/secrets.py",
+      "count": 2
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/session.py",
+      "count": 13
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/testing.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/text.py",
+      "count": 3
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/tools.py",
+      "count": 4
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/verify.py",
+      "count": 6
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/visual_checks.py",
+      "count": 11
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/visual_decisions.py",
+      "count": 1
+    },
+    {
+      "member": "footwork/artifacts/jevdual-0.0.1-py3-none-any.whl!jevdual/visual_evidence.py",
+      "count": 5
+    }
+  ],
+  "passed": true,
+  "scope": "exact outer ZIP and nested wheel text; literal private home/file URL/account/host and email patterns; @ decorators documented separately",
+  "reviewed_generic_matches": {
+    "home_path": "Both hits are the same qualification.json explanatory placeholder: Other /Users/<name> or /home/<name> roots from evidence content. No identity is present.",
+    "file_url": "Single hit is generic session.py construction return f\"file://{doc}\". No concrete URL or document path is present."
+  },
+  "identifying_path_or_address_findings": []
+}

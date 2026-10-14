@@ -1,0 +1,34 @@
+{
+  "boundaries": [
+    {
+      "case": "host-uncertain",
+      "command_id": "command-2fa2310dcde0409ba65e9430c4e08a9a",
+      "finished_snapshot": "000004-finished.json",
+      "gate": null,
+      "new_epoch": 1,
+      "offline_snapshot": "000002-offline.json",
+      "old_epoch": 1,
+      "pre_snapshot": "000001-before.json",
+      "process": {
+        "boot": 1,
+        "children_after": [],
+        "children_before": [],
+        "exit_observed": true,
+        "group": 60458,
+        "initialized": false,
+        "log": "workbench-01.log",
+        "pid": 60458,
+        "port": 51389,
+        "returncode": -9,
+        "role": "workbench",
+        "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-host-uncertain-v1/operator",
+        "signal": "SIGKILL",
+        "stopped_time": 1791835389.350252
+      },
+      "request_sha256": "1693f3dd8b1f58c134b589b33687988cc30687c3f71f911016c7424c56b846c0",
+      "restored_snapshot": "000003-restored.json",
+      "role": "workbench"
+    }
+  ],
+  "case": "host-uncertain"
+}

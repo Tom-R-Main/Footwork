@@ -1,0 +1,222 @@
+{
+  "log": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-conformance-v2.log",
+  "tests_passed": 43,
+  "seconds": 63.611,
+  "case_roots": [
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-ae2bc20b52e4",
+      "test_id": "test_body_contract.BodyContractTests.test_alternate_command_recovers_after_reply_loss_and_client_restart_without_replay",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-875cbbe4d9f2",
+      "test_id": "test_body_contract.BodyContractTests.test_unbound_historical_receipt_does_not_release_unknown_command",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-162f94cdb580",
+      "test_id": "test_body_contract.BodyContractTests.test_bench_schema_still_refuses_alternate_operations_and_unsafe_motion",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-60f3d9fcb693",
+      "test_id": "test_body_contract.BodyContractTests.test_required_operation_schema_refuses_before_send_or_journal",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-ac54c860b48e",
+      "test_id": "test_body_contract.BodyContractTests.test_unknown_lower_proof_blocks_completed_outer_receipt_until_exact_proof",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-28789cfeba9c",
+      "test_id": "test_body_contract.BodyContractTests.test_shared_envelope_refuses_wrong_identity_epoch_state_and_schema",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-body-contract-9c561606fd0b",
+      "test_id": "test_body_contract.BodyContractTests.test_shared_transport_import_has_no_simulator_dependency",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-be5a4f384b",
+      "test_id": "test_body_network.BodyNetworkTests.test_exact_concurrent_duplicate_executes_one_native_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-5781a589e9",
+      "test_id": "test_body_network.BodyNetworkTests.test_accepted_intent_without_lower_receipt_blocks_restart",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-ae56b59eb4",
+      "test_id": "test_body_network.BodyNetworkTests.test_conflicting_duplicate_refuses_without_second_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-ee015656d4",
+      "test_id": "test_body_network.BodyNetworkTests.test_missing_command_not_seen_then_not_accepted_after_lease_expiry",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-3223407c01",
+      "test_id": "test_body_network.BodyNetworkTests.test_known_result_survives_restart_and_old_lease_is_fenced",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-87e877e9dc",
+      "test_id": "test_body_network.BodyNetworkTests.test_invalid_arguments_never_create_intent",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-31080ff719",
+      "test_id": "test_body_network.BodyNetworkTests.test_identity_source_origin_and_exclusive_lease_refuse",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-11c1a4d12e",
+      "test_id": "test_body_network.BodyNetworkTests.test_image_crosses_tcp_with_exact_challenge_sha",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-ec47bb78c4",
+      "test_id": "test_body_network.BodyNetworkTests.test_read_only_recovery_requires_indexed_hash_verified_lower_receipt",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-0f89f21b08",
+      "test_id": "test_body_network.BodyNetworkTests.test_stale_observation_is_retained_known_dispatch_refusal",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-64b119ed98",
+      "test_id": "test_body_network.BodyNetworkTests.test_terminal_pointer_persist_failure_keeps_cache_and_disk_unknown",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-4e17d10350",
+      "test_id": "test_body_network.BodyNetworkTests.test_expired_and_rotated_leases_fence_new_admission",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/body-net-test-252db9f768",
+      "test_id": "test_body_network.BodyNetworkTests.test_lease_rechecked_after_slow_validation_before_intent",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-272c4605c3a3",
+      "test_id": "test_body_client.BodyClientTests.test_endpoint_pin_and_lifetime_client_lock",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-63bc74ffb717",
+      "test_id": "test_body_client.BodyClientTests.test_exact_256_record_client_journal_reloads_and_refuses_send_257",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-5c1de8bf4576",
+      "test_id": "test_body_client.BodyClientTests.test_malformed_proxy_headers_never_forward_or_admit_a_native_command",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-4f4fc027d009",
+      "test_id": "test_body_client.BodyClientTests.test_unknown_request_corruption_cannot_clear_or_resend",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-edeb4dbda07c",
+      "test_id": "test_body_client.BodyClientTests.test_rotating_lease_and_exclusive_client_holder",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-dfc0fabfda3b",
+      "test_id": "test_body_client.BodyClientTests.test_drop_before_remains_unknown_across_client_restart_until_lease_fence",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-0d828fc06ed6",
+      "test_id": "test_body_client.BodyClientTests.test_duplicate_real_socket_dispatch_has_one_native_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-75052e44bdc9",
+      "test_id": "test_body_client.BodyClientTests.test_delays_before_and_after_forwarding_use_real_transport",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-193c9585c4a1",
+      "test_id": "test_body_client.BodyClientTests.test_unbound_error_after_native_success_stays_pending",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-2b5c946f33b2",
+      "test_id": "test_body_client.BodyClientTests.test_images_are_downloaded_hash_bound_without_changing_nested_packet",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-999d22063bac",
+      "test_id": "test_body_client.BodyClientTests.test_drop_after_native_effect_reconciles_without_resending",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-488b0e0f48",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_09_identity_source_epoch_and_exclusive_lease_fence",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-4bce85857e",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_02_bounded_delays_preserve_exact_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-9dbd7e5104",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_06_conflicting_duplicate_refuses_without_second_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-5f5abeb233",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_04_drop_after_effect_reconciles_without_resending",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-40aa82f185",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_01_successive_network_cycles_with_RGB_only_policy",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-682ea46467",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_08_delay_past_lease_expiry_never_admits_late_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-cf2549e025",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_10_process_restart_preserves_terminal_history_and_body",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-41c0221c94",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_07_stale_image_proposal_cannot_dispatch_effect",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-7979f7737d",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_12_accepted_without_lower_proof_and_client_restart_stays_unknown",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-5e6df0fafa",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_03_drop_before_acceptance_stays_pending_until_fenced",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-4b670d1056",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_11_restart_recovers_exact_lower_receipt_without_dispatch",
+      "passed": true
+    },
+    {
+      "root": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9test-f5722da49c",
+      "test_id": "test_network_body_faults.NetworkBodyFaultTests.test_05_exact_concurrent_duplicate_has_one_result_one_motion",
+      "passed": true
+    }
+  ]
+}

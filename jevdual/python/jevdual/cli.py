@@ -57,6 +57,15 @@ async def cmd_apps(_: argparse.Namespace) -> int:
     return 0
 
 
+async def cmd_check_artifact(args: argparse.Namespace) -> int:
+    """External-artifact equality needs no Driver, model, session, or carried value."""
+    from jevdual.artifacts import check_artifact
+
+    result = check_artifact(Path(args.path), Path(args.expected_file), args.expected_sha256)
+    print(json.dumps(result, sort_keys=True))
+    return 0 if result["ok"] else 6
+
+
 async def cmd_menu(args: argparse.Namespace) -> int:
     from cua_driver import CuaDriver
 
@@ -413,6 +422,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     common(cf)
     cf.set_defaults(fn=S.cmd_check_file)
+    artifact = sub.add_parser("check-artifact", help="read-only exact bytes against a digest-bound expected file")
+    artifact.add_argument("path")
+    artifact.add_argument("--expected-file", required=True)
+    artifact.add_argument("--expected-sha256", required=True)
+    artifact.set_defaults(fn=cmd_check_artifact)
     gr = sub.add_parser("grant", help="allow one exact effect on one resource (the words `do` takes)")
     gr.add_argument("words", nargs="+")
     gr.add_argument("--uses", type=int, default=1)

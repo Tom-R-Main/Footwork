@@ -17,10 +17,39 @@ The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the pro
 from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
 
+For an agent integration, start with [capability installation](jevdual/docs/capability-packaging.md)
+and the [agent-host recipe](jevdual/docs/installed-agent-host.md). The wheel supplies five MCP tools
+for one scoped browser-to-TextEdit job on macOS, with durable operation results and validated completion
+reports. It needs existing Python, uv, Chrome and applicable host permissions. The current candidate
+does not discover arbitrary apps; its disposable fixture helpers derive the identifiers for that test job.
+
 Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
 timestamped evidence through an existing tab/CDP adapter. They are dependency-free ESM helpers,
 separate from the Python driver and verification gates. Their contract is tested offline; live
 capture fidelity must be calibrated on the selected browser.
+
+The optional [desk paper inbox](tools/desk-inbox-experiment/README.md) connects a saved
+camera frame to local text recognition and a reviewed inbox note. Its private review keeps
+the original image and OCR text. `footwork check-artifact` checks the saved note against
+the approved source bytes without a model call; it does not judge recognition accuracy.
+
+[Project-linked workbench records](tools/workbench-notes/README.md) attach reviewed evidence
+to an explicit project, repository revision and proposed check. The optional
+[MuJoCo workcell](tools/physical-workcell/README.md) explores a body interface with
+physical-state feedback and a conditional computer work-order update. Simulation results
+remain separate from real-camera and robot qualification.
+Its [image-guided route](tools/physical-workcell/IMAGE_GUIDED.md) supplies calibrated RGB views
+to an agent, accepts frame-bound proposals and requires fresh visual placement evidence before
+the conditional local computer action.
+The [repeatable episode interface](tools/physical-workcell/EPISODES.md) binds varied cases,
+retains images when perception fails, and compares fresh-agent decisions with a deterministic
+RGB controller. [SIM3 results](jevdual/results/repeatable-work-orders-20261010/report.md)
+record all twelve attempted episodes and their limits.
+The [independent controller](tools/physical-workcell/CONTROLLER.md) owns a simulated episode
+in a separate process, with reconnectable operation status, cancellation evidence and
+conservative receipt-based restart recovery.
+[SIM4 results](jevdual/results/independent-controller-20261010/report.md) record disconnect,
+cancellation and crash trials, retained failures and the boundary of supported recovery.
 
 ## Drive it
 

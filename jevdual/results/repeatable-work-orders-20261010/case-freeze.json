@@ -1,0 +1,49 @@
+{
+  "protocol_commit": "5128f37",
+  "suite_sha256": "36ded4e5e8b98227ef5f35ce2457ad72f6fbfb92d4999484541959d6dcef40d7",
+  "cases": [
+    {
+      "case_id": "ordinary-a",
+      "group": "ordinary",
+      "file": "ordinary-a.json",
+      "case_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/cases/ordinary-a.json",
+      "case_sha256": "4a60068d9e562246812c02d57e978259e24697274f3ea5055bda8175c85a5751"
+    },
+    {
+      "case_id": "ordinary-b",
+      "group": "ordinary",
+      "file": "ordinary-b.json",
+      "case_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/cases/ordinary-b.json",
+      "case_sha256": "b6a36fffbf83a68af315944ff1f92cdfd9a0dfa48c921dd11a6f64f4b564b926"
+    },
+    {
+      "case_id": "ordinary-c",
+      "group": "ordinary",
+      "file": "ordinary-c.json",
+      "case_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/cases/ordinary-c.json",
+      "case_sha256": "fa34684c4d313a2fb765c2ad1bed38f7cfc37d447436486ff87d88380c25fbb7"
+    },
+    {
+      "case_id": "low-light",
+      "group": "challenge",
+      "file": "low-light.json",
+      "case_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/cases/low-light.json",
+      "case_sha256": "30321dd8243b1305de5dad17e6f4f9d1230187e6f8dd6845d82c56508e871d98"
+    },
+    {
+      "case_id": "occlusion",
+      "group": "challenge",
+      "file": "occlusion.json",
+      "case_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/cases/occlusion.json",
+      "case_sha256": "934880ad3736e73cb761b64d3cfda109a7e40d08320e770fb3edcb50c90769da"
+    },
+    {
+      "case_id": "camera-shift",
+      "group": "challenge",
+      "file": "camera-shift.json",
+      "case_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/cases/camera-shift.json",
+      "case_sha256": "cbf8a3b2612965dd2246523ba630bd86760192f9f8b3a01d9be9d7af89fc72c6"
+    }
+  ],
+  "development_excluded": true
+}

@@ -1,0 +1,246 @@
+{
+  "steps": [
+    {
+      "browser_action": "Observed offline state; cached evidence and disabled controls retained",
+      "cached_public": null,
+      "client_commands": 4,
+      "fetch_error": "[Errno 61] Connection refused",
+      "name": "crash-offline",
+      "offline": true,
+      "pending_command_ids": [],
+      "pins": {
+        "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+        "body_id": "88ef33b6618f41f58507907680f0bde8"
+      },
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/ui/crash-offline.png",
+      "snapshot_provenance": {
+        "name": "000002-offline.json",
+        "sha256": "992c40b69b4f48109253bb0602c7b9644e583adaff0c26ecdb09169514d4ecec"
+      },
+      "state": null,
+      "time": 1791860317.602944,
+      "visible_text": "Browser tab: 5, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51413/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51413/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t54 checkbox Recover interrupted move history Working, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t55 text Recover interrupted move history\n\t\t56 text Disconnected\n\t\t14 button (disabled) Pause, ID: pause\n\t\t57 text The workbench is unavailable. The last camera image and job status are retained.\n\t\t15 container Description: Body connection, ID: network-card\n\t\t\t58 text Body connected\n\t\t\t59 text Last known body status. The workbench cannot check it while disconnected.\n\t\t\t18 button (disabled) Disconnect, ID: disconnect\n\t\t\t19 button (disabled) Check receipt, ID: reconcile\n\t\t\t20 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t21 text Test the simulated connection\n\t\t22 container Camera observation\n\t\t\t23 text OVERHEAD CAMERA\n\t\t\t60 text Retained observation \u00b7 workbench offline\n\t\t\t53 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t26 text Orange part Blue pusher Green task region\n\t\t\t61 text Retained \u00b7 workbench offline \u00b7 generation 0\n\t\t62 text WORKBENCH OFFLINE\n\t\t63 text The camera image and job status are from the workbench\u2019s last reply. Reconnect before continuing.\n\t\t30 container Job progress\n\t\t\t31 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t32 container Measurement\n\t\t\t33 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t34 text Measurement\n\t\t\t64 text Pending\n\t\t\t36 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Reloaded retained root; no automatic continuation or command replay",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "restored",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/ui/restored.png",
+      "state": {
+        "active_job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+        "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+        "connection": {
+          "adapter_id": "6d17e55437444025af20a6cc32e00464",
+          "body_id": "88ef33b6618f41f58507907680f0bde8",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": "Restarted with a retained command stage; check its exact receipt",
+            "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+            "label": "Recover interrupted move history",
+            "last_intent": "Approach the block from the left to establish contact for a rightward push.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+          "operation": "dispatch",
+          "reason": "Restarted with a retained command stage; check its exact receipt",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791860352.906879,
+      "visible_text": "Browser tab: 5, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51413/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51413/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 checkbox Recover interrupted move history Needs attention, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t12 text Recover interrupted move history\n\t\t13 text Needs attention\n\t\t14 button (disabled) Pause, ID: pause\n\t\t15 text Restarted with a retained command stage; check its exact receipt\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t17 text Body connected\n\t\t\t18 text Body identity verified by read-only TCP health\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t25 text Last observation \u00b7 Recover interrupted move history\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t28 text Captured \u00b7 generation 0\n\t\t29 text OUTCOME UNCERTAIN\n\t\t30 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t36 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Clicked Check receipt; original move receipt recovered while paused without new sends",
+      "cached_public": null,
+      "client_commands": 4,
+      "name": "recovered",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/ui/recovered.png",
+      "state": {
+        "active_job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+        "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+        "connection": {
+          "adapter_id": "6d17e55437444025af20a6cc32e00464",
+          "body_id": "88ef33b6618f41f58507907680f0bde8",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 1,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+            "label": "Recover interrupted move history",
+            "last_intent": "Approach the block from the left to establish contact for a rightward push.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-64fbd4a32ea94706b5cd8a3269debf04",
+          "operation": "dispatch",
+          "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence",
+          "state": "recovered"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791860365.9127622,
+      "visible_text": "Browser tab: 5, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51413/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51413/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t69 checkbox Recover interrupted move history Paused, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Recover interrupted move history\n\t\t71 text Paused\n\t\t14 button Resume, ID: pause\n\t\t72 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t73 text Body connected\n\t\t\t74 text Body identity verified by read-only TCP health\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t75 text Last observation \u00b7 Recover interrupted move history\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t76 text Captured \u00b7 generation 0\n\t\t77 text RECEIPT RECOVERED\n\t\t78 text The exact command receipt was recovered. The agent is paused until you resume.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t79 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Clicked explicit Resume before any additional reply fault; fresh TCP camera planning resumes",
+      "cached_public": null,
+      "client_commands": 8,
+      "name": "resumed",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/ui/resumed.png",
+      "state": {
+        "active_job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+        "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+        "connection": {
+          "adapter_id": "6d17e55437444025af20a6cc32e00464",
+          "body_id": "88ef33b6618f41f58507907680f0bde8",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 2,
+          "image_url": "/api/frame?generation=2&sha256=42819fa0bc8837bbd91f1098939426208f093b3ed7e6a2e198d725dd1e53787e"
+        },
+        "jobs": [
+          {
+            "call_count": 3,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+            "label": "Recover interrupted move history",
+            "last_intent": "Push the block rightward until its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "running",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": true,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791860398.3226151,
+      "visible_text": "Browser tab: 5, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51413/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51413/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t69 checkbox Recover interrupted move history Paused, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Recover interrupted move history\n\t\t71 text Running\n\t\t14 button Pause, ID: pause\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t72 text Body connected\n\t\t\t73 text Current body boot verified for explicit Resume\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t74 text Last observation \u00b7 Recover interrupted move history\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t75 text Captured \u00b7 generation 0\n\t\t76 text AGENT\n\t\t77 text Approach the block from the left to establish contact for a rightward push.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t78 text Pending\n\t\t\t37 text The part\u2019s visible footprint will be measured after its placement is verified."
+    },
+    {
+      "browser_action": "Observed recorded measurement and verified reset after publication recovery",
+      "cached_public": null,
+      "client_commands": 43,
+      "name": "completed",
+      "offline": false,
+      "pending_command_ids": [],
+      "screenshot": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim14-publication-v2/ui/completed.png",
+      "state": {
+        "active_job_id": null,
+        "app_id": "7fb0ac9324bd404fb51896b0f89c1c7d",
+        "connection": {
+          "adapter_id": "6d17e55437444025af20a6cc32e00464",
+          "body_id": "88ef33b6618f41f58507907680f0bde8",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 11,
+          "image_url": "/api/frame?generation=11&sha256=970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+            "label": "Recover interrupted move history",
+            "last_intent": "Verify the block center and pusher are both at their home positions.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "88ef33b6618f41f58507907680f0bde8",
+              "block_home_verified": true,
+              "generation": 11,
+              "image_sha256": "970fbf7a383c132c204bf8738fb951dbb9e226a02bc458dfa8c1bfca16d9855f",
+              "job_id": "9740c402-0754-4052-9a0e-55cc99c93600",
+              "kind": "finish_reset",
+              "native_time_s": 23.61399999999779,
+              "operation_id": "agent-42b2d69f655d4ecdaf4ca1bfa5bfd41e",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3132,
+              "reset_native_steps": 8439,
+              "state_sha256": "c88451508675d9e3a033cfcf0d8c626f353001ea20783eb3877b655452423257"
+            },
+            "status": "completed",
+            "target": "A"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791861030.574198,
+      "visible_text": "Browser tab: 5, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51413/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51413/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t69 checkbox Recover interrupted move history Completed, Value: 1\n\t9 container\n\t\t10 heading Bench, Value: 1\n\t\t\t11 text Bench\n\t\t70 text Recover interrupted move history\n\t\t71 text Running\n\t\t14 button Pause, ID: pause\n\t\t16 container Description: Body connection, ID: network-card\n\t\t\t72 text Body connected\n\t\t\t73 text Body identity verified by read-only TCP health\n\t\t\t19 button Disconnect, ID: disconnect\n\t\t\t20 button (disabled) Check receipt, ID: reconcile\n\t\t\t21 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t22 text Test the simulated connection\n\t\t23 container Camera observation\n\t\t\t24 text OVERHEAD CAMERA\n\t\t\t74 text Last camera observation\n\t\t\t26 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t27 text Orange part Blue pusher Green task region\n\t\t\t75 text Captured \u00b7 generation 11\n\t\t76 text COMPLETED\n\t\t77 text Measurement recorded and reset verified. The bench is ready for another job.\n\t\t31 container Job progress\n\t\t\t32 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t33 container Measurement\n\t\t\t34 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t35 text Measurement\n\t\t\t78 text Historical result\n\t\t\t79 container measurement-result\n\t\t\t\t80 text 1,726\n\t\t\t\t81 text Orange pixels\n\t\t\t\t82 container\n\t\t\t\t\t83 text 4,794.4\n\t\t\t\t\t84 text mm\u00b2\n\t\t\t\t85 text Apparent footprint\n\t\t\t\t86 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment.\n\t\t\t87 button Repeat job, ID: repeat"
+    }
+  ]
+}

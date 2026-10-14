@@ -1,0 +1,58 @@
+{
+  "passed": true,
+  "source_commit": "aa971782964a42d12d1ea8a52d6617476e8e3c63",
+  "artifact": {
+    "verified": true,
+    "members": 13,
+    "sha256": "1eed24b44e1749ccee387a1677d89e43d4ac4616554eac4f80f02cb75e5d6a31",
+    "source_commit": "aa971782964a42d12d1ea8a52d6617476e8e3c63"
+  },
+  "profiles": {
+    "312": {
+      "imports": {
+        "capability_clean_install": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_clean_install.py",
+        "capability_fixture": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_fixture.py",
+        "capability_fixture_config": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_fixture_config.py",
+        "capability_host_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_host_trial.py",
+        "capability_interrupt_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_interrupt_trial.py",
+        "capability_restart_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_restart_trial.py",
+        "capability_installed_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_installed_trial.py"
+      },
+      "helps": {
+        "capability_clean_install.py": 0,
+        "capability_fixture.py": 0,
+        "capability_fixture_config.py": 0,
+        "capability_installed_trial.py": 0
+      }
+    },
+    "314": {
+      "imports": {
+        "capability_clean_install": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_clean_install.py",
+        "capability_fixture": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_fixture.py",
+        "capability_fixture_config": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_fixture_config.py",
+        "capability_host_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_host_trial.py",
+        "capability_interrupt_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_interrupt_trial.py",
+        "capability_restart_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_restart_trial.py",
+        "capability_installed_trial": "/Users/thomasmain/.codex/worktrees/restart-agent-acceptance/footwork/output/u2-packet-smoke-v2/unpacked/footwork/jevdual/scripts/capability_installed_trial.py"
+      },
+      "helps": {
+        "capability_clean_install.py": 0,
+        "capability_fixture.py": 0,
+        "capability_fixture_config.py": 0,
+        "capability_installed_trial.py": 0
+      }
+    }
+  },
+  "changed_payload_members_from_v1": [
+    "footwork/MANIFEST.json",
+    "footwork/README.md",
+    "footwork/vm-plan.md"
+  ],
+  "runtime_wheel_and_helpers_unchanged": true,
+  "foreign_ref_rejected": true,
+  "old_packet_verifiable_with_frozen_ref": true,
+  "tamper_and_extra_member_rejected": true,
+  "first_use_qualification": "not_performed",
+  "claude_review": "queued_unread",
+  "limits": "Preparation only on existing Mac; no independent OS/TCC transition or native input."
+}

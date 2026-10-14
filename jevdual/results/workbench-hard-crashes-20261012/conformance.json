@@ -1,0 +1,26 @@
+{
+  "native_launcher_checks": {
+    "count": 3,
+    "passed": true,
+    "log": "tools/physical-workcell/output/sim13-crash-body-first.log"
+  },
+  "host_checks": {
+    "count": 2,
+    "passed": true,
+    "log": "tools/physical-workcell/output/sim13-host-crash-runtime-v1.log",
+    "includes_explicit_recovery_limitation": true
+  },
+  "product_files_changed": false,
+  "actual_browser_trials": "all four independently passed",
+  "controller_checks": {
+    "count": 9,
+    "passed": true,
+    "log": "tools/physical-workcell/output/sim13-harness-tests-v3/unittest.log"
+  },
+  "scorer_checks": {
+    "count": 8,
+    "passed": true,
+    "log": "tools/physical-workcell/output/sim13-crash-scorer-missing-db-final.log"
+  },
+  "total_distinct_checks": 22
+}

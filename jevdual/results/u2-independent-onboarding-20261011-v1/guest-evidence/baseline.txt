@@ -1,0 +1,53 @@
+ProductName:		macOS
+ProductVersion:		26.6.2
+BuildVersion:		25G83
+System Integrity Protection status: enabled.
+   Device Identifier:         disk0
+   Device Node:               /dev/disk0
+   Whole:                     Yes
+   Part of Whole:             disk0
+   Device / Media Name:       Apple Inc. VirtIO Block Media
+
+   Volume Name:               FOOTWORK_U2
+   Mounted:                   Yes
+   Mount Point:               /Volumes/FOOTWORK_U2
+
+   Content (IOContent):       None
+   File System Personality:   ISO Joliet
+   Type (Bundle):             cd9660
+   Name (User Visible):       ISO 9660 (Joliet)
+
+   OS Can Be Installed:       No
+   Media Type:                
+   Protocol:                  
+   SMART Status:              Not Supported
+
+   Disk Size:                 379.8 MB (379752448 Bytes) (exactly 741704 512-Byte-Units)
+   Device Block Size:         512 Bytes
+
+   Volume Total Space:        379.8 MB (379752448 Bytes) (exactly 741704 512-Byte-Units)
+   Volume Used Space:         379.8 MB (379752448 Bytes) (exactly 741704 512-Byte-Units) (100.0%)
+   Volume Free Space:         0 B (0 Bytes) (exactly 0 512-Byte-Units) (0.0%)
+   Allocation Block Size:     2048 Bytes
+
+   Media OS Use Only:         No
+   Media Read-Only:           Yes
+   Volume Read-Only:          Yes (read-only mount flag set)
+
+   Device Location:           Internal
+   Removable Media:           Fixed
+
+   Solid State:               Yes
+   Hardware AES Support:      Yes
+
+total 741608
+drwxr-xr-x  1 tom   staff       2048 Oct 11 11:08 .
+drwxr-xr-x  4 root  wheel        128 Oct 11 13:02 ..
+-rwxr-xr-x  1 tom   staff     308344 Oct 11 11:08 footwork-onboarding-u2-packet-v3.zip
+-rwxr-xr-x  1 tom   staff  282304813 Oct 11 11:08 googlechrome.dmg
+-rwxr-xr-x  1 tom   staff       2340 Oct 11 11:08 PROVENANCE.json
+-rwxr-xr-x  1 tom   staff   78557763 Oct 11 11:08 python-3.14.7-macos11.pkg
+-rwxr-xr-x  1 tom   staff        382 Oct 11 11:08 SHA256SUMS.txt
+-rwxr-xr-x  1 tom   staff   18518284 Oct 11 11:08 uv-0.12.5-aarch64-apple-darwin.tar.gz
+com.apple.Terminal
+2.15

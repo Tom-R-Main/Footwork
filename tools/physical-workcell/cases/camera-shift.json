@@ -1,0 +1,29 @@
+{
+  "case_id": "camera-shift",
+  "max_actions": 8,
+  "scene": {
+    "block_xy": [
+      -0.145,
+      0
+    ],
+    "camera_offset_x_m": 0.05,
+    "illumination_scale": 1,
+    "occlusion_fraction": 0
+  },
+  "version": 1,
+  "work_order": {
+    "order_id": "sim3-camera-shift",
+    "part_id": "block",
+    "project": {
+      "namespace": "codex_app",
+      "project_id": "abe2a667-dedc-4f3f-9863-62f3d80188bd"
+    },
+    "target_zone": {
+      "x_max": 0.22,
+      "x_min": 0.14,
+      "y_max": 0.04,
+      "y_min": -0.04
+    },
+    "version": 1
+  }
+}

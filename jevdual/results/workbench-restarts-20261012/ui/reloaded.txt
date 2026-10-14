@@ -1,0 +1,81 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			9 checkbox Restart inspection 01 Completed, Value: 0
+			10 checkbox Restart inspection 02 Completed, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		14 text Restart inspection 02
+		15 text Running
+		16 button Pause, ID: pause
+		17 container Description: Body connection, ID: network-card
+			18 text Body connected
+			19 text Body identity verified by read-only TCP health
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			22 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				23 text Test the simulated connection
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			26 text Last camera observation
+			27 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			29 text Captured · generation 20
+		30 text COMPLETED
+		31 text Measurement recorded and reset verified. The bench is ready for another job.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			37 text Historical result
+			38 container measurement-result
+				39 text 1,729
+				40 text Orange pixels
+				41 container
+					42 text 4,802.8
+					43 text mm²
+				44 text Apparent footprint
+				45 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+			46 button Repeat job, ID: repeat
+		47 container Activity
+			48 heading Activity, Value: 2, ID: activity-heading
+				49 text Activity
+			50 text 24 events
+			51 content list activity
+				52 container
+					53 text 02:21 PM Action receipt checked Restart inspection 02
+				54 container
+					55 text 02:21 PM Sending a guarded action
+				56 container
+					57 text 02:21 PM Action proposal accepted Restart inspection 02
+				58 container
+					59 text 02:21 PM Checking the planned action
+				60 container
+					61 text 02:21 PM AI planning requested Restart inspection 02
+				62 container
+					63 text 02:21 PM Camera observation received Restart inspection 02
+				64 container
+					65 text 02:21 PM Requesting camera observation
+				66 container
+					67 text 02:21 PM Agent resumed
+				68 container
+					69 text 02:20 PM Agent stopped for review timed out
+				70 container
+					71 text 02:20 PM Agent stopped for review timed out
+				72 container
+					73 text 02:20 PM Agent stopped for review timed out
+				74 container
+					75 text 02:20 PM Agent stopped for review timed out
+		76 button (collapsed) Session details, Secondary Actions: Expand
+			77 text Session details
+		78 text 29 model requests · Reported tokens: 343,310 input / 3,963 output · Reporting incomplete (26 of 29 requests)
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/

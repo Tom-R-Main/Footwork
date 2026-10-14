@@ -1,0 +1,40 @@
+Browser tab: 6, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51419/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 checkbox Retire planner and recover reply Paused, Value: 1
+		9 text One bench. Successive jobs.
+		10 text The AI prepares the part, takes a measurement, and returns it home before the next job.
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		14 text Retire planner and recover reply
+		15 text Paused
+		16 button Resume, ID: pause
+		17 text Prior planner retired; explicit Resume obtains a fresh image
+		18 container Description: Body connection, ID: network-card
+			19 text Body connected
+			20 text Body identity verified by read-only TCP health
+			21 button Disconnect, ID: disconnect
+			22 button (disabled) Check receipt, ID: reconcile
+			23 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				24 text Test the simulated connection
+		25 container Camera observation
+			26 text OVERHEAD CAMERA
+			27 text Last observation · Retire planner and recover reply
+			28 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			29 text Orange part Blue pusher Green task region
+			30 text Captured · generation 0
+		31 text PAUSED
+		32 text Paused. Resume when you are ready for the next action.
+		33 container Job progress
+			34 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		35 container Measurement
+			36 heading Measurement, Value: 2, ID: measurement-heading
+				37 text Measurement
+			38 text Pending
+			39 text The part’s visible footprint will be measured after its placement is verified.

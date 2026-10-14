@@ -1,0 +1,48 @@
+Browser tab: 4, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51377/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51377/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button ＋ New job, ID: new-job
+		8 container queue
+			9 checkbox Restart inspection 01 Completed, Value: 0
+			10 checkbox Restart inspection 02 Completed, Value: 1
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		14 text Restart inspection 02
+		15 text Running
+		16 button Pause, ID: pause
+		17 container Description: Body connection, ID: network-card
+			18 text Body connected
+			19 text Body identity verified by read-only TCP health
+			20 button Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			22 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				23 text Test the simulated connection
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			26 text Last camera observation
+			27 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame
+			28 text Orange part Blue pusher Green task region
+			29 text Captured · generation 20
+		30 text COMPLETED
+		31 text Measurement recorded and reset verified. The bench is ready for another job.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			37 text Historical result
+			38 container measurement-result
+				39 text 1,729
+				40 text Orange pixels
+				41 container
+					42 text 4,802.8
+					43 text mm²
+				44 text Apparent footprint
+				45 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI’s judgment.
+			46 button Repeat job, ID: repeat
+[Main-panel excerpt; full browser capture is reloaded.txt]

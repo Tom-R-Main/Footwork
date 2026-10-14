@@ -1,0 +1,42 @@
+{
+  "attempts": [
+    {
+      "evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-body-server-tests-first.log",
+      "failed_checks": 7,
+      "kind": "server-conformance",
+      "outcome": "failed",
+      "passed_checks": 5,
+      "reason": "stray response field violated closed retained schema"
+    },
+    {
+      "authority_remained_fenced": true,
+      "evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-terminal-pointer-before-fix.log",
+      "kind": "terminal-pointer-regression",
+      "outcome": "expected_failure"
+    },
+    {
+      "evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim9-client-capacity-before/unittest.log",
+      "kind": "client-capacity-regression",
+      "outcome": "expected_failure",
+      "reason": "256-entry local journal exceeded 64 KiB reader"
+    },
+    {
+      "checks": 12,
+      "evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9-matrix-v1/unittest.log",
+      "kind": "matrix-v1",
+      "outcome": "passed"
+    },
+    {
+      "checks": 12,
+      "evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9-matrix-v2/unittest.log",
+      "kind": "matrix-v2",
+      "outcome": "passed"
+    },
+    {
+      "checks": 12,
+      "evidence": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/n9-matrix-v3/aggregate.json",
+      "kind": "matrix-v3",
+      "outcome": "passed"
+    }
+  ]
+}

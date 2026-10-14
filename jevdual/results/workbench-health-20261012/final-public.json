@@ -1,0 +1,320 @@
+{
+  "active_job_id": null,
+  "activity": [
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-e6cd1a382110409ab381d5fd4c4cc3b0",
+      "seq": 261,
+      "time": 1791832252.5547252
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "c51f62b6b7e6b77045faa7e62b207b6083aae7cea93bc688b1d5d13ebc2183a9"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 262,
+      "time": 1791832252.67232
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 263,
+      "time": 1791832252.76916
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-34752e8b30564841a21d087d561a5930",
+      "seq": 264,
+      "time": 1791832253.140799
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "c91ba6318b8583251c817e27b82994527fd14970642478cf703ba8623ab401ee"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 265,
+      "time": 1791832253.259854
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 266,
+      "time": 1791832253.339296
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-c966c8b893db42eb84c5b0616acca391",
+      "seq": 267,
+      "time": 1791832253.647178
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "inference",
+      "outcome": "12",
+      "seq": 268,
+      "time": 1791832253.650083
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "507e8fc580d3a1de3645c79017d29cbdb19fbe08c7bb29b53151c86cb670beb8"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 269,
+      "time": 1791832261.705438
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 270,
+      "time": 1791832261.803793
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-c8ad5019377e44159aef0ee22364b18f",
+      "seq": 271,
+      "time": 1791832261.969871
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "6f79059dab5d68858756144c67eaf9be40238e57b91180f0f3da17633c09fdad"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 272,
+      "time": 1791832262.110875
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 273,
+      "time": 1791832262.20136
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-10a03ed616ea4d96a26e96ae0973c32b",
+      "seq": 274,
+      "time": 1791832262.66578
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "b7771a9f856f21997220b7646337a78d909ab9201902d30832ec913dc2ce5243"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "observe",
+      "seq": 275,
+      "time": 1791832262.80537
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "observe",
+      "seq": 276,
+      "time": 1791832262.8756638
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "observe: command-6b6e57d717d249c7811ef4708c6b8667",
+      "seq": 277,
+      "time": 1791832263.206536
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "inference",
+      "outcome": "13",
+      "seq": 278,
+      "time": 1791832263.209843
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "ad60b3ef58d11abfe414f2b391c8adbf9ce89722fe1594db2aeb69a6db2098ef"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "propose",
+      "seq": 279,
+      "time": 1791832269.831627
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "propose",
+      "seq": 280,
+      "time": 1791832269.9314198
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "propose: command-594d54e2793d428bbb42f80713e94ed3",
+      "seq": 281,
+      "time": 1791832270.19759
+    },
+    {
+      "evidence": {
+        "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+        "body_id": "eea757a5363c43ca81de4a2f78715534",
+        "epoch": 1,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state_sha256": "1cd6c2dd647f4e3bfccb6b46456551baf8e02d9b03e8eeb6ad8d00f54372e53b"
+      },
+      "intent": "",
+      "kind": "admission_proof",
+      "outcome": "dispatch",
+      "seq": 282,
+      "time": 1791832270.339628
+    },
+    {
+      "intent": "",
+      "kind": "rpc_intent",
+      "outcome": "dispatch",
+      "seq": 283,
+      "time": 1791832270.4208908
+    },
+    {
+      "intent": "Health inspection 02",
+      "kind": "rpc_applied",
+      "outcome": "dispatch: command-bd5377590da74532a8333ac5ca2a72b3",
+      "seq": 284,
+      "time": 1791832270.9544058
+    }
+  ],
+  "app_id": "433d80f43f4148ef87d341b6d117396d",
+  "connection": {
+    "adapter_id": "20f1c0ad0a0d40f38e1dee2ac094251e",
+    "body_id": "eea757a5363c43ca81de4a2f78715534",
+    "epoch": 1,
+    "fault": null,
+    "reason": "Health read delayed; fresh body proof is required before any command",
+    "state": "checking"
+  },
+  "current_frame": {
+    "available": true,
+    "generation": 21,
+    "image_url": "/api/frame?generation=21&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+  },
+  "jobs": [
+    {
+      "call_count": 14,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+      "label": "Health inspection 01",
+      "last_intent": "Finish reset with the block centered in the home zone and the pusher at its home position.",
+      "measurement": {
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "eea757a5363c43ca81de4a2f78715534",
+        "block_home_verified": true,
+        "generation": 11,
+        "image_sha256": "e47008c08f81d1ed137d87f021a4273e354a0c3d79e0c9b1da21e6dbeaf28429",
+        "job_id": "6a210963-8657-4adc-8b6b-bfffd52f3743",
+        "kind": "finish_reset",
+        "native_time_s": 22.28199999999853,
+        "operation_id": "agent-53ec814ec65e409f894ccaf9c1dd2c2a",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3166,
+        "reset_native_steps": 7940,
+        "state_sha256": "0de60aca2a69c72c36eb8396ce0c3e420c60000ca6190ec36315207e14c804a4"
+      },
+      "status": "completed",
+      "target": "A"
+    },
+    {
+      "call_count": 13,
+      "disturbance_test": false,
+      "error": null,
+      "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+      "label": "Health inspection 02",
+      "last_intent": "Verify the block center is in the home zone and the pusher is at its home position.",
+      "measurement": {
+        "footprint_area_m2": 0.004802777777777777,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1729
+      },
+      "phase": "completed",
+      "reset": {
+        "bench_id": "eea757a5363c43ca81de4a2f78715534",
+        "block_home_verified": true,
+        "generation": 21,
+        "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+        "job_id": "18dcf629-14a7-43a8-b47f-ecd98a1a85e1",
+        "kind": "finish_reset",
+        "native_time_s": 43.03000000000662,
+        "operation_id": "agent-6ec3f611bd9042a5b9a1acc3867b74e7",
+        "pusher_home_verified": true,
+        "reset_contact_samples": 3304,
+        "reset_native_steps": 8106,
+        "state_sha256": "d3bdf81922c73fc0177d3453905a0376c365e73434d7708da14061adba34ddf7"
+      },
+      "status": "completed",
+      "target": "B"
+    }
+  ],
+  "model_request_pending": false,
+  "pending_operation": null,
+  "readiness": {
+    "ready": false,
+    "reason": "Resumed; next decision receives a fresh TCP image"
+  },
+  "recovery": {
+    "command_id": null,
+    "operation": null,
+    "reason": "No pending command",
+    "state": "none"
+  },
+  "runner_status": "running",
+  "simulation": true,
+  "transport_pending": false,
+  "usage": {
+    "calls": 27,
+    "input_tokens": 352734,
+    "output_tokens": 4129,
+    "reported_calls": 27,
+    "token_usage_complete": true
+  }
+}

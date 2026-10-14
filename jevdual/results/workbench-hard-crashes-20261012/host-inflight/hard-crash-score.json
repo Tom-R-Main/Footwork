@@ -1,0 +1,544 @@
+{
+  "admissions": [
+    {
+      "command_id": "command-18ebe241a89c446b8ab656aa265e5636",
+      "passed": true,
+      "proof_event": 2
+    },
+    {
+      "command_id": "command-cb6b36628d9c494a898fff2144441b53",
+      "passed": true,
+      "proof_event": 5
+    },
+    {
+      "command_id": "command-544a0a6743cc4dff808eb83acc72eb8a",
+      "passed": true,
+      "proof_event": 9
+    },
+    {
+      "command_id": "command-2af21401c7314a818b232beb8fa76cd6",
+      "passed": true,
+      "proof_event": 12
+    },
+    {
+      "command_id": "command-374f0d33a7074ca9a4c2a6ae96b23051",
+      "passed": true,
+      "proof_event": 18
+    },
+    {
+      "command_id": "command-581d5439b2b543ff9694fb848a3574ef",
+      "passed": true,
+      "proof_event": 22
+    },
+    {
+      "command_id": "command-21bae301f68b4daa967df7eb2740f25a",
+      "passed": true,
+      "proof_event": 25
+    },
+    {
+      "command_id": "command-622145ed89c64c5ebdc4deffc9bb4327",
+      "passed": true,
+      "proof_event": 28
+    },
+    {
+      "command_id": "command-99750dcde52541a1a18bd7a52fa5a56d",
+      "passed": true,
+      "proof_event": 32
+    },
+    {
+      "command_id": "command-2e248720c89b478aaf2b9e90a05d47c2",
+      "passed": true,
+      "proof_event": 35
+    },
+    {
+      "command_id": "command-6e855574ffc54b2089d482130fbbc6f7",
+      "passed": true,
+      "proof_event": 38
+    },
+    {
+      "command_id": "command-a55ea8503d004943b6fc14cfcafd8b6d",
+      "passed": true,
+      "proof_event": 42
+    },
+    {
+      "command_id": "command-bda0d0397b154860860b96862d2f2251",
+      "passed": true,
+      "proof_event": 45
+    },
+    {
+      "command_id": "command-dfe9b1d8d29d4932b2ae5cf111f38250",
+      "passed": true,
+      "proof_event": 48
+    },
+    {
+      "command_id": "command-a40a88a4bcae4cb79242458b35f51a76",
+      "passed": true,
+      "proof_event": 52
+    },
+    {
+      "command_id": "command-c0761a0a44224ffead15e99d100ec1eb",
+      "passed": true,
+      "proof_event": 55
+    },
+    {
+      "command_id": "command-5432b510458a4b56b30c8487b2f055ab",
+      "passed": true,
+      "proof_event": 58
+    },
+    {
+      "command_id": "command-c3086f2876384e748886e9c57241d5ea",
+      "passed": true,
+      "proof_event": 62
+    },
+    {
+      "command_id": "command-7fec3622fb2e4fee9073f2030ec8368a",
+      "passed": true,
+      "proof_event": 65
+    },
+    {
+      "command_id": "command-e6fa1885911f42e5929caed1c85578e5",
+      "passed": true,
+      "proof_event": 68
+    },
+    {
+      "command_id": "command-f1b8c026d22a41f69f204ddc0e10358e",
+      "passed": true,
+      "proof_event": 72
+    },
+    {
+      "command_id": "command-5564f3929a134f769349b7ed912dbe28",
+      "passed": true,
+      "proof_event": 75
+    },
+    {
+      "command_id": "command-1864919be51c4453a32ef9e41629b1b9",
+      "passed": true,
+      "proof_event": 78
+    },
+    {
+      "command_id": "command-16afdb9f80bd43fb9d06bfb7cbd451cc",
+      "passed": true,
+      "proof_event": 82
+    },
+    {
+      "command_id": "command-74f7ffea09ea4e5f80212aa8076d3242",
+      "passed": true,
+      "proof_event": 85
+    },
+    {
+      "command_id": "command-621b28853cbe44be87903770301361b7",
+      "passed": true,
+      "proof_event": 88
+    },
+    {
+      "command_id": "command-8e296a53a7c547639cf8e24b93a870dc",
+      "passed": true,
+      "proof_event": 92
+    },
+    {
+      "command_id": "command-1b0c643b32ad419ab0d62ff81ab08651",
+      "passed": true,
+      "proof_event": 95
+    },
+    {
+      "command_id": "command-dd6e531c789d4e528eda06c68bc7fd73",
+      "passed": true,
+      "proof_event": 98
+    },
+    {
+      "command_id": "command-81d2f2aa57f749a2b5962014ca922c63",
+      "passed": true,
+      "proof_event": 102
+    },
+    {
+      "command_id": "command-b6f56dc3e4d844d988385d99b3101f7d",
+      "passed": true,
+      "proof_event": 105
+    },
+    {
+      "command_id": "command-78c833e25fbf4d04b526d36fbeeba483",
+      "passed": true,
+      "proof_event": 108
+    },
+    {
+      "command_id": "command-ee93d3f247d2406e9c16bc9cceb5baea",
+      "passed": true,
+      "proof_event": 112
+    },
+    {
+      "command_id": "command-5fb23ca55f264d78bf167b94b63cebb6",
+      "passed": true,
+      "proof_event": 115
+    },
+    {
+      "command_id": "command-a796455ffdbd4c628d805688f990dc0c",
+      "passed": true,
+      "proof_event": 118
+    },
+    {
+      "command_id": "command-75ca7196ce15408a991d354d6a54027b",
+      "passed": true,
+      "proof_event": 122
+    },
+    {
+      "command_id": "command-88277848bc1a40ce99c55e9fbac30e0d",
+      "passed": true,
+      "proof_event": 125
+    },
+    {
+      "command_id": "command-ecfa531b21f24c108926c097aec3375f",
+      "passed": true,
+      "proof_event": 128
+    },
+    {
+      "command_id": "command-ab8a3f9667c94b57b3a26986f9575b9a",
+      "passed": true,
+      "proof_event": 132
+    },
+    {
+      "command_id": "command-31d14b46fbed46338c061e12ddec1569",
+      "passed": true,
+      "proof_event": 135
+    }
+  ],
+  "body_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+  "browser": {
+    "passed": true,
+    "required_names": [
+      "crash-completed",
+      "crash-offline",
+      "crash-recovered",
+      "crash-restored",
+      "crash-resumed"
+    ]
+  },
+  "calls": [
+    {
+      "action": "move",
+      "call": 1,
+      "camera_generation": 0,
+      "challenge_id": "challenge-2366e5191cd149bd89ad99567ffe2a85",
+      "command_id": "command-2af21401c7314a818b232beb8fa76cd6",
+      "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 48409,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-a5b9f1eebd6d4aaf8f142caee11074d3"
+    },
+    {
+      "action": "move",
+      "call": 2,
+      "camera_generation": 1,
+      "challenge_id": "challenge-de16bd8ad389469fbdb7c261d8e9c6e9",
+      "command_id": "command-21bae301f68b4daa967df7eb2740f25a",
+      "image_sha256": "cb4221e600bbb24aec549f49924fc9224876a1ad8d04159fe0cc3798658d8357",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 55882,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-38066d3e977241d6870af8f4a5f3985f"
+    },
+    {
+      "action": "measure",
+      "call": 3,
+      "camera_generation": 2,
+      "challenge_id": "challenge-6fa425993af04da7aaddc4ef5d29b9ac",
+      "command_id": "command-2e248720c89b478aaf2b9e90a05d47c2",
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 56585,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-5a711d8cc97a4e738d5609ead18494cd"
+    },
+    {
+      "action": "begin_reset",
+      "call": 4,
+      "camera_generation": 2,
+      "challenge_id": "challenge-51d15b359a8942a29096ce6cdff8fe2f",
+      "command_id": "command-bda0d0397b154860860b96862d2f2251",
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 57307,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-cdc9093d3fce4d5a96c2f31c7586ae11"
+    },
+    {
+      "action": "move",
+      "call": 5,
+      "camera_generation": 2,
+      "challenge_id": "challenge-2628b7324de6446a93d785a88ecd85ff",
+      "command_id": "command-c0761a0a44224ffead15e99d100ec1eb",
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 57811,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-dc3f3b524537463d9911ae6479933e8d"
+    },
+    {
+      "action": "move",
+      "call": 6,
+      "camera_generation": 3,
+      "challenge_id": "challenge-1fe4ce7ab28944bea669592b89a07755",
+      "command_id": "command-7fec3622fb2e4fee9073f2030ec8368a",
+      "image_sha256": "aeb57b730bc64cb1ec47fbf9a42ef0acce36a927702e60d6df1d751e4d240d1e",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 58657,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-62271a2fa9254018896b449d21f1e21a"
+    },
+    {
+      "action": "move",
+      "call": 7,
+      "camera_generation": 4,
+      "challenge_id": "challenge-3e147a4cafbb467888f5177316b13021",
+      "command_id": "command-5564f3929a134f769349b7ed912dbe28",
+      "image_sha256": "c62187cd908d71592bdd7193b83ec80666e6f350e90968204d2d87a7169d12dc",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 59307,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-9462f0f172ae4a3e8dded23c0bc41ca0"
+    },
+    {
+      "action": "move",
+      "call": 8,
+      "camera_generation": 5,
+      "challenge_id": "challenge-4edb43dab1994ed2848a36e10575c38c",
+      "command_id": "command-74f7ffea09ea4e5f80212aa8076d3242",
+      "image_sha256": "e6f35d68a39eccb69ef08ffb81de2aed231bbe097a530bc31bb48ffda662a3f1",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 59841,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-4e28e400200e4ca283e60c2477cec2d4"
+    },
+    {
+      "action": "move",
+      "call": 9,
+      "camera_generation": 6,
+      "challenge_id": "challenge-985df3cbb5364dafb0391c7b770e96ec",
+      "command_id": "command-1b0c643b32ad419ab0d62ff81ab08651",
+      "image_sha256": "6c4785ad11fbf959867ca24381e9caf3a051c777b86c8e5357697aa2cdea5f67",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 60481,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-bb504f25133248e3be5e9a9e97eb1861"
+    },
+    {
+      "action": "move",
+      "call": 10,
+      "camera_generation": 7,
+      "challenge_id": "challenge-fb29bceea1d1405ca741eda4f5605ca9",
+      "command_id": "command-b6f56dc3e4d844d988385d99b3101f7d",
+      "image_sha256": "18e16fad85b15cc6b6c095191c6d8f1be9d3e1a605f05ae0ac11954d420d7c38",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 61178,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-33ee21df5233413aa9c3ed2d355ae4e6"
+    },
+    {
+      "action": "move",
+      "call": 11,
+      "camera_generation": 8,
+      "challenge_id": "challenge-aa466b3468324fb381dc08751a2a8eb5",
+      "command_id": "command-5fb23ca55f264d78bf167b94b63cebb6",
+      "image_sha256": "18207abc055796d1b37f4b94528d52bfd960be835625169fc997360f0ec4d906",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 61724,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-dd15bb91d8f24618a6847580f41c81fa"
+    },
+    {
+      "action": "move",
+      "call": 12,
+      "camera_generation": 9,
+      "challenge_id": "challenge-997c165af55e493cb62f56cbc5f5fd20",
+      "command_id": "command-88277848bc1a40ce99c55e9fbac30e0d",
+      "image_sha256": "cda2378ead3e165186825aa560540c8495d01f07acff067406513a16ee92db65",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 62258,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-701b890f9a3c4fcf9321378a2447c366"
+    },
+    {
+      "action": "finish_reset",
+      "call": 13,
+      "camera_generation": 10,
+      "challenge_id": "challenge-cd9c6ec72ecb44efb28c38f162930e02",
+      "command_id": "command-31d14b46fbed46338c061e12ddec1569",
+      "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "model_pid": 62832,
+      "native_gap": false,
+      "passed": true,
+      "proposal_id": "proposal-459f99e34a9c4b1c83492411e3c7a5d5"
+    }
+  ],
+  "case": "host-inflight",
+  "completed_cycles": 1,
+  "crash": {
+    "case": "host-inflight",
+    "command_id": "command-2af21401c7314a818b232beb8fa76cd6",
+    "new_epoch": 1,
+    "old_epoch": 1,
+    "passed": true,
+    "reconciled_sequence": 16,
+    "request_sha256": "7db7148e228e381277df038f4f18641a0fcf4051343687b5bd1dd4acdd275156",
+    "restored_sequence": 14,
+    "resume_sequence": 17,
+    "role": "workbench",
+    "snapshot_command_count": 4
+  },
+  "event_cutoff": 137,
+  "native": {
+    "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+    "measurement_receipt": {
+      "bench_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+      "generation": 2,
+      "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "measurement": {
+        "block_box": [
+          339,
+          159,
+          381,
+          201
+        ],
+        "block_center_xy": [
+          0.06666666666666667,
+          0.0
+        ],
+        "centroid_pixel_xy": [
+          359.0486674391657,
+          179.5393974507532
+        ],
+        "footprint_area_m2": 0.004794444444444444,
+        "method": "simulated_orange_RGB_footprint",
+        "orange_pixel_count": 1726
+      },
+      "native_time_s": 5.533999999999613,
+      "operation_id": "agent-d2c79124d1354aa68079cee8dfe39802",
+      "source_kind": "mujoco_simulation",
+      "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3",
+      "version": 1,
+      "worker_pid": 57272
+    },
+    "measurement_state": {
+      "block_center_in_zone": true,
+      "block_xyz": [
+        0.06582868246696554,
+        -8.393868978677625e-11,
+        0.034995730455369786
+      ],
+      "external_force_cleared": true,
+      "generation": 2,
+      "native_time_s": 5.533999999999613,
+      "pusher_home": false,
+      "pusher_xyz": [
+        -0.049999969408768885,
+        8.057882667829012e-26,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3"
+    },
+    "model_calls": 13,
+    "passed": true,
+    "reset_receipt": {
+      "bench_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+      "block_home_verified": true,
+      "generation": 10,
+      "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+      "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+      "kind": "finish_reset",
+      "native_time_s": 21.81399999999879,
+      "operation_id": "agent-1e41a624a0124550839549b25c0b46b0",
+      "pusher_home_verified": true,
+      "reset_contact_samples": 3174,
+      "reset_native_steps": 8140,
+      "state_sha256": "ff7af086a1eea92c53736c30a05c8102da4417d39f0423b48573218144fcb713"
+    },
+    "reset_state": {
+      "block_center_in_zone": true,
+      "block_xyz": [
+        -0.11582763630912812,
+        -2.3633644648884637e-09,
+        0.03499573045536985
+      ],
+      "external_force_cleared": true,
+      "generation": 10,
+      "native_time_s": 21.81399999999879,
+      "pusher_home": true,
+      "pusher_xyz": [
+        -0.3,
+        3.071149644023488e-08,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "ff7af086a1eea92c53736c30a05c8102da4417d39f0423b48573218144fcb713"
+    }
+  },
+  "owned_processes_exited": true,
+  "passed": true,
+  "safely_blocked": false,
+  "scope": "selected process SIGKILL boundaries; actual image-only Codex browser; loopback simulation; no arbitrary power-loss guarantee",
+  "single_wire_post_every_command": true,
+  "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050",
+  "source_unchanged": true,
+  "sqlite": {
+    "count": 1,
+    "role": "independent_read_only_sqlite_scorer",
+    "rows": [
+      {
+        "bench_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+        "generation": 2,
+        "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+        "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+        "operation_id": "agent-d2c79124d1354aa68079cee8dfe39802",
+        "receipt": {
+          "bench_id": "fa2bfa1f197340cd93848d5096b4bfe6",
+          "generation": 2,
+          "image_sha256": "0036a91468be0843afde149e0b028384dc45405c715d049191b94fda59392463",
+          "job_id": "78315007-1225-4aee-ad89-0fb2723c029e",
+          "measurement": {
+            "block_box": [
+              339,
+              159,
+              381,
+              201
+            ],
+            "block_center_xy": [
+              0.06666666666666667,
+              0.0
+            ],
+            "centroid_pixel_xy": [
+              359.0486674391657,
+              179.5393974507532
+            ],
+            "footprint_area_m2": 0.004794444444444444,
+            "method": "simulated_orange_RGB_footprint",
+            "orange_pixel_count": 1726
+          },
+          "native_time_s": 5.533999999999613,
+          "operation_id": "agent-d2c79124d1354aa68079cee8dfe39802",
+          "source_kind": "mujoco_simulation",
+          "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3",
+          "version": 1,
+          "worker_pid": 57272
+        },
+        "state_sha256": "ebb7a34ed4811733325084e937c4752a7fe9349c170fff8a2f3d5243bae73cf3"
+      }
+    ]
+  },
+  "transport_command_count": 40,
+  "version": 1
+}

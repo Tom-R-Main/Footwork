@@ -1,0 +1,673 @@
+{
+  "version": "v2",
+  "source_commit": "f96ac4a",
+  "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+  "planner": "current Codex session, inspected each RGB frame before its next decision; no API calls",
+  "planner_packets_have_native_poses": false,
+  "driver_sha256": "259394899c189a14dbb7f19781914c47cb6aa42f5e26cb28803628ac197cfcfc",
+  "post_run_native_oracle": {
+    "block_center_in_zone": true,
+    "block_xyz": [
+      0.2207432310034855,
+      -1.73716030348864e-10,
+      0.034998235824722744
+    ],
+    "claims": [
+      "native_simulator_state_observation"
+    ],
+    "current_software_artifact_check": {
+      "claims": [
+        "current_artifact_byte_equality"
+      ],
+      "detail": "current bytes equal the digest-bound expected source",
+      "expected_bytes": 1195,
+      "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/expected-order.json",
+      "expected_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+      "limit_bytes": 1048576,
+      "observed_bytes": 1195,
+      "observed_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+      "ok": true,
+      "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/order.json",
+      "source_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f"
+    },
+    "frame": "sim_world",
+    "generation": 5,
+    "historical_software_outcome": "staged",
+    "order_id": "footwork-image-stage-block-001",
+    "phase": "completed",
+    "physical_condition_verified": true,
+    "pusher_xyz": [
+      0.1657457661178629,
+      8.161743913677396e-19,
+      0.06
+    ],
+    "simulation_time_s": 9.137999999999721,
+    "source_kind": "mujoco_simulation",
+    "state_authority": "current_persisted_simulator_state",
+    "state_sha256": "e0eae3b6b3c86335bb69b885d8dd4a051285634e4e31598eb7c926f1ff63dac1",
+    "target_zone": {
+      "x_max": 0.26,
+      "x_min": 0.18,
+      "y_max": 0.04,
+      "y_min": -0.04
+    }
+  },
+  "independent_software_check": {
+    "claims": [
+      "current_artifact_byte_equality"
+    ],
+    "detail": "current bytes equal the digest-bound expected source",
+    "expected_bytes": 1195,
+    "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/expected-order.json",
+    "expected_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+    "limit_bytes": 1048576,
+    "observed_bytes": 1195,
+    "observed_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+    "ok": true,
+    "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/order.json",
+    "source_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f"
+  },
+  "repeated_proposals_all_artifacts_unchanged": true,
+  "limits": [
+    "fixed camera and object colors",
+    "agent-driven trial, no unattended model runner",
+    "completion verifies block center with margin, not general manipulation"
+  ],
+  "trajectory_summary": [
+    {
+      "label": "initialize",
+      "mode": "init",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "note": "Native initialization result withheld from planner; raw public CLI result in private trajectory."
+    },
+    {
+      "label": "image-0",
+      "mode": "view",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "generation": 0,
+      "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/vision-frame-000000.png",
+      "image_sha256": "824f565207bef6625da7fbcbf289ed6cfb50b7f19fc503e1fe8bad51187d7ea0",
+      "state_sha256": "3a8c7d1b2c047630a067a0590f939c066b6c621349b6021d26609c85b2e4644b",
+      "fingerprint": {
+        "base_fingerprints": {
+          "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+          "implementation_sha256": "810d343cf500526ac884badc31bae095f819a3c3e469a3d4a3155c7a20960d3b",
+          "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+          "mujoco_version": "3.15.0",
+          "state_spec": 16383
+        },
+        "schema_sha256": "4f632336093c6b9d81741a4deff879b07eea7c9290eb34cbfa75ed84359b90e6",
+        "settings_sha256": "a4b1820eb44423efa3f5c230b9afa30007ac1608033ffa1aa1594419a3868bea",
+        "wrapper_sha256": "d77da7013cefd6ea3344878332450b1835a207716fa0ed0fdb42f5f376334494"
+      }
+    },
+    {
+      "label": "approach-1",
+      "mode": "apply",
+      "reason": "The overhead image shows a large gap before contact; choose a 10 cm approach and inspect the new view.",
+      "exit_code": 0,
+      "phase": "executed",
+      "proposal": {
+        "block_box": [
+          226,
+          158,
+          270,
+          202
+        ],
+        "decision": "move",
+        "generation": 0,
+        "image_sha256": "824f565207bef6625da7fbcbf289ed6cfb50b7f19fc503e1fe8bad51187d7ea0",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "target": {
+          "x": -0.2,
+          "y": 0.0
+        },
+        "token": "move-001",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 1,
+        "after_state_sha256": "1d8919b516bf48038bcae73cd39a79177fe329c40e1e2ae1a2aaf6d7a4476219",
+        "historical_visual_check": {
+          "block_box": [
+            227,
+            159,
+            269,
+            201
+          ],
+          "image_center_world_xy": [
+            -0.12,
+            0.0
+          ],
+          "method": "color_specific_RGB"
+        },
+        "contact_statistics": {
+          "command_speed_limit_m_s": 0.15,
+          "max_axis_actuator_force_n": 0.38456934164970424,
+          "native_steps": 834,
+          "pusher_block_contact_samples": 0
+        },
+        "replayed": false
+      }
+    },
+    {
+      "label": "image-1",
+      "mode": "view",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "generation": 1,
+      "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/vision-frame-000001.png",
+      "image_sha256": "1f687fc7db0ad2f12862b06de9765440542041084fcdb51d58e5793f5cfa74e4",
+      "state_sha256": "1d8919b516bf48038bcae73cd39a79177fe329c40e1e2ae1a2aaf6d7a4476219",
+      "fingerprint": "same frozen binding"
+    },
+    {
+      "label": "contact-2",
+      "mode": "apply",
+      "reason": "Fresh frame shows pusher close to the orange block, which is still far left of target; make an 11 cm contact push.",
+      "exit_code": 0,
+      "phase": "executed",
+      "proposal": {
+        "block_box": [
+          226,
+          158,
+          270,
+          202
+        ],
+        "decision": "move",
+        "generation": 1,
+        "image_sha256": "1f687fc7db0ad2f12862b06de9765440542041084fcdb51d58e5793f5cfa74e4",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "target": {
+          "x": -0.09,
+          "y": 0.0
+        },
+        "token": "move-002",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 2,
+        "after_state_sha256": "9a85e6b1420b674bae3b79e6ddc8cf20c2951645cd9e8f780ee61b5f3623808b",
+        "historical_visual_check": {
+          "block_box": [
+            227,
+            159,
+            269,
+            201
+          ],
+          "image_center_world_xy": [
+            -0.12,
+            0.0
+          ],
+          "method": "color_specific_RGB"
+        },
+        "contact_statistics": {
+          "command_speed_limit_m_s": 0.15,
+          "max_axis_actuator_force_n": 1.2989950287851713,
+          "native_steps": 867,
+          "pusher_block_contact_samples": 2274
+        },
+        "replayed": false
+      }
+    },
+    {
+      "label": "image-2",
+      "mode": "view",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "generation": 2,
+      "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/vision-frame-000002.png",
+      "image_sha256": "1a13c5aabcbb34787bddb302c6324eafd206b1c557d44dc7b11f08b2876013a7",
+      "state_sha256": "9a85e6b1420b674bae3b79e6ddc8cf20c2951645cd9e8f780ee61b5f3623808b",
+      "fingerprint": "same frozen binding"
+    },
+    {
+      "label": "feedback-3",
+      "mode": "apply",
+      "reason": "New view confirms contact moved the block, but it remains about 155 pixels left of green center; continue an 11 cm bounded push.",
+      "exit_code": 0,
+      "phase": "executed",
+      "proposal": {
+        "block_box": [
+          275,
+          158,
+          320,
+          202
+        ],
+        "decision": "move",
+        "generation": 2,
+        "image_sha256": "1a13c5aabcbb34787bddb302c6324eafd206b1c557d44dc7b11f08b2876013a7",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "target": {
+          "x": 0.02,
+          "y": 0.0
+        },
+        "token": "move-003",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 3,
+        "after_state_sha256": "ffbb07ff0d2af9873a95a133760f2eeb21ff21b5eac73ba6080bff437227cf0e",
+        "historical_visual_check": {
+          "block_box": [
+            276,
+            159,
+            317,
+            201
+          ],
+          "image_center_world_xy": [
+            -0.03916666666666666,
+            0.0
+          ],
+          "method": "color_specific_RGB"
+        },
+        "contact_statistics": {
+          "command_speed_limit_m_s": 0.15,
+          "max_axis_actuator_force_n": 1.4476469920290285,
+          "native_steps": 867,
+          "pusher_block_contact_samples": 2596
+        },
+        "replayed": false
+      }
+    },
+    {
+      "label": "image-3",
+      "mode": "view",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "generation": 3,
+      "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/vision-frame-000003.png",
+      "image_sha256": "4b560931a6cd39894da76d0c0c4bac2d7b64961fb9bf4dfcc9af658fd759a780",
+      "state_sha256": "ffbb07ff0d2af9873a95a133760f2eeb21ff21b5eac73ba6080bff437227cf0e",
+      "fingerprint": "same frozen binding"
+    },
+    {
+      "label": "feedback-4",
+      "mode": "apply",
+      "reason": "The orange center is still about 89 pixels left of the green center; use a 10 cm push and check the remaining error in a new frame.",
+      "exit_code": 0,
+      "phase": "executed",
+      "proposal": {
+        "block_box": [
+          341,
+          158,
+          385,
+          202
+        ],
+        "decision": "move",
+        "generation": 3,
+        "image_sha256": "4b560931a6cd39894da76d0c0c4bac2d7b64961fb9bf4dfcc9af658fd759a780",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "target": {
+          "x": 0.12,
+          "y": 0.0
+        },
+        "token": "move-004",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 4,
+        "after_state_sha256": "322055163bb36712b6382e33d3ca2fbf6d053129182b4737a6416d479f2eba48",
+        "historical_visual_check": {
+          "block_box": [
+            342,
+            159,
+            384,
+            201
+          ],
+          "image_center_world_xy": [
+            0.07166666666666666,
+            0.0
+          ],
+          "method": "color_specific_RGB"
+        },
+        "contact_statistics": {
+          "command_speed_limit_m_s": 0.15,
+          "max_axis_actuator_force_n": 1.467647819345494,
+          "native_steps": 834,
+          "pusher_block_contact_samples": 2548
+        },
+        "replayed": false
+      }
+    },
+    {
+      "label": "image-4",
+      "mode": "view",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "generation": 4,
+      "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/vision-frame-000004.png",
+      "image_sha256": "e7376fea396aa33836c4e9202df010feff5df00875e76a4eb580153d0c7b21cb",
+      "state_sha256": "322055163bb36712b6382e33d3ca2fbf6d053129182b4737a6416d479f2eba48",
+      "fingerprint": "same frozen binding"
+    },
+    {
+      "label": "short-placement-completion",
+      "mode": "apply",
+      "reason": "The new frame shows orange center still about 5 cm left of green center; completion must refuse before correction.",
+      "exit_code": 2,
+      "phase": "refused",
+      "proposal": {
+        "block_box": [
+          401,
+          158,
+          445,
+          202
+        ],
+        "decision": "complete",
+        "generation": 4,
+        "image_sha256": "e7376fea396aa33836c4e9202df010feff5df00875e76a4eb580153d0c7b21cb",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "token": "short-complete-001",
+        "version": 1
+      },
+      "feedback": {
+        "reason": "fresh RGB block center is outside the conservative inspection zone"
+      }
+    },
+    {
+      "label": "final-correction-5",
+      "mode": "apply",
+      "reason": "Fresh image shows roughly 30 pixels remaining to green center; choose a smaller 5 cm correction and require another image.",
+      "exit_code": 0,
+      "phase": "executed",
+      "proposal": {
+        "block_box": [
+          401,
+          158,
+          445,
+          202
+        ],
+        "decision": "move",
+        "generation": 4,
+        "image_sha256": "e7376fea396aa33836c4e9202df010feff5df00875e76a4eb580153d0c7b21cb",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "target": {
+          "x": 0.17,
+          "y": 0.0
+        },
+        "token": "move-005",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 5,
+        "after_state_sha256": "e0eae3b6b3c86335bb69b885d8dd4a051285634e4e31598eb7c926f1ff63dac1",
+        "historical_visual_check": {
+          "block_box": [
+            402,
+            159,
+            443,
+            201
+          ],
+          "image_center_world_xy": [
+            0.1708333333333333,
+            0.0
+          ],
+          "method": "color_specific_RGB"
+        },
+        "contact_statistics": {
+          "command_speed_limit_m_s": 0.15,
+          "max_axis_actuator_force_n": 1.501413009316252,
+          "native_steps": 667,
+          "pusher_block_contact_samples": 2162
+        },
+        "replayed": false
+      }
+    },
+    {
+      "label": "image-5",
+      "mode": "view",
+      "reason": "",
+      "exit_code": 0,
+      "phase": "ready",
+      "generation": 5,
+      "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/vision-frame-000005.png",
+      "image_sha256": "6d822e4ccf21b34da2e81505f30995b7ac21a4e6d50cdce16bfbfb55eb22602c",
+      "state_sha256": "e0eae3b6b3c86335bb69b885d8dd4a051285634e4e31598eb7c926f1ff63dac1",
+      "fingerprint": "same frozen binding"
+    },
+    {
+      "label": "stale-image-generation",
+      "mode": "apply",
+      "reason": "Negative check: a stale generation cannot complete even when the latest visible placement is correct.",
+      "exit_code": 2,
+      "phase": "refused",
+      "proposal": {
+        "block_box": [
+          431,
+          158,
+          475,
+          202
+        ],
+        "decision": "complete",
+        "generation": 4,
+        "image_sha256": "6d822e4ccf21b34da2e81505f30995b7ac21a4e6d50cdce16bfbfb55eb22602c",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "token": "stale-001",
+        "version": 1
+      },
+      "feedback": {
+        "reason": "image proposal generation is stale"
+      }
+    },
+    {
+      "label": "wrong-object-box",
+      "mode": "apply",
+      "reason": "Negative check: a box around the blue pusher cannot serve as block placement evidence.",
+      "exit_code": 2,
+      "phase": "refused",
+      "proposal": {
+        "block_box": [
+          407,
+          138,
+          431,
+          222
+        ],
+        "decision": "complete",
+        "generation": 5,
+        "image_sha256": "6d822e4ccf21b34da2e81505f30995b7ac21a4e6d50cdce16bfbfb55eb22602c",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "token": "wrong-box-001",
+        "version": 1
+      },
+      "feedback": {
+        "reason": "proposed block box does not match independent RGB silhouette evidence"
+      }
+    },
+    {
+      "label": "visual-completion",
+      "mode": "apply",
+      "reason": "Final fresh frame shows the orange face centered on the green area; request visual and physical verification followed by the local computer action.",
+      "exit_code": 0,
+      "phase": "staged",
+      "proposal": {
+        "block_box": [
+          431,
+          158,
+          475,
+          202
+        ],
+        "decision": "complete",
+        "generation": 5,
+        "image_sha256": "6d822e4ccf21b34da2e81505f30995b7ac21a4e6d50cdce16bfbfb55eb22602c",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "token": "complete-001",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 5,
+        "after_state_sha256": "e0eae3b6b3c86335bb69b885d8dd4a051285634e4e31598eb7c926f1ff63dac1",
+        "historical_visual_check": {
+          "block_box": [
+            432,
+            159,
+            473,
+            201
+          ],
+          "image_center_world_xy": [
+            0.22083333333333333,
+            0.0
+          ],
+          "inside_with_margin": true,
+          "method": "color_specific_RGB"
+        },
+        "replayed": false,
+        "current_software_artifact_check": {
+          "claims": [
+            "current_artifact_byte_equality"
+          ],
+          "detail": "current bytes equal the digest-bound expected source",
+          "expected_bytes": 1195,
+          "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/expected-order.json",
+          "expected_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+          "limit_bytes": 1048576,
+          "observed_bytes": 1195,
+          "observed_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+          "ok": true,
+          "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/order.json",
+          "source_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f"
+        }
+      }
+    },
+    {
+      "label": "repeated-completion",
+      "mode": "replay",
+      "reason": "Repeat the exact completion; current bytes must be rechecked without another write.",
+      "exit_code": 0,
+      "phase": "staged",
+      "proposal": {
+        "block_box": [
+          431,
+          158,
+          475,
+          202
+        ],
+        "decision": "complete",
+        "generation": 5,
+        "image_sha256": "6d822e4ccf21b34da2e81505f30995b7ac21a4e6d50cdce16bfbfb55eb22602c",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "token": "complete-001",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 5,
+        "after_state_sha256": "e0eae3b6b3c86335bb69b885d8dd4a051285634e4e31598eb7c926f1ff63dac1",
+        "historical_visual_check": {
+          "block_box": [
+            432,
+            159,
+            473,
+            201
+          ],
+          "image_center_world_xy": [
+            0.22083333333333333,
+            0.0
+          ],
+          "inside_with_margin": true,
+          "method": "color_specific_RGB"
+        },
+        "replayed": false,
+        "current_software_artifact_check": {
+          "claims": [
+            "current_artifact_byte_equality"
+          ],
+          "detail": "current bytes equal the digest-bound expected source",
+          "expected_bytes": 1195,
+          "expected_file": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/expected-order.json",
+          "expected_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+          "limit_bytes": 1048576,
+          "observed_bytes": 1195,
+          "observed_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f",
+          "ok": true,
+          "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2/order.json",
+          "source_sha256": "ec275d09fa202e3b3e3d88022bc042b84e2fcb448d0f514727055cdd235ecf2f"
+        }
+      }
+    },
+    {
+      "label": "repeated-motion",
+      "mode": "replay",
+      "reason": "Repeat the original move after completion; retained receipt must not step physics.",
+      "exit_code": 0,
+      "phase": "executed",
+      "proposal": {
+        "block_box": [
+          226,
+          158,
+          270,
+          202
+        ],
+        "decision": "move",
+        "generation": 0,
+        "image_sha256": "824f565207bef6625da7fbcbf289ed6cfb50b7f19fc503e1fe8bad51187d7ea0",
+        "run_dir": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/image-demo-v2",
+        "target": {
+          "x": -0.2,
+          "y": 0.0
+        },
+        "token": "move-001",
+        "version": 1
+      },
+      "feedback": {
+        "after_generation": 1,
+        "after_state_sha256": "1d8919b516bf48038bcae73cd39a79177fe329c40e1e2ae1a2aaf6d7a4476219",
+        "historical_visual_check": {
+          "block_box": [
+            227,
+            159,
+            269,
+            201
+          ],
+          "image_center_world_xy": [
+            -0.12,
+            0.0
+          ],
+          "method": "color_specific_RGB"
+        },
+        "contact_statistics": {
+          "command_speed_limit_m_s": 0.15,
+          "max_axis_actuator_force_n": 0.38456934164970424,
+          "native_steps": 834,
+          "pusher_block_contact_samples": 0
+        },
+        "replayed": false
+      }
+    }
+  ],
+  "private_raw_trajectory": {
+    "path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim2-v2-inputs/trajectory.jsonl",
+    "sha256": "00e767974d0475ef3baf80f22d111a38d9e23dfdc64485592061bf6ea3a191c7"
+  },
+  "metrics": {
+    "moves": 5,
+    "viewed_frames": 6,
+    "target_center_xy": [
+      0.22,
+      0
+    ],
+    "before_final_correction_image_xy": [
+      0.1708333333333333,
+      0.0
+    ],
+    "final_image_xy": [
+      0.22083333333333333,
+      0.0
+    ],
+    "final_native_xyz": [
+      0.2207432310034855,
+      -1.73716030348864e-10,
+      0.034998235824722744
+    ],
+    "final_horizontal_image_error_m": 0.0008333333333333248,
+    "native_horizontal_error_m": 0.0007432310034855005,
+    "maximum_axis_actuator_force_n": 1.501413009316252
+  }
+}

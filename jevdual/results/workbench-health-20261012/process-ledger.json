@@ -1,0 +1,40 @@
+{
+  "app_id": "433d80f43f4148ef87d341b6d117396d",
+  "body_id": "eea757a5363c43ca81de4a2f78715534",
+  "body_origin": "http://127.0.0.1:51373",
+  "browser_origin": "http://127.0.0.1:51377",
+  "health_delay_s": 1.2,
+  "limit_s": 2700,
+  "owned_processes_exited": true,
+  "planner": "actual_codex_cli_images_over_TCP",
+  "processes": [
+    {
+      "exit_observed": true,
+      "pid": 63766,
+      "returncode": 0,
+      "role": "body"
+    },
+    {
+      "exit_observed": true,
+      "pid": 63768,
+      "returncode": 0,
+      "role": "health-relay"
+    },
+    {
+      "exit_observed": true,
+      "pid": 63773,
+      "returncode": 0,
+      "role": "initialize"
+    },
+    {
+      "exit_observed": true,
+      "pid": 63779,
+      "returncode": 0,
+      "role": "workbench"
+    }
+  ],
+  "ready": true,
+  "relay_origin": "http://127.0.0.1:49270",
+  "simulation": true,
+  "source_commit": "37ebfdb3054b977149d7b60b46254ddd852b749a"
+}

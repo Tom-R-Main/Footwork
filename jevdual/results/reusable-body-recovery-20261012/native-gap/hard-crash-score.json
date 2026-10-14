@@ -1,0 +1,143 @@
+{
+  "admissions": [
+    {
+      "command_id": "command-7c7f1616df1245399a248717c004c424",
+      "passed": true,
+      "proof_event": 2
+    },
+    {
+      "command_id": "command-58f43389dab14ea1af8f011dcac3b415",
+      "passed": true,
+      "proof_event": 5
+    },
+    {
+      "command_id": "command-19630ef4ff684508b4053bffd3261aca",
+      "passed": true,
+      "proof_event": 9
+    },
+    {
+      "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+      "passed": true,
+      "proof_event": 12
+    }
+  ],
+  "body_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+  "browser": {
+    "passed": true,
+    "required_names": [
+      "crash-blocked",
+      "crash-offline",
+      "crash-restored",
+      "crash-still-blocked"
+    ]
+  },
+  "calls": [
+    {
+      "action": "move",
+      "call": 1,
+      "camera_generation": 0,
+      "challenge_id": "challenge-c4a2aac3e0e44153bb8a38ba9a847b50",
+      "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+      "image_sha256": "4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7",
+      "job_id": "f86aaa43-84f4-4074-98d1-5b2a52c98280",
+      "model_pid": 62581,
+      "native_gap": true,
+      "passed": true,
+      "proposal_id": "proposal-28a486115a0242468ba8651ede499eb6"
+    }
+  ],
+  "case": "body-native-gap",
+  "completed_cycles": 0,
+  "crash": {
+    "case": "body-native-gap",
+    "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+    "new_epoch": 2,
+    "old_epoch": 1,
+    "passed": true,
+    "reconciled_sequence": null,
+    "request_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+    "restored_sequence": 17,
+    "resume_sequence": null,
+    "role": "body",
+    "snapshot_command_count": 4
+  },
+  "event_cutoff": 19,
+  "native": {
+    "after": {
+      "block_center_in_zone": false,
+      "block_xyz": [
+        0.06581381720865363,
+        -8.39496500218506e-11,
+        0.03499805666564847
+      ],
+      "external_force_cleared": true,
+      "generation": 1,
+      "native_time_s": 4.0999999999997705,
+      "pusher_home": false,
+      "pusher_xyz": [
+        0.010816304329139825,
+        6.653769644544919e-18,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "3dd31d583a8b7ec3f4a7fa51f403baa50fda8f9839a705a1787505c87464e425"
+    },
+    "before": {
+      "block_center_in_zone": true,
+      "block_xyz": [
+        -0.11999998822184511,
+        1.630059551357049e-11,
+        0.03499573045537004
+      ],
+      "external_force_cleared": true,
+      "generation": 0,
+      "native_time_s": 1.0000000000000007,
+      "pusher_home": true,
+      "pusher_xyz": [
+        -0.3,
+        0.0,
+        0.06
+      ],
+      "role": "independent_native_state_scorer",
+      "state_sha256": "3a8c7d1b2c047630a067a0590f939c066b6c621349b6021d26609c85b2e4644b"
+    },
+    "marker": {
+      "barrier": "after_native",
+      "bench_id": "2bfcf6ea4ac04b44b20db138b4c03e80",
+      "command_id": "command-20204cceb73b473eb66857af0b813c1d",
+      "diagnostic_source_sha256": "9163ad618c7a92efc1306bdeca2488ce5b10835edcb77eec062fa8490e0557ea",
+      "manifest_generation": 0,
+      "native_generation": 1,
+      "native_state_sha256": "3dd31d583a8b7ec3f4a7fa51f403baa50fda8f9839a705a1787505c87464e425",
+      "native_steps": 1550,
+      "native_time_s": 4.0999999999997705,
+      "operation_id": "agent-f38f26f75d5948c98118fc8c65842276",
+      "pid": 53902,
+      "proposal_id": "proposal-28a486115a0242468ba8651ede499eb6",
+      "pusher_block_contact_samples": 3164,
+      "request_sha256": "fa142a5edc57c58e9ef9c4421bbdc5044a24afe4727e726b1cc6ebe543c6a522",
+      "version": 1
+    },
+    "native_displacement_m": 0.3108163043291398,
+    "passed": true,
+    "reason": "Advanced native state without indexed terminal proof remains unknown",
+    "recovered": false,
+    "safely_blocked": true
+  },
+  "owned_processes_exited": true,
+  "passed": true,
+  "safely_blocked": true,
+  "scope": "selected process SIGKILL boundaries; actual image-only Codex browser; loopback simulation; no arbitrary power-loss guarantee",
+  "single_wire_post_every_command": true,
+  "source_commit": "c00c65cf29fb468cbf2c1601d44f0e5d26bf4b54",
+  "source_unchanged": true,
+  "sqlite": {
+    "count": 0,
+    "database_created": false,
+    "reason": "Native gap occurred before the first computer measurement",
+    "role": "independent_read_only_sqlite_scorer",
+    "rows": []
+  },
+  "transport_command_count": 4,
+  "version": 1
+}

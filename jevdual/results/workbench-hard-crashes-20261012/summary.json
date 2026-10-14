@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "body-native-gap",
+      "passed": true,
+      "completed_cycles": 0,
+      "safely_blocked": true,
+      "model_calls": 1,
+      "commands": 4,
+      "boot_before": 1,
+      "boot_after": 2,
+      "cutoff": 19,
+      "root": "tools/physical-workcell/output/sim13-body-native-gap-v3",
+      "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+    },
+    {
+      "case": "host-inflight",
+      "passed": true,
+      "completed_cycles": 1,
+      "safely_blocked": false,
+      "model_calls": 13,
+      "commands": 40,
+      "boot_before": 1,
+      "boot_after": 1,
+      "cutoff": 137,
+      "root": "tools/physical-workcell/output/sim13-host-inflight-v1",
+      "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+    },
+    {
+      "case": "body-uncertain",
+      "passed": true,
+      "completed_cycles": 1,
+      "safely_blocked": false,
+      "model_calls": 14,
+      "commands": 43,
+      "boot_before": 1,
+      "boot_after": 2,
+      "cutoff": 151,
+      "root": "tools/physical-workcell/output/sim13-body-uncertain-v1",
+      "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+    },
+    {
+      "case": "host-uncertain",
+      "passed": true,
+      "completed_cycles": 1,
+      "safely_blocked": false,
+      "model_calls": 13,
+      "commands": 40,
+      "boot_before": 1,
+      "boot_after": 1,
+      "cutoff": 139,
+      "root": "tools/physical-workcell/output/sim13-host-uncertain-v1",
+      "source_commit": "4e2dd74d27ec07f0b5a42039e0f30016402cf050"
+    }
+  ],
+  "qualified_model_calls": 41,
+  "qualified_commands": 127,
+  "completed_jobs": 3,
+  "safe_blocks": 1,
+  "no_replay": true
+}

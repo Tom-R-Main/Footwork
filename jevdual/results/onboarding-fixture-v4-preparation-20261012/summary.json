@@ -1,0 +1,45 @@
+{
+  "source_commit": "21599c641e4c54cad137b3c49e11142c5c14e596",
+  "packet_sha256": "eef3632506680d74b21b511cec905d73de2324f951e924b0716f2309490f590d",
+  "packet_bytes": 312685,
+  "packet_members": 14,
+  "repeat_build_matches": true,
+  "wheel_sha256": "9bb0440d7bd981df7dc70bbd22f97861a7ed32a88bf6de7a18c2f46982fef3a7",
+  "checks": {
+    "focused_tests_passed": 73,
+    "fixture_boundary_tests": 47,
+    "ruff": "passed",
+    "notebook": "passed",
+    "profiles": [
+      "3.12",
+      "3.14"
+    ],
+    "helper_imports_per_profile": 7,
+    "help_entries_per_profile": 4
+  },
+  "baseline_automation_denial": "old exact AX window remains open; new helper automatically closes it",
+  "claude_review": {
+    "approved": true,
+    "message": "1791829509202848000",
+    "blockers": 0
+  },
+  "guest_qualification": "not_performed",
+  "initial_build": {
+    "source_commit": "1d72e51ef7c4c5a49dac6cfac44c95427fbeff01",
+    "packet_sha256": "23e5e16fe5923c392b9d11e4601c390ff174234efd01af9a27653ed59b6a3d1e",
+    "claude_review": "approved1791828646123834000 with notesN2/N3/N4"
+  },
+  "retained_revisions": [
+    {
+      "source_commit": "1d72e51ef7c4c5a49dac6cfac44c95427fbeff01",
+      "packet_sha256": "23e5e16fe5923c392b9d11e4601c390ff174234efd01af9a27653ed59b6a3d1e",
+      "claude_review": "approved1791828646123834000 with notesN2/N3/N4"
+    },
+    {
+      "source_commit": "3d0984dda6e4c1b67a2c4ca79d5adde4a275ae2a",
+      "packet_sha256": "03dc007954a246f6f038a771e3c63afa7df8d44f5b7616b1409f8c1d0eff2fb7",
+      "claude_review": "approved1791829172719781000 with N3 APIcorrection note"
+    }
+  ],
+  "packet_path": "output/u2-packet-v4-final-r2/footwork-onboarding-u2.zip"
+}

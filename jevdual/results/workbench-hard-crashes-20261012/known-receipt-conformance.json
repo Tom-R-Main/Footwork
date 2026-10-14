@@ -1,0 +1,173 @@
+{
+  "events": [
+    {
+      "diagnostic_gate": "after_dispatch",
+      "identity": {
+        "adapter_id": "7f8b343a382c4e8da69d881553bfab9d",
+        "body_id": "43c0f4c1e7b64d909b7972a5dc9f6a80",
+        "epoch": 1,
+        "protocol": "footwork.body/1",
+        "simulation": true,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "kind": "ready",
+      "launcher": "crash_body.py",
+      "pid": 5467
+    },
+    {
+      "kind": "stopped_barrier",
+      "marker": {
+        "barrier": "after_dispatch",
+        "command_id": "command-24e75d697fd54bc7952de7f08bd42b5b",
+        "pid": 5467
+      }
+    },
+    {
+      "command_id": "command-24e75d697fd54bc7952de7f08bd42b5b",
+      "kind": "SIGKILL",
+      "pid": 5467,
+      "returncode": -9
+    },
+    {
+      "diagnostic_gate": null,
+      "identity": {
+        "adapter_id": "7f8b343a382c4e8da69d881553bfab9d",
+        "body_id": "43c0f4c1e7b64d909b7972a5dc9f6a80",
+        "epoch": 2,
+        "protocol": "footwork.body/1",
+        "simulation": true,
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787"
+      },
+      "kind": "ready",
+      "launcher": "body_network.py",
+      "pid": 5483
+    },
+    {
+      "exact_single_send": true,
+      "kind": "exact_lower_receipt_recovered",
+      "native_unchanged": true,
+      "receipt": {
+        "adapter_id": "7f8b343a382c4e8da69d881553bfab9d",
+        "body_id": "43c0f4c1e7b64d909b7972a5dc9f6a80",
+        "command_id": "command-24e75d697fd54bc7952de7f08bd42b5b",
+        "protocol": "footwork.body/1",
+        "reason": "read-only lower receipt recovered after restart",
+        "receipt_scope": "retained_command_result",
+        "recorded_epoch": 1,
+        "request_sha256": "d94a19acd27c066b8829a7b6c52cbd3552d744986d61ad79677be50934ad399d",
+        "result": {
+          "next_observation": {
+            "challenge_id": "challenge-e4c037eb16b7495eb7e50ea0f9fcb7b8",
+            "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-crash-body-f9b6716db22e/body/bench/images/000001-665f7003914695a3.png",
+            "observation": {
+              "bench_id": "43c0f4c1e7b64d909b7972a5dc9f6a80",
+              "calibration": {
+                "bbox_convention": "exclusive_max_pixel_edges",
+                "height": 360,
+                "image_center_world_xy": [
+                  0.0,
+                  0.0
+                ],
+                "image_x_direction": "world_positive_x",
+                "image_y_direction": "world_negative_y",
+                "meters_per_pixel": 0.0016666666666666666,
+                "projection": "orthographic",
+                "valid": true,
+                "validity_reason": "bound orthographic calibration",
+                "vertical_span_m": 0.6,
+                "width": 640,
+                "world_frame": "sim_world"
+              },
+              "generation": 1,
+              "image_path": "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim13-crash-body-f9b6716db22e/body/bench/images/000001-665f7003914695a3.png",
+              "image_sha256": "c3054638556af1832bce1a717ab197a1c1e0cb8621d6d5fc734d2d5867f845ad",
+              "job_id": "job",
+              "native_time_s": 2.7339999999999205,
+              "phase": "prepare",
+              "source_fingerprints": {
+                "bench_sha256": "f35b9fdca2c093d4a93bcdb7797ff252f40e7165494e4ee6a957c6d2db5bd4b2",
+                "capture_utility_sha256": "3623fcad2a6ec0135af2452d50403bad7c508f80795c0f98417ccc9446a56f7b",
+                "case_validator_sha256": "c746a6df8f1f9554633266fcd5363b8001f21eb3d334a5e90ffed4b6ad219029",
+                "controller_sha256": "4b0c7f3e5f069111e7282b85f073ddc2bcd3efba8aaf47d228aad9a3213edd7f",
+                "implementation_sha256": "d7034fc6d528c4476aecb3094e7a0b8fd22d3e09b407e056a4a18a8cf1e5b1e2",
+                "measurement_sha256": "21900e9297ac15499642cf106b303836b40bb1b19f128f8008ef400a881f7f9e",
+                "model_sha256": "f411f7632d5df2035c780d26d43e8a066991afe501438daefeedaa68455f251f",
+                "mujoco_version": "3.15.0",
+                "protocol_sha256": "d5d9824149e3ed68d15ec4b62e36c406cdc64b8df0cc945ece13f34f13449d5e",
+                "state_spec": 16383,
+                "vision_sha256": "572206e18f900776d951b40802d57112a86b22766eb9f7f83bf7a2410328e961"
+              },
+              "source_kind": "mujoco_simulation",
+              "state_sha256": "3f9c81b61415826a5127bf21026fffb5d4155b58bf7a9dff2c34563105d3327b",
+              "version": 1
+            },
+            "observation_sha256": "eb813a3e2291ced4d734b0b413f4653fb159798df3905aaa868cdd13c28e5aa4",
+            "sequence": 4,
+            "session_id": "79161ccbff704b3fa47b12439ef03173",
+            "task": {
+              "bounds": {
+                "x_max": 0.18,
+                "x_min": -0.32,
+                "y_max": 0.15,
+                "y_min": -0.15
+              },
+              "home_zone": {
+                "x_max": -0.08,
+                "x_min": -0.16,
+                "y_max": 0.03,
+                "y_min": -0.03
+              },
+              "pusher_dimensions_m": {
+                "x": 0.04,
+                "y": 0.14
+              },
+              "zone": {
+                "x_max": 0.1,
+                "x_min": 0.04,
+                "y_max": 0.025,
+                "y_min": -0.025
+              }
+            }
+          },
+          "observation_scope": "snapshot_at_dispatch_result",
+          "outcome": "executed",
+          "proposal_id": "proposal-934b16e5e404493abf64647771e5dd68",
+          "receipt": {
+            "bench_id": "43c0f4c1e7b64d909b7972a5dc9f6a80",
+            "command_speed_limit_m_s": 0.15,
+            "generation": 1,
+            "job_id": "job",
+            "kind": "move",
+            "max_axis_actuator_force_n": 0.38498849079591624,
+            "native_steps": 867,
+            "native_time_s": 2.7339999999999205,
+            "operation_id": "agent-41aee184254a4b8bb3acd838df4721eb",
+            "pusher_block_contact_samples": 0,
+            "state_sha256": "3f9c81b61415826a5127bf21026fffb5d4155b58bf7a9dff2c34563105d3327b",
+            "target_xy": [
+              -0.19,
+              0.0
+            ]
+          }
+        },
+        "source_sha256": "10833c9f931a9d762c93d13b6061795fa5c3b4be9ac6151eaf38427b47f04787",
+        "state": "completed"
+      }
+    }
+  ],
+  "passed": true,
+  "processes": [
+    {
+      "pid": 5467,
+      "returncode": -9
+    },
+    {
+      "pid": 5483,
+      "returncode": -9
+    }
+  ],
+  "processes_reaped": true,
+  "scenario_kind": "actual_process_SIGKILL_TCP_native",
+  "sources_unchanged": true,
+  "test_id": "test_crash_body.CrashBodyTests.test_indexed_lower_receipt_SIGKILL_recovers_exact_command_without_motion_replay"
+}

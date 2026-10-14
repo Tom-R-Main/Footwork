@@ -1,0 +1,14 @@
+{
+  "source_commit": "6e93c35",
+  "source_sha256": {
+    "jevdual/python/jevdual/artifacts.py": "f2d52806bef26654aa733fc1a8a02079088a08c2c4d4f05f6594880fc648ef8a",
+    "jevdual/python/jevdual/cli.py": "a397139e56a7ba576f51344131e859e3a9c2c3fcaad5d04bc46f15a2d66f5d7c",
+    "tools/desk-inbox-experiment/inbox.py": "13aeee66b25cd11b6a741e6798206c5f154bcb4d1605fd41dd44f6b99776e51b",
+    "tools/desk-inbox-experiment/recognize.swift": "340d9969f84f4bc892483c2a7fd4786f6bf4a6fef964f9cf6ba9b956389d2b85"
+  },
+  "test_command": "uv run --no-sync pytest tests/test_artifacts.py tests/test_cli.py tests/test_carry.py ../tools/desk-inbox-experiment/test_inbox.py -q",
+  "test_cwd": "jevdual",
+  "tests_passed": 31,
+  "test_exit_code": 0,
+  "ruff_exit_code": 0
+}

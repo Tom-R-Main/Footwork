@@ -1,0 +1,734 @@
+{
+  "steps": [
+    {
+      "browser_action": "Observed the first lost dispatch reply as Outcome uncertain before any process restart or receipt lookup",
+      "client_commands": 5,
+      "name": "uncertain",
+      "pending_command_ids": [
+        "command-24230a0f96bc4e84a84f720b1c974054"
+      ],
+      "screenshot": "tools/physical-workcell/output/sim11-browser-restarts-v2/ui/uncertain.jpg",
+      "state": {
+        "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 2,
+            "disturbance_test": false,
+            "error": "reply is uncertain; reconcile exact command without resending",
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Push the block right so its center enters the measurement zone.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-24230a0f96bc4e84a84f720b1c974054",
+          "operation": "dispatch",
+          "reason": "reply is uncertain; reconcile exact command without resending",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791828766.590297,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t75 checkbox Restart inspection 01 Needs attention, Value: 1\n\t\t\t76 checkbox Restart inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t77 text Restart inspection 01\n\t\t78 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t79 text reply is uncertain; reconcile exact command without resending\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t80 text Body connected\n\t\t\t81 text Body identity verified by read-only TCP health\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t73 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t74 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t82 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t83 text Last observation \u00b7 Restart inspection 01\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t84 text Captured \u00b7 generation 0\n\t\t85 text OUTCOME UNCERTAIN\n\t\t86 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t87 text Pending\n\t\t\t38 text The part\u2019s visible footprint will be measured after its placement is verified.\n\t\t39 container Activity\n\t\t\t40 heading Activity, Value: 2, ID: activity-heading\n\t\t\t\t41 text Activity\n\t\t\t88 text 19 events\n\t\t\t43 content list activity\n\t\t\t\t89 container\n\t\t\t\t\t90 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending\n\t\t\t\t91 container\n\t\t\t\t\t92 text 02:12 PM Sending a guarded action\n\t\t\t\t93 container\n\t\t\t\t\t94 text 02:12 PM Action proposal accepted Restart inspection 01\n\t\t\t\t95 container\n\t\t\t\t\t96 text 02:12 PM Checking the planned action\n\t\t\t\t97 container\n\t\t\t\t\t98 text 02:12 PM AI planning requested Restart inspection 01\n\t\t\t\t99 container\n\t\t\t\t\t100 text 02:12 PM Camera observation received Restart inspection 01\n\t\t\t\t101 container\n\t\t\t\t\t102 text 02:12 PM Requesting camera observation\n\t\t\t\t103 container\n\t\t\t\t\t104 text 02:12 PM Agent resumed\n\t\t\t\t105 container\n\t\t\t\t\t106 text 02:12 PM Reply fault armed The next command reply will be lost.\n\t\t\t\t107 container\n\t\t\t\t\t108 text 02:10 PM Agent stopped for review operator_pause_requested\n\t\t\t\t109 container\n\t\t\t\t\t110 text 02:10 PM AI planning requested Restart inspection 01\n\t\t\t\t111 container\n\t\t\t\t\t112 text 02:10 PM Camera observation received Restart inspection 01\n\t\t50 button (collapsed) Session details, Secondary Actions: Expand\n\t\t\t51 text Session details\n\t\t113 text 2 model requests \u00b7 Reported tokens: 13,063 input / 199 output \u00b7 Reporting incomplete (1 of 2 requests)\n\nThe focused UI element is 1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/"
+    },
+    {
+      "browser_action": "Clicked Disconnect after workbench restart while preserving the same uncertain command",
+      "client_commands": 5,
+      "name": "disconnected",
+      "pending_command_ids": [
+        "command-24230a0f96bc4e84a84f720b1c974054"
+      ],
+      "screenshot": null,
+      "state": {
+        "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Diagnostic link disconnected; cached observations are retained",
+          "state": "disconnected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 2,
+            "disturbance_test": false,
+            "error": "Restarted with a retained command stage; check its exact receipt",
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Push the block right so its center enters the measurement zone.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-24230a0f96bc4e84a84f720b1c974054",
+          "operation": "dispatch",
+          "reason": "Restarted with a retained command stage; check its exact receipt",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791828795.696644,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t75 checkbox Restart inspection 01 Needs attention, Value: 1\n\t\t\t76 checkbox Restart inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t77 text Restart inspection 01\n\t\t78 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t79 text Restarted with a retained command stage; check its exact receipt\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t80 text Body disconnected\n\t\t\t81 text Diagnostic link disconnected; cached observations are retained\n\t\t\t20 button Reconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t73 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t74 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t82 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t83 text Retained observation \u00b7 body offline\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t84 text Retained \u00b7 offline \u00b7 generation 0\n\t\t85 text DISCONNECTED\n\t\t86 text The body connection is unavailable. The last camera observation is retained.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t87 text Pending\n\t\t\t38 text The part\u2019s visible footprint will be measured after its placement is verified.\n\t\t39 container Activity\n\t\t\t40 heading Activity, Value: 2, ID: activity-heading\n\t\t\t\t41 text Activity\n\t\t\t88 text 21 events\n\t\t\t43 content list activity\n\t\t\t\t89 container\n\t\t\t\t\t90 text 02:13 PM Body disconnected Transport only; no body reset or replay\n\t\t\t\t91 container\n\t\t\t\t\t92 text 02:12 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt\n\t\t\t\t93 container\n\t\t\t\t\t94 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending\n\t\t\t\t95 container\n\t\t\t\t\t96 text 02:12 PM Sending a guarded action\n\t\t\t\t97 container\n\t\t\t\t\t98 text 02:12 PM Action proposal accepted Restart inspection 01\n\t\t\t\t99 container\n\t\t\t\t\t100 text 02:12 PM Checking the planned action\n\t\t\t\t101 container\n\t\t\t\t\t102 text 02:12 PM AI planning requested Restart inspection 01\n\t\t\t\t103 container\n\t\t\t\t\t104 text 02:12 PM Camera observation received Restart inspection 01\n\t\t\t\t105 container\n\t\t\t\t\t106 text 02:12 PM Requesting camera observation\n\t\t\t\t107 container\n\t\t\t\t\t108 text 02:12 PM Agent resumed\n\t\t\t\t109 container\n\t\t\t\t\t110 text 02:12 PM Reply fault armed The next command reply will be lost.\n\t\t\t\t111 container\n\t\t\t\t\t112 text 02:10 PM Agent stopped for review operator_pause_requested\n\t\t50 button (collapsed) Session details, Secondary Actions: Expand\n\t\t\t51 text Session details\n\t\t113 text 2 model requests \u00b7 Reported tokens: 13,063 input / 199 output \u00b7 Reporting incomplete (1 of 2 requests)\n\nThe focused UI element is 1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/"
+    },
+    {
+      "browser_action": "Observed Check receipt disabled while the retained command remained uncertain and the link was disconnected",
+      "client_commands": 5,
+      "name": "offline_receipt",
+      "pending_command_ids": [
+        "command-24230a0f96bc4e84a84f720b1c974054"
+      ],
+      "screenshot": null,
+      "state": {
+        "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Diagnostic link disconnected; cached observations are retained",
+          "state": "disconnected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 2,
+            "disturbance_test": false,
+            "error": "Restarted with a retained command stage; check its exact receipt",
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Push the block right so its center enters the measurement zone.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-24230a0f96bc4e84a84f720b1c974054",
+          "operation": "dispatch",
+          "reason": "Restarted with a retained command stage; check its exact receipt",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791828795.808469,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t75 checkbox Restart inspection 01 Needs attention, Value: 1\n\t\t\t76 checkbox Restart inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t77 text Restart inspection 01\n\t\t78 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t79 text Restarted with a retained command stage; check its exact receipt\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t80 text Body disconnected\n\t\t\t81 text Diagnostic link disconnected; cached observations are retained\n\t\t\t20 button Reconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t73 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t74 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t82 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t83 text Retained observation \u00b7 body offline\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t84 text Retained \u00b7 offline \u00b7 generation 0\n\t\t85 text DISCONNECTED\n\t\t86 text The body connection is unavailable. The last camera observation is retained.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t87 text Pending\n\t\t\t38 text The part\u2019s visible footprint will be measured after its placement is verified.\n\t\t39 container Activity\n\t\t\t40 heading Activity, Value: 2, ID: activity-heading\n\t\t\t\t41 text Activity\n\t\t\t88 text 21 events\n\t\t\t43 content list activity\n\t\t\t\t89 container\n\t\t\t\t\t90 text 02:13 PM Body disconnected Transport only; no body reset or replay\n\t\t\t\t91 container\n\t\t\t\t\t92 text 02:12 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt\n\t\t\t\t93 container\n\t\t\t\t\t94 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending\n\t\t\t\t95 container\n\t\t\t\t\t96 text 02:12 PM Sending a guarded action\n\t\t\t\t97 container\n\t\t\t\t\t98 text 02:12 PM Action proposal accepted Restart inspection 01\n\t\t\t\t99 container\n\t\t\t\t\t100 text 02:12 PM Checking the planned action\n\t\t\t\t101 container\n\t\t\t\t\t102 text 02:12 PM AI planning requested Restart inspection 01\n\t\t\t\t103 container\n\t\t\t\t\t104 text 02:12 PM Camera observation received Restart inspection 01\n\t\t\t\t105 container\n\t\t\t\t\t106 text 02:12 PM Requesting camera observation\n\t\t\t\t107 container\n\t\t\t\t\t108 text 02:12 PM Agent resumed\n\t\t\t\t109 container\n\t\t\t\t\t110 text 02:12 PM Reply fault armed The next command reply will be lost.\n\t\t\t\t111 container\n\t\t\t\t\t112 text 02:10 PM Agent stopped for review operator_pause_requested\n\t\t50 button (collapsed) Session details, Secondary Actions: Expand\n\t\t\t51 text Session details\n\t\t113 text 2 model requests \u00b7 Reported tokens: 13,063 input / 199 output \u00b7 Reporting incomplete (1 of 2 requests)\n\nThe focused UI element is 1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/"
+    },
+    {
+      "browser_action": "Clicked Reconnect; the same unknown command remained blocked and no command was sent",
+      "client_commands": 5,
+      "name": "reconnected",
+      "pending_command_ids": [
+        "command-24230a0f96bc4e84a84f720b1c974054"
+      ],
+      "screenshot": null,
+      "state": {
+        "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 2,
+            "disturbance_test": false,
+            "error": "Restarted with a retained command stage; check its exact receipt",
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Push the block right so its center enters the measurement zone.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "unknown",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-24230a0f96bc4e84a84f720b1c974054",
+          "operation": "dispatch",
+          "reason": "Restarted with a retained command stage; check its exact receipt",
+          "state": "uncertain"
+        },
+        "runner_status": "blocked"
+      },
+      "time": 1791828811.400429,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button (disabled) \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t75 checkbox Restart inspection 01 Needs attention, Value: 1\n\t\t\t76 checkbox Restart inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t77 text Restart inspection 01\n\t\t78 text Needs attention\n\t\t16 button (disabled) Pause, ID: pause\n\t\t79 text Restarted with a retained command stage; check its exact receipt\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t80 text Body connected\n\t\t\t81 text Body identity verified by read-only TCP health\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button (disabled) Lose next reply, ID: fault-drop\n\t\t\t\t73 button (disabled) Delay next reply, ID: fault-delay\n\t\t\t\t74 button (disabled) Duplicate next command, ID: fault-duplicate\n\t\t\t\t82 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t83 text Last observation \u00b7 Restart inspection 01\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t84 text Captured \u00b7 generation 0\n\t\t85 text OUTCOME UNCERTAIN\n\t\t86 text The command outcome is uncertain. Reconnect if needed, then check its receipt before continuing.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t87 text Pending\n\t\t\t38 text The part\u2019s visible footprint will be measured after its placement is verified.\n\t\t39 container Activity\n\t\t\t40 heading Activity, Value: 2, ID: activity-heading\n\t\t\t\t41 text Activity\n\t\t\t88 text 22 events\n\t\t\t43 content list activity\n\t\t\t\t89 container\n\t\t\t\t\t90 text 02:13 PM Body reconnecting No command sent or replayed\n\t\t\t\t91 container\n\t\t\t\t\t92 text 02:13 PM Body disconnected Transport only; no body reset or replay\n\t\t\t\t93 container\n\t\t\t\t\t94 text 02:12 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt\n\t\t\t\t95 container\n\t\t\t\t\t96 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending\n\t\t\t\t97 container\n\t\t\t\t\t98 text 02:12 PM Sending a guarded action\n\t\t\t\t99 container\n\t\t\t\t\t100 text 02:12 PM Action proposal accepted Restart inspection 01\n\t\t\t\t101 container\n\t\t\t\t\t102 text 02:12 PM Checking the planned action\n\t\t\t\t103 container\n\t\t\t\t\t104 text 02:12 PM AI planning requested Restart inspection 01\n\t\t\t\t105 container\n\t\t\t\t\t106 text 02:12 PM Camera observation received Restart inspection 01\n\t\t\t\t107 container\n\t\t\t\t\t108 text 02:12 PM Requesting camera observation\n\t\t\t\t109 container\n\t\t\t\t\t110 text 02:12 PM Agent resumed\n\t\t\t\t111 container\n\t\t\t\t\t112 text 02:12 PM Reply fault armed The next command reply will be lost.\n\t\t50 button (collapsed) Session details, Secondary Actions: Expand\n\t\t\t51 text Session details\n\t\t113 text 2 model requests \u00b7 Reported tokens: 13,063 input / 199 output \u00b7 Reporting incomplete (1 of 2 requests)\n\nThe focused UI element is 1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/"
+    },
+    {
+      "browser_action": "Clicked Check receipt after workbench restart; the exact historical command settled and remained paused without a new command",
+      "client_commands": 5,
+      "name": "recovered",
+      "pending_command_ids": [],
+      "screenshot": "tools/physical-workcell/output/sim11-browser-restarts-v2/ui/recovered.jpg",
+      "state": {
+        "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 0,
+          "image_url": "/api/frame?generation=0&sha256=4fe3b2c26529a4b05ed8a8f0d72bfe586ceea6567dab4713011a550f6f12cbe7"
+        },
+        "jobs": [
+          {
+            "call_count": 2,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Push the block right so its center enters the measurement zone.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-24230a0f96bc4e84a84f720b1c974054",
+          "operation": "dispatch",
+          "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence",
+          "state": "recovered"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791828827.093657,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t75 checkbox Restart inspection 01 Paused, Value: 1\n\t\t\t76 checkbox Restart inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t77 text Restart inspection 01\n\t\t78 text Paused\n\t\t16 button Resume, ID: pause\n\t\t79 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t80 text Body connected\n\t\t\t81 text Body identity verified by read-only TCP health\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button Lose next reply, ID: fault-drop\n\t\t\t\t73 button Delay next reply, ID: fault-delay\n\t\t\t\t74 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t82 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t83 text Last observation \u00b7 Restart inspection 01\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t84 text Captured \u00b7 generation 0\n\t\t85 text RECEIPT RECOVERED\n\t\t86 text The exact command receipt was recovered. The agent is paused until you resume.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t87 text Pending\n\t\t\t38 text The part\u2019s visible footprint will be measured after its placement is verified.\n\t\t39 container Activity\n\t\t\t40 heading Activity, Value: 2, ID: activity-heading\n\t\t\t\t41 text Activity\n\t\t\t88 text 24 events\n\t\t\t90 content list activity\n\t\t\t\t91 container\n\t\t\t\t\t92 text 02:13 PM Command receipt recovered The agent remains paused until you resume.\n\t\t\t\t93 container\n\t\t\t\t\t94 text 02:13 PM Action receipt checked Restart inspection 01\n\t\t\t\t95 container\n\t\t\t\t\t96 text 02:13 PM Body reconnecting No command sent or replayed\n\t\t\t\t97 container\n\t\t\t\t\t98 text 02:13 PM Body disconnected Transport only; no body reset or replay\n\t\t\t\t99 container\n\t\t\t\t\t100 text 02:12 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt\n\t\t\t\t101 container\n\t\t\t\t\t102 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending\n\t\t\t\t103 container\n\t\t\t\t\t104 text 02:12 PM Sending a guarded action\n\t\t\t\t105 container\n\t\t\t\t\t106 text 02:12 PM Action proposal accepted Restart inspection 01\n\t\t\t\t107 container\n\t\t\t\t\t108 text 02:12 PM Checking the planned action\n\t\t\t\t109 container\n\t\t\t\t\t110 text 02:12 PM AI planning requested Restart inspection 01\n\t\t\t\t111 container\n\t\t\t\t\t112 text 02:12 PM Camera observation received Restart inspection 01\n\t\t\t\t113 container\n\t\t\t\t\t114 text 02:12 PM Requesting camera observation\n\t\t50 button (collapsed) Session details, Secondary Actions: Expand\n\t\t\t51 text Session details\n\t\t89 text 2 model requests \u00b7 Reported tokens: 13,063 input / 199 output \u00b7 Reporting incomplete (1 of 2 requests)\n\nThe focused UI element is 1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/"
+    },
+    {
+      "browser_action": "Clicked Resume explicitly after receipt recovery; next step takes a fresh TCP camera observation",
+      "client_commands": 6,
+      "name": "resumed",
+      "pending_command_ids": [],
+      "screenshot": null,
+      "state": {
+        "active_job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 1,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 1,
+          "image_url": "/api/frame?generation=1&sha256=cb4221e600bbb24aec549f49924fc9224876a1ad8d04159fe0cc3798658d8357"
+        },
+        "jobs": [
+          {
+            "call_count": 3,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Push the block right so its center enters the measurement zone.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "running",
+            "target": "A"
+          },
+          {
+            "call_count": 0,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "",
+            "measurement": null,
+            "phase": null,
+            "reset": null,
+            "status": "queued",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": true,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791828841.224544,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t91 checkbox Restart inspection 01 Paused, Value: 1\n\t\t\t92 checkbox Restart inspection 02 Queued, Value: 0\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t93 text Restart inspection 01\n\t\t94 text Running\n\t\t16 button Pause, ID: pause\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t95 text Body connected\n\t\t\t96 text Current body boot verified for explicit Resume\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button Lose next reply, ID: fault-drop\n\t\t\t\t73 button Delay next reply, ID: fault-delay\n\t\t\t\t74 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t97 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t98 text Last observation \u00b7 Restart inspection 01\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t99 text Captured \u00b7 generation 0\n\t\t100 text AGENT\n\t\t101 text Push the block right so its center enters the measurement zone.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t102 text Pending\n\t\t\t38 text The part\u2019s visible footprint will be measured after its placement is verified.\n\t\t39 container Activity\n\t\t\t40 heading Activity, Value: 2, ID: activity-heading\n\t\t\t\t41 text Activity\n\t\t\t103 text 24 events\n\t\t\t90 content list activity\n\t\t\t\t104 container\n\t\t\t\t\t105 text 02:13 PM Requesting camera observation\n\t\t\t\t106 container\n\t\t\t\t\t107 text 02:13 PM Agent resumed\n\t\t\t\t108 container\n\t\t\t\t\t109 text 02:13 PM Command receipt recovered The agent remains paused until you resume.\n\t\t\t\t110 container\n\t\t\t\t\t111 text 02:13 PM Action receipt checked Restart inspection 01\n\t\t\t\t112 container\n\t\t\t\t\t113 text 02:13 PM Body reconnecting No command sent or replayed\n\t\t\t\t114 container\n\t\t\t\t\t115 text 02:13 PM Body disconnected Transport only; no body reset or replay\n\t\t\t\t116 container\n\t\t\t\t\t117 text 02:12 PM Agent stopped for review Restarted with a retained command stage; check its exact receipt\n\t\t\t\t118 container\n\t\t\t\t\t119 text 02:12 PM Agent stopped for review reply is uncertain; reconcile exact command without resending\n\t\t\t\t120 container\n\t\t\t\t\t121 text 02:12 PM Sending a guarded action\n\t\t\t\t122 container\n\t\t\t\t\t123 text 02:12 PM Action proposal accepted Restart inspection 01\n\t\t\t\t124 container\n\t\t\t\t\t125 text 02:12 PM Checking the planned action\n\t\t\t\t126 container\n\t\t\t\t\t127 text 02:12 PM AI planning requested Restart inspection 01\n\t\t50 button (collapsed) Session details, Secondary Actions: Expand\n\t\t\t51 text Session details\n\t\t128 text 2 model requests \u00b7 Reported tokens: 13,063 input / 199 output \u00b7 Reporting incomplete (1 of 2 requests)\n\nThe focused UI element is 1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/"
+    },
+    {
+      "browser_action": "Clicked Check receipt after body reboot; historical boot-two command recovered while boot three remained paused; full UI capture retained separately",
+      "client_commands": 46,
+      "name": "body_uncertain_recovered",
+      "pending_command_ids": [],
+      "screenshot": "tools/physical-workcell/output/sim11-browser-restarts-v2/ui/body-uncertain-recovered.jpg",
+      "state": {
+        "active_job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 3,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 10,
+          "image_url": "/api/frame?generation=10&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Request verification with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+              "block_home_verified": true,
+              "generation": 10,
+              "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+              "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+              "kind": "finish_reset",
+              "native_time_s": 21.679999999998863,
+              "operation_id": "agent-e8227a121d794919a11b4e108dff63f6",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3174,
+              "reset_native_steps": 8106,
+              "state_sha256": "f403fd1d61afe7bb83d4a4ff3dd9aa56936c5dbe9d0a709af793549130097d0e"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 2,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "Push the block right so its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "paused",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": "command-cf898dd6e56a4d8bb0a5894371f9ba81",
+          "operation": "dispatch",
+          "reason": "Exact historical stage recovered; explicit Resume observes fresh evidence",
+          "state": "recovered"
+        },
+        "runner_status": "paused"
+      },
+      "time": 1791829096.6301959,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t105 checkbox Restart inspection 01 Completed, Value: 0\n\t\t\t106 checkbox Restart inspection 02 Paused, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t107 text Restart inspection 02\n\t\t108 text Paused\n\t\t16 button Resume, ID: pause\n\t\t109 text Receipt recovered. The agent is paused; choose Resume to observe the bench again and continue.\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t110 text Body connected\n\t\t\t111 text Body identity verified by read-only TCP health\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button Lose next reply, ID: fault-drop\n\t\t\t\t73 button Delay next reply, ID: fault-delay\n\t\t\t\t74 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t112 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t113 text Last observation \u00b7 Restart inspection 02\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t114 text Captured \u00b7 generation 10\n\t\t115 text RECEIPT RECOVERED\n\t\t116 text The exact command receipt was recovered. The agent is paused until you resume.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t117 text Pending\n\t\t\t104 text The part\u2019s visible footprint will be measured after its placement is verified.\n[Main-panel excerpt; full browser capture is body-uncertain-recovered.txt]\n"
+    },
+    {
+      "browser_action": "Clicked Resume explicitly after boot-two receipt recovery; the next decision receives a fresh boot-three TCP image; full UI capture retained separately",
+      "client_commands": 47,
+      "name": "body_uncertain_resumed",
+      "pending_command_ids": [],
+      "screenshot": null,
+      "state": {
+        "active_job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 3,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 11,
+          "image_url": "/api/frame?generation=11&sha256=0d42c93fef97b6bf1ded19965b65518e43b873916c9e8bc1d8300debf130f9fa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Request verification with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+              "block_home_verified": true,
+              "generation": 10,
+              "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+              "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+              "kind": "finish_reset",
+              "native_time_s": 21.679999999998863,
+              "operation_id": "agent-e8227a121d794919a11b4e108dff63f6",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3174,
+              "reset_native_steps": 8106,
+              "state_sha256": "f403fd1d61afe7bb83d4a4ff3dd9aa56936c5dbe9d0a709af793549130097d0e"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 3,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "Push the block right so its center reaches the measurement region.",
+            "measurement": null,
+            "phase": "prepare",
+            "reset": null,
+            "status": "running",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": true,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791829107.8461351,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t105 checkbox Restart inspection 01 Completed, Value: 0\n\t\t\t106 checkbox Restart inspection 02 Paused, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t107 text Restart inspection 02\n\t\t108 text Running\n\t\t16 button Pause, ID: pause\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t109 text Body connected\n\t\t\t110 text Current body boot verified for explicit Resume\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button Lose next reply, ID: fault-drop\n\t\t\t\t73 button Delay next reply, ID: fault-delay\n\t\t\t\t74 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t111 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t112 text Last observation \u00b7 Restart inspection 02\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t113 text Captured \u00b7 generation 10\n\t\t114 text AGENT\n\t\t115 text Push the block right so its center reaches the measurement region.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t116 text Pending\n\t\t\t104 text The part\u2019s visible footprint will be measured after its placement is verified.\n[Main-panel excerpt; full browser capture is body-uncertain-resumed.txt]\n"
+    },
+    {
+      "browser_action": "Observed both jobs completed after all four restart recoveries and one explicit health-timeout resume; full browser capture retained separately",
+      "client_commands": 83,
+      "name": "completed",
+      "pending_command_ids": [],
+      "screenshot": "tools/physical-workcell/output/sim11-browser-restarts-v2/ui/completed.jpg",
+      "state": {
+        "active_job_id": null,
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 3,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 20,
+          "image_url": "/api/frame?generation=20&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Request verification with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+              "block_home_verified": true,
+              "generation": 10,
+              "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+              "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+              "kind": "finish_reset",
+              "native_time_s": 21.679999999998863,
+              "operation_id": "agent-e8227a121d794919a11b4e108dff63f6",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3174,
+              "reset_native_steps": 8106,
+              "state_sha256": "f403fd1d61afe7bb83d4a4ff3dd9aa56936c5dbe9d0a709af793549130097d0e"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 15,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "Finish reset with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004802777777777777,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1729
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+              "block_home_verified": true,
+              "generation": 20,
+              "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+              "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+              "kind": "finish_reset",
+              "native_time_s": 42.630000000006135,
+              "operation_id": "agent-7acee30a3cb442d9a3a2b3a9bfec10ed",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3314,
+              "reset_native_steps": 8140,
+              "state_sha256": "02c49f9f03f16f8de552b4b4ce57b6d78c85e291fc3dbf1b6acb0ce4b7cd638b"
+            },
+            "status": "completed",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791829354.9904199,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t140 checkbox Restart inspection 01 Completed, Value: 0\n\t\t\t141 checkbox Restart inspection 02 Completed, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t142 text Restart inspection 02\n\t\t143 text Running\n\t\t16 button Pause, ID: pause\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t144 text Body connected\n\t\t\t145 text Body identity verified by read-only TCP health\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t68 container\n\t\t\t\t69 button (expanded) Test the simulated connection, Secondary Actions: Collapse\n\t\t\t\t\t70 text Test the simulated connection\n\t\t\t\t71 text These controls affect the next command reply. Recovery checks its retained receipt and waits for you to resume.\n\t\t\t\t72 button Lose next reply, ID: fault-drop\n\t\t\t\t73 button Delay next reply, ID: fault-delay\n\t\t\t\t74 button Duplicate next command, ID: fault-duplicate\n\t\t\t\t146 text No reply fault armed.\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t147 text Last camera observation\n\t\t\t60 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t148 text Captured \u00b7 generation 20\n\t\t149 text COMPLETED\n\t\t150 text Measurement recorded and reset verified. The bench is ready for another job.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t151 text Historical result\n\t\t\t132 container measurement-result\n\t\t\t\t152 text 1,729\n\t\t\t\t134 text Orange pixels\n\t\t\t\t135 container\n\t\t\t\t\t153 text 4,802.8\n\t\t\t\t\t137 text mm\u00b2\n\t\t\t\t138 text Apparent footprint\n\t\t\t\t139 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment.\n\t\t\t154 button Repeat job, ID: repeat\n[Main-panel excerpt; full browser capture is completed.txt]\n"
+    },
+    {
+      "browser_action": "Reloaded the browser; completed job records and the 83-command journal remained identical with no replay; full capture retained separately",
+      "client_commands": 83,
+      "name": "reloaded",
+      "pending_command_ids": [],
+      "screenshot": null,
+      "state": {
+        "active_job_id": null,
+        "app_id": "878fad93039a4e86b4dcc5529f118f20",
+        "connection": {
+          "adapter_id": "96943574039142dda13cb620decfddf0",
+          "body_id": "a26eb04332df4e1e9f3f0f307db47644",
+          "epoch": 3,
+          "fault": null,
+          "reason": "Body identity verified by read-only TCP health",
+          "state": "connected"
+        },
+        "current_frame": {
+          "available": true,
+          "generation": 20,
+          "image_url": "/api/frame?generation=20&sha256=118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa"
+        },
+        "jobs": [
+          {
+            "call_count": 14,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+            "label": "Restart inspection 01",
+            "last_intent": "Request verification with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004794444444444444,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1726
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+              "block_home_verified": true,
+              "generation": 10,
+              "image_sha256": "b404f8a09f6ccd21c78edfec024e7e3e940c21146aeeaa3f58975e6aee8a7e87",
+              "job_id": "20eb6586-e73a-4db4-aaac-db3e5d537329",
+              "kind": "finish_reset",
+              "native_time_s": 21.679999999998863,
+              "operation_id": "agent-e8227a121d794919a11b4e108dff63f6",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3174,
+              "reset_native_steps": 8106,
+              "state_sha256": "f403fd1d61afe7bb83d4a4ff3dd9aa56936c5dbe9d0a709af793549130097d0e"
+            },
+            "status": "completed",
+            "target": "A"
+          },
+          {
+            "call_count": 15,
+            "disturbance_test": false,
+            "error": null,
+            "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+            "label": "Restart inspection 02",
+            "last_intent": "Finish reset with the block centered in the home zone and the pusher at its home position.",
+            "measurement": {
+              "footprint_area_m2": 0.004802777777777777,
+              "method": "simulated_orange_RGB_footprint",
+              "orange_pixel_count": 1729
+            },
+            "phase": "completed",
+            "reset": {
+              "bench_id": "a26eb04332df4e1e9f3f0f307db47644",
+              "block_home_verified": true,
+              "generation": 20,
+              "image_sha256": "118bf53bca3344b8d0318c995ebe8b171a2a8bbc09c0ae163d70cc0f1d4aaefa",
+              "job_id": "c922a26d-9121-4d7e-82e1-7b61b0e42161",
+              "kind": "finish_reset",
+              "native_time_s": 42.630000000006135,
+              "operation_id": "agent-7acee30a3cb442d9a3a2b3a9bfec10ed",
+              "pusher_home_verified": true,
+              "reset_contact_samples": 3314,
+              "reset_native_steps": 8140,
+              "state_sha256": "02c49f9f03f16f8de552b4b4ce57b6d78c85e291fc3dbf1b6acb0ce4b7cd638b"
+            },
+            "status": "completed",
+            "target": "B"
+          }
+        ],
+        "model_request_pending": false,
+        "recovery": {
+          "command_id": null,
+          "operation": null,
+          "reason": "No pending command",
+          "state": "none"
+        },
+        "runner_status": "running"
+      },
+      "time": 1791829364.1247208,
+      "visible_text": "Browser tab: 4, Title: \"Footwork \u00b7 Network bench\", URL: \"http://127.0.0.1:51377/\".\n1 AXWebArea Footwork \u00b7 Network bench, URL: 127.0.0.1:51377/\n\t2 container\n\t\t3 text Footwork Bench\n\t\t4 text SIMULATION\n\t5 container Jobs\n\t\t6 text WORK QUEUE\n\t\t7 button \uff0b New job, ID: new-job\n\t\t8 container queue\n\t\t\t9 checkbox Restart inspection 01 Completed, Value: 0\n\t\t\t10 checkbox Restart inspection 02 Completed, Value: 1\n\t11 container\n\t\t12 heading Bench, Value: 1\n\t\t\t13 text Bench\n\t\t14 text Restart inspection 02\n\t\t15 text Running\n\t\t16 button Pause, ID: pause\n\t\t17 container Description: Body connection, ID: network-card\n\t\t\t18 text Body connected\n\t\t\t19 text Body identity verified by read-only TCP health\n\t\t\t20 button Disconnect, ID: disconnect\n\t\t\t21 button (disabled) Check receipt, ID: reconcile\n\t\t\t22 button (collapsed) Test the simulated connection, Secondary Actions: Expand\n\t\t\t\t23 text Test the simulated connection\n\t\t24 container Camera observation\n\t\t\t25 text OVERHEAD CAMERA\n\t\t\t26 text Last camera observation\n\t\t\t27 image Description: Rendered overhead view of the orange part, blue pusher and green task region, ID: frame\n\t\t\t28 text Orange part Blue pusher Green task region\n\t\t\t29 text Captured \u00b7 generation 20\n\t\t30 text COMPLETED\n\t\t31 text Measurement recorded and reset verified. The bench is ready for another job.\n\t\t32 container Job progress\n\t\t\t33 text 1 Prepare 2 Measure 3 Reset 4 Ready\n\t\t34 container Measurement\n\t\t\t35 heading Measurement, Value: 2, ID: measurement-heading\n\t\t\t\t36 text Measurement\n\t\t\t37 text Historical result\n\t\t\t38 container measurement-result\n\t\t\t\t39 text 1,729\n\t\t\t\t40 text Orange pixels\n\t\t\t\t41 container\n\t\t\t\t\t42 text 4,802.8\n\t\t\t\t\t43 text mm\u00b2\n\t\t\t\t44 text Apparent footprint\n\t\t\t\t45 text Image-based area in the calibrated simulation. This is a recorded measurement, separate from the AI\u2019s judgment.\n\t\t\t46 button Repeat job, ID: repeat\n[Main-panel excerpt; full browser capture is reloaded.txt]\n"
+    }
+  ]
+}

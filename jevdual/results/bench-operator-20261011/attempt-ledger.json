@@ -1,0 +1,12 @@
+{
+  "transport_probes": 2,
+  "trial_v1_reserved_calls": 30,
+  "trial_v2_reserved_calls": 31,
+  "total_reserved_cli_requests": 63,
+  "usage_scope": "reported token totals only; no monetary price or complete billing evidence",
+  "v1_qualification": "inconclusive, retained; retrospective repaired score has changed-source flag",
+  "v2_qualification": "passed first version-2 attempt",
+  "cli_version": "codex-cli 0.147.0",
+  "model": "CLI default; exact model name not reported",
+  "reasoning_effort": "low"
+}

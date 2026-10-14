@@ -1,0 +1,62 @@
+Browser tab: 6, Title: "Footwork · Network bench", URL: "http://127.0.0.1:51419/".
+1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/
+	2 container
+		3 text Footwork Bench
+		4 text SIMULATION
+	5 container Jobs
+		6 text WORK QUEUE
+		7 button (disabled) ＋ New job, ID: new-job
+		58 checkbox Retire planner and recover reply Working, Value: 1
+		9 text One bench. Successive jobs.
+		10 text The AI prepares the part, takes a measurement, and returns it home before the next job.
+	11 container
+		12 heading Bench, Value: 1
+			13 text Bench
+		59 text Retire planner and recover reply
+		60 text Disconnected
+		16 button (disabled) Pause, ID: pause
+		61 text The workbench is unavailable. The last camera image and job status are retained.
+		17 container Description: Body connection, ID: network-card
+			62 text Body connected
+			63 text Last known body status. The workbench cannot check it while disconnected.
+			20 button (disabled) Disconnect, ID: disconnect
+			21 button (disabled) Check receipt, ID: reconcile
+			22 button (collapsed) Test the simulated connection, Secondary Actions: Expand
+				23 text Test the simulated connection
+		24 container Camera observation
+			25 text OVERHEAD CAMERA
+			64 text Retained observation · workbench offline
+			65 text Waiting for the next camera observation.
+			28 text Orange part Blue pusher Green task region
+			66 text No frame captured
+		67 text WORKBENCH OFFLINE
+		68 text The camera image and job status are from the workbench’s last reply. Reconnect before continuing.
+		32 container Job progress
+			33 text 1 Prepare 2 Measure 3 Reset 4 Ready
+		34 container Measurement
+			35 heading Measurement, Value: 2, ID: measurement-heading
+				36 text Measurement
+			69 text Pending
+			38 text The part’s visible footprint will be measured after its placement is verified.
+		39 container Activity
+			40 heading Activity, Value: 2, ID: activity-heading
+				41 text Activity
+			70 text 6 events
+			43 content list activity
+				71 container
+					72 text 10:56 PM Requesting camera observation
+				73 container
+					74 text 10:56 PM Fresh body check verified The next command uses current body evidence.
+				75 container
+					76 text 10:56 PM Inspection started Retire planner and recover reply
+				77 container
+					78 text 10:56 PM Preparing inspection
+				79 container
+					80 text 10:56 PM Fresh body check verified The next command uses current body evidence.
+				81 container
+					82 text 10:56 PM Job queued Retire planner and recover reply
+		56 button (collapsed) Session details, Secondary Actions: Expand
+			57 text Session details
+		83 text Model usage will appear after the first request.
+
+The focused UI element is 1 AXWebArea Footwork · Network bench, URL: 127.0.0.1:51419/

@@ -1,0 +1,12 @@
+{
+  "source_commit": "1b773b3b6ee70da85d5dc19619107176ec1c4514",
+  "previous_product": "http://127.0.0.1:51377/",
+  "retained_roots": [
+    "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim12-browser-health-v1/body",
+    "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim12-browser-health-v1/operator",
+    "/Users/thomasmain/projects/footwork/tools/physical-workcell/output/sim12-handoff/persistent-relay"
+  ],
+  "unchanged_completed_jobs": 2,
+  "crash_target": false,
+  "plan": "Isolated fresh simulated roots/ports for all SIGKILL cases; existing paused product retained"
+}

@@ -1,0 +1,59 @@
+{
+  "recorded_at": "2026-10-11T17:19:00-04:00",
+  "status": "cold_fixture_timeout_preserved",
+  "source_commit": "33e1afb06710e2d2a57a0f7d1aea7ea0e19a878d",
+  "packet_sha256": "769c08c89061731368db33d78b180e7c8c96d531190f43bee44263642a76fd0f",
+  "guest": {
+    "os": "macOS",
+    "version": "26.6.2",
+    "build": "25G83",
+    "sip": "enabled",
+    "responsible_host": "com.apple.Terminal",
+    "responsible_host_version": "2.15"
+  },
+  "media": {
+    "mount": "/Volumes/FOOTWORK_U2",
+    "media_read_only": true,
+    "volume_read_only": true,
+    "visible_files": 6,
+    "payload_checksum_checks": 4,
+    "payload_checksum_passes": 4
+  },
+  "prerequisites": {
+    "uv_version": "0.12.5",
+    "python_installed": true,
+    "python_license": "human_approved_and_accepted",
+    "python_installer": "human authentication completed",
+    "chrome_dmg": "mounted_read_only",
+    "chrome_signature": "deep strict codesign valid; spctl accepted Notarized Developer ID; stapled ticket",
+    "chrome_version": "155.0.8059.40",
+    "chrome_installation": "completed at /Applications/Google Chrome.app; installed bundle version readback 155.0.8059.40",
+    "python_version": "3.14.7"
+  },
+  "qualification": {
+    "packet_member_verification": "passed 14 members, exit0",
+    "cold_dependency_install": "passed 115 packages, seven stages exit0, installer exit0",
+    "denied_accessibility_baseline": "observed not_granted, strict doctor exit1, fixture exit2, fixture directory absent",
+    "permission_transition": "Settings on observed after human unlock; actor/time not captured; Terminal quit/relaunched; strict doctor exit0 Accessibility granted",
+    "native_effect_restart_report": "not_run: fixture-v1 identity deadline expired during Chrome first-launch verification",
+    "cleanup": "exact unchanged TextEdit document manually closed after declining Automation; fixture browser cleanup completed",
+    "qualified": false
+  },
+  "evidence_location": "guest-evidence sanitized copies; exact raw archive output/u2-export-v1/evidence-v1.zip",
+  "claude_baseline_review": {
+    "message": "1791751104201824000",
+    "verdict": "valid denied baseline",
+    "clarifications": [
+      "cause of Terminal entry not reconstructible retrospectively; no prompting dialog observed",
+      "raw receipt export and hashes required before post-grant run"
+    ]
+  },
+  "export": {
+    "sha256": "b9dcde6aae648d760d1730bfe979756c6165549b46d7f6eaf6d00dcd9561ea18",
+    "bytes": 11988,
+    "members": 20,
+    "baseline_hashes_matched": 3,
+    "receiver_closed": true,
+    "hash_timing": "before doctor-after, actual grant timing not captured"
+  }
+}

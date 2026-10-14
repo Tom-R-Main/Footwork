@@ -11,11 +11,28 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[2]
+
+
+def source_commit(project: Path) -> str:
+    """Packet provenance never calls Git or the macOS developer-tools shim."""
+    manifest = project / "MANIFEST.json"
+    if manifest.exists() or manifest.is_symlink():
+        if manifest.is_symlink() or not manifest.is_file():
+            raise ValueError("Packet manifest must be a regular file")
+        payload = json.loads(manifest.read_text())
+        commit = payload.get("source_commit") if isinstance(payload, dict) else None
+        if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+            raise ValueError("Packet manifest requires a full immutable source commit")
+        return commit
+    if (project / ".git").exists():
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=project, text=True).strip()
+    return "unavailable"
 
 
 def isolated_environment(state_root: Path | None = None) -> dict[str, str]:
@@ -61,6 +78,7 @@ def main() -> int:
     root, wheel = args.run_dir.resolve(), args.wheel.resolve()
     if not root.is_relative_to(PROJECT / "output") or not wheel.is_file():
         parser.error("owned output run and existing wheel required")
+    provenance = source_commit(PROJECT)
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
     cwd, cache, venv = root / "outside-source", root / "empty-cache", root / "venv"
     cwd.mkdir(mode=0o700)
@@ -74,9 +92,7 @@ def main() -> int:
     interpreter = os.path.abspath(args.python)
     common = [uv, "--no-config", "--no-progress", "--cache-dir", str(cache), "--no-python-downloads"]
     receipt = {
-        "source_commit": subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=PROJECT, text=True
-        ).strip(),
+        "source_commit": provenance,
         "host": {"platform": platform.system(), "machine": platform.machine()},
         "interpreter_requested": interpreter,
         "wheel": str(wheel),
