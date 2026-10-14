@@ -36,3 +36,20 @@ jobs:
           cargo test --workspace --locked
       - name: Unit and equality tests (no keys, no browser)
         run: uv run pytest -q -m "not browser"
+      - name: Camera, desk inbox and workbench conformance (synthetic inputs)
+        run: |
+          uv run ruff check ../tools/camera-capture-experiment ../tools/desk-inbox-experiment ../tools/workbench-notes ../tools/physical-workcell
+          uv run python -m unittest discover -s ../tools/camera-capture-experiment -p 'test_*.py' -v
+          uv run pytest -q ../tools/desk-inbox-experiment/test_inbox.py ../tools/workbench-notes/test_workbench.py
+      - name: Install pinned physical simulator and headless rendering libraries
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1-mesa-dri
+          uv venv --python 3.12 tools/physical-workcell/.venv
+          uv pip install --python tools/physical-workcell/.venv/bin/python -r tools/physical-workcell/requirements.txt
+      - name: Physical workcell conformance (simulation, no model calls)
+        working-directory: .
+        env:
+          MUJOCO_GL: egl
+        run: tools/physical-workcell/.venv/bin/python -m unittest discover -s tools/physical-workcell -p 'test_*.py' -v
