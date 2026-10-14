@@ -26,3 +26,10 @@ Test: add meaningful long-path and adversarial ownership/symlink cases; create f
 Predicts: long checkout paths work, hostile socket roots are refused, separate controller identities remain separate, restart/replay safety tests remain green, and all original physical tests pass.
 Against: shortened paths retarget another controller, tolerate unsafe roots, weaken the existing safety bound, leave broken binding across restart, or original failures persist.
 Refs: tools/physical-workcell/controller.py:socket_path; output/consolidation-physical.log
+
+## CA5 · prediction · 2026-10-14 13:10
+Hypothesis: frozen onboarding packet verification must derive its wheel inventory from the requested immutable commit rather than the current checkout, and the existing release verifier can preserve that constraint after camera runtime changes.
+Test: reproduce reviewer inventory mismatch using the qualified wheel and source445a348; add a regression with current runtime differing from frozen source, then use committed-source wheel verification before generating packet inventory. Reverify the original205577packet and immutable8dc81c72candidate without rebuilding them.
+Predicts: exact old wheel and packet verify against their frozen source; altered wheel bytes or a mismatched commit still refuse; current-source default remains correctly verified.
+Against: verification accepts tampering, silently uses current source, introduces circular imports, or changes the preserved packet.
+Refs: jevdual/scripts/build_onboarding_packet.py:inventory; jevdual/scripts/build_release_candidate.py:verify_committed_wheel; independent reviewer source445a348 inventory mismatch
