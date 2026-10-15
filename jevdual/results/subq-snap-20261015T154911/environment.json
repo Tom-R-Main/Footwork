@@ -1,0 +1,7 @@
+{
+  "python": "3.12.6",
+  "tls_library": "OpenSSL 3.0.15 3 Sep 2024",
+  "certificate_verification": true,
+  "trust_selection": "SSL_CERT_FILE using already installed certifi bundle",
+  "ca_bundle_sha256": "9cc2a774b5198dcff14d9be1e66091f538975d867ce029a96bce15a55dfd730f"
+}

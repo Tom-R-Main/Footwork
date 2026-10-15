@@ -1,0 +1,21 @@
+{
+  "experiment": "SQ1",
+  "model": "subq-snap-preview",
+  "source_commit": "6f8ae860a082712c067d1fc806e538da90acf1b7",
+  "planned": 12,
+  "attempted": 0,
+  "completed": 0,
+  "contract_valid": 0,
+  "route_correct": 0,
+  "route_accuracy_planned": 0.0,
+  "completion_correct": 0,
+  "score_correct": 0,
+  "reported_input_tokens": 0,
+  "reported_usage_available_calls": 0,
+  "estimated_reported_charge_usd": 0.0,
+  "reserved_or_settled_usd": 0.0,
+  "latency_median_seconds": null,
+  "latency_max_seconds": null,
+  "stop_reason": "Transport failure; stopped without retry",
+  "decision": "incomplete or failed; no adoption conclusion"
+}

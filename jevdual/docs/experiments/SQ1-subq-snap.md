@@ -69,3 +69,17 @@ provider-error retry or changed prompts. The original aggregate limit of twelve 
 and $0.20 local reservation ceiling includes every run; zero inference attempts have occurred.
 Record the CA bundle digest with the new results. Commit the atomic ledger-write refinement
 before the new measurement; preserve the previous ledger if replacement fails.
+
+## Result
+
+Completed 2026-10-15 at ff69a0f. Fresh run returned 12/12 valid response sets and expected routes,
+with 12/12 expected completion classifications and progress checks. Reported usage is 54,769 input
+tokens and zero output tokens; estimated charge is $0.00273845 at the documented rate. Median client
+wall latency is 376 ms; maximum is 779 ms. Maximum per-call reported context is 11,805 input tokens.
+The initial TLS access failure sent no inference requests; aggregate inference attempts remain twelve.
+
+The smoke hypothesis holds. This result justifies separately registered development evaluation;
+it does not justify runtime adoption or vendor benchmark claims. Full records and limits:
+[report](../../results/subq-snap-20261015T154911/report.md),
+[summary](../../results/subq-snap-20261015T154911/summary.json), and
+[initial access failure](../../results/subq-snap-20261015T154737/summary.json).
