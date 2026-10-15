@@ -168,3 +168,46 @@ def test_dry_run_does_not_prompt_or_dispatch(monkeypatch, capsys):
     monkeypatch.setattr(probe, "transport", forbidden)
     assert probe.main(["--prompt-key"]) == 0
     assert json.loads(capsys.readouterr().out)["requests"] == 12
+
+
+
+def test_atomic_save_preserves_prior_ledger_when_replace_fails(tmp_path, monkeypatch):
+    ledger = tmp_path / "attempts.json"
+    prior = b'[{"status":"reserved","accounted_tokens":99}]\n'
+    ledger.write_bytes(prior)
+    fsynced = []
+    real_fsync = probe.os.fsync
+
+    def fsync(descriptor):
+        real_fsync(descriptor)
+        fsynced.append(descriptor)
+
+    def fail_replace(source, destination):
+        assert fsynced, "Complete temporary ledger must be fsynced before replacement"
+        assert json.loads(Path(source).read_text()) == [{"echo": "[REDACTED]"}]
+        assert Path(destination).read_bytes() == prior
+        raise OSError("simulated replacement failure")
+
+    monkeypatch.setattr(probe.os, "fsync", fsync)
+    monkeypatch.setattr(probe.os, "replace", fail_replace)
+    with pytest.raises(OSError, match="replacement failure"):
+        probe.save(ledger, [{"echo": "sk-private"}], "sk-private")
+    assert ledger.read_bytes() == prior
+    assert list(tmp_path.iterdir()) == [ledger]
+
+
+def test_atomic_save_cleans_partial_temp_on_serialization_failure(tmp_path):
+    ledger = tmp_path / "attempts.json"
+    ledger.write_text("[]\n")
+    with pytest.raises(ValueError):
+        probe.save(ledger, {"invalid": float("nan")})
+    assert ledger.read_text() == "[]\n"
+    assert list(tmp_path.iterdir()) == [ledger]
+
+
+def test_atomic_save_success_publishes_complete_sanitized_ledger(tmp_path):
+    ledger = tmp_path / "attempts.json"
+    ledger.write_text("[]\n")
+    probe.save(ledger, [{"status": "reserved", "echo": "sk-private"}], "sk-private")
+    assert json.loads(ledger.read_text()) == [{"status": "reserved", "echo": "[REDACTED]"}]
+    assert list(tmp_path.iterdir()) == [ledger]

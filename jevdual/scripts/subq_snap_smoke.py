@@ -8,6 +8,7 @@ import os
 import statistics
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -102,11 +103,27 @@ def sanitize(value, key):
 
 
 def save(path, value, key=""):
-    with path.open("w", encoding="utf-8") as stream:
-        json.dump(sanitize(value, key), stream, indent=2, allow_nan=False)
-        stream.write("\n")
-        stream.flush()
-        os.fsync(stream.fileno())
+    """Publish a complete fsynced artifact; failed writes preserve its predecessor."""
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=path.parent,
+            prefix=f".{path.name}.", suffix=".tmp", delete=False,
+        ) as stream:
+            temporary = Path(stream.name)
+            json.dump(sanitize(value, key), stream, indent=2, allow_nan=False)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+        directory = os.open(path.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def prompt_key():
