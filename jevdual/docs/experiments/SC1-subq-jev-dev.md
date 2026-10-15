@@ -95,3 +95,24 @@ Sources checked 2026-10-15:
 [SubQ Decisions](https://docs.subq.ai/endpoints/decisions-api/),
 [SubQ pricing](https://docs.subq.ai/using-the-api/models/),
 [Jev models](https://docs.typesafe.ai/models).
+
+## Result
+
+Completed October 15, 2026 at `bd34247b514191162cdee280d927e6f484422527`. All 636 attempts
+finished without request/contract errors and all reported usage settled. Estimated input charge
+is **$0.025787922** under the $1 aggregate cap; the largest pre-dispatch package reservation was
+$0.053348710. Independent audit verifies all raw-response replays, manifests, request hashes,
+case/repeat counts, timings and ledgers. No probes/retries/heldout runs or app dispatch occurred.
+
+The hypothesis fails: Snap accepts four of eighteen negative completion cases finally and eight
+semantically, versus Jev zero for both. Positive final all-three coverage is seven versus five
+of eighteen. Snap has stronger risk correctness (37/40 versus33/40) and raw action pairs
+(29/30 versus28/30), with zero incorrect admissions for both. Paired Snap/Jev request ratios
+are1.35 completion,1.12 risk and1.70 actions; no overall speed advantage is observed.
+
+Keep Jev default and for normal completion judgment. The explicit experimental backend switch is
+implemented without changing thresholds or code authority. Further action/risk validation would
+be a new package. Full evidence and limitations:
+[report](../../results/sc1-20261015T172206/report.md),
+[summary](../../results/sc1-20261015T172206/summary.json),
+[independent audit](../../results/sc1-20261015T172206/audit.json).

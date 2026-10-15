@@ -1,0 +1,147 @@
+{
+  "id": "R1-A26",
+  "role": "actions",
+  "repeat": 0,
+  "backend": "jev",
+  "category": "native_ambiguous_target",
+  "expect": null,
+  "expect_abstain": true,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "1eb74f6437717af9e632523ca9fa82f217840828bd4c7c0ec9301d7fc0632e89",
+  "answer_sources": {
+    "operation": "provider",
+    "click_target": "provider",
+    "enter_target": "provider",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "8977110f62ba6f547ca23d04ece8913c69f431b1da67bad8354499e5bfa06318",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 182.1539590600878,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "operation": {
+        "type": "choice",
+        "choice": "blocked",
+        "confidence": 0.94,
+        "probabilities": {
+          "click": 0.04,
+          "enter": 0.0,
+          "scroll_page": 0.01,
+          "back": 0.0,
+          "wait": 0.0,
+          "done": 0.0,
+          "blocked": 0.95
+        }
+      },
+      "click_target": {
+        "type": "choice",
+        "choice": "260",
+        "confidence": 0.96,
+        "probabilities": {
+          "260": 0.98,
+          "261": 0.02
+        }
+      },
+      "enter_target": {
+        "type": "choice",
+        "choice": "260",
+        "confidence": 0.96,
+        "probabilities": {
+          "260": 0.98,
+          "261": 0.02
+        }
+      },
+      "goal_done": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "stuck": {
+        "type": "noul",
+        "noul": 0.05
+      },
+      "destructive": {
+        "type": "noul",
+        "noul": 0.14
+      },
+      "login_required": {
+        "type": "noul",
+        "noul": 0.04
+      },
+      "bot_check": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "needs_reasoning": {
+        "type": "noul",
+        "noul": 0.57
+      }
+    },
+    "usage": {
+      "input_tokens": 2091,
+      "output_tokens": 243
+    }
+  },
+  "actual_request_sha256": "1eb74f6437717af9e632523ca9fa82f217840828bd4c7c0ec9301d7fc0632e89",
+  "result": {
+    "decision": "abstain",
+    "raw_abstain": true,
+    "admitted": false,
+    "admitted_target_id": null,
+    "admitted_pair_correct": false,
+    "operation": "blocked",
+    "target_id": null,
+    "raw_pair_correct": true,
+    "arbiter_kind": "escalate",
+    "reason": "blocked: no offered operation can make progress",
+    "native_decision": {
+      "operation": {
+        "choice": "blocked",
+        "confidence": 0.94,
+        "probabilities": {
+          "click": 0.04,
+          "enter": 0.0,
+          "scroll_page": 0.01,
+          "back": 0.0,
+          "wait": 0.0,
+          "done": 0.0,
+          "blocked": 0.95
+        }
+      },
+      "target": null,
+      "nouls": {
+        "goal_done": 0.03,
+        "stuck": 0.05,
+        "destructive": 0.14,
+        "login_required": 0.04,
+        "bot_check": 0.03,
+        "needs_reasoning": 0.57
+      },
+      "model": "jev-1.13.0",
+      "request_tokens": 2091,
+      "latency_ms": 0.5289169494062662,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 183.7391669396311,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "1eb74f6437717af9e632523ca9fa82f217840828bd4c7c0ec9301d7fc0632e89",
+    "wire_questions": 9,
+    "body_bytes": 6800,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 8.7822e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 2091
+  }
+}

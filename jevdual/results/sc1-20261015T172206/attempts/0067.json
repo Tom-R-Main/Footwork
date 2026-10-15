@@ -1,0 +1,72 @@
+{
+  "id": "C10-accept",
+  "role": "completion",
+  "repeat": 0,
+  "backend": "jev",
+  "category": "generic success and wrong resource",
+  "expect": "accept",
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "0196cdaec3a1769d9a45d5f281a14bf6d3cb6658c4c36d829475e52c2b69c229",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "000b0c548db492191c4cb6dceddb83cdffaf0d9a4392f0949b1ead98a144028d",
+  "cold": false,
+  "correct": false,
+  "request_latency_ms": 253.57433408498764,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.97
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.05
+      }
+    },
+    "usage": {
+      "input_tokens": 767,
+      "output_tokens": 37
+    }
+  },
+  "actual_request_sha256": "0196cdaec3a1769d9a45d5f281a14bf6d3cb6658c4c36d829475e52c2b69c229",
+  "result": {
+    "semantic_accept": true,
+    "accept": false,
+    "band": "verify",
+    "reason": "no evidence in this run for: submitted; complete p=0.97, max unmet p=0.00",
+    "raw_reason": "complete p=0.97, max unmet p=0.00",
+    "complete": 0.97,
+    "unmet": {},
+    "answer_required": 0.05,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.97
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.05
+      }
+    }
+  },
+  "total_latency_ms": 254.61683399043977,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "0196cdaec3a1769d9a45d5f281a14bf6d3cb6658c4c36d829475e52c2b69c229",
+    "wire_questions": 2,
+    "body_bytes": 1770,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 3.2214e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 767
+  }
+}

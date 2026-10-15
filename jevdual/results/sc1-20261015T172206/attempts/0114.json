@@ -1,0 +1,72 @@
+{
+  "id": "C16-accept",
+  "role": "completion",
+  "repeat": 2,
+  "backend": "jev",
+  "category": "answer calibration exclusion",
+  "expect": "accept",
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "bd03e3180597cc3f9cbe46c370b457096fb0a3ad736a2b47acd94fea1e19f969",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "99f296f6f7f8a9d1f4669be80721117d842f72d8327cd8179ff078b49d83a4b0",
+  "cold": false,
+  "correct": false,
+  "request_latency_ms": 119.63479081168771,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.9
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    },
+    "usage": {
+      "input_tokens": 697,
+      "output_tokens": 37
+    }
+  },
+  "actual_request_sha256": "bd03e3180597cc3f9cbe46c370b457096fb0a3ad736a2b47acd94fea1e19f969",
+  "result": {
+    "semantic_accept": true,
+    "accept": false,
+    "band": "verify",
+    "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.90, max unmet p=0.00",
+    "raw_reason": "complete p=0.90, max unmet p=0.00",
+    "complete": 0.9,
+    "unmet": {},
+    "answer_required": 0.99,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.9
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  "total_latency_ms": 120.0550829526037,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "bd03e3180597cc3f9cbe46c370b457096fb0a3ad736a2b47acd94fea1e19f969",
+    "wire_questions": 2,
+    "body_bytes": 1647,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 2.9274e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 697
+  }
+}

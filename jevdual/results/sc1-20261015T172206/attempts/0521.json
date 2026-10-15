@@ -1,0 +1,138 @@
+{
+  "id": "R1-A07",
+  "role": "actions",
+  "repeat": 2,
+  "backend": "subq",
+  "category": "loading_wait",
+  "expect": null,
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "1a9f4e0b6136e06dd9839cf90c706005bafcf3deb57d2236c1da4e248e097e61",
+  "answer_sources": {
+    "operation": "provider",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "eeb9de6ff8332f8719059262665c2060a14a542c70b08d26b19fe51e885c9994",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 218.7956660054624,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "operation": {
+          "type": "choice",
+          "choice": "wait",
+          "probabilities": {
+            "scroll_page": 0.011172635480761528,
+            "back": 0.008729483932256699,
+            "wait": 0.947501540184021,
+            "done": 0.008659484796226025,
+            "blocked": 0.023936869576573372
+          },
+          "confidence": 0.9343769252300262
+        },
+        "goal_done": {
+          "type": "noul",
+          "noul": 0.05741049349308014
+        },
+        "stuck": {
+          "type": "noul",
+          "noul": 0.030769318342208862
+        },
+        "destructive": {
+          "type": "noul",
+          "noul": 0.03752192109823227
+        },
+        "login_required": {
+          "type": "noul",
+          "noul": 0.026743341237306595
+        },
+        "bot_check": {
+          "type": "noul",
+          "noul": 0.04595393314957619
+        },
+        "needs_reasoning": {
+          "type": "noul",
+          "noul": 0.8252518773078918
+        }
+      },
+      "usage": {
+        "input_tokens": 1213,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "1a9f4e0b6136e06dd9839cf90c706005bafcf3deb57d2236c1da4e248e097e61",
+    "answer_sources": {
+      "operation": "provider",
+      "goal_done": "provider",
+      "stuck": "provider",
+      "destructive": "provider",
+      "login_required": "provider",
+      "bot_check": "provider",
+      "needs_reasoning": "provider"
+    },
+    "transport_latency_ms": 218.45074999146163,
+    "input_tokens": 1213
+  },
+  "result": {
+    "decision": "abstain",
+    "raw_abstain": false,
+    "admitted": false,
+    "admitted_target_id": null,
+    "admitted_pair_correct": false,
+    "operation": "wait",
+    "target_id": null,
+    "raw_pair_correct": true,
+    "arbiter_kind": "escalate",
+    "reason": "needs_reasoning: needs_reasoning 0.83 >= 0.6",
+    "native_decision": {
+      "operation": {
+        "choice": "wait",
+        "confidence": 0.9343769252300262,
+        "probabilities": {
+          "scroll_page": 0.011172635480761528,
+          "back": 0.008729483932256699,
+          "wait": 0.947501540184021,
+          "done": 0.008659484796226025,
+          "blocked": 0.023936869576573372
+        }
+      },
+      "target": null,
+      "nouls": {
+        "goal_done": 0.05741049349308014,
+        "stuck": 0.030769318342208862,
+        "destructive": 0.03752192109823227,
+        "login_required": 0.026743341237306595,
+        "bot_check": 0.04595393314957619,
+        "needs_reasoning": 0.8252518773078918
+      },
+      "model": "subq-snap-preview",
+      "request_tokens": 1213,
+      "latency_ms": 0.10879198089241982,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 219.61962501518428,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "1a9f4e0b6136e06dd9839cf90c706005bafcf3deb57d2236c1da4e248e097e61",
+    "wire_questions": 7,
+    "body_bytes": 4890,
+    "input_tokens_upper": 448000,
+    "reserved_usd": 0.0224,
+    "charged_upper_usd": 6.0650000000000004e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 1213
+  }
+}

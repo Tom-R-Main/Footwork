@@ -1,0 +1,82 @@
+{
+  "id": "C14-refuse",
+  "role": "completion",
+  "repeat": 2,
+  "backend": "subq",
+  "category": "answer calibration calculation",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "07bcb30314aa3891e43bd36d44d6c4680749a6f04acc960bb978ab5888945cde",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "2ad4df2052e6ddf44b92b411209606e56555404fba72c914a9d1c31ebf354527",
+  "cold": false,
+  "correct": false,
+  "request_latency_ms": 163.07120816782117,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "complete": {
+          "type": "noul",
+          "noul": 0.9216761589050293
+        },
+        "answer_required": {
+          "type": "noul",
+          "noul": 0.9707745909690857
+        }
+      },
+      "usage": {
+        "input_tokens": 465,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "07bcb30314aa3891e43bd36d44d6c4680749a6f04acc960bb978ab5888945cde",
+    "answer_sources": {
+      "complete": "provider",
+      "answer_required": "provider"
+    },
+    "transport_latency_ms": 162.75841696187854,
+    "input_tokens": 465
+  },
+  "result": {
+    "semantic_accept": true,
+    "accept": true,
+    "band": "accept",
+    "reason": "complete p=0.92, max unmet p=0.00",
+    "raw_reason": "complete p=0.92, max unmet p=0.00",
+    "complete": 0.9216761589050293,
+    "unmet": {},
+    "answer_required": 0.9707745909690857,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.9216761589050293
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.9707745909690857
+      }
+    }
+  },
+  "total_latency_ms": 163.27416617423296,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "07bcb30314aa3891e43bd36d44d6c4680749a6f04acc960bb978ab5888945cde",
+    "wire_questions": 2,
+    "body_bytes": 1626,
+    "input_tokens_upper": 128000,
+    "reserved_usd": 0.0064,
+    "charged_upper_usd": 2.325e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 465
+  }
+}

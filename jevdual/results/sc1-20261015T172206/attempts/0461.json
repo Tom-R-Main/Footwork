@@ -1,0 +1,175 @@
+{
+  "id": "R1-A29",
+  "role": "actions",
+  "repeat": 2,
+  "backend": "subq",
+  "category": "native_dialog_cancel",
+  "expect": null,
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "6200ed21db31ae5efaaa95fd6a9dfa4619cf2128a1f143c1de040727ab9cb2c7",
+  "answer_sources": {
+    "operation": "provider",
+    "click_target": "provider",
+    "type_target": "forced_single_option",
+    "enter_target": "provider",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "f3b7026a106468605f1e4223153ecaa983a91be0593d0dc87011e6536bf9f187",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 305.28774997219443,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "operation": {
+          "type": "choice",
+          "choice": "click",
+          "probabilities": {
+            "click": 0.9582109451293945,
+            "type": 0.0016877639573067427,
+            "enter": 0.034512653946876526,
+            "scroll_page": 0.0007551618036814034,
+            "back": 0.0013735172105953097,
+            "wait": 0.0005579408607445657,
+            "done": 0.0015067420899868011,
+            "blocked": 0.0013954421738162637
+          },
+          "confidence": 0.9522410801478794
+        },
+        "click_target": {
+          "type": "choice",
+          "choice": "290",
+          "probabilities": {
+            "290": 0.9926899075508118,
+            "291": 0.007310106884688139
+          },
+          "confidence": 0.9853798151016235
+        },
+        "enter_target": {
+          "type": "choice",
+          "choice": "290",
+          "probabilities": {
+            "290": 0.9901256561279297,
+            "291": 0.009874371811747551
+          },
+          "confidence": 0.9802513122558594
+        },
+        "goal_done": {
+          "type": "noul",
+          "noul": 0.04780237376689911
+        },
+        "stuck": {
+          "type": "noul",
+          "noul": 0.022704239934682846
+        },
+        "destructive": {
+          "type": "noul",
+          "noul": 0.04740627482533455
+        },
+        "login_required": {
+          "type": "noul",
+          "noul": 0.01482303161174059
+        },
+        "bot_check": {
+          "type": "noul",
+          "noul": 0.012459570541977882
+        },
+        "needs_reasoning": {
+          "type": "noul",
+          "noul": 0.015902377665042877
+        }
+      },
+      "usage": {
+        "input_tokens": 1802,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "6200ed21db31ae5efaaa95fd6a9dfa4619cf2128a1f143c1de040727ab9cb2c7",
+    "answer_sources": {
+      "operation": "provider",
+      "click_target": "provider",
+      "type_target": "forced_single_option",
+      "enter_target": "provider",
+      "goal_done": "provider",
+      "stuck": "provider",
+      "destructive": "provider",
+      "login_required": "provider",
+      "bot_check": "provider",
+      "needs_reasoning": "provider"
+    },
+    "transport_latency_ms": 304.63541578501463,
+    "input_tokens": 1802
+  },
+  "result": {
+    "decision": "propose",
+    "raw_abstain": false,
+    "admitted": true,
+    "admitted_target_id": "290",
+    "admitted_pair_correct": true,
+    "operation": "click",
+    "target_id": "290",
+    "raw_pair_correct": true,
+    "arbiter_kind": "act",
+    "reason": "act: operation 0.95, target 0.9853798151016235",
+    "native_decision": {
+      "operation": {
+        "choice": "click",
+        "confidence": 0.9522410801478794,
+        "probabilities": {
+          "click": 0.9582109451293945,
+          "type": 0.0016877639573067427,
+          "enter": 0.034512653946876526,
+          "scroll_page": 0.0007551618036814034,
+          "back": 0.0013735172105953097,
+          "wait": 0.0005579408607445657,
+          "done": 0.0015067420899868011,
+          "blocked": 0.0013954421738162637
+        }
+      },
+      "target": {
+        "choice": "290",
+        "confidence": 0.9853798151016235,
+        "probabilities": {
+          "290": 0.9926899075508118,
+          "291": 0.007310106884688139
+        }
+      },
+      "nouls": {
+        "goal_done": 0.04780237376689911,
+        "stuck": 0.022704239934682846,
+        "destructive": 0.04740627482533455,
+        "login_required": 0.01482303161174059,
+        "bot_check": 0.012459570541977882,
+        "needs_reasoning": 0.015902377665042877
+      },
+      "model": "subq-snap-preview",
+      "request_tokens": 1802,
+      "latency_ms": 0.28545898385345936,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 306.89483298920095,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "6200ed21db31ae5efaaa95fd6a9dfa4619cf2128a1f143c1de040727ab9cb2c7",
+    "wire_questions": 9,
+    "body_bytes": 6923,
+    "input_tokens_upper": 576000,
+    "reserved_usd": 0.0288,
+    "charged_upper_usd": 9.010000000000001e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 1802
+  }
+}

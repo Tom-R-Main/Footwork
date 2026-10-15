@@ -1,0 +1,82 @@
+{
+  "id": "C01-refuse",
+  "role": "completion",
+  "repeat": 0,
+  "backend": "subq",
+  "category": "benign query navigation",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "c60aba2d24d30191ef96a2e1f9b7b5a8ac58e17e84fbbb1fb857432ce5999c45",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "50a5d63cdc6db5a996ee406f836808b81e2cb4d9ec91539a687da7b355eb3e92",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 170.88520899415016,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "complete": {
+          "type": "noul",
+          "noul": 0.505416214466095
+        },
+        "answer_required": {
+          "type": "noul",
+          "noul": 0.02931670844554901
+        }
+      },
+      "usage": {
+        "input_tokens": 777,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "c60aba2d24d30191ef96a2e1f9b7b5a8ac58e17e84fbbb1fb857432ce5999c45",
+    "answer_sources": {
+      "complete": "provider",
+      "answer_required": "provider"
+    },
+    "transport_latency_ms": 170.60729092918336,
+    "input_tokens": 777
+  },
+  "result": {
+    "semantic_accept": false,
+    "accept": false,
+    "band": "verify",
+    "reason": "uncertain: complete p=0.51, max unmet p=0.00",
+    "raw_reason": "uncertain: complete p=0.51, max unmet p=0.00",
+    "complete": 0.505416214466095,
+    "unmet": {},
+    "answer_required": 0.02931670844554901,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.505416214466095
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.02931670844554901
+      }
+    }
+  },
+  "total_latency_ms": 171.04445886798203,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "c60aba2d24d30191ef96a2e1f9b7b5a8ac58e17e84fbbb1fb857432ce5999c45",
+    "wire_questions": 2,
+    "body_bytes": 2405,
+    "input_tokens_upper": 128000,
+    "reserved_usd": 0.0064,
+    "charged_upper_usd": 3.885e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 777
+  }
+}

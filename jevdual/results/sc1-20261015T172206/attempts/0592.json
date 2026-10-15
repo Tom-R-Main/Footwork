@@ -1,0 +1,175 @@
+{
+  "id": "R1-A17",
+  "role": "actions",
+  "repeat": 1,
+  "backend": "subq",
+  "category": "native_replace",
+  "expect": null,
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "8ce7867b00239783d6328e467069dfa3ee538fec9c26cb26c41fb4a30597625c",
+  "answer_sources": {
+    "operation": "provider",
+    "click_target": "forced_single_option",
+    "type_target": "provider",
+    "append_target": "provider",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "8000777e08507075aeb6fbccfd4f1204f09d680dfc5a20e3060099e2c739d697",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 237.07425012253225,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "operation": {
+          "type": "choice",
+          "choice": "type",
+          "probabilities": {
+            "click": 0.008485477417707443,
+            "type": 0.9693557620048523,
+            "append": 0.006783113814890385,
+            "scroll_page": 0.0027355675119906664,
+            "back": 0.0032056872732937336,
+            "wait": 0.0018320181407034397,
+            "done": 0.0032003934029489756,
+            "blocked": 0.004401850514113903
+          },
+          "confidence": 0.9649780137198312
+        },
+        "type_target": {
+          "type": "choice",
+          "choice": "170",
+          "probabilities": {
+            "170": 0.9895563721656799,
+            "171": 0.010443638078868389
+          },
+          "confidence": 0.9791127443313599
+        },
+        "append_target": {
+          "type": "choice",
+          "choice": "170",
+          "probabilities": {
+            "170": 0.928013801574707,
+            "171": 0.07198621332645416
+          },
+          "confidence": 0.8560276031494141
+        },
+        "goal_done": {
+          "type": "noul",
+          "noul": 0.020687373355031013
+        },
+        "stuck": {
+          "type": "noul",
+          "noul": 0.025526612997055054
+        },
+        "destructive": {
+          "type": "noul",
+          "noul": 0.02499525249004364
+        },
+        "login_required": {
+          "type": "noul",
+          "noul": 0.016761882230639458
+        },
+        "bot_check": {
+          "type": "noul",
+          "noul": 0.012446576729416847
+        },
+        "needs_reasoning": {
+          "type": "noul",
+          "noul": 0.024634411558508873
+        }
+      },
+      "usage": {
+        "input_tokens": 1827,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "8ce7867b00239783d6328e467069dfa3ee538fec9c26cb26c41fb4a30597625c",
+    "answer_sources": {
+      "operation": "provider",
+      "click_target": "forced_single_option",
+      "type_target": "provider",
+      "append_target": "provider",
+      "goal_done": "provider",
+      "stuck": "provider",
+      "destructive": "provider",
+      "login_required": "provider",
+      "bot_check": "provider",
+      "needs_reasoning": "provider"
+    },
+    "transport_latency_ms": 236.40295793302357,
+    "input_tokens": 1827
+  },
+  "result": {
+    "decision": "propose",
+    "raw_abstain": false,
+    "admitted": true,
+    "admitted_target_id": "170",
+    "admitted_pair_correct": true,
+    "operation": "type",
+    "target_id": "170",
+    "raw_pair_correct": true,
+    "arbiter_kind": "act",
+    "reason": "act: operation 0.96, target 0.9791127443313599",
+    "native_decision": {
+      "operation": {
+        "choice": "type",
+        "confidence": 0.9649780137198312,
+        "probabilities": {
+          "click": 0.008485477417707443,
+          "type": 0.9693557620048523,
+          "append": 0.006783113814890385,
+          "scroll_page": 0.0027355675119906664,
+          "back": 0.0032056872732937336,
+          "wait": 0.0018320181407034397,
+          "done": 0.0032003934029489756,
+          "blocked": 0.004401850514113903
+        }
+      },
+      "target": {
+        "choice": "170",
+        "confidence": 0.9791127443313599,
+        "probabilities": {
+          "170": 0.9895563721656799,
+          "171": 0.010443638078868389
+        }
+      },
+      "nouls": {
+        "goal_done": 0.020687373355031013,
+        "stuck": 0.025526612997055054,
+        "destructive": 0.02499525249004364,
+        "login_required": 0.016761882230639458,
+        "bot_check": 0.012446576729416847,
+        "needs_reasoning": 0.024634411558508873
+      },
+      "model": "subq-snap-preview",
+      "request_tokens": 1827,
+      "latency_ms": 0.2733329311013222,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 238.76270791515708,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "8ce7867b00239783d6328e467069dfa3ee538fec9c26cb26c41fb4a30597625c",
+    "wire_questions": 9,
+    "body_bytes": 7008,
+    "input_tokens_upper": 576000,
+    "reserved_usd": 0.0288,
+    "charged_upper_usd": 9.135000000000001e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 1827
+  }
+}

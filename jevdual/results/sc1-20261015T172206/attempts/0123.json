@@ -1,0 +1,72 @@
+{
+  "id": "C09-accept",
+  "role": "completion",
+  "repeat": 1,
+  "backend": "jev",
+  "category": "legitimate repeats",
+  "expect": "accept",
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "a703fcf271e9458efc7eae84629c224a82a8b43e97283697828041bfe051b0aa",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "27b5b0f9ae35ebabdc3659ddc5b5e055cd71f5f3dc0f500495a25c557bb07e52",
+  "cold": false,
+  "correct": false,
+  "request_latency_ms": 213.55591691099107,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.56
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.05
+      }
+    },
+    "usage": {
+      "input_tokens": 861,
+      "output_tokens": 37
+    }
+  },
+  "actual_request_sha256": "a703fcf271e9458efc7eae84629c224a82a8b43e97283697828041bfe051b0aa",
+  "result": {
+    "semantic_accept": false,
+    "accept": false,
+    "band": "verify",
+    "reason": "uncertain: complete p=0.56, max unmet p=0.00",
+    "raw_reason": "uncertain: complete p=0.56, max unmet p=0.00",
+    "complete": 0.56,
+    "unmet": {},
+    "answer_required": 0.05,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.56
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.05
+      }
+    }
+  },
+  "total_latency_ms": 213.78145786002278,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "a703fcf271e9458efc7eae84629c224a82a8b43e97283697828041bfe051b0aa",
+    "wire_questions": 2,
+    "body_bytes": 1998,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 3.6162e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 861
+  }
+}

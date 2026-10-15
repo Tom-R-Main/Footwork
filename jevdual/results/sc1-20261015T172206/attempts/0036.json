@@ -1,0 +1,72 @@
+{
+  "id": "C14-accept",
+  "role": "completion",
+  "repeat": 2,
+  "backend": "jev",
+  "category": "answer calibration calculation",
+  "expect": "accept",
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "e5c06454e2c30f88a4560422558a2637fc8b01155d181060011a84cb85773179",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "c4dfd850fbbedd5c237d3d617d3b6f17088c06a7e48a288b025700290b4cf274",
+  "cold": false,
+  "correct": false,
+  "request_latency_ms": 196.9113750383258,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.81
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    },
+    "usage": {
+      "input_tokens": 685,
+      "output_tokens": 37
+    }
+  },
+  "actual_request_sha256": "e5c06454e2c30f88a4560422558a2637fc8b01155d181060011a84cb85773179",
+  "result": {
+    "semantic_accept": true,
+    "accept": false,
+    "band": "verify",
+    "reason": "answer carries no fact found on the page (1 unsupported, rest narrative); complete p=0.81, max unmet p=0.00",
+    "raw_reason": "complete p=0.81, max unmet p=0.00",
+    "complete": 0.81,
+    "unmet": {},
+    "answer_required": 0.99,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.81
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  "total_latency_ms": 197.42299988865852,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "e5c06454e2c30f88a4560422558a2637fc8b01155d181060011a84cb85773179",
+    "wire_questions": 2,
+    "body_bytes": 1619,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 2.8770000000000004e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 685
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "id": "C16-refuse",
+  "role": "completion",
+  "repeat": 0,
+  "backend": "jev",
+  "category": "answer calibration exclusion",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "89cca7fcf3f9db99243074882f201f5350f70870ff23de2d638c84a2a683a8d4",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "8b5f74dc70820cf9a8598c46197ddbdc26698c35896fc8f27d57e775e01bac83",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 151.57583309337497,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.29
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    },
+    "usage": {
+      "input_tokens": 697,
+      "output_tokens": 37
+    }
+  },
+  "actual_request_sha256": "89cca7fcf3f9db99243074882f201f5350f70870ff23de2d638c84a2a683a8d4",
+  "result": {
+    "semantic_accept": false,
+    "accept": false,
+    "band": "reject",
+    "reason": "1 unsupported claim(s) dropped; complete p=0.29",
+    "raw_reason": "complete p=0.29",
+    "complete": 0.29,
+    "unmet": {},
+    "answer_required": 0.99,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.29
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  "total_latency_ms": 151.86354191973805,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "89cca7fcf3f9db99243074882f201f5350f70870ff23de2d638c84a2a683a8d4",
+    "wire_questions": 2,
+    "body_bytes": 1647,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 2.9274e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 697
+  }
+}

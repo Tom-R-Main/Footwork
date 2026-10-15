@@ -1,0 +1,82 @@
+{
+  "id": "C18-refuse",
+  "role": "completion",
+  "repeat": 0,
+  "backend": "subq",
+  "category": "field lost after navigation",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "962208fc7932bf22ab4b2cf015b85bc25e51f4f7815a4d9053b9f9b55c68f17a",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "6aab65c14ddcbb9ea6a659d58cdec26b1d99f44b637eee5bfc7dc3521993258a",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 269.9370419140905,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "complete": {
+          "type": "noul",
+          "noul": 0.8450490832328796
+        },
+        "answer_required": {
+          "type": "noul",
+          "noul": 0.032831352204084396
+        }
+      },
+      "usage": {
+        "input_tokens": 603,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "962208fc7932bf22ab4b2cf015b85bc25e51f4f7815a4d9053b9f9b55c68f17a",
+    "answer_sources": {
+      "complete": "provider",
+      "answer_required": "provider"
+    },
+    "transport_latency_ms": 269.2985830362886,
+    "input_tokens": 603
+  },
+  "result": {
+    "semantic_accept": true,
+    "accept": false,
+    "band": "verify",
+    "reason": "no evidence in this run for the requested effect (only what the page says); complete p=0.85, max unmet p=0.00",
+    "raw_reason": "complete p=0.85, max unmet p=0.00",
+    "complete": 0.8450490832328796,
+    "unmet": {},
+    "answer_required": 0.032831352204084396,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.8450490832328796
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.032831352204084396
+      }
+    }
+  },
+  "total_latency_ms": 270.594083936885,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "962208fc7932bf22ab4b2cf015b85bc25e51f4f7815a4d9053b9f9b55c68f17a",
+    "wire_questions": 2,
+    "body_bytes": 2013,
+    "input_tokens_upper": 128000,
+    "reserved_usd": 0.0064,
+    "charged_upper_usd": 3.015e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 603
+  }
+}

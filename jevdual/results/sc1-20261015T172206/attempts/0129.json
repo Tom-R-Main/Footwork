@@ -1,0 +1,82 @@
+{
+  "id": "C06-refuse",
+  "role": "completion",
+  "repeat": 1,
+  "backend": "subq",
+  "category": "document resource identity",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "9b09a699fce8eb8aad8d87c5a5c519c9bbfa89b64da6eb316074381b9d39c31b",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "9e4926d28a1b4bd3e6373a5f1db31bf5ff76f71461b17ad7f6e3fc267ffe6f7a",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 248.82808281108737,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "complete": {
+          "type": "noul",
+          "noul": 0.14356638491153717
+        },
+        "answer_required": {
+          "type": "noul",
+          "noul": 0.040627479553222656
+        }
+      },
+      "usage": {
+        "input_tokens": 505,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "9b09a699fce8eb8aad8d87c5a5c519c9bbfa89b64da6eb316074381b9d39c31b",
+    "answer_sources": {
+      "complete": "provider",
+      "answer_required": "provider"
+    },
+    "transport_latency_ms": 248.5536669846624,
+    "input_tokens": 505
+  },
+  "result": {
+    "semantic_accept": false,
+    "accept": false,
+    "band": "reject",
+    "reason": "complete p=0.14",
+    "raw_reason": "complete p=0.14",
+    "complete": 0.14356638491153717,
+    "unmet": {},
+    "answer_required": 0.040627479553222656,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.14356638491153717
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.040627479553222656
+      }
+    }
+  },
+  "total_latency_ms": 249.0127079654485,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "9b09a699fce8eb8aad8d87c5a5c519c9bbfa89b64da6eb316074381b9d39c31b",
+    "wire_questions": 2,
+    "body_bytes": 1876,
+    "input_tokens_upper": 128000,
+    "reserved_usd": 0.0064,
+    "charged_upper_usd": 2.525e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 505
+  }
+}

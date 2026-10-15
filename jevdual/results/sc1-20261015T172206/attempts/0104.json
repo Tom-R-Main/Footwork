@@ -1,0 +1,82 @@
+{
+  "id": "C15-accept",
+  "role": "completion",
+  "repeat": 0,
+  "backend": "subq",
+  "category": "answer calibration source",
+  "expect": "accept",
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "8b5cb6a86754393651c26f93dd88a0861900f79072068551c74ec9ebd201f448",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "65378f744333cbf7bf0001e404e4e8ce1c798804f1c9a76c78c61d3982891b49",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 244.33645815588534,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "complete": {
+          "type": "noul",
+          "noul": 0.9427127838134766
+        },
+        "answer_required": {
+          "type": "noul",
+          "noul": 0.9778789281845093
+        }
+      },
+      "usage": {
+        "input_tokens": 538,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "8b5cb6a86754393651c26f93dd88a0861900f79072068551c74ec9ebd201f448",
+    "answer_sources": {
+      "complete": "provider",
+      "answer_required": "provider"
+    },
+    "transport_latency_ms": 243.76374995335937,
+    "input_tokens": 538
+  },
+  "result": {
+    "semantic_accept": true,
+    "accept": true,
+    "band": "accept",
+    "reason": "complete p=0.94, max unmet p=0.00",
+    "raw_reason": "complete p=0.94, max unmet p=0.00",
+    "complete": 0.9427127838134766,
+    "unmet": {},
+    "answer_required": 0.9778789281845093,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.9427127838134766
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.9778789281845093
+      }
+    }
+  },
+  "total_latency_ms": 245.24208321236074,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "8b5cb6a86754393651c26f93dd88a0861900f79072068551c74ec9ebd201f448",
+    "wire_questions": 2,
+    "body_bytes": 1814,
+    "input_tokens_upper": 128000,
+    "reserved_usd": 0.0064,
+    "charged_upper_usd": 2.6900000000000003e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 538
+  }
+}

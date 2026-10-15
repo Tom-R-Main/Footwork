@@ -134,6 +134,11 @@ existing arbiter, authorization, completion floors and System 2 settings; confid
 have not been calibrated across providers. A successful comparison does not change the default,
 and no automatic provider fallback occurs. Historical D1/D2/D3 comparisons remain pinned.
 
+The [SC1 development comparison](results/sc1-20261015T172206/report.md) retains Jev as the
+recommended default: Snap accepted 4/18 negative completion cases after all guard checks versus
+Jev's 0/18, and completion request median was 221 ms versus 170 ms. Snap's risk/action gains
+support further role-specific research; the global switch remains experimental.
+
 Eval result rows retain the legacy `jev_calls` and `jev_cost_usd` fields for System 1 usage,
 with explicit `s1_provider`, `s1_model` and `s1_input_usd_per_million` metadata. Selected input rates
 are Jev $0.042/M and Snap $0.05/M. They are estimates from reported input tokens (or the existing

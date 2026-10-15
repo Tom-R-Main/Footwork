@@ -1,0 +1,174 @@
+{
+  "id": "R1-A12",
+  "role": "actions",
+  "repeat": 2,
+  "backend": "jev",
+  "category": "submit_search",
+  "expect": null,
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "b2b07a22f962de9e3d077504426621fcbe192640d05f26216da324c65b92243e",
+  "answer_sources": {
+    "operation": "provider",
+    "click_target": "provider",
+    "type_target": "provider",
+    "append_target": "provider",
+    "enter_target": "provider",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "217c394772320567d612c673292bdd5179bfa76510731c1671a8d1047654d369",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 140.67341689951718,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "operation": {
+        "type": "choice",
+        "choice": "enter",
+        "confidence": 0.73,
+        "probabilities": {
+          "click": 0.22,
+          "type": 0.01,
+          "append": 0.0,
+          "enter": 0.76,
+          "scroll_page": 0.0,
+          "back": 0.0,
+          "wait": 0.0,
+          "done": 0.01,
+          "blocked": 0.0
+        }
+      },
+      "click_target": {
+        "type": "choice",
+        "choice": "121",
+        "confidence": 1.0,
+        "probabilities": {
+          "121": 1.0,
+          "122": 0.0
+        }
+      },
+      "type_target": {
+        "type": "choice",
+        "choice": "120",
+        "confidence": 1.0,
+        "probabilities": {
+          "120": 1.0
+        }
+      },
+      "append_target": {
+        "type": "choice",
+        "choice": "120",
+        "confidence": 1.0,
+        "probabilities": {
+          "120": 1.0
+        }
+      },
+      "enter_target": {
+        "type": "choice",
+        "choice": "120",
+        "confidence": 1.0,
+        "probabilities": {
+          "120": 1.0
+        }
+      },
+      "goal_done": {
+        "type": "noul",
+        "noul": 0.05
+      },
+      "stuck": {
+        "type": "noul",
+        "noul": 0.05
+      },
+      "destructive": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "login_required": {
+        "type": "noul",
+        "noul": 0.07
+      },
+      "bot_check": {
+        "type": "noul",
+        "noul": 0.02
+      },
+      "needs_reasoning": {
+        "type": "noul",
+        "noul": 0.1
+      }
+    },
+    "usage": {
+      "input_tokens": 2593,
+      "output_tokens": 300
+    }
+  },
+  "actual_request_sha256": "b2b07a22f962de9e3d077504426621fcbe192640d05f26216da324c65b92243e",
+  "result": {
+    "decision": "propose",
+    "raw_abstain": false,
+    "admitted": true,
+    "admitted_target_id": "120",
+    "admitted_pair_correct": true,
+    "operation": "enter",
+    "target_id": "120",
+    "raw_pair_correct": true,
+    "arbiter_kind": "act",
+    "reason": "act: operation 0.73, target 1.0",
+    "native_decision": {
+      "operation": {
+        "choice": "enter",
+        "confidence": 0.73,
+        "probabilities": {
+          "click": 0.22,
+          "type": 0.01,
+          "append": 0.0,
+          "enter": 0.76,
+          "scroll_page": 0.0,
+          "back": 0.0,
+          "wait": 0.0,
+          "done": 0.01,
+          "blocked": 0.0
+        }
+      },
+      "target": {
+        "choice": "120",
+        "confidence": 1.0,
+        "probabilities": {
+          "120": 1.0
+        }
+      },
+      "nouls": {
+        "goal_done": 0.05,
+        "stuck": 0.05,
+        "destructive": 0.03,
+        "login_required": 0.07,
+        "bot_check": 0.02,
+        "needs_reasoning": 0.1
+      },
+      "model": "jev-1.13.0",
+      "request_tokens": 2593,
+      "latency_ms": 0.2926248125731945,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 142.16887508518994,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "b2b07a22f962de9e3d077504426621fcbe192640d05f26216da324c65b92243e",
+    "wire_questions": 11,
+    "body_bytes": 8454,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 0.000108906,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 2593
+  }
+}

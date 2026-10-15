@@ -1,0 +1,164 @@
+{
+  "id": "R1-A02",
+  "role": "actions",
+  "repeat": 2,
+  "backend": "subq",
+  "category": "search_entry",
+  "expect": null,
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "4a9312e7e6a0c1baf88ce6505e5f1db7857d796561d5cc78a53da1f7f99b4dab",
+  "answer_sources": {
+    "operation": "provider",
+    "click_target": "forced_single_option",
+    "type_target": "forced_single_option",
+    "append_target": "forced_single_option",
+    "select_target": "forced_single_option",
+    "enter_target": "forced_single_option",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "d2256aa4d0d11a4dc66250e18fe39939e1c679a125c38df846cc99b613159934",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 263.90270912088454,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "operation": {
+          "type": "choice",
+          "choice": "type",
+          "probabilities": {
+            "click": 0.0033321657683700323,
+            "type": 0.9390764832496643,
+            "append": 0.046932153403759,
+            "select": 0.0019989553838968277,
+            "enter": 0.004139017779380083,
+            "scroll_page": 0.0006381536950357258,
+            "back": 0.0004517800407484174,
+            "wait": 0.001103704795241356,
+            "done": 0.001379817840643227,
+            "blocked": 0.0009476044797338545
+          },
+          "confidence": 0.9323072036107382
+        },
+        "goal_done": {
+          "type": "noul",
+          "noul": 0.033285968005657196
+        },
+        "stuck": {
+          "type": "noul",
+          "noul": 0.02384815737605095
+        },
+        "destructive": {
+          "type": "noul",
+          "noul": 0.017820289358496666
+        },
+        "login_required": {
+          "type": "noul",
+          "noul": 0.018936391919851303
+        },
+        "bot_check": {
+          "type": "noul",
+          "noul": 0.014472058042883873
+        },
+        "needs_reasoning": {
+          "type": "noul",
+          "noul": 0.032627739012241364
+        }
+      },
+      "usage": {
+        "input_tokens": 1414,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "4a9312e7e6a0c1baf88ce6505e5f1db7857d796561d5cc78a53da1f7f99b4dab",
+    "answer_sources": {
+      "operation": "provider",
+      "click_target": "forced_single_option",
+      "type_target": "forced_single_option",
+      "append_target": "forced_single_option",
+      "select_target": "forced_single_option",
+      "enter_target": "forced_single_option",
+      "goal_done": "provider",
+      "stuck": "provider",
+      "destructive": "provider",
+      "login_required": "provider",
+      "bot_check": "provider",
+      "needs_reasoning": "provider"
+    },
+    "transport_latency_ms": 262.4446249101311,
+    "input_tokens": 1414
+  },
+  "result": {
+    "decision": "propose",
+    "raw_abstain": false,
+    "admitted": true,
+    "admitted_target_id": "20",
+    "admitted_pair_correct": true,
+    "operation": "type",
+    "target_id": "20",
+    "raw_pair_correct": true,
+    "arbiter_kind": "act",
+    "reason": "act: operation 0.93, target 1.0",
+    "native_decision": {
+      "operation": {
+        "choice": "type",
+        "confidence": 0.9323072036107382,
+        "probabilities": {
+          "click": 0.0033321657683700323,
+          "type": 0.9390764832496643,
+          "append": 0.046932153403759,
+          "select": 0.0019989553838968277,
+          "enter": 0.004139017779380083,
+          "scroll_page": 0.0006381536950357258,
+          "back": 0.0004517800407484174,
+          "wait": 0.001103704795241356,
+          "done": 0.001379817840643227,
+          "blocked": 0.0009476044797338545
+        }
+      },
+      "target": {
+        "choice": "20",
+        "confidence": 1.0,
+        "probabilities": {
+          "20": 1.0
+        }
+      },
+      "nouls": {
+        "goal_done": 0.033285968005657196,
+        "stuck": 0.02384815737605095,
+        "destructive": 0.017820289358496666,
+        "login_required": 0.018936391919851303,
+        "bot_check": 0.014472058042883873,
+        "needs_reasoning": 0.032627739012241364
+      },
+      "model": "subq-snap-preview",
+      "request_tokens": 1414,
+      "latency_ms": 0.5003330297768116,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 268.27312516979873,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "4a9312e7e6a0c1baf88ce6505e5f1db7857d796561d5cc78a53da1f7f99b4dab",
+    "wire_questions": 7,
+    "body_bytes": 5670,
+    "input_tokens_upper": 448000,
+    "reserved_usd": 0.0224,
+    "charged_upper_usd": 7.07e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 1414
+  }
+}

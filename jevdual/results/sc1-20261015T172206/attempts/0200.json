@@ -1,0 +1,82 @@
+{
+  "id": "C17-refuse",
+  "role": "completion",
+  "repeat": 0,
+  "backend": "subq",
+  "category": "named field identity",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "subq-snap-preview",
+  "request_sha256": "91621a8005b2e162dc47eb41907cb0050ec56a896053c14d03aa17d336dcfb28",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "94284db2db1a978bb6593c78dc0e093ac27c69c55595af6a1f80e3d4a2c22375",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 164.15275004692376,
+  "returned_model": "subq-snap-preview",
+  "receipt": {
+    "requested_model": "subq-snap-preview",
+    "returned_model": "subq-snap-preview",
+    "raw_response": {
+      "model": "subq-snap-preview",
+      "answers": {
+        "complete": {
+          "type": "noul",
+          "noul": 0.23324331641197205
+        },
+        "answer_required": {
+          "type": "noul",
+          "noul": 0.02826569229364395
+        }
+      },
+      "usage": {
+        "input_tokens": 518,
+        "output_tokens": 0
+      }
+    },
+    "request_sha256": "91621a8005b2e162dc47eb41907cb0050ec56a896053c14d03aa17d336dcfb28",
+    "answer_sources": {
+      "complete": "provider",
+      "answer_required": "provider"
+    },
+    "transport_latency_ms": 163.85645791888237,
+    "input_tokens": 518
+  },
+  "result": {
+    "semantic_accept": false,
+    "accept": false,
+    "band": "reject",
+    "reason": "complete p=0.23",
+    "raw_reason": "complete p=0.23",
+    "complete": 0.23324331641197205,
+    "unmet": {},
+    "answer_required": 0.02826569229364395,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.23324331641197205
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.02826569229364395
+      }
+    }
+  },
+  "total_latency_ms": 164.3486248794943,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "subq",
+    "request_sha256": "91621a8005b2e162dc47eb41907cb0050ec56a896053c14d03aa17d336dcfb28",
+    "wire_questions": 2,
+    "body_bytes": 1772,
+    "input_tokens_upper": 128000,
+    "reserved_usd": 0.0064,
+    "charged_upper_usd": 2.5900000000000003e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 518
+  }
+}

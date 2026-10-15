@@ -1,0 +1,72 @@
+{
+  "id": "C06-refuse",
+  "role": "completion",
+  "repeat": 1,
+  "backend": "jev",
+  "category": "document resource identity",
+  "expect": "refuse",
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "9876e4a291a85433d69f98310c9438a6024569e81ea4caec748e4da0b7d3060f",
+  "answer_sources": {
+    "complete": "provider",
+    "answer_required": "provider"
+  },
+  "shared_input_hash": "9e4926d28a1b4bd3e6373a5f1db31bf5ff76f71461b17ad7f6e3fc267ffe6f7a",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 168.721416965127,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.07
+      }
+    },
+    "usage": {
+      "input_tokens": 742,
+      "output_tokens": 37
+    }
+  },
+  "actual_request_sha256": "9876e4a291a85433d69f98310c9438a6024569e81ea4caec748e4da0b7d3060f",
+  "result": {
+    "semantic_accept": false,
+    "accept": false,
+    "band": "reject",
+    "reason": "complete p=0.03",
+    "raw_reason": "complete p=0.03",
+    "complete": 0.03,
+    "unmet": {},
+    "answer_required": 0.07,
+    "raw_answers": {
+      "complete": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "answer_required": {
+        "type": "noul",
+        "noul": 0.07
+      }
+    }
+  },
+  "total_latency_ms": 168.9676670357585,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "9876e4a291a85433d69f98310c9438a6024569e81ea4caec748e4da0b7d3060f",
+    "wire_questions": 2,
+    "body_bytes": 1869,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 3.1164e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 742
+  }
+}

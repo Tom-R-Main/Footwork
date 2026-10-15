@@ -1,0 +1,153 @@
+{
+  "id": "R1-A13",
+  "role": "actions",
+  "repeat": 2,
+  "backend": "jev",
+  "category": "container_scroll",
+  "expect": null,
+  "expect_abstain": false,
+  "requested_model": "jev-1.13.0",
+  "request_sha256": "62f0663c8dd80d58781ed891f785051676a25076d48fe6030a86f1ff85694002",
+  "answer_sources": {
+    "operation": "provider",
+    "click_target": "provider",
+    "scroll_target": "provider",
+    "goal_done": "provider",
+    "stuck": "provider",
+    "destructive": "provider",
+    "login_required": "provider",
+    "bot_check": "provider",
+    "needs_reasoning": "provider"
+  },
+  "shared_input_hash": "d15f80712fd20b369c795b7341df164057278cd1a3bbed5f2b2fe08738389c9f",
+  "cold": false,
+  "correct": true,
+  "request_latency_ms": 117.36575001850724,
+  "returned_model": "jev-1.13.0",
+  "native_response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "operation": {
+        "type": "choice",
+        "choice": "scroll",
+        "confidence": 1.0,
+        "probabilities": {
+          "click": 0.0,
+          "scroll": 1.0,
+          "scroll_page": 0.0,
+          "back": 0.0,
+          "wait": 0.0,
+          "done": 0.0,
+          "blocked": 0.0
+        }
+      },
+      "click_target": {
+        "type": "choice",
+        "choice": "132",
+        "confidence": 1.0,
+        "probabilities": {
+          "132": 1.0
+        }
+      },
+      "scroll_target": {
+        "type": "choice",
+        "choice": "130",
+        "confidence": 1.0,
+        "probabilities": {
+          "130": 1.0,
+          "131": 0.0
+        }
+      },
+      "goal_done": {
+        "type": "noul",
+        "noul": 0.04
+      },
+      "stuck": {
+        "type": "noul",
+        "noul": 0.04
+      },
+      "destructive": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "login_required": {
+        "type": "noul",
+        "noul": 0.07
+      },
+      "bot_check": {
+        "type": "noul",
+        "noul": 0.02
+      },
+      "needs_reasoning": {
+        "type": "noul",
+        "noul": 0.12
+      }
+    },
+    "usage": {
+      "input_tokens": 2082,
+      "output_tokens": 234
+    }
+  },
+  "actual_request_sha256": "62f0663c8dd80d58781ed891f785051676a25076d48fe6030a86f1ff85694002",
+  "result": {
+    "decision": "propose",
+    "raw_abstain": false,
+    "admitted": true,
+    "admitted_target_id": "130",
+    "admitted_pair_correct": true,
+    "operation": "scroll",
+    "target_id": "130",
+    "raw_pair_correct": true,
+    "arbiter_kind": "act",
+    "reason": "act: operation 1.00, target 1.0",
+    "native_decision": {
+      "operation": {
+        "choice": "scroll",
+        "confidence": 1.0,
+        "probabilities": {
+          "click": 0.0,
+          "scroll": 1.0,
+          "scroll_page": 0.0,
+          "back": 0.0,
+          "wait": 0.0,
+          "done": 0.0,
+          "blocked": 0.0
+        }
+      },
+      "target": {
+        "choice": "130",
+        "confidence": 1.0,
+        "probabilities": {
+          "130": 1.0,
+          "131": 0.0
+        }
+      },
+      "nouls": {
+        "goal_done": 0.04,
+        "stuck": 0.04,
+        "destructive": 0.03,
+        "login_required": 0.07,
+        "bot_check": 0.02,
+        "needs_reasoning": 0.12
+      },
+      "model": "jev-1.13.0",
+      "request_tokens": 2082,
+      "latency_ms": 0.14949985779821873,
+      "omitted_elements": 0
+    }
+  },
+  "total_latency_ms": 118.5107920318842,
+  "budget": {
+    "run": "/Users/thomasmain/projects/footwork/jevdual/results/sc1-20261015T172206",
+    "backend": "jev",
+    "request_sha256": "62f0663c8dd80d58781ed891f785051676a25076d48fe6030a86f1ff85694002",
+    "wire_questions": 9,
+    "body_bytes": 6778,
+    "input_tokens_upper": 64000,
+    "reserved_usd": 0.002688,
+    "charged_upper_usd": 8.7444e-05,
+    "usage_known": true,
+    "state": "settled",
+    "input_tokens": 2082
+  }
+}
