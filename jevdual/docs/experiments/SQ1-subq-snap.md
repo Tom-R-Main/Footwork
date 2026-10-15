@@ -1,0 +1,60 @@
+# SQ1: SubQ Snap synthetic contract and routing smoke test
+
+Registered 2026-10-15 before harness implementation or inference. Model: subq-snap-preview,
+POST https://api.subq.ai/v1/systemone. No runtime integration, app dispatch, heldout fixtures,
+Jev comparison, private documents or real screenshots.
+
+## Hypothesis and predictions
+
+Snap returns valid choice, noul and score answers for obvious synthetic agent states and retains
+the expected next route with irrelevant historical context. If true, every call is schema-valid
+and its route matches the declared oracle. If false, at least one valid response selects the wrong
+route or distractor text changes the decision. Missing access is inconclusive.
+
+## Design
+
+Four cases crossed with zero, 8000 and 80000 ASCII distractor characters, twelve calls total.
+Distractor text is explicitly historical and contains no instructions. Current authoritative
+state follows it. Ask all three questions in each call: route (act/wait/done/escalate), completion
+probability, and completion score with three ordered levels (not started/partial/complete).
+
+Oracles:
+- act: requested local draft has not been created; an enabled Create draft control is available;
+  completion false and score near 0.
+- wait: local draft is being saved, busy indicator active, no completion receipt;
+  completion false and score near 1.
+- done: exact requested draft content and one successful durable save receipt are present;
+  completion true and score near 2.
+- escalate: requested draft requires a missing required value and user clarification;
+  completion false and score near 0.
+
+Primary metric: exact route accuracy out of twelve planned calls. Report incomplete denominator
+separately. Secondary diagnostics: contract validity, completion noul threshold 0.5, score within
+0.5 of expected level, reported usage, each request's wall latency, descriptive median and maximum.
+No calibration, tail-latency, long-context-limit or general agent-performance claims from this sample.
+
+## Guardrails
+
+One GET /v1/models access check, then at most twelve POST attempts; no automatic retries. Stop on
+any HTTP, transport, malformed-response or billing/access error. Thirty-second per-call timeout.
+Only synthetic states leave the machine. Read the API key from SUBQ_API_KEY or an explicit hidden
+macOS dialog; never write or print it. No paid action until measured code is committed.
+
+Input is ASCII and each serialized request must be <=90000 bytes. Reserve that byte count once
+per question, conservatively at $0.05 per million input tokens, before dispatch. Cap cumulative
+reservation/settled usage at $0.20; retain reservations when usage is unavailable, and stop if reported
+tokens exceed reservation. These are local test bounds at documented pricing, not a provider billing
+guarantee. Report actual usage and estimated charge separately. Never overwrite an existing run.
+Keep durable attempt reservations and request hashes before sending; flush results after each call.
+Save source commit, model list, per-case results and summary under results/subq-snap-*; run
+scripts/redact_results.py before committing artifacts. No credentials in request/response artifacts.
+
+## Decision rule
+
+Twelve valid routes matching the oracle justify a larger separately registered development study,
+not adoption. Any failure is reported unchanged; no prompt tuning or extra live retry in SQ1.
+Existing Jev thresholds, confidence semantics and runtime policy stay unchanged. Image capability,
+100K-token speed, 384K context and vendor benchmark claims remain untested.
+
+Sources: https://docs.subq.ai/endpoints/decisions-api/ and
+https://docs.subq.ai/using-the-api/models/ (checked 2026-10-15).
