@@ -58,3 +58,14 @@ Existing Jev thresholds, confidence semantics and runtime policy stay unchanged.
 
 Sources: https://docs.subq.ai/endpoints/decisions-api/ and
 https://docs.subq.ai/using-the-api/models/ (checked 2026-10-15).
+
+## Amendment before new measurement: verified CA configuration, 2026-10-15 15:48
+
+The first run, results/subq-snap-20261015T154737 at 6f8ae86, stopped at the model-list GET
+with a local certificate error and zero inference attempts. Preserve it. Select this environment's
+already installed certifi CA bundle using SSL_CERT_FILE, retaining certificate verification,
+and test public connectivity before a fresh access/inference run. No package installation,
+provider-error retry or changed prompts. The original aggregate limit of twelve inference attempts
+and $0.20 local reservation ceiling includes every run; zero inference attempts have occurred.
+Record the CA bundle digest with the new results. Commit the atomic ledger-write refinement
+before the new measurement; preserve the previous ledger if replacement fails.
