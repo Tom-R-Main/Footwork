@@ -110,6 +110,35 @@ uv run python -m evals.runner --split dev --arm stock --arm dual --llm meta
 Keys are files under `~/.config/jevdual` (`TYPESAFE_API_KEY`, `META_MODEL_API_KEY`), materialized
 from the Sift vault; `jevdual/keys.py` exports them. Requires Rust 1.95 and Python 3.11+.
 
+## Experimental System 1 selection
+
+The active runtime defaults to pinned `jev-1.13.0`. To explicitly try Snap for proposal,
+destructive-action judgment, completion verification and delegated evidence selection, supply
+`SUBQ_API_KEY` in the process environment and select the backend:
+
+```sh
+footwork run "Compute 6 times 7" --app Calculator --s1-provider subq --s1-model subq-snap-preview
+footwork start "Compute 6 times 7" --app Calculator --s1-provider subq
+uv run python -m evals.runner --split dev --arm dual --s1-provider subq
+uv run python -m evals.native.runner --split dev --arm s1_only --s1-provider subq
+```
+
+`JEVDUAL_S1_PROVIDER` and `JEVDUAL_S1_MODEL` also select the backend/model when explicit flags
+are absent. Provider/model combinations are validated before dispatch. A session freezes both
+at `start`; later `s1`, `do` and `done` use its saved selection even if the environment changes.
+Older sessions retain pinned Jev. Start a new session with `--s1-provider jev --s1-model jev-1.13.0`
+to revert, or unset both environment overrides for the default on new runs.
+
+This is an experimental backend switch across all semantic System 1 roles. It preserves the
+existing arbiter, authorization, completion floors and System 2 settings; confidence thresholds
+have not been calibrated across providers. A successful comparison does not change the default,
+and no automatic provider fallback occurs. Historical D1/D2/D3 comparisons remain pinned.
+
+Eval result rows retain the legacy `jev_calls` and `jev_cost_usd` fields for System 1 usage,
+with explicit `s1_provider`, `s1_model` and `s1_input_usd_per_million` metadata. Selected input rates
+are Jev $0.042/M and Snap $0.05/M. They are estimates from reported input tokens (or the existing
+per-call fallback), separate from any provider invoice or experiment budget ledger.
+
 ## Credits
 
 Ideas from the MIT-licensed jev-ultrafast, fastbrowse, jev-browser, jev-for-chrome and

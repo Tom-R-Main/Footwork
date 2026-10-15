@@ -27,6 +27,7 @@ from typing import Any, Literal
 
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 from jevdual.posture import ExecutionPolicy
+from jevdual.system1 import S1Config, create_s1_client, resolve_s1_config
 from jevdual.trace import RunHeader, TraceWriter
 
 from evals.native.predicates import NativeEndState, evaluate
@@ -54,6 +55,9 @@ class Deps:
     arbiter_factory: Any  # () -> Arbiter
     jev_model: str | None = None
     llm_model: str | None = None
+    s1_provider: str = "jev"
+    s1_input_usd_per_million: float = JEV_USD_PER_MTOK
+    s1_counter: Any = None
 
 
 def task_folder(task: NativeTask, run_id: str) -> Path:
@@ -245,6 +249,9 @@ async def run_task(
     *,
     max_steps: int = 25,
 ) -> TaskResult:
+    counter = deps.s1_counter if deps is not None else None
+    initial_calls = counter.calls if counter is not None else 0
+    initial_tokens = counter.input_tokens if counter is not None else 0
     run_id = f"{task.id}-{arm}-{uuid.uuid4().hex[:8]}"
     tmp = task_folder(task, run_id)
     (out_dir / "traces").mkdir(parents=True, exist_ok=True)
@@ -362,7 +369,12 @@ async def run_task(
         if not os.environ.get("JEVDUAL_KEEP_TMP"):
             shutil.rmtree(tmp, ignore_errors=True)
     wall = time.perf_counter() - t0
-    jev_cost = (jev_tokens or jev_calls * JEV_TOKENS_PER_CALL) / 1e6 * JEV_USD_PER_MTOK
+    if counter is not None:
+        # Includes proposal, completion, evidence and destructive judgment calls, including failures.
+        jev_calls = counter.calls - initial_calls
+        jev_tokens = counter.input_tokens - initial_tokens
+    s1_rate = deps.s1_input_usd_per_million if deps is not None else JEV_USD_PER_MTOK
+    jev_cost = (jev_tokens or jev_calls * JEV_TOKENS_PER_CALL) / 1e6 * s1_rate
     return TaskResult(
         task_id=task.id,
         arm=arm if arm != "oracle" else "s1_only",
@@ -375,6 +387,9 @@ async def run_task(
         llm_tokens=llm_in + llm_out,
         llm_cost_usd=llm_in / 1e6 * MUSE_IN_PER_MTOK + llm_out / 1e6 * MUSE_OUT_PER_MTOK,
         jev_cost_usd=jev_cost,
+        s1_provider=deps.s1_provider if deps is not None else None,
+        s1_model=deps.jev_model if deps is not None else None,
+        s1_input_usd_per_million=s1_rate if deps is not None else None,
         wall_s=wall,
         is_done=is_done,
         # the claimed completion the report's verified pass reads: a done the verifier accepted (an
@@ -407,12 +422,16 @@ def load_partial(out_dir: Path) -> list[TaskResult]:
     return out
 
 
-def default_deps(llm: str | None, client: Any) -> Deps:
+def default_deps(llm: str | None, client: Any, *, config: S1Config | None = None) -> Deps:
     from jevdual.arbiter import Arbiter
     from jevdual.desktop_s2 import NativeS2, meta_chat_from_env
-    from jevdual.policy import JEV_MODEL, JevPolicy
+    from jevdual.policy import JevPolicy
     from jevdual.verify import ArbiterHook, Verifier
 
+    from evals.runner import CountingClient
+
+    config = config or resolve_s1_config()
+    client = CountingClient(client, config=config)
     chat = meta_chat_from_env() if llm not in (None, "none") else None
 
     def s2_factory(task: NativeTask, verifier: Any):
@@ -421,13 +440,19 @@ def default_deps(llm: str | None, client: Any) -> Deps:
         return NativeS2(chat)
 
     return Deps(
-        policy_factory=lambda task: JevPolicy(client),
+        policy_factory=lambda task: JevPolicy(client, model=config.model),
         verifier_factory=lambda task: ArbiterHook(
-            Verifier(client), task.requirements, answer_expected=task.answer_expected, use_trajectory=False
+            Verifier(client, model=config.model),
+            task.requirements,
+            answer_expected=task.answer_expected,
+            use_trajectory=False,
         ),
         s2_factory=s2_factory,
         arbiter_factory=Arbiter.from_toml,
-        jev_model=JEV_MODEL,
+        jev_model=config.model,
+        s1_provider=config.provider,
+        s1_input_usd_per_million=config.price_per_million,
+        s1_counter=client,
         llm_model=getattr(chat, "model", None),
     )
 
@@ -486,6 +511,8 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--task", action="append")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--repeats", type=int, default=1)
+    ap.add_argument("--s1-provider", choices=("jev", "subq"), help="experimental System 1 backend")
+    ap.add_argument("--s1-model", help="explicit System 1 model")
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--llm", default="meta", help="System 2 provider: meta (Muse Spark) or none")
     ap.add_argument("--out", default=f"results/native-{time.strftime('%Y%m%d-%H%M%S')}")
@@ -493,6 +520,7 @@ def main(argv: list[str] | None = None) -> None:
         "--resume", action="store_true", help="fill missing (task, arm, repeat) rows in --out/results.json"
     )
     args = ap.parse_args(argv)
+    config = resolve_s1_config(args.s1_provider, args.s1_model)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     present = load_keys()
     log.info("keys present: %s", present)
@@ -511,10 +539,8 @@ def main(argv: list[str] | None = None) -> None:
                 repeats=args.repeats,
                 resume=args.resume,
             )
-        from typesafe_sdk import AsyncTypeSafeClient
-
-        async with AsyncTypeSafeClient() as client:
-            deps = default_deps(None if args.llm == "none" else args.llm, client)
+        async with create_s1_client(config) as client:
+            deps = default_deps(None if args.llm == "none" else args.llm, client, config=config)
             return await run_split(
                 args.split,
                 arms,

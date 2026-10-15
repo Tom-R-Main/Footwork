@@ -67,6 +67,10 @@ class TaskResult:
     handovers: int = 0
     #: package D: steps whose input was dispatched and never reached the page
     undelivered_inputs: int = 0
+    #: Legacy jev_calls/jev_cost_usd account for the explicitly selected System 1 provider.
+    s1_provider: str | None = None
+    s1_model: str | None = None
+    s1_input_usd_per_million: float | None = None
 
     @property
     def cost_usd(self) -> float:

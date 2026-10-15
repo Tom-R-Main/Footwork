@@ -106,7 +106,6 @@ def _step_line(o: Any) -> str:
 
 async def cmd_run(args: argparse.Namespace) -> int:
     from cua_driver import CuaDriver
-    from typesafe_sdk import AsyncTypeSafeClient
 
     from jevdual.arbiter import Arbiter, ArbiterPolicy
     from jevdual.authorize import Authorizer
@@ -115,13 +114,17 @@ async def cmd_run(args: argparse.Namespace) -> int:
     from jevdual.keys import load_keys
     from jevdual.native import NativeBridge, find_window
     from jevdual.policy import JevPolicy
+    from jevdual.system1 import create_s1_client, resolve_s1_config
     from jevdual.trace import TraceWriter
     from jevdual.verify import ArbiterHook, Verifier
 
     arm = run_arm(args)
+    config = resolve_s1_config(getattr(args, "s1_provider", None), getattr(args, "s1_model", None))
     keys = load_keys()
-    if not keys.get("TYPESAFE_API_KEY"):
-        print("TYPESAFE_API_KEY missing (0400 file under ~/.config/jevdual)", file=sys.stderr)
+    import os
+
+    if not (keys.get(config.key_env) or os.environ.get(config.key_env)):
+        print(f"{config.key_env} missing", file=sys.stderr)
         return 2
     out = _out_dir(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -163,9 +166,9 @@ async def cmd_run(args: argparse.Namespace) -> int:
                 return 2
             mark(f"opened {args.url} in a new tab of window {wid} (address bar {shown[:50]!r})")
         trace = TraceWriter(out / "trace.jsonl")
-        async with AsyncTypeSafeClient() as client:
-            policy = JevPolicy(client)
-            verifier = Verifier(client)
+        async with create_s1_client(config) as client:
+            policy = JevPolicy(client, model=config.model)
+            verifier = Verifier(client, model=config.model)
             hook = ArbiterHook(verifier, requirements, use_trajectory=True)
             s2 = None
             if arm != "s1_only":
@@ -233,6 +236,9 @@ async def cmd_run(args: argparse.Namespace) -> int:
         json.dumps(
             {
                 "task": args.task,
+                "s1_provider": config.provider,
+                "s1_model": config.model,
+                "s1_input_usd_per_million": config.price_per_million,
                 "app": args.app,
                 "url": args.url,
                 "requirements": requirements,
@@ -280,6 +286,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run", help="run a task in a running app")
     r.add_argument("task")
+    r.add_argument("--s1-provider", choices=("jev", "subq"), help="experimental System 1 backend")
+    r.add_argument("--s1-model", help="explicit model for the selected System 1 backend")
     r.add_argument("--app", required=True, help="the running app's name as the Driver lists it")
     r.add_argument("--url", help="open this URL in a new tab first (Chrome, Safari) and bind to that window")
     r.add_argument("--window", help="bind to the window whose title contains this")
@@ -323,6 +331,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     st = sub.add_parser("start", help="bind a window and start a session you drive as System 2")
     st.add_argument("task")
+    st.add_argument(
+        "--s1-provider", choices=("jev", "subq"), help="persist the experimental System 1 backend"
+    )
+    st.add_argument("--s1-model", help="persist the selected System 1 model")
     st.add_argument("--app", default="Google Chrome", help="the running app (native route)")
     st.add_argument(
         "--browser", action="store_true", help="footwork's own Chrome through the Driver's DevTools route"
@@ -362,12 +374,21 @@ def build_parser() -> argparse.ArgumentParser:
     visual = sub.add_parser("visual-check", help="record one native advisory visual predicate; never execute")
     visual.add_argument("--request", required=True, help="JSON request manifest inside the session")
     visual.add_argument("--provider", choices=("decisions",), help="explicitly enable one provider request")
-    visual.add_argument("--disclose", action="store_true", help="allow this session capture and supplied asset upload")
-    visual.add_argument("--timeout", type=float, default=10.0, help="operational deadline; not an admission setting")
+    visual.add_argument(
+        "--disclose", action="store_true", help="allow this session capture and supplied asset upload"
+    )
+    visual.add_argument(
+        "--timeout", type=float, default=10.0, help="operational deadline; not an admission setting"
+    )
     visual.add_argument("--max-bytes", type=int, default=4_000_000)
     visual.add_argument("--max-input-tokens", type=int, default=64_000)
-    visual.add_argument("--max-calls", type=int, choices=(1, 2), default=1,
-                        help="fixed workflow cap; two permits one changed-evidence recovery")
+    visual.add_argument(
+        "--max-calls",
+        type=int,
+        choices=(1, 2),
+        default=1,
+        help="fixed workflow cap; two permits one changed-evidence recovery",
+    )
     visual.add_argument("--max-cost", type=float, default=0.0064)
     common(visual)
     visual.set_defaults(fn=cmd_visual_check)
@@ -378,7 +399,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     do.add_argument("--settle", type=float, default=S.SETTLE_S)
     do.add_argument(
-        "--no-judge", action="store_true",
+        "--no-judge",
+        action="store_true",
         help="explicit keyword/replacement-only mode; skips Jev judgment on click/menu/key/enter/navigation",
     )
     do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
@@ -422,7 +444,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     common(cf)
     cf.set_defaults(fn=S.cmd_check_file)
-    artifact = sub.add_parser("check-artifact", help="read-only exact bytes against a digest-bound expected file")
+    artifact = sub.add_parser(
+        "check-artifact", help="read-only exact bytes against a digest-bound expected file"
+    )
     artifact.add_argument("path")
     artifact.add_argument("--expected-file", required=True)
     artifact.add_argument("--expected-sha256", required=True)

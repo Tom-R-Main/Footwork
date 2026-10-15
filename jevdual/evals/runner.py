@@ -30,6 +30,7 @@ from jevdual import BACKEND, patch
 from jevdual.agent import DualProcessAgent, S1Policy
 from jevdual.chrome_profile import automation_profile
 from jevdual.keys import META_BASE_URL, MUSE_CONTRIBUTOR, load_keys
+from jevdual.system1 import S1Config, create_s1_client, resolve_s1_config
 from jevdual.trace import ActionRecord, MenuEntry, RunHeader, StepRecord, Timings, TraceWriter
 
 from evals.fixtures.server import serve
@@ -119,7 +120,7 @@ def _secret_store(task: Task, site_url: str):
     return SecretStore({pattern: dict(task.secrets)})
 
 
-def default_policy_factory() -> PolicyFactory:
+def default_policy_factory(*, s1_provider: str | None = None, s1_model: str | None = None) -> PolicyFactory:
     """S1 policy for the s1_only and dual arms: Jev over TypeSafe, arbiter chosen per arm at call time.
 
     The arm is a call-time argument on purpose: an earlier version bound it at construction from
@@ -128,13 +129,15 @@ def default_policy_factory() -> PolicyFactory:
     """
     from jevdual.policy import JevPolicy
     from jevdual.s1 import AlwaysAct, JevS1
-    from typesafe_sdk import AsyncTypeSafeClient
 
-    base_client = AsyncTypeSafeClient()  # reads TYPESAFE_API_KEY
+    config = resolve_s1_config(s1_provider, s1_model)
+    base_client = create_s1_client(config)
 
     def factory(task: Task, store: Any = None, arm: str = "dual") -> S1Policy:
-        client = CountingClient(base_client)  # one counter per task: every Jev request is billed
-        policy = JevPolicy(client)
+        client = CountingClient(
+            base_client, config=config
+        )  # one counter per task: every Jev request is billed
+        policy = JevPolicy(client, model=config.model)
         if arm == "s1_only":
             # S1's own done stands, so false completions are measured, not hidden.
             s1 = JevS1(policy, arbiter=AlwaysAct(), requirements=tuple(task.requirements), secrets=store)
@@ -148,7 +151,7 @@ def default_policy_factory() -> PolicyFactory:
             # explicitly and `guarded` gets the default, so the two are now the same arm
             vpolicy = VerifyPolicy(claim_evidence="page_and_fields") if arm in EVIDENCE_ARMS else None
             hook = ArbiterHook(
-                Verifier(client, policy=vpolicy),
+                Verifier(client, model=config.model, policy=vpolicy),
                 requirements=tuple(task.requirements),
                 answer_expected=task.answer_expected,
             )
@@ -159,7 +162,9 @@ def default_policy_factory() -> PolicyFactory:
             from jevdual.verify import ArbiterHook, Verifier
 
             hook = ArbiterHook(
-                Verifier(client), requirements=tuple(task.requirements), answer_expected=task.answer_expected
+                Verifier(client, model=config.model),
+                requirements=tuple(task.requirements),
+                answer_expected=task.answer_expected,
             )
             s1 = JevS1(
                 policy,
@@ -174,6 +179,17 @@ def default_policy_factory() -> PolicyFactory:
         return s1
 
     return factory
+
+
+def _evidence_selector(s1_policy: Any):
+    """Use the same selected backend/model for delegated evidence and the guard."""
+    from jevdual.evidence import EvidenceSelector
+
+    client = getattr(s1_policy, "jev_counter", None) or getattr(
+        getattr(s1_policy, "policy", None), "client", None
+    )
+    config = getattr(client, "config", None) or resolve_s1_config("jev", "jev-1.13.0")
+    return EvidenceSelector(client, model=config.model)
 
 
 def declaration_for(task: Task, arm: str, s1_policy: Any) -> tuple[str, Any]:
@@ -234,8 +250,9 @@ async def _snapshot_page(agent: Agent) -> dict[str, str]:
 class CountingClient:
     """Counts every System One request and its input tokens at the client boundary."""
 
-    def __init__(self, inner: Any):
+    def __init__(self, inner: Any, *, config: S1Config | None = None):
         self.inner = inner
+        self.config = config
         self.calls = 0
         self.input_tokens = 0
 
@@ -247,7 +264,7 @@ class CountingClient:
         if isinstance(tokens, int):
             self.input_tokens += tokens
         else:
-            log.warning("Jev response without input_tokens; cost will undercount this call")
+            log.warning("System 1 response without input_tokens; cost will undercount this call")
         return r
 
 
@@ -357,6 +374,11 @@ def _write_trace(
                 backend=BACKEND,
                 browser_use_version=importlib.metadata.version("browser_use"),
                 patches=patch.describe(),
+                jev_model=getattr(
+                    getattr(getattr(getattr(agent, "s1_policy", None), "jev_counter", None), "config", None),
+                    "model",
+                    None,
+                ),
                 llm_model=llm_model,
             )
         )
@@ -524,13 +546,10 @@ async def _run_task_once(
             tools = Tools()
             register_delegation(tools, lambda: holder.get("agent"))
         if arm == "delegate_evidence":
-            from jevdual.evidence import EvidenceSelector, register_find_evidence
+            from jevdual.evidence import register_find_evidence
             from jevdual.menu import build_menu
 
-            selector = EvidenceSelector(
-                getattr(s1_policy, "jev_counter", None)
-                or getattr(getattr(s1_policy, "policy", None), "client", None)
-            )
+            selector = _evidence_selector(s1_policy)
             holder["evidence"] = selector
 
             async def _page_text() -> tuple[str, str]:
@@ -622,12 +641,14 @@ async def _run_task_once(
         # browser-use has no price table for Muse; contributor rates from developer.meta.com.
         llm_cost = usage.total_prompt_tokens / 1e6 * 0.10 + usage.total_completion_tokens / 1e6 * 0.20
     counter = getattr(getattr(agent, "s1_policy", None), "jev_counter", None)
+    s1_config = getattr(counter, "config", None)
+    s1_rate = s1_config.price_per_million if s1_config is not None else JEV_USD_PER_MTOK
     if counter is not None:
         jev_calls_total = counter.calls
-        jev_cost = counter.input_tokens / 1e6 * JEV_USD_PER_MTOK
+        jev_cost = counter.input_tokens / 1e6 * s1_rate
     else:
         jev_calls_total = getattr(agent, "s1_steps", 0)
-        jev_cost = jev_calls_total * JEV_TOKENS_PER_CALL / 1e6 * JEV_USD_PER_MTOK
+        jev_cost = jev_calls_total * JEV_TOKENS_PER_CALL / 1e6 * s1_rate
     s1 = getattr(agent, "s1_steps", 0)
     s2 = getattr(agent, "s2_steps", len(history.history))
     return TaskResult(
@@ -642,6 +663,9 @@ async def _run_task_once(
         llm_tokens=usage.total_tokens if usage else 0,
         llm_cost_usd=llm_cost,
         jev_cost_usd=jev_cost,
+        s1_provider=s1_config.provider if s1_config is not None else None,
+        s1_model=s1_config.model if s1_config is not None else None,
+        s1_input_usd_per_million=s1_rate if counter is not None else None,
         wall_s=wall,
         is_done=end.is_done,
         success=end.success,
@@ -795,6 +819,8 @@ def main(argv: list[str] | None = None) -> None:
         default="meta",
         help="System 2 provider for stock/dual arms: meta (Muse Spark 1.3 Contributor, default), browser-use, or none",
     )
+    ap.add_argument("--s1-provider", choices=("jev", "subq"), help="experimental System 1 backend")
+    ap.add_argument("--s1-model", help="explicit System 1 model")
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--out", default=f"results/run-{time.strftime('%Y%m%d-%H%M%S')}")
     ap.add_argument("--resume", action="store_true", help="skip task/arm pairs already in --out/results.json")
@@ -806,7 +832,12 @@ def main(argv: list[str] | None = None) -> None:
     if "scripted" in arms:
         raise SystemExit("the scripted arm is for tests; supply a policy_factory programmatically")
     llm = _default_llm(None if args.llm == "none" else args.llm)
-    policy_factory = default_policy_factory() if any(a in POLICY_ARMS for a in arms) else None
+    config = resolve_s1_config(args.s1_provider, args.s1_model)
+    policy_factory = (
+        default_policy_factory(s1_provider=config.provider, s1_model=config.model)
+        if any(a in POLICY_ARMS for a in arms)
+        else None
+    )
     results = asyncio.run(
         run_split(
             args.split,

@@ -33,3 +33,12 @@ def test_secrets_are_scoped_to_the_app_and_never_printed():
     store = _secrets(["sauce_password=hunter2"], "Google Chrome")
     assert store is not None and store.allowed_for("app://Google Chrome", "sauce_password")
     assert "hunter2" not in repr(store)
+
+
+def test_system_one_provider_selection_is_explicit_on_run_or_session_start():
+    parser = build_parser()
+    for prefix in (["run", "t", "--app", "Calculator"], ["start", "t"]):
+        defaults = parser.parse_args(prefix)
+        assert defaults.s1_provider is None and defaults.s1_model is None
+        selected = parser.parse_args([*prefix, "--s1-provider", "subq", "--s1-model", "subq-snap-preview"])
+        assert selected.s1_provider == "subq" and selected.s1_model == "subq-snap-preview"

@@ -166,7 +166,9 @@ async def test_capability_lost_setter_permission_refuses_before_input(text_capab
     assert world.content == "Invoice report"
 
 
-async def test_capability_restart_without_durable_execution_evidence_stays_unknown(text_capability, monkeypatch):
+async def test_capability_restart_without_durable_execution_evidence_stays_unknown(
+    text_capability, monkeypatch
+):
     """Baseline: a completed append whose final journal write dies loses its local evidence."""
     from jevdual.capability.backend import ScopedBackend
     from jevdual.capability.contracts import CapabilityError
@@ -219,8 +221,14 @@ def durable_text_capability(text_capability, monkeypatch):
 
     world, tools = text_capability
     tools.backend.durable = True
-    identity = {"boot": "test-boot", "pid": world.pid, "start": "0x1.0p0", "document": str(world.document),
-                "device": 1, "inode": 2}
+    identity = {
+        "boot": "test-boot",
+        "pid": world.pid,
+        "start": "0x1.0p0",
+        "document": str(world.document),
+        "device": 1,
+        "inode": 2,
+    }
     monkeypatch.setattr(recovery, "native_identity", lambda scope: dict(identity))
     monkeypatch.setattr(execution_worker, "native_identity", lambda scope: dict(identity))
     launches = []
@@ -256,7 +264,9 @@ async def _reopened_capability(tools, monkeypatch):
 
 
 @pytest.mark.parametrize("change", ["none", "content", "document", "process", "role", "frame", "ambiguous"])
-async def test_capability_durable_receipt_recovers_historical_applied_after_restart(durable_text_capability, monkeypatch, change):
+async def test_capability_durable_receipt_recovers_historical_applied_after_restart(
+    durable_text_capability, monkeypatch, change
+):
     world, tools, identity, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
     arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "durable-lost-reply"}
@@ -285,7 +295,9 @@ async def test_capability_durable_receipt_recovers_historical_applied_after_rest
         world.ambiguous = True
     restarted = await _reopened_capability(tools, monkeypatch)
     try:
-        status = await restarted.call("status", {"client_token": arguments["client_token"], "reconcile": True})
+        status = await restarted.call(
+            "status", {"client_token": arguments["client_token"], "reconcile": True}
+        )
         assert status["disposition"] == "applied" and status["resolved_by"] == "execution"
         assert status["evidence"]["readback"]["passed"] is True
         assert status["evidence"]["readback"]["historical"] is True
@@ -301,7 +313,9 @@ async def test_capability_durable_receipt_recovers_historical_applied_after_rest
         restarted.service.journal.close()
 
 
-async def test_capability_started_no_receipt_rejects_matching_external_text(durable_text_capability, monkeypatch):
+async def test_capability_started_no_receipt_rejects_matching_external_text(
+    durable_text_capability, monkeypatch
+):
     world, tools, _, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
 
@@ -335,7 +349,9 @@ async def test_capability_started_no_receipt_rejects_matching_external_text(dura
 
 
 @pytest.mark.parametrize("boundary", ["prepare", "start"])
-async def test_capability_durable_storage_admission_failure_never_launches(durable_text_capability, monkeypatch, boundary):
+async def test_capability_durable_storage_admission_failure_never_launches(
+    durable_text_capability, monkeypatch, boundary
+):
     world, tools, _, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
 
@@ -363,7 +379,9 @@ async def test_capability_second_worker_claim_cannot_replay_packet(durable_text_
     assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
 
 
-async def test_capability_worker_readback_refusal_after_input_remains_unknown(durable_text_capability, monkeypatch):
+async def test_capability_worker_readback_refusal_after_input_remains_unknown(
+    durable_text_capability, monkeypatch
+):
     from jevdual.capability.backend import ScopedBackend
     from jevdual.capability.contracts import CapabilityError
 
@@ -460,6 +478,9 @@ async def test_capability_readback_identity_loss_stays_unknown_without_retry(tex
 
 
 class _Client:
+    def __init__(self, **kwargs):
+        pass
+
     async def __aenter__(self):
         return self
 
@@ -470,8 +491,8 @@ class _Client:
 class _Verifier:
     """Accepts when the last word of every requirement is on the window; the models are not under test."""
 
-    def __init__(self, client):
-        pass
+    def __init__(self, client, *, model="jev-1.13.0"):
+        self.model = model
 
     #: every judgment asked for, and the probability a scenario wants back (secondary audit 2026-09-27)
     judged: ClassVar[list[list[str]]] = []
@@ -499,8 +520,8 @@ class _Policy:
 
     script: ClassVar[list[str]] = []
 
-    def __init__(self, client):
-        pass
+    def __init__(self, client, *, model="jev-1.13.0"):
+        self.model = model
 
     async def decide(self, menu, ctx):
         label = _Policy.script.pop(0)
@@ -700,10 +721,17 @@ def test_a_key_and_a_return_go_to_the_judge_through_the_real_command(world, fw):
         _Verifier.p = 0.05
 
 
-@pytest.mark.parametrize("words", [
-    ("click", "All Clear"), ("key", "Tab"), ("hotkey", "cmd", "s"),
-    ("menu", "File > Save"), ("enter", "All Clear"), ("navigate", "http://127.0.0.1/fixture"),
-])
+@pytest.mark.parametrize(
+    "words",
+    [
+        ("click", "All Clear"),
+        ("key", "Tab"),
+        ("hotkey", "cmd", "s"),
+        ("menu", "File > Save"),
+        ("enter", "All Clear"),
+        ("navigate", "http://127.0.0.1/fixture"),
+    ],
+)
 def test_missing_required_judge_pauses_operator_routes(world, fw, monkeypatch, words):
     import jevdual.keys
     from jevdual.native import NativeBridge
@@ -907,3 +935,77 @@ async def test_capability_resource_replacement_during_live_observation_sends_not
     result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
     assert result["phase"] == "not_sent"
     assert world.writes == [] and world.content == "Invoice report"
+
+
+def test_selected_system_one_reaches_proposal_judge_and_completion(world, fw, monkeypatch):
+    import jevdual.policy
+    import jevdual.system1
+    import jevdual.verify
+
+    selected = []
+    roles = []
+
+    def client(config, **kwargs):
+        selected.append(config)
+        return _Client()
+
+    class Policy(_Policy):
+        def __init__(self, client, *, model):
+            roles.append(("proposal", model))
+            super().__init__(client, model=model)
+
+    class Verifier(_Verifier):
+        def __init__(self, client, *, model):
+            roles.append(("verifier", model))
+            super().__init__(client, model=model)
+
+    monkeypatch.setenv("SUBQ_API_KEY", "synthetic-only")
+    monkeypatch.setattr(jevdual.system1, "create_s1_client", client)
+    monkeypatch.setattr(jevdual.policy, "JevPolicy", Policy)
+    monkeypatch.setattr(jevdual.verify, "Verifier", Verifier)
+    assert fw("start", "Compute 7", "--app", "Calculator", "--s1-provider", "subq")[0] == 0
+    monkeypatch.setenv("JEVDUAL_S1_PROVIDER", "jev")
+    monkeypatch.setenv("JEVDUAL_S1_MODEL", "jev-1.13.0")
+    _Policy.script = ["7"]
+    _Verifier.p = 0.05
+    assert fw("s1", "--act")[0] == 0
+    assert world.presses == ["7"]
+    assert fw("done")[0] == 0
+    assert roles == [
+        ("proposal", "subq-snap-preview"),
+        ("verifier", "subq-snap-preview"),
+        ("verifier", "subq-snap-preview"),
+    ]
+    assert len(selected) == 3
+    assert all(c.provider == "subq" and c.price_per_million == 0.05 for c in selected)
+    assert _state(fw)["s1_provider"] == "subq"
+
+
+def test_invalid_system_one_configuration_refuses_before_session_mutation(world, fw):
+    assert fw("start", "Compute 7", "--app", "Calculator")[0] == 0
+    previous = (fw.session / "session.json").read_bytes()
+    code, _, _ = fw(
+        "start", "Compute 8", "--app", "Calculator", "--s1-provider", "subq", "--s1-model", "jev-1.13.0"
+    )
+    assert code != 0
+    assert (fw.session / "session.json").read_bytes() == previous
+    assert world.presses == []
+
+
+def test_selected_subq_missing_key_never_uses_existing_jev_access(world, fw, monkeypatch):
+    import jevdual.system1
+
+    monkeypatch.delenv("SUBQ_API_KEY", raising=False)
+
+    def unexpected_client(*args, **kwargs):
+        raise AssertionError("No client should be created without the selected provider key")
+
+    monkeypatch.setattr(jevdual.system1, "create_s1_client", unexpected_client)
+    assert fw("start", "Compute 7", "--app", "Calculator", "--s1-provider", "subq")[0] == 0
+    code, _, error = fw("s1")
+    assert code == 2 and "SUBQ_API_KEY missing" in error
+    code, _, error = fw("done")
+    assert code == 2 and "SUBQ_API_KEY missing" in error
+    code, output, _ = fw("do", "click", "7")
+    assert code == 3 and "judgment_unavailable" in output
+    assert world.presses == []

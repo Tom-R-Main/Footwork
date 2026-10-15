@@ -330,7 +330,9 @@ def test_redact_results_without_mac_hardware_probe_still_scrubs_task_secrets(tmp
     from evals.tasks import schema
 
     secret = "synthetic-task-secret-value"
-    monkeypatch.setattr(schema, "load_all", lambda: {"dev": [SimpleNamespace(id="fixture", secrets={"token": secret})]})
+    monkeypatch.setattr(
+        schema, "load_all", lambda: {"dev": [SimpleNamespace(id="fixture", secrets={"token": secret})]}
+    )
     monkeypatch.setattr(sys, "platform", platform)
     probes = []
 
@@ -359,3 +361,38 @@ def test_cli_builds_a_policy_factory_for_every_policy_arm():
     from evals.runner import ARMS, POLICY_ARMS
 
     assert set(ARMS) - set(POLICY_ARMS) == {"stock", "scripted"}
+
+
+@pytest.mark.parametrize(
+    "provider,model,rate", [("jev", "jev-1.13.0", 0.042), ("subq", "subq-snap-preview", 0.05)]
+)
+def test_selected_backend_model_is_shared_by_policy_guard_and_evidence(monkeypatch, provider, model, rate):
+    from types import SimpleNamespace
+
+    from evals import runner
+    from evals.tasks.schema import Task
+
+    clients = []
+
+    def client(config):
+        clients.append(config)
+        return SimpleNamespace()
+
+    monkeypatch.setattr(runner, "create_s1_client", client)
+    task = Task(
+        id="s1-selection",
+        tags=("read",),
+        task="Report the total",
+        start_url="https://x.example/",
+        requirements=("Total reported",),
+        predicate={"kind": "answer_contains", "value": "1"},
+    )
+    factory = runner.default_policy_factory(s1_provider=provider, s1_model=model)
+    dual = factory(task, None, "dual")
+    guard = factory(task, None, "guarded")
+    selector = runner._evidence_selector(dual)
+    assert dual.policy.model == model
+    assert dual.verifier.verifier.model == guard.verifier.verifier.model == selector.model == model
+    assert selector.client is dual.jev_counter
+    assert dual.jev_counter.config.price_per_million == rate
+    assert clients[0].provider == provider

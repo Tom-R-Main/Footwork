@@ -236,3 +236,76 @@ def test_launch_failure_is_a_crash_row(snapshot_json, stub_sdk, tmp_path, monkey
 
     res = asyncio.run(nr.run_task(NoWindow(snapshot_json), _task(), "oracle", tmp_path / "c", None))
     assert not res.passed and res.error.startswith("crash: RuntimeError")
+
+
+@pytest.mark.parametrize(
+    "provider,model,rate", [("jev", "jev-1.13.0", 0.042), ("subq", "subq-snap-preview", 0.05)]
+)
+def test_native_default_dependencies_propagate_selected_system_one(provider, model, rate):
+    from jevdual.system1 import resolve_s1_config
+
+    deps = nr.default_deps(None, object(), config=resolve_s1_config(provider, model))
+    assert deps.policy_factory(_task()).model == model
+    assert deps.verifier_factory(_task()).verifier.model == model
+    assert deps.jev_model == model and deps.s1_provider == provider
+    assert deps.s1_input_usd_per_million == rate
+
+
+def test_native_results_use_selected_provider_rate(snapshot_json, stub_sdk, tmp_path, monkeypatch):
+    monkeypatch.setenv("TMPDIR", str(tmp_path))
+    ids = _ids(snapshot_json)
+    policy = SeqPolicy(_decision("click", ids["6"]), _decision("done"))
+    deps = _deps(policy, FakeHook("accept", "shows 1,248"))
+    deps.s1_provider, deps.jev_model, deps.s1_input_usd_per_million = "subq", "subq-snap-preview", 0.05
+    out = tmp_path / "out"
+    result = asyncio.run(nr.run_task(LaunchDriver(snapshot_json), _task(), "s1_only", out, deps))
+    assert result.s1_provider == "subq" and result.s1_model == "subq-snap-preview"
+    assert result.s1_input_usd_per_million == 0.05
+    assert result.jev_cost_usd == pytest.approx(2 * 120 / 1e6 * 0.05)
+    nr.write_results([result], out, "selection")
+    row = json.loads((out / "results.json").read_text())[0]
+    assert row["s1_provider"] == "subq" and row["s1_input_usd_per_million"] == 0.05
+
+
+def test_native_shared_counter_charges_proposal_and_verification_per_run(
+    snapshot_json, stub_sdk, tmp_path, monkeypatch
+):
+    from jevdual.system1 import resolve_s1_config
+
+    from evals.runner import CountingClient
+
+    monkeypatch.setenv("TMPDIR", str(tmp_path))
+    model = "subq-snap-preview"
+    seen = []
+
+    class Client:
+        async def system_one(self, state, questions, *, model):
+            seen.append((state, model))
+            return SimpleNamespace(usage=SimpleNamespace(input_tokens=220 if state == "verify" else 100))
+
+    counter = CountingClient(Client(), config=resolve_s1_config("subq", model))
+    ids = _ids(snapshot_json)
+
+    class Policy(SeqPolicy):
+        async def decide(self, menu, ctx):
+            await counter.system_one("proposal", {}, model=model)
+            return await super().decide(menu, ctx)
+
+    hook = FakeHook("accept", "shows 1,248")
+    original_verify = hook.verifier.verify
+
+    async def verify(*args, **kwargs):
+        await counter.system_one("verify", {}, model=model)
+        return await original_verify(*args, **kwargs)
+
+    hook.verifier.verify = verify
+    for repeat in range(2):
+        deps = _deps(Policy(_decision("click", ids["6"]), _decision("done")), hook)
+        deps.s1_provider, deps.jev_model, deps.s1_input_usd_per_million = "subq", model, 0.05
+        deps.s1_counter = counter
+        result = asyncio.run(
+            nr.run_task(LaunchDriver(snapshot_json), _task(), "s1_only", tmp_path / str(repeat), deps)
+        )
+        assert result.error is None and result.jev_calls == 3
+        assert result.jev_cost_usd == pytest.approx(420 / 1e6 * 0.05)
+    assert seen == [("proposal", model), ("proposal", model), ("verify", model)] * 2

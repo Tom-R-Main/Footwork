@@ -402,3 +402,14 @@ def test_a_numeric_label_is_addressable_and_an_incomplete_view_says_so():
         omitted={"elements_incomplete": 1},
     )
     assert "this observation is incomplete" in render_observation(nm, receipt=None)
+
+
+def test_old_session_keeps_pinned_jev_despite_new_environment(tmp_path, monkeypatch):
+    raw = dataclasses.asdict(SessionState(dir=str(tmp_path), app="X", pid=1, window_id=2, task="t"))
+    raw.pop("s1_provider")
+    raw.pop("s1_model")
+    (tmp_path / "session.json").write_text(json.dumps(raw))
+    monkeypatch.setenv("JEVDUAL_S1_PROVIDER", "subq")
+    monkeypatch.setenv("JEVDUAL_S1_MODEL", "subq-snap-preview")
+    config = SessionState.load(tmp_path).s1_config()
+    assert config.provider == "jev" and config.model == "jev-1.13.0"

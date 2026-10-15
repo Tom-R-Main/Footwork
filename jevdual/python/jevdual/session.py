@@ -77,6 +77,14 @@ class SessionState:
     #: Visual answers belong to one observation generation and are advisory only.
     visual_generation: str = ""
     last_visual_check: dict[str, Any] | None = None
+    #: Frozen at start; old sessions retain the pinned Jev baseline regardless of current environment.
+    s1_provider: str = "jev"
+    s1_model: str = "jev-1.13.0"
+
+    def s1_config(self):
+        from jevdual.system1 import resolve_s1_config
+
+        return resolve_s1_config(self.s1_provider, self.s1_model)
 
     @property
     def path(self) -> Path:
@@ -90,7 +98,9 @@ class SessionState:
         raw = json.loads((d / "session.json").read_text())
         raw["requirements"] = tuple(raw.get("requirements") or ())
         raw["authorized"] = tuple(raw.get("authorized") or ())
-        return cls(**raw)
+        state = cls(**raw)
+        state.s1_config()  # reject unsupported persisted configuration before binding or acting
+        return state
 
     def log(self, rec: dict[str, Any]) -> None:
         with (self.path / "session.jsonl").open("a") as fh:
@@ -453,7 +463,9 @@ async def cmd_start(args: Any) -> int:
     from cua_driver import CuaDriver
 
     from jevdual.native import address_bar, find_window, navigate_in_window, new_window
+    from jevdual.system1 import resolve_s1_config
 
+    config = resolve_s1_config(getattr(args, "s1_provider", None), getattr(args, "s1_model", None))
     d = session_dir(args.session)
     d.mkdir(parents=True, exist_ok=True)
     # a new session inherits nothing: no carried value or destination snapshot from an older one in
@@ -476,6 +488,8 @@ async def cmd_start(args: Any) -> int:
             pid=pid,
             window_id=wid,
             task=args.task,
+            s1_provider=config.provider,
+            s1_model=config.model,
             requirements=_split(args.require, ";"),
             authorized=_split(args.authorize, ","),
             answer_expected=args.answer,
@@ -523,7 +537,9 @@ async def _start_browser(args: Any, d: Path) -> int:
     """A session on footwork's own Chrome through the Driver's browser mode (jevdual.browser_driver)."""
     from jevdual.browser_driver import bind_footwork_chrome
     from jevdual.posture import ExecutionPolicy
+    from jevdual.system1 import resolve_s1_config
 
+    config = resolve_s1_config(getattr(args, "s1_provider", None), getattr(args, "s1_model", None))
     posture = getattr(args, "mode", None) or "background_only"
     driver, bridge = await bind_footwork_chrome(args.url, policy=ExecutionPolicy(posture))  # type: ignore[arg-type]
     try:
@@ -533,6 +549,8 @@ async def _start_browser(args: Any, d: Path) -> int:
             pid=bridge.pid,
             window_id=bridge.window_id,
             task=args.task,
+            s1_provider=config.provider,
+            s1_model=config.model,
             requirements=_split(args.require, ";"),
             authorized=_split(args.authorize, ","),
             answer_expected=args.answer,
@@ -892,18 +910,18 @@ async def cmd_do(args: Any) -> int:
 
         if not getattr(args, "no_judge", False) and op in (*JUDGED_ROUTES, "navigate"):
             from jevdual.keys import load_keys
+            from jevdual.system1 import create_s1_client
+            from jevdual.verify import Verifier
 
-            if load_keys().get("TYPESAFE_API_KEY"):
-                from typesafe_sdk import AsyncTypeSafeClient
-
-                from jevdual.verify import Verifier
-
-                client = AsyncTypeSafeClient()
+            config = state.s1_config()
+            present = load_keys()
+            if present.get(config.key_env) or os.environ.get(config.key_env):
+                client = create_s1_client(config)
                 await client.__aenter__()
-                judge = Verifier(client).judge_destructive
+                judge = Verifier(client, model=config.model).judge_destructive
             else:
                 reason = (
-                    f"judgment_unavailable: {op} requires configured Jev judgment. "
+                    f"judgment_unavailable: {op} requires configured {config.provider} judgment. "
                     "No action dispatched. Configure judgment access, or deliberately choose "
                     "--no-judge for keyword/replacement-only checks."
                 )
@@ -1036,23 +1054,24 @@ async def cmd_do(args: Any) -> int:
 
 
 async def cmd_s1(args: Any) -> int:
-    from typesafe_sdk import AsyncTypeSafeClient
-
     from jevdual.keys import load_keys
     from jevdual.policy import JevPolicy, StepContext
+    from jevdual.system1 import create_s1_client
 
-    if not load_keys().get("TYPESAFE_API_KEY"):
-        print("TYPESAFE_API_KEY missing", file=sys.stderr)
-        return 2
     state = SessionState.load(session_dir(args.session))
+    config = state.s1_config()
+    present = load_keys()
+    if not (present.get(config.key_env) or os.environ.get(config.key_env)):
+        print(f"{config.key_env} missing", file=sys.stderr)
+        return 2
     driver, bridge = await bind(state)
     try:
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
-        async with AsyncTypeSafeClient() as client:
+        async with create_s1_client(config) as client:
             t0 = time.perf_counter()
-            decision = await JevPolicy(client).decide(
+            decision = await JevPolicy(client, model=config.model).decide(
                 nm.menu,
                 StepContext(
                     task=state.task,
@@ -1189,15 +1208,16 @@ def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
 
 
 async def cmd_done(args: Any) -> int:
-    from typesafe_sdk import AsyncTypeSafeClient
-
     from jevdual.keys import load_keys
+    from jevdual.system1 import create_s1_client
     from jevdual.verify import Verifier
 
-    if not load_keys().get("TYPESAFE_API_KEY"):
-        print("TYPESAFE_API_KEY missing", file=sys.stderr)
-        return 2
     state = SessionState.load(session_dir(args.session))
+    config = state.s1_config()
+    present = load_keys()
+    if not (present.get(config.key_env) or os.environ.get(config.key_env)):
+        print(f"{config.key_env} missing", file=sys.stderr)
+        return 2
     driver, bridge = await bind(state)
     try:
         nm, receipt = await observe(state, bridge)
@@ -1227,9 +1247,9 @@ async def cmd_done(args: Any) -> int:
             effects = session_effects(state.path, document=document)
             for d in getattr(args, "context_from", None) or []:
                 effects += session_effects(Path(d))
-        async with AsyncTypeSafeClient() as client:
+        async with create_s1_client(config) as client:
             t0 = time.perf_counter()
-            v = await Verifier(client).verify(
+            v = await Verifier(client, model=config.model).verify(
                 state.task,
                 state.requirements,
                 nm.menu,
