@@ -33,6 +33,7 @@ Footwork is research code with an evaluation discipline. The discipline is the p
 
 ```sh
 cd jevdual
+rustup toolchain install 1.97.1 --profile minimal  # CUA reference source build
 uv sync
 uv run ruff check python evals tests scripts
 uv run pytest                              # no keys needed

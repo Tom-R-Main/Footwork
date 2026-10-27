@@ -5,6 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 UP=../browser-use/tests/ci
 MODULES=(
+  "$UP/test_browser_session.py"
+  "$UP/test_cloud_hints.py"
   "$UP/test_multi_act_guards.py"
   "$UP/test_action_loop_detection.py"
   "$UP/test_redact_cascade.py"
@@ -18,8 +20,8 @@ MODULES=(
 )
 # upstream modules import ``tests.ci.conftest``; make the submodule root importable first
 export PYTHONPATH="$(cd ../browser-use && pwd)${PYTHONPATH:+:$PYTHONPATH}"
-# Deselected: fails on this machine with and without the jevdual patches (navigate hits the 180 s
-# per-action timeout against pytest-httpserver's /static route), so it says nothing about our seams.
-DESELECT=(--deselect "tests/ci/test_multi_act_guards.py::TestStaticGuard::test_navigate_aborts_remaining_actions")
+# Match upstream's loop ownership: its browser fixtures and event buses span tests.
+# -c /dev/null intentionally skips upstream project setup, so keep these explicit.
 exec uv run pytest -p jevdual.upstream_pytest -c /dev/null --rootdir=../browser-use --confcutdir="$UP" \
-  -o asyncio_mode=auto -p no:cacheprovider -q --timeout=240 "${DESELECT[@]}" "${MODULES[@]}" "$@"
+  -o asyncio_mode=auto -o asyncio_default_fixture_loop_scope=session \
+  -o asyncio_default_test_loop_scope=session -p no:cacheprovider -q --timeout=240 "${MODULES[@]}" "$@"

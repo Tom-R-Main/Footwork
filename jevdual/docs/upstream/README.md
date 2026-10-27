@@ -1,6 +1,6 @@
 # Upstream change drafts
 
-Patches prepared against the pinned browser-use submodule (0.13.10, d8110c5). They are not
+Patches applicable to the pinned browser-use submodule (0.13.14, 2cc71890). They are not
 opened as pull requests from this repo; opening one is a separate, explicit step.
 
 - `browser-use-drop-unused-node-uuid.patch`: removes `EnhancedDOMTreeNode.uuid`, a uuid7
@@ -8,3 +8,6 @@ opened as pull requests from this repo; opening one is a separate, explicit step
   `tests/contract/test_upstream_seams.py::test_node_uuid_is_never_read_upstream`). Measured
   cost on the Wikipedia fixture: 22 ms per step for 14,860 nodes. jevdual carries the same
   effect locally as `patch.install_lazy_uuid()` until upstream takes it.
+
+The UUID patch was prepared at 0.13.10 and remains applicable at 0.13.14; the
+contract assertion checks that no upstream reader has made UUID generation necessary.

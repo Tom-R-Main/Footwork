@@ -65,6 +65,69 @@ def test_met_prerequisites_are_only_prerequisites(prerequisites):
     assert "Window identity" in checked["qualification"]
 
 
+
+@pytest.mark.parametrize(
+    ("requirement", "version", "compatible", "blockers"),
+    [
+        (">=3.11, <4.0", "3.12.6", True, []),
+        (">=3.11, <4.0", "3.10.14", False, ["python_incompatible"]),
+        (">=3.11, <4.0", "4.0.0", False, ["python_incompatible"]),
+        ("not a requirement", "3.12.6", "unparsed", ["python_requirement_unparsed"]),
+        (None, "3.12.6", "unparsed", ["python_requirement_unparsed"]),
+        ("", "3.12.6", "unparsed", ["python_requirement_unparsed"]),
+        ("   ", "3.12.6", "unparsed", ["python_requirement_unparsed"]),
+        (">=3.11, <4.0", "unknown", "unparsed", ["python_requirement_unparsed"]),
+    ],
+)
+def test_python_metadata_uses_standard_specifiers(
+    prerequisites, monkeypatch, requirement, version, compatible, blockers
+):
+    original = setup.importlib.metadata.distribution
+
+    def distribution(name):
+        installed = original(name)
+        if name == "jevdual":
+            installed.metadata = {"Requires-Python": requirement}
+        return installed
+
+    monkeypatch.setattr(setup.importlib.metadata, "distribution", distribution)
+    monkeypatch.setattr(setup.platform, "python_version", lambda: version)
+    checked = setup.doctor()
+    assert checked["runtime"]["python_compatible"] == compatible
+    assert checked["blockers"] == blockers
+    assert checked["prerequisite_status"] == ("blocked" if blockers else "met")
+    assert checked["dependencies"]["psutil"]["compatible"] is True
+
+
+def test_missing_python_specifier_parser_blocks(prerequisites, monkeypatch):
+    original = builtins.__import__
+
+    def without_parser(name, *args, **kwargs):
+        if name == "packaging.specifiers":
+            raise ImportError("not installed")
+        return original(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", without_parser)
+    checked = setup.doctor()
+    assert checked["runtime"]["python_compatible"] == "unparsed"
+    assert checked["blockers"] == ["python_requirement_unparsed"]
+    assert checked["prerequisite_status"] == "blocked"
+
+
+@pytest.mark.parametrize("installed,expected", [
+    ("0.38.0+footwork.d5373879", True),
+    ("0.38.0", False),
+    ("0.38.0+footwork.other", False),
+])
+def test_native_reference_pin_requires_exact_source_build(prerequisites, monkeypatch, installed, expected):
+    pin = "0.38.0+footwork.d5373879"
+    monkeypatch.setattr(setup.importlib.metadata, "requires", lambda name: [f"cua-driver=={pin}"])
+    monkeypatch.setattr(setup.importlib.metadata, "version", lambda name: installed)
+    checked = setup.doctor()
+    assert checked["dependencies"]["cua-driver"]["compatible"] is expected
+    assert checked["blockers"] == ([] if expected else ["dependency_incompatible"])
+
+
 def test_strict_blocks_but_default_diagnostics_exit_zero(prerequisites, monkeypatch, capsys):
     def missing(name):
         raise setup.importlib.metadata.PackageNotFoundError(name)

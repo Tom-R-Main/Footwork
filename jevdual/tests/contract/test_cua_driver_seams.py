@@ -1,4 +1,4 @@
-"""Contract tests pinning the cua-driver 0.28.2 seams jevdual depends on.
+"""Contract tests pinning the cua-driver 0.38.0 seams jevdual depends on.
 
 The native arm, the receipts and the coexistence posture all read the Driver's own types: its five
 effect words, its routes and delivery modes, the snapshot fields that make ids stale by construction.
@@ -17,7 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.28.2"
+PINNED_VERSION = "0.38.0+footwork.d5373879"
 
 
 def _params(cls) -> set[str]:
@@ -128,12 +128,9 @@ def test_action_result_fields():
     assert "mode" in _params(cd.ActionDelivery)
 
 
-def test_evidence_carries_a_kind_only():
-    # native.effect_from_action_result formats "<kind>: <detail>", but in this version evidence has
-    # no detail: a receipt's evidence line from the Driver is the kind alone. The detail in
-    # tests/test_native.py's fake is richer than the real SDK; readback text comes from our own
-    # reobservation (jevdual.ax), not from here.
-    assert _params(cd.ActionEvidence) == {"kind"}
+def test_evidence_carries_kind_and_optional_detail():
+    # native.effect_from_action_result preserves the SDK's optional readback detail.
+    assert _params(cd.ActionEvidence) == {"kind", "detail"}
     assert {"VALUE_READBACK", "WINDOW_CHANGE"} <= _members(cd.ActionEvidenceKind)
 
 
@@ -145,14 +142,18 @@ def test_mapping_reads_a_real_action_result():
         effect=cd.ActionEffect.SUSPECTED_NOOP,
         route=cd.ActionRoute.ACCESSIBILITY,
         delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.BACKGROUND, delivered_count=1),
-        evidence=[cd.ActionEvidence(kind=cd.ActionEvidenceKind.WINDOW_CHANGE)],
+        evidence=[cd.ActionEvidence(kind=cd.ActionEvidenceKind.WINDOW_CHANGE, detail="window changed")],
         escalation=None,
+        summary=None,
+        error=None,
+        hint=None,
+        next_call=None,
     )
     eff = effect_from_action_result("click", 3, "OK", res)
     assert eff.effect == "suspected_noop"
     assert eff.route == "accessibility"
     assert eff.driver_delivery == "background"
-    assert eff.evidence == ("window_change:",)
+    assert eff.evidence == ("window_change: window changed",)
 
 
 def test_tool_result_fields():
@@ -204,3 +205,27 @@ def test_verify_state_predicates():
     assert {"pid", "window_id", "expect"} <= _params(cd.VerifyStateInput)
     assert {"window", "element"} <= _params(cd.StatePredicate)
     assert {"selector", "exists", "value_equals", "enabled", "selected"} <= _params(cd.ElementPredicate)
+
+
+@pytest.mark.asyncio
+async def test_native_observation_requests_complete_structured_snapshot():
+    """Exercise the actual SDK input: compact defaults drop the menu's elements and text."""
+    from types import SimpleNamespace
+
+    from jevdual.native import NativeBridge
+
+    class Driver:
+        async def get_window_state(self, input):
+            assert isinstance(input, cd.GetWindowStateInput)
+            assert (input.pid, input.window_id) == (101, 202)
+            assert input.full_output is True
+            assert input.max_image_dimension is None
+            return {"pid": 101, "window_id": 202, "snapshot_id": "s1", "elements": []}
+
+    bridge = NativeBridge(Driver(), 101, 202, policy=SimpleNamespace(locked=lambda: False))
+    assert (await bridge.observe()).snapshot_id == "s1"
+
+
+def test_embedded_constructor_is_available_without_starting_runtime():
+    # Native sessions must retain their host's permission identity, not auto-launch CuaDriver.app.
+    assert "embedded" in inspect.signature(cd.CuaDriver.create).parameters

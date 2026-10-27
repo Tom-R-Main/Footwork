@@ -1,6 +1,6 @@
 # Independent first-use qualification
 
-This packet prepares U2; it is not a passed first-use result. It contains the reviewed standalone wheel, MIT license and qualification helpers, with hashes in MANIFEST.json. No code runs automatically. Product processes load Python runtime files from the installed wheel; helper code supplies the fixture and independent oracle. A runtime source checkout, development environment, provider credentials and evaluation results are absent.
+This packet prepares U2; it is not a passed first-use result. It contains the reviewed standalone wheel, MIT license and qualification helpers, with hashes in MANIFEST.json. No code runs automatically. Product processes load Python runtime files from the installed wheel; helper code supplies the fixture and independent oracle. A Footwork runtime source checkout, development environment, provider credentials and evaluation results are absent. The packet includes the fixed CUA Driver SDK source, its MIT license and provenance, and a build helper; native binaries are downloaded and verified during an explicit dependency build.
 
 Use an independently provisioned Mac or a new SIP-enabled macOS guest with a visible logged-in session. A pregranted CI runner or cloned granted seed cannot establish the initial permission transition. Record the actual environment and launch host; do not reset this MacBook's permissions to simulate a fresh machine. A rerun on a previously provisioned disposable guest must be labeled a fresh permission-state run, not a new cold-OS installation. Only after explicit approval, the supported guest command `tccutil reset Accessibility com.apple.Terminal` can restore that host's denied state; never reset other hosts or edit the TCC database. Retain all earlier run directories.
 
@@ -22,15 +22,20 @@ uv --version
 "$QUALIFICATION_PYTHON" -I "$PACKET_ROOT/jevdual/scripts/verify_onboarding_packet.py" \
   --packet-root "$PACKET_ROOT"
 cd jevdual
+"$QUALIFICATION_PYTHON" -E -s scripts/build_cua_driver_wheel.py \
+  --output "$PACKET_ROOT/output/cua-wheelhouse"
 "$QUALIFICATION_PYTHON" -E -s scripts/capability_clean_install.py \
   --python "$QUALIFICATION_PYTHON" \
   --wheel "$PACKET_ROOT/artifacts/jevdual-0.0.1-py3-none-any.whl" \
+  --find-links "$PACKET_ROOT/output/cua-wheelhouse" \
   --run-dir "$PACKET_ROOT/output/install-v1"
 ~~~
 
 Set QUALIFICATION_PYTHON to the absolute executable installed for this run, not /usr/bin/python3. The system Python and Git commands can trigger a developer-tools installation dialog on a fresh Mac. The standalone helpers read their source commit from MANIFEST.json and do not need Git. Record the command paths and version output above. Verify members before installation creates output directories; stop on a nonzero verification exit. The archive hash from the accompanying report authenticates the manifest; member hashes detect changes after extraction.
 
-The installer uses a fresh environment, empty cache, private state and public binary packages. Preserve failures as their own version; a new attempt needs a new run directory. Existing dependencies, source code, Rust and model accounts must not satisfy missing prerequisites.
+The explicit CUA build uses the carried source and hash-pinned upstream native release for this host; see `jevdual/docs/upstream/cua-driver-build.md` and `jevdual/vendor/cua-driver/PROVENANCE.md` in the packet. It requires network access for the native archive and build dependencies, and does not launch the Driver or request permissions. Its native cache and built wheel are created only after packet verification.
+
+The installer uses a fresh environment, empty cache, private state, the supplied CUA wheelhouse and public binary packages for the remaining dependencies. Preserve failures as their own version; a new attempt needs a new run directory. Existing dependencies, source code, Rust and model accounts must not satisfy missing prerequisites.
 
 ## Record denied first use
 
@@ -88,3 +93,7 @@ Retain installation receipts, before/after diagnostics and exit codes, host/OS/S
 ## Recorded qualification
 
 The repaired packet from source `445a348` passed the supported Terminal permission-reset journey on a previously provisioned macOS 26.6.2 guest, including captured grant, installed native action/replay/report and automatic cleanup. Independent Claude review approved the raw evidence. See [the U3v3 report](../results/u3-packet-v4-permission-20261012-v3/report.md) for the exact artifact and limits. Original failed and interrupted runs remain preserved. Other agent hosts, pixel capture and disk persistence need their own qualification.
+
+## CUA 0.38 initial browser attachment
+
+Before the first source bind, bring the owned fixture Chrome window to the foreground once. CUA 0.38 refuses a new background DevTools attachment while another app is in front on the same Space. Footwork preserves that refusal. Subsequent reads and native append operations retain background delivery; the installed conformance trial passed with this initial foreground prerequisite on macOS arm64. This check covers the owned fixture and current host permissions, not other profiles, Spaces or apps.

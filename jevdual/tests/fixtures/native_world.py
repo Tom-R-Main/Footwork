@@ -78,7 +78,8 @@ class World:
 
     # ---- the Driver surface NativeBridge and the session use
 
-    def create(self) -> World:
+    def create(self, *, embedded: bool = False) -> World:
+        assert embedded is True
         return self
 
     async def shutdown(self) -> None:
@@ -131,6 +132,10 @@ class World:
             delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.BACKGROUND, delivered_count=1),
             evidence=[],
             escalation=None,
+            summary=None,
+            error=None,
+            hint=None,
+            next_call=None,
         )
 
     async def call_tool(self, name: str, args_json: str) -> Any:
@@ -199,7 +204,7 @@ class TextWorld:
         from jevdual import ax
         from jevdual.posture import ExecutionPolicy
 
-        monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda: self))
+        monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda *, embedded=False: self))
         monkeypatch.setattr(ExecutionPolicy, "locked", lambda _: False)
         monkeypatch.setattr(ax, "window_element", lambda pid, wid: self._window(pid, wid))
         monkeypatch.setattr(ax, "_attr", self._attr)

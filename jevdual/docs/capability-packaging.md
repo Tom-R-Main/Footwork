@@ -25,16 +25,19 @@ The separate `capability-package` CI workflow builds the wheel twice, verifies i
 python scripts/capability_package_check.py --run-dir /absolute/footwork/output/new-package-check
 ```
 
-CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The macOS profiles also run U1's fresh-cache, private-state, binary-only dependency installer. Receipts and the candidate wheel are retained as CI artifacts. These checks neither launch native input nor qualify macOS permission prompts. Each interpreter's two builds must match; byte identity across operating systems or compression-library versions is not required.
+CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The macOS profiles build the hash-pinned CUA wheel and then run the fresh-cache, private-state, binary-only dependency installer with that wheelhouse. Receipts and the candidate wheel are retained as CI artifacts. These checks neither launch native input nor qualify macOS permission prompts. Each interpreter's two builds must match; byte identity across operating systems or compression-library versions is not required.
 
 ## Install into a fresh environment
 
-With an existing Python and uv, create an owned environment and install the local wheel with its dependencies:
+CUA `0.38.0+footwork.d5373879` builds its Python bindings and native engine from the pinned reference source because published packages lag that commit. First build the dependency wheel for the destination platform; see [CUA wheel provenance and builds](upstream/cua-driver-build.md). From `jevdual/`, with an existing Python and uv:
 
 ~~~sh
+rustup toolchain install 1.97.1 --profile minimal
+uv build vendor/cua-driver --wheel --out-dir /absolute/owned/cua-wheels
 uv --no-config venv --python /absolute/python3 /absolute/owned/venv
 uv --no-config pip install --python /absolute/owned/venv/bin/python \
   --default-index https://pypi.org/simple --only-binary :all: \
+  --find-links /absolute/owned/cua-wheels \
   /absolute/owned/artifacts/jevdual-0.0.1-py3-none-any.whl
 /absolute/owned/venv/bin/python -I -m jevdual.capability.cli doctor --strict
 ~~~
@@ -111,3 +114,7 @@ The setup improvements use the structured prerequisite/error mechanism in local 
 ## Qualified local candidate
 
 The repaired guest permission-reset journey and one installed Claude Code task both passed with independent review. See [the guest report](../results/u3-packet-v4-permission-20261012-v3/report.md) and [the real-host report](../results/installed-agent-release-20261012-v2/report.md). The local release bundle preserves wheel9bb0440d and helper source445a348; its manifest identifies release documentation separately. It includes an [agent-host recipe](installed-agent-host.md) and exact qualification limits. Public registry publication, other hosts, pixel capture and disk persistence are separate gates.
+
+## CUA 0.38 initial browser attachment
+
+Before the first source bind, bring the owned fixture Chrome window to the foreground once. CUA 0.38 refuses a new background DevTools attachment while another app is in front on the same Space. Footwork preserves that refusal. Subsequent reads and native append operations retain background delivery; the installed conformance trial passed with this initial foreground prerequisite on macOS arm64. This check covers the owned fixture and current host permissions, not other profiles, Spaces or apps.

@@ -1,10 +1,10 @@
 # Use the candidate from an agent host
 
-Install the wheel as described in [installation](capability-packaging.md). Keep the environment and job directory private. Run doctor from the same responsible host that will launch the MCP server; a grant observed from another terminal does not establish this host's access.
+Build the CUA dependency and install the Footwork wheel as described in [installation](capability-packaging.md). CUA 0.38.0 needs the carried source build because its Python wheel is not yet on PyPI. Keep the environment and job directory private. Run doctor from the same responsible host that will launch the MCP server; a grant observed from another terminal does not establish this host's access.
 
 For a disposable qualification task, the bundled helpers create an owned browser page and TextEdit document. Use absolute paths for every command. Verify an extracted qualification packet before creating output; a release bundle has its own manifest and is a different artifact.
 
-1. Run `jevdual/scripts/capability_clean_install.py` with an existing Python, the bundled wheel and a new output directory. Its empty cache and private state test fresh dependencies on the existing OS.
+1. After packet verification, run `jevdual/scripts/build_cua_driver_wheel.py --output /absolute/owned/output/cua-wheelhouse` with an existing Python. The helper builds the carried `jevdual/vendor/cua-driver` source with hash-pinned upstream native artifacts; it needs uv and network access but does not start a Driver. Then run `jevdual/scripts/capability_clean_install.py --python /absolute/python3.12 --wheel /absolute/footwork/artifacts/jevdual-0.0.1-py3-none-any.whl --find-links /absolute/owned/output/cua-wheelhouse --run-dir /absolute/owned/output/install`. Its empty cache and private state test fresh dependencies on the existing OS.
 2. From that installed environment, run `jevdual/scripts/capability_fixture.py --run-dir /absolute/owned/output/fixture`. Wait for its ready response; keep this Terminal open. The helper records exact source/destination identity and waits for cleanup.
 3. In another Terminal from the same responsible host, run `jevdual/scripts/capability_fixture_config.py --scope /absolute/owned/output/fixture/scope.json --run-dir /absolute/owned/output/job`. This invokes public configuration and creates `host.json`, `run.json` and `report-schema.json` for one job.
 
@@ -21,3 +21,7 @@ Finish the fixture with one Ctrl-C and inspect its `cleanup.json` and exit statu
 This recipe needs existing compatible Python/uv/Chrome, applicable macOS permissions and working agent-host authentication. The dependency installation and the model call use their respective networks. Only the product runtime is provider-independent. Fresh dependencies, guest permission-state qualification and actual agent execution are separate evidence lanes; the release manifest records what passed.
 
 The measured host trial additionally applied product-only private HOME/config/cache/temp overrides, blanked ambient variable names ending in _KEY/_TOKEN/_SECRET, and enabled runtime audit in a private output directory. The host kept its existing opaque authentication. These diagnostic isolation settings do not come automatically from the generated registration; the latter supplies isolated imports and telemetry settings. The evidence records this distinction.
+
+## CUA 0.38 initial browser attachment
+
+Before the first source bind, bring the owned fixture Chrome window to the foreground once. CUA 0.38 refuses a new background DevTools attachment while another app is in front on the same Space. Footwork preserves that refusal. Subsequent reads and native append operations retain background delivery; the installed conformance trial passed with this initial foreground prerequisite on macOS arm64. This check covers the owned fixture and current host permissions, not other profiles, Spaces or apps.

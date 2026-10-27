@@ -92,7 +92,7 @@ class ScopedBackend:
                 from jevdual.native import NativeBridge
 
                 spec = self.scope[name]
-                driver = CuaDriver.create()
+                driver = CuaDriver.create(embedded=True)
                 bridge = NativeBridge(
                     driver, spec["pid"], spec["window_id"], session=self.session, live_check=True
                 )

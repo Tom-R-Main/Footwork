@@ -11,6 +11,7 @@ import re
 import stat
 import subprocess
 import tempfile
+import tomllib
 import zipfile
 from pathlib import Path, PurePosixPath
 
@@ -27,6 +28,39 @@ HELPERS = (
     "capability_restart_trial.py",
     "capability_installed_trial.py",
 )
+
+
+# Fixed source-only inventory: downloaded native caches and binaries never enter a packet.
+CUA_SOURCES = (
+    "pyproject.toml",
+    "hatch_build.py",
+    "build_support.py",
+    "native-source.tar.gz",
+    "README.md",
+    "LICENSE",
+    "PROVENANCE.md",
+    "src/cua_driver/__init__.py",
+    "src/cua_driver/__main__.py",
+    "src/cua_driver/_daemon.py",
+    "src/cua_driver/_native.py",
+    "src/cua_driver/_native_contract.py",
+    "src/cua_driver/wrapper.py",
+)
+
+
+def dependency_sources(commit: str, project: Path) -> tuple[str, ...]:
+    """Select dependency build sources from the frozen commit, preserving historical packets."""
+    config = tomllib.loads(committed_bytes(commit, "jevdual/pyproject.toml", project).decode())
+    cua = config.get("tool", {}).get("uv", {}).get("sources", {}).get("cua-driver")
+    if cua is None:
+        return ()
+    if cua != {"path": "vendor/cua-driver"}:
+        raise ValueError("Unsupported CUA dependency source for onboarding packet")
+    return (
+        *("jevdual/vendor/cua-driver/" + name for name in CUA_SOURCES),
+        "jevdual/scripts/build_cua_driver_wheel.py",
+        "jevdual/docs/upstream/cua-driver-build.md",
+    )
 
 
 def sha(data: bytes) -> str:
@@ -161,6 +195,9 @@ def inventory(wheel: Path, source_commit: str | None = None) -> dict[str, bytes]
     }
     sources.update(
         {"footwork/jevdual/scripts/" + name: PROJECT / "jevdual/scripts" / name for name in HELPERS}
+    )
+    sources.update(
+        {"footwork/" + relative: PROJECT / relative for relative in dependency_sources(source_commit, PROJECT)}
     )
     files = {}
     for name, path in sources.items():

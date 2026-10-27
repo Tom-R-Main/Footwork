@@ -5,7 +5,7 @@ browser-use's `Agent.step` is prepare, decide, execute, post-process. The decide
 `_get_next_action`, whose only contract is to leave an `AgentOutput` in `state.last_model_output`.
 `DualProcessAgent` overrides that method and `_execute_actions`; everything else, including the
 serializer, watchdogs, history, GIFs and callbacks, is inherited unchanged. Contract tests
-(`tests/contract`) pin every seam at browser-use 0.13.10 so an upgrade fails loudly.
+(`tests/contract`) pin every seam at browser-use 0.13.14 so an upgrade fails loudly.
 
 ## Why not a fork
 Upstream moves quickly and its value is the battle-tested observer and executor. A package that

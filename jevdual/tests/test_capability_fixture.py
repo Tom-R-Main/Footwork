@@ -99,7 +99,7 @@ async def test_readiness_waits_only_for_missing_window_and_keeps_exact_identity(
             raise ax.AXError("window_missing", "opening")
         return str(document)
 
-    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
     monkeypatch.setattr(ax, "document_path", path)
     result = await module.scope_for(42, "http://127.0.0.1:1", document)
     assert result["destination"] == {"pid": 43, "window_id": 8, "document": str(document)}
@@ -128,7 +128,7 @@ async def test_readiness_does_not_swallow_other_ax_errors(monkeypatch, tmp_path)
     def path(*_):
         raise ax.AXError("permission_denied", "no access")
 
-    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
     monkeypatch.setattr(ax, "document_path", path)
     with pytest.raises(ax.AXError, match="no access"):
         await module.scope_for(42, "http://127.0.0.1:1", tmp_path / "owned.txt")
@@ -412,7 +412,7 @@ async def test_identity_stays_strict_after_startup(monkeypatch, tmp_path):
         async def shutdown(self):
             pass
 
-    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
     monkeypatch.setattr(ax, "document_path", lambda *args: str(tmp_path / "owned.txt"))
     with pytest.raises(module.FixtureFailure) as failure:
         await module.scope_for(42, "http://127.0.0.1:1", tmp_path / "owned.txt")
@@ -547,7 +547,7 @@ def test_setup_failures_always_stop_owned_resources(monkeypatch, tmp_path, stage
             async def shutdown(self):
                 pass
 
-        monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+        monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
         monkeypatch.setattr(module, "IDENTITY_SECONDS", 0.02)
     else:
         monkeypatch.setattr(module, "scope_for", identity)
@@ -706,7 +706,7 @@ async def test_indefinite_sdk_enumeration_is_cancelled_then_owned_cleanup_runs(m
         async def shutdown(self):
             shutdown.append(True)
 
-    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
     with pytest.raises(module.FixtureFailure) as failure:
         await module.scope_for(42, "http://127.0.0.1:1", tmp_path / "owned.txt")
     assert failure.value.reason == "sdk_timeout"
@@ -782,7 +782,7 @@ async def test_scope_sets_process_timeout_and_rejects_late_document_identity(mon
         elapsed[0] = 31  # Synchronous native call returned beyond identity deadline.
         return str(document)
 
-    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
     monkeypatch.setattr(ax, "document_path", path)
     with pytest.raises(module.FixtureFailure) as failure:
         await module.scope_for(42, "http://127.0.0.1:1", document)
@@ -919,7 +919,7 @@ async def test_identity_uses_global_ax_reference_and_resets_default_even_on_shut
             raise ax.AXError("permission_denied", "AX lookup refused")
         return str(document)
 
-    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda: Driver())
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", lambda *, embedded=False: Driver())
     monkeypatch.setattr(ax, "document_path", path)
     if outcome == "success":
         result = await module.scope_for(42, "http://127.0.0.1:1", document)

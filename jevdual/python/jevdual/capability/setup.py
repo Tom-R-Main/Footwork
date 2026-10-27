@@ -169,13 +169,22 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
     try:
         distribution = importlib.metadata.distribution("jevdual")
         python_requirement = distribution.metadata.get("Requires-Python")
-        if python_requirement and all(
-            re.fullmatch(r"(?:==|>=|<)\d+(?:\.\d+)*", clause) for clause in python_requirement.split(",")
-        ):
-            python_compatible = _compatible(platform.python_version(), python_requirement)
-            if not python_compatible:
-                block("python_incompatible")
-        else:
+        try:
+            from packaging.specifiers import InvalidSpecifier, SpecifierSet
+            from packaging.version import InvalidVersion, Version
+
+            if not python_requirement or not python_requirement.strip():
+                block("python_requirement_unparsed")
+            else:
+                try:
+                    python_compatible = SpecifierSet(python_requirement).contains(
+                        Version(platform.python_version())
+                    )
+                    if not python_compatible:
+                        block("python_incompatible")
+                except (InvalidSpecifier, InvalidVersion):
+                    block("python_requirement_unparsed")
+        except ImportError:
             block("python_requirement_unparsed")
     except importlib.metadata.PackageNotFoundError:
         block("dependency_metadata_unavailable")
@@ -195,7 +204,10 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
                 understood = (
                     bool(requirement)
                     and all(
-                        re.fullmatch(r"(?:==|>=|<)\d+(?:\.\d+)*", clause) for clause in requirement.split(",")
+                        re.fullmatch(
+                            r"(?:==\d+(?:\.\d+)*(?:\+[a-z0-9]+(?:[._-][a-z0-9]+)*)?|(?:>=|<)\d+(?:\.\d+)*)",
+                            clause,
+                        ) for clause in requirement.split(",")
                     )
                     and not required.url
                     and not required.extras

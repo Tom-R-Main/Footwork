@@ -4,9 +4,9 @@ The package behind [Footwork](../README.md): a guard (done verification against 
 destructive gate, a receipt for every action) in front of whoever drives, with
 [TypeSafe Jev](https://docs.typesafe.ai) as an optional System 1 that picks an operation and a target from a
 code-owned menu. Two surfaces share the menu, arbiter, verifier and receipt types: the browser, through
-[browser-use](https://github.com/browser-use/browser-use) 0.13.10 (pinned, not forked) or the Cua Driver's
+[browser-use](https://github.com/browser-use/browser-use) 0.13.14 (pinned, not forked) or the Cua Driver's
 DevTools route, and native macOS apps through the [Cua Driver](https://github.com/trycua/cua)'s
-accessibility tree (`cua-driver` 0.28.2, pinned). The operator surface is the `footwork` CLI
+accessibility tree (`cua-driver` 0.38.0+footwork.d5373879, pinned to reference source). The operator surface is the `footwork` CLI
 (`python/jevdual/cli.py`, `session.py`); see the [top-level README](../README.md#drive-it). Measured hot
 paths in the DOM pipeline run in Rust through PyO3, each with a pure-Python twin and equality tests.
 
@@ -101,7 +101,8 @@ matcher is 46 to 82x faster and byte-identical to the Python reference on the fi
 ## Run it
 
 ```sh
-uv sync                                    # builds the extension with maturin
+rustup toolchain install 1.97.1 --profile minimal
+uv sync                                    # builds the extension and pinned native CUA source
 uv run pytest                              # native; JEVDUAL_PURE_PY=1 for pure Python
 JEVDUAL_BROWSER_TESTS=1 uv run pytest tests/integration tests/test_tools.py
 uv run python -m evals.runner --split dev --arm stock --arm dual --llm meta

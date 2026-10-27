@@ -241,7 +241,7 @@ async def shutdown_driver(driver, phase: str, deadline: float):
 async def textedit_pid() -> int | None:
     from cua_driver import CuaDriver, ListAppsInput
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     deadline = time.monotonic() + 3
     try:
         apps = (await bounded_call(driver.list_apps(ListAppsInput()), deadline - 1, "document_cleanup")).apps
@@ -258,7 +258,7 @@ async def scope_for(chrome_pid: int, url: str, document: Path, browser=None) -> 
     from cua_driver import CuaDriver, ListAppsInput, ListWindowsInput
     from jevdual import ax
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     global_ax = AXUIElementCreateSystemWide()
     try:
         deadline = time.monotonic() + IDENTITY_SECONDS

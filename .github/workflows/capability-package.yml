@@ -21,7 +21,7 @@ jobs:
           - os: macos-15
             python: "3.14"
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: jevdual
@@ -34,14 +34,22 @@ jobs:
         with:
           enable-cache: false
           version: "0.12.5"
+      - uses: dtolnay/rust-toolchain@stable
+        if: runner.os == 'macOS'
+        with:
+          toolchain: 1.97.1
       - name: Rebuild and check dependency-free installed CLI
         run: python scripts/capability_package_check.py --run-dir "$GITHUB_WORKSPACE/output/ci-package"
+      - name: Build CUA dependency wheel from pinned native source
+        if: runner.os == 'macOS'
+        run: uv build vendor/cua-driver --wheel --out-dir "$GITHUB_WORKSPACE/output/ci-cua"
       - name: Fresh binary dependency installation on macOS
         if: runner.os == 'macOS'
         run: |
           python scripts/capability_clean_install.py \
             --python "$(command -v python)" \
             --wheel "$GITHUB_WORKSPACE"/output/ci-package/build-one/*.whl \
+            --find-links "$GITHUB_WORKSPACE/output/ci-cua" \
             --run-dir "$GITHUB_WORKSPACE/output/ci-dependencies"
       - name: Retain candidate artifact and qualification receipts
         if: always()
@@ -55,3 +63,4 @@ jobs:
             output/ci-package/*.log
             output/ci-dependencies/receipt.json
             output/ci-dependencies/*.log
+            output/ci-cua/*.whl
