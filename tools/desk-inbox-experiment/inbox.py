@@ -16,8 +16,9 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
 PROJECT = BASE.parents[1]
-OUTPUT = BASE / "output"
-FOOTWORK = PROJECT / "jevdual" / ".venv" / "bin" / "footwork"
+OUTPUT = (Path(os.environ["FOOTWORK_TOOL_OUTPUT_ROOT"]) / BASE.name
+          if os.environ.get("FOOTWORK_TOOL_OUTPUT_ROOT") else BASE / "output")
+FOOTWORK = Path(os.environ.get("FOOTWORK_EXECUTABLE", str(PROJECT / "jevdual" / ".venv" / "bin" / "footwork")))
 SPEC = importlib.util.spec_from_file_location("camera_capture", BASE.parent / "camera-capture-experiment" / "capture.py")
 camera = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(camera)

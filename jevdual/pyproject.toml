@@ -26,6 +26,9 @@ dependencies = [
     "pyobjc-framework-cocoa>=12 ; sys_platform == 'darwin'",
 ]
 
+[project.optional-dependencies]
+tools = ["mujoco==3.15.0"]
+
 [dependency-groups]
 dev = [
     "maturin>=1.9.4,<2",
@@ -44,6 +47,7 @@ python-source = "python"
 module-name = "jevdual._core"
 manifest-path = "crates/jevdual-core/Cargo.toml"
 features = ["pyo3/extension-module"]
+include = [{ path = "python/jevdual/_tool_resources/**/*", format = ["wheel", "sdist"] }]
 
 [project.scripts]
 footwork = "jevdual.cli:main"
@@ -54,6 +58,7 @@ cache-keys = [
     { file = "pyproject.toml" },
     { file = "crates/**/Cargo.toml" },
     { file = "crates/**/*.rs" },
+    { file = "python/jevdual/_tool_resources/**/*" },
 ]
 
 [tool.pytest.ini_options]
@@ -65,6 +70,7 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 
 [tool.ruff]
+extend-exclude = ["python/jevdual/_tool_resources"]
 line-length = 110
 target-version = "py311"
 

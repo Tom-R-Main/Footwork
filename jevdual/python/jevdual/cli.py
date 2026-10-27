@@ -446,6 +446,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from .agent_cli import route
+
+    return route(argv, _legacy_main)
+
+
+def _legacy_main(argv: list[str] | None = None) -> int:
     import logging
 
     args = build_parser().parse_args(argv)

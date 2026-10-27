@@ -11,7 +11,8 @@ import stat
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-OUTPUT = BASE / "output"
+OUTPUT = (Path(os.environ["FOOTWORK_TOOL_OUTPUT_ROOT"]) / BASE.name
+          if os.environ.get("FOOTWORK_TOOL_OUTPUT_ROOT") else BASE / "output")
 MAX_BYTES = 64 * 1024
 DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 IDENTITY = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}\Z")

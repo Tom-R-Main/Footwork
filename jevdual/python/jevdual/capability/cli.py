@@ -12,8 +12,8 @@ from .completion import ReportError, unavailable_summary, validate_from_journal
 MAX_REPORT_BYTES = 65536
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="footwork-capability")
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="footwork capability")
     sub = parser.add_subparsers(dest="command", required=True)
     server = sub.add_parser("server", help="Serve scoped capability tools over MCP stdio")
     server.add_argument("--scope", type=Path, required=True)
@@ -41,7 +41,11 @@ def main(argv: list[str] | None = None) -> int:
     diagnostics.add_argument("--scope", type=Path)
     diagnostics.add_argument("--journal", type=Path)
     diagnostics.add_argument("--strict", action="store_true", help="Exit 1 when prerequisites are blocked")
-    args = parser.parse_args(argv)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
     if args.command == "server":
         from .mcp_server import main as serve
 

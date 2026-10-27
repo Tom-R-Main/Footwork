@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SIM2 image-bound proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "run_dir", "generation", "image_sha256", "token", "block_box", "decision"],
+  "properties": {
+    "version": {"const": 1},
+    "run_dir": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "generation": {"type": "integer", "minimum": 0, "maximum": 999999},
+    "image_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "token": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+    "block_box": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"type": "integer", "minimum": 0, "maximum": 640}
+    },
+    "decision": {"enum": ["move", "complete"]},
+    "target": {
+      "type": "object", "additionalProperties": false, "required": ["x", "y"],
+      "properties": {"x": {"type": "number", "minimum": -0.32, "maximum": 0.18},
+                     "y": {"type": "number", "minimum": -0.01, "maximum": 0.01}}
+    }
+  },
+  "allOf": [{"if": {"properties": {"decision": {"const": "move"}}},
+             "then": {"required": ["target"]},
+             "else": {"not": {"required": ["target"]}}}],
+  "$comment": "Runtime additionally requires canonical run binding, finite numbers, correct bbox dimensions/order, fresh image/generation and RGB evidence; coordinates use exclusive maximum pixel edges."
+}

@@ -187,7 +187,7 @@ class Trial(previous.Trial):
             process = super().launch(role, initialize)
         else:
             log = (self.root / "workbench-01.log").open("xb")
-            process = subprocess.Popen([str(BASE / ".venv/bin/python"), str(BASE / "crash_operator.py"),
+            process = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "crash_operator.py"),
                 "--root", str(self.root / "operator"), "--port", str(self.browser_port), "--gate",
                 "publication" if self.case == "host-publication" else "planning"], cwd=REPO,
                 stdout=log, stderr=log, start_new_session=True)
@@ -368,7 +368,7 @@ class Trial(previous.Trial):
             upstream = self.relay.origin
             log = (self.root / "initialization.log").open("xb")
             self.logs.append(log)
-            init = subprocess.Popen([str(BASE / ".venv/bin/python"), str(BASE / "network_bench_operator.py"), "init",
+            init = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "network_bench_operator.py"), "init",
                 "--root", str(self.root / "operator"), "--body-origin", upstream], cwd=REPO, stdout=log, stderr=log, start_new_session=True)
             record = {"role": "initialization", "pid": init.pid, "group": init.pid}
             self.processes.append((init, record))

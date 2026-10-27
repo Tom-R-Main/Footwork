@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import signal
 import socket
 import subprocess
@@ -70,7 +71,7 @@ def run(root, commit):
     def launch(name, arguments):
         log = (root / (name + ".log")).open("xb")
         logs.append(log)
-        process = subprocess.Popen([str(BASE / ".venv/bin/python"), *arguments],
+        process = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), *arguments],
                                    cwd=REPO, stdout=log, stderr=log)
         processes.append(process)
         ledger["processes"].append({"role": name, "pid": process.pid})
@@ -84,7 +85,7 @@ def run(root, commit):
         retain(root / "identity.json", identity)
         browser_origin = f"http://127.0.0.1:{available_port()}"
         initialization = subprocess.run([
-            str(BASE / ".venv/bin/python"), str(BASE / "network_bench_operator.py"), "init",
+            str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "network_bench_operator.py"), "init",
             "--root", str(root / "operator"), "--body-origin", body_origin],
             cwd=REPO, capture_output=True, timeout=30, check=False)
         protocol.create_file(root / "initialization.stdout", initialization.stdout)
