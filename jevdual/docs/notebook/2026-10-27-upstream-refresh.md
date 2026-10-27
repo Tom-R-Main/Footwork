@@ -54,3 +54,30 @@ Test: build the immutable native reference source in owned ignored output, prese
 Predicts: current reference native sources build on this Mac, import through their exact Python bindings, and pass the existing scoped observation/append/reconnect flow without policy changes.
 Against: native build prerequisites cannot be satisfied within authorized dependency downloads, ABI checks fail, or the source-head engine breaks a required integration boundary.
 Refs: /Volumes/External SSD/referencerepos/cua at d5373879e9e0baf5a63999ac4d26902340c0ce20; vendor/cua-driver/PROVENANCE.md
+
+## UR-U2 · update · 2026-10-27 17:23
+Resolves: UR2 = held
+Observed: valid normalized Python requirements now pass the actual installed doctor while malformed, unavailable, missing and incompatible metadata remain blocked. Exact local source-build version pins are recognized without permitting a release or different source suffix to satisfy them. Python metadata and local-pin regressions fail before their repairs and pass afterwards; the final complete suite passes.
+Inferred: the original readiness blocker came from the hand-written Python clause parser. The exact local-version extension is separately required to distinguish the reference native engine from its older published release.
+Next: retain standard Python specifier parsing and exact dependency source identity.
+Refs: bde0c28; output/upstream-refresh-doctor-before.json; output/upstream-refresh-doctor-after.json; output/upstream-refresh-local-pin-before.txt; output/upstream-refresh-local-pin-after.txt; tests/test_capability_doctor.py
+
+## UR-U5 · update · 2026-10-27 17:23
+Resolves: UR5 = held
+Observed: the exact native source builds with pinned Rust 1.97.1 and locked dependencies; initial compilation identified two external telemetry JSON resources, now included in the immutable source archive. The actual CLI reports full d5373879 source identity, and clean Python 3.12/3.14 installs contain the matching source-built SDK library. Final installed native read/append/reconnect conformance passes, with actual installed worker and exact destination readback; owned fixture cleanup confirms document, browser and listener closure. The frozen onboarding packet verifies with the bounded source archive included.
+Inferred: native reference parity is established for the tested macOS arm64 build and this scoped integration; release version equality alone was insufficient.
+Next: retain the source-identified local version and source-build/consumer workflow; other native platforms remain a separate CI qualification.
+Refs: bde0c28; results/upstream-refresh-20261027/report.md; output/cua-native-head/build-receipt.json; output/upstream-refresh-native-head-doctor.json; output/upstream-refresh-head-installed-origins.json; output/upstream-refresh-head-installed-trial/receipt.json
+
+## UR-U6 · update · 2026-10-27 17:23
+Resolves: UR1 = held
+Observed: final source-head validation passes 1738 Footwork tests (21 skipped, 5 live tests deselected) and all 138 inherited Browser-use tests, including the previously excluded navigation case. Rust formatting/Clippy/19 tests, 97 JavaScript tests, lint and notebook checks pass. Browser-use is pinned to 0.13.14 at 2cc71890; CUA Python and native source are pinned to d5373879 as 0.38.0+footwork.d5373879. Existing authorization, session, receipt, policy and default-model checks remain green.
+Inferred: both requested local reference snapshots can be adopted without changing policy thresholds or Jev defaults. The new CUA initial-attachment prerequisite must remain visible in installation instructions.
+Next: close this local update; preserve hosted CI and broader native qualification as unverified.
+Refs: bde0c28; results/upstream-refresh-20261027/report.md; output/upstream-refresh-head-final-tests.log; output/upstream-refresh-head-upstream.txt
+
+## UR-S1 · summary · 2026-10-27 17:23
+Established: Footwork is locally built and checked against both October 27 reference snapshots, including source-built native CUA rather than only matching Python bindings. Exact pins, immutable source/build provenance, contract tests, consumer installation, onboarding packet and the owned native workflow are updated. Failed Python-metadata, test-loop and background-attachment probes remain preserved; final fixture resources are closed.
+Uncertain: hosted CI, other operating systems/architectures, arbitrary app/profile/Space behavior, screenshot modes and general disk persistence are not qualified. No paid model calls, heldout evaluation, model/default/threshold change, publication, remote merge or deployment occurred.
+Decision: retain this checked local branch and source-build workflow. Native initial browser attachment requires the owned Chrome in front on the tested same-Space path; preserve refusals rather than widening delivery authority.
+Refs: results/upstream-refresh-20261027/report.md; docs/upstream/cua-driver-build.md; bde0c28
