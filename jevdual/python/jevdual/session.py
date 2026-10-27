@@ -398,7 +398,7 @@ async def bind(state: SessionState):
         return driver, bridge
     from cua_driver import CuaDriver
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
 
 
@@ -462,7 +462,7 @@ async def cmd_start(args: Any) -> int:
         (d / old).unlink(missing_ok=True)
     if getattr(args, "browser", False):
         return await _start_browser(args, d)
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     try:
         try:
             pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")

@@ -14,13 +14,13 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "browser-use==0.13.10",
+    "browser-use==0.13.14",
     "typesafe-sdk>=0.7,<1",
     "orjson>=3.10",
     "psutil==7.2.2",  # kernel process-start identity; already pinned in uv.lock
     "mcp==2.1.1",  # capability transport is direct, not an incidental browser dependency
     "packaging>=25,<27",  # required by installed dependency diagnostics
-    "cua-driver==0.28.2",  # pinned like browser-use: tests/contract/test_cua_driver_seams.py
+    "cua-driver==0.38.0",  # pinned like browser-use: tests/contract/test_cua_driver_seams.py
     "pyobjc-framework-applicationservices>=12 ; sys_platform == 'darwin'",
     "pyobjc-framework-quartz>=12 ; sys_platform == 'darwin'",
     "pyobjc-framework-cocoa>=12 ; sys_platform == 'darwin'",
@@ -67,3 +67,6 @@ asyncio_mode = "auto"
 [tool.ruff]
 line-length = 110
 target-version = "py311"
+
+[tool.uv.sources]
+cua-driver = { path = "vendor/cua-driver" }

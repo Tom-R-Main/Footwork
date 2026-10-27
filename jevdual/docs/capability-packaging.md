@@ -25,16 +25,18 @@ The separate `capability-package` CI workflow builds the wheel twice, verifies i
 python scripts/capability_package_check.py --run-dir /absolute/footwork/output/new-package-check
 ```
 
-CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The macOS profiles also run U1's fresh-cache, private-state, binary-only dependency installer. Receipts and the candidate wheel are retained as CI artifacts. These checks neither launch native input nor qualify macOS permission prompts. Each interpreter's two builds must match; byte identity across operating systems or compression-library versions is not required.
+CI defines Linux/Python 3.12 and macOS arm64/Python 3.12 and 3.14 profiles. The macOS profiles build the hash-pinned CUA wheel and then run the fresh-cache, private-state, binary-only dependency installer with that wheelhouse. Receipts and the candidate wheel are retained as CI artifacts. These checks neither launch native input nor qualify macOS permission prompts. Each interpreter's two builds must match; byte identity across operating systems or compression-library versions is not required.
 
 ## Install into a fresh environment
 
-With an existing Python and uv, create an owned environment and install the local wheel with its dependencies:
+CUA 0.38.0 is built from the pinned source and native release because its Python wheel is not on PyPI. First build the dependency wheel for the destination platform; see [CUA wheel provenance and builds](upstream/cua-driver-build.md). From `jevdual/`, with an existing Python and uv:
 
 ~~~sh
+uv build vendor/cua-driver --wheel --out-dir /absolute/owned/cua-wheels
 uv --no-config venv --python /absolute/python3 /absolute/owned/venv
 uv --no-config pip install --python /absolute/owned/venv/bin/python \
   --default-index https://pypi.org/simple --only-binary :all: \
+  --find-links /absolute/owned/cua-wheels \
   /absolute/owned/artifacts/jevdual-0.0.1-py3-none-any.whl
 /absolute/owned/venv/bin/python -I -m jevdual.capability.cli doctor --strict
 ~~~

@@ -239,7 +239,7 @@ async def main() -> None:
             with log_path.open("a") as fh:
                 fh.write(json.dumps(rec, default=str) + "\n")
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     try:
         pid, window_id, title = await find_window(driver, args.app)
         print(f"{args.app}: pid {pid} window {window_id} {title!r}")
@@ -259,6 +259,8 @@ async def main() -> None:
                     max_elements=None,
                     max_depth=None,
                     max_dimension=None,
+                    max_image_dimension=None,
+                    full_output=True,
                 )
             )
 

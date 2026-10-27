@@ -21,7 +21,7 @@ def test_native_ping_round_trips():
 
 
 def test_browser_use_is_pinned():
-    assert importlib.metadata.version("browser_use") == "0.13.10"
+    assert importlib.metadata.version("browser_use") == "0.13.14"
 
 
 def test_typesafe_sdk_importable():

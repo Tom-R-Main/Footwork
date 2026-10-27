@@ -47,7 +47,7 @@ def _out_dir(arg: str | None) -> Path:
 async def cmd_apps(_: argparse.Namespace) -> int:
     from cua_driver import CuaDriver, ListAppsInput
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     try:
         apps = await driver.list_apps(ListAppsInput())
         for a in sorted(apps.apps, key=lambda a: a.name.casefold()):
@@ -72,7 +72,7 @@ async def cmd_menu(args: argparse.Namespace) -> int:
     from jevdual.native import NativeBridge, find_window
 
     t0 = time.perf_counter()
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     try:
         pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
         nm = await NativeBridge(driver, pid, wid).observe(include_menu_bar=args.menu_bar)
@@ -133,7 +133,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
     def mark(what: str) -> None:
         marks.append((what, time.perf_counter() - t_start))
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     mark("driver up")
     try:
         pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")

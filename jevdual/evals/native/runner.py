@@ -454,7 +454,7 @@ async def run_split(
     if own:
         from cua_driver import CuaDriver
 
-        driver = CuaDriver.create()
+        driver = CuaDriver.create(embedded=True)
     title = f"native {split} split, arms {', '.join(arms)}"
     results: list[TaskResult] = load_partial(out_dir) if resume else []
     if results:

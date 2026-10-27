@@ -1,10 +1,10 @@
 # Use the candidate from an agent host
 
-Install the wheel as described in [installation](capability-packaging.md). Keep the environment and job directory private. Run doctor from the same responsible host that will launch the MCP server; a grant observed from another terminal does not establish this host's access.
+Build the CUA dependency and install the Footwork wheel as described in [installation](capability-packaging.md). CUA 0.38.0 needs the carried source build because its Python wheel is not yet on PyPI. Keep the environment and job directory private. Run doctor from the same responsible host that will launch the MCP server; a grant observed from another terminal does not establish this host's access.
 
 For a disposable qualification task, the bundled helpers create an owned browser page and TextEdit document. Use absolute paths for every command. Verify an extracted qualification packet before creating output; a release bundle has its own manifest and is a different artifact.
 
-1. Run `jevdual/scripts/capability_clean_install.py` with an existing Python, the bundled wheel and a new output directory. Its empty cache and private state test fresh dependencies on the existing OS.
+1. After packet verification, run `jevdual/scripts/build_cua_driver_wheel.py --output /absolute/owned/output/cua-wheelhouse` with an existing Python. The helper builds the carried `jevdual/vendor/cua-driver` source with hash-pinned upstream native artifacts; it needs uv and network access but does not start a Driver. Then run `jevdual/scripts/capability_clean_install.py --python /absolute/python3.12 --wheel /absolute/footwork/artifacts/jevdual-0.0.1-py3-none-any.whl --find-links /absolute/owned/output/cua-wheelhouse --run-dir /absolute/owned/output/install`. Its empty cache and private state test fresh dependencies on the existing OS.
 2. From that installed environment, run `jevdual/scripts/capability_fixture.py --run-dir /absolute/owned/output/fixture`. Wait for its ready response; keep this Terminal open. The helper records exact source/destination identity and waits for cleanup.
 3. In another Terminal from the same responsible host, run `jevdual/scripts/capability_fixture_config.py --scope /absolute/owned/output/fixture/scope.json --run-dir /absolute/owned/output/job`. This invokes public configuration and creates `host.json`, `run.json` and `report-schema.json` for one job.
 

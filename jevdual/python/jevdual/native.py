@@ -663,6 +663,9 @@ class NativeBridge:
                 max_elements=max_elements,
                 max_depth=None,
                 max_dimension=None,
+                max_image_dimension=None,
+                # Compact SDK defaults omit the structured elements and static-text detail.
+                full_output=True,
             )
         )
         self.last = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)

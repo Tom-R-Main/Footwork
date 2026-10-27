@@ -153,7 +153,8 @@ def test_guest_verifier_checks_extracted_payload(tmp_path, mutation):
         assert "verification failed" in run.stderr
 
 
-def test_frozen_packet_uses_committed_runtime_after_later_changes(tmp_path, monkeypatch):
+@pytest.mark.parametrize("vendored_cua", [False, True])
+def test_frozen_packet_uses_committed_runtime_after_later_changes(tmp_path, monkeypatch, vendored_cua):
     monkeypatch.syspath_prepend(str(SCRIPTS))
     import build_capability_wheel as wheels
     import build_onboarding_packet as packets
@@ -182,6 +183,18 @@ def test_frozen_packet_uses_committed_runtime_after_later_changes(tmp_path, monk
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("frozen helper or instructions\n")
 
+    if vendored_cua:
+        with (package / "pyproject.toml").open("a") as stream:
+            stream.write('[tool.uv.sources]\ncua-driver={path="vendor/cua-driver"}\n')
+        for relative in (
+            *("vendor/cua-driver/" + name for name in packets.CUA_SOURCES),
+            "scripts/build_cua_driver_wheel.py",
+            "docs/upstream/cua-driver-build.md",
+        ):
+            path = package / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("frozen CUA source fixture\n")
+
     def git(*arguments):
         return subprocess.check_output(
             ["git", "-c", "user.name=Packet Fixture", "-c", "user.email=fixture@example.invalid", *arguments],
@@ -197,6 +210,18 @@ def test_frozen_packet_uses_committed_runtime_after_later_changes(tmp_path, monk
     wheel = wheels.build(package, tmp_path / "wheel")
     packet = packets.build(wheel, tmp_path / "packet")
     packet_bytes = packet.read_bytes()
+    members = packets.parse_archive(packet_bytes)
+    cua_member = "footwork/jevdual/vendor/cua-driver/src/cua_driver/_native.py"
+    if vendored_cua:
+        assert members[cua_member] == b"frozen CUA source fixture\n"
+        assert "footwork/jevdual/scripts/build_cua_driver_wheel.py" in members
+        assert "footwork/jevdual/docs/upstream/cua-driver-build.md" in members
+        # Later checkout edits and local native binaries do not alter frozen packet inventory.
+        (package / "vendor/cua-driver/src/cua_driver/_native.py").write_text("changed SDK\n")
+        (package / "vendor/cua-driver/src/cua_driver/runtime.dylib").write_bytes(b"native binary")
+        assert not any(name.endswith(".dylib") for name in members)
+    else:
+        assert cua_member not in members
 
     (package / "python/jevdual/capability/cli.py").write_text("# changed runtime\n")
     (package / "python/jevdual/later.py").write_text("# added after qualification\n")
@@ -234,7 +259,11 @@ def test_packet_inventory_uses_one_verified_wheel_snapshot(tmp_path, monkeypatch
     wheel.write_bytes(original)
     monkeypatch.setattr(packets, "PROJECT", tmp_path)
     monkeypatch.setattr(packets, "commit_identity", lambda commit, project: COMMIT)
-    monkeypatch.setattr(packets, "committed_bytes", lambda *args: b"fixture source")
+    monkeypatch.setattr(
+        packets,
+        "committed_bytes",
+        lambda commit, relative, project: b"[project]\n" if relative.endswith("pyproject.toml") else b"fixture source",
+    )
 
     def verified_then_replaced(name, data, commit, project):
         assert data == original
@@ -331,3 +360,14 @@ def test_archive_size_budget_refuses_compressed_oversize(tmp_path, monkeypatch):
         archive.writestr("footwork/oversize", b"x" * (8 * 1024 * 1024 + 1))
     with pytest.raises(ValueError, match="bounded candidate size"):
         packets.parse_archive(path.read_bytes())
+
+
+@pytest.mark.parametrize("source", ["../outside", "vendor/other", "https://example.invalid/source"])
+def test_packet_refuses_unrecognized_dependency_source(tmp_path, monkeypatch, source):
+    monkeypatch.syspath_prepend(str(SCRIPTS))
+    import build_onboarding_packet as packets
+
+    data = ('[tool.uv.sources]\ncua-driver={path="' + source + '"}\n').encode()
+    monkeypatch.setattr(packets, "committed_bytes", lambda *args: data)
+    with pytest.raises(ValueError, match="Unsupported CUA"):
+        packets.dependency_sources(COMMIT, tmp_path)
