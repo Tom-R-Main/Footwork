@@ -313,6 +313,9 @@ def _redact_arguments(text: str, args: list[str]) -> str:
             else None
         )
         if value:
+            # Argument errors may format the original token with !r; escaped
+            # newlines/backslashes must not bypass the ordinary value scrub.
+            text = text.replace(repr(value), "[REDACTED]")
             secret = value.split("=", 1)[1] if "=" in value else value
             if secret:
                 text = text.replace(secret, "[REDACTED]")

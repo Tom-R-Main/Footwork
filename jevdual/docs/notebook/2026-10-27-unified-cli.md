@@ -30,3 +30,8 @@ Observed: the first implementation did not fully preserve the existing CLI diagn
 Inferred: command routing and packaging alone were insufficient to guarantee legacy CLI compatibility. Explicit error-propagation regressions are necessary beside success-path and admission checks.
 Next: retain the repaired candidate and require final-head hosted CI plus resolved review before merge; hosted qualification remains pending rather than inferred from local success.
 Refs: 6d8449f; output/unified-systemexit-before.txt; output/unified-systemexit-after.txt; output/unified-cli-installed-native.json; output/unified-cli-onboarding/; PR5
+
+## UCU4 · update · 2026-10-27 18:20
+Observed: the actual malformed-secret parser formats tokens with repr; a multiline synthetic secret bypassed raw-string redaction in both modes. Regressions failed before escaping-aware token redaction and pass after it; all 105 focused CLI/session tests pass. No credential values from real environments were read or printed.
+Next: validate this final diagnostic boundary in hosted CI and merge after all checks pass.
+Refs: output/unified-escaped-secret-before.txt; output/unified-diagnostics-final.txt; tests/test_agent_cli.py

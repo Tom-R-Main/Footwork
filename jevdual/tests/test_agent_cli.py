@@ -232,3 +232,21 @@ def test_string_exit_redacts_even_malformed_secret(structured, capsys):
     captured = capsys.readouterr()
     assert "opaque-test-credential" not in captured.out + captured.err
     assert "[REDACTED]" in captured.out + captured.err
+
+
+@pytest.mark.parametrize("structured", [False, True])
+def test_actual_secret_parser_redacts_escaped_malformed_values(structured, capsys):
+    from jevdual.cli import _secrets
+
+    value = "opaque\ncredential"
+    assert (
+        route(
+            (["--json"] if structured else []) + ["run", "--secret", value],
+            lambda args: _secrets([value], "TextEdit"),
+        )
+        == 1
+    )
+    captured = capsys.readouterr()
+    text = json.loads(captured.out)["diagnostics"] if structured else captured.err
+    assert value not in text and repr(value)[1:-1] not in text
+    assert "[REDACTED]" in text
