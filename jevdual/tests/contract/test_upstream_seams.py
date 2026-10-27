@@ -1,4 +1,4 @@
-"""Contract tests pinning the browser-use 0.13.10 seams jevdual depends on.
+"""Contract tests pinning the browser-use 0.13.14 seams jevdual depends on.
 
 Each assertion names the jevdual module that relies on it. If a bump of
 browser-use turns one of these red, that module needs a look before the
@@ -15,7 +15,7 @@ import typing
 
 import pytest
 
-PINNED_VERSION = "0.13.10"
+PINNED_VERSION = "0.13.14"
 
 
 def _src(obj) -> str:
@@ -112,7 +112,7 @@ def test_tools_action_decorator_signatures():
     ]
 
 
-# Names as they exist in 0.13.10. Surprises relative to the plan's assumptions:
+# Names as they exist in 0.13.14. Surprises relative to the plan's assumptions:
 #   - the tab switch action is named ``switch`` (param ``tab_id``), not ``switch_tab``
 #   - ``go_back`` uses NoParamsAction, whose only field is a free-text ``description``
 #   - ``input`` has a third field ``clear``; ``done`` has ``files_to_display``

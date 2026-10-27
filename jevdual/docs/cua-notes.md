@@ -1,8 +1,35 @@
 # What we take from trycua/cua
 
-Survey date 2026-09-24. Checkout: `external/cua` (git-ignored; MIT except where noted below), trycua/cua at `605d358a48ad938a41b384a8f23909153eb73f78` (2026-09-24). The Python SDK jevdual runs against is the `cua-driver==0.28.2` wheel, pinned in `pyproject.toml` with its seams in `tests/contract/test_cua_driver_seams.py`.
+Survey date 2026-09-24. Checkout: `external/cua` (git-ignored; MIT except where noted below), trycua/cua at `605d358a48ad938a41b384a8f23909153eb73f78` (2026-09-24). The initial survey used `cua-driver==0.28.2`; the current adoption is recorded below.
 Surveyed: `libs/cua-driver`, `libs/cua-s1`, `libs/cua-bench-s1`, `libs/cua-bench`,
 `libs/python/*`, `rfcs/3931`, `rfcs/2512`, `rfcs/2549`, `rfcs/3007`, `skills/jev-use`.
+
+## October 27, 2026 refresh
+
+Reference: `/Volumes/External SSD/referencerepos/cua` at
+`d5373879e9e0baf5a63999ac4d26902340c0ce20`; its Python package declares 0.38.0.
+The published Python wheel lags this reference, so Footwork uses the vendored 0.38.0
+Python SDK source with its matching, hash-pinned upstream native release artifacts (see
+`vendor/cua-driver/`). The generated `_native.py` and `_native_contract.py` are unchanged
+between `cua-driver-rs-v0.37.0` and this reference; the native runtime is nevertheless built
+from the matching 0.38.0 artifact rather than relabeling an older engine.
+
+The SDK now prefers CuaDriver.app's daemon on macOS. Footwork explicitly passes
+`embedded=True` at ordinary constructor sites to preserve the existing host Accessibility
+permission identity and avoid automatic app launch. Browser profile attachment continues
+through the configured in-process authorization host.
+
+Window reads explicitly request `full_output=True`: new compact defaults omit structured
+`elements`, trim metadata, and reduce the default traversal to 250 nodes. Footwork needs
+both the structured candidates and full static text for its verifier. The input's required
+`max_image_dimension` field is supplied, while existing explicit element limits still apply.
+Action records retain the SDK's optional evidence detail; fixtures supply the added
+summary/error/hint/next-call constructor fields. New hints are evidence, not dispatch authority.
+The browser attachment stays background-only. Current CUA may refuse same-Space existing-profile
+preparation if it cannot avoid a focus change; Footwork preserves that refusal instead of
+implicitly escalating to foreground. Contract, scenario and native unit checks cover these
+seams without live desktop actions.
+The Calculator observations below remain historical evidence from the original version.
 
 ## The short version
 
@@ -17,12 +44,13 @@ desktop backend, and theirs is good.
 
 ## What we consume
 
-**Cua Driver** as a dependency, not vendored: `cua-driver==0.28.2` wheel (Python 3.10+, no
-dependencies, bundles the Rust runtime and the `cua-driver` binary). `CuaDriver.create()` runs
+**Cua Driver** as a source-pinned dependency: `cua-driver==0.38.0` package (Python 3.10+, no
+dependencies, bundles the Rust runtime and the `cua-driver` binary). `CuaDriver.create(embedded=True)` runs
 in-process with the host process's Accessibility grant; no daemon, no CuaDriver.app needed for
 development. Telemetry disabled with `cua-driver telemetry disable`.
 
-What it gives us, verified on this Mac against Calculator:
+The original 0.28.2 Calculator observations established these consumed shapes; the current
+SDK contracts are checked offline, with live behavior still requiring qualification:
 
 - `get_window_state(pid, window_id)`: a flat element list (`element_index`, `role`, `label`,
   `value`, `enabled`, `selected`, `actions`, `parent_index`, `frame`, `element_token`) plus

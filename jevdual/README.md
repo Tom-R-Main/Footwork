@@ -4,9 +4,9 @@ The package behind [Footwork](../README.md): a guard (done verification against 
 destructive gate, a receipt for every action) in front of whoever drives, with
 [TypeSafe Jev](https://docs.typesafe.ai) as an optional System 1 that picks an operation and a target from a
 code-owned menu. Two surfaces share the menu, arbiter, verifier and receipt types: the browser, through
-[browser-use](https://github.com/browser-use/browser-use) 0.13.10 (pinned, not forked) or the Cua Driver's
+[browser-use](https://github.com/browser-use/browser-use) 0.13.14 (pinned, not forked) or the Cua Driver's
 DevTools route, and native macOS apps through the [Cua Driver](https://github.com/trycua/cua)'s
-accessibility tree (`cua-driver` 0.28.2, pinned). The operator surface is the `footwork` CLI
+accessibility tree (`cua-driver` 0.38.0, pinned). The operator surface is the `footwork` CLI
 (`python/jevdual/cli.py`, `session.py`); see the [top-level README](../README.md#drive-it). Measured hot
 paths in the DOM pipeline run in Rust through PyO3, each with a pure-Python twin and equality tests.
 

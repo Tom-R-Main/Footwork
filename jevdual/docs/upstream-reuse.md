@@ -1,6 +1,6 @@
 # What jevdual reuses from browser-use's test and eval infrastructure
 
-browser-use is pinned as a submodule (commit d8110c5, MIT). Its tests, fixtures and judge are a
+browser-use is pinned as a submodule (0.13.14, commit 2cc71890, MIT). Its tests, fixtures and judge are a
 foundation we adapt rather than rebuild. This file is the inventory; each item names the upstream
 source and what changed.
 
@@ -10,7 +10,7 @@ source and what changed.
 | `pytest-httpserver` pages per test | `tests/test_agent_loop.py` | Adopted as-is (dev dependency). Each test serves exactly the page it needs. |
 | `browser_use/agent/judge.py` (judge prompt) and `Agent(use_judge, judge_llm, ground_truth)` | `evals/runner.py`, `evals/report.py` | The judge already ran on every dual and stock run with the System 2 model; the verdict, failure reason, `impossible_task` and `reached_captcha` are now recorded per row and summarised (agreement, false accept, false reject against predicates). It is the Q3 judge baseline. S1-only runs skip it. |
 | `tests/agent_tasks/*.yaml` (`judge_context`) and `tests/mind2web_data/processed.json` | `scripts/import_upstream_tasks.py` → `evals/tasks/live-upstream.yaml` | Imported as `judge`-kind tasks: criteria become the judge's ground truth; rows are graded-by-judge and never mixed into predicate rates. Mind2Web is sampled round-robin across sites with real https start pages. |
-| `tests/ci/test_multi_act_guards.py`, `test_action_loop_detection.py`, `test_redact_cascade.py`, `test_variable_substitution.py`, `test_dom_paint_order_serialization.py`, `test_dom_visibility.py`, `test_llm_output_truncation.py`, `test_llm_retries.py`, `test_tools.py`, `security/test_sensitive_data.py` | `scripts/upstream_tests.sh` via the `jevdual.upstream_pytest` plugin | Run unchanged from the submodule against our installed package with the jevdual patches active. This is the contract with the pinned commit for the seams we override. |
+| `tests/ci/test_browser_session.py`, `test_cloud_hints.py`, `test_multi_act_guards.py`, `test_action_loop_detection.py`, `test_redact_cascade.py`, `test_variable_substitution.py`, `test_dom_paint_order_serialization.py`, `test_dom_visibility.py`, `test_llm_output_truncation.py`, `test_llm_retries.py`, `test_tools.py`, `security/test_sensitive_data.py` | `scripts/upstream_tests.sh` via the `jevdual.upstream_pytest` plugin | Run unchanged from the submodule against our installed package with the jevdual patches active. This is the contract with the pinned commit for the seams we override. |
 | `tests/ci/browser/*_template.html` | not yet | Candidate DOM fixtures for the Rust paint-order and snapshot ports. |
 
 First run (2026-09-21): 111 passed, 11 failed. One failure was real and is fixed: upstream's
@@ -22,9 +22,10 @@ it). The other ten are navigation timeouts to pytest-httpserver in `test_tools.p
 180 s navigate), so they are environment-bound; they stay in the script so a fixed environment
 reports them.
 
-One upstream test is deselected in the script: `test_multi_act_guards.py::TestStaticGuard::test_navigate_aborts_remaining_actions`
-hits the 180 s per-action navigate timeout on this machine both with and without the patches
-(observed 2026-09-21), so it is an environment issue, not a seam regression.
+Historically, `test_multi_act_guards.py::TestStaticGuard::test_navigate_aborts_remaining_actions`
+was deselected after a 180 s per-action navigate timeout with and without patches
+(observed 2026-09-21). The October 27 refresh restores it after repairing the
+upstream test runner's asyncio loop configuration; see below.
 
 Not reused: upstream's `evaluate_tasks.py` runner (subprocess-per-task, judge-only grading) and the
 cloud eval workflow. Our runner grades by predicates first and records the judge alongside.
@@ -44,3 +45,31 @@ every trace. It is used three ways, and the reports keep them apart:
 
 The judge never overrides a predicate, and a judge pass on a `judge`-kind task is not evidence for
 the predicate-graded pass rates quoted in the README.
+
+## October 27, 2026 refresh
+
+The reference snapshot is browser-use 0.13.14 at
+`2cc71890e65056b67fdb29d98bb407749c15bb08`. The DOM serializer, snapshot
+lookup, node hashing and UUID seams are unchanged from 0.13.10; the existing
+native adapters and lazy-UUID patch remain applicable. Agent lifecycle and tool
+registry contracts continue to pin Footwork's private override boundaries.
+
+The inherited suite now also runs upstream's mocked reconnection cleanup tests
+and cloud authentication/hint tests. The former cover cancellation and failure
+while replacing a CDP connection, including cleanup cancellation. The latter
+cover missing credentials before a request and cloud hint selection. New upstream
+OpenAI/Anthropic tool integrations remain optional: Footwork still dispatches
+through its existing verified bridge and does not acquire a second action path.
+Historical evaluation numbers and fixture capture versions retain their original
+provenance; this dependency update does not remeasure them.
+
+The upstream runner keeps browser-use's session-scoped fixture and test asyncio
+loops explicitly even though it uses `-c /dev/null`. Omitting those upstream
+settings stranded long-lived browser event buses on an inactive fixture loop:
+the same unpatched go-back test timed out at 30 seconds without them and passed
+in 3.00 seconds with them; the patched counterpart passed in 2.88 seconds.
+These probes diagnose the current runner failure; the September observation was
+not independently reproduced on its original environment.
+
+With those settings restored, all 138 inherited checks pass, including the formerly
+deselected navigation case (`output/upstream-refresh-browser-session-full.txt`).

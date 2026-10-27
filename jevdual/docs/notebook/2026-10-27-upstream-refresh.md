@@ -20,3 +20,10 @@ Test: run the same unpatched go-back test with explicit upstream session/session
 Predicts: the existing navigation timeout disappears with matched session loops for both pure Python and Footwork's active patches, without changing production code or upstream tests.
 Against: either matching-loop run still times out or fails a guard assertion, or the complete inherited selection shows an unresolved regression.
 Refs: browser-use/pyproject.toml asyncio_default_fixture_loop_scope and asyncio_default_test_loop_scope; scripts/upstream_tests.sh; output/upstream-refresh-browser-pure-go-back.txt
+
+## UR-U3 · update · 2026-10-27 17:09
+Resolves: UR3 = held
+Observed: the unpatched go-back test timed out at 30 seconds with the original loop configuration, then passed in 3.00 seconds with upstream session/session loop settings; its patched counterpart passed in 2.88 seconds. Restoring both settings and the formerly deselected navigate test lets the complete inherited selection pass 138 tests in 24.38 seconds. Browser-use contracts, scaffold and packaging checks pass 42 tests on the final dependency versions; selected lint passes. UR3's heading minute was transcribed as 17:08 although the preceding date command returned 17:07; its commit d016e37 precedes both resolving probes.
+Inferred: preserving upstream loop ownership fixes the current inherited navigation-test stall without production changes. This does not establish the cause of the historical September timeout on that earlier environment.
+Next: retain explicit upstream asyncio settings and all inherited tests; combine with CUA and full Footwork validation before closing UR1.
+Refs: output/upstream-refresh-browser-pure-go-back.txt; output/upstream-refresh-browser-pure-session.txt; output/upstream-refresh-browser-patched-session.txt; output/upstream-refresh-browser-session-full.txt; scripts/upstream_tests.sh; tests/contract/test_upstream_seams.py

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import gzip
+import importlib.metadata
 import json
 import logging
 import sys
@@ -115,7 +116,7 @@ async def capture(bs: BrowserSession, page: Page) -> dict:
         "url": page.url,
         "why": page.why,
         "captured_at": datetime.now(UTC).isoformat(),
-        "browser_use_version": "0.13.10",
+        "browser_use_version": importlib.metadata.version("browser-use"),
         "snapshot": trees.snapshot,
         "dom": trees.dom_tree,
         "ax": trees.ax_tree,

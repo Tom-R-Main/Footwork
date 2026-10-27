@@ -73,11 +73,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--python", type=Path, required=True)
     parser.add_argument("--wheel", type=Path, required=True)
+    parser.add_argument("--find-links", type=Path, help="Local wheelhouse containing the built CUA dependency")
     parser.add_argument("--run-dir", type=Path, required=True)
     args = parser.parse_args()
     root, wheel = args.run_dir.resolve(), args.wheel.resolve()
     if not root.is_relative_to(PROJECT / "output") or not wheel.is_file():
         parser.error("owned output run and existing wheel required")
+    wheelhouse = args.find_links.resolve() if args.find_links else None
+    if wheelhouse is not None and not wheelhouse.is_dir():
+        parser.error("--find-links requires an existing wheelhouse directory")
     provenance = source_commit(PROJECT)
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
     cwd, cache, venv = root / "outside-source", root / "empty-cache", root / "venv"
@@ -102,6 +106,10 @@ def main() -> int:
         "borrowed_dependencies": False,
         "registry": "https://pypi.org/simple",
         "binary_only": True,
+        "local_dependency_wheels": {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(wheelhouse.glob("*.whl"))
+        } if wheelhouse else {},
         "commands": [],
         "passed": False,
         "limits": "Fresh dependencies on existing host OS/interpreter, not a fresh machine or TCC permission database.",
@@ -151,6 +159,9 @@ def main() -> int:
             "https://pypi.org/simple",
             "--only-binary",
             ":all:",
+        ]
+        + (["--find-links", str(wheelhouse)] if wheelhouse else [])
+        + [
             str(wheel),
         ],
     ):

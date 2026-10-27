@@ -48,7 +48,7 @@ async def main() -> None:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     rows = []
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     try:
         async with AsyncTypeSafeClient() as client:
             verifier = Verifier(client)

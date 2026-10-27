@@ -8,7 +8,7 @@ calibrated guard from [TypeSafe Jev](https://docs.typesafe.ai) in front of whoev
 completion is checked against observed state and the trajectory before it counts, every irreversible action
 passes a gate, and every action comes back with a receipt saying what visibly changed. On top of that guard,
 Jev can also take the fast, mechanical steps itself (System 1) while the driver (System 2) keeps the
-reading, comparing and deciding. The driver can be an LLM loop (browser-use 0.13.10 as a library, not a
+reading, comparing and deciding. The driver can be an LLM loop (browser-use 0.13.14 as a library, not a
 fork) or the operator at the keyboard: a person, or an agent such as a Claude Code session, one command at a
 time. Native apps are driven in the background through the [Cua Driver](https://github.com/trycua/cua)'s
 accessibility tree, beside a person still using the same Mac.

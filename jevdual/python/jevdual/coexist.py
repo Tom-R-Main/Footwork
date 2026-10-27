@@ -780,7 +780,7 @@ async def run_case(key: str, work: Path | None = None) -> CaseResult:
 
     require_idle(BETWEEN_S if work is not None else GUARD_IDLE_S)
     work = work or Path(tempfile.mkdtemp(prefix="q15-"))
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     try:
         return await CASES[key](driver, work)
     except Exception as exc:  # noqa: BLE001 - a crashed case is a failed case with its reason

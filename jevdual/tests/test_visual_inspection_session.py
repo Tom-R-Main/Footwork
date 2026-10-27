@@ -160,7 +160,7 @@ def test_secret_session_withholds_before_driver_creation_or_capture(operator, mo
     state_path.write_text(json.dumps(state))
     before = world.capture_calls
     monkeypatch.setattr(
-        cd.CuaDriver, "create", staticmethod(lambda: pytest.fail("driver created after secret guard"))
+        cd.CuaDriver, "create", staticmethod(lambda *, embedded=False: pytest.fail("driver created after secret guard"))
     )
     code, _, error = inspect(run)
     assert code == 4 and "screenshot_withheld" in error
@@ -267,7 +267,7 @@ def test_browser_unqualified_geometry_fails_before_capture(operator, monkeypatch
     state["mode"] = "browser"
     state_path.write_text(json.dumps(state))
     monkeypatch.setattr(
-        cd.CuaDriver, "create", staticmethod(lambda: pytest.fail("unqualified browser captured"))
+        cd.CuaDriver, "create", staticmethod(lambda *, embedded=False: pytest.fail("unqualified browser captured"))
     )
     code, _, error = inspect(run)
     assert code == 4 and "surface_unsupported" in error

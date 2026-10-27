@@ -187,6 +187,8 @@ async def observe(driver: Any, pid: int, wid: int, screenshot: Path | None = Non
             max_elements=500,
             max_depth=None,
             max_dimension=660,
+            max_image_dimension=None,
+            full_output=True,
         )
     )
 
@@ -308,7 +310,7 @@ def check_effect(directory: Path, family: str, oracle: dict[str, Any]) -> bool:
 async def _capture(out: Path) -> list[dict[str, Any]]:
     from cua_driver import CuaDriver
 
-    driver = CuaDriver.create()
+    driver = CuaDriver.create(embedded=True)
     cases = []
     for family in FAMILIES:
         for variant in VARIANTS:
@@ -451,7 +453,7 @@ async def _replay(case: dict[str, Any], accepted: bool, out: Path) -> dict[str, 
         ready = json.loads((out / "ready.json").read_text())
         pid, wid = ready["pid"], ready["window_id"]
         await asyncio.sleep(0.1)
-        await observe(CuaDriver.create(), pid, wid)
+        await observe(CuaDriver.create(embedded=True), pid, wid)
         text, nodes = ax_text(pid, wid)
         setup_ms = (time.perf_counter() - total_start) * 1000
         effect_start = time.perf_counter()
