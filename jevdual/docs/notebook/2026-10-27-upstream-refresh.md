@@ -40,3 +40,17 @@ Test: activate only the fixture's identified Chrome PID, then run the existing i
 Predicts: initial browser attachment and source read succeed; one append has matching destination readback, and reconnect with the same operation token does not duplicate it.
 Against: attachment still refuses, delivery requires broader authority, destination content differs, or reconnect duplicates the append. Preserve refusal rather than escalating delivery if the prerequisite is insufficient.
 Refs: scripts/capability_installed_trial.py; output/upstream-refresh-fixture/scope.json; output/upstream-refresh-package/build-one/jevdual-0.0.1-py3-none-any.whl
+
+## UR-U4 · update · 2026-10-27 17:12
+Resolves: UR4 = held
+Observed: placing the owned fixture Chrome in front permits the installed capability trial to pass, including actual installed worker identity, exact destination readback, and restart/replay without duplicate append. Fixture cleanup confirms its document, browser and listener are closed. A final source audit shows the native 0.38.0 release is behind reference HEAD across 75 Rust files even though Python SDK files match; the release-based wheel cannot establish complete native reference parity.
+Inferred: the documented foreground prerequisite is sufficient for this fixture on this host; latest published native release is an intermediate validation point, not the full requested source refresh.
+Next: build and qualify the native engine from the immutable reference source under UR5.
+Refs: output/upstream-refresh-installed-trial-front/receipt.json; output/upstream-refresh-fixture/cleanup.json; trycua/cua cua-driver-rs-v0.38.0..d5373879 libs/cua-driver/rust
+
+## UR5 · prediction · 2026-10-27 17:12
+Hypothesis: the native CUA SDK and CLI at reference d5373879 can be built reproducibly into a source-identified dependency wheel and retain Footwork's current integration contract.
+Test: build the immutable native reference source in owned ignored output, preserve source/build hashes, package its matching Python bindings with source identity, then rerun contract and installed native conformance checks. Keep published-release evidence separate and document platform build requirements.
+Predicts: current reference native sources build on this Mac, import through their exact Python bindings, and pass the existing scoped observation/append/reconnect flow without policy changes.
+Against: native build prerequisites cannot be satisfied within authorized dependency downloads, ABI checks fail, or the source-head engine breaks a required integration boundary.
+Refs: /Volumes/External SSD/referencerepos/cua at d5373879e9e0baf5a63999ac4d26902340c0ce20; vendor/cua-driver/PROVENANCE.md
