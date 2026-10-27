@@ -32,7 +32,10 @@ summary/error/hint/next-call constructor fields. New hints are evidence, not dis
 The browser attachment stays background-only. Current CUA may refuse same-Space existing-profile
 preparation if it cannot avoid a focus change; Footwork preserves that refusal instead of
 implicitly escalating to foreground. Contract, scenario and native unit checks cover these
-seams without live desktop actions.
+seams without live desktop actions. The [October 27 source-head qualification](../results/upstream-refresh-20261027/report.md)
+also checks the installed browser-to-TextEdit read/append/reconnect workflow on this Mac.
+Initial same-Space attachment requires bringing the owned fixture Chrome to the foreground;
+subsequent delivery remains background-only.
 The Calculator observations below remain historical evidence from the original version.
 
 ## The short version
