@@ -58,6 +58,48 @@ def test_isolation_redirects_state_and_removes_overrides(tmp_path, monkeypatch):
     assert env["ANONYMIZED_TELEMETRY"] == env["BROWSER_USE_CLOUD_SYNC"] == "false"
 
 
+def test_installer_selects_built_cua_wheel_explicitly(tmp_path, monkeypatch):
+    """A later PyPI wheel with the same version must not replace the checked native artifact."""
+    import hashlib
+    from types import SimpleNamespace
+
+    spec = importlib.util.spec_from_file_location("install", ROOT / "scripts/capability_clean_install.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    project = tmp_path / "project"
+    project.mkdir()
+    wheel = project / "jevdual.whl"
+    wheel.write_bytes(b"product")
+    wheelhouse = project / "dependency-wheels"
+    wheelhouse.mkdir()
+    dependency = wheelhouse / "cua_driver-0.38.0-py3-none-test.whl"
+    dependency.write_bytes(b"checked native artifact")
+    monkeypatch.setattr(module, "PROJECT", project)
+    monkeypatch.setattr(module.shutil, "which", lambda name: "owned-uv")
+    commands = []
+
+    def run(command, **kwargs):
+        commands.append(command)
+        if command[6] == "venv":
+            venv = Path(command[-1])
+            venv.mkdir()
+            (venv / "pyvenv.cfg").write_text("include-system-site-packages = false")
+            return SimpleNamespace(returncode=0)
+        return SimpleNamespace(returncode=1)  # Stop before importing the synthetic wheels.
+
+    monkeypatch.setattr(module.subprocess, "run", run)
+    monkeypatch.setattr(sys, "argv", [
+        "install", "--python", sys.executable, "--wheel", str(wheel),
+        "--find-links", str(wheelhouse), "--run-dir", str(project / "output/run"),
+    ])
+    assert module.main() == 1
+    assert commands[-1][-2:] == [str(wheel), str(dependency)]
+    receipt = json.loads((project / "output/run/receipt.json").read_text())
+    assert receipt["local_dependency_wheels"] == {
+        dependency.name: hashlib.sha256(dependency.read_bytes()).hexdigest()
+    }
+
+
 def test_runtime_audit_is_private_optional_and_not_a_receipt(tmp_path, monkeypatch):
     from jevdual.capability.runtime import emit_runtime_audit
 

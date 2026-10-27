@@ -35,6 +35,7 @@ CUA_SOURCES = (
     "pyproject.toml",
     "hatch_build.py",
     "build_support.py",
+    "native-source.tar.gz",
     "README.md",
     "LICENSE",
     "PROVENANCE.md",

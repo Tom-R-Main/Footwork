@@ -18,7 +18,8 @@ from a run directory under [`jevdual/results/`](jevdual/results/), and every exp
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
 
 For an agent integration, start with [capability installation](jevdual/docs/capability-packaging.md)
-and the [agent-host recipe](jevdual/docs/installed-agent-host.md). The wheel supplies five MCP tools
+and the [agent-host recipe](jevdual/docs/installed-agent-host.md).
+CUA is built from the [pinned Python and Rust reference source](jevdual/docs/upstream/cua-driver-build.md); building its dependency wheel requires Rust 1.97.1 and native development tools. The wheel supplies five MCP tools
 for one scoped browser-to-TextEdit job on macOS, with durable operation results and validated completion
 reports. It needs existing Python, uv, Chrome and applicable host permissions. The current candidate
 does not discover arbitrary apps; its disposable fixture helpers derive the identifiers for that test job.
@@ -220,7 +221,8 @@ What that says, in order of how sure we are:
 ```sh
 git clone --recurse-submodules https://github.com/Tom-R-Main/Footwork.git
 cd Footwork/jevdual
-uv sync                        # builds the PyO3 crate; Rust 1.95 via rust-toolchain.toml
+rustup toolchain install 1.97.1 --profile minimal  # pinned CUA source compiler
+uv sync                        # builds Footwork and the exact CUA native reference
 uv run pytest                  # unit and equality tests, no keys needed
 ```
 

@@ -204,7 +204,10 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
                 understood = (
                     bool(requirement)
                     and all(
-                        re.fullmatch(r"(?:==|>=|<)\d+(?:\.\d+)*", clause) for clause in requirement.split(",")
+                        re.fullmatch(
+                            r"(?:==\d+(?:\.\d+)*(?:\+[a-z0-9]+(?:[._-][a-z0-9]+)*)?|(?:>=|<)\d+(?:\.\d+)*)",
+                            clause,
+                        ) for clause in requirement.split(",")
                     )
                     and not required.url
                     and not required.extras

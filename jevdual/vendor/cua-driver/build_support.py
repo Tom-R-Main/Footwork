@@ -1,64 +1,37 @@
-"""Package unchanged upstream Python bindings with checksum-pinned release binaries.
-
-No native library is loaded or executable started during the build.
-"""
+"""Offline integrity and native build plan for the exact CUA reference snapshot."""
 
 from __future__ import annotations
 
 import hashlib
+import os
 import platform
 import shutil
-import stat
+import subprocess
 import tarfile
-import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
-VERSION = "0.38.0"
-BASE_URL = f"https://github.com/trycua/cua/releases/download/cua-driver-rs-v{VERSION}"
-# Recorded from the versioned release's checksums.txt on 2026-10-27. Builds never
-# retrieve a replacement checksum: a changed asset must fail closed.
-TARGETS = {
-    ("darwin", "universal"): (
-        "tar.gz",
-        "py3-none-macosx_13_0_universal2",
-        "2bb8dc4a7e69185ffd04c4a9c0eab590bd2c54b72c2c1be13ab675be4f487732",
-        ("cua-driver", "libcua_driver_sdk.dylib"),
-    ),
-    ("linux", "x86_64"): (
-        "tar.gz",
-        "py3-none-manylinux_2_31_x86_64",
-        "31ab9709dd91ce73677e49b9f3e75c6f0d3e4d9625c286c9e58262bfbea698dd",
-        ("cua-driver", "libcua_driver_sdk.so"),
-    ),
-    ("linux", "arm64"): (
-        "tar.gz",
-        "py3-none-manylinux_2_31_aarch64",
-        "80c9ae66bc7322052dd426c6133c96086b33894bf06c972bca8215384400b33d",
-        ("cua-driver", "libcua_driver_sdk.so"),
-    ),
-    ("windows", "x86_64"): (
-        "zip",
-        "py3-none-win_amd64",
-        "5edaa74d0afa1b55a9668dbc4f32736507bd2bd4d75b18ca1dc8881bb12402b5",
-        ("cua-driver.exe", "cua-driver-uia.exe", "cua_driver_sdk.dll"),
-    ),
-    ("windows", "arm64"): (
-        "zip",
-        "py3-none-win_arm64",
-        "d25c8ebfffb34e4c095ea170baf47b87c35dc0d1116f42e46b39df2bcbff8700",
-        ("cua-driver.exe", "cua-driver-uia.exe", "cua_driver_sdk.dll"),
-    ),
-}
+VERSION = "0.38.0+footwork.d5373879"
+SOURCE_COMMIT = "d5373879e9e0baf5a63999ac4d26902340c0ce20"
+SOURCE_SHA256 = "606d8c8696aa54afcff32f285f8f6730a8eef1b6c2b4730372f5ce2b0fe426b1"
+TOOLCHAIN = "1.97.1"
 
 
 def native_target() -> tuple[str, str]:
     system = platform.system().lower()
     machine = platform.machine().lower()
     arch = {"amd64": "x86_64", "x64": "x86_64", "aarch64": "arm64"}.get(machine, machine)
-    target = (system, "universal" if system == "darwin" and arch in {"arm64", "x86_64"} else arch)
-    if target not in TARGETS:
-        raise RuntimeError(f"No pinned CUA Driver {VERSION} native asset for {target}")
-    return target
+    if system not in {"darwin", "linux", "windows"} or arch not in {"arm64", "x86_64"}:
+        raise RuntimeError(f"No CUA native build plan for {(system, arch)}")
+    return system, arch
+
+
+def wheel_tag(system: str, arch: str) -> str:
+    if system == "darwin":
+        return f"py3-none-macosx_13_0_{arch}"
+    if system == "linux":
+        # Local compilation is not an audited manylinux build.
+        return f"py3-none-linux_{'aarch64' if arch == 'arm64' else arch}"
+    return f"py3-none-win_{'arm64' if arch == 'arm64' else 'amd64'}"
 
 
 def verify(path: Path, expected: str) -> None:
@@ -66,41 +39,108 @@ def verify(path: Path, expected: str) -> None:
         digest = hashlib.sha256()
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
-        actual = digest.hexdigest()
-    if actual != expected:
-        raise RuntimeError(f"CUA Driver archive checksum mismatch: {path.name}")
+    if digest.hexdigest() != expected:
+        raise RuntimeError(f"CUA Driver source checksum mismatch: {path.name}")
 
 
-def extract_selected(archive: Path, names: tuple[str, ...], destination: Path) -> None:
-    """Copy exact regular-file basenames; never extract archive-controlled paths."""
-    seen = set()
-    if archive.suffix == ".zip":
-        with zipfile.ZipFile(archive) as bundle:
-            for member in bundle.infolist():
-                name = Path(member.filename).name
-                if (
-                    name not in names
-                    or member.is_dir()
-                    or stat.S_IFMT(member.external_attr >> 16) not in (0, stat.S_IFREG)
-                ):
-                    continue
-                if name in seen:
-                    raise RuntimeError(f"Duplicate native artifact: {name}")
-                seen.add(name)
-                with bundle.open(member) as source, (destination / name).open("wb") as output:
-                    shutil.copyfileobj(source, output)
-    else:
-        with tarfile.open(archive, "r:gz") as bundle:
-            for member in bundle:
-                name = Path(member.name).name
-                if name not in names or not member.isfile():
-                    continue
-                if name in seen:
-                    raise RuntimeError(f"Duplicate native artifact: {name}")
-                seen.add(name)
-                with bundle.extractfile(member) as source, (destination / name).open("wb") as output:
-                    shutil.copyfileobj(source, output)
-    if seen != set(names):
-        raise RuntimeError(f"Missing native artifacts: {sorted(set(names) - seen)}")
+def extract_source(archive: Path, destination: Path) -> None:
+    """Restore every source member from the verified archive, retaining unchanged mtimes.
+
+    No symlinks, hard links, devices or archive-controlled escapes are accepted.
+    Restoring the contents each time prevents an edited extracted source from
+    silently diverging from the pinned archive while allowing Cargo caching.
+    """
+    if destination.is_symlink():
+        raise RuntimeError("Native source cache must not be a symlink")
+    destination.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(archive, "r:gz") as bundle:
+        seen = set()
+        for member in bundle:
+            name = PurePosixPath(member.name)
+            if name.is_absolute() or ".." in name.parts or "\\" in member.name:
+                raise RuntimeError(f"Unsafe native source path: {member.name}")
+            if member.name in seen:
+                raise RuntimeError(f"Duplicate native source path: {member.name}")
+            seen.add(member.name)
+            if not member.isdir() and not member.isfile():
+                raise RuntimeError(f"Non-regular native source member: {member.name}")
+            target = destination.joinpath(*name.parts)
+            # A caller-edited cache must not redirect a restore outside its root.
+            if target.is_symlink() or not target.resolve().is_relative_to(destination.resolve()):
+                raise RuntimeError(f"Native source cache escapes its root: {member.name}")
+            if member.isdir():
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with bundle.extractfile(member) as source:
+                content = source.read()
+            if not target.exists() or target.read_bytes() != content:
+                target.write_bytes(content)
+            target.chmod(member.mode & 0o777)
+    unexpected = [p for p in destination.rglob("*") if p.relative_to(destination).as_posix() not in seen]
+    if unexpected:
+        raise RuntimeError(f"Unexpected native source cache member: {unexpected[0]}")
+
+
+def cargo_command(system: str) -> list[str]:
+    command = [
+        "cargo",
+        f"+{TOOLCHAIN}",
+        "build",
+        "--release",
+        "--locked",
+        "--jobs",
+        "2",
+        "-p",
+        "cua-driver",
+        "-p",
+        "cua-driver-sdk",
+    ]
+    if system == "windows":
+        command.extend(["-p", "cua-driver-uia"])
+    return command
+
+
+def build_native(root: Path) -> tuple[str, dict[str, str]]:
+    system, arch = native_target()
+    if not shutil.which("cargo") or not shutil.which("rustup"):
+        raise RuntimeError(
+            f"CUA native source build requires Rust {TOOLCHAIN}: install rustup, then run "
+            f"`rustup toolchain install {TOOLCHAIN} --profile minimal` before uv sync"
+        )
+    if os.environ.get("CARGO_BUILD_TARGET"):
+        raise RuntimeError("CUA wheel builds do not support CARGO_BUILD_TARGET cross-compilation")
+    available = subprocess.run(["rustup", "toolchain", "list"], capture_output=True, text=True, check=True)
+    if not any(line.startswith(f"{TOOLCHAIN}-") for line in available.stdout.splitlines()):
+        raise RuntimeError(
+            f"Install the pinned compiler first: rustup toolchain install {TOOLCHAIN} --profile minimal"
+        )
+    archive = root / "native-source.tar.gz"
+    verify(archive, SOURCE_SHA256)
+    cache = root / ".native-cache"
+    if cache.is_symlink():
+        raise RuntimeError("Native build cache must not be a symlink")
+    source = cache / f"source-{SOURCE_SHA256[:12]}"
+    extract_source(archive, source)
+    target = cache / "target"
+    env = os.environ.copy()
+    env["CUA_DRIVER_GIT_SHA"] = SOURCE_COMMIT
+    env["CARGO_TARGET_DIR"] = str(target.resolve())
+    if system == "darwin":
+        env["MACOSX_DEPLOYMENT_TARGET"] = "13.0"
+    subprocess.run(cargo_command(system), cwd=source / "libs/cua-driver/rust", env=env, check=True)
+    names = {
+        "darwin": ("cua-driver", "libcua_driver_sdk.dylib"),
+        "linux": ("cua-driver", "libcua_driver_sdk.so"),
+        "windows": ("cua-driver.exe", "cua-driver-uia.exe", "cua_driver_sdk.dll"),
+    }[system]
+    include = {}
     for name in names:
-        (destination / name).chmod(0o755)
+        artifact = target / "release" / name
+        if not artifact.is_file():
+            raise RuntimeError(f"CUA native build did not produce {artifact}")
+        relative = (
+            f"cua_driver/{name}" if name.endswith((".dylib", ".so", ".dll")) else f"cua_driver/bin/{name}"
+        )
+        include[str(artifact)] = relative
+    return wheel_tag(system, arch), include

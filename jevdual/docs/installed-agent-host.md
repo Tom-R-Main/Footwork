@@ -21,3 +21,7 @@ Finish the fixture with one Ctrl-C and inspect its `cleanup.json` and exit statu
 This recipe needs existing compatible Python/uv/Chrome, applicable macOS permissions and working agent-host authentication. The dependency installation and the model call use their respective networks. Only the product runtime is provider-independent. Fresh dependencies, guest permission-state qualification and actual agent execution are separate evidence lanes; the release manifest records what passed.
 
 The measured host trial additionally applied product-only private HOME/config/cache/temp overrides, blanked ambient variable names ending in _KEY/_TOKEN/_SECRET, and enabled runtime audit in a private output directory. The host kept its existing opaque authentication. These diagnostic isolation settings do not come automatically from the generated registration; the latter supplies isolated imports and telemetry settings. The evidence records this distinction.
+
+## CUA 0.38 initial browser attachment
+
+Before the first source bind, bring the owned fixture Chrome window to the foreground once. CUA 0.38 refuses a new background DevTools attachment while another app is in front on the same Space. Footwork preserves that refusal. Subsequent reads and native append operations retain background delivery; the installed conformance trial passed with this initial foreground prerequisite on macOS arm64. This check covers the owned fixture and current host permissions, not other profiles, Spaces or apps.

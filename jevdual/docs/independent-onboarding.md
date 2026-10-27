@@ -93,3 +93,7 @@ Retain installation receipts, before/after diagnostics and exit codes, host/OS/S
 ## Recorded qualification
 
 The repaired packet from source `445a348` passed the supported Terminal permission-reset journey on a previously provisioned macOS 26.6.2 guest, including captured grant, installed native action/replay/report and automatic cleanup. Independent Claude review approved the raw evidence. See [the U3v3 report](../results/u3-packet-v4-permission-20261012-v3/report.md) for the exact artifact and limits. Original failed and interrupted runs remain preserved. Other agent hosts, pixel capture and disk persistence need their own qualification.
+
+## CUA 0.38 initial browser attachment
+
+Before the first source bind, bring the owned fixture Chrome window to the foreground once. CUA 0.38 refuses a new background DevTools attachment while another app is in front on the same Space. Footwork preserves that refusal. Subsequent reads and native append operations retain background delivery; the installed conformance trial passed with this initial foreground prerequisite on macOS arm64. This check covers the owned fixture and current host permissions, not other profiles, Spaces or apps.

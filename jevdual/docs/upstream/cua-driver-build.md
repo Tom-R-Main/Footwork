@@ -1,50 +1,72 @@
-# Building the CUA Driver 0.38.0 dependency
+# Building the current CUA reference dependency
 
-The October 27 reference checkout is at
-`d5373879e9e0baf5a63999ac4d26902340c0ce20`. Its Python SDK and native release
-are 0.38.0; PyPI publishes only through 0.37.0 at the time of this update.
-Footwork therefore carries the unchanged Python binding sources in
-`vendor/cua-driver`, with the upstream MIT license and source hashes in
+Footwork uses the exact October 27 CUA reference snapshot
+`d5373879e9e0baf5a63999ac4d26902340c0ce20`, including its native implementation.
+Although its upstream version field is 0.38.0, the reference has native changes
+after the 0.38.0 release. Footwork identifies the complete build as
+`cua-driver==0.38.0+footwork.d5373879` so the released native binary cannot
+silently satisfy this dependency.
+
+`vendor/cua-driver/src/cua_driver` contains the six unchanged upstream Python
+binding files. `vendor/cua-driver/native-source.tar.gz` is a minimal `git archive`
+of the same commit: the Rust workspace, Linux helper, telemetry dependency and
+its two external JSON resources, and MIT license. Source hashes, archive hash,
+paths, and reconstruction command are recorded in
 `vendor/cua-driver/PROVENANCE.md`. No compiled binaries are committed.
 
-`uv sync` uses the local path in `[tool.uv.sources]` and builds this dependency
-in isolation. The build hook downloads the versioned upstream native archive
-for the build host, checks its SHA256 against a value recorded in `build_support.py`,
-and packages only the named executables and shared library. Cached archives
-are verified on every build; builds never fetch a replacement checksum.
-A mismatch or unsupported platform fails before packaging. Building does not
-load the library, start a Driver, request permissions, or modify the reference
-checkout.
+The build hook verifies the source archive against the hardcoded SHA256 in
+`build_support.py`, restores its exact contents into an ignored source cache,
+refuses unexpected cache files and links, and runs:
 
-Supported assets match upstream: macOS universal2 (13+), Linux x86_64/aarch64
-(glibc 2.31+), Windows amd64/arm64. Selection uses the actual build host;
-this workflow does not cross-compile. Only macOS arm64 is exercised locally
-by this refresh. Other platforms require their corresponding CI/build hosts.
+```sh
+cargo +1.97.1 build --release --locked --jobs 2 -p cua-driver -p cua-driver-sdk
+```
 
-To supply the dependency alongside a Footwork consumer wheel, from `jevdual/`:
+Windows adds `-p cua-driver-uia`. The exact commit is embedded through
+`CUA_DRIVER_GIT_SHA`. macOS sets `MACOSX_DEPLOYMENT_TARGET=13.0` and packages
+only the build host's architecture. Linux wheels use local `linux_x86_64` or
+`linux_aarch64` tags; they make no manylinux compatibility claim. Windows
+builds native amd64/arm64 wheels. Cross compilation is not supported by this
+workflow. macOS arm64 is the locally exercised host; other hosts require CI
+qualification.
+
+Install the pinned Rust compiler before syncing or building:
+
+```sh
+rustup toolchain install 1.97.1 --profile minimal
+```
+
+macOS requires Xcode and its command-line tools. Linux requires the native
+X11/AT-SPI/Cairo/keyboard/clipboard development libraries installed by the
+repository CI workflow. Windows requires the matching MSVC build tools.
+Cargo can download the dependencies in the upstream `Cargo.lock`; the hook
+does not install a toolchain automatically. Building does not start the Driver,
+load its library, request permissions, or change the reference checkout.
+
+From `jevdual/`, `uv sync` uses `[tool.uv.sources]` to build the local source
+package in isolation. To supply it alongside a Footwork consumer wheel:
 
 ```sh
 uv build vendor/cua-driver --wheel --out-dir ../output/cua-wheelhouse
 # Equivalent convenience helper (standard library only):
 python3 scripts/build_cua_driver_wheel.py --output ../output/cua-wheelhouse
-# Install both from the wheelhouse, retaining PyPI for other dependencies:
 uv pip install --python /path/to/consumer/python \
   --find-links ../output/cua-wheelhouse /path/to/jevdual.whl
 ```
 
-`[tool.uv.sources]` is a repository development setting and is not embedded in
-Footwork's standard wheel dependency metadata. A consumer needs the built CUA
-wheel through `--find-links` or a package index that serves it. The packaging
-workflow builds it before its clean-install checks.
+A normal Footwork wheel requires the exact local-version CUA distribution,
+so consumers need this wheelhouse or an index serving that build. Development
+`[tool.uv.sources]` settings are not embedded in standard wheel metadata. The
+packaging workflow and onboarding source packet build the dependency before
+installing Footwork.
 
-The ignored `vendor/cua-driver/.native-cache/` holds only downloaded native
-release archives and can be removed when no build uses it. Wheel output stays
-under ignored `output/` or the caller's chosen artifact directory. A warm
-verified cache allows CUA's hook to run offline; the isolated build backend and
-other dependencies must also be available in uv's cache.
+`vendor/cua-driver/.native-cache/` holds the restored source and Cargo target
+artifacts. Those are regenerable and remain ignored. The vendored source
+archive, SDK files, build backend version and upstream Cargo lock provide a
+repeatable source build procedure; the workflow does not claim native binaries
+are byte-identical across different compilers, hosts or build paths. Retain
+wheel hashes and native build receipts when qualifying an artifact.
 
-An upstream version change requires reviewing the SDK/native ABI together,
-copying the new binding source with provenance, updating native hashes in `build_support.py` and
-platform tags, and rerunning the CUA contract and packaging checks. Once an
-appropriate upstream Python wheel is published, this local packaging can be
-retired in a separate dependency change.
+An update requires reviewing Python/native ABI changes together, regenerating
+the source archive and source hashes, advancing the local-version commit suffix,
+and rerunning contracts, deterministic tests and consumer packaging checks.
