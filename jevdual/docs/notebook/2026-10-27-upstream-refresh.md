@@ -27,3 +27,16 @@ Observed: the unpatched go-back test timed out at 30 seconds with the original l
 Inferred: preserving upstream loop ownership fixes the current inherited navigation-test stall without production changes. This does not establish the cause of the historical September timeout on that earlier environment.
 Next: retain explicit upstream asyncio settings and all inherited tests; combine with CUA and full Footwork validation before closing UR1.
 Refs: output/upstream-refresh-browser-pure-go-back.txt; output/upstream-refresh-browser-pure-session.txt; output/upstream-refresh-browser-patched-session.txt; output/upstream-refresh-browser-session-full.txt; scripts/upstream_tests.sh; tests/contract/test_upstream_seams.py
+
+## UR-U1 · update · 2026-10-27 17:11
+Observed: the fresh binary-only consumer installation and immutable onboarding packet pass on b8c9be1. Supplemental live observation reads the owned TextEdit fixture through the actual CLI. The installed capability trial fails at source bind because CUA refuses a same-Space background attachment while TextEdit is frontmost; no capability append was dispatched. The original UR1 plan excluded desktop dispatch; this supplemental existing conformance harness did reset its owned fixture text before bind. It does not count as the original offline test design.
+Inferred: the new CUA background-attachment refusal preserves a stricter visible-effect boundary; complete integration readiness also needs a documented, scope-preserving initial-attachment prerequisite.
+Next: test UR4 without changing production delivery authority or policy defaults.
+Refs: output/upstream-refresh-clean-install/receipt.json; output/upstream-refresh-packet/footwork-onboarding-u2.zip; output/upstream-refresh-native-menu.txt; output/upstream-refresh-browser-bind-probe.txt; output/upstream-refresh-installed-trial/
+
+## UR4 · prediction · 2026-10-27 17:11
+Hypothesis: placing the owned fixture Chrome in front before initial attachment satisfies CUA 0.38's background attach constraint and allows the installed capability read/append/reconnect flow without changing Footwork's background delivery authority.
+Test: activate only the fixture's identified Chrome PID, then run the existing installed capability conformance trial in a new owned run against the unchanged consumer wheel. Read the destination's exact value and retained operation receipts; close only owned fixture resources afterwards. No model/provider calls, user-profile writes, permission changes or production policy changes.
+Predicts: initial browser attachment and source read succeed; one append has matching destination readback, and reconnect with the same operation token does not duplicate it.
+Against: attachment still refuses, delivery requires broader authority, destination content differs, or reconnect duplicates the append. Preserve refusal rather than escalating delivery if the prerequisite is insufficient.
+Refs: scripts/capability_installed_trial.py; output/upstream-refresh-fixture/scope.json; output/upstream-refresh-package/build-one/jevdual-0.0.1-py3-none-any.whl
