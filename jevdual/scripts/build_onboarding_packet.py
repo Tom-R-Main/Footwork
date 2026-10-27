@@ -171,7 +171,11 @@ def verify_committed_wheel(name: str, data: bytes, commit: str, project: Path) -
             if not entry:
                 continue
             relative = entry.split(b"\t", 1)[1].decode()
-            if relative.endswith(".py") or relative == "jevdual/python/jevdual/arbiter.toml":
+            if (
+                relative.endswith(".py")
+                or relative == "jevdual/python/jevdual/arbiter.toml"
+                or relative.startswith("jevdual/python/jevdual/_tool_resources/")
+            ):
                 paths.append(relative)
         for relative in paths:
             target = root / relative

@@ -115,7 +115,7 @@ def run(root, commit):
     try:
         for index, name in enumerate(("ordinary", "disturbed"), 1):
             journal = root / (name + "-journal")
-            command = [str(BASE / ".venv/bin/python"), str(BASE / "bench_runner.py"),
+            command = [str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "bench_runner.py"),
                        "--bench-dir", str(bench_root), "--journal-dir", str(journal), "--job-id", name]
             if name == "disturbed":
                 command.append("--disturb")

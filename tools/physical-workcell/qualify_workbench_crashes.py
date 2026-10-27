@@ -273,7 +273,7 @@ class Trial(previous.Trial):
             process = super().launch(role, initialize)
         else:
             log = (self.root / "body-01.log").open("xb")
-            process = subprocess.Popen([str(BASE / ".venv/bin/python"), str(BASE / "crash_body.py"), "--root", str(self.root / "body"),
+            process = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "crash_body.py"), "--root", str(self.root / "body"),
                 "--port", str(self.body_port), "--initialize", "--diagnostic", "--gate", "after_native"], cwd=REPO,
                 stdout=log, stderr=log, start_new_session=True)
             record = {"role": role, "boot": 1, "pid": process.pid, "root": str(self.root / "body"),
@@ -465,7 +465,7 @@ class Trial(previous.Trial):
             upstream = self.relay.origin
             log = (self.root / "initialization.log").open("xb")
             self.logs.append(log)
-            init = subprocess.Popen([str(BASE / ".venv/bin/python"), str(BASE / "network_bench_operator.py"), "init",
+            init = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "network_bench_operator.py"), "init",
                 "--root", str(self.root / "operator"), "--body-origin", upstream], cwd=REPO, stdout=log, stderr=log, start_new_session=True)
             record = {"role": "initialization", "pid": init.pid, "group": init.pid}
             self.processes.append((init, record))

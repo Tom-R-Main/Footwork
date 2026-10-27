@@ -8,6 +8,7 @@ Numbered control requests capture fresh expectations; mismatches never signal a 
 """
 import argparse
 import json
+import os
 import signal
 import subprocess
 import threading
@@ -143,7 +144,7 @@ class Trial:
         log = (self.root / log_name).open("xb")
         log_path = self.root / log_name
         log_path.chmod(0o600)
-        process = subprocess.Popen([str(BASE / ".venv/bin/python"), *args], cwd=REPO, stdout=log, stderr=log,
+        process = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), *args], cwd=REPO, stdout=log, stderr=log,
                                    start_new_session=True)
         record = {"role": role, "boot": boot, "pid": process.pid, "root": str(self.root / ("body" if role == "body" else "operator")),
                   "port": self.body_port if role == "body" else self.browser_port, "initialized": initialize, "log": log_name}
@@ -275,7 +276,7 @@ class Trial:
             self.launch("body", initialize=True)
             self.identity = self.wait_public(self.body_origin, "/identity")
             retain(self.root / "identity.json", self.identity)
-            initialization = subprocess.Popen([str(BASE / ".venv/bin/python"), str(BASE / "network_bench_operator.py"), "init",
+            initialization = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "network_bench_operator.py"), "init",
                 "--root", str(self.root / "operator"), "--body-origin", self.body_origin], cwd=REPO,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             record = {"role": "initialization", "pid": initialization.pid}

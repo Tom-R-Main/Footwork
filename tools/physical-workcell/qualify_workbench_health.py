@@ -7,6 +7,7 @@ import argparse
 import contextlib
 import http.client
 import json
+import os
 import signal
 import socket
 import subprocess
@@ -236,7 +237,7 @@ def run(root, commit, body_port=0, browser_port=0, relay_port=0):
     def launch(name, arguments):
         log = (root / (name + ".log")).open("xb")
         logs.append(log)
-        process = subprocess.Popen([str(BASE / ".venv/bin/python"), *arguments], cwd=REPO, stdout=log, stderr=log)
+        process = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), *arguments], cwd=REPO, stdout=log, stderr=log)
         processes.append(process)
         ledger["processes"].append({"role": name, "pid": process.pid})
         return process

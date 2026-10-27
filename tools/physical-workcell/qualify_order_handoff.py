@@ -86,14 +86,14 @@ class Fixture(OrderApplicationTests):
         return self.lease
 
     def handoff(self, command, *args):
-        return self.command([str(BASE / '.venv/bin/python'), HANDOFF, command,
+        return self.command([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), HANDOFF, command,
                              '--handoff-dir', self.lease['handoff_dir'], *args])
 
     def prepare(self, *, placed=False, pace=0):
         scene = {'block_xy': [.163, .004] if placed else [-.117, .004],
                  'illumination_scale': 1, 'occlusion_fraction': 0, 'camera_offset_x_m': 0}
         path = self.retain(self.directory / 'scene.json', scene)
-        prepared = self.command([str(BASE / '.venv/bin/python'), HANDOFF, 'prepare', '--app-url', self.origin,
+        prepared = self.command([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), HANDOFF, 'prepare', '--app-url', self.origin,
             '--expected-app-id', self.app_id, '--lease-id', self.lease['lease_id'], '--scene-file', path,
             '--scene-sha256', sha(path.read_bytes()), '--pace-s', pace])
         self.assertEqual(prepared['phase'], 'prepared', prepared)
@@ -319,7 +319,7 @@ def restart(f):
     app_process.wait(timeout=8)
     _, current_app = f.serve_app(restart=True)
     f.assertEqual(initial_app['app_id'], current_app['app_id'])
-    f.native = f.spawn([str(BASE / '.venv/bin/python'), CONTROLLER, 'serve', '--run-dir', f.lease['run_dir'],
+    f.native = f.spawn([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), CONTROLLER, 'serve', '--run-dir', f.lease['run_dir'],
                         '--controller-dir', f.control], 'independent-controller-restart')
     current = f.native_ready()
     f.assertNotEqual(current['current_incarnation'], prepared['controller']['current_incarnation'])

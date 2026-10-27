@@ -47,7 +47,11 @@ def inventory(root: Path) -> tuple[str, dict[str, bytes]]:
     for path in sorted(source.rglob("*")):
         if path.is_symlink():
             raise ValueError("Source symlinks cannot be packaged")
-        if path.is_file() and (path.suffix == ".py" or path == source / "arbiter.toml"):
+        resource = path.is_relative_to(source / "_tool_resources")
+        if path.is_file() and (
+            path.suffix == ".py" or path == source / "arbiter.toml"
+            or (resource and path.suffix in {".mjs", ".json", ".xml", ".html", ".swift", ".txt", ".md"})
+        ):
             files[path.relative_to(root / "python").as_posix()] = path.read_bytes()
     license_path = root.parent / "LICENSE"
     if source.is_symlink() or license_path.is_symlink():
@@ -63,6 +67,9 @@ def inventory(root: Path) -> tuple[str, dict[str, bytes]]:
         "License-File: LICENSE",
     ]
     metadata.extend(f"Requires-Dist: {dep}" for dep in project["dependencies"])
+    for extra, dependencies in project.get("optional-dependencies", {}).items():
+        metadata.append(f"Provides-Extra: {extra}")
+        metadata.extend(f'Requires-Dist: {dep}; extra == "{extra}"' for dep in dependencies)
     files[f"{dist}/METADATA"] = ("\n".join(metadata) + "\n\n").encode()
     files[f"{dist}/WHEEL"] = (
         b"Wheel-Version: 1.0\nGenerator: footwork-stdlib\nRoot-Is-Purelib: true\nTag: py3-none-any\n"

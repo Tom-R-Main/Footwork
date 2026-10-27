@@ -52,6 +52,10 @@ conservative receipt-based restart recovery.
 [SIM4 results](jevdual/results/independent-controller-20261010/report.md) record disconnect,
 cancellation and crash trials, retained failures and the boundary of supported recovery.
 
+## One installed interface for agents
+
+Use the [unified CLI installation guide](jevdual/docs/unified-cli.md) to build one host-specific bundle and install it into an isolated environment. `footwork tools` discovers commands, `footwork schema` describes their inputs, and `footwork --json …` returns a machine-readable result envelope. Browser and desktop groups share the existing session operations; camera, inbox, workbench, workcell and inspection utilities are carried in the wheel. Optional hardware, OS grants and browser-tab adapters remain explicit prerequisites.
+
 ## Drive it
 
 ```sh

@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import socket
 import subprocess
 import threading
@@ -58,7 +59,7 @@ def run(root, commit):
     port = available_port()
     origin = f"http://127.0.0.1:{port}"
     log = (root / "service.log").open("xb")
-    process = subprocess.Popen([str(BASE / ".venv/bin/python"), str(BASE / "body_network.py"),
+    process = subprocess.Popen([str(Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))), str(BASE / "body_network.py"),
                                "--root", str(root / "body"), "--port", str(port),
                                "--initialize", "--diagnostic"], stdout=log, stderr=log)
     proxy, client = None, None

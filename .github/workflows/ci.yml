@@ -31,6 +31,8 @@ jobs:
         run: uv sync
       - name: Lint
         run: uv run ruff check python evals tests scripts
+      - name: Verify installed tool resource snapshot matches source
+        run: uv run python scripts/sync_tool_resources.py --check
       - name: Browser inspection tests (no dependencies)
         working-directory: .
         run: node --test tools/browser-inspection/*.test.mjs tools/inspection-experiments/*.test.mjs tools/inspection-transport/*.test.mjs

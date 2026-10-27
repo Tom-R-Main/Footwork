@@ -40,6 +40,8 @@ jobs:
           toolchain: 1.97.1
       - name: Rebuild and check dependency-free installed CLI
         run: python scripts/capability_package_check.py --run-dir "$GITHUB_WORKSPACE/output/ci-package"
+      - name: Verify installed unified agent discovery outside checkout
+        run: python scripts/unified_cli_check.py --python "$GITHUB_WORKSPACE/output/ci-package/venv/bin/python"
       - name: Build CUA dependency wheel from pinned native source
         if: runner.os == 'macOS'
         run: uv build vendor/cua-driver --wheel --out-dir "$GITHUB_WORKSPACE/output/ci-cua"
@@ -51,6 +53,12 @@ jobs:
             --wheel "$GITHUB_WORKSPACE"/output/ci-package/build-one/*.whl \
             --find-links "$GITHUB_WORKSPACE/output/ci-cua" \
             --run-dir "$GITHUB_WORKSPACE/output/ci-dependencies"
+      - name: Verify install-once bundle and installed simulator
+        if: runner.os == 'macOS'
+        run: |
+          python scripts/build_agent_bundle.py --cua-wheel "$GITHUB_WORKSPACE"/output/ci-cua/*.whl --output "$GITHUB_WORKSPACE/output/ci-agent-bundle"
+          python "$GITHUB_WORKSPACE/output/ci-agent-bundle/install.py" --python "$(command -v python)" --venv "$GITHUB_WORKSPACE/output/ci-agent-installed"
+          python scripts/unified_cli_check.py --python "$GITHUB_WORKSPACE/output/ci-agent-installed/bin/python" --tools
       - name: Retain candidate artifact and qualification receipts
         if: always()
         uses: actions/upload-artifact@v4
@@ -64,3 +72,6 @@ jobs:
             output/ci-dependencies/receipt.json
             output/ci-dependencies/*.log
             output/ci-cua/*.whl
+            output/ci-agent-bundle/install.py
+            output/ci-agent-bundle/MANIFEST.json
+            output/ci-agent-bundle/*.whl

@@ -28,7 +28,7 @@ protocol = module("handoff_protocol", "order_protocol.py")
 cases = module("handoff_cases", "episode_cases.py")
 Refusal = protocol.Refusal
 SELF = BASE / "app_handoff.py"
-PYTHON = BASE / ".venv/bin/python"
+PYTHON = Path(os.environ.get("FOOTWORK_PYTHON", str(BASE / ".venv/bin/python")))
 LEASE_KEYS = ("app_id", "lease_id", "order_id", "expected_revision", "work_order", "work_order_sha256",
               "app_dir", "workspace_dir", "run_dir", "controller_dir", "handoff_dir", "origin",
               "physical_completion_id", "completion_operation_id", "binding_operation_id")
