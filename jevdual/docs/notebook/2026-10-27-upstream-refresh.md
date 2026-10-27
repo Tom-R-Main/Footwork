@@ -13,3 +13,10 @@ Test: preserve the failing doctor output; replace only the Python requirement pa
 Predicts: valid spaced requirements accept Python 3.12 while invalid, absent, incompatible or unparseable requirements still block; dependency version diagnostics retain their current behavior.
 Against: the same blocker remains for valid normalized metadata, invalid or incompatible metadata passes, or another diagnostic contract regresses.
 Refs: output/upstream-refresh-doctor-before.json; python/jevdual/capability/setup.py
+
+## UR3 · prediction · 2026-10-27 17:08
+Hypothesis: the inherited upstream browser tests stall because Footwork's upstream script discards browser-use's session-scoped asyncio fixture and test-loop settings with `-c /dev/null`, leaving its long-lived browser event bus on a different loop from the test.
+Test: run the same unpatched go-back test with explicit upstream session/session loop scope, then the patched counterpart; if both pass, restore those settings in the upstream script and run its full selection.
+Predicts: the existing navigation timeout disappears with matched session loops for both pure Python and Footwork's active patches, without changing production code or upstream tests.
+Against: either matching-loop run still times out or fails a guard assertion, or the complete inherited selection shows an unresolved regression.
+Refs: browser-use/pyproject.toml asyncio_default_fixture_loop_scope and asyncio_default_test_loop_scope; scripts/upstream_tests.sh; output/upstream-refresh-browser-pure-go-back.txt
