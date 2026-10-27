@@ -303,6 +303,22 @@ def _dispatch(args: list[str], legacy: Callable[[list[str]], int], json_mode: bo
     return legacy(args)
 
 
+def _redact_arguments(text: str, args: list[str]) -> str:
+    for index, arg in enumerate(args):
+        value = (
+            args[index + 1]
+            if arg == "--secret" and index + 1 < len(args)
+            else arg.removeprefix("--secret=")
+            if arg.startswith("--secret=")
+            else None
+        )
+        if value:
+            secret = value.split("=", 1)[1] if "=" in value else value
+            if secret:
+                text = text.replace(secret, "[REDACTED]")
+    return text
+
+
 def route(argv: list[str] | None, legacy: Callable[[list[str]], int]) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     json_mode = bool(args and args[0] == "--json")
@@ -320,28 +336,16 @@ def route(argv: list[str] | None, legacy: Callable[[list[str]], int]) -> int:
             code = _dispatch(args, legacy, json_mode)
             code = int(code or 0)
         except SystemExit as exc:
-            code = exc.code if isinstance(exc.code, int) else 1
+            code = exc.code if isinstance(exc.code, int) else 0 if exc.code is None else 1
+            if exc.code is not None and not isinstance(exc.code, int):
+                print(_redact_arguments(str(exc.code), args), file=sys.stderr)
         except (RoutingError, OSError, ValueError, ImportError) as exc:
             print(f"footwork: {exc}", file=sys.stderr)
             code = 2
     if json_mode:
         stdout, stderr = output.getvalue(), diagnostics.getvalue()
-        # Legacy --secret values must not become a new diagnostic disclosure path.
-        for index, arg in enumerate(args):
-            value = (
-                args[index + 1]
-                if arg == "--secret" and index + 1 < len(args)
-                else arg.removeprefix("--secret=")
-                if arg.startswith("--secret=")
-                else None
-            )
-            if value and "=" in value:
-                secret = value.split("=", 1)[1]
-                if secret:
-                    stdout, stderr = (
-                        stdout.replace(secret, "[REDACTED]"),
-                        stderr.replace(secret, "[REDACTED]"),
-                    )
+        stdout = _redact_arguments(stdout, args)
+        stderr = _redact_arguments(stderr, args)
         try:
             data = json.loads(stdout)
         except (ValueError, RecursionError):

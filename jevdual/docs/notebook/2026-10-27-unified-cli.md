@@ -18,3 +18,8 @@ Established: local CLI and installed packaging checks pass; original commands re
 Uncertain: hosted platform runs and final review remain pending. Host Node/Swift/ffmpeg/hardware/permission prerequisites are explicit, as are research checkout and browser adapter requirements; no new model/provider qualification is claimed.
 Decision: hand off the tested candidate to hosted CI and PR review under the user's explicit merge authorization.
 Refs: docs/unified-cli.md; tests/test_agent_cli.py; tests/test_tool_catalog.py; tests/test_unified_packaging.py
+
+## UCU2 · update · 2026-10-27 18:16
+Observed: hosted review identified dropped string-valued SystemExit diagnostics; actual session parse_do errors and malformed-secret regressions failed before the repair. The router now preserves error text and exit semantics while redacting even malformed secret arguments; 103 focused CLI/session regressions pass. The separate preregistration finding is contradicted by parent f2b3047, whose notebook contains UC1 alone before 1cf30f4 adds results.
+Next: publish the diagnostic repair, resolve review threads with commit evidence, and verify final-head hosted checks before merge.
+Refs: output/unified-systemexit-before.txt; output/unified-systemexit-after.txt; f2b3047; PR5 review threads

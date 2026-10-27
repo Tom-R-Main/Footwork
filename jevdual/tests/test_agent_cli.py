@@ -208,3 +208,27 @@ def test_doctor_help_retains_captured_usage(capsys):
     result = json.loads(capsys.readouterr().out)
     assert "--strict" in result["output"]
     assert result["exit_code"] == 0
+
+
+@pytest.mark.parametrize("structured", [False, True])
+def test_string_exit_retains_actual_parser_diagnostic(structured, capsys):
+    from jevdual.session import parse_do
+
+    words = ["do", "type", "3"]
+    assert route((["--json"] if structured else []) + words, lambda args: parse_do(args[1:])) == 1
+    captured = capsys.readouterr()
+    message = json.loads(captured.out)["diagnostics"] if structured else captured.err
+    assert "type needs text" in message
+
+
+@pytest.mark.parametrize("structured", [False, True])
+def test_string_exit_redacts_even_malformed_secret(structured, capsys):
+    def legacy(args):
+        raise SystemExit("--secret needs NAME=VALUE: opaque-test-credential")
+
+    assert (
+        route((["--json"] if structured else []) + ["run", "--secret", "opaque-test-credential"], legacy) == 1
+    )
+    captured = capsys.readouterr()
+    assert "opaque-test-credential" not in captured.out + captured.err
+    assert "[REDACTED]" in captured.out + captured.err
