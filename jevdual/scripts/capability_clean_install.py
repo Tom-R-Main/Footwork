@@ -82,6 +82,9 @@ def main() -> int:
     wheelhouse = args.find_links.resolve() if args.find_links else None
     if wheelhouse is not None and not wheelhouse.is_dir():
         parser.error("--find-links requires an existing wheelhouse directory")
+    cua_wheels = sorted(wheelhouse.glob("cua_driver-*.whl")) if wheelhouse else []
+    if wheelhouse is not None and len(cua_wheels) != 1:
+        parser.error("--find-links requires exactly one CUA wheel for this installation platform")
     provenance = source_commit(PROJECT)
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
     cwd, cache, venv = root / "outside-source", root / "empty-cache", root / "venv"
@@ -163,7 +166,8 @@ def main() -> int:
         + (["--find-links", str(wheelhouse)] if wheelhouse else [])
         + [
             str(wheel),
-        ],
+        ]
+        + [str(path) for path in cua_wheels],
     ):
         return 1
     if not run("consistency", common + ["pip", "check", "--python", python]):

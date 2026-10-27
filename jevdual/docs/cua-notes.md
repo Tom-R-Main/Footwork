@@ -8,11 +8,15 @@ Surveyed: `libs/cua-driver`, `libs/cua-s1`, `libs/cua-bench-s1`, `libs/cua-bench
 
 Reference: `/Volumes/External SSD/referencerepos/cua` at
 `d5373879e9e0baf5a63999ac4d26902340c0ce20`; its Python package declares 0.38.0.
-The published Python wheel lags this reference, so Footwork uses the vendored 0.38.0
-Python SDK source with its matching, hash-pinned upstream native release artifacts (see
-`vendor/cua-driver/`). The generated `_native.py` and `_native_contract.py` are unchanged
-between `cua-driver-rs-v0.37.0` and this reference; the native runtime is nevertheless built
-from the matching 0.38.0 artifact rather than relabeling an older engine.
+The published Python wheel and native release lag this reference. Footwork builds both
+Python bindings and the native Rust implementation from that exact commit, identified as
+`cua-driver==0.38.0+footwork.d5373879`. The unchanged Python binding files and a hash-pinned
+source archive live in `vendor/cua-driver/`; [build instructions](upstream/cua-driver-build.md)
+record compiler requirements and source provenance. The generated `_native.py` and
+`_native_contract.py` are unchanged between `cua-driver-rs-v0.37.0` and this reference.
+Native changes after the 0.38.0 release include JPEG capture support, optional post-action
+waiting, and additional minimized-window click safeguards. Footwork retains its existing
+capture and wait defaults while adopting the current implementation.
 
 The SDK now prefers CuaDriver.app's daemon on macOS. Footwork explicitly passes
 `embedded=True` at ordinary constructor sites to preserve the existing host Accessibility
@@ -44,7 +48,7 @@ desktop backend, and theirs is good.
 
 ## What we consume
 
-**Cua Driver** as a source-pinned dependency: `cua-driver==0.38.0` package (Python 3.10+, no
+**Cua Driver** as a source-pinned dependency: `cua-driver==0.38.0+footwork.d5373879` package (Python 3.10+, no
 dependencies, bundles the Rust runtime and the `cua-driver` binary). `CuaDriver.create(embedded=True)` runs
 in-process with the host process's Accessibility grant; no daemon, no CuaDriver.app needed for
 development. Telemetry disabled with `cua-driver telemetry disable`.

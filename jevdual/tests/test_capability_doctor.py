@@ -113,6 +113,21 @@ def test_missing_python_specifier_parser_blocks(prerequisites, monkeypatch):
     assert checked["blockers"] == ["python_requirement_unparsed"]
     assert checked["prerequisite_status"] == "blocked"
 
+
+@pytest.mark.parametrize("installed,expected", [
+    ("0.38.0+footwork.d5373879", True),
+    ("0.38.0", False),
+    ("0.38.0+footwork.other", False),
+])
+def test_native_reference_pin_requires_exact_source_build(prerequisites, monkeypatch, installed, expected):
+    pin = "0.38.0+footwork.d5373879"
+    monkeypatch.setattr(setup.importlib.metadata, "requires", lambda name: [f"cua-driver=={pin}"])
+    monkeypatch.setattr(setup.importlib.metadata, "version", lambda name: installed)
+    checked = setup.doctor()
+    assert checked["dependencies"]["cua-driver"]["compatible"] is expected
+    assert checked["blockers"] == ([] if expected else ["dependency_incompatible"])
+
+
 def test_strict_blocks_but_default_diagnostics_exit_zero(prerequisites, monkeypatch, capsys):
     def missing(name):
         raise setup.importlib.metadata.PackageNotFoundError(name)

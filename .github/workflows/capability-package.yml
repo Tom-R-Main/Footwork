@@ -21,7 +21,7 @@ jobs:
           - os: macos-15
             python: "3.14"
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: jevdual
@@ -34,9 +34,13 @@ jobs:
         with:
           enable-cache: false
           version: "0.12.5"
+      - uses: dtolnay/rust-toolchain@stable
+        if: runner.os == 'macOS'
+        with:
+          toolchain: 1.97.1
       - name: Rebuild and check dependency-free installed CLI
         run: python scripts/capability_package_check.py --run-dir "$GITHUB_WORKSPACE/output/ci-package"
-      - name: Build hash-pinned CUA dependency wheel
+      - name: Build CUA dependency wheel from pinned native source
         if: runner.os == 'macOS'
         run: uv build vendor/cua-driver --wheel --out-dir "$GITHUB_WORKSPACE/output/ci-cua"
       - name: Fresh binary dependency installation on macOS
