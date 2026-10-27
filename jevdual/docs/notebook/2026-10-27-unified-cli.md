@@ -23,3 +23,10 @@ Refs: docs/unified-cli.md; tests/test_agent_cli.py; tests/test_tool_catalog.py; 
 Observed: hosted review identified dropped string-valued SystemExit diagnostics; actual session parse_do errors and malformed-secret regressions failed before the repair. The router now preserves error text and exit semantics while redacting even malformed secret arguments; 103 focused CLI/session regressions pass. The separate preregistration finding is contradicted by parent f2b3047, whose notebook contains UC1 alone before 1cf30f4 adds results.
 Next: publish the diagnostic repair, resolve review threads with commit evidence, and verify final-head hosted checks before merge.
 Refs: output/unified-systemexit-before.txt; output/unified-systemexit-after.txt; f2b3047; PR5 review threads
+
+## UCU3 · update · 2026-10-27 18:18
+Resolves: UC1 = failed
+Observed: the first implementation did not fully preserve the existing CLI diagnostic boundary: string SystemExit messages were lost in both modes. Review exposed that defect, reproduced by the real session argument parser before the repair. The corrected implementation preserves diagnostics and secret redaction; 103 focused regressions pass. Independent same-session-model packaging/router review found no additional blocking issue. Installed simulator init/status and native observation pass; frozen onboarding and wheel resource parity also pass.
+Inferred: command routing and packaging alone were insufficient to guarantee legacy CLI compatibility. Explicit error-propagation regressions are necessary beside success-path and admission checks.
+Next: retain the repaired candidate and require final-head hosted CI plus resolved review before merge; hosted qualification remains pending rather than inferred from local success.
+Refs: 6d8449f; output/unified-systemexit-before.txt; output/unified-systemexit-after.txt; output/unified-cli-installed-native.json; output/unified-cli-onboarding/; PR5
