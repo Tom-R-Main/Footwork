@@ -156,6 +156,15 @@ def run_tool(family: str, args: list[str]) -> int:
             if any(path.is_symlink() for path in (home, *home.parents)):
                 return _error("unsafe_output_root", "Choose a non-symlink tool output root")
             home.mkdir(parents=True, exist_ok=True, mode=0o700)
+            # Private captures and task state must not become source changes
+            # when the installed CLI is used from another repository.
+            try:
+                fd = os.open(home / ".gitignore", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            except FileExistsError:
+                pass
+            else:
+                with os.fdopen(fd, "w") as stream:
+                    stream.write("*\n")
         except OSError:
             return _error("output_unavailable", "Cannot create the private tool output root")
     env["FOOTWORK_TOOL_OUTPUT_ROOT"] = str(home)

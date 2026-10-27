@@ -35,3 +35,8 @@ Refs: 6d8449f; output/unified-systemexit-before.txt; output/unified-systemexit-a
 Observed: the actual malformed-secret parser formats tokens with repr; a multiline synthetic secret bypassed raw-string redaction in both modes. Regressions failed before escaping-aware token redaction and pass after it; all 105 focused CLI/session tests pass. No credential values from real environments were read or printed.
 Next: validate this final diagnostic boundary in hosted CI and merge after all checks pass.
 Refs: output/unified-escaped-secret-before.txt; output/unified-diagnostics-final.txt; tests/test_agent_cli.py
+
+## UCU5 · update · 2026-10-27 18:22
+Observed: new installed tool output roots now create a non-overwriting private .gitignore so captures and task state are ignored even inside a caller's different repository. The real inbox status route and git check-ignore verify that behavior; CLI/catalog regressions and lint pass.
+Next: freeze implementation and wait for final-head hosted conformance before merge.
+Refs: tests/test_tool_catalog.py; output/unified-cli-private-state.txt

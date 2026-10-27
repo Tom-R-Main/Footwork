@@ -25,6 +25,9 @@ def test_inbox_status_uses_chosen_state_root_and_needs_no_device(tmp_path, monke
     result = json.loads(capfd.readouterr().out)
     assert result["state"] == "absent"
     assert run.is_dir()
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    ignored = subprocess.run(["git", "check-ignore", str(run)], cwd=tmp_path, capture_output=True)
+    assert ignored.returncode == 0
     assert not (tools.resource_root() / "desk-inbox-experiment/output/one").exists()
 
 

@@ -13,6 +13,7 @@
 *.pyc
 .DS_Store
 /external/
+**/.footwork/
 
 # Local capability trial scratch; qualification summaries live in results/.
 /jevdual/output/
