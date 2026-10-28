@@ -38,7 +38,7 @@ from typing import Any
 
 from jevdual import carry, grants
 from jevdual.menu import Candidate, Menu
-from jevdual.native import NativeBridge, NativeMenu
+from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
 _CAND_FIELDS = ("id", "label", "role", "operations", "value", "input_type", "checked", "selected", "section")
@@ -87,7 +87,13 @@ class SessionState:
 
     @classmethod
     def load(cls, d: Path) -> SessionState:
-        raw = json.loads((d / "session.json").read_text())
+        try:
+            raw = json.loads((d / "session.json").read_text())
+        except FileNotFoundError:
+            raise NativeBridgeError(
+                "session_not_found",
+                f"No initialized session at {d}; start must complete successfully before using this session.",
+            ) from None
         raw["requirements"] = tuple(raw.get("requirements") or ())
         raw["authorized"] = tuple(raw.get("authorized") or ())
         return cls(**raw)
@@ -452,7 +458,10 @@ def finish_observation(
 async def cmd_start(args: Any) -> int:
     from cua_driver import CuaDriver
 
-    from jevdual.native import address_bar, find_window, navigate_in_window, new_window
+    from jevdual.native import address_bar, find_window, navigate_in_window, new_window, require_accessibility
+
+    if not getattr(args, "browser", False):
+        require_accessibility()
 
     d = session_dir(args.session)
     d.mkdir(parents=True, exist_ok=True)

@@ -16,3 +16,13 @@ def _screen_unlocked(monkeypatch):
     from jevdual import posture
 
     monkeypatch.setattr(posture, "screen_locked", lambda: False)
+
+
+@pytest.fixture(autouse=True)
+def _native_accessibility_granted(monkeypatch):
+    """Offline Driver doubles also replace the host permission boundary."""
+    if os.environ.get("FOOTWORK_LIVE") == "1":
+        return
+    from jevdual import native
+
+    monkeypatch.setattr(native, "accessibility_status", lambda: "granted")

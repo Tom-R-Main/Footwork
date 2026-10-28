@@ -176,7 +176,7 @@ def _schema(args: list[str]) -> dict:
                 "exit_code": "integer",
                 "command_completed": "exit_code == 0",
                 "effect_verification": "not_asserted",
-                "output": "captured stdout",
+                "output": "captured non-JSON stdout; empty when decoded into data",
                 "diagnostics": "captured stderr",
                 "data": "decoded JSON output when available",
             },
@@ -244,6 +244,7 @@ def _schema(args: list[str]) -> dict:
 
 
 def _doctor(args: list[str]) -> int:
+    from ._native import acceleration_status
     from .capability.cli import main as capability
     from .tool_catalog import catalog as auxiliary
 
@@ -259,6 +260,7 @@ def _doctor(args: list[str]) -> int:
     except ValueError:
         print(captured.getvalue(), end="")
     else:
+        result["acceleration"] = acceleration_status()
         result["tool_families"] = auxiliary()
         result["effect_verification"] = "not_asserted"
         _emit(result)
@@ -353,6 +355,8 @@ def route(argv: list[str] | None, legacy: Callable[[list[str]], int]) -> int:
             data = json.loads(stdout)
         except (ValueError, RecursionError):
             data = None
+        else:
+            stdout = ""
         _emit(
             {
                 "schema_version": "1",

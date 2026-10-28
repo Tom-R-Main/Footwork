@@ -220,10 +220,17 @@ async def test_native_observation_requests_complete_structured_snapshot():
             assert (input.pid, input.window_id) == (101, 202)
             assert input.full_output is True
             assert input.max_image_dimension is None
+            assert input.session and input.session == bridge.session
             return {"pid": 101, "window_id": 202, "snapshot_id": "s1", "elements": []}
 
     bridge = NativeBridge(Driver(), 101, 202, policy=SimpleNamespace(locked=lambda: False))
     assert (await bridge.observe()).snapshot_id == "s1"
+
+
+def test_native_bridge_preserves_explicit_driver_session():
+    from jevdual.native import NativeBridge
+
+    assert NativeBridge(object(), 101, 202, session="owned-scope").session == "owned-scope"
 
 
 def test_embedded_constructor_is_available_without_starting_runtime():

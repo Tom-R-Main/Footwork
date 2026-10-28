@@ -24,12 +24,22 @@ _log = logging.getLogger("jevdual.native")
 PURE_PY_ENV = "JEVDUAL_PURE_PY"
 
 core = None
+CORE_STATUS = "disabled"
 if os.environ.get(PURE_PY_ENV) != "1":
     try:
-        from jevdual import _core as core  # type: ignore[no-redef]
-    except ImportError as exc:  # pragma: no cover - exercised only when the wheel lacks the extension
+        core = importlib.import_module("jevdual._core")
+    except ModuleNotFoundError as exc:
+        # The portable wheel deliberately omits this optional extension. An
+        # explicit import avoids Python's misleading partially initialized
+        # package diagnostic while __init__ imports this backend selector.
+        CORE_STATUS = "not_installed" if exc.name == "jevdual._core" else "unavailable"
+        if CORE_STATUS == "unavailable":
+            _log.warning("jevdual._core unavailable (%s); falling back to pure Python", exc)
+    except ImportError as exc:
+        CORE_STATUS = "unavailable"
         _log.warning("jevdual._core unavailable (%s); falling back to pure Python", exc)
-        core = None
+    else:
+        CORE_STATUS = "available"
 
 BACKEND: str = f"native {core.version()}" if core is not None else "pure-python"
 _log.info("jevdual backend: %s", BACKEND)
@@ -48,6 +58,17 @@ _fallback_logged: set[str] = set()
 
 def native_available() -> bool:
     return core is not None
+
+
+def acceleration_status() -> dict[str, Any]:
+    """Describe optional Jev acceleration independently of the computer driver."""
+    return {
+        "component": "jevdual._core",
+        "available": native_available(),
+        "status": CORE_STATUS,
+        "backend": BACKEND,
+        "scope": "Optional Jev Rust hot paths; independent of the CUA native driver",
+    }
 
 
 def _resolve(name: str) -> tuple[str, Callable[..., Any]]:

@@ -22,7 +22,34 @@ def test_envelope_does_not_promote_exit_zero_to_effect_success(capsys):
     assert result["command_completed"] is True
     assert result["effect_verification"] == "not_asserted"
     assert result["data"] == {"effect": "refused"}
+    assert result["output"] == ""
     assert "success" not in result
+
+
+@pytest.mark.parametrize("payload", [None, [1, 2], "text", False, 0])
+def test_json_envelope_keeps_structured_output_only_once(payload, capsys):
+    def legacy(args):
+        print(json.dumps(payload))
+        print("diagnostic kept", file=sys.stderr)
+        return 7
+
+    assert route(["--json", "status"], legacy) == 7
+    result = json.loads(capsys.readouterr().out)
+    assert result["data"] == payload
+    assert result["output"] == ""
+    assert result["diagnostics"] == "diagnostic kept\n"
+    assert result["command_completed"] is False
+
+
+def test_json_envelope_keeps_non_json_stdout(capsys):
+    def legacy(args):
+        print("bound window\n{\"observation\":\"partial\"}")
+        return 0
+
+    assert route(["--json", "status"], legacy) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["data"] is None
+    assert result["output"] == 'bound window\n{"observation":"partial"}\n'
 
 
 def test_json_prefix_does_not_consume_literal_action_payload(capsys):
@@ -111,6 +138,10 @@ def test_schema_reports_actual_required_arguments(capsys):
 
 
 def test_doctor_includes_optional_families_and_preserves_strict_code(monkeypatch, capsys):
+    from jevdual import _native
+
+    monkeypatch.setattr(_native, "core", None)
+
     def doctor(args):
         assert args == ["doctor", "--strict"]
         print('{"prerequisite_status":"blocked"}')
@@ -121,6 +152,10 @@ def test_doctor_includes_optional_families_and_preserves_strict_code(monkeypatch
     result = json.loads(capsys.readouterr().out)
     assert result["data"]["prerequisite_status"] == "blocked"
     assert result["data"]["tool_families"]
+    assert result["data"]["acceleration"]["available"] is False
+    assert result["data"]["acceleration"]["component"] == "jevdual._core"
+    assert "CUA" in result["data"]["acceleration"]["scope"]
+    assert result["output"] == ""
 
 
 @pytest.mark.parametrize(

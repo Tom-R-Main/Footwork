@@ -37,7 +37,9 @@ Use that absolute executable from the agent host or add its `bin` directory to t
 
 The original top-level verbs remain compatible. `footwork capability` exposes the existing scoped MCP configuration/server/report commands through the same executable. Its browser-to-TextEdit scope remains intentionally bounded; it does not grant generic input access to an MCP host.
 
-`--json` wraps command output and the underlying exit code for agents. Read the underlying action receipt to determine effects: an exit code or successful transport alone does not prove that an action applied or a task completed. For a long-lived capability server, retain its MCP stdio protocol rather than wrapping the stream.
+`--json` wraps command output and the underlying exit code for agents. JSON stdout appears once in `data`, with an empty `output`; ordinary text stays in `output` and stderr stays in `diagnostics`. Read the underlying action receipt to determine effects: an exit code or successful transport alone does not prove that an action applied or a task completed. For a long-lived capability server, retain its MCP stdio protocol rather than wrapping the stream.
+
+`doctor` reports optional Jev Rust acceleration separately from the native CUA driver. The portable wheel uses the pure Python backend; that does not prevent desktop control. Native observations require Accessibility permission for the process hosting Footwork and report a permission blocker directly. Permission status describes prerequisites; it does not qualify a live capture or action. If startup fails, the session is not initialized; correct the reported cause and complete `start` before using `look` or `do`.
 
 ## Auxiliary families
 
