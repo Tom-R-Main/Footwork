@@ -170,6 +170,17 @@ def test_effect_from_action_result_reads_driver_words():
     assert eff.effect == "unverifiable" and eff.dispatched and eff.error_code == "background_unavailable"
 
 
+@pytest.mark.parametrize("count", [None, 0, 1, True, -1, "1"])
+def test_delivery_count_is_distinct_from_input_attempt(count):
+    action = SimpleNamespace(
+        effect="UNVERIFIABLE", delivery=SimpleNamespace(mode="BACKGROUND", delivered_count=count)
+    )
+    eff = effect_from_action_result("click", 1, "Submit", action)
+    assert eff.dispatched
+    assert eff.delivered_count == (count if type(count) is int and count >= 0 else None)
+    assert eff.to_record()["delivered_count"] == eff.delivered_count
+
+
 class _FakeDriver:
     def __init__(self, snapshot):
         self.snapshot = snapshot

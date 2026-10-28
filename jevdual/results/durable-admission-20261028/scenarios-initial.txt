@@ -1,0 +1,32 @@
+............F.....                                                       [100%]
+=================================== FAILURES ===================================
+____ test_durable_replay_needs_no_current_app_and_changed_request_conflicts ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x10316f2e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1031c5d00>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-73/test_durable_replay_needs_no_c0')
+
+    def test_durable_replay_needs_no_current_app_and_changed_request_conflicts(world, fw, monkeypatch, tmp_path):
+        import jevdual.session as session
+    
+        _durable_start(fw, monkeypatch, tmp_path)
+        assert fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")[0] == 0
+    
+        def unavailable(*args, **kwargs):
+            raise AssertionError("replay must not bind the app")
+    
+        monkeypatch.setattr(session, "bind", unavailable)
+        code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")
+        assert code == 0 and "operation" in out, (out, err)
+        assert world.presses == ["All Clear"]
+        code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "clear-once")
+>       assert code != 0 and "token_conflict" in (out + err), (out, err)
+E       AssertionError: ('', 'stopped: TokenConflict: client token already names operation op_cc1a364b1cd0, with different arguments
+E         ')
+E       assert (7 != 0 and 'token_conflict' in ('' + 'stopped: TokenConflict: client token already names operation op_cc1a364b1cd0, with different arguments\n'))
+
+tests/test_session_scenarios.py:918: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_durable_replay_needs_no_current_app_and_changed_request_conflicts
+1 failed, 17 passed, 70 deselected in 1.38s

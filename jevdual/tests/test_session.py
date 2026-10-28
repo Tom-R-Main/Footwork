@@ -6,8 +6,68 @@ import dataclasses
 import json
 from types import SimpleNamespace
 
+import pytest
 from jevdual.menu import Candidate, Menu
 from jevdual.session import SessionState, receipt_for
+
+
+@pytest.mark.parametrize("value", [None, "", "x", "xy"])
+def test_durable_bind_refuses_unavailable_prior_secret_before_driver_creation(tmp_path, monkeypatch, value):
+    import asyncio
+
+    import cua_driver
+    from jevdual.native import NativeBridgeError
+    from jevdual.session import bind
+
+    state = SessionState(
+        dir=str(tmp_path),
+        app="X",
+        pid=1,
+        window_id=2,
+        task="t",
+        authority=str(tmp_path / "authority.sqlite"),
+        secret_names=["FIXTURE"],
+    )
+    if value is None:
+        monkeypatch.delenv("FOOTWORK_SECRET_FIXTURE", raising=False)
+    else:
+        monkeypatch.setenv("FOOTWORK_SECRET_FIXTURE", value)
+
+    def unexpected_driver(**kwargs):
+        raise AssertionError("unavailable-secret gate must run before driver creation")
+
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(unexpected_driver))
+    with pytest.raises(NativeBridgeError) as stopped:
+        asyncio.run(bind(state))
+    assert stopped.value.reason == "secret_unavailable"
+
+
+@pytest.mark.parametrize(("authority", "value"), [("authority.sqlite", "fixture-long-value"), ("", None)])
+def test_bind_allows_restored_durable_secret_and_preserves_legacy_mode(
+    tmp_path, monkeypatch, authority, value
+):
+    import asyncio
+
+    import cua_driver
+    from jevdual import session
+
+    state = SessionState(
+        dir=str(tmp_path),
+        app="X",
+        pid=1,
+        window_id=2,
+        task="t",
+        authority=authority,
+        secret_names=["FIXTURE"],
+    )
+    if value is None:
+        monkeypatch.delenv("FOOTWORK_SECRET_FIXTURE", raising=False)
+    else:
+        monkeypatch.setenv("FOOTWORK_SECRET_FIXTURE", value)
+    driver, bridge = object(), object()
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda **kwargs: driver))
+    monkeypatch.setattr(session, "_native_bridge", lambda *args: bridge)
+    assert asyncio.run(session.bind(state)) == (driver, bridge)
 
 
 def _nm(cands, title="page", page_text=""):

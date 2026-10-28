@@ -530,6 +530,8 @@ class NativeEffect:
     foreground: dict[str, Any] | None = None
     #: package G: after a save, the file the window names read against its text (``save_readback``)
     readback: dict[str, Any] | None = None
+    #: Qualified SDK delivery count; dispatched alone only means input was attempted.
+    delivered_count: int | None = None
 
     @property
     def ok(self) -> bool:
@@ -548,6 +550,7 @@ class NativeEffect:
             "delivery": self.delivery,
             "driver_delivery": self.driver_delivery,
             "dispatched": self.dispatched,
+            "delivered_count": self.delivered_count,
         }
         if self.foreground is not None:
             rec["foreground"] = dict(self.foreground)
@@ -576,8 +579,9 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
     if getattr(result, "is_error", False) and effect != "refused":
         # An error reply alone cannot establish that input was never delivered.
         effect = "unverifiable"
-    count = getattr(getattr(action, "delivery", None), "delivered_count", 0) or 0
-    if effect == "refused" and count > 0:
+    count = getattr(getattr(action, "delivery", None), "delivered_count", None)
+    count = count if type(count) is int and count >= 0 else None
+    if effect == "refused" and count is not None and count > 0:
         effect = "unverifiable"
     return NativeEffect(
         operation,
@@ -590,6 +594,7 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
         code,
         driver_delivery=delivered,
         dispatched=effect != "refused",
+        delivered_count=count,
     )
 
 

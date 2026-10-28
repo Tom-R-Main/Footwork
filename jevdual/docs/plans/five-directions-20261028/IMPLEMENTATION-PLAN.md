@@ -1,5 +1,7 @@
 # One implementation plan: dependable operations across different apps
 
+**Implementation progress:** the [dispatch correction](../../../results/operator-dispatch-20261028/report.md) is committed. The [native admission/replay implementation](../../../results/durable-admission-20261028/report.md) adds opt-in durable custody, reservations, blocking and projection recovery. General started-unknown reconciliation still needs qualified evidence producers; installed Finder/Preview/Chrome qualification remains pending. See [durable native usage and limits](../../durable-native-operator.md).
+
 Prepared October 28, 2026 against `5d494c6a22921d092e67399badce708e8418bf2a`. This is the proposed implementation sequence, synthesized after independent subagent review of all five original plans and Claude's critiques and three syntheses. It incorporates the user's subsequent requirement to diversify applications and where Footwork is exercised. It does not record implementation approval or completed qualification.
 
 **Build a durable operator path, then qualify it on Finder file organization, Preview image transformation, and a stateful browser application.** Use independent outcome checks and a static report to show precisely what happened. TextEdit remains regression coverage; it is no longer the main workflow, release demonstration, or evidence of general application support.

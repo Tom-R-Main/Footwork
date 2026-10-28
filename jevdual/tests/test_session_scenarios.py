@@ -858,6 +858,239 @@ def test_cancelled_granted_press_characterizes_missing_durable_intent(world, fw,
     assert world.presses == ["Delete", "Delete"]
 
 
+def _durable_start(fw, monkeypatch, tmp_path):
+    import jevdual.session_operations as operations
+
+    monkeypatch.setattr(
+        operations,
+        "native_identity",
+        lambda pid, window_id: {"boot": "test-boot", "pid": pid, "start": "1.0", "window_id": window_id},
+    )
+    authority = tmp_path / "authority.sqlite"
+    code, out, err = fw("start", "Compute", "--app", "Calculator", "--authority", str(authority))
+    assert code == 0, (out, err)
+    return authority
+
+
+def test_durable_cancelled_granted_press_blocks_retry_without_extra_input(world, fw, monkeypatch, tmp_path):
+    import asyncio
+
+    from jevdual.native import NativeBridge
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    fw("grant", "click", "Delete")
+    original = NativeBridge.act
+
+    async def cancel_after_press(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(NativeBridge, "act", cancel_after_press)
+    with pytest.raises(asyncio.CancelledError):
+        fw("do", "click", "Delete", "--no-judge", "--token", "delete-once")
+    assert world.presses == ["Delete"]
+    monkeypatch.setattr(NativeBridge, "act", original)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "delete-once")
+    assert code == 0 and "unknown" in out, (out, err)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "another-delete")
+    assert code != 0 and "busy" in (out + err).lower(), (out, err)
+    assert world.presses == ["Delete"]
+    from jevdual.session_operations import SessionOperations
+
+    with SessionOperations(authority) as ops:
+        assert len(ops.status()) == 1
+        assert ops.status()[0].state == "unknown"
+
+
+def test_durable_replay_needs_no_current_app_and_changed_request_conflicts(world, fw, monkeypatch, tmp_path):
+    from jevdual import session
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")[0] == 0
+
+    def unavailable(*args, **kwargs):
+        raise AssertionError("replay must not bind the app")
+
+    monkeypatch.setattr(session, "bind", unavailable)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")
+    assert code == 0 and "operation" in out, (out, err)
+    assert world.presses == ["All Clear"]
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "clear-once")
+    assert code != 0 and "token_conflict" in (out + err), (out, err)
+
+
+def test_durable_lost_projection_replays_finished_operation(world, fw, monkeypatch, tmp_path):
+    from jevdual.session import SessionState
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    original = SessionState.log
+    failed = False
+
+    def lose_do(self, record):
+        nonlocal failed
+        if record.get("kind") == "do" and not failed:
+            failed = True
+            raise OSError("projection write lost after journal finish")
+        return original(self, record)
+
+    monkeypatch.setattr(SessionState, "log", lose_do)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "lost-response")[0] != 0
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "lost-response")
+    assert code == 0, (out, err)
+    assert world.presses == ["All Clear"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert len([r for r in records if r["kind"] == "do"]) == 1
+
+
+def test_durable_process_change_refuses_new_input_but_status_stays_available(
+    world, fw, monkeypatch, tmp_path
+):
+    import jevdual.session_operations as operations
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    monkeypatch.setattr(
+        operations,
+        "native_identity",
+        lambda pid, window_id: {"boot": "test-boot", "pid": pid, "start": "2.0", "window_id": window_id},
+    )
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "new-process")
+    assert code != 0, (out, err)
+    assert world.presses == []
+    assert fw("status")[0] == 0
+
+
+def test_durable_start_preserves_existing_history(world, fw, monkeypatch, tmp_path):
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "retained")[0] == 0
+    before = (fw.session / "session.jsonl").read_text()
+    code, _, _ = fw("start", "Replacement", "--app", "Calculator", "--authority", str(authority))
+    assert code != 0
+    assert (fw.session / "session.jsonl").read_text().startswith(before)
+
+
+def test_durable_domain_blocks_another_session_before_missing_secret_resolution(
+    world, fw, monkeypatch, tmp_path, capsys
+):
+    from jevdual.native import NativeBridge
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+
+    async def uncertain(self, *args, **kwargs):
+        raise RuntimeError("delivery cannot be determined")
+
+    monkeypatch.setattr(NativeBridge, "act", uncertain)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "uncertain")[0] == 0
+    other = tmp_path / "another-session"
+    assert (
+        cli.main(
+            [
+                "start",
+                "Another",
+                "--app",
+                "Calculator",
+                "--session",
+                str(other),
+                "--authority",
+                str(authority),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    monkeypatch.delenv("FOOTWORK_SECRET_MISSING", raising=False)
+    code = cli.main(
+        [
+            "do",
+            "type",
+            "anything",
+            "{MISSING}",
+            "--session",
+            str(other),
+            "--token",
+            "blocked",
+            "--settle",
+            "0",
+        ]
+    )
+    output = capsys.readouterr()
+    assert code != 0 and "busy" in (output.out + output.err).lower()
+    assert "export FOOTWORK_SECRET" not in output.err
+    assert world.presses == []
+
+
+def test_durable_lock_contention_does_not_write_another_owners_log(world, fw, monkeypatch, tmp_path):
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    before = (fw.session / "session.jsonl").read_bytes()
+    with SessionOperations(authority):
+        code, _, _ = fw("look")
+        assert code != 0
+        assert (fw.session / "session.jsonl").read_bytes() == before
+
+
+def test_durable_secret_request_replays_without_secret_and_never_persists_value(
+    world, fw, monkeypatch, tmp_path
+):
+    import asyncio
+
+    world.base["elements"].append(
+        {
+            "element_index": 999999,
+            "role": "AXTextField",
+            "label": "Fixture input",
+            "value": "",
+            "parent_index": 0,
+        }
+    )
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    value = "fixture-private-value"
+    monkeypatch.setenv("FOOTWORK_SECRET_DEMO", value)
+    attempts = []
+
+    async def set_then_cancel(name, args_json):
+        assert name == "set_value"
+        attempts.append(json.loads(args_json)["value"])
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(world, "call_tool", set_then_cancel)
+    words = ("do", "type", "Fixture input", "{DEMO}", "--no-judge", "--token", "secret-input")
+    try:
+        result = fw(*words)
+    except asyncio.CancelledError:
+        pass
+    else:
+        pytest.fail(f"driver boundary was not reached: {result!r}")
+    assert attempts == [value]
+    monkeypatch.delenv("FOOTWORK_SECRET_DEMO")
+    code, out, err = fw(*words)
+    assert code == 0 and "unknown" in out, (out, err)
+    assert len(attempts) == 1
+    assert value not in out + err
+    assert value.encode() not in authority.read_bytes()
+    for name in ("session.json", "session.jsonl"):
+        assert value not in (fw.session / name).read_text()
+    code, out, err = fw("look")
+    assert code != 0 and "secret_unavailable" in out + err
+    assert fw("status")[0] == 0
+
+
+def test_durable_short_secret_refuses_before_binding(world, fw, monkeypatch, tmp_path):
+    from jevdual import session
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    monkeypatch.setenv("FOOTWORK_SECRET_SHORT", "xy")
+
+    def unexpected_bind(*args, **kwargs):
+        raise AssertionError("short secret must be refused before binding")
+
+    monkeypatch.setattr(session, "bind", unexpected_bind)
+    code, out, err = fw("do", "type", "Anything", "{SHORT}", "--token", "short")
+    assert code != 0 and "short_secret_unsupported" in out + err
+    assert "xy" not in out + err
+    assert world.presses == []
+
+
 def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, monkeypatch):
     """cmd_do caught a bridge exception, then read ``eff.readback`` with ``eff`` unassigned."""
     from jevdual.native import NativeBridge, NativeBridgeError
