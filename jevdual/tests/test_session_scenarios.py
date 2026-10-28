@@ -820,6 +820,76 @@ def test_a_driver_error_at_start_stops_with_its_reason_not_a_traceback(world, fw
     assert "Traceback" not in err
 
 
+def test_native_start_and_look_use_a_cua_capture_session(world, fw, monkeypatch):
+    """CUA publishes screenshots only inside a named driver session."""
+    original = world.get_window_state
+    original_click = world.click
+    sessions = []
+
+    async def capture(inp):
+        if inp.include_screenshot and inp.screenshot_out_file and not inp.session:
+            raise RuntimeError(
+                "tool='get_window_state', message='capture binding failed: capture binding is invalid. "
+                "Not dispatching click.', error_code='capture_binding_failed'"
+            )
+        sessions.append(inp.session)
+        return await original(inp)
+
+    async def click(inp):
+        assert inp.session == sessions[-1]
+        return await original_click(inp)
+
+    monkeypatch.setattr(world, "get_window_state", capture)
+    monkeypatch.setattr(world, "click", click)
+    code, out, err = fw("start", "Observe Calculator", "--app", "Calculator")
+    assert code == 0, err
+    assert "elements:" in out and (fw.session / "session.json").exists()
+    code, out, err = fw("look")
+    assert code == 0, err
+    assert "elements:" in out
+    code, _, err = fw("do", "click", str(_id(out, "7")), "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["7"]
+
+
+@pytest.mark.parametrize("command", ["start", "look"])
+@pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
+def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):
+    from jevdual import native
+
+    if command == "look":
+        assert fw("start", "Observe Calculator", "--app", "Calculator")[0] == 0
+    monkeypatch.setattr(native, "accessibility_status", lambda: permission)
+    before = world.n
+    args = ("start", "Observe Calculator", "--app", "Calculator") if command == "start" else ("look",)
+    code, out, err = fw(*args)
+    reason = "accessibility_not_granted" if permission == "not_granted" else "accessibility_unavailable"
+    assert code == 7 and reason in err
+    assert "Privacy & Security" in err and "0 elements" not in out
+    assert world.n == before and world.presses == []
+
+
+def test_denied_native_start_preserves_existing_session(world, fw, monkeypatch):
+    assert fw("start", "Observe Calculator", "--app", "Calculator")[0] == 0
+    saved = (fw.session / "session.json").read_bytes()
+    monkeypatch.setattr("jevdual.native.accessibility_status", lambda: "not_granted")
+    code, _, err = fw("start", "Another task", "--app", "Calculator")
+    assert code == 7 and "accessibility_not_granted" in err
+    assert (fw.session / "session.json").read_bytes() == saved
+
+
+def test_look_after_failed_start_reports_missing_initialized_session(world, fw, monkeypatch):
+    async def capture_failure(inp):
+        raise RuntimeError("capture_binding_failed")
+
+    monkeypatch.setattr(world, "get_window_state", capture_failure)
+    assert fw("start", "Observe Calculator", "--app", "Calculator")[0] == 7
+    code, _, err = fw("look")
+    assert code == 7 and "session_not_found" in err
+    assert "start must complete successfully" in err
+    assert "FileNotFoundError" not in err and "Traceback" not in err
+
+
 # ---- package H: grants bound to a resource and an effect ----
 
 

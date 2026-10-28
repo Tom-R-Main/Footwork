@@ -31,6 +31,7 @@ import json
 import logging
 import math
 import re
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -484,6 +485,24 @@ class NativeBridgeError(Exception):
         self.reason = reason
 
 
+def accessibility_status() -> str:
+    """Read the current host permission without prompting or changing it."""
+    from jevdual.capability.setup import permission_status
+
+    return permission_status()["accessibility"]
+
+
+def require_accessibility() -> None:
+    status = accessibility_status()
+    if status not in ("granted", "unsupported"):
+        raise NativeBridgeError(
+            "accessibility_not_granted" if status == "not_granted" else "accessibility_unavailable",
+            "Native observation requires Accessibility permission for the process hosting Footwork. "
+            "Check System Settings > Privacy & Security > Accessibility, then run footwork doctor "
+            "from the same host before retrying.",
+        )
+
+
 @dataclass(frozen=True)
 class NativeEffect:
     """The Driver's account of one dispatched action, verbatim. ``effect`` is one of the Driver's
@@ -622,7 +641,10 @@ class NativeBridge:
         self.driver = driver
         self.pid = pid
         self.window_id = window_id
-        self.session = session
+        # CUA's screenshot file authorization rebuilds the request from public
+        # arguments. Its implicit-direct binding is lost at that boundary;
+        # an explicit runtime-scoped session survives and binds the capture.
+        self.session = session or f"footwork-native-{uuid.uuid4().hex}"
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
         self._ax = ax
@@ -651,6 +673,7 @@ class NativeBridge:
         if self.policy.locked():
             # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
             raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
+        require_accessibility()
         snap = await self.driver.get_window_state(
             GetWindowStateInput(
                 pid=self.pid,
@@ -1074,7 +1097,10 @@ class NativeBridge:
             fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
             try:
                 outcome = await self.driver.call_tool(
-                    "move_cursor", json.dumps({"x": fx + fw / 2, "y": fy + fh / 2, "scope": "desktop"})
+                    "move_cursor",
+                    json.dumps(
+                        {"x": fx + fw / 2, "y": fy + fh / 2, "scope": "desktop", "session": self.session}
+                    ),
                 )
             except Exception as exc:  # noqa: BLE001
                 outcome = exc

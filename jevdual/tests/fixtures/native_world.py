@@ -206,6 +206,7 @@ class TextWorld:
 
         monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda *, embedded=False: self))
         monkeypatch.setattr(ExecutionPolicy, "locked", lambda _: False)
+        monkeypatch.setattr("jevdual.native.accessibility_status", lambda: "granted")
         monkeypatch.setattr(ax, "window_element", lambda pid, wid: self._window(pid, wid))
         monkeypatch.setattr(ax, "_attr", self._attr)
         monkeypatch.setattr(ax, "frame_of", lambda _: ax.Frame(*self.frame) if self.frame else None)
