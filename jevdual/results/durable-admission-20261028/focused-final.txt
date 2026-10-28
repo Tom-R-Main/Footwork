@@ -11,13 +11,13 @@ tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/p
 
     def test_durable_short_secret_refuses_before_binding(world, fw, monkeypatch, tmp_path):
         from jevdual import session
-    
+
         _durable_start(fw, monkeypatch, tmp_path)
         monkeypatch.setenv("FOOTWORK_SECRET_SHORT", "xy")
-    
+
         def unexpected_bind(*args, **kwargs):
             raise AssertionError("short secret must be refused before binding")
-    
+
         monkeypatch.setattr(session, "bind", unexpected_bind)
         code, out, err = fw("do", "type", "Anything", "{SHORT}", "--token", "short")
 >       assert code != 0 and "short_secret_unsupported" in out + err

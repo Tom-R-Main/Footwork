@@ -11,7 +11,7 @@ tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/p
         world, fw, monkeypatch, tmp_path
     ):
         import asyncio
-    
+
         world.base["elements"].append(
             {
                 "element_index": 999999,
@@ -25,12 +25,12 @@ tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/p
         value = "fixture-private-value"
         monkeypatch.setenv("FOOTWORK_SECRET_DEMO", value)
         attempts = []
-    
+
         async def set_then_cancel(name, args_json):
             assert name == "set_value"
             attempts.append(json.loads(args_json)["value"])
             raise asyncio.CancelledError()
-    
+
         monkeypatch.setattr(world, "call_tool", set_then_cancel)
         words = ("do", "type", "Fixture input", "{DEMO}", "--no-judge", "--token", "secret-input")
 >       with pytest.raises(asyncio.CancelledError):

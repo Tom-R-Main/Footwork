@@ -9,13 +9,13 @@ tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/p
 
     def test_durable_replay_needs_no_current_app_and_changed_request_conflicts(world, fw, monkeypatch, tmp_path):
         import jevdual.session as session
-    
+
         _durable_start(fw, monkeypatch, tmp_path)
         assert fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")[0] == 0
-    
+
         def unavailable(*args, **kwargs):
             raise AssertionError("replay must not bind the app")
-    
+
         monkeypatch.setattr(session, "bind", unavailable)
         code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")
         assert code == 0 and "operation" in out, (out, err)

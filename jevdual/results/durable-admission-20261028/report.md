@@ -39,6 +39,8 @@ Run from `jevdual/` using its existing `.venv`:
 
 The final full-suite run includes the privacy gate and the short-secret refusal scenario. The earlier `suite.txt` predates these last controls; intermediate focused failures are retained separately. The source and final tests are committed together with this report.
 
+Retained pytest transcripts have trailing whitespace normalized for repository diff checks; diagnostic text and results are preserved.
+
 ## Qualification limits
 
 This is opt-in native CLI coordination within one configured authority database. Legacy sessions, MCP, browser mutation, older binaries, other databases and unrelated tools remain outside it. Process incarnation is qualified, but independent window-creation identity is not supplied by the current adapter. There is no general qualified reconciliation producer for started unknowns; their block is preserved rather than manually cleared. Direct AX routes lacking delivery evidence may remain unknown despite a matching current readback.
