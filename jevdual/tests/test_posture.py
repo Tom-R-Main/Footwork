@@ -394,6 +394,7 @@ def test_append_readback_error_after_write_is_not_no_send():
     eff = run(b.act(run(b.observe()), "append", 1, "world"))
     assert ax.text == "hello\nworld"
     assert eff.effect == "unverifiable" and eff.dispatched
+    assert eff.delivery_basis == "unknown" and eff.delivered_count is None and eff.field_readback is None
 
 
 def test_title_bar_input_is_preserved_when_menu_resolution_then_fails():
@@ -404,6 +405,7 @@ def test_title_bar_input_is_preserved_when_menu_resolution_then_fails():
     eff = run(b.menu(run(b.observe()), ["File", "Save"]))
     assert ax.clicks == ((300.0, 172.0),) and ax.pressed == ()
     assert eff.effect == "unverifiable" and eff.dispatched
+    assert eff.delivery_basis == "unknown" and eff.delivered_count is None
 
 
 def test_hover_is_desktop_scoped():
@@ -477,6 +479,7 @@ def test_append_refuses_an_edit_between_read_and_insert():
     nm = run(b.observe())
     eff = run(b.act(nm, "append", 1, "two"))
     assert eff.error_code == "precondition_changed" and not eff.dispatched and ax.inserts == []
+    assert eff.delivery_basis == "qualified_gate" and eff.delivered_count == 0 and eff.field_readback is None
 
 
 def test_append_reports_partial_when_readback_differs():
@@ -489,6 +492,43 @@ def test_append_reports_partial_when_readback_differs():
     eff = run(b.act(nm, "append", 1, "two"))
     assert eff.effect == "partial" and eff.error_code == "content_mismatch"
     assert "first difference at 2" in eff.evidence[0]
+    assert eff.delivered_count == 1 and eff.delivery_basis == "ax_insert_ack"
+    assert eff.field_readback["matches"] is False
+    assert eff.field_readback["expected_value"] == "one\ntwo"
+    assert eff.field_readback["observed_value"] == "on\ntwo"
+
+
+@pytest.mark.parametrize("length", [200, 65_536])
+def test_append_exact_readback_is_separate_bounded_producer_evidence(length):
+    initial = "head"
+    payload = "x" * length
+    ax = FakeAX(initial)
+    b = bridge_for(FakeDriver(doc_snapshot(initial)), ax=ax)
+    nm = run(b.observe())
+    eff = run(b.act(nm, "append", 1, payload))
+    assert eff.effect == "confirmed" and eff.delivery_basis == "ax_insert_ack"
+    assert eff.delivered_count == 1 and eff.readback is None
+    rb = eff.field_readback
+    assert rb["producer"] == {"name": "footwork.native", "version": 1}
+    assert rb["predicate"] == "field_equals" and rb["matches"] is True
+    assert rb["target_id"] == 1 and rb["role"] == "AXTextArea" and rb["snapshot_id"] == nm.snapshot_id
+    if length == 200:
+        assert rb["complete"] is True
+        assert rb["observed_value"] == rb["expected_value"] == initial + "\n" + payload
+        assert rb["before_value"] == initial
+    else:
+        assert rb["complete"] is False
+        assert rb["observed_value"] is rb["expected_value"] is rb["before_value"] is None
+    assert eff.to_record()["field_readback"] == rb
+
+
+def test_ax_menu_acknowledges_delivery_without_application_effect():
+    ax = FakeAX("")
+    b = bridge_for(FakeDriver(doc_snapshot("")), ax=ax, mode="foreground_permitted", fronts=(1,))
+    eff = run(b.menu(run(b.observe()), ["File", "Open"]))
+    assert ax.pressed == (["File", "Open"],)
+    assert eff.delivered_count == 1 and eff.delivery_basis == "ax_menu_press_ack"
+    assert eff.effect == "unverifiable" and eff.field_readback is None and eff.readback is None
 
 
 def test_values_are_whole_and_the_preview_is_not_execution_data():

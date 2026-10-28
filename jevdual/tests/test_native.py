@@ -179,6 +179,19 @@ def test_delivery_count_is_distinct_from_input_attempt(count):
     assert eff.dispatched
     assert eff.delivered_count == (count if type(count) is int and count >= 0 else None)
     assert eff.to_record()["delivered_count"] == eff.delivered_count
+    assert eff.delivery_basis == ("sdk_delivery_count" if type(count) is int and count > 0 else "unknown")
+
+
+def test_refusal_has_qualified_gate_basis_but_opaque_error_does_not():
+    refused = SimpleNamespace(effect="REFUSED", delivery=SimpleNamespace(delivered_count=0))
+    eff = effect_from_action_result("click", 1, "Submit", refused)
+    assert not eff.dispatched and eff.delivery_basis == "qualified_gate"
+    contradictory = SimpleNamespace(effect="REFUSED", delivery=SimpleNamespace(delivered_count=1))
+    eff = effect_from_action_result("click", 1, "Submit", contradictory)
+    assert eff.dispatched and eff.effect == "unverifiable" and eff.delivery_basis == "sdk_delivery_count"
+    opaque = SimpleNamespace(action=None, is_error=True, text="failure", error_code=None)
+    eff = effect_from_action_result("click", 1, "Submit", opaque)
+    assert eff.dispatched and eff.delivery_basis == "unknown"
 
 
 class _FakeDriver:

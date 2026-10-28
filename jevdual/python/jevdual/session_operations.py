@@ -37,6 +37,9 @@ CREATE TABLE IF NOT EXISTS operator_admissions (
     operation TEXT PRIMARY KEY, protocol INTEGER NOT NULL, request TEXT NOT NULL,
     authorization TEXT NOT NULL, projection TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS operator_execution_receipts (
+    operation TEXT PRIMARY KEY, body TEXT NOT NULL, digest TEXT NOT NULL, recorded REAL NOT NULL
+);
 """
 
 
@@ -330,6 +333,126 @@ class SessionOperations(Journal):
         raise JournalError(
             "operator unknowns require a qualified reconciliation producer; manual resolution is unsupported"
         )
+
+    def _execution_binding(self, op_id: str) -> dict[str, Any]:
+        row = self._db.execute(
+            "SELECT projection FROM operator_admissions WHERE operation=?", (op_id,)
+        ).fetchone()
+        if row is None:
+            raise JournalError("missing admission binding")
+        from jevdual.operator_evidence import EvidenceError, validate_binding
+
+        try:
+            return validate_binding(json.loads(row[0]).get("binding"))
+        except (ValueError, TypeError, AttributeError) as exc:
+            raise EvidenceError("admission lacks qualified execution binding") from exc
+
+    def record_execution(self, op_id: str, capsule: dict[str, Any]) -> None:
+        """Retain the returned runtime result before finalization; never import caller assertions."""
+        from jevdual.operator_evidence import canonical, validate_execution
+
+        op = self._owned(op_id)
+        if op.state != "dispatching" or op.execution_stage != "started":
+            raise JournalError("execution receipt requires a started, owned attempt")
+        validate_execution(capsule, op, binding=self._execution_binding(op_id))
+        body = canonical(capsule)
+        digest = hashlib.sha256(body.encode()).hexdigest()
+        with self._tx() as db:
+            prior = db.execute(
+                "SELECT body,digest FROM operator_execution_receipts WHERE operation=?", (op_id,)
+            ).fetchone()
+            if prior is not None:
+                if (prior["body"], prior["digest"]) != (body, digest):
+                    raise JournalError("execution receipt is immutable")
+                return
+            db.execute(
+                "INSERT INTO operator_execution_receipts VALUES (?,?,?,?)",
+                (op_id, body, digest, time.time()),
+            )
+            self._event(db, op_id, "execution_retained", {"schema_version": "1"})
+
+    def _retained_execution(self, op: Operation) -> dict[str, Any] | None:
+        from jevdual.operator_evidence import EvidenceError, validate_execution
+
+        row = self._db.execute(
+            "SELECT * FROM operator_execution_receipts WHERE operation=?", (op.id,)
+        ).fetchone()
+        if row is None:
+            return None
+        if hashlib.sha256(row["body"].encode()).hexdigest() != row["digest"]:
+            raise EvidenceError("retained execution receipt integrity failed")
+        record = json.loads(row["body"])
+        validate_execution(record, op, binding=self._execution_binding(op.id))
+        if record["interval"]["end"] > row["recorded"]:
+            raise EvidenceError("execution receipt predates its capture")
+        return record
+
+    def finish_from_execution(self, op_id: str) -> Operation:
+        """Finalize from the same validated retained producer record used by reconciliation."""
+        op = self._owned(op_id)
+        record = self._retained_execution(op)
+        if record is None:
+            raise JournalError("no retained execution receipt")
+        return self.finish(
+            op_id,
+            dispatched=record["dispatched"],
+            effect=record["effect"],
+            phase=record["phase"],
+            evidence={**record["projection"], "execution_receipt": record},
+            error=record["error"],
+        )
+
+    def reconcile(self, op_id: str) -> Operation:
+        """Resolve only from a retained returned execution record; never dispatch or read the app."""
+        from jevdual.operator_evidence import EvidenceError
+
+        op = self._owned(op_id)
+        if op.state == "final":
+            return op
+        if op.state != "unknown" or op.execution_stage != "started":
+            return op
+        try:
+            record = self._retained_execution(op)
+        except (EvidenceError, ValueError, TypeError, KeyError):
+            return op  # invalid evidence cannot release custody or settle authority
+        if record is None:
+            return op
+        phase, effect, error = record["phase"], record["effect"], record["error"]
+        if op.evidence.get("execution_receipt") == record and op.phase == phase:
+            return op  # preserve original uncertainty history on repeated unknown reconciliation
+        if phase == "not_sent":
+            disposition, state, settlement = "not_sent", "final", "released"
+        elif phase == "sent" and effect in ("confirmed", "partial") and not error:
+            disposition, state, settlement = (
+                ("applied" if effect == "confirmed" else "partial"),
+                "final",
+                "spent",
+            )
+        else:
+            disposition, state, settlement = "unknown", "unknown", "spent" if phase == "sent" else "held"
+        with self._tx() as db:
+            current = self._get(db, op_id)
+            if current.state != "unknown":
+                raise JournalError("reconciliation requires unresolved custody")
+            evidence = {**record["projection"], "execution_receipt": record}
+            evidence["prior_uncertainty"] = {"phase": current.phase, "error": current.error}
+            db.execute(
+                "UPDATE operations SET state=?,disposition=?,phase=?,evidence=?,error=?,resolved_by=?,updated=? WHERE id=?",
+                (
+                    state,
+                    disposition,
+                    phase,
+                    _json(evidence),
+                    error,
+                    "execution" if state == "final" else None,
+                    time.time(),
+                    op_id,
+                ),
+            )
+            if settlement != "held":
+                self._settle(db, op_id, settlement)
+            self._event(db, op_id, "execution_reconciled", {"disposition": disposition, "phase": phase})
+            return self._get(db, op_id)
 
     def status(self, session_id: str | None = None) -> list[Operation]:
         if session_id is not None:

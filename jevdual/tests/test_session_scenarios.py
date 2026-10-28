@@ -858,7 +858,7 @@ def test_cancelled_granted_press_characterizes_missing_durable_intent(world, fw,
     assert world.presses == ["Delete", "Delete"]
 
 
-def _durable_start(fw, monkeypatch, tmp_path):
+def _durable_start(fw, monkeypatch, tmp_path, app="Calculator"):
     import jevdual.session_operations as operations
 
     monkeypatch.setattr(
@@ -867,7 +867,7 @@ def _durable_start(fw, monkeypatch, tmp_path):
         lambda pid, window_id: {"boot": "test-boot", "pid": pid, "start": "1.0", "window_id": window_id},
     )
     authority = tmp_path / "authority.sqlite"
-    code, out, err = fw("start", "Compute", "--app", "Calculator", "--authority", str(authority))
+    code, out, err = fw("start", "Compute", "--app", app, "--authority", str(authority))
     assert code == 0, (out, err)
     return authority
 
@@ -1089,6 +1089,132 @@ def test_durable_short_secret_refuses_before_binding(world, fw, monkeypatch, tmp
     assert code != 0 and "short_secret_unsupported" in out + err
     assert "xy" not in out + err
     assert world.presses == []
+
+
+def test_retained_execution_reconciles_lost_finish_without_new_input(world, fw, monkeypatch, tmp_path):
+    from jevdual import session
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    fw("grant", "click", "Delete")
+    original = SessionOperations.finish_from_execution
+
+    def lost_finish(self, operation_id):
+        raise OSError("lost journal finalization after retained runtime receipt")
+
+    monkeypatch.setattr(SessionOperations, "finish_from_execution", lost_finish)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "retained-return")
+    assert code != 0, (out, err)
+    assert world.presses == ["Delete"]
+    monkeypatch.setattr(SessionOperations, "finish_from_execution", original)
+
+    def no_live_app(*args, **kwargs):
+        raise AssertionError("qualified reconciliation must not bind or dispatch")
+
+    monkeypatch.setattr(session, "bind", no_live_app)
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0 and "applied" in out, (out, err)
+    assert fw("status", "--reconcile")[0] == 0
+    assert fw("do", "click", "Delete", "--no-judge", "--token", "retained-return")[0] == 0
+    assert world.presses == ["Delete"]
+    with SessionOperations(authority) as operations:
+        op = operations.status()[0]
+        assert op.state == "final" and op.disposition == "applied"
+        assert operations.receipt(op)["reservation"] == "spent"
+        kinds = [event["kind"] for event in operations.events(op.id)]
+        assert "recovered_unknown" in kinds and kinds.count("execution_reconciled") == 1
+
+
+def test_reconciliation_without_retained_return_keeps_cancelled_input_unknown(
+    world, fw, monkeypatch, tmp_path
+):
+    import asyncio
+
+    from jevdual import session
+    from jevdual.native import NativeBridge
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    original = NativeBridge.act
+
+    async def cancelled(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(NativeBridge, "act", cancelled)
+    with pytest.raises(asyncio.CancelledError):
+        fw("do", "click", "All Clear", "--no-judge", "--token", "no-return")
+
+    def no_live_app(*args, **kwargs):
+        raise AssertionError("current state must not be used as execution proof")
+
+    monkeypatch.setattr(session, "bind", no_live_app)
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0 and "unknown" in out, (out, err)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "new-input")
+    assert code != 0 and "busy" in out + err
+    assert world.presses == ["All Clear"]
+
+
+def test_retained_sent_unknown_does_not_become_success_on_reconciliation(world, fw, monkeypatch, tmp_path):
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    fw("grant", "click", "Delete")
+    original = world.click
+
+    async def delivered_unknown(inp):
+        await original(inp)
+        return SimpleNamespace(
+            effect="unverifiable",
+            delivery=SimpleNamespace(mode="background", delivered_count=1),
+            evidence=[],
+            summary="input delivered; app effect unconfirmed",
+        )
+
+    monkeypatch.setattr(world, "click", delivered_unknown)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "sent-unknown")
+    assert code == 0, (out, err)
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0 and "unknown" in out, (out, err)
+    assert world.presses == ["Delete"]
+    with SessionOperations(authority) as operations:
+        op = operations.status()[0]
+        assert op.state == "unknown" and op.phase == "sent"
+        assert operations.receipt(op)["reservation"] == "spent"
+
+
+def test_real_cli_live_append_retains_full_typed_value(world, fw, monkeypatch, tmp_path):
+    from jevdual.completion import session_effects
+
+    from tests.fixtures.native_world import TextWorld
+
+    text_world = TextWorld(tmp_path / "note.txt", content="Prefix\n")
+    text_world.install(monkeypatch)
+
+    async def apps(inp):
+        return SimpleNamespace(apps=[SimpleNamespace(name="TextEdit", pid=77, running=True)])
+
+    async def windows(inp):
+        return SimpleNamespace(
+            windows=[
+                SimpleNamespace(
+                    window_id=40335, title="note.txt", bounds=SimpleNamespace(width=400, height=300)
+                )
+            ]
+        )
+
+    monkeypatch.setattr(text_world, "list_apps", apps, raising=False)
+    monkeypatch.setattr(text_world, "list_windows", windows, raising=False)
+    _durable_start(fw, monkeypatch, tmp_path, app="TextEdit")
+    payload = "long-value-" + "x" * 240
+    code, out, err = fw("do", "append", "1", payload, "--no-judge", "--token", "long-append")
+    assert code == 0, (out, err)
+    assert text_world.content == "Prefix\n" + payload
+    assert len([item for item in text_world.writes if item[0] == "AXSelectedText"]) == 1
+    facts = session_effects(fw.session)
+    exact = [fact for fact in facts if fact.effect == "field_holds" and fact.usable]
+    assert len(exact) == 1, [(fact.effect, fact.limits) for fact in facts]
+    assert exact[0].values == (text_world.content,)
 
 
 def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, monkeypatch):

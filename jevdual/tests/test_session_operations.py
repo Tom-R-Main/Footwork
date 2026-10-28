@@ -318,3 +318,206 @@ def test_identity_distinguishes_process_reincarnation_and_window_binding():
     assert native_resource(identity) != native_resource({**identity, "start": "new"})
     with pytest.raises(JournalError):
         native_binding({"pid": 77, "window_id": 12})
+
+
+EXEC_BINDING = {"boot": "fixture-boot", "pid": 77, "start": "fixture-start", "window_id": 12}
+
+
+def execution_admit(store, *, gated=True):
+    if gated:
+        issue(store, resource=native_resource(EXEC_BINDING))
+    op = admit(
+        store,
+        gated=gated,
+        resource=native_resource(EXEC_BINDING),
+        projection={"step": 1, "line": "click(Delete)", "binding": EXEC_BINDING},
+    )
+    store.start(op.id)
+    return store.get(op.id)
+
+
+def capsule_for(op, *, phase="sent", effect="confirmed", error=None):
+    import time
+
+    from jevdual.operator_evidence import execution_record
+
+    now = time.time()
+    return execution_record(
+        op,
+        binding=EXEC_BINDING,
+        started_at=now,
+        ended_at=now,
+        producer_evidence={
+            "name": "footwork.native",
+            "version": 1,
+            "delivery_basis": "sdk_delivery_count"
+            if phase == "sent"
+            else "qualified_gate"
+            if phase == "not_sent"
+            else "unknown",
+            "delivered_count": 1 if phase == "sent" else 0,
+        },
+        dispatched=False if phase == "not_sent" else True if phase == "sent" else None,
+        effect=effect,
+        phase=phase,
+        projection={
+            "step": 1,
+            "line": "click(Delete)",
+            "driver_effect": effect,
+            "binding": EXEC_BINDING,
+            "operation_id": op.id,
+        },
+        error=error,
+    )
+
+
+@pytest.mark.parametrize(
+    ("phase", "effect", "state", "reservation"),
+    [
+        ("sent", "confirmed", "final", "spent"),
+        ("not_sent", "refused", "final", "released"),
+        ("sent", "unverifiable", "unknown", "spent"),
+        ("ambiguous", "unverifiable", "unknown", "held"),
+    ],
+)
+def test_retained_execution_reconciles_only_qualified_outcomes(tmp_path, phase, effect, state, reservation):
+    path = tmp_path / "authority.db"
+    with SessionOperations(path) as store:
+        op = execution_admit(store)
+        store.record_execution(op.id, capsule_for(op, phase=phase, effect=effect))
+    with SessionOperations(path) as store:
+        assert store.get(op.id).state == "unknown"
+        reconciled = store.reconcile(op.id)
+        assert reconciled.state == state and store.receipt(reconciled)["reservation"] == reservation
+        assert "recovered_unknown" in [event["kind"] for event in store.events(op.id)]
+        assert "execution_reconciled" in [event["kind"] for event in store.events(op.id)]
+        events, evidence = store.events(op.id), reconciled.evidence
+        again = store.reconcile(op.id)
+        assert again.state == state and store.receipt(again)["reservation"] == reservation
+        assert store.events(op.id) == events and again.evidence == evidence
+        assert again.evidence["prior_uncertainty"]["phase"] == "ambiguous"
+        available = store.matching_grant("one", PROPOSAL, resource=op.resource)[0]
+        assert (available is not None) is (reservation == "released")
+        if state == "unknown":
+            with pytest.raises(Busy):
+                store.assert_available()
+
+
+def test_execution_receipt_is_immutable_and_normal_finish_uses_it(tmp_path):
+    with SessionOperations(tmp_path / "authority.db") as store:
+        op = execution_admit(store)
+        capsule = capsule_for(op)
+        store.record_execution(op.id, capsule)
+        store.record_execution(op.id, capsule)
+        changed = {**capsule, "error": "another outcome"}
+        with pytest.raises(JournalError, match="immutable"):
+            store.record_execution(op.id, changed)
+        done = store.finish_from_execution(op.id)
+        assert done.disposition == "applied" and done.evidence["execution_receipt"] == capsule
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [
+        "missing",
+        "body",
+        "digest",
+        "wrong_binding",
+        "wrong_version",
+        "boolean_protocol",
+        "boolean_producer",
+        "boolean_binding",
+    ],
+)
+def test_missing_or_tampered_execution_never_releases_custody(tmp_path, failure):
+    import hashlib
+    import json
+
+    path = tmp_path / "authority.db"
+    with SessionOperations(path) as store:
+        op = execution_admit(store)
+        if failure != "missing":
+            capsule = capsule_for(op)
+            store.record_execution(op.id, capsule)
+            if failure in (
+                "wrong_binding",
+                "wrong_version",
+                "boolean_protocol",
+                "boolean_producer",
+                "boolean_binding",
+            ):
+                if failure == "wrong_binding":
+                    capsule["binding"] = {**EXEC_BINDING, "window_id": 99}
+                elif failure == "wrong_version":
+                    capsule["schema_version"] = "99"
+                elif failure == "boolean_protocol":
+                    capsule["protocol"] = True
+                elif failure == "boolean_producer":
+                    capsule["producer"]["version"] = True
+                else:
+                    capsule["binding"]["pid"] = True
+                raw = json.dumps(capsule, sort_keys=True, separators=(",", ":"))
+                store._db.execute(
+                    "UPDATE operator_execution_receipts SET body=?,digest=?",
+                    (raw, hashlib.sha256(raw.encode()).hexdigest()),
+                )
+            else:
+                store._db.execute(f"UPDATE operator_execution_receipts SET {failure}='corrupt'")
+    with SessionOperations(path) as store:
+        assert store.reconcile(op.id).state == "unknown"
+        assert store.receipt(store.get(op.id))["reservation"] == "held"
+        with pytest.raises(Busy):
+            store.assert_available()
+
+
+def test_current_text_or_caller_assertion_cannot_reconcile(tmp_path):
+    with SessionOperations(tmp_path / "authority.db") as store:
+        op = execution_admit(store)
+        store.finish(op.id, dispatched=None, effect="unverifiable", evidence={"current_text": "matches"})
+        assert store.reconcile(op.id).state == "unknown"
+        with pytest.raises(JournalError):
+            store.resolve(op.id, evidence={"operator_says": "done"}, disposition="applied")
+
+
+def _execution_crash_child(path, boundary, channel):
+    with SessionOperations(Path(path)) as store:
+        op = execution_admit(store)
+        with open(path + ".inputs", "a") as ledger:
+            ledger.write(op.id + "\n")
+            ledger.flush()
+            os.fsync(ledger.fileno())
+        if boundary != "before_receipt":
+            store.record_execution(op.id, capsule_for(op))
+        if boundary == "after_finish":
+            store.finish_from_execution(op.id)
+        channel.send(op.id)
+        signal.pause()
+
+
+@pytest.mark.parametrize("boundary", ["before_receipt", "after_receipt", "after_finish"])
+def test_sigkill_around_retained_receipt_never_redispatches(tmp_path, boundary):
+    path = tmp_path / "authority.db"
+    context = multiprocessing.get_context("spawn")
+    reader, writer = context.Pipe(duplex=False)
+    child = context.Process(target=_execution_crash_child, args=(str(path), boundary, writer))
+    child.start()
+    try:
+        assert reader.poll(10)
+        op_id = reader.recv()
+        os.kill(child.pid, signal.SIGKILL)
+        child.join(10)
+        assert child.exitcode == -signal.SIGKILL
+        with SessionOperations(path) as store:
+            result = store.reconcile(op_id)
+            assert result.state == ("unknown" if boundary == "before_receipt" else "final")
+            assert store.by_request("one", "token", REQUEST).id == op_id
+            assert Path(str(path) + ".inputs").read_text().splitlines() == [op_id]
+            assert store.receipt(result)["reservation"] == (
+                "held" if boundary == "before_receipt" else "spent"
+            )
+    finally:
+        if child.is_alive():
+            child.kill()
+            child.join(10)
+        reader.close()
+        writer.close()

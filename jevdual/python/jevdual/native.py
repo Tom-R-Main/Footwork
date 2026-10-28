@@ -532,6 +532,10 @@ class NativeEffect:
     readback: dict[str, Any] | None = None
     #: Qualified SDK delivery count; dispatched alone only means input was attempted.
     delivered_count: int | None = None
+    #: Producer of qualified delivery; an attempted input has basis ``unknown``.
+    delivery_basis: str = "unknown"
+    #: Exact AX current-state readback, separate from disk/window persistence.
+    field_readback: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -551,9 +555,12 @@ class NativeEffect:
             "driver_delivery": self.driver_delivery,
             "dispatched": self.dispatched,
             "delivered_count": self.delivered_count,
+            "delivery_basis": self.delivery_basis,
         }
         if self.foreground is not None:
             rec["foreground"] = dict(self.foreground)
+        if self.field_readback is not None:
+            rec["field_readback"] = dict(self.field_readback)
         return rec
 
 
@@ -595,6 +602,13 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
         driver_delivery=delivered,
         dispatched=effect != "refused",
         delivered_count=count,
+        delivery_basis=(
+            "qualified_gate"
+            if effect == "refused"
+            else "sdk_delivery_count"
+            if count is not None and count > 0
+            else "unknown"
+        ),
     )
 
 
@@ -781,6 +795,8 @@ class NativeBridge:
             code,
             delivery=delivery,
             dispatched=False,
+            delivered_count=0,
+            delivery_basis="qualified_gate",
         )
 
     def _effect(self, operation: str, target: int, label: str, outcome: Any, delivery: str) -> NativeEffect:
@@ -804,6 +820,18 @@ class NativeBridge:
                 str(outcome)[:200],
                 str(code),
                 delivery=delivery,
+            )
+        if outcome is _PRESSED:
+            return NativeEffect(
+                operation,
+                target,
+                label,
+                "unverifiable",
+                route="accessibility",
+                summary="menu item press acknowledged; application effect not verified",
+                delivery=delivery,
+                delivered_count=1,
+                delivery_basis="ax_menu_press_ack",
             )
         eff = effect_from_action_result(operation, target, label, outcome)
         return dataclasses.replace(eff, delivery=delivery)
@@ -834,7 +862,13 @@ class NativeBridge:
         eff = self._effect(operation, target, label, outcome, "foreground")
         if not eff.dispatched and self._foreground_inputs != prior_inputs:
             # A failed menu/chord gate cannot erase a title-bar click already attempted.
-            eff = dataclasses.replace(eff, effect="unverifiable", dispatched=True)
+            eff = dataclasses.replace(
+                eff,
+                effect="unverifiable",
+                dispatched=True,
+                delivery_basis="unknown",
+                delivered_count=None,
+            )
         note = "front app restored" if rec.get("restored") else "front app changed"
         return dataclasses.replace(eff, foreground=rec, summary=f"foreground ({note}); {eff.summary}"[:200])
 
@@ -985,8 +1019,27 @@ class NativeBridge:
                 exc.reason,
                 delivery="background",
                 dispatched=not not_sent,
+                delivered_count=0 if not_sent else None,
+                delivery_basis="qualified_gate" if not_sent else "unknown",
             )
         inserted = sep + text
+        want = before + inserted
+        complete = all(len(value) <= 65_536 for value in (before, after, want))
+        readback = {
+            "schema_version": 1,
+            "producer": {"name": "footwork.native", "version": 1},
+            "predicate": "field_equals",
+            "before_value": before if complete else None,
+            "observed_value": after if complete else None,
+            "expected_value": want if complete else None,
+            "matches": after == want,
+            "complete": complete,
+            "target_id": id,
+            "label": cand.label,
+            "role": role,
+            "frame": list(frame) if frame is not None else None,
+            "snapshot_id": nm.snapshot_id,
+        }
         if after == before + inserted:
             return NativeEffect(
                 "append",
@@ -1000,8 +1053,10 @@ class NativeBridge:
                 "appended",
                 delivery="background",
                 driver_delivery="background",
+                delivered_count=1,
+                delivery_basis="ax_insert_ack",
+                field_readback=readback,
             )
-        want = before + inserted
         diverge = next((i for i, (a, b) in enumerate(zip(after, want, strict=False)) if a != b), None)
         at = diverge if diverge is not None else min(len(after), len(want))
         return NativeEffect(
@@ -1017,6 +1072,9 @@ class NativeBridge:
             "content_mismatch",
             delivery="background",
             driver_delivery="background",
+            delivered_count=1,
+            delivery_basis="ax_insert_ack",
+            field_readback=readback,
         )
 
     async def _type_web(
@@ -1052,7 +1110,13 @@ class NativeBridge:
         eff = self._effect("type", id, label, outcome, "background")
         typing_refused = not eff.dispatched
         if selected and not eff.dispatched:
-            eff = dataclasses.replace(eff, effect="unverifiable", dispatched=True)
+            eff = dataclasses.replace(
+                eff,
+                effect="unverifiable",
+                dispatched=True,
+                delivery_basis="unknown",
+                delivered_count=None,
+            )
         if typing_refused or eff.error_code or getattr(outcome, "is_error", False):
             return eff
         after = await self._observe_after_input()
@@ -1114,6 +1178,7 @@ class NativeBridge:
             )
         if operation in ("type", "append") and text is None:
             raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
+        decision_snapshot, decision_target = nm.snapshot_id, id
         if self.live_check:
             decided_values = nm.values
             nm, fresh_id = await self._live(nm, id, operation)
@@ -1126,7 +1191,17 @@ class NativeBridge:
         label = cand.label
         if operation == "append":
             assert text is not None
-            return await self._append(nm, id, cand, text, append_precondition)
+            result = await self._append(nm, id, cand, text, append_precondition)
+            if result.field_readback is not None:
+                result = dataclasses.replace(
+                    result,
+                    field_readback={
+                        **result.field_readback,
+                        "decision_snapshot_id": decision_snapshot,
+                        "decision_target_id": decision_target,
+                    },
+                )
+            return result
         if operation in ("enter",):
             return await self._key_route("enter", id, label, "return", [], token)
         if operation == "hover":

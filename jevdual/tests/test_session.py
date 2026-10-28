@@ -86,6 +86,105 @@ def _field(id, label, value=None, **kw):
     return Candidate(id=id, label=label, role="textbox", operations=("type",), value=value, **kw)
 
 
+def _exact_pending(tmp_path, value):
+    binding = {"boot": "test", "pid": 77, "start": "start", "window_id": 3}
+    state = SessionState(
+        dir=str(tmp_path),
+        app="Native fixture",
+        pid=77,
+        window_id=3,
+        task="append",
+        authority=str(tmp_path / "authority.sqlite"),
+        session_id="session_one",
+        native_binding=binding,
+    )
+    pending = {
+        "operation_id": "op_one",
+        "binding": binding,
+        "observation": "decision",
+        "execution_interval": {"start": 1.0, "end": 2.0},
+        "target_id": 3,
+        "target_label": "Body",
+        "op": "append",
+        "secret": False,
+        "dispatched": True,
+        "field_readback": {
+            "schema_version": 1,
+            "producer": {"name": "footwork.native", "version": 1},
+            "predicate": "field_equals",
+            "observed_value": value,
+            "expected_value": value,
+            "before_value": "Before",
+            "matches": True,
+            "complete": True,
+            "target_id": 8,
+            "label": "Body",
+            "role": "AXTextArea",
+            "frame": [10, 20, 400, 300],
+            "snapshot_id": "revalidated",
+            "decision_snapshot_id": "decision",
+            "decision_target_id": 3,
+        },
+    }
+    fresh = _nm([_field(8, "Body", value=value[:120])])
+    fresh.ax_roles = {8: "AXTextArea"}
+    fresh.frames = {8: (10, 20, 400, 300)}
+    fresh.values = {8: value[:120]}
+    return state, pending, fresh
+
+
+def test_exact_readback_links_revalidated_target_without_using_projection_as_full_value(tmp_path):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    value = "Complete long value " * 30
+    state, pending, fresh = _exact_pending(tmp_path, value)
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert item.usable and item.values == (value,)
+    assert payload["facts"][0]["parameters"]["source_observation"] == "revalidated"
+
+
+def test_fresh_contradictory_projection_limits_earlier_exact_readback(tmp_path):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+    fresh.values = {8: "Externally changed"}
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert not item.usable and "contradicts" in item.limits[0]
+
+
+def test_prior_secret_redaction_is_not_exact_literal_placeholder_evidence(tmp_path, monkeypatch):
+    from jevdual.completion import effects
+    from jevdual.session import _safe_field_readback, _structured_receipt
+
+    value = "Previously secret phrase"
+    monkeypatch.setenv("FOOTWORK_SECRET_OLD", value)
+    state, pending, fresh = _exact_pending(tmp_path, value + "\nNew public text")
+    state.secret_names = ["OLD"]
+    pending["field_readback"] = _safe_field_readback(state, pending["field_readback"], None)
+    readback = pending["field_readback"]
+    assert readback["redacted"] and not readback["complete"] and readback["observed_value"] is None
+    payload = _structured_receipt(state, pending, fresh)
+    assert value not in json.dumps(payload) and value not in json.dumps(readback)
+    assert effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}]) == []
+
+
+def test_durable_observation_records_projection_limits_and_generation(tmp_path):
+    from jevdual.session import finish_observation
+
+    state, _, fresh = _exact_pending(tmp_path, "Read value")
+    fresh.elements_complete = False
+    fresh.text_truncated = True
+    finish_observation(state, fresh, observed_interval=(1.0, 2.0))
+    record = json.loads((tmp_path / "session.jsonl").read_text().splitlines()[-1])
+    assert record["kind"] == "observation" and record["generation"] == state.visual_generation
+    assert record["coverage"]["text_truncated"] and not record["coverage"]["values_exact"]
+    assert record["binding"] == state.native_binding and record["interval"] == {"start": 1.0, "end": 2.0}
+
+
 def test_type_receipt_follows_the_field_not_the_element_count(tmp_path):
     before = [_field(4, "Search Wikipedia")]
     pend = {

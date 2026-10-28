@@ -149,6 +149,10 @@ class WebMenu:
     frames: dict[int, tuple[float, float, float, float]] = field(default_factory=dict)
     #: current value per text control, read by the authorization boundary's replacement rule
     values: dict[int, str] = field(default_factory=dict)
+    #: Coverage of the normalized semantic projection, not original webpage bytes.
+    text_original_length: int | None = None
+    text_truncated: bool = False
+    value_truncated: tuple[int, ...] = ()
 
     def token(self, id: int) -> str | None:
         return self.refs.get(id)
@@ -209,10 +213,20 @@ def menu_from_semantic(s: dict[str, Any]) -> WebMenu:
     omitted = {k: v for k, v in (snap.get("omitted") or {}).items() if v}
     if not snap.get("complete", True):
         omitted["elements_incomplete"] = 1
+    projected_text = "\n".join(lines)
+    clipped_values = tuple(
+        _ref_index(x["ref"])
+        for x in s.get("refs") or []
+        if x.get("ref") in refs.values() and len(str(x.get("value") or "")) > 200
+    )
+    if len(projected_text) > 6000:
+        omitted["text_truncated"] = 1
+    if clipped_values:
+        omitted["value_previews_truncated"] = len(clipped_values)
     menu = Menu(
         url=str(page.get("url") or ""),
         title=str(page.get("title") or ""),
-        page_text="\n".join(lines)[:6000],
+        page_text=projected_text[:6000],
         candidates=tuple(cands),
         by_operation=by_op,  # type: ignore[arg-type]
         omitted=omitted,
@@ -225,6 +239,9 @@ def menu_from_semantic(s: dict[str, Any]) -> WebMenu:
         page_url=menu.url,
         page_title=menu.title,
         elements_complete=bool(snap.get("complete", True)),
+        text_original_length=len(projected_text),
+        text_truncated=len(projected_text) > 6000,
+        value_truncated=clipped_values,
     )
 
 

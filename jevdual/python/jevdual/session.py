@@ -228,6 +228,125 @@ def _safe_operation_value(state: SessionState, value: Any, secret: str | None = 
     return value
 
 
+def _safe_field_readback(state: SessionState, readback: dict[str, Any], secret: str | None) -> dict[str, Any]:
+    safe = _safe_operation_value(state, readback, secret)
+    if safe != readback:
+        # Redaction is a lossy projection, not an exact value containing the literal placeholder.
+        safe.update(
+            complete=False, redacted=True, observed_value=None, expected_value=None, before_value=None
+        )
+    return safe
+
+
+def _structured_receipt(state: SessionState, pending: dict[str, Any], nm: Any) -> dict[str, Any]:
+    """Facts from actual producers, not from receipt prose or projection previews."""
+    from jevdual.operator_evidence import fact_record
+    from jevdual.session_operations import native_resource
+
+    binding = pending.get("binding") or state.native_binding
+    interval = pending.get("execution_interval") or {"start": time.time(), "end": time.time()}
+    operation_id = pending.get("operation_id")
+    observation = pending.get("observation") or state.last_snapshot
+    resource = native_resource(binding)
+    refs = [f"execution:{operation_id}"]
+    common = {
+        "resource": resource,
+        "binding": binding,
+        "observation": observation,
+        "started_at": interval["start"],
+        "ended_at": interval["end"],
+        "evidence_refs": refs,
+    }
+    facts = []
+    rb = pending.get("field_readback")
+    if (
+        isinstance(rb, dict)
+        and type(rb.get("schema_version")) is int
+        and rb.get("schema_version") == 1
+        and rb.get("producer") == {"name": "footwork.native", "version": 1}
+        and type(rb["producer"].get("version")) is int
+        and rb.get("predicate") == "field_equals"
+        and rb.get("complete") is True
+        and rb.get("decision_target_id") == pending.get("target_id")
+        and type(rb.get("decision_target_id")) is int
+        and type(rb.get("target_id")) is int
+        and rb.get("decision_snapshot_id") == observation
+        and isinstance(rb.get("snapshot_id"), str)
+        and rb["snapshot_id"]
+        and isinstance(rb.get("observed_value"), str)
+        and not pending.get("secret")
+    ):
+        limits = [] if rb.get("matches") is True else ["the requested field postcondition did not match"]
+        roles, frames = getattr(nm, "ax_roles", {}), getattr(nm, "frames", {})
+        same = [
+            candidate
+            for candidate in nm.menu.candidates
+            if roles.get(candidate.id) == rb.get("role")
+            and rb.get("frame") is not None
+            and list(frames.get(candidate.id) or ()) == list(rb["frame"])
+        ]
+        if len(same) != 1:
+            limits.append("the fresh observation cannot bind the field uniquely")
+        else:
+            preview = getattr(nm, "values", {}).get(same[0].id, same[0].value)
+            if not isinstance(preview, str):
+                limits.append("the fresh field value is unavailable")
+            elif not rb["observed_value"].strip().startswith(preview.strip()):
+                limits.append("the fresh field projection contradicts the earlier exact readback")
+        facts.append(
+            fact_record(
+                **common,
+                kind="current_state",
+                predicate="field_equals",
+                values=[rb["observed_value"]],
+                parameters={
+                    "source": "native.ax_insert_ack",
+                    "label": rb.get("label"),
+                    "target_id": rb["decision_target_id"],
+                    "source_target_id": rb["target_id"],
+                    "source_observation": rb["snapshot_id"],
+                    "matches": rb.get("matches") is True,
+                },
+                limits=limits,
+            )
+        )
+    elif pending.get("op") in ("type", "append"):
+        facts.append(
+            fact_record(
+                **common,
+                kind="current_state",
+                predicate="projection_field",
+                values=[],
+                parameters={"label": pending.get("target_label"), "target_id": pending.get("target_id")},
+                limits=["no complete exact field readback from a qualified producer"],
+            )
+        )
+    saved = pending.get("save_readback")
+    if isinstance(saved, dict) and saved.get("ok") is True and isinstance(saved.get("path"), str):
+        facts.append(
+            fact_record(
+                **common,
+                kind="persistence",
+                predicate="disk_equals_window",
+                values=[],
+                parameters={"path": saved["path"], "task_postcondition": "not_checked"},
+                limits=["window/disk agreement does not establish intended destination or task correctness"],
+            )
+        )
+    return {
+        "schema_version": "1",
+        "producer": {"name": "footwork.session", "version": 1},
+        "session_id": state.session_id,
+        "operation_id": operation_id,
+        "resource": resource,
+        "binding": binding,
+        "observation": observation,
+        "interval": interval,
+        "evidence_refs": refs,
+        "facts": facts,
+    }
+
+
 def _project_operation(state: SessionState, operations: Any, operation: Any) -> None:
     """Repair a missing JSON projection without repeating the effect or overwriting newer state."""
     projection = operations.projection(operation)
@@ -311,6 +430,8 @@ def receipt_for(
         out = {k: w.replace(v, "{secret}") for k, w in out.items()}
     if "dispatched" in state.pending:
         out["dispatched"] = state.pending["dispatched"]
+    if state.authority and state.pending.get("operation_id"):
+        out["structured_evidence"] = _structured_receipt(state, state.pending, nm)
     return out
 
 
@@ -591,12 +712,20 @@ async def observe(
         shots = state.path / "screenshots"
         shots.mkdir(exist_ok=True)
         shot = str(shots / f"obs-{state.step:03d}-{int(time.time())}.png")
+    started_at = time.time()
     nm = await bridge.observe(screenshot_path=shot)
-    return finish_observation(state, nm, secret_value=secret_value)
+    return finish_observation(
+        state, nm, secret_value=secret_value, observed_interval=(started_at, time.time())
+    )
 
 
 def finish_observation(
-    state: SessionState, nm: NativeMenu, *, secret_value: str | None = None, generation: str | None = None
+    state: SessionState,
+    nm: NativeMenu,
+    *,
+    secret_value: str | None = None,
+    generation: str | None = None,
+    observed_interval: tuple[float, float] | None = None,
 ) -> tuple[NativeMenu, dict[str, Any] | None]:
     """Reconcile the prior action before replacing its observation baseline."""
     receipt = receipt_for(state, nm, secret_value=secret_value)
@@ -610,6 +739,34 @@ def finish_observation(
     state.remember(nm)
     if generation is not None:
         state.visual_generation = generation
+    if state.authority:
+        from jevdual.session_operations import native_resource
+
+        start, end = observed_interval or (time.time(), time.time())
+        state.log(
+            {
+                "kind": "observation",
+                "schema_version": "1",
+                "producer": {"name": "footwork.session", "version": 1},
+                "session_id": state.session_id,
+                "resource": native_resource(state.native_binding),
+                "binding": state.native_binding,
+                "observation": nm.snapshot_id,
+                "generation": state.visual_generation,
+                "interval": {"start": start, "end": end},
+                "coverage": {
+                    "elements_complete": bool(getattr(nm, "elements_complete", False)),
+                    "text_truncated": bool(getattr(nm, "text_truncated", False)),
+                    "truncated": bool(getattr(nm, "truncated", False)),
+                    "degraded": bool(getattr(nm, "degraded", False)),
+                    "values_exact": False,
+                    "omitted": nm.menu.omitted,
+                },
+                "text": nm.menu.page_text,
+                "elements": [{k: getattr(c, k) for k in _CAND_FIELDS} for c in nm.menu.candidates],
+                "limits": ["projection values may be previews; window creation identity is unavailable"],
+            }
+        )
     state.save()
     return nm, receipt
 
@@ -1238,6 +1395,8 @@ async def cmd_do(args: Any) -> int:
                 "app": state.app,
             }
             prepared = _safe_operation_value(state, prepared, text if secret_used else None)
+            prepared["binding"] = dict(state.native_binding)
+            prepared["observation"] = nm.snapshot_id
             authorization_basis = _safe_operation_value(
                 state, authorization_basis, text if secret_used else None
             )
@@ -1257,6 +1416,9 @@ async def cmd_do(args: Any) -> int:
             print(f"operation: {operation.id}")
             operations.start(operation.id)
         t0 = time.perf_counter()
+        started_at = time.time()
+        ended_at = None
+        bridge_returned = False
         error = None
         eff = None
         dispatched = None  # a missing acknowledgement cannot establish no-send
@@ -1278,6 +1440,8 @@ async def cmd_do(args: Any) -> int:
                     )
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
+            ended_at = time.time()
+            bridge_returned = True
             driver_effect = eff.effect
             dispatched = getattr(eff, "dispatched", True)
             if not getattr(eff, "dispatched", True):
@@ -1321,21 +1485,55 @@ async def cmd_do(args: Any) -> int:
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
+        if operations is not None and getattr(eff, "field_readback", None) is not None:
+            state.pending["field_readback"] = _safe_field_readback(
+                state, eff.field_readback, text if secret_used else None
+            )
         if operations is not None and operation is not None:
             state.pending["step"] = state.step
             state.pending["operation_id"] = operation.id
             # Driver errors can quote arguments; resolved secrets never enter the authority store.
             state.pending = _safe_operation_value(state, state.pending, text if secret_used else None)
-            finished = operations.finish(
-                operation.id,
-                dispatched=dispatched,
-                effect=getattr(eff, "effect", "unverifiable"),
-                evidence=state.pending,
-                error=state.pending.get("error"),
-                phase="not_sent"
+            state.pending["binding"] = dict(state.native_binding)
+            state.pending["observation"] = nm.snapshot_id
+            state.pending["execution_interval"] = {"start": started_at, "end": ended_at or time.time()}
+            phase = (
+                "not_sent"
                 if dispatched is False
-                else ("sent" if getattr(eff, "delivered_count", None) else "ambiguous"),
+                else ("sent" if getattr(eff, "delivered_count", None) else "ambiguous")
             )
+            if bridge_returned:
+                from jevdual.operator_evidence import execution_record
+
+                basis = getattr(eff, "delivery_basis", "unknown")
+                record = execution_record(
+                    operation,
+                    binding=state.native_binding,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    producer_evidence={
+                        "name": "footwork.native",
+                        "version": 1,
+                        "delivery_basis": basis,
+                        "delivered_count": getattr(eff, "delivered_count", None),
+                    },
+                    dispatched=dispatched,
+                    phase=phase,
+                    effect="unverifiable" if basis == "ax_menu_press_ack" else eff.effect,
+                    projection=state.pending,
+                    error=state.pending.get("error"),
+                )
+                operations.record_execution(operation.id, record)
+                finished = operations.finish_from_execution(operation.id)
+            else:
+                finished = operations.finish(
+                    operation.id,
+                    dispatched=dispatched,
+                    effect="unverifiable",
+                    evidence=state.pending,
+                    error=state.pending.get("error"),
+                    phase=phase,
+                )
             state.pending = operations.projection(finished)
             driver_effect = state.pending["driver_effect"]
             error = state.pending.get("error")
@@ -1588,12 +1786,44 @@ async def cmd_status(args: Any) -> int:
     state = SessionState.load(session_dir(args.session))
     operations = _operations(args, state)
     if operations is not None:
+        selected = getattr(args, "operation", None)
+        if selected:
+            item = operations.get(selected)
+            if item is None or item.task != state.session_id:
+                raise NativeBridgeError("operation_not_found", "no such operation in this session")
+            items = [item]
+        else:
+            items = operations.status(state.session_id)
+        if getattr(args, "reconcile", False):
+            reconciled = []
+            for prior in items:
+                item = operations.reconcile(prior.id)
+                if (item.state, item.phase, item.disposition) != (
+                    prior.state,
+                    prior.phase,
+                    prior.disposition,
+                ):
+                    state.log(
+                        {
+                            "kind": "execution_resolution",
+                            "operation_id": item.id,
+                            "prior": {
+                                "state": prior.state,
+                                "phase": prior.phase,
+                                "disposition": prior.disposition,
+                            },
+                            "resolution": operations.receipt(item),
+                        }
+                    )
+                _project_operation(state, operations, item)
+                reconciled.append(item)
+            items = reconciled
         print(
             json.dumps(
                 {
                     "authority": state.authority,
                     "session_id": state.session_id,
-                    "operations": [operations.receipt(op) for op in operations.status(state.session_id)],
+                    "operations": [operations.receipt(op) for op in items],
                     "domain_unresolved": [
                         operations.receipt(op) for op in operations.status() if op.unresolved
                     ],
@@ -1602,6 +1832,9 @@ async def cmd_status(args: Any) -> int:
             )
         )
         return 0
+    if getattr(args, "reconcile", False) or getattr(args, "operation", None):
+        print("reconciliation requires a durable session started with --authority", file=sys.stderr)
+        return 2
     print(
         f"{state.status}: {state.app} window {state.window_id} ({state.posture}), step {state.step}, "
         f"task {state.task!r}"

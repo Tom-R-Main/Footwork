@@ -13,3 +13,7 @@ Structured observation/current-state/persistence facts retain provenance, versio
 ## Guardrails and decision
 
 No live app, provider, installation, heldout grading, permission change or public transport. Preserve old predictions/results and legacy records. Do not infer independent window birth or task correctness from the new record shape. Adopt only if real command fault/replay tests, meaningful negative cases and repository checks pass. Retain failures and append results below rather than changing the protocol after evidence.
+
+## Result
+
+SE1/SE2 held for this bounded native CLI protocol. Final validation: 1857 passed, 26 skipped; Ruff, notebook and diff checks clean. Retained runtime receipts reconcile the receipt-to-finish gap without redispatch; missing/ambiguous/tampered receipts preserve blocking. Three real SIGKILL receipt boundaries and actual command scenarios exercise custody and settlement. Exact AX facts, lossy-redaction limits, live-target linkage, malformed typed records and browser clipping are covered. Review findings were corrected; independent source review found no remaining blocker. App-specific task effects and installed diversity remain pending. See `results/structured-evidence-20261028/report.md`.

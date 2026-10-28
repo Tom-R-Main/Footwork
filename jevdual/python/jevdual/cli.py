@@ -455,6 +455,12 @@ def build_parser() -> argparse.ArgumentParser:
     common(sf)
     sf.set_defaults(fn=S.cmd_snapshot_file)
     stt = sub.add_parser("status")
+    stt.add_argument(
+        "--reconcile",
+        action="store_true",
+        help="reconcile only retained execution evidence; never resend input",
+    )
+    stt.add_argument("--operation", help="select one operation owned by this session")
     common(stt)
     stt.set_defaults(fn=S.cmd_status)
     return ap

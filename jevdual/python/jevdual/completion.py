@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-KINDS = ("current_state", "event", "answer")
+KINDS = ("current_state", "event", "answer", "persistence")
 _NAVIGATED = re.compile(r"navigated to (\S+?)[;)]?(?:\s|$)")
 _STRING = r"'(?:[^'\\\r\n]|\\.)*'|\"(?:[^\"\\\r\n]|\\.)*\""
 _HOLDS = re.compile(rf"(?P<label>{_STRING}) now holds (?P<value>{_STRING})")
@@ -112,6 +112,115 @@ def _records(session: Path) -> list[dict[str, Any]]:
     return [json.loads(ln) for ln in p.read_text().splitlines() if ln.strip()] if p.exists() else []
 
 
+def _structured_effects(record: dict[str, Any], later: list[dict[str, Any]]) -> list[Effect]:
+    """Validate the producer's scoped facts; malformed typed data never falls back to prose."""
+    from jevdual.operator_evidence import EvidenceError, validate_binding, validate_fact
+    from jevdual.session_operations import native_resource
+
+    try:
+        payload, action = record["structured_evidence"], record.get("action") or {}
+        if not isinstance(payload, dict) or set(payload) != {
+            "schema_version",
+            "producer",
+            "session_id",
+            "operation_id",
+            "resource",
+            "binding",
+            "observation",
+            "interval",
+            "evidence_refs",
+            "facts",
+        }:
+            return []
+        if payload["schema_version"] != "1" or payload["producer"] != {
+            "name": "footwork.session",
+            "version": 1,
+        }:
+            return []
+        if type(payload["producer"]["version"]) is not int:
+            return []
+        if not all(
+            isinstance(payload[k], str) and payload[k]
+            for k in ("session_id", "operation_id", "resource", "observation")
+        ):
+            return []
+        if payload["operation_id"] != action.get("operation_id") or payload["binding"] != action.get(
+            "binding"
+        ):
+            return []
+        validate_binding(payload["binding"])
+        if payload["resource"] != native_resource(payload["binding"]):
+            return []
+        if payload["observation"] != action.get("observation") or payload["interval"] != action.get(
+            "execution_interval"
+        ):
+            return []
+        reference = f"execution:{payload['operation_id']}"
+        if payload["evidence_refs"] != [reference] or not isinstance(payload["facts"], list):
+            return []
+        result = []
+        for raw in payload["facts"]:
+            fact = validate_fact(raw)
+            if any(fact[k] != payload[k] for k in ("binding", "resource", "observation", "interval")):
+                return []
+            if fact["evidence_refs"] != [reference]:
+                return []
+            limits = list(fact["limits"])
+            edited = next((item for item in later if _possible_edit(item, record)), None)
+            if edited is not None:
+                limits.append(f"a later input may have changed this state (step {edited.get('step')})")
+            parameters = fact["parameters"]
+            if fact["kind"] == "current_state" and fact["predicate"] == "field_equals":
+                if (
+                    parameters.get("source") != "native.ax_insert_ack"
+                    or type(parameters.get("target_id")) is not int
+                    or parameters["target_id"] != action.get("target_id")
+                    or type(parameters.get("source_target_id")) is not int
+                    or not isinstance(parameters.get("source_observation"), str)
+                    or not parameters["source_observation"]
+                    or not isinstance(parameters.get("label"), str)
+                    or not parameters["label"]
+                    or parameters.get("matches") is not True
+                    or len(fact["values"]) != 1
+                    or action.get("secret")
+                ):
+                    return []
+                value = fact["values"][0]
+                result.append(
+                    Effect(
+                        "field_holds",
+                        parameters["label"],
+                        "current_state",
+                        int(record.get("step") or 0),
+                        fact["interval"]["end"],
+                        f"holds {value!r} at the captured interval",
+                        (value,),
+                        tuple(limits),
+                    )
+                )
+            elif fact["kind"] == "persistence" and fact["predicate"] == "disk_equals_window":
+                path = parameters.get("path")
+                if not isinstance(path, str) or not Path(path).is_absolute() or fact["values"]:
+                    return []
+                limits.append("disk/window agreement does not establish task completion")
+                result.append(
+                    Effect(
+                        "disk_equals_window",
+                        path,
+                        "persistence",
+                        int(record.get("step") or 0),
+                        fact["interval"]["end"],
+                        "disk matched the observed window at capture",
+                        (),
+                        tuple(limits),
+                    )
+                )
+            # Projection previews and task predicates have no qualified completion producer here.
+        return result
+    except (EvidenceError, TypeError, ValueError, KeyError, AttributeError):
+        return []
+
+
 def effects(
     records: list[dict[str, Any]], *, document: str = "", carries: dict[str, Any] | None = None
 ) -> list[Effect]:
@@ -125,6 +234,9 @@ def effects(
     for index, r in enumerate(receipts):
         a = r.get("action") or {}
         op, step, t = a.get("op"), int(r.get("step") or 0), float(r.get("t") or 0.0)
+        if "structured_evidence" in r:
+            out.extend(_structured_effects(r, receipts[index + 1 :]))
+            continue
         if r.get("effect") != "confirmed":
             continue
         rb = a.get("save_readback")
