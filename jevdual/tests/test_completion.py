@@ -198,6 +198,14 @@ def test_no_send_same_field_mutation_does_not_invalidate_readback(driver_effect)
     assert item.usable
 
 
+@pytest.mark.parametrize("dispatched", [True, None])
+def test_explicit_uncertain_dispatch_overrides_legacy_refusal(dispatched):
+    later = _receipt(2, "type", "outcome unknown", driver_effect="refused", dispatched=dispatched)
+    later["effect"] = "refused"
+    (item,) = effects([_field_readback(1, "27"), later])
+    assert not item.usable
+
+
 def test_refused_same_field_action_retains_readback():
     later = _receipt(2, "type", "not changed", target_label="Quantity", target_id=1)
     later["effect"] = "refused"

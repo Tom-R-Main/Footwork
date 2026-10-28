@@ -1,0 +1,113 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_post_press_error_is_uncertain_and_never_retried[lost reply after press] _
+
+snapshot = {'app_name': 'Calculator', 'degraded': None, 'degraded_reason': None, 'element_count': 155, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108df3830>
+message = 'lost reply after press'
+
+    @pytest.mark.parametrize("message", ["lost reply after press", "AX press failed (-25204)"])
+    def test_post_press_error_is_uncertain_and_never_retried(snapshot, monkeypatch, message):
+        """The independent input ledger sees the press before the driver loses its reply."""
+        import sys
+    
+        class FailedReply(_FakeDriver):
+            async def click(self, inp):
+                self.calls.append(("click", inp))
+                raise RuntimeError(message)
+    
+        monkeypatch.setitem(
+            sys.modules,
+            "cua_driver",
+            SimpleNamespace(
+                GetWindowStateInput=lambda **kw: kw,
+                ClickInput=lambda **kw: kw,
+                ClickPosition=SimpleNamespace(ELEMENT=lambda element_token: ("element", element_token)),
+                InputDeliveryMode=SimpleNamespace(BACKGROUND="background"),
+                ActionTarget=SimpleNamespace(WINDOW=lambda pid, window_id: ("window", pid, window_id)),
+            ),
+        )
+        driver = FailedReply(snapshot)
+        bridge = NativeBridge(driver, pid=snapshot["pid"], window_id=snapshot["window_id"])
+        nm = asyncio.run(bridge.observe())
+        six = next(c for c in nm.menu.candidates if c.label == "6")
+        effect = asyncio.run(bridge.act(nm, "click", six.id))
+        assert [name for name, _ in driver.calls].count("click") == 1
+>       assert effect.effect == "unverifiable"
+E       AssertionError: assert 'refused' == 'unverifiable'
+E         
+E         - unverifiable
+E         + refused
+
+tests/test_native.py:233: AssertionError
+_ test_post_press_error_is_uncertain_and_never_retried[AX press failed (-25204)] _
+
+snapshot = {'app_name': 'Calculator', 'degraded': None, 'degraded_reason': None, 'element_count': 155, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108df6090>
+message = 'AX press failed (-25204)'
+
+    @pytest.mark.parametrize("message", ["lost reply after press", "AX press failed (-25204)"])
+    def test_post_press_error_is_uncertain_and_never_retried(snapshot, monkeypatch, message):
+        """The independent input ledger sees the press before the driver loses its reply."""
+        import sys
+    
+        class FailedReply(_FakeDriver):
+            async def click(self, inp):
+                self.calls.append(("click", inp))
+                raise RuntimeError(message)
+    
+        monkeypatch.setitem(
+            sys.modules,
+            "cua_driver",
+            SimpleNamespace(
+                GetWindowStateInput=lambda **kw: kw,
+                ClickInput=lambda **kw: kw,
+                ClickPosition=SimpleNamespace(ELEMENT=lambda element_token: ("element", element_token)),
+                InputDeliveryMode=SimpleNamespace(BACKGROUND="background"),
+                ActionTarget=SimpleNamespace(WINDOW=lambda pid, window_id: ("window", pid, window_id)),
+            ),
+        )
+        driver = FailedReply(snapshot)
+        bridge = NativeBridge(driver, pid=snapshot["pid"], window_id=snapshot["window_id"])
+        nm = asyncio.run(bridge.observe())
+        six = next(c for c in nm.menu.candidates if c.label == "6")
+        effect = asyncio.run(bridge.act(nm, "click", six.id))
+>       assert [name for name, _ in driver.calls].count("click") == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = <built-in method count of list object at 0x108fcee80>('click')
+E        +    where <built-in method count of list object at 0x108fcee80> = ['get_window_state', 'click', 'get_window_state', 'click'].count
+
+tests/test_native.py:232: AssertionError
+_______________ test_opaque_tool_error_is_not_qualified_no_send ________________
+
+    def test_opaque_tool_error_is_not_qualified_no_send():
+        reply = SimpleNamespace(action=None, text="reply lost", is_error=True, error_code="transport")
+        effect = effect_from_action_result("click", 1, "Submit", reply)
+>       assert effect.effect == "unverifiable"
+E       AssertionError: assert 'refused' == 'unverifiable'
+E         
+E         - unverifiable
+E         + refused
+
+tests/test_native.py:240: AssertionError
+________________ test_explicit_driver_refusal_qualifies_no_send ________________
+
+    def test_explicit_driver_refusal_qualifies_no_send():
+        reply = SimpleNamespace(
+            action=SimpleNamespace(effect=SimpleNamespace(name="REFUSED"), delivery=None),
+            is_error=True,
+            error_code="stale_token",
+        )
+        effect = effect_from_action_result("click", 1, "Submit", reply)
+        assert effect.effect == "refused"
+>       assert effect.dispatched is False
+E       AssertionError: assert True is False
+E        +  where True = NativeEffect(operation='click', target=1, label='Submit', effect='refused', route=None, evidence=(), summary='', error_code='stale_token', delivery=None, driver_delivery=None, dispatched=True, foreground=None, readback=None).dispatched
+
+tests/test_native.py:252: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_native.py::test_post_press_error_is_uncertain_and_never_retried[lost reply after press]
+FAILED tests/test_native.py::test_post_press_error_is_uncertain_and_never_retried[AX press failed (-25204)]
+FAILED tests/test_native.py::test_opaque_tool_error_is_not_qualified_no_send
+FAILED tests/test_native.py::test_explicit_driver_refusal_qualifies_no_send
+4 failed, 12 deselected in 0.15s

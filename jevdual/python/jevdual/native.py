@@ -480,9 +480,10 @@ def menu_from_snapshot(
 
 
 class NativeBridgeError(Exception):
-    def __init__(self, reason: str, message: str):
+    def __init__(self, reason: str, message: str, *, dispatched: bool = False):
         super().__init__(message)
         self.reason = reason
+        self.dispatched = dispatched
 
 
 def accessibility_status() -> str:
@@ -572,10 +573,23 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
     summary = str(getattr(action, "summary", None) or getattr(result, "text", "") or "")
     code = getattr(result, "error_code", None)
     delivered = _enum_name(getattr(getattr(action, "delivery", None), "mode", None))
-    if getattr(result, "is_error", False) and effect not in ("refused",):
-        effect = "refused"
+    if getattr(result, "is_error", False) and effect != "refused":
+        # An error reply alone cannot establish that input was never delivered.
+        effect = "unverifiable"
+    count = getattr(getattr(action, "delivery", None), "delivered_count", 0) or 0
+    if effect == "refused" and count > 0:
+        effect = "unverifiable"
     return NativeEffect(
-        operation, target, label, effect, route, evidence, summary, code, driver_delivery=delivered
+        operation,
+        target,
+        label,
+        effect,
+        route,
+        evidence,
+        summary,
+        code,
+        driver_delivery=delivered,
+        dispatched=effect != "refused",
     )
 
 
@@ -647,6 +661,7 @@ class NativeBridge:
         self.session = session or f"footwork-native-{uuid.uuid4().hex}"
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
+        self._foreground_inputs = 0
         self._ax = ax
         self.last: NativeMenu | None = None
         self.dispatches = 0
@@ -768,11 +783,17 @@ class NativeBridge:
             code = (
                 getattr(outcome, "code", None) or getattr(outcome, "reason", None) or type(outcome).__name__
             )
+            from jevdual.ax import AXError
+
+            if (isinstance(outcome, NativeBridgeError) and not outcome.dispatched) or (
+                isinstance(outcome, AXError) and code in _MENU_NOT_PRESSED
+            ):
+                return self._not_sent(operation, target, label, str(code), str(outcome), delivery)
             return NativeEffect(
                 operation,
                 target,
                 label,
-                "refused",
+                "unverifiable",
                 None,
                 (),
                 str(outcome)[:200],
@@ -790,9 +811,10 @@ class NativeBridge:
         if refusal is not None:
             return self._not_sent(operation, target, label, refusal.code, refusal.reason, "foreground")
         before = self.policy.before_foreground()
+        prior_inputs = self._foreground_inputs
         try:
             outcome = await call()
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+        except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
         # Give the front back when our window still holds it (bring_to_front leaves it there, and
         # invoke_menu re-activated our app 34 ms after the person had moved away, Q15 smoke 2026-09-25).
@@ -805,6 +827,9 @@ class NativeBridge:
                 before = {**before, "handed_back": target, "hand_back_ok": ok}
         rec = self.policy.after_foreground(before)
         eff = self._effect(operation, target, label, outcome, "foreground")
+        if not eff.dispatched and self._foreground_inputs != prior_inputs:
+            # A failed menu/chord gate cannot erase a title-bar click already attempted.
+            eff = dataclasses.replace(eff, effect="unverifiable", dispatched=True)
         note = "front app restored" if rec.get("restored") else "front app changed"
         return dataclasses.replace(eff, foreground=rec, summary=f"foreground ({note}); {eff.summary}"[:200])
 
@@ -828,7 +853,7 @@ class NativeBridge:
             args["session"] = self.session
         try:
             outcome = await self.driver.call_tool("press_key", json.dumps(args))
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+        except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
         if AMBIGUITY not in _refusal_text(outcome):
             return self._effect(operation, target, label, outcome, "background")
@@ -858,6 +883,7 @@ class NativeBridge:
         role = nm.ax_roles.get(id, "AXTextArea")
         frame = nm.frames.get(id)
         ax = self.ax
+        insertion_started = False
         try:
             if precondition is not None and (role != precondition.role or frame != precondition.frame):
                 return self._not_sent(
@@ -937,26 +963,23 @@ class NativeBridge:
                         "background",
                     )
             sep = "" if exact == "" or exact.endswith("\n") else "\n"
+            insertion_started = True
             before, after = ax.insert_at_end(el, sep + text, expect=exact)
         except ax.AXError as exc:
+            # insert_at_end checks this precondition before its first write. Other errors
+            # from inside insertion may originate from the readback after a successful write.
+            not_sent = not insertion_started or exc.reason == "precondition_changed"
             return NativeEffect(
                 "append",
                 id,
                 cand.label,
-                "refused",
+                "refused" if not_sent else "unverifiable",
                 "accessibility",
                 (),
                 str(exc)[:200],
                 exc.reason,
                 delivery="background",
-                dispatched=exc.reason
-                not in (
-                    "precondition_changed",
-                    "element_missing",
-                    "element_ambiguous",
-                    "window_missing",
-                    "no_value",
-                ),
+                dispatched=not not_sent,
             )
         inserted = sep + text
         if after == before + inserted:
@@ -1000,11 +1023,13 @@ class NativeBridge:
         selected first with Command-A on that element, through the key route and so through the posture.
         The field is read back: ``confirmed`` only when it holds the text."""
         label = cand.label
+        selected = False
         if nm.values.get(id, "").strip():
             sel = await self._key_route("type", id, label, "a", ["cmd"], token)
-            if not sel.dispatched or sel.effect == "refused":
+            if not sel.dispatched or sel.effect != "confirmed" or sel.error_code:
                 return dataclasses.replace(sel, summary=f"select-all before typing: {sel.summary}"[:200])
-            fresh = await self.observe()
+            selected = True
+            fresh = await self._observe_after_input()
             token = fresh.token(id) or token
         args: dict[str, Any] = {
             "pid": self.pid,
@@ -1017,12 +1042,15 @@ class NativeBridge:
             args["session"] = self.session
         try:
             outcome: Any = await self.driver.call_tool("type_text", json.dumps(args))
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+        except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
         eff = self._effect("type", id, label, outcome, "background")
-        if eff.effect == "refused":
+        typing_refused = not eff.dispatched
+        if selected and not eff.dispatched:
+            eff = dataclasses.replace(eff, effect="unverifiable", dispatched=True)
+        if typing_refused or eff.error_code or getattr(outcome, "is_error", False):
             return eff
-        after = await self.observe()
+        after = await self._observe_after_input()
         self.last = None
         same = after.menu.candidate(id)
         got = after.values.get(id, "") if same is not None and same.label == label else None
@@ -1038,6 +1066,12 @@ class NativeBridge:
                 f"value_readback: the field holds {len(got or '')} characters, not the text",
             ),
         )
+
+    async def _observe_after_input(self) -> NativeMenu:
+        try:
+            return await self.observe()
+        except NativeBridgeError as exc:
+            raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
 
     async def _click_token(self, token: str) -> Any:
         from cua_driver import ClickInput, ClickPosition, InputDeliveryMode
@@ -1128,7 +1162,7 @@ class NativeBridge:
                 if self.session:
                     args["session"] = self.session
                 outcome = await self.driver.call_tool("scroll", json.dumps(args))
-                if _refusal_text(outcome):
+                if not effect_from_action_result(operation, id, label, outcome).dispatched:
                     # a wheel the Driver will not aim at this element: Page Down to the element instead,
                     # through the key route and so through the posture (2026-09-25: a Chrome list refused)
                     return await self._key_route("scroll", id, label, "pagedown", [], token)
@@ -1136,19 +1170,8 @@ class NativeBridge:
                 raise NativeBridgeError("unsupported", f"{operation!r} has no native dispatch yet")
         except NativeBridgeError:
             raise
-        except Exception as exc:  # noqa: BLE001 - DriverError.Tool carries the refusal; keep it as evidence
-            log.info("native %s on [%s] refused: %s", operation, id, exc)
-            if self.dispatches == 1 and "-25204" in str(exc) and operation == "click":
-                # The first AX press of a fresh runtime fails with kAXErrorCannotComplete on every
-                # launch seen so far (Calculator, 2026-09-24); a refusal carries no delivery, so one
-                # retry on a fresh snapshot is not a blind replay. Recorded in the effect summary.
-                fresh = await self.observe()
-                again = fresh.menu.candidate(id)
-                if again is not None and fresh.token(id) is not None:
-                    eff = await self.act(fresh, operation, id, text)
-                    return dataclasses.replace(
-                        eff, summary=f"retried after first-press -25204; {eff.summary}"[:200]
-                    )
+        except Exception as exc:  # noqa: BLE001 - input may have landed before the error
+            log.info("native %s on [%s] outcome unknown: %s", operation, id, exc)
             return self._effect(operation, id, label, exc, "background")
         return self._effect(operation, id, label, outcome, "background")
 
@@ -1196,10 +1219,15 @@ class NativeBridge:
                 "not_key",
                 "the bound window did not become the key window and its title bar is covered; not pressed",
             )
+        self._foreground_inputs += 1
         await asyncio.to_thread(self.ax.click_at, *point)
         if await keyed():
             return
-        raise NativeBridgeError("not_key", "the bound window did not become the key window; not pressed")
+        raise NativeBridgeError(
+            "not_key",
+            "the bound window did not become the key window after a title-bar click; chord not pressed",
+            dispatched=True,
+        )
 
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
         """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and
@@ -1224,8 +1252,6 @@ class NativeBridge:
             return await self.driver.call_tool("hotkey", json.dumps(args))
 
         eff = await self._foreground("hotkey", -1, label, call, why=f"hotkey {label} (a menu key-equivalent)")
-        if eff.error_code in _MENU_NOT_PRESSED:
-            eff = dataclasses.replace(eff, dispatched=False)
         return await self._after_save(eff, keys=keys)
 
     async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
@@ -1275,9 +1301,6 @@ class NativeBridge:
         eff = await self._foreground(
             "menu", -1, label, call, why=f"menu {label} (a menu acts on the key window)"
         )
-        if eff.error_code in _MENU_NOT_PRESSED:
-            # the window took the front but nothing was pressed: say so
-            eff = dataclasses.replace(eff, dispatched=False)
         eff = dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
         return await self._after_save(eff, path=path)
 

@@ -363,13 +363,47 @@ def test_scroll_is_aimed_at_the_element_and_falls_back_through_the_posture():
     )
     assert "x" not in args and "y" not in args
 
-    d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [_refused("no frame")], "press_key": [AMBIG]})
+    refusal = _ok(effect="REFUSED")
+    d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [refusal], "press_key": [AMBIG]})
     b = bridge_for(d)
     nm = run(b.observe())
     eff = run(b.act(nm, "scroll", 3))
     assert d.names() == ["scroll", "press_key"]
     assert d.calls[-1][1]["key"] == "pagedown" and d.calls[-1][1]["element_token"] == nm.tokens[3]
     assert eff.error_code == "requires_foreground" and not eff.dispatched
+
+
+def test_opaque_scroll_error_does_not_authorize_a_second_input():
+    d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [_refused("no frame")]})
+    b = bridge_for(d)
+    eff = run(b.act(run(b.observe()), "scroll", 3))
+    assert d.names() == ["scroll"]
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+def test_append_readback_error_after_write_is_not_no_send():
+    ax = FakeAX("hello")
+    original = ax.insert_at_end
+
+    def insert_then_lose_readback(*args, **kwargs):
+        original(*args, **kwargs)
+        raise ax.AXError("no_value", "post-write AXValue unavailable")
+
+    ax.insert_at_end = insert_then_lose_readback
+    b = bridge_for(FakeDriver(doc_snapshot("hello")), ax=ax)
+    eff = run(b.act(run(b.observe()), "append", 1, "world"))
+    assert ax.text == "hello\nworld"
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+def test_title_bar_input_is_preserved_when_menu_resolution_then_fails():
+    ax = FakeAX("hello")
+    ax.focused, ax.bar, ax.click_keys = 9, (300.0, 172.0), True
+    ax.menu_error = "menu_missing"
+    b = bridge_for(FakeDriver(doc_snapshot("hello")), "foreground_permitted", fronts=(1,), ax=ax)
+    eff = run(b.menu(run(b.observe()), ["File", "Save"]))
+    assert ax.clicks == ((300.0, 172.0),) and ax.pressed == ()
+    assert eff.effect == "unverifiable" and eff.dispatched
 
 
 def test_hover_is_desktop_scoped():
@@ -657,6 +691,38 @@ def test_web_field_with_text_is_selected_first_under_the_posture():
     nm = run(b.observe())
     eff = run(b.act(nm, "type", 7, "Ada"))
     assert eff.error_code == "requires_foreground" and not eff.dispatched and "type_text" not in d.names()
+
+
+def test_uncertain_select_all_does_not_authorize_typing():
+    d = FakeDriver(_web_snapshot("old"), replies={"press_key": [_refused("reply lost")]})
+    b = bridge_for(d)
+    eff = run(b.act(run(b.observe()), "type", 7, "Ada"))
+    assert d.names() == ["press_key"]
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+def test_type_refusal_does_not_erase_prior_select_all_input():
+    d = FakeDriver(_web_snapshot("old"), replies={"type_text": [_ok(effect="REFUSED")]})
+    b = bridge_for(d)
+    eff = run(b.act(run(b.observe()), "type", 7, "Ada"))
+    assert d.names() == ["press_key", "type_text"]
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+@pytest.mark.parametrize("initial", ["", "old"])
+def test_web_observation_failure_after_input_cannot_be_no_send(initial, monkeypatch):
+    d = FakeDriver(_web_snapshot(initial))
+    b = bridge_for(d)
+    nm = run(b.observe())
+
+    async def unavailable(*args, **kwargs):
+        raise NativeBridgeError("screen_locked", "locked during readback")
+
+    monkeypatch.setattr(b, "observe", unavailable)
+    with pytest.raises(NativeBridgeError) as exc:
+        run(b.act(nm, "type", 7, "Ada"))
+    assert d.names() == (["type_text"] if not initial else ["press_key"])
+    assert exc.value.dispatched is True
 
 
 def test_a_locked_screen_refuses_every_delivery_and_observation(monkeypatch):

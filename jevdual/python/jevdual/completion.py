@@ -69,6 +69,13 @@ def _possible_edit(record: dict[str, Any], earlier: dict[str, Any]) -> bool:
     input/scope overlaps. A later qualified readback supplies its own new current-state effect.
     """
     action = record.get("action") or {}
+    # New producers record dispatch explicitly. An uncertain/attempted input can
+    # supersede prior state even when legacy prose or the diff says "refused".
+    if "dispatched" in action or "dispatched" in record:
+        dispatched = action.get("dispatched") if "dispatched" in action else record["dispatched"]
+        return (
+            action.get("op") not in _READ_ONLY and dispatched is not False and _same_surface(record, earlier)
+        )
     if (
         action.get("op") in _READ_ONLY
         or record.get("effect") not in ("confirmed", "partial", "unverifiable", "suspected_noop")

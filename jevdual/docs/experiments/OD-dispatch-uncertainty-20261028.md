@@ -17,3 +17,7 @@ Primary metric: underlying input count for one admitted simulated command after 
 ## Guardrails and decision
 
 Change no authority policy or verifier threshold. Keep secrets opaque. Distinguish cancellation from SIGKILL and simulated commands from installed qualification. If the boundary never reaches input, repair the reproduction before interpreting it. Preserve failed predictions and old-path output. Accept package 1 only when the reproduction passes after the fix, qualified no-send remains no-send, and relevant regression/lint checks pass. Durable process-death/cancellation safety belongs to the subsequent admission package.
+
+## Result
+
+OD1 and OD2 held in the simulated command/bridge harness. Post-input errors were mislabeled; the -25204 case made two input calls. Cancellation consumed authority without a do record and allowed a newly granted second press. Package 1 corrects returned/caught-error reporting, completion invalidation and uncertain follow-on input, with 1724 tests passing and 26 skipped in the final full suite. OD2 remains an explicitly reproduced open defect for durable admission. See `results/operator-dispatch-20261028/report.md` and retained before/after outputs. No live app or provider evaluation ran.

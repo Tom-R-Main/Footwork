@@ -166,7 +166,9 @@ async def test_capability_lost_setter_permission_refuses_before_input(text_capab
     assert world.content == "Invoice report"
 
 
-async def test_capability_restart_without_durable_execution_evidence_stays_unknown(text_capability, monkeypatch):
+async def test_capability_restart_without_durable_execution_evidence_stays_unknown(
+    text_capability, monkeypatch
+):
     """Baseline: a completed append whose final journal write dies loses its local evidence."""
     from jevdual.capability.backend import ScopedBackend
     from jevdual.capability.contracts import CapabilityError
@@ -219,8 +221,14 @@ def durable_text_capability(text_capability, monkeypatch):
 
     world, tools = text_capability
     tools.backend.durable = True
-    identity = {"boot": "test-boot", "pid": world.pid, "start": "0x1.0p0", "document": str(world.document),
-                "device": 1, "inode": 2}
+    identity = {
+        "boot": "test-boot",
+        "pid": world.pid,
+        "start": "0x1.0p0",
+        "document": str(world.document),
+        "device": 1,
+        "inode": 2,
+    }
     monkeypatch.setattr(recovery, "native_identity", lambda scope: dict(identity))
     monkeypatch.setattr(execution_worker, "native_identity", lambda scope: dict(identity))
     launches = []
@@ -256,7 +264,9 @@ async def _reopened_capability(tools, monkeypatch):
 
 
 @pytest.mark.parametrize("change", ["none", "content", "document", "process", "role", "frame", "ambiguous"])
-async def test_capability_durable_receipt_recovers_historical_applied_after_restart(durable_text_capability, monkeypatch, change):
+async def test_capability_durable_receipt_recovers_historical_applied_after_restart(
+    durable_text_capability, monkeypatch, change
+):
     world, tools, identity, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
     arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "durable-lost-reply"}
@@ -285,7 +295,9 @@ async def test_capability_durable_receipt_recovers_historical_applied_after_rest
         world.ambiguous = True
     restarted = await _reopened_capability(tools, monkeypatch)
     try:
-        status = await restarted.call("status", {"client_token": arguments["client_token"], "reconcile": True})
+        status = await restarted.call(
+            "status", {"client_token": arguments["client_token"], "reconcile": True}
+        )
         assert status["disposition"] == "applied" and status["resolved_by"] == "execution"
         assert status["evidence"]["readback"]["passed"] is True
         assert status["evidence"]["readback"]["historical"] is True
@@ -301,7 +313,9 @@ async def test_capability_durable_receipt_recovers_historical_applied_after_rest
         restarted.service.journal.close()
 
 
-async def test_capability_started_no_receipt_rejects_matching_external_text(durable_text_capability, monkeypatch):
+async def test_capability_started_no_receipt_rejects_matching_external_text(
+    durable_text_capability, monkeypatch
+):
     world, tools, _, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
 
@@ -335,7 +349,9 @@ async def test_capability_started_no_receipt_rejects_matching_external_text(dura
 
 
 @pytest.mark.parametrize("boundary", ["prepare", "start"])
-async def test_capability_durable_storage_admission_failure_never_launches(durable_text_capability, monkeypatch, boundary):
+async def test_capability_durable_storage_admission_failure_never_launches(
+    durable_text_capability, monkeypatch, boundary
+):
     world, tools, _, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
 
@@ -363,7 +379,9 @@ async def test_capability_second_worker_claim_cannot_replay_packet(durable_text_
     assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
 
 
-async def test_capability_worker_readback_refusal_after_input_remains_unknown(durable_text_capability, monkeypatch):
+async def test_capability_worker_readback_refusal_after_input_remains_unknown(
+    durable_text_capability, monkeypatch
+):
     from jevdual.capability.backend import ScopedBackend
     from jevdual.capability.contracts import CapabilityError
 
@@ -631,14 +649,14 @@ def test_background_only_sends_no_hotkey(world, fw):
     assert world.tool_calls == [] and world.presses == []
 
 
-def test_a_driver_refusal_is_reported_and_the_receipt_follows_the_window(world, fw):
+def test_an_opaque_driver_error_does_not_claim_no_delivery(world, fw):
     fw("start", "Compute 8", "--app", "Calculator")
     _, out, _ = fw("look")
     world.refuse.add("8")
     code, out, _ = fw("do", "click", str(_id(out, "8")), "--no-judge")
-    assert code == 0 and "driver says refused" in out and world.presses == []
-    assert "receipt: Receipt for click(8): refused" in out
-    assert _state(fw)["memory"] == ["step 1: click(8) -> refused"]
+    assert code == 0 and "driver says unverifiable" in out and world.presses == []
+    assert "receipt: Receipt for click(8): unverifiable" in out
+    assert _state(fw)["memory"] == ["step 1: click(8) -> unverifiable"]
 
 
 # ---- package G: a carried value, its provenance and the exact saved-file oracle ----
@@ -700,10 +718,17 @@ def test_a_key_and_a_return_go_to_the_judge_through_the_real_command(world, fw):
         _Verifier.p = 0.05
 
 
-@pytest.mark.parametrize("words", [
-    ("click", "All Clear"), ("key", "Tab"), ("hotkey", "cmd", "s"),
-    ("menu", "File > Save"), ("enter", "All Clear"), ("navigate", "http://127.0.0.1/fixture"),
-])
+@pytest.mark.parametrize(
+    "words",
+    [
+        ("click", "All Clear"),
+        ("key", "Tab"),
+        ("hotkey", "cmd", "s"),
+        ("menu", "File > Save"),
+        ("enter", "All Clear"),
+        ("navigate", "http://127.0.0.1/fixture"),
+    ],
+)
 def test_missing_required_judge_pauses_operator_routes(world, fw, monkeypatch, words):
     import jevdual.keys
     from jevdual.native import NativeBridge
@@ -765,6 +790,72 @@ def test_observations_remain_available_without_judgment_credentials(world, fw, m
     code, out, err = fw("look")
     assert code == 0 and "All Clear" in out, (out, err)
     assert world.presses == []
+
+
+def test_post_press_driver_error_is_not_reported_as_refusal(world, fw, monkeypatch):
+    original = world.click
+
+    async def press_then_fail(inp):
+        await original(inp)
+        raise RuntimeError("post-press acknowledgement lost")
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(world, "click", press_then_fail)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["All Clear"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    action = next(r for r in records if r["kind"] == "do")
+    assert action["driver_effect"] == "unverifiable", action
+    assert "not applied" not in out
+    assert "unverifiable" in out
+
+
+def test_post_press_outer_runtime_error_remains_uncertain(world, fw, monkeypatch):
+    from jevdual.native import NativeBridge
+
+    original = NativeBridge.act
+
+    async def press_then_fail(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise RuntimeError("bridge reply lost after input")
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(NativeBridge, "act", press_then_fail)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["All Clear"]
+    assert "not dispatched" not in out and "not applied" not in out
+    assert "unverifiable" in out
+
+
+def test_cancelled_granted_press_characterizes_missing_durable_intent(world, fw, monkeypatch):
+    """OD2 diagnosis; durable admission must replace this characterization with safety assertions."""
+    import asyncio
+
+    from jevdual.native import NativeBridge
+
+    original = NativeBridge.act
+
+    async def press_then_cancel(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise asyncio.CancelledError()
+
+    fw("start", "Compute", "--app", "Calculator")
+    fw("grant", "click", "Delete")
+    monkeypatch.setattr(NativeBridge, "act", press_then_cancel)
+    with pytest.raises(asyncio.CancelledError):
+        fw("do", "click", "Delete", "--no-judge")
+    assert world.presses == ["Delete"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert any(r["kind"] == "grant_used" for r in records)
+    assert not any(r["kind"] == "do" for r in records)
+    assert json.loads((fw.session / "grants.json").read_text())[0]["uses_left"] == 0
+    monkeypatch.setattr(NativeBridge, "act", original)
+    fw("grant", "click", "Delete")
+    code, _, err = fw("do", "click", "Delete", "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["Delete", "Delete"]
 
 
 def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, monkeypatch):

@@ -157,14 +157,25 @@ def receipt_for(
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     r = _save_receipt(r, state.pending)
     r = _outside_receipt(r, state.pending)
+    if state.pending.get("error") and state.pending.get("dispatched", False) is not False:
+        # A failed acknowledgement is not evidence of non-delivery. The diff
+        # receipt's error handling historically called every error a refusal.
+        r = dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence="input outcome unknown after error: " + str(state.pending["error"]),
+        )
     if r.effect == "suspected_noop" and state.pending.get("driver_effect") == "confirmed":
         # the driver confirmed the press but nothing on the menu changed: say both
         text = receipt_text(r) + " The driver reported the press as delivered."
     else:
         text = receipt_text(r)
     out = {"effect": r.effect, "evidence": r.evidence, "text": text}
+    # Scrub text fields before adding non-text metadata below.
     for v in _secret_values(state, secret_value):
         out = {k: w.replace(v, "{secret}") for k, w in out.items()}
+    if "dispatched" in state.pending:
+        out["dispatched"] = state.pending["dispatched"]
     return out
 
 
@@ -287,8 +298,12 @@ def _field_receipt(
     error = pending.get("error") or getattr(r, "error", None)
     if (
         r.effect == "refused"
-        or error
-        or pending.get("driver_effect") in ("not sent", "not dispatched", "refused")
+        or ("dispatched" not in pending and error)
+        or pending.get("dispatched") is False
+        or (
+            "dispatched" not in pending
+            and pending.get("driver_effect") in ("not sent", "not dispatched", "refused")
+        )
     ):
         return dataclasses.replace(
             r, effect="refused", evidence=f"not applied: {str(error or pending.get('driver_effect'))[:120]}"
@@ -985,7 +1000,8 @@ async def cmd_do(args: Any) -> int:
         state.step += 1
         t0 = time.perf_counter()
         error = None
-        eff = None  # a raised dispatch leaves no effect; the refusal below is still recorded
+        eff = None
+        dispatched = None  # a missing acknowledgement cannot establish no-send
         try:
             if op == "navigate":
                 eff = await bridge.navigate(text or "")
@@ -1005,19 +1021,25 @@ async def cmd_do(args: Any) -> int:
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
             driver_effect = eff.effect
+            dispatched = getattr(eff, "dispatched", True)
             if not getattr(eff, "dispatched", True):
                 # the posture refused it: nothing reached any window
                 driver_effect = "not sent"
                 error = f"{eff.error_code}: {eff.summary[:140]}"
             elif eff.effect == "refused":
-                error = f"driver refused: {eff.error_code or ''} {eff.summary[:100]}".strip()
+                driver_effect = "unverifiable"
+                error = f"input outcome unknown: {eff.error_code or ''} {eff.summary[:100]}".strip()
+            elif eff.error_code:
+                error = f"{eff.error_code}: {eff.summary[:140]}"
         except (NativeBridgeError, RuntimeError) as exc:
-            driver_effect = "not dispatched"
+            dispatched = getattr(exc, "dispatched", None)
+            driver_effect = "not dispatched" if dispatched is False else "unverifiable"
             error = f"{getattr(exc, 'reason', 'error')}: {exc}"[:160]
         exec_ms = (time.perf_counter() - t0) * 1000
         state.pending = {
             "line": line,
             "driver_effect": driver_effect,
+            "dispatched": dispatched,
             "error": error,
             "exec_ms": exec_ms,
             "op": op,
