@@ -16,6 +16,7 @@ import socket
 import sqlite3
 import threading
 import time
+import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
@@ -102,7 +103,19 @@ class TicketStore:
                 );
                 CREATE TABLE IF NOT EXISTS fixture_state (key TEXT PRIMARY KEY, value TEXT NOT NULL);
             """)
+            columns = {row[1] for row in db.execute("PRAGMA table_info(ingress)")}
+            if "origin" not in columns:
+                db.execute("ALTER TABLE ingress ADD COLUMN origin TEXT")
+            db.execute("INSERT OR IGNORE INTO fixture_state VALUES ('fixture_id',?)", (uuid.uuid4().hex,))
         self.path.chmod(0o600)
+
+    def bind_origin(self, origin: str) -> None:
+        """Register this fixture server's current origin without replacing its durable identity."""
+        from jevdual.ticket_evidence import normalize_origin
+
+        origin = normalize_origin(origin)
+        with self._db() as db:
+            db.execute("INSERT OR REPLACE INTO fixture_state VALUES ('origin',?)", (origin,))
 
     @contextlib.contextmanager
     def _db(self):
@@ -116,7 +129,9 @@ class TicketStore:
         finally:
             db.close()
 
-    def record(self, body: bytes, *, lose_reply_once: bool = False) -> tuple[dict, str | None, bool]:
+    def record(
+        self, body: bytes, *, lose_reply_once: bool = False, origin: str | None = None
+    ) -> tuple[dict, str | None, bool]:
         error = None
         fields: dict[str, str] = {}
         try:
@@ -137,8 +152,8 @@ class TicketStore:
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
             db.execute(
-                "INSERT INTO ingress(received,body_sha,fields,error) VALUES (?,?,?,?)",
-                (time.time(), hashlib.sha256(body).hexdigest(), _json(fields), error),
+                "INSERT INTO ingress(received,body_sha,fields,error,origin) VALUES (?,?,?,?,?)",
+                (time.time(), hashlib.sha256(body).hexdigest(), _json(fields), error, origin),
             )
             if error is None:
                 db.execute(
@@ -223,10 +238,22 @@ class TicketStore:
 class TicketFixture:
     """Loopback-only actual POST form with a persistent independent ledger."""
 
-    def __init__(self, root: Path, *, lose_reply_once: bool = False, port: int = 0):
+    def __init__(
+        self,
+        root: Path,
+        *,
+        lose_reply_once: bool = False,
+        port: int = 0,
+        reply_loss: str = "disconnect",
+    ):
+        if not isinstance(reply_loss, str) or reply_loss not in {"disconnect", "truncated"}:
+            raise QualificationError("unsupported reply-loss mode")
+        if reply_loss != "disconnect" and not lose_reply_once:
+            raise QualificationError("truncated reply loss requires lose_reply_once")
         self.root = Path(root).resolve()
         self.store = TicketStore(self.root / "tickets.sqlite")
         self.lose_reply_once = lose_reply_once
+        self.reply_loss = reply_loss
         fixture = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -267,13 +294,24 @@ class TicketFixture:
                     fixture.store.reject(body, "origin_refused")
                     self.send_error(403)
                     return
-                fields, error, lost = fixture.store.record(body, lose_reply_once=fixture.lose_reply_once)
+                fields, error, lost = fixture.store.record(
+                    body, lose_reply_once=fixture.lose_reply_once, origin=fixture.url
+                )
+                data = _json({"recorded": error is None, "fields": fields, "error": error}).encode()
                 if lost:
+                    if fixture.reply_loss == "truncated":
+                        # This is an incomplete application response after known
+                        # status/headers, distinct from the legacy zero-byte TCP
+                        # disconnect that a browser can automatically replay.
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.send_header("Content-Length", str(len(data)))
+                        self.end_headers()
+                        self.wfile.flush()
                     with contextlib.suppress(OSError):
                         self.connection.shutdown(socket.SHUT_RDWR)
                     self.connection.close()
                     return
-                data = _json({"recorded": error is None, "fields": fields, "error": error}).encode()
                 self.send_response(400 if error else 200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(data)))
@@ -286,6 +324,7 @@ class TicketFixture:
         self.server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
         self.server.daemon_threads = True
         self.url = f"http://127.0.0.1:{self.server.server_port}"
+        self.store.bind_origin(self.url)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
 
     def __enter__(self):
@@ -386,7 +425,7 @@ class HandoffRun:
                     or op.created < row.get("began", float("inf"))
                 ):
                     raise QualificationError("recorded execution proof changed")
-                retained = operations._retained_execution(op)
+                retained = operations.qualified_receipt(op)
                 if retained is None or retained["projection"].get("app") not in APP_NAMES[row["stage"]]:
                     raise QualificationError("recorded application proof changed")
                 current.append(operations.receipt(op))
@@ -454,7 +493,7 @@ class HandoffRun:
                     raise QualificationError("operation belongs to another runtime session")
                 if op.created < state["active"]["began"]:
                     raise QualificationError("operation predates this handoff")
-                retained = operations._retained_execution(op)
+                retained = operations.qualified_receipt(op)
                 if (
                     retained is None
                     or retained["phase"] != "sent"
@@ -551,16 +590,32 @@ def main() -> None:
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--lose-reply-once", action="store_true")
+    parser.add_argument("--reply-loss", choices=("disconnect", "truncated"))
     args = parser.parse_args()
+    if args.reply_loss is not None and not args.lose_reply_once:
+        parser.error("--reply-loss requires --lose-reply-once")
 
     def stop(*_):
         raise SystemExit(0)
 
     signal.signal(signal.SIGTERM, stop)
     try:
-        with TicketFixture(args.root, port=args.port, lose_reply_once=args.lose_reply_once) as fixture:
+        with TicketFixture(
+            args.root,
+            port=args.port,
+            lose_reply_once=args.lose_reply_once,
+            reply_loss=args.reply_loss or "disconnect",
+        ) as fixture:
             print(
-                _json({"url": fixture.url, "pid": os.getpid(), "database": str(fixture.store.path)}),
+                _json(
+                    {
+                        "url": fixture.url,
+                        "pid": os.getpid(),
+                        "database": str(fixture.store.path),
+                        "lose_reply_once": fixture.lose_reply_once,
+                        "reply_loss": fixture.reply_loss,
+                    }
+                ),
                 flush=True,
             )
             while True:

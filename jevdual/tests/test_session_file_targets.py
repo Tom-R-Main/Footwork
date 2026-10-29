@@ -220,6 +220,10 @@ class FinderWorld(World):
     async def call_tool(self, name, args_json):
         arguments = json.loads(args_json)
         self.tool_calls.append((name, arguments))
+        if name == "bring_to_front":
+            assert arguments["pid"] == 77 and arguments["window_id"] == self.window_id
+            assert arguments["session"]
+            return SimpleNamespace(action=None, text="", is_error=False, error_code=None, structured_json=None)
         assert name == "hotkey"
         assert arguments["pid"] == 77 and arguments["window_id"] == self.window_id
         assert arguments["keys"] == ["Return"] and arguments["delivery_mode"] == "foreground"

@@ -40,6 +40,13 @@ CREATE TABLE IF NOT EXISTS operator_admissions (
 CREATE TABLE IF NOT EXISTS operator_execution_receipts (
     operation TEXT PRIMARY KEY, body TEXT NOT NULL, digest TEXT NOT NULL, recorded REAL NOT NULL
 );
+CREATE TABLE IF NOT EXISTS operator_service_receipts (
+    operation TEXT PRIMARY KEY, body TEXT NOT NULL, digest TEXT NOT NULL, recorded REAL NOT NULL
+);
+CREATE TABLE IF NOT EXISTS operator_ticket_claims (
+    source TEXT NOT NULL, nonce TEXT NOT NULL, operation TEXT NOT NULL UNIQUE,
+    PRIMARY KEY(source,nonce)
+);
 """
 
 
@@ -244,6 +251,28 @@ class SessionOperations(Journal):
                 "INSERT INTO operator_admissions VALUES (?,?,?,?,?)",
                 (op_id, PROTOCOL, raw_request, authorization_basis, raw_projection),
             )
+            if "ticket_submission" in projection:
+                from jevdual.ticket_evidence import digest, validate_preparation
+
+                prepared = projection["ticket_submission"]
+                if projection.get("app") not in ("Google Chrome", "Chrome") or resource != native_resource(
+                    projection.get("binding", {})
+                ):
+                    raise JournalError("ticket admission requires its bound native Chrome resource")
+                validate_preparation(self._get(db, op_id), prepared, projection.get("binding"))
+                source = digest(prepared["scope"]["source"])
+                nonce = prepared["scope"]["expected"]["request_id"]
+                claim = db.execute(
+                    "SELECT operation FROM operator_ticket_claims WHERE source=? AND nonce=?", (source, nonce)
+                ).fetchone()
+                if claim is not None:
+                    old = self._get(db, claim["operation"])
+                    if old.state != "final" or old.disposition != "not_sent":
+                        raise JournalError("ticket nonce already belongs to an admitted attempt")
+                    db.execute(
+                        "DELETE FROM operator_ticket_claims WHERE source=? AND nonce=?", (source, nonce)
+                    )
+                db.execute("INSERT INTO operator_ticket_claims VALUES (?,?,?)", (source, nonce, op_id))
             if grant is not None:
                 db.execute(
                     "UPDATE operator_grants SET available=available-1 WHERE session=? AND id=?",
@@ -402,7 +431,7 @@ class SessionOperations(Journal):
             error=record["error"],
         )
 
-    def reconcile(self, op_id: str) -> Operation:
+    def _reconcile_execution(self, op_id: str) -> Operation:
         """Resolve only from a retained returned execution record; never dispatch or read the app."""
         from jevdual.operator_evidence import EvidenceError
 
@@ -453,6 +482,93 @@ class SessionOperations(Journal):
                 self._settle(db, op_id, settlement)
             self._event(db, op_id, "execution_reconciled", {"disposition": disposition, "phase": phase})
             return self._get(db, op_id)
+
+    def _ticket_preparation(self, op: Operation) -> dict[str, Any] | None:
+        row = self._db.execute(
+            "SELECT projection FROM operator_admissions WHERE operation=?", (op.id,)
+        ).fetchone()
+        return json.loads(row[0]).get("ticket_submission") if row else None
+
+    def _retained_service(self, op: Operation) -> dict[str, Any] | None:
+        from jevdual.ticket_evidence import TicketEvidenceError, validate_receipt
+
+        row = self._db.execute(
+            "SELECT * FROM operator_service_receipts WHERE operation=?", (op.id,)
+        ).fetchone()
+        if row is None:
+            return None
+        if hashlib.sha256(row["body"].encode()).hexdigest() != row["digest"]:
+            raise TicketEvidenceError("retained service receipt integrity failed")
+        record = validate_receipt(
+            json.loads(row["body"]), op, self._ticket_preparation(op), self._execution_binding(op.id)
+        )
+        if record["interval"]["end"] > row["recorded"]:
+            raise TicketEvidenceError("service receipt predates its capture")
+        return record
+
+    def qualified_receipt(self, op: Operation) -> dict[str, Any] | None:
+        """Retained historical proof, preserving service and native evidence as distinct kinds."""
+        service = self._retained_service(op)
+        return service if service is not None else self._retained_execution(op)
+
+    def _reconcile_ticket(self, op: Operation) -> Operation:
+        from jevdual.ticket_evidence import TicketEvidenceError, canonical, qualify
+
+        prepared = self._ticket_preparation(op)
+        if prepared is None or op.state != "unknown" or op.execution_stage != "started":
+            return op
+        try:
+            record = self._retained_service(op)
+            if record is None:
+                record = qualify(op, prepared, self._execution_binding(op.id))
+        except (TicketEvidenceError, ValueError, TypeError, KeyError):
+            return op
+        if record is None:
+            return op
+        body = canonical(record)
+        digest = hashlib.sha256(body.encode()).hexdigest()
+        # Retain the independent producer result before finalization, so a process
+        # dying between these transactions can reconcile without re-reading or input.
+        with self._tx() as db:
+            prior = db.execute(
+                "SELECT body,digest FROM operator_service_receipts WHERE operation=?", (op.id,)
+            ).fetchone()
+            if prior is None:
+                db.execute(
+                    "INSERT INTO operator_service_receipts VALUES (?,?,?,?)",
+                    (op.id, body, digest, time.time()),
+                )
+                self._event(db, op.id, "service_receipt_retained", {"kind": record["kind"], "digest": digest})
+            elif (prior["body"], prior["digest"]) != (body, digest):
+                raise JournalError("service receipt is immutable")
+        with self._tx() as db:
+            current = self._get(db, op.id)
+            if current.state != "unknown":
+                return current
+            evidence = {
+                **current.evidence,
+                "service_receipt": record,
+                "independent_effect": "confirmed",
+                "prior_uncertainty": {"phase": current.phase, "error": current.error},
+                "error": None,
+            }
+            db.execute(
+                "UPDATE operations SET state='final',disposition='applied',phase='sent',evidence=?,error=NULL,resolved_by='ticket_ledger',updated=? WHERE id=?",
+                (_json(evidence), time.time(), op.id),
+            )
+            self._settle(db, op.id, "spent")
+            self._event(
+                db,
+                op.id,
+                "service_reconciled",
+                {"disposition": "applied", "producer": record["producer"], "receipt_digest": digest},
+            )
+            return self._get(db, op.id)
+
+    def reconcile(self, op_id: str) -> Operation:
+        """Resolve a returned native receipt or pre-admitted independent service event; no input."""
+        op = self._reconcile_execution(op_id)
+        return self._reconcile_ticket(op) if op.state == "unknown" else op
 
     def status(self, session_id: str | None = None) -> list[Operation]:
         if session_id is not None:

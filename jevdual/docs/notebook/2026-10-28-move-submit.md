@@ -97,3 +97,10 @@ Hypothesis: Copy from the exact source window and Move Item Here in a separately
 Test: open both owned folders during fixture setup; register the unique destination window via its protected marker before admission; revalidate it before focusing and before Move Item Here. Fresh live rename/move, wrong/duplicate/stale destination-window scenarios and same-inode/bytes/sibling oracle.
 Predicts: five acknowledged AX selection/menu inputs and exact source/destination readbacks qualify the move; missing or mismatched destination binding refuses before file input.
 Against: another window receives the move, contents/inode change, or the qualified destination loses focus and the move still proceeds.
+
+## MSU7 · update · 2026-10-28 22:22
+Resolves: MS1 = failed; MS7 = failed; MS10 = held
+Observed: the modal route never completed a qualified move. After closing verified owned leftover modal windows, a fresh two-window development run completed rename and Move Item Here; the independent oracle confirmed destination, unchanged bytes, same inode and untouched siblings. Original move-token replay sent no input. Public/producer challenges rejected missing/changed/duplicate destination bindings, stale clipboard and lost focus. An earlier two-window rename refused before input while owned modals remained; that no-send is retained.
+Inferred: qualify only the explicit two-window route; do not infer modal support or active-human coexistence.
+Next: freeze source, install its offline wheel and run nominal/interrupted/response-loss full chains.
+Refs: output/move-submit-20261028/two-window-dev2; tests/test_session_finder_move.py; tests/test_finder_move.py

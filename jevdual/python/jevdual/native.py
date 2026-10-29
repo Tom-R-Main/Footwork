@@ -1269,18 +1269,273 @@ class NativeBridge:
     async def act_file(
         self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
     ) -> NativeEffect:
-        """Rename the owned Finder file in its exact front/key window through AX."""
+        """Rename or move the exact owned file through Finder's front/key UI."""
         target, id = self.resolve_file(nm, selector)
         self._require_fresh(nm, id)
+        if operation == "move":
+            self._move_plan(target.binding, text)
 
         async def call() -> NativeEffect:
             await self._front_and_key()
-            fresh = await self.observe()
-            return await self._rename_file(fresh, operation, selector, text)
+            # These routes use fresh strict AX file/inode/frame resolution, not
+            # SDK element tokens. Do not interpose another SDK capture after
+            # acquiring the key window; it can introduce another focus lifecycle.
+            if operation == "move":
+                return await self._move_file(nm, selector, text)
+            return await self._rename_file(nm, operation, selector, text)
 
         return await self._foreground(
-            operation, id, target.value, call, why="Finder filename editing requires its front/key window"
+            operation, id, target.value, call, why="Finder file editing requires its front/key window"
         )
+
+    def _move_plan(self, binding: Any, directory: str | None) -> tuple[dict[str, Any], str, dict[str, Any]]:
+        from jevdual.finder_targets import file_identity, move_destination
+
+        if not isinstance(directory, str):
+            raise NativeBridgeError("file_destination_invalid", "move requires one absolute owned directory")
+        destination = move_destination(self.finder_scope["manifest"], directory)
+        path = str(Path(directory) / Path(binding.path).name)
+        if path != str(
+            Path(self.finder_scope["manifest"]["root"]) / self.finder_scope["manifest"]["paths"]["organized"]
+        ):
+            raise NativeBridgeError(
+                "file_destination_invalid", "move must produce the declared organized path"
+            )
+        if Path(path).exists() or Path(path).is_symlink() or path == binding.path:
+            raise NativeBridgeError("file_destination_exists", "the owned move destination must be empty")
+        self._move_destination_window(directory)
+        return destination, path, file_identity(self.finder_scope["manifest"], binding)
+
+    def _move_destination_window(self, directory: str) -> dict[str, Any]:
+        """Revalidate the pre-bound second window before any move preparation."""
+        from jevdual.finder_targets import resolve_marker
+
+        registered = self.finder_scope.get("destination_window")
+        if (
+            not isinstance(registered, dict)
+            or type(registered.get("pid")) is not int
+            or registered["pid"] != self.pid
+            or type(registered.get("window_id")) is not int
+            or registered["window_id"] <= 0
+            or registered["window_id"] == self.window_id
+        ):
+            raise NativeBridgeError(
+                "file_destination_window_missing",
+                "one separately pre-bound owned destination window is required",
+            )
+        current = resolve_marker(self.pid, registered["window_id"], self.finder_scope["manifest"], directory)
+        if current != registered:
+            raise NativeBridgeError(
+                "file_destination_window_changed", "the pre-bound destination window identity changed"
+            )
+        return current
+
+    async def _move_file(self, nm: NativeMenu, selector: str, directory: str | None) -> NativeEffect:
+        """Copy the owned source and Move Item Here in its pre-bound destination window."""
+        from jevdual.finder_targets import file_identity, move_destination, rebind
+
+        target, id = self.resolve_file(nm, selector)
+        self._require_fresh(nm, id)
+        destination, path, source = self._move_plan(target.binding, directory)
+        assert directory is not None
+        registered = self._move_destination_window(directory)
+        destination_window_id = registered["window_id"]
+        self.last = None
+        self.dispatches += 1
+        count = 0
+        active_window_id = self.window_id
+        proof: dict[str, Any] = {
+            "schema_version": 1,
+            "producer": "footwork.ax.finder",
+            "predicate": "finder_move_same_inode",
+            "transfer_route": "prebound_destination_window",
+            "before": target.to_record(),
+            "source_identity": source,
+            "destination_directory": destination,
+            "destination": path,
+            "destination_window_binding": registered,
+            "acknowledgements": [],
+        }
+
+        def front() -> None:
+            context = self.ax.finder_window_context(self.pid)
+            proof["last_window_context"] = {**context, "front_pid": self.policy._activity().frontmost_pid()}
+            if (
+                proof["last_window_context"]["front_pid"] != self.pid
+                or context["main_window_id"] != active_window_id
+                or context["focused_window_id"] != active_window_id
+            ):
+                raise self.ax.AXError(
+                    "file_move_lost_focus", "the exact owned Finder move window lost foreground"
+                )
+
+        def unchanged_source() -> None:
+            if file_identity(self.finder_scope["manifest"], target.binding) != source:
+                raise self.ax.AXError(
+                    "file_source_changed", "the owned source changed during move preparation"
+                )
+            if move_destination(self.finder_scope["manifest"], directory) != destination:
+                raise self.ax.AXError(
+                    "file_destination_changed", "the owned destination changed during move preparation"
+                )
+            if Path(path).exists() or Path(path).is_symlink():
+                raise self.ax.AXError(
+                    "file_destination_changed", "the destination appeared before Move Item Here"
+                )
+
+        def acknowledge(name: str) -> None:
+            nonlocal count
+            count += 1
+            proof["acknowledgements"].append(name)
+
+        async def menu(path_parts: list[str], label: str, verify: Any = None) -> None:
+            front()
+            enabled = False
+            for _ in range(20):
+                enabled = self.ax.menu_item_enabled(self.pid, path_parts)
+                if enabled:
+                    break
+                await asyncio.sleep(0.05)
+            if not enabled:
+                raise self.ax.AXError(
+                    "file_move_menu_disabled", "the exact move workflow menu item is disabled"
+                )
+            front()
+            if verify is not None:
+                verify()
+            self.ax.press_menu(self.pid, path_parts)
+            acknowledge(label)
+
+        try:
+            front()
+            self.ax.select_finder_row_ack(target.element)
+            acknowledge("exact_row_selected")
+            if not self.ax.finder_selection_state(target.element).get("exact_row_only"):
+                raise self.ax.AXError(
+                    "file_selection_unverified", "the owned file must be the sole selected row"
+                )
+            before_clipboard = self.ax.pasteboard_change_count()
+            self.ax.press_menu(self.pid, ["Edit"])
+            acknowledge("edit_menu_opened_for_copy")
+            copy_titles = {"Copy", f"Copy “{target.value}”", f'Copy "{target.value}"'}
+            copy_paths = [
+                item.split(" > ")
+                for item in self.ax.menu_paths(self.pid)
+                if item.split(" > ")[:-1] == ["Edit"] and item.split(" > ")[-1] in copy_titles
+            ]
+            if len(copy_paths) != 1:
+                raise self.ax.AXError(
+                    "file_copy_menu_ambiguous", "one exact Copy item for the owned filename is required"
+                )
+            proof["copy_menu_path"] = copy_paths[0]
+
+            def copy_precondition() -> None:
+                unchanged_source()
+                if not self.ax.finder_selection_state(target.element).get("exact_row_only"):
+                    raise self.ax.AXError(
+                        "file_selection_changed", "the sole selected source changed before Copy"
+                    )
+
+            await menu(copy_paths[0], "copy_menu_pressed", copy_precondition)
+            copied_count = before_clipboard
+            for _ in range(20):
+                copied_count = self.ax.pasteboard_change_count()
+                if copied_count != before_clipboard:
+                    break
+                await asyncio.sleep(0.05)
+            if copied_count <= before_clipboard:
+                raise self.ax.AXError(
+                    "file_clipboard_stale", "Copy did not produce a new clipboard generation"
+                )
+            if self.ax.pasteboard_file_paths() != [target.binding.path]:
+                raise self.ax.AXError(
+                    "file_clipboard_mismatch", "Copy did not expose the exact owned file URL"
+                )
+            proof["clipboard"] = {
+                "before_change_count": before_clipboard,
+                "after_change_count": copied_count,
+                "paths": [target.binding.path],
+            }
+            unchanged_source()
+            self._move_destination_window(directory)
+            destination_bridge = NativeBridge(
+                self.driver,
+                self.pid,
+                destination_window_id,
+                policy=self.policy,
+                ax=self.ax,
+                session=self.session + "-destination",
+            )
+            try:
+                await destination_bridge._front_and_key()
+            finally:
+                self._foreground_inputs += destination_bridge._foreground_inputs
+            active_window_id = destination_window_id
+            proof["navigation"] = self._move_destination_window(directory)
+            front()
+            self.ax.press_menu(self.pid, ["Edit"])
+            acknowledge("edit_menu_opened_for_move")
+
+            def move_precondition() -> None:
+                unchanged_source()
+                if self.ax.pasteboard_change_count() != copied_count or self.ax.pasteboard_file_paths() != [
+                    target.binding.path
+                ]:
+                    raise self.ax.AXError(
+                        "file_clipboard_changed", "the copied file changed before Move Item Here"
+                    )
+                self._move_destination_window(directory)
+                front()
+
+            await menu(["Edit", "Move Item Here"], "move_item_here_pressed", move_precondition)
+            rebound = None
+            for _ in range(40):
+                try:
+                    rebound = rebind(target.binding, self.finder_scope["manifest"], "file:" + path)
+                    if not Path(target.binding.path).exists() and not Path(target.binding.path).is_symlink():
+                        break
+                except self.ax.AXError:
+                    rebound = None
+                await asyncio.sleep(0.05)
+            if (
+                rebound is None
+                or Path(target.binding.path).exists()
+                or Path(target.binding.path).is_symlink()
+            ):
+                raise self.ax.AXError("file_move_unverified", "the exact same-inode move was not established")
+            after = file_identity(self.finder_scope["manifest"], rebound)
+            if after["sha256"] != source["sha256"] or after["size"] != source["size"]:
+                raise self.ax.AXError("file_move_contents_changed", "the moved file's bytes changed")
+            if move_destination(self.finder_scope["manifest"], directory) != destination:
+                raise self.ax.AXError(
+                    "file_destination_changed", "the destination directory changed during the move"
+                )
+            proof["after"] = rebound.to_record()
+            proof["after_identity"] = after
+            return NativeEffect(
+                "move",
+                id,
+                target.value,
+                "confirmed",
+                route="accessibility",
+                summary="owned same-inode move observed after Finder UI input; count is acknowledged-input lower bound",
+                delivered_count=count,
+                delivery_basis="ax_finder_move_readback",
+                native_readback=proof,
+            )
+        except Exception as exc:  # noqa: BLE001 - acknowledged inputs cannot be erased by missing readback
+            return NativeEffect(
+                "move",
+                id,
+                target.value,
+                "unverifiable",
+                route="accessibility",
+                summary=str(exc)[:200],
+                error_code=getattr(exc, "reason", type(exc).__name__),
+                delivered_count=count or None,
+                delivery_basis="ax_finder_move_readback" if count else "unknown",
+                native_readback=proof,
+            )
 
     async def _rename_file(
         self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
@@ -1312,8 +1567,7 @@ class NativeBridge:
             raise NativeBridgeError(
                 "file_scope_invalid", "destination is outside declared fixture paths"
             ) from exc
-        fresh = await self.observe()
-        target, id = self.resolve_file(fresh, selector)
+        target, id = self.resolve_file(nm, selector)
         self.last = None
         self.dispatches += 1
         count = 0
@@ -1583,9 +1837,65 @@ class NativeBridge:
         return await self._key_route("key", -1, "+".join([*mods, key]), key, mods, None)
 
     async def _front(self) -> None:
-        """Explicit foreground escalation: the bound window made its app's key window through AX, then the
-        app activated by exact pid (the Driver's bring_to_front took 1.2 s to return while the front was
-        already ours, and resolves apps by bundle)."""
+        """Declare exact foreground intent to the SDK, then establish native activation.
+
+        The supported intent boundary ends the SDK's background restoration tails;
+        native foreground/key readback remains required before application input.
+        Callers obtain posture permission before entering this boundary.
+        """
+        if self.observation_guard is not None:
+            await self.observe()
+        try:
+            outcome = await self.driver.call_tool(
+                "bring_to_front",
+                json.dumps({"pid": self.pid, "window_id": self.window_id, "session": self.session}),
+            )
+        except Exception as exc:
+            raise NativeBridgeError(
+                "foreground_intent_failed", "the SDK foreground intent failed; application input not sent"
+            ) from exc
+        effect = effect_from_action_result("foreground_intent", -1, "foreground", outcome)
+        record = None
+        structured = getattr(outcome, "structured_json", None)
+        if structured is not None:
+            try:
+                record = json.loads(structured) if isinstance(structured, str) else structured
+                if not isinstance(record, dict) or any(
+                    key in record and (type(record[key]) is not int or record[key] != expected)
+                    for key, expected in (("pid", self.pid), ("window_id", self.window_id))
+                ):
+                    raise ValueError("foreground intent identity differs")
+            except (TypeError, ValueError) as exc:
+                raise NativeBridgeError(
+                    "foreground_intent_target_changed", "the SDK foreground intent identity was not exact"
+                ) from exc
+        verified_activation = (
+            isinstance(record, dict)
+            and record.get("code") == "bring_to_front_exact_window_verified"
+            and record.get("status") == "activated"
+            and record.get("request_accepted") is True
+            and record.get("pid") == self.pid
+            and record.get("window_id") == self.window_id
+            and isinstance(record.get("exact_window_effect"), dict)
+            and record["exact_window_effect"].get("verified") is True
+            and isinstance(record.get("observed"), dict)
+            and record["observed"].get("focused_window_id") == self.window_id
+            and record["observed"].get("frontmost_pid") == self.pid
+        )
+        # ToolResult.error_code also lifts informational structured `code`
+        # values. Only this exact success contract can override that field.
+        if (
+            getattr(outcome, "is_error", False)
+            or effect.effect == "refused"
+            or getattr(getattr(outcome, "action", None), "error", None) is not None
+            or (
+                effect.error_code
+                and not (verified_activation and effect.error_code == "bring_to_front_exact_window_verified")
+            )
+        ):
+            raise NativeBridgeError(
+                "foreground_intent_refused", "the SDK foreground intent refused; application input not sent"
+            )
         # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
         # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)
         await asyncio.to_thread(self.policy._activity().activate, self.pid)

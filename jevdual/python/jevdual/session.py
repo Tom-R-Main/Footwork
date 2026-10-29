@@ -83,6 +83,7 @@ class SessionState:
     native_binding: dict[str, Any] = field(default_factory=dict)
     native_scope: dict[str, str] = field(default_factory=dict)
     finder_scope: dict[str, Any] = field(default_factory=dict)
+    ticket_scope: dict[str, Any] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
@@ -226,6 +227,8 @@ def _operation_request(args: Any) -> dict[str, Any]:
         request["native_scope"] = dict(args._native_scope)
     if getattr(args, "_finder_scope", None):
         request["finder_scope"] = dict(args._finder_scope)
+    if getattr(args, "_ticket_scope", None):
+        request["ticket_scope"] = dict(args._ticket_scope)
     return request
 
 
@@ -535,6 +538,7 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
     basis = (execution.get("producer") or {}).get("delivery_basis")
     if execution.get("effect") == "confirmed" and basis in {
         "ax_finder_rename_readback",
+        "ax_finder_move_readback",
         "ax_menu_effect_readback",
     }:
         return dataclasses.replace(
@@ -930,6 +934,7 @@ async def cmd_start(args: Any) -> int:
         return 2
     native_scope = {}
     finder_scope = {}
+    ticket_scope = {}
     if getattr(args, "finder_manifest", None):
         if not durable or getattr(args, "browser", False) or args.app != "Finder":
             print("not starting: --finder-manifest requires durable native Finder", file=sys.stderr)
@@ -953,6 +958,27 @@ async def cmd_start(args: Any) -> int:
             return 2
         native_scope = {"url": args.native_url, "title": args.native_title or ""}
         _native_scope_guard(native_scope)
+    if getattr(args, "ticket_manifest", None):
+        if (
+            not durable
+            or getattr(args, "browser", False)
+            or args.app not in ("Google Chrome", "Chrome")
+            or not native_scope
+            or not native_scope["title"]
+        ):
+            raise NativeBridgeError(
+                "ticket_scope_invalid",
+                "ticket enrollment requires durable native Chrome and exact URL/title scope",
+            )
+        from jevdual.ticket_evidence import bind as bind_ticket
+        from jevdual.ticket_evidence import normalize_origin
+
+        spec = json.loads(Path(args.ticket_manifest).read_text())
+        if set(spec) != {"database", "url", "expected", "artifact", "root"}:
+            raise NativeBridgeError("ticket_scope_invalid", "ticket manifest has unsupported fields")
+        ticket_scope = bind_ticket(**spec)
+        if normalize_origin(native_scope["url"]) != ticket_scope["url"]:
+            raise NativeBridgeError("ticket_scope_invalid", "ticket origin differs from the native scope")
     old_metadata = d / "session.json"
     if durable or (old_metadata.exists() and SessionState.load(d).authority):
         if getattr(args, "browser", False) or getattr(args, "url", None):
@@ -990,7 +1016,7 @@ async def cmd_start(args: Any) -> int:
             if finder_scope:
                 from cua_driver import ListWindowsInput
 
-                from jevdual.finder_targets import FinderBinding, FinderTargetError, resolve
+                from jevdual.finder_targets import FinderBinding, FinderTargetError, resolve, resolve_marker
 
                 windows = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
                 matches = []
@@ -1012,6 +1038,26 @@ async def cmd_start(args: Any) -> int:
                 if len(matches) != 1:
                     raise LookupError("the owned Finder asset must appear in exactly one complete window")
                 wid, title = matches[0].window_id, matches[0].title
+                destination = str(
+                    Path(finder_scope["manifest"]["root"])
+                    / Path(finder_scope["manifest"]["paths"]["organized"]).parent
+                )
+                destinations = []
+                for window in windows.windows:
+                    if window.title != Path(destination).name:
+                        continue
+                    try:
+                        destinations.append(
+                            resolve_marker(pid, window.window_id, finder_scope["manifest"], destination)
+                        )
+                    except FinderTargetError as exc:
+                        if exc.reason == "file_destination_unverified":
+                            continue
+                        raise
+                if len(destinations) > 1:
+                    raise LookupError("the owned Finder destination must appear in exactly one window")
+                if destinations:
+                    finder_scope["destination_window"] = destinations[0]
         except LookupError as exc:
             # not running, installed but not running, or no on-screen window: say which, no traceback
             print(f"not starting: {exc}", file=sys.stderr)
@@ -1035,6 +1081,7 @@ async def cmd_start(args: Any) -> int:
             state.native_binding = native_identity(pid, wid)
             state.native_scope = native_scope
             state.finder_scope = finder_scope
+            state.ticket_scope = ticket_scope
         bridge = _native_bridge(
             driver, pid, wid, state.posture, native_scope=state.native_scope, finder_scope=state.finder_scope
         )
@@ -1303,7 +1350,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </body></html>'''
 
 
-_ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
 
 
 def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, ...], tuple[str, ...]]:
@@ -1333,7 +1380,7 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
     if len(words) < 2:
         raise SystemExit(f'{op} needs an element id or a label, e.g. {op} 65 or {op} "Telephone"')
     text = " ".join(words[2:]) if len(words) > 2 else None
-    if op in ("type", "append") and text is None:
+    if op in ("type", "append", "move") and text is None:
         raise SystemExit(f"{op} needs text")
     if words[1].lstrip("-").isdigit():
         return op, int(words[1]), text, (), ()
@@ -1402,6 +1449,7 @@ async def cmd_do(args: Any) -> int:
     token = getattr(args, "token", None)
     args._native_scope = state.native_scope
     args._finder_scope = state.finder_scope
+    args._ticket_scope = state.ticket_scope
     request = _operation_request(args)
     if operations is not None:
         token = token or uuid.uuid4().hex
@@ -1498,6 +1546,8 @@ async def cmd_do(args: Any) -> int:
                 )
                 print(render_observation(nm, text_chars=args.text, receipt=None))
                 return 4
+        if op == "move" and file_target is None:
+            raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
         judge = None
         client = None
         # every route the authorizer judges (authorize.JUDGED_ROUTES), plus navigation: a key or Return
@@ -1637,6 +1687,25 @@ async def cmd_do(args: Any) -> int:
             prepared = _safe_operation_value(state, prepared, text if secret_used else None)
             prepared["binding"] = dict(state.native_binding)
             prepared["observation"] = nm.snapshot_id
+            if state.ticket_scope and op == "click":
+                from jevdual.ticket_evidence import prepare as prepare_ticket
+
+                if (
+                    args.words != ["click", "button:Register asset"]
+                    or target is None
+                    or target.label != "Register asset"
+                ):
+                    raise NativeBridgeError(
+                        "ticket_target_invalid", "qualified submission requires click button:Register asset"
+                    )
+                for label, expected in state.ticket_scope["expected"].items():
+                    fields = [c for c in nm.menu.candidates if c.role == "textbox" and c.label == label]
+                    if len(fields) != 1 or nm.values.get(fields[0].id, "") != expected:
+                        raise NativeBridgeError(
+                            "ticket_fields_changed",
+                            "the observed form differs from the enrolled ticket intent",
+                        )
+                prepared["ticket_submission"] = prepare_ticket(state.ticket_scope)
             authorization_basis = _safe_operation_value(
                 state, authorization_basis, text if secret_used else None
             )
@@ -1664,9 +1733,9 @@ async def cmd_do(args: Any) -> int:
         dispatched = None  # a missing acknowledgement cannot establish no-send
         try:
             if file_target is not None:
-                if op != "type":
+                if op not in ("type", "move"):
                     raise NativeBridgeError(
-                        "file_operation_unsupported", "owned file selectors currently support type to rename"
+                        "file_operation_unsupported", "owned file selectors support type to rename or move"
                     )
                 eff = await bridge.act_file(nm, op, "file:" + file_target.binding.path, text)
             elif op == "navigate":
@@ -2253,7 +2322,7 @@ def _proposal(
 ) -> grants.Proposal:
     arguments = (
         text
-        if op in ("type", "append", "navigate")
+        if op in ("type", "append", "move", "navigate")
         else ("+".join(keys) if keys else " > ".join(path) or None)
     )
     return grants.Proposal(

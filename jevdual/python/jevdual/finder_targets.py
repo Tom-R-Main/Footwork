@@ -8,12 +8,13 @@ These helpers never perform file or UI mutations; native producers own input.
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
 from jevdual import ax
-from jevdual.app_oracles import OracleError, _asset_path, _read, _validate
+from jevdual.app_oracles import OracleError, _asset_path, _read, _root_fd, _validate
 
 
 class FinderTargetError(ax.AXError):
@@ -206,8 +207,21 @@ def resolve(
 ) -> FinderTarget:
     """Read the exact one Finder filename field in the freshly bound AX window."""
     rebind(binding, manifest, "file:" + binding.path)
+    matches = _filename_matches(pid, window_id, binding.path, limit=limit)
+    if len(matches) != 1:
+        raise FinderTargetError(
+            "file_target_ambiguous" if matches else "file_target_missing",
+            f"{len(matches)} Finder filename fields resolve to the exact owned file",
+        )
+    element, raw_url, role, value, frame = matches[0]
+    rebind(binding, manifest, "file:" + binding.path)
+    return FinderTarget(element, pid, window_id, binding, raw_url, role, value, frame)
+
+
+def _filename_matches(pid: int, window_id: int, path: str, *, limit: int = 4000) -> list[tuple]:
+    """Complete bounded AXURL search shared by source and destination-marker binding."""
     stack = [ax.window_element(pid, window_id)]
-    matches: list[FinderTarget] = []
+    matches: list[tuple] = []
     seen = 0
     identities: set[int] = set()
     retained: list[Any] = []
@@ -226,11 +240,11 @@ def resolve(
         if not isinstance(role, str) or not role.startswith("AX"):
             raise FinderTargetError("file_ax_unreadable", "Finder AX role is invalid")
         raw_url = _read_attribute(element, names, "AXURL", optional=True) if role == "AXTextField" else None
-        if raw_url is not None and file_url_path(raw_url) == binding.path:
+        if raw_url is not None and file_url_path(raw_url) == path:
             value = _read_attribute(element, names, "AXValue")
             frame = ax.frame_of(element)
             if (
-                value != Path(binding.path).name
+                value != Path(path).name
                 or frame is None
                 or not all(math.isfinite(v) for v in (frame.x, frame.y, frame.w, frame.h))
                 or frame.w <= 0
@@ -239,7 +253,7 @@ def resolve(
                 raise FinderTargetError(
                     "file_field_changed", "Finder file field has an unexpected value or frame"
                 )
-            matches.append(FinderTarget(element, pid, window_id, binding, str(raw_url), role, value, frame))
+            matches.append((element, str(raw_url), role, value, frame))
         children = _read_attribute(element, names, "AXChildren", optional=True)
         if children is not None:
             if isinstance(children, (str, bytes)):
@@ -253,14 +267,75 @@ def resolve(
                     "file_tree_incomplete", "Finder AX children exceed the traversal bound"
                 )
             stack.extend(reversed(children))
+    return matches
+
+
+def move_destination(manifest: dict[str, Any], directory: str) -> dict[str, Any]:
+    """Bind only the declared organized directory and its protected marker, read-only."""
+    path = _path("file:" + directory)
+    try:
+        _validate(manifest)
+        expected = Path(manifest["root"]) / Path(manifest["paths"]["organized"]).parent
+        if path != str(expected):
+            raise ValueError("destination is not the declared organized directory")
+        marker_relative = str(Path(manifest["paths"]["organized"]).parent / "keep.bin")
+        _, marker = _read(manifest, marker_relative)
+        if marker["sha256"] != manifest["protected"][marker_relative]:
+            raise ValueError("destination marker changed")
+        fd = _root_fd(Path(manifest["root"]), manifest["root_identity"])
+        try:
+            for part in expected.relative_to(manifest["root"]).parts:
+                nxt = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+                os.close(fd)
+                fd = nxt
+            info = os.fstat(fd)
+        finally:
+            os.close(fd)
+        return {
+            "path": path,
+            "device": info.st_dev,
+            "inode": info.st_ino,
+            "sentinel_path": str(expected / "keep.bin"),
+            "sentinel_identity": marker,
+        }
+    except (OracleError, OSError, ValueError, TypeError, KeyError) as exc:
+        raise FinderTargetError(
+            "file_destination_invalid", "the owned move destination is unavailable"
+        ) from exc
+
+
+def resolve_marker(pid: int, window_id: int, manifest: dict[str, Any], directory: str) -> dict[str, Any]:
+    """Prove the same bound Finder window now exposes the exact owned destination marker."""
+    destination = move_destination(manifest, directory)
+    window = ax.window_element(pid, window_id)
+    title = _read_attribute(window, _attribute_names(window), "AXTitle")
+    if title != Path(directory).name:
+        raise FinderTargetError(
+            "file_destination_unverified", "Finder's bound window title is not the destination directory"
+        )
+    matches = _filename_matches(pid, window_id, destination["sentinel_path"])
     if len(matches) != 1:
         raise FinderTargetError(
-            "file_target_ambiguous" if matches else "file_target_missing",
-            f"{len(matches)} Finder filename fields resolve to the exact owned file",
+            "file_destination_unverified", "the owned destination marker is missing or ambiguous"
         )
-    # Detect replacement or a path change while the AX tree was read.
+    if move_destination(manifest, directory) != destination:
+        raise FinderTargetError(
+            "file_destination_changed", "the owned destination changed during observation"
+        )
+    return {
+        "pid": pid,
+        "window_id": window_id,
+        "window_title": title,
+        **destination,
+        "ax_url": matches[0][1],
+        "basis": "fresh_ax_destination_marker_and_owned_directory",
+    }
+
+
+def file_identity(manifest: dict[str, Any], binding: FinderBinding) -> dict[str, Any]:
+    """Read source bytes/identity without supplying any mutation route."""
     rebind(binding, manifest, "file:" + binding.path)
-    return matches[0]
+    return _identity(manifest, binding.path)
 
 
 def candidate_id(target: FinderTarget, menu: Any) -> int:

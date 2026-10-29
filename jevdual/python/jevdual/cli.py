@@ -343,6 +343,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--finder-manifest", help="durable Finder only: owned fixture manifest for stable file:/ selectors"
     )
     st.add_argument(
+        "--ticket-manifest",
+        help="durable native Chrome: pre-bind an owned ticket ledger and exact artifact/fields",
+    )
+    st.add_argument(
         "--native-url", help="native Chrome only: exact HTTP numeric-loopback URL required before every input"
     )
     st.add_argument(
@@ -472,7 +476,7 @@ def build_parser() -> argparse.ArgumentParser:
     stt.add_argument(
         "--reconcile",
         action="store_true",
-        help="reconcile only retained execution evidence; never resend input",
+        help="reconcile retained execution or pre-admitted independent ticket evidence; never resend input",
     )
     stt.add_argument("--operation", help="select one operation owned by this session")
     common(stt)

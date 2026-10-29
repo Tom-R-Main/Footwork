@@ -330,7 +330,7 @@ def test_foreground_receipt_reports_front_app_not_restored():
     eff = run(b.hotkey(nm, ["cmd", "s"]))
     assert eff.foreground["front_before"] == 77 and eff.foreground["front_after"] == 88
     assert eff.foreground["restored"] is False and "front app changed" in eff.summary
-    assert d.names() == ["hotkey"]
+    assert d.names() == ["bring_to_front", "hotkey"]
 
 
 # ---- target identity through compound steps -------------------------------------------------------
@@ -594,7 +594,9 @@ def test_menu_hands_the_front_back_but_never_fights_the_person():
     eff = run(b.menu(nm, ["Edit", "Select All"]))
     assert ax.pressed == (["Edit", "Select All"],) and eff.dispatched and eff.route == "accessibility"
     assert eff.foreground["handed_back"] == 77 and b.policy.activity.activated == [1, 77]
-    assert ax.raised == [(1, 2)] and "invoke_menu" not in d.names() and "bring_to_front" not in d.names()
+    assert ax.raised == [(1, 2)] and d.names() == ["bring_to_front"]
+    intent = next(args for name, args in d.calls if name == "bring_to_front")
+    assert intent["pid"] == 1 and intent["window_id"] == 2 and intent["session"]
     # something re-took the front after the person moved to 99: it goes to 99, not back to 77
     d = FakeDriver(doc_snapshot("hello"))
     b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 99), during=(77, 1, 99, 1), ax=FakeAX(""))

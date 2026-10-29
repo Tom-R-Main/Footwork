@@ -21,6 +21,7 @@ BASES = frozenset(
         "ax_menu_press_ack",
         "ax_menu_effect_readback",
         "ax_finder_rename_readback",
+        "ax_finder_move_readback",
         "qualified_gate",
         "unknown",
     }
@@ -75,6 +76,9 @@ def _validate_native_readback(
         type(proof.get("schema_version")) is not int or proof.get("schema_version") != 1
     ):
         raise EvidenceError("missing qualified native readback")
+    if basis == "ax_finder_move_readback":
+        _validate_finder_move(proof, binding, effect, op, projection)
+        return
     if basis == "ax_menu_effect_readback":
         from jevdual.native import preview_menu_readback
 
@@ -173,6 +177,132 @@ def _validate_native_readback(
             original = scope.get("binding", {})
             if not original or {**original, "path": old.path} != old.to_record():
                 raise EvidenceError("Finder readback differs from admitted file identity")
+
+
+def _validate_finder_move(
+    proof: dict[str, Any], binding: dict[str, Any], effect: str, op: Any, projection: dict[str, Any]
+) -> None:
+    from jevdual.finder_targets import FinderBinding
+
+    try:
+        before = proof["before"]
+        old = FinderBinding.from_record(before["binding"])
+        args = op.args
+        words = args["words"]
+        manifest = args["finder_scope"]["manifest"]
+        original = args["finder_scope"]["binding"]
+        directory = " ".join(words[2:])
+        expected_directory = str(Path(manifest["root"]) / Path(manifest["paths"]["organized"]).parent)
+        if (
+            proof.get("producer") != "footwork.ax.finder"
+            or proof.get("predicate") != "finder_move_same_inode"
+            or op.move != "move"
+            or projection.get("app") != "Finder"
+            or len(words) < 3
+            or words[:2] != ["move", "file:" + old.path]
+            or directory != expected_directory
+            or proof.get("destination") != str(Path(directory) / Path(old.path).name)
+            or {**original, "path": old.path} != old.to_record()
+            or any(
+                type(before.get(key)) is not int or before[key] != binding[key]
+                for key in ("pid", "window_id")
+            )
+        ):
+            raise EvidenceError("Finder move differs from admitted identity or destination")
+        if effect not in {"confirmed", "partial"}:
+            return
+        new = FinderBinding.from_record(proof["after"])
+        if (
+            new.path != proof["destination"]
+            or old.path == new.path
+            or {**old.to_record(), "path": new.path} != new.to_record()
+        ):
+            raise EvidenceError("Finder move did not preserve file identity")
+        source, after = proof["source_identity"], proof["after_identity"]
+        for item, path in ((source, old.path), (after, new.path)):
+            if (
+                not isinstance(item, dict)
+                or set(item) != {"path", "device", "inode", "size", "mtime_ns", "sha256"}
+                or item["path"] != path
+                or any(
+                    type(item[k]) is not int or item[k] < 0 for k in ("device", "inode", "size", "mtime_ns")
+                )
+                or not isinstance(item["sha256"], str)
+                or len(item["sha256"]) != 64
+                or any(c not in "0123456789abcdef" for c in item["sha256"])
+            ):
+                raise EvidenceError("invalid Finder move byte proof")
+        if any(source[k] != after[k] for k in ("device", "inode", "size", "sha256")) or (
+            source["device"],
+            source["inode"],
+        ) != (old.device, old.inode):
+            raise EvidenceError("Finder move changed bytes or inode")
+        destination = proof["destination_directory"]
+        marker_path = str(Path(directory) / "keep.bin")
+        marker = destination["sentinel_identity"]
+        if (
+            destination["path"] != directory
+            or destination["sentinel_path"] != marker_path
+            or any(type(destination[k]) is not int or destination[k] < 0 for k in ("device", "inode"))
+            or marker["path"] != marker_path
+            or marker["sha256"]
+            != manifest["protected"][str(Path(manifest["paths"]["organized"]).parent / "keep.bin")]
+        ):
+            raise EvidenceError("Finder destination marker differs")
+        navigation = proof["navigation"]
+        registered = args["finder_scope"]["destination_window"]
+        if (
+            proof.get("transfer_route") != "prebound_destination_window"
+            or proof.get("destination_window_binding") != registered
+            or type(registered.get("pid")) is not int
+            or registered["pid"] != binding["pid"]
+            or type(registered.get("window_id")) is not int
+            or registered["window_id"] <= 0
+            or registered["window_id"] == binding["window_id"]
+            or navigation != registered
+        ):
+            raise EvidenceError("Finder destination registration differs")
+        if (
+            navigation.get("basis") != "fresh_ax_destination_marker_and_owned_directory"
+            or navigation.get("window_title") != Path(directory).name
+            or not isinstance(navigation.get("ax_url"), str)
+            or not navigation["ax_url"].startswith("file:")
+            or any(
+                type(navigation.get(k)) is not int or navigation[k] != registered[k]
+                for k in ("pid", "window_id")
+            )
+            or any(navigation.get(k) != v for k, v in destination.items())
+        ):
+            raise EvidenceError("Finder destination window differs")
+        clipboard = proof["clipboard"]
+        if (
+            clipboard.get("paths") != [old.path]
+            or any(
+                type(clipboard.get(k)) is not int or clipboard[k] < 0
+                for k in ("before_change_count", "after_change_count")
+            )
+            or clipboard["after_change_count"] <= clipboard["before_change_count"]
+            or proof.get("copy_menu_path")
+            not in (
+                ["Edit", "Copy"],
+                ["Edit", f"Copy “{Path(old.path).name}”"],
+                ["Edit", f'Copy "{Path(old.path).name}"'],
+            )
+        ):
+            raise EvidenceError("Finder clipboard identity differs")
+        acks = [
+            "exact_row_selected",
+            "edit_menu_opened_for_copy",
+            "copy_menu_pressed",
+            "edit_menu_opened_for_move",
+            "move_item_here_pressed",
+        ]
+        if proof.get("acknowledgements") != acks:
+            raise EvidenceError("Finder move lacks qualified input sequence")
+    except (KeyError, TypeError, AttributeError, ValueError) as exc:
+        if isinstance(exc, EvidenceError):
+            raise
+        raise EvidenceError("invalid Finder move readback") from exc
 
 
 def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict[str, Any]:
@@ -279,6 +409,7 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
                 "ax_menu_press_ack",
                 "ax_menu_effect_readback",
                 "ax_finder_rename_readback",
+                "ax_finder_move_readback",
             }
             or not count
         ):
@@ -294,8 +425,14 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     ):
         raise EvidenceError("invalid execution projection/error")
     projection = record["projection"]
-    if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback"}:
+    if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback", "ax_finder_move_readback"}:
         _validate_native_readback(projection.get("native_readback"), basis, binding, effect, op, projection)
+        if (
+            basis in {"ax_finder_rename_readback", "ax_finder_move_readback"}
+            and effect in {"confirmed", "partial"}
+            and count < len(projection["native_readback"]["acknowledgements"])
+        ):
+            raise EvidenceError("acknowledged input count contradicts native readback")
     arguments = getattr(op, "args", {})
     if not isinstance(arguments, dict) or projection.get("native_scope", {}) != arguments.get(
         "native_scope", {}

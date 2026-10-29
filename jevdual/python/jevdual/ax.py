@@ -245,6 +245,40 @@ def finder_window_context(pid: int) -> dict[str, Any]:
     return result
 
 
+def pasteboard_change_count() -> int:
+    """Clipboard generation only; never reads the person's prior clipboard content."""
+    from AppKit import NSPasteboard
+
+    count = NSPasteboard.generalPasteboard().changeCount()
+    if type(count) is not int or count < 0:
+        raise AXError("file_clipboard_unavailable", "clipboard generation is unavailable")
+    return count
+
+
+def pasteboard_file_paths() -> list[str]:
+    """Read file URLs only after the caller's acknowledged Copy changed the clipboard.
+
+    Callers retain values only when they equal their exact owned source. Other
+    representations, clipboard types and the previous content are not inspected.
+    """
+    from AppKit import NSPasteboard, NSPasteboardURLReadingFileURLsOnlyKey
+    from Foundation import NSURL
+
+    board = NSPasteboard.generalPasteboard()
+    urls = board.readObjectsForClasses_options_([NSURL], {NSPasteboardURLReadingFileURLsOnlyKey: True})
+    if urls is None or len(urls) > 16:
+        raise AXError("file_clipboard_unavailable", "bounded copied file URLs are unavailable")
+    paths = []
+    for url in urls:
+        if not url.isFileURL() or url.host() not in (None, "", "localhost"):
+            raise AXError("file_clipboard_unavailable", "copied resource is not a local file")
+        concrete = url.filePathURL()
+        if concrete is None or concrete.path() is None:
+            raise AXError("file_clipboard_unavailable", "copied file URL could not be resolved")
+        paths.append(str(concrete.path()))
+    return paths
+
+
 def document_path(pid: int, window_id: int) -> str | None:
     """The file a document window shows (its AXDocument URL as a path), or None when it names none."""
     from urllib.parse import unquote, urlsplit
