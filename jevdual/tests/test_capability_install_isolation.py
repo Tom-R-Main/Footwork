@@ -152,3 +152,50 @@ def test_generated_launches_isolate_interpreter_and_private_root(tmp_path, monke
     monkeypatch.setattr(store, "directory", lambda op_id: tmp_path / "run/packet")
     store._launch(SimpleNamespace(id="fixture"))
     assert captured[0][1:4] == ["-I", "-m", "jevdual.capability.execution_worker"]
+
+
+def test_failed_install_reports_bounded_evidence_and_keeps_failure(tmp_path, monkeypatch, capsys):
+    """The command users run must explain failure without opening a CI artifact."""
+    from types import SimpleNamespace
+
+    spec = importlib.util.spec_from_file_location("install", ROOT / "scripts/capability_clean_install.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    project = tmp_path / "project"
+    project.mkdir()
+    wheel = project / "product.whl"
+    wheel.write_bytes(b"fixture")
+    monkeypatch.setattr(module, "PROJECT", project)
+    monkeypatch.setattr(module.shutil, "which", lambda name: "fixture-uv")
+    for timed_out in (False, True):
+        run_dir = project / "output" / str(timed_out)
+
+        def run(command, timed_out=timed_out, **kwargs):
+            if command[6] == "venv":
+                venv = Path(command[-1])
+                venv.mkdir()
+                (venv / "pyvenv.cfg").write_text("include-system-site-packages = false")
+                return SimpleNamespace(returncode=0)
+            kwargs["stderr"].write("x" * 8000 + '\nDNS lookup failed\n::error::untrusted output\n')
+            kwargs["stderr"].flush()
+            if timed_out:
+                raise subprocess.TimeoutExpired(command, kwargs["timeout"])
+            return SimpleNamespace(returncode=2)
+
+        monkeypatch.setattr(module.subprocess, "run", run)
+        monkeypatch.setattr(sys, "argv", [
+            "install", "--python", sys.executable, "--wheel", str(wheel), "--run-dir", str(run_dir),
+        ])
+        assert module.main() == 1
+        report = json.loads(capsys.readouterr().out.splitlines()[-1])
+        assert report["stage"] == "install"
+        assert report["returncode"] == (-1 if timed_out else 2)
+        assert report["timed_out"] is timed_out
+        assert "DNS lookup failed" in report["stderr_tail"]
+        assert len(report["stderr_tail"]) <= 4096
+        assert Path(report["stderr_log"]).read_text().endswith("::error::untrusted output\n")
+        receipt = json.loads((run_dir / "receipt.json").read_text())
+        assert receipt["passed"] is False
+        assert receipt["commands"][-1]["timed_out"] is timed_out
+        assert len(receipt["commands"]) == 2  # No retry or false qualification.
+        assert not (run_dir / "origins.stdout.log").exists()

@@ -120,9 +120,12 @@ def main() -> int:
 
     def run(name, command, timeout=300):
         receipt["commands"].append({"stage": name, "argv": command})
+        stdout_log = root / (name + ".stdout.log")
+        stderr_log = root / (name + ".stderr.log")
+        timed_out = False
         with (
-            (root / (name + ".stdout.log")).open("w") as out,
-            (root / (name + ".stderr.log")).open("w") as err,
+            stdout_log.open("w") as out,
+            stderr_log.open("w") as err,
         ):
             try:
                 proc = subprocess.run(
@@ -130,10 +133,24 @@ def main() -> int:
                 )
                 code = proc.returncode
             except subprocess.TimeoutExpired:
+                timed_out = True
                 code = -1
-        receipt["commands"][-1]["returncode"] = code
+        receipt["commands"][-1].update(returncode=code, timed_out=timed_out)
         (root / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
-        print(json.dumps({"stage": name, "returncode": code}), flush=True)
+        report = {"stage": name, "returncode": code}
+        if code != 0:
+            # Bound console output; the full logs remain in the uploaded artifact.
+            # JSON quoting keeps child output from becoming workflow commands.
+            with stderr_log.open("rb") as err:
+                err.seek(max(0, stderr_log.stat().st_size - 4096))
+                tail = err.read(4096).decode("utf-8", errors="replace")
+            report.update(
+                timed_out=timed_out,
+                stderr_tail=tail,
+                stdout_log=str(stdout_log),
+                stderr_log=str(stderr_log),
+            )
+        print(json.dumps(report), flush=True)
         return code == 0
 
     def require(condition, code):
