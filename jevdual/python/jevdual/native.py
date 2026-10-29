@@ -13,9 +13,9 @@ Contract:
   snapshots can be replayed offline) into a :class:`NativeMenu`: the ordinary :class:`Menu`
   plus the per-id ``element_token`` map and the snapshot identity.
 * ``NativeBridge`` observes a window and executes one ``(operation, id)`` against the menu it
-  was decided from, refusing a stale menu. Every dispatch returns a :class:`NativeEffect` that
-  carries the Driver's own ``effect``/``route``/``evidence`` verbatim; ``confirmed`` is the
-  Driver's word, never ours.
+  was decided from, refusing a stale menu. Each :class:`NativeEffect` names its producer:
+  SDK results preserve the Driver's account, while bounded AX routes retain their own
+  acknowledgement and exact readback predicate. Neither establishes overall task correctness.
 
 Role mapping is conservative: an element becomes a candidate only when the Driver gave it a
 token (it advertises an action or a writable value) and its role maps to one of our operations.
@@ -198,6 +198,9 @@ class NativeMenu:
     web: frozenset[int] = frozenset()
     visual_capture: NativeVisualCapture | None = None
     visual_capture_error: str | None = None
+    #: Pre-pruning address bars for scope checks; deduplication cannot prove uniqueness.
+    scope_address_bars: tuple[tuple[int, str | None], ...] | None = None
+    chrome_scope: Any = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -473,6 +476,12 @@ def menu_from_snapshot(
             if None not in (fx, fy, fw, fh):
                 frames[cand.id] = (float(fx), float(fy), float(fw), float(fh))
 
+    scope_address_bars = tuple(
+        (candidate.id, values.get(candidate.id))
+        for candidate in candidates
+        if candidate.role in ("textbox", "searchbox")
+        and any(hint in candidate.label.casefold() for hint in ADDRESS_BAR_HINTS)
+    )
     candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
     kept = {c.id for c in candidates}
     values = {i: v for i, v in values.items() if i in kept}
@@ -514,6 +523,7 @@ def menu_from_snapshot(
         values=values,
         ax_roles=ax_roles,
         web=frozenset(i for i in web if i in kept),
+        scope_address_bars=scope_address_bars,
     )
 
 
@@ -523,9 +533,10 @@ def menu_from_snapshot(
 
 
 class NativeBridgeError(Exception):
-    def __init__(self, reason: str, message: str):
+    def __init__(self, reason: str, message: str, *, dispatched: bool = False):
         super().__init__(message)
         self.reason = reason
+        self.dispatched = dispatched
 
 
 def accessibility_status() -> str:
@@ -548,8 +559,9 @@ def require_accessibility() -> None:
 
 @dataclass(frozen=True)
 class NativeEffect:
-    """The Driver's account of one dispatched action, verbatim. ``effect`` is one of the Driver's
-    words (confirmed, partial, unverifiable, suspected_noop, refused); ``ok`` is our reading of it.
+    """One native producer's account of an action and its declared local predicate.
+    ``effect`` uses confirmed, partial, unverifiable, suspected_noop or refused.
+    ``delivery_basis`` identifies the SDK or source-qualified AX route.
 
     ``delivery`` is how the bridge declared it would reach the target before sending anything
     (background, foreground, desktop; see ``jevdual.posture``) and ``driver_delivery`` how the Driver says
@@ -572,6 +584,15 @@ class NativeEffect:
     foreground: dict[str, Any] | None = None
     #: package G: after a save, the file the window names read against its text (``save_readback``)
     readback: dict[str, Any] | None = None
+    #: Qualified acknowledged-input lower bound; uncounted SDK input is excluded.
+    #: Dispatched alone only means input was attempted.
+    delivered_count: int | None = None
+    #: Producer of qualified delivery; an attempted input has basis ``unknown``.
+    delivery_basis: str = "unknown"
+    #: Exact AX current-state readback, separate from disk/window persistence.
+    field_readback: dict[str, Any] | None = None
+    #: Source-qualified non-text UI predicates, never task-correctness claims.
+    native_readback: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -590,9 +611,15 @@ class NativeEffect:
             "delivery": self.delivery,
             "driver_delivery": self.driver_delivery,
             "dispatched": self.dispatched,
+            "delivered_count": self.delivered_count,
+            "delivery_basis": self.delivery_basis,
         }
         if self.foreground is not None:
             rec["foreground"] = dict(self.foreground)
+        if self.field_readback is not None:
+            rec["field_readback"] = dict(self.field_readback)
+        if self.native_readback is not None:
+            rec["native_readback"] = dict(self.native_readback)
         return rec
 
 
@@ -613,12 +640,34 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
         for e in (getattr(action, "evidence", None) or ())
     )
     summary = str(getattr(action, "summary", None) or getattr(result, "text", "") or "")
-    code = getattr(result, "error_code", None)
+    code = getattr(result, "error_code", None) or getattr(getattr(action, "error", None), "code", None)
     delivered = _enum_name(getattr(getattr(action, "delivery", None), "mode", None))
-    if getattr(result, "is_error", False) and effect not in ("refused",):
-        effect = "refused"
+    if getattr(result, "is_error", False) and effect != "refused":
+        # An error reply alone cannot establish that input was never delivered.
+        effect = "unverifiable"
+    count = getattr(getattr(action, "delivery", None), "delivered_count", None)
+    count = count if type(count) is int and count >= 0 else None
+    if effect == "refused" and count is not None and count > 0:
+        effect = "unverifiable"
     return NativeEffect(
-        operation, target, label, effect, route, evidence, summary, code, driver_delivery=delivered
+        operation,
+        target,
+        label,
+        effect,
+        route,
+        evidence,
+        summary,
+        code,
+        driver_delivery=delivered,
+        dispatched=effect != "refused",
+        delivered_count=count,
+        delivery_basis=(
+            "qualified_gate"
+            if effect == "refused"
+            else "sdk_delivery_count"
+            if count is not None and count > 0
+            else "unknown"
+        ),
     )
 
 
@@ -636,12 +685,30 @@ AMBIGUITY = "same_pid_keyboard_ambiguity"
 _TEXT_EDIT_ROLES = frozenset({"AXTextArea", "AXTextField", "AXComboBox", "AXSearchField"})
 
 
-def _refusal_text(outcome: Any) -> str:
-    if isinstance(outcome, BaseException):
-        return str(outcome)
-    if getattr(outcome, "is_error", False):
-        return str(getattr(outcome, "text", "") or "")
-    return ""
+def _keyboard_ambiguity_no_send(outcome: Any, effect: NativeEffect, pid: int, window_id: int) -> bool:
+    if isinstance(outcome, BaseException) or effect.error_code != AMBIGUITY:
+        return False
+    if not effect.dispatched:
+        return True
+    if getattr(outcome, "action", None) is not None or not getattr(outcome, "is_error", False):
+        return False
+    # The pinned SDK leaves action=None for error replies. Its native background
+    # gate publishes this exact target-bound shape before running an actuator.
+    structured = getattr(outcome, "structured_json", None)
+    try:
+        record = json.loads(structured) if isinstance(structured, str) else structured
+    except (TypeError, ValueError):
+        return False
+    return (
+        isinstance(record, dict)
+        and set(record) <= {"code", "effect", "pid", "window_id", "reason", "escalation"}
+        and record.get("code") == AMBIGUITY
+        and record.get("effect") == "refused"
+        and all(
+            type(record.get(key)) is int and record[key] == expected
+            for key, expected in (("pid", pid), ("window_id", window_id))
+        )
+    )
 
 
 def _norm_tail(s: str) -> str:
@@ -658,6 +725,62 @@ class AppendPrecondition:
     frame: tuple[float, float, float, float]
     document: str | None = None
     resource_check: Callable[[], bool] | None = field(default=None, repr=False, compare=False)
+
+
+def preview_menu_readback(path: list[str], before: Any, after: Any) -> dict[str, Any] | None:
+    """Qualify only the named Preview UI transition, independently of image correctness."""
+    if not isinstance(before, dict) or not isinstance(after, dict):
+        return None
+    for item in (before, after):
+        identity = item.get("identity")
+        if (
+            not isinstance(item.get("document"), str)
+            or not Path(item["document"]).is_absolute()
+            or not isinstance(identity, dict)
+            or set(identity) != {"device", "inode"}
+            or any(type(value) is not int or value < 0 for value in identity.values())
+            or any(type(item.get(key)) is not int or item[key] <= 0 for key in ("pid", "window_id"))
+            or not isinstance(item.get("undo"), list)
+            or any(not isinstance(title, str) for title in item["undo"])
+        ):
+            return None
+    if (
+        not before.get("document")
+        or not before.get("identity")
+        or before.get("document") != after.get("document")
+        or before["pid"] != after["pid"]
+        or before["window_id"] != after["window_id"]
+    ):
+        return None
+    predicate = None
+    if path in (["Tools", "Rotate Left"], ["Tools", "Rotate Right"]):
+        undo = f"Undo {path[1]}"
+        if (
+            before.get("identity") == after.get("identity")
+            and undo not in before.get("undo", [])
+            and undo in after.get("undo", [])
+        ):
+            predicate = "preview_rotate_" + path[1].split()[-1].lower() + "_ui_transition"
+    elif path == ["File", "Save"] and before.get("edited") is True and after.get("edited") is False:
+        predicate = "preview_save_ui_transition"
+    elif (
+        path == ["File", "Save"]
+        and all(
+            isinstance(item.get("sha256"), str) and re.fullmatch(r"[0-9a-f]{64}", item["sha256"])
+            for item in (before, after)
+        )
+        and before["sha256"] != after["sha256"]
+    ):
+        predicate = "preview_save_file_transition"
+    if predicate is None:
+        return None
+    return {
+        "schema_version": 1,
+        "producer": "footwork.ax.preview",
+        "predicate": predicate,
+        "before": before,
+        "after": after,
+    }
 
 
 class NativeBridge:
@@ -678,6 +801,8 @@ class NativeBridge:
         policy: Any = None,
         live_check: bool = False,
         ax: Any = None,
+        observation_guard: Callable[[NativeMenu], None] | None = None,
+        finder_scope: dict[str, Any] | None = None,
     ):
         from jevdual.posture import ExecutionPolicy
 
@@ -690,6 +815,9 @@ class NativeBridge:
         self.session = session or f"footwork-native-{uuid.uuid4().hex}"
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
+        self.observation_guard = observation_guard
+        self.finder_scope = finder_scope
+        self._foreground_inputs = 0
         self._ax = ax
         self.last: NativeMenu | None = None
         self.dispatches = 0
@@ -717,6 +845,9 @@ class NativeBridge:
             # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
             raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
         require_accessibility()
+        # Scope must be checked before retaining pixels. This bounded route uses
+        # AX observations only rather than capture a possibly changed page.
+        capture_path = screenshot_path if self.observation_guard is None else None
         snap = await self.driver.get_window_state(
             GetWindowStateInput(
                 pid=self.pid,
@@ -724,8 +855,8 @@ class NativeBridge:
                 session=self.session,
                 query=query,
                 include_accessibility_tree=True,
-                include_screenshot=screenshot_path is not None,
-                screenshot_out_file=screenshot_path,
+                include_screenshot=capture_path is not None,
+                screenshot_out_file=capture_path,
                 max_elements=max_elements,
                 max_depth=None,
                 max_dimension=None,
@@ -734,10 +865,22 @@ class NativeBridge:
                 full_output=True,
             )
         )
-        self.last = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
-        if screenshot_path is not None:
-            capture, error = _visual_capture(snap, screenshot_path)
-            self.last = dataclasses.replace(self.last, visual_capture=capture, visual_capture_error=error)
+        self.last = None
+        observed = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
+        if self.observation_guard is not None and observed.app_name in {"Chrome", "Google Chrome"}:
+            from jevdual.chrome_scope import capture
+
+            observed = dataclasses.replace(
+                observed, chrome_scope=capture(observed.pid, observed.window_id).to_record()
+            )
+        if self.observation_guard is not None:
+            self.observation_guard(observed)
+        if capture_path is not None:
+            capture, error = _visual_capture(snap, capture_path)
+            observed = dataclasses.replace(observed, visual_capture=capture, visual_capture_error=error)
+        elif screenshot_path is not None:
+            observed = dataclasses.replace(observed, visual_capture_error="scope_guard_withheld_pixels")
+        self.last = observed
         return self.last
 
     def _target(self) -> Any:
@@ -818,23 +961,45 @@ class NativeBridge:
             code,
             delivery=delivery,
             dispatched=False,
+            delivered_count=0,
+            delivery_basis="qualified_gate",
         )
 
     def _effect(self, operation: str, target: int, label: str, outcome: Any, delivery: str) -> NativeEffect:
+        if isinstance(outcome, NativeEffect):
+            return dataclasses.replace(outcome, delivery=delivery)
         if isinstance(outcome, BaseException):
             code = (
                 getattr(outcome, "code", None) or getattr(outcome, "reason", None) or type(outcome).__name__
             )
+            from jevdual.ax import AXError
+
+            if (isinstance(outcome, NativeBridgeError) and not outcome.dispatched) or (
+                isinstance(outcome, AXError) and code in _MENU_NOT_PRESSED
+            ):
+                return self._not_sent(operation, target, label, str(code), str(outcome), delivery)
             return NativeEffect(
                 operation,
                 target,
                 label,
-                "refused",
+                "unverifiable",
                 None,
                 (),
                 str(outcome)[:200],
                 str(code),
                 delivery=delivery,
+            )
+        if outcome is _PRESSED:
+            return NativeEffect(
+                operation,
+                target,
+                label,
+                "unverifiable",
+                route="accessibility",
+                summary="menu item press acknowledged; application effect not verified",
+                delivery=delivery,
+                delivered_count=1,
+                delivery_basis="ax_menu_press_ack",
             )
         eff = effect_from_action_result(operation, target, label, outcome)
         return dataclasses.replace(eff, delivery=delivery)
@@ -847,21 +1012,31 @@ class NativeBridge:
         if refusal is not None:
             return self._not_sent(operation, target, label, refusal.code, refusal.reason, "foreground")
         before = self.policy.before_foreground()
+        prior_inputs = self._foreground_inputs
         try:
             outcome = await call()
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+        except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
         # Give the front back when our window still holds it (bring_to_front leaves it there, and
         # invoke_menu re-activated our app 34 ms after the person had moved away, Q15 smoke 2026-09-25).
         # It goes to the person's latest choice during the step, never to where they were before it.
         act = self.policy._activity()
         if act.frontmost_pid() == self.pid:
-            target = self.policy.persons_choice(self.pid, before.get("front_before"))
-            if target not in (None, self.pid):
-                ok = act.activate(int(target))  # type: ignore[arg-type]
-                before = {**before, "handed_back": target, "hand_back_ok": ok}
+            restore_target = self.policy.persons_choice(self.pid, before.get("front_before"))
+            if restore_target not in (None, self.pid):
+                ok = act.activate(int(restore_target))  # type: ignore[arg-type]
+                before = {**before, "handed_back": restore_target, "hand_back_ok": ok}
         rec = self.policy.after_foreground(before)
         eff = self._effect(operation, target, label, outcome, "foreground")
+        if not eff.dispatched and self._foreground_inputs != prior_inputs:
+            # A failed menu/chord gate cannot erase a title-bar click already attempted.
+            eff = dataclasses.replace(
+                eff,
+                effect="unverifiable",
+                dispatched=True,
+                delivery_basis="unknown",
+                delivered_count=None,
+            )
         note = "front app restored" if rec.get("restored") else "front app changed"
         return dataclasses.replace(eff, foreground=rec, summary=f"foreground ({note}); {eff.summary}"[:200])
 
@@ -885,16 +1060,25 @@ class NativeBridge:
             args["session"] = self.session
         try:
             outcome = await self.driver.call_tool("press_key", json.dumps(args))
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+        except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
-        if AMBIGUITY not in _refusal_text(outcome):
-            return self._effect(operation, target, label, outcome, "background")
+        background = self._effect(operation, target, label, outcome, "background")
+        # Only the SDK's structured no-send refusal authorizes another input.
+        # Prose, exceptions and contradictory positive delivery stay uncertain.
+        if not _keyboard_ambiguity_no_send(outcome, background, self.pid, self.window_id):
+            return background
         fg = {**args, "delivery_mode": "foreground"}
+
+        async def foreground_call() -> Any:
+            if self.observation_guard is not None:
+                await self.observe()
+            return await self.driver.call_tool("press_key", json.dumps(fg))
+
         eff = await self._foreground(
             operation,
             target,
             label,
-            lambda: self.driver.call_tool("press_key", json.dumps(fg)),
+            foreground_call,
             why=f"{label} (the process owns other windows, so a background key cannot be proven to reach this one; {AMBIGUITY})",
         )
         if not eff.dispatched:
@@ -915,6 +1099,7 @@ class NativeBridge:
         role = nm.ax_roles.get(id, "AXTextArea")
         frame = nm.frames.get(id)
         ax = self.ax
+        insertion_started = False
         try:
             if precondition is not None and (role != precondition.role or frame != precondition.frame):
                 return self._not_sent(
@@ -994,28 +1179,44 @@ class NativeBridge:
                         "background",
                     )
             sep = "" if exact == "" or exact.endswith("\n") else "\n"
+            insertion_started = True
             before, after = ax.insert_at_end(el, sep + text, expect=exact)
         except ax.AXError as exc:
+            # insert_at_end checks this precondition before its first write. Other errors
+            # from inside insertion may originate from the readback after a successful write.
+            not_sent = not insertion_started or exc.reason == "precondition_changed"
             return NativeEffect(
                 "append",
                 id,
                 cand.label,
-                "refused",
+                "refused" if not_sent else "unverifiable",
                 "accessibility",
                 (),
                 str(exc)[:200],
                 exc.reason,
                 delivery="background",
-                dispatched=exc.reason
-                not in (
-                    "precondition_changed",
-                    "element_missing",
-                    "element_ambiguous",
-                    "window_missing",
-                    "no_value",
-                ),
+                dispatched=not not_sent,
+                delivered_count=0 if not_sent else None,
+                delivery_basis="qualified_gate" if not_sent else "unknown",
             )
         inserted = sep + text
+        want = before + inserted
+        complete = all(len(value) <= 65_536 for value in (before, after, want))
+        readback = {
+            "schema_version": 1,
+            "producer": {"name": "footwork.native", "version": 1},
+            "predicate": "field_equals",
+            "before_value": before if complete else None,
+            "observed_value": after if complete else None,
+            "expected_value": want if complete else None,
+            "matches": after == want,
+            "complete": complete,
+            "target_id": id,
+            "label": cand.label,
+            "role": role,
+            "frame": list(frame) if frame is not None else None,
+            "snapshot_id": nm.snapshot_id,
+        }
         if after == before + inserted:
             return NativeEffect(
                 "append",
@@ -1029,8 +1230,10 @@ class NativeBridge:
                 "appended",
                 delivery="background",
                 driver_delivery="background",
+                delivered_count=1,
+                delivery_basis="ax_insert_ack",
+                field_readback=readback,
             )
-        want = before + inserted
         diverge = next((i for i, (a, b) in enumerate(zip(after, want, strict=False)) if a != b), None)
         at = diverge if diverge is not None else min(len(after), len(want))
         return NativeEffect(
@@ -1046,6 +1249,9 @@ class NativeBridge:
             "content_mismatch",
             delivery="background",
             driver_delivery="background",
+            delivered_count=1,
+            delivery_basis="ax_insert_ack",
+            field_readback=readback,
         )
 
     async def _type_web(
@@ -1057,11 +1263,13 @@ class NativeBridge:
         selected first with Command-A on that element, through the key route and so through the posture.
         The field is read back: ``confirmed`` only when it holds the text."""
         label = cand.label
+        selected = False
         if nm.values.get(id, "").strip():
             sel = await self._key_route("type", id, label, "a", ["cmd"], token)
-            if not sel.dispatched or sel.effect == "refused":
+            if not sel.dispatched or sel.effect != "confirmed" or sel.error_code:
                 return dataclasses.replace(sel, summary=f"select-all before typing: {sel.summary}"[:200])
-            fresh = await self.observe()
+            selected = True
+            fresh = await self._observe_after_input()
             token = fresh.token(id) or token
         args: dict[str, Any] = {
             "pid": self.pid,
@@ -1074,12 +1282,21 @@ class NativeBridge:
             args["session"] = self.session
         try:
             outcome: Any = await self.driver.call_tool("type_text", json.dumps(args))
-        except Exception as exc:  # noqa: BLE001 - refusal is evidence
+        except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
         eff = self._effect("type", id, label, outcome, "background")
-        if eff.effect == "refused":
+        typing_refused = not eff.dispatched
+        if selected and not eff.dispatched:
+            eff = dataclasses.replace(
+                eff,
+                effect="unverifiable",
+                dispatched=True,
+                delivery_basis="unknown",
+                delivered_count=None,
+            )
+        if typing_refused or eff.error_code or getattr(outcome, "is_error", False):
             return eff
-        after = await self.observe()
+        after = await self._observe_after_input()
         self.last = None
         same = after.menu.candidate(id)
         got = after.values.get(id, "") if same is not None and same.label == label else None
@@ -1096,6 +1313,12 @@ class NativeBridge:
             ),
         )
 
+    async def _observe_after_input(self) -> NativeMenu:
+        try:
+            return await self.observe()
+        except NativeBridgeError as exc:
+            raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
+
     async def _click_token(self, token: str) -> Any:
         from cua_driver import ClickInput, ClickPosition, InputDeliveryMode
 
@@ -1109,6 +1332,561 @@ class NativeBridge:
                 count=None,
             )
         )
+
+    def resolve_file(self, nm: NativeMenu, selector: str) -> tuple[Any, int]:
+        """Resolve the exact retained Finder inode in this fresh window."""
+        from jevdual.finder_targets import FinderBinding, candidate_id, rebind, resolve
+
+        if not self.finder_scope or nm.app_name != "Finder":
+            raise NativeBridgeError("file_scope_missing", "an owned Finder manifest is required")
+        binding = FinderBinding.from_record(self.finder_scope["binding"])
+        binding = rebind(binding, self.finder_scope["manifest"], selector)
+        target = resolve(self.pid, self.window_id, binding, self.finder_scope["manifest"])
+        return target, candidate_id(target, nm)
+
+    async def act_file(
+        self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
+    ) -> NativeEffect:
+        """Rename or move the exact owned file through Finder's front/key UI."""
+        target, id = self.resolve_file(nm, selector)
+        self._require_fresh(nm, id)
+        if operation == "move":
+            self._move_plan(target.binding, text)
+
+        async def call() -> NativeEffect:
+            await self._front_and_key()
+            # These routes use fresh strict AX file/inode/frame resolution, not
+            # SDK element tokens. Do not interpose another SDK capture after
+            # acquiring the key window; it can introduce another focus lifecycle.
+            if operation == "move":
+                return await self._move_file(nm, selector, text)
+            return await self._rename_file(nm, operation, selector, text)
+
+        return await self._foreground(
+            operation, id, target.value, call, why="Finder file editing requires its front/key window"
+        )
+
+    def _move_plan(self, binding: Any, directory: str | None) -> tuple[dict[str, Any], str, dict[str, Any]]:
+        from jevdual.finder_targets import file_identity, move_destination
+
+        if not isinstance(directory, str):
+            raise NativeBridgeError("file_destination_invalid", "move requires one absolute owned directory")
+        destination = move_destination(self.finder_scope["manifest"], directory)
+        path = str(Path(directory) / Path(binding.path).name)
+        if path != str(
+            Path(self.finder_scope["manifest"]["root"]) / self.finder_scope["manifest"]["paths"]["organized"]
+        ):
+            raise NativeBridgeError(
+                "file_destination_invalid", "move must produce the declared organized path"
+            )
+        if Path(path).exists() or Path(path).is_symlink() or path == binding.path:
+            raise NativeBridgeError("file_destination_exists", "the owned move destination must be empty")
+        self._move_destination_window(directory)
+        return destination, path, file_identity(self.finder_scope["manifest"], binding)
+
+    def _move_destination_window(self, directory: str) -> dict[str, Any]:
+        """Revalidate the pre-bound second window before any move preparation."""
+        from jevdual.finder_targets import resolve_marker
+
+        registered = self.finder_scope.get("destination_window")
+        if (
+            not isinstance(registered, dict)
+            or type(registered.get("pid")) is not int
+            or registered["pid"] != self.pid
+            or type(registered.get("window_id")) is not int
+            or registered["window_id"] <= 0
+            or registered["window_id"] == self.window_id
+        ):
+            raise NativeBridgeError(
+                "file_destination_window_missing",
+                "one separately pre-bound owned destination window is required",
+            )
+        current = resolve_marker(self.pid, registered["window_id"], self.finder_scope["manifest"], directory)
+        if current != registered:
+            raise NativeBridgeError(
+                "file_destination_window_changed", "the pre-bound destination window identity changed"
+            )
+        return current
+
+    async def _move_file(self, nm: NativeMenu, selector: str, directory: str | None) -> NativeEffect:
+        """Copy the owned source and Move Item Here in its pre-bound destination window."""
+        from jevdual.finder_targets import file_identity, move_destination, rebind
+
+        target, id = self.resolve_file(nm, selector)
+        self._require_fresh(nm, id)
+        destination, path, source = self._move_plan(target.binding, directory)
+        assert directory is not None
+        registered = self._move_destination_window(directory)
+        destination_window_id = registered["window_id"]
+        self.last = None
+        self.dispatches += 1
+        count = 0
+        active_window_id = self.window_id
+        proof: dict[str, Any] = {
+            "schema_version": 1,
+            "producer": "footwork.ax.finder",
+            "predicate": "finder_move_same_inode",
+            "transfer_route": "prebound_destination_window",
+            "before": target.to_record(),
+            "source_identity": source,
+            "destination_directory": destination,
+            "destination": path,
+            "destination_window_binding": registered,
+            "acknowledgements": [],
+        }
+
+        def front() -> None:
+            context = self.ax.finder_window_context(self.pid)
+            proof["last_window_context"] = {**context, "front_pid": self.policy._activity().frontmost_pid()}
+            if (
+                proof["last_window_context"]["front_pid"] != self.pid
+                or context["main_window_id"] != active_window_id
+                or context["focused_window_id"] != active_window_id
+            ):
+                raise self.ax.AXError(
+                    "file_move_lost_focus", "the exact owned Finder move window lost foreground"
+                )
+
+        def unchanged_source() -> None:
+            if file_identity(self.finder_scope["manifest"], target.binding) != source:
+                raise self.ax.AXError(
+                    "file_source_changed", "the owned source changed during move preparation"
+                )
+            if move_destination(self.finder_scope["manifest"], directory) != destination:
+                raise self.ax.AXError(
+                    "file_destination_changed", "the owned destination changed during move preparation"
+                )
+            if Path(path).exists() or Path(path).is_symlink():
+                raise self.ax.AXError(
+                    "file_destination_changed", "the destination appeared before Move Item Here"
+                )
+
+        def acknowledge(name: str) -> None:
+            nonlocal count
+            count += 1
+            proof["acknowledgements"].append(name)
+
+        async def menu(path_parts: list[str], label: str, verify: Any = None) -> None:
+            front()
+            enabled = False
+            for _ in range(20):
+                enabled = self.ax.menu_item_enabled(self.pid, path_parts)
+                if enabled:
+                    break
+                await asyncio.sleep(0.05)
+            if not enabled:
+                raise self.ax.AXError(
+                    "file_move_menu_disabled", "the exact move workflow menu item is disabled"
+                )
+            front()
+            if verify is not None:
+                verify()
+            self.ax.press_menu(self.pid, path_parts)
+            acknowledge(label)
+
+        try:
+            front()
+            self.ax.select_finder_row_ack(target.element)
+            acknowledge("exact_row_selected")
+            if not self.ax.finder_selection_state(target.element).get("exact_row_only"):
+                raise self.ax.AXError(
+                    "file_selection_unverified", "the owned file must be the sole selected row"
+                )
+            before_clipboard = self.ax.pasteboard_change_count()
+            self.ax.press_menu(self.pid, ["Edit"])
+            acknowledge("edit_menu_opened_for_copy")
+            copy_titles = {"Copy", f"Copy “{target.value}”", f'Copy "{target.value}"'}
+            copy_paths = [
+                item.split(" > ")
+                for item in self.ax.menu_paths(self.pid)
+                if item.split(" > ")[:-1] == ["Edit"] and item.split(" > ")[-1] in copy_titles
+            ]
+            if len(copy_paths) != 1:
+                raise self.ax.AXError(
+                    "file_copy_menu_ambiguous", "one exact Copy item for the owned filename is required"
+                )
+            proof["copy_menu_path"] = copy_paths[0]
+
+            def copy_precondition() -> None:
+                unchanged_source()
+                if not self.ax.finder_selection_state(target.element).get("exact_row_only"):
+                    raise self.ax.AXError(
+                        "file_selection_changed", "the sole selected source changed before Copy"
+                    )
+
+            await menu(copy_paths[0], "copy_menu_pressed", copy_precondition)
+            copied_count = before_clipboard
+            for _ in range(20):
+                copied_count = self.ax.pasteboard_change_count()
+                if copied_count != before_clipboard:
+                    break
+                await asyncio.sleep(0.05)
+            if copied_count <= before_clipboard:
+                raise self.ax.AXError(
+                    "file_clipboard_stale", "Copy did not produce a new clipboard generation"
+                )
+            if self.ax.pasteboard_file_paths() != [target.binding.path]:
+                raise self.ax.AXError(
+                    "file_clipboard_mismatch", "Copy did not expose the exact owned file URL"
+                )
+            proof["clipboard"] = {
+                "before_change_count": before_clipboard,
+                "after_change_count": copied_count,
+                "paths": [target.binding.path],
+            }
+            unchanged_source()
+            self._move_destination_window(directory)
+            destination_bridge = NativeBridge(
+                self.driver,
+                self.pid,
+                destination_window_id,
+                policy=self.policy,
+                ax=self.ax,
+                session=self.session + "-destination",
+            )
+            try:
+                await destination_bridge._front_and_key()
+            finally:
+                self._foreground_inputs += destination_bridge._foreground_inputs
+            active_window_id = destination_window_id
+            proof["navigation"] = self._move_destination_window(directory)
+            front()
+            self.ax.press_menu(self.pid, ["Edit"])
+            acknowledge("edit_menu_opened_for_move")
+
+            def move_precondition() -> None:
+                unchanged_source()
+                if self.ax.pasteboard_change_count() != copied_count or self.ax.pasteboard_file_paths() != [
+                    target.binding.path
+                ]:
+                    raise self.ax.AXError(
+                        "file_clipboard_changed", "the copied file changed before Move Item Here"
+                    )
+                self._move_destination_window(directory)
+                front()
+
+            await menu(["Edit", "Move Item Here"], "move_item_here_pressed", move_precondition)
+            rebound = None
+            for _ in range(40):
+                try:
+                    rebound = rebind(target.binding, self.finder_scope["manifest"], "file:" + path)
+                    if not Path(target.binding.path).exists() and not Path(target.binding.path).is_symlink():
+                        break
+                except self.ax.AXError:
+                    rebound = None
+                await asyncio.sleep(0.05)
+            if (
+                rebound is None
+                or Path(target.binding.path).exists()
+                or Path(target.binding.path).is_symlink()
+            ):
+                raise self.ax.AXError("file_move_unverified", "the exact same-inode move was not established")
+            after = file_identity(self.finder_scope["manifest"], rebound)
+            if after["sha256"] != source["sha256"] or after["size"] != source["size"]:
+                raise self.ax.AXError("file_move_contents_changed", "the moved file's bytes changed")
+            if move_destination(self.finder_scope["manifest"], directory) != destination:
+                raise self.ax.AXError(
+                    "file_destination_changed", "the destination directory changed during the move"
+                )
+            proof["after"] = rebound.to_record()
+            proof["after_identity"] = after
+            return NativeEffect(
+                "move",
+                id,
+                target.value,
+                "confirmed",
+                route="accessibility",
+                summary="owned same-inode move observed after Finder UI input; count is acknowledged-input lower bound",
+                delivered_count=count,
+                delivery_basis="ax_finder_move_readback",
+                native_readback=proof,
+            )
+        except Exception as exc:  # noqa: BLE001 - acknowledged inputs cannot be erased by missing readback
+            return NativeEffect(
+                "move",
+                id,
+                target.value,
+                "unverifiable",
+                route="accessibility",
+                summary=str(exc)[:200],
+                error_code=getattr(exc, "reason", type(exc).__name__),
+                delivered_count=count or None,
+                delivery_basis="ax_finder_move_readback" if count else "unknown",
+                native_readback=proof,
+            )
+
+    async def _rename_file(
+        self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
+    ) -> NativeEffect:
+        """Source-qualified rename producer; called only after front/key qualification."""
+        from jevdual.finder_targets import rebind, resolve
+
+        target, id = self.resolve_file(nm, selector)
+        self._require_fresh(nm, id)
+        if (
+            operation != "type"
+            or not text
+            or Path(text).name != text
+            or text in {".", ".."}
+            or "\x00" in text
+        ):
+            raise NativeBridgeError(
+                "file_operation_unsupported", "Finder filename input requires one basename"
+            )
+        destination = str(Path(target.binding.path).with_name(text))
+        if destination == target.binding.path or Path(destination).exists() or Path(destination).is_symlink():
+            raise NativeBridgeError("file_destination_exists", "the destination must be a fresh owned path")
+        # Check the destination is a declared fixture path before any input.
+        from jevdual.app_oracles import OracleError, _asset_path
+
+        try:
+            _asset_path(self.finder_scope["manifest"], destination)
+        except OracleError as exc:
+            raise NativeBridgeError(
+                "file_scope_invalid", "destination is outside declared fixture paths"
+            ) from exc
+        target, id = self.resolve_file(nm, selector)
+        self.last = None
+        self.dispatches += 1
+        count = 0
+        proof = {
+            "schema_version": 1,
+            "producer": "footwork.ax.finder",
+            "predicate": "finder_rename_same_inode",
+            "before": target.to_record(),
+            "destination": destination,
+            "acknowledgements": [],
+        }
+
+        def context() -> dict[str, Any]:
+            try:
+                selection = self.ax.finder_selection_state(target.element)
+            except self.ax.AXError as exc:
+                selection = {"exact_row_only": False, "error": exc.reason}
+            return {
+                **self.ax.finder_window_context(self.pid),
+                "front_pid": self.policy._activity().frontmost_pid(),
+                "selection": selection,
+            }
+
+        def selection_owned(current: dict[str, Any], *, menu_focus: bool = False) -> bool:
+            # Opening our File menu can move AX focus to the application. Only
+            # this acknowledged menu stage permits a missing focused window;
+            # the exact front/main window and sole owned row remain mandatory.
+            focused = current["focused_window_id"] == self.window_id or (
+                menu_focus
+                and current["focused_window_id"] is None
+                and current["focused_role"] == "AXApplication"
+            )
+            return (
+                current["front_pid"] == self.pid
+                and current["main_window_id"] == self.window_id
+                and focused
+                and current["selection"]["exact_row_only"]
+            )
+
+        try:
+            proof["before_selection"] = context()
+            self.ax.select_finder_row_ack(target.element)
+            count += 1
+            proof["acknowledgements"].append("exact_row_selected")
+            proof["before_menu"] = context()
+            if not selection_owned(proof["before_menu"]):
+                raise self.ax.AXError(
+                    "file_selection_unverified",
+                    "the exact bound row is not the sole selected row in the front window",
+                )
+            self.ax.press_menu(self.pid, ["File"])
+            count += 1
+            proof["acknowledgements"].append("file_menu_opened")
+            rename_enabled = False
+            for _ in range(20):
+                rename_enabled = self.ax.menu_item_enabled(self.pid, ["File", "Rename"])
+                if rename_enabled:
+                    break
+                await asyncio.sleep(0.05)
+            proof["rename_enabled"] = rename_enabled
+            if not rename_enabled:
+                raise self.ax.AXError("file_rename_disabled", "the opened File menu did not enable Rename")
+            proof["before_rename"] = context()
+            if not selection_owned(proof["before_rename"], menu_focus=True):
+                raise self.ax.AXError(
+                    "file_selection_unverified",
+                    "the bound Finder window or sole selection changed before Rename",
+                )
+            self.ax.press_menu(self.pid, ["File", "Rename"])
+            count += 1
+            proof["acknowledgements"].append("rename_menu_pressed")
+            proof["after_menu"] = context()
+            editor = None
+            for _ in range(20):
+                try:
+                    editor = self.ax.focused_finder_editor(
+                        self.pid, self.window_id, target.frame, target.value
+                    )
+                    if self.ax.value(editor) == target.value:
+                        break
+                except self.ax.AXError as exc:
+                    proof["editor_error"] = {"reason": exc.reason, "detail": str(exc)[:200]}
+                    editor = None
+                await asyncio.sleep(0.05)
+            if editor is None or self.ax.value(editor) != target.value or not self.ax.can_set_value(editor):
+                proof["editor_failure_context"] = context()
+                raise self.ax.AXError("file_editor_missing", "the actual rename editor was not established")
+            proof["editor"] = {
+                "pid": self.pid,
+                "window_id": self.window_id,
+                "role": "AXTextField",
+                "before_value": self.ax.value(editor),
+            }
+            current_editor = self.ax.focused_finder_editor(
+                self.pid, self.window_id, target.frame, target.value
+            )
+            proof["before_editor_write"] = context()
+            current = proof["before_editor_write"]
+            if (
+                current["front_pid"] != self.pid
+                or current["main_window_id"] != self.window_id
+                or current["focused_window_id"] not in (None, self.window_id)
+                or (
+                    not current["selection"]["exact_row_only"]
+                    and current["selection"].get("error") != "file_row_missing"
+                )
+                or current_editor != editor
+            ):
+                raise self.ax.AXError(
+                    "file_editor_lost_focus", "the exact owned rename editor changed before its value write"
+                )
+            # Finder replaces the filename row with this already qualified
+            # transient editor. Its absence cannot replace the editor/window
+            # checks above or the exact original inode check before writing.
+            rebind(target.binding, self.finder_scope["manifest"], selector)
+            self.ax.set_value_ack(editor, text)
+            count += 1
+            proof["acknowledgements"].append("editor_value_set")
+            if self.ax.value(editor) != text:
+                raise self.ax.AXError(
+                    "file_editor_unverified", "the actual editor did not retain the new name"
+                )
+            rebind(target.binding, self.finder_scope["manifest"], selector)
+            current_editor = self.ax.focused_finder_editor(self.pid, self.window_id, target.frame, text)
+            if self.policy._activity().frontmost_pid() != self.pid or current_editor != editor:
+                raise self.ax.AXError(
+                    "file_editor_lost_focus", "the bound rename window lost foreground before commit"
+                )
+            if Path(destination).exists() or Path(destination).is_symlink():
+                raise self.ax.AXError(
+                    "file_destination_changed", "the rename destination appeared before commit"
+                )
+            outcome = await self.driver.call_tool(
+                "hotkey",
+                json.dumps(
+                    {
+                        "pid": self.pid,
+                        "window_id": self.window_id,
+                        "keys": ["Return"],
+                        "delivery_mode": "foreground",
+                        "session": self.session,
+                    }
+                ),
+            )
+            commit = effect_from_action_result("enter", id, target.value, outcome)
+            proof["commit"] = {
+                "route": "sdk_foreground_return",
+                "effect": commit.effect,
+                "delivered_count": commit.delivered_count,
+            }
+            if commit.delivered_count:
+                count += commit.delivered_count
+            if not commit.dispatched or commit.error_code:
+                raise self.ax.AXError(
+                    "file_commit_uncertain", "the rename commit did not return a successful acknowledgement"
+                )
+            rebound = None
+            for _ in range(20):
+                try:
+                    rebound = rebind(target.binding, self.finder_scope["manifest"], "file:" + destination)
+                    if not Path(target.binding.path).exists() and not Path(target.binding.path).is_symlink():
+                        break
+                except self.ax.AXError:
+                    rebound = None
+                await asyncio.sleep(0.05)
+            if (
+                rebound is None
+                or Path(target.binding.path).exists()
+                or Path(target.binding.path).is_symlink()
+            ):
+                raise self.ax.AXError("rename_unverified", "same-inode rename is not established")
+
+            def completion_owned(*, allow_current_editor: bool = False) -> bool:
+                current = self.ax.finder_window_context(self.pid)
+                proof["completion_context"] = {
+                    **current,
+                    "front_pid": self.policy._activity().frontmost_pid(),
+                }
+                if (
+                    proof["completion_context"]["front_pid"] != self.pid
+                    or current["main_window_id"] != self.window_id
+                ):
+                    return False
+                if current["focused_window_id"] == self.window_id:
+                    return True
+                if allow_current_editor and current["focused_window_id"] is None:
+                    return self.ax.finder_completion_editor(self.pid, self.window_id, text) is not None
+                return False
+
+            if not completion_owned(allow_current_editor=True):
+                raise self.ax.AXError(
+                    "file_completion_lost_focus", "the owned rename window lost foreground before completion"
+                )
+            proof["completion_reacquire_context"] = dict(proof["completion_context"])
+            await self._front_and_key()
+            completion = None
+            for _ in range(20):
+                if not completion_owned():
+                    raise self.ax.AXError(
+                        "file_completion_lost_focus",
+                        "the owned rename window lost foreground during completion",
+                    )
+                try:
+                    completion = resolve(self.pid, self.window_id, rebound, self.finder_scope["manifest"])
+                    if completion_owned():
+                        break
+                    completion = None
+                except self.ax.AXError:
+                    completion = None
+                await asyncio.sleep(0.05)
+            if completion is None:
+                raise self.ax.AXError(
+                    "file_completion_unverified",
+                    "the renamed file's exact filename target did not become ready",
+                )
+            proof["completion_target"] = completion.to_record()
+            proof["after"] = rebound.to_record()
+            return NativeEffect(
+                operation,
+                id,
+                target.value,
+                "confirmed",
+                route="accessibility",
+                summary="rename editor input acknowledged; same-inode rename observed; count is acknowledged-input lower bound",
+                delivered_count=count,
+                delivery_basis="ax_finder_rename_readback",
+                native_readback=proof,
+            )
+        except Exception as exc:  # noqa: BLE001 - a write may have landed
+            return NativeEffect(
+                operation,
+                id,
+                target.value,
+                "unverifiable",
+                route="accessibility",
+                summary=str(exc)[:200],
+                error_code=getattr(exc, "reason", type(exc).__name__),
+                delivered_count=count or None,
+                delivery_basis="ax_finder_rename_readback" if count else "unknown",
+                native_readback=proof,
+            )
 
     async def act(
         self,
@@ -1132,7 +1910,8 @@ class NativeBridge:
             )
         if operation in ("type", "append") and text is None:
             raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
-        if self.live_check:
+        decision_snapshot, decision_target = nm.snapshot_id, id
+        if self.live_check or self.observation_guard is not None:
             decided_values = nm.values
             nm, fresh_id = await self._live(nm, id, operation)
             # the text the decision was based on is what the append compares against
@@ -1144,7 +1923,17 @@ class NativeBridge:
         label = cand.label
         if operation == "append":
             assert text is not None
-            return await self._append(nm, id, cand, text, append_precondition)
+            result = await self._append(nm, id, cand, text, append_precondition)
+            if result.field_readback is not None:
+                result = dataclasses.replace(
+                    result,
+                    field_readback={
+                        **result.field_readback,
+                        "decision_snapshot_id": decision_snapshot,
+                        "decision_target_id": decision_target,
+                    },
+                )
+            return result
         if operation in ("enter",):
             return await self._key_route("enter", id, label, "return", [], token)
         if operation == "hover":
@@ -1185,7 +1974,7 @@ class NativeBridge:
                 if self.session:
                     args["session"] = self.session
                 outcome = await self.driver.call_tool("scroll", json.dumps(args))
-                if _refusal_text(outcome):
+                if not effect_from_action_result(operation, id, label, outcome).dispatched:
                     # a wheel the Driver will not aim at this element: Page Down to the element instead,
                     # through the key route and so through the posture (2026-09-25: a Chrome list refused)
                     return await self._key_route("scroll", id, label, "pagedown", [], token)
@@ -1193,19 +1982,8 @@ class NativeBridge:
                 raise NativeBridgeError("unsupported", f"{operation!r} has no native dispatch yet")
         except NativeBridgeError:
             raise
-        except Exception as exc:  # noqa: BLE001 - DriverError.Tool carries the refusal; keep it as evidence
-            log.info("native %s on [%s] refused: %s", operation, id, exc)
-            if self.dispatches == 1 and "-25204" in str(exc) and operation == "click":
-                # The first AX press of a fresh runtime fails with kAXErrorCannotComplete on every
-                # launch seen so far (Calculator, 2026-09-24); a refusal carries no delivery, so one
-                # retry on a fresh snapshot is not a blind replay. Recorded in the effect summary.
-                fresh = await self.observe()
-                again = fresh.menu.candidate(id)
-                if again is not None and fresh.token(id) is not None:
-                    eff = await self.act(fresh, operation, id, text)
-                    return dataclasses.replace(
-                        eff, summary=f"retried after first-press -25204; {eff.summary}"[:200]
-                    )
+        except Exception as exc:  # noqa: BLE001 - input may have landed before the error
+            log.info("native %s on [%s] outcome unknown: %s", operation, id, exc)
             return self._effect(operation, id, label, exc, "background")
         return self._effect(operation, id, label, outcome, "background")
 
@@ -1215,14 +1993,72 @@ class NativeBridge:
         mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
+        if self.observation_guard is not None:
+            await self.observe()
         self.last = None
         self.dispatches += 1
         return await self._key_route("key", -1, "+".join([*mods, key]), key, mods, None)
 
     async def _front(self) -> None:
-        """Explicit foreground escalation: the bound window made its app's key window through AX, then the
-        app activated by exact pid (the Driver's bring_to_front took 1.2 s to return while the front was
-        already ours, and resolves apps by bundle)."""
+        """Declare exact foreground intent to the SDK, then establish native activation.
+
+        The supported intent boundary ends the SDK's background restoration tails;
+        native foreground/key readback remains required before application input.
+        Callers obtain posture permission before entering this boundary.
+        """
+        if self.observation_guard is not None:
+            await self.observe()
+        try:
+            outcome = await self.driver.call_tool(
+                "bring_to_front",
+                json.dumps({"pid": self.pid, "window_id": self.window_id, "session": self.session}),
+            )
+        except Exception as exc:
+            raise NativeBridgeError(
+                "foreground_intent_failed", "the SDK foreground intent failed; application input not sent"
+            ) from exc
+        effect = effect_from_action_result("foreground_intent", -1, "foreground", outcome)
+        record = None
+        structured = getattr(outcome, "structured_json", None)
+        if structured is not None:
+            try:
+                record = json.loads(structured) if isinstance(structured, str) else structured
+                if not isinstance(record, dict) or any(
+                    key in record and (type(record[key]) is not int or record[key] != expected)
+                    for key, expected in (("pid", self.pid), ("window_id", self.window_id))
+                ):
+                    raise ValueError("foreground intent identity differs")
+            except (TypeError, ValueError) as exc:
+                raise NativeBridgeError(
+                    "foreground_intent_target_changed", "the SDK foreground intent identity was not exact"
+                ) from exc
+        verified_activation = (
+            isinstance(record, dict)
+            and record.get("code") == "bring_to_front_exact_window_verified"
+            and record.get("status") == "activated"
+            and record.get("request_accepted") is True
+            and record.get("pid") == self.pid
+            and record.get("window_id") == self.window_id
+            and isinstance(record.get("exact_window_effect"), dict)
+            and record["exact_window_effect"].get("verified") is True
+            and isinstance(record.get("observed"), dict)
+            and record["observed"].get("focused_window_id") == self.window_id
+            and record["observed"].get("frontmost_pid") == self.pid
+        )
+        # ToolResult.error_code also lifts informational structured `code`
+        # values. Only this exact success contract can override that field.
+        if (
+            getattr(outcome, "is_error", False)
+            or effect.effect == "refused"
+            or getattr(getattr(outcome, "action", None), "error", None) is not None
+            or (
+                effect.error_code
+                and not (verified_activation and effect.error_code == "bring_to_front_exact_window_verified")
+            )
+        ):
+            raise NativeBridgeError(
+                "foreground_intent_refused", "the SDK foreground intent refused; application input not sent"
+            )
         # activate first, then raise: activating the app re-keys whichever of its windows was key, so a raise
         # made before it is undone (Q19 frozen re-drive: the bound TextEdit document never became key)
         await asyncio.to_thread(self.policy._activity().activate, self.pid)
@@ -1253,10 +2089,15 @@ class NativeBridge:
                 "not_key",
                 "the bound window did not become the key window and its title bar is covered; not pressed",
             )
+        self._foreground_inputs += 1
         await asyncio.to_thread(self.ax.click_at, *point)
         if await keyed():
             return
-        raise NativeBridgeError("not_key", "the bound window did not become the key window; not pressed")
+        raise NativeBridgeError(
+            "not_key",
+            "the bound window did not become the key window after a title-bar click; chord not pressed",
+            dispatched=True,
+        )
 
     async def hotkey(self, nm: NativeMenu, keys: list[str]) -> NativeEffect:
         """Press a chord with the Driver's explicit foreground delivery (it fronts the window, acts, and
@@ -1264,6 +2105,8 @@ class NativeBridge:
         background chord. Asked of the posture first; ``key`` is the background route for a chord."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
+        if self.observation_guard is not None:
+            await self.observe()
         self.last = None
         self.dispatches += 1
         label = "+".join(keys)
@@ -1278,11 +2121,11 @@ class NativeBridge:
 
         async def call() -> Any:
             await self._front_and_key()
+            if self.observation_guard is not None:
+                await self.observe()
             return await self.driver.call_tool("hotkey", json.dumps(args))
 
         eff = await self._foreground("hotkey", -1, label, call, why=f"hotkey {label} (a menu key-equivalent)")
-        if eff.error_code in _MENU_NOT_PRESSED:
-            eff = dataclasses.replace(eff, dispatched=False)
         return await self._after_save(eff, keys=keys)
 
     async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
@@ -1308,14 +2151,42 @@ class NativeBridge:
         invoke_menu remains the route only in exclusive_desktop, for a path AX cannot resolve."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
+        if self.observation_guard is not None:
+            await self.observe()
         self.last = None
         self.dispatches += 1
         label = " > ".join(path)
         ax = self.ax
+        preview_path = nm.app_name == "Preview" and path in (
+            ["Tools", "Rotate Left"],
+            ["Tools", "Rotate Right"],
+            ["File", "Save"],
+        )
+
+        def preview_owned() -> bool:
+            return (
+                self.policy._activity().frontmost_pid() == self.pid
+                and ax.focused_window_id(self.pid) == self.window_id
+            )
 
         async def call() -> Any:
+            preview_before = None
             await self._front_and_key()
+            if self.observation_guard is not None:
+                await self.observe()
+            if preview_path:
+                try:
+                    if preview_owned():
+                        preview_before = ax.preview_document_state(self.pid, self.window_id)
+                        if not preview_owned():
+                            preview_before = None
+                except (ax.AXError, OSError):
+                    preview_before = None
             try:
+                if preview_path and not preview_owned():
+                    raise NativeBridgeError(
+                        "not_key", "the exact Preview window lost foreground/key ownership; menu not pressed"
+                    )
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:
                 if exc.reason == "menu_missing" and self.policy.mode == "exclusive_desktop":
@@ -1327,15 +2198,35 @@ class NativeBridge:
                         )
                     )
                 raise
+            if preview_before is not None:
+                for _ in range(20):
+                    try:
+                        if not preview_owned():
+                            break
+                        after = ax.preview_document_state(self.pid, self.window_id)
+                        if not preview_owned():
+                            break
+                        proof = preview_menu_readback(path, preview_before, after)
+                    except (ax.AXError, OSError):
+                        proof = None
+                    if proof is not None:
+                        acknowledged = self._effect("menu", -1, label, _PRESSED, "foreground")
+                        return dataclasses.replace(
+                            acknowledged,
+                            effect="confirmed",
+                            delivery_basis="ax_menu_effect_readback",
+                            native_readback=proof,
+                            evidence=(*acknowledged.evidence, "native_ui_readback: " + proof["predicate"]),
+                        )
+                    await asyncio.sleep(0.05)
             return _PRESSED
 
         eff = await self._foreground(
             "menu", -1, label, call, why=f"menu {label} (a menu acts on the key window)"
         )
-        if eff.error_code in _MENU_NOT_PRESSED:
-            # the window took the front but nothing was pressed: say so
-            eff = dataclasses.replace(eff, dispatched=False)
         eff = dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
+        if eff.delivery_basis == "ax_menu_effect_readback":
+            return eff
         return await self._after_save(eff, path=path)
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:

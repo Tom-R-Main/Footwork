@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_foreground_handback_preserves_requested_effect_target __________
+
+    def test_foreground_handback_preserves_requested_effect_target():
+        activity = Activity(fronts=(1,))
+        policy = SimpleNamespace(
+            permits=lambda *args, **kwargs: None,
+            before_foreground=lambda: {"front_before": 77},
+            _activity=lambda: activity,
+            persons_choice=lambda *args: 77,
+            after_foreground=lambda before: {**before, "restored": True},
+        )
+        bridge = NativeBridge(None, 1, 2, policy=policy)
+
+        async def call():
+            return _ok()
+
+        effect = run(bridge._foreground("click", 4, "Bold", call, why="owned test"))
+        assert activity.activated == [77]
+>       assert effect.target == 4
+E       AssertionError: assert 77 == 4
+E        +  where 77 = NativeEffect(operation='click', target=77, label='Bold', effect='confirmed', route='accessibility', evidence=(), summa...ored': True}, readback=None, delivered_count=None, delivery_basis='unknown', field_readback=None, native_readback=None).target
+
+tests/test_posture.py:929: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_posture.py::test_foreground_handback_preserves_requested_effect_target
+1 failed, 53 deselected in 0.27s

@@ -1,0 +1,100 @@
+[
+  {
+    "operation_id": "op_ff3037ab0637",
+    "client_token": "rename",
+    "state": "final",
+    "disposition": "not_sent",
+    "phase": "not_sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 12944
+      },
+      "dispatched": false,
+      "driver_effect": "not sent",
+      "error": "human_active: Finder file editing requires its front/key window needs the foreground and the person gave input 0.0s ago (needs 3s idle); yielding",
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 60,
+      "target_label": "textbox",
+      "exec_ms": 154.78012501262128,
+      "execution_interval": {
+        "end": 1793237828.20492,
+        "start": 1793237828.050144
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 12944
+        },
+        "custody": "returned",
+        "dispatched": false,
+        "effect": "refused",
+        "error": "human_active: Finder file editing requires its front/key window needs the foreground and the person gave input 0.0s ago (needs 3s idle); yielding",
+        "interval": {
+          "end": 1793237828.20492,
+          "start": 1793237828.050144
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_ff3037ab0637",
+        "phase": "not_sent",
+        "producer": {
+          "delivered_count": 0,
+          "delivery_basis": "qualified_gate",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 12944
+          },
+          "dispatched": false,
+          "driver_effect": "not sent",
+          "error": "human_active: Finder file editing requires its front/key window needs the foreground and the person gave input 0.0s ago (needs 3s idle); yielding",
+          "exec_ms": 154.78012501262128,
+          "execution_interval": {
+            "end": 1793237828.20492,
+            "start": 1793237828.050144
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_ff3037ab0637",
+          "secret": false,
+          "step": 1,
+          "target_id": 60,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "92b3ef6c83ccb251e1b9e8aace94988ecd0a7b269c83c5fa4a7e6a54f114a1b1",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "c471c603f2c5455f9bd9273b7da1634e",
+        "target": "60"
+      },
+      "operation_id": "op_ff3037ab0637"
+    },
+    "error": "human_active: Finder file editing requires its front/key window needs the foreground and the person gave input 0.0s ago (needs 3s idle); yielding"
+  }
+]

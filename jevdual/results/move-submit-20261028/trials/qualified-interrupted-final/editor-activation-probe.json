@@ -1,0 +1,40 @@
+{
+  "focus_role": "AXOutline",
+  "focus_value": "None",
+  "context": {
+    "main_window_id": 13928,
+    "focused_window_id": 13928,
+    "focused_role": "AXOutline"
+  },
+  "identity": {
+    "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-final/fixture/inbox/renamed.png",
+    "device": 16777234,
+    "inode": 388479002,
+    "size": 83,
+    "mtime_ns": 1793241867996398095,
+    "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+  },
+  "resolved": {
+    "pid": 81134,
+    "window_id": 13928,
+    "binding": {
+      "manifest_sha256": "ddd78b23baa09411bc422e4dd9d822e8bcb2844d8a618209148ca0b230b3cf9d",
+      "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-final/fixture",
+      "root_device": 16777234,
+      "root_inode": 388478996,
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-final/fixture/inbox/renamed.png",
+      "device": 16777234,
+      "inode": 388479002
+    },
+    "ax_url": "file:///.file/id=6571367.388479002",
+    "role": "AXTextField",
+    "value": "renamed.png",
+    "frame": {
+      "x": 688.0,
+      "y": 471.0,
+      "w": 87.0,
+      "h": 18.0
+    },
+    "basis": "fresh_ax_file_url_and_owned_inode"
+  }
+}

@@ -65,7 +65,13 @@ def _refused(text: str):
     return SimpleNamespace(action=None, text=text, is_error=True, error_code=None)
 
 
-AMBIG = _refused(f"Background input refused ({AMBIGUITY}): pid 1 owns 1 other eligible top-level window(s)")
+AMBIG = SimpleNamespace(
+    action=None,
+    is_error=True,
+    error_code=AMBIGUITY,
+    text=f"Background input refused ({AMBIGUITY}): pid 1 owns 1 other eligible top-level window(s)",
+    structured_json=json.dumps({"code": AMBIGUITY, "effect": "refused", "pid": 1, "window_id": 2}),
+)
 
 
 def doc_snapshot(value: str, *, snap: str = "s00000001", label: str = "text area", extra: list | None = None):
@@ -298,11 +304,17 @@ def test_ambiguity_is_not_silently_escalated():
     assert [(n, a["delivery_mode"]) for n, a in d.calls if n == "press_key"] == [("press_key", "background")]
 
 
-def test_foreground_permitted_escalates_only_when_idle():
+@pytest.mark.parametrize("refusal_kind", ["legacy_structured", "typed_action"])
+def test_foreground_permitted_escalates_only_when_idle(refusal_kind):
     """Promise: in foreground_permitted the ambiguity escalates to foreground when the person is idle, and
     yields (human_active, nothing sent) when they gave input recently."""
+    refusal = AMBIG
+    if refusal_kind == "typed_action":
+        refusal = _ok(effect="REFUSED")
+        refusal.action.error = SimpleNamespace(code=AMBIGUITY)
+        refusal.action.delivery.delivered_count = 0
     d = FakeDriver(
-        doc_snapshot("hello"), replies={"press_key": [AMBIG, _ok("UNVERIFIABLE", mode="FOREGROUND")]}
+        doc_snapshot("hello"), replies={"press_key": [refusal, _ok("UNVERIFIABLE", mode="FOREGROUND")]}
     )
     b = bridge_for(d, "foreground_permitted", idle=30.0, fronts=(77, 77))
     nm = run(b.observe())
@@ -312,12 +324,57 @@ def test_foreground_permitted_escalates_only_when_idle():
     assert eff.dispatched and eff.delivery == "foreground" and eff.foreground["restored"] is True
     assert eff.driver_delivery == "foreground"
 
-    d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [AMBIG]})
+    d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [refusal]})
     b = bridge_for(d, "foreground_permitted", idle=0.2)
     nm = run(b.observe())
     eff = run(b.key(nm, "s", ["cmd"]))
     assert eff.error_code == "human_active" and not eff.dispatched
     assert [a["delivery_mode"] for n, a in d.calls if n == "press_key"] == ["background"]
+
+
+@pytest.mark.parametrize("reply_kind", ["opaque_reply", "exception", "delivered_error"])
+def test_ambiguous_keyboard_error_cannot_authorize_a_second_key(reply_kind):
+    message = f"reply lost after {AMBIGUITY}"
+    if reply_kind == "exception":
+        reply = RuntimeError(message)
+    elif reply_kind == "opaque_reply":
+        reply = _refused(message)
+        reply.error_code = AMBIGUITY
+    else:
+        reply = _ok()
+        reply.is_error = True
+        reply.text = message
+        reply.error_code = AMBIGUITY
+        reply.action.delivery.delivered_count = 1
+        reply.structured_json = AMBIG.structured_json
+    d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [reply]})
+    b = bridge_for(d, "foreground_permitted", idle=30.0)
+    eff = run(b.key(run(b.observe()), "return"))
+    assert [(name, args["delivery_mode"]) for name, args in d.calls if name == "press_key"] == [
+        ("press_key", "background")
+    ]
+    assert eff.dispatched and eff.effect == "unverifiable"
+    assert eff.delivered_count == (1 if reply_kind == "delivered_error" else None)
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"pid": 9},
+        {"window_id": 9},
+        {"window_id": True},
+        {"effect": "unverifiable"},
+        {"delivery": {"delivered_count": 1}},
+    ],
+)
+def test_structured_keyboard_refusal_requires_exact_supported_no_send(change):
+    record = {"code": AMBIGUITY, "effect": "refused", "pid": 1, "window_id": 2, **change}
+    reply = SimpleNamespace(**{**vars(AMBIG), "structured_json": json.dumps(record)})
+    d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [reply]})
+    b = bridge_for(d, "foreground_permitted", idle=30.0)
+    eff = run(b.key(run(b.observe()), "return"))
+    assert d.names() == ["press_key"]
+    assert eff.dispatched and eff.effect == "unverifiable" and eff.delivered_count is None
 
 
 def test_foreground_receipt_reports_front_app_not_restored():
@@ -330,7 +387,7 @@ def test_foreground_receipt_reports_front_app_not_restored():
     eff = run(b.hotkey(nm, ["cmd", "s"]))
     assert eff.foreground["front_before"] == 77 and eff.foreground["front_after"] == 88
     assert eff.foreground["restored"] is False and "front app changed" in eff.summary
-    assert d.names() == ["hotkey"]
+    assert d.names() == ["bring_to_front", "hotkey"]
 
 
 # ---- target identity through compound steps -------------------------------------------------------
@@ -363,13 +420,49 @@ def test_scroll_is_aimed_at_the_element_and_falls_back_through_the_posture():
     )
     assert "x" not in args and "y" not in args
 
-    d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [_refused("no frame")], "press_key": [AMBIG]})
+    refusal = _ok(effect="REFUSED")
+    d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [refusal], "press_key": [AMBIG]})
     b = bridge_for(d)
     nm = run(b.observe())
     eff = run(b.act(nm, "scroll", 3))
     assert d.names() == ["scroll", "press_key"]
     assert d.calls[-1][1]["key"] == "pagedown" and d.calls[-1][1]["element_token"] == nm.tokens[3]
     assert eff.error_code == "requires_foreground" and not eff.dispatched
+
+
+def test_opaque_scroll_error_does_not_authorize_a_second_input():
+    d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [_refused("no frame")]})
+    b = bridge_for(d)
+    eff = run(b.act(run(b.observe()), "scroll", 3))
+    assert d.names() == ["scroll"]
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+def test_append_readback_error_after_write_is_not_no_send():
+    ax = FakeAX("hello")
+    original = ax.insert_at_end
+
+    def insert_then_lose_readback(*args, **kwargs):
+        original(*args, **kwargs)
+        raise ax.AXError("no_value", "post-write AXValue unavailable")
+
+    ax.insert_at_end = insert_then_lose_readback
+    b = bridge_for(FakeDriver(doc_snapshot("hello")), ax=ax)
+    eff = run(b.act(run(b.observe()), "append", 1, "world"))
+    assert ax.text == "hello\nworld"
+    assert eff.effect == "unverifiable" and eff.dispatched
+    assert eff.delivery_basis == "unknown" and eff.delivered_count is None and eff.field_readback is None
+
+
+def test_title_bar_input_is_preserved_when_menu_resolution_then_fails():
+    ax = FakeAX("hello")
+    ax.focused, ax.bar, ax.click_keys = 9, (300.0, 172.0), True
+    ax.menu_error = "menu_missing"
+    b = bridge_for(FakeDriver(doc_snapshot("hello")), "foreground_permitted", fronts=(1,), ax=ax)
+    eff = run(b.menu(run(b.observe()), ["File", "Save"]))
+    assert ax.clicks == ((300.0, 172.0),) and ax.pressed == ()
+    assert eff.effect == "unverifiable" and eff.dispatched
+    assert eff.delivery_basis == "unknown" and eff.delivered_count is None
 
 
 def test_hover_is_desktop_scoped():
@@ -443,6 +536,7 @@ def test_append_refuses_an_edit_between_read_and_insert():
     nm = run(b.observe())
     eff = run(b.act(nm, "append", 1, "two"))
     assert eff.error_code == "precondition_changed" and not eff.dispatched and ax.inserts == []
+    assert eff.delivery_basis == "qualified_gate" and eff.delivered_count == 0 and eff.field_readback is None
 
 
 def test_append_reports_partial_when_readback_differs():
@@ -455,6 +549,43 @@ def test_append_reports_partial_when_readback_differs():
     eff = run(b.act(nm, "append", 1, "two"))
     assert eff.effect == "partial" and eff.error_code == "content_mismatch"
     assert "first difference at 2" in eff.evidence[0]
+    assert eff.delivered_count == 1 and eff.delivery_basis == "ax_insert_ack"
+    assert eff.field_readback["matches"] is False
+    assert eff.field_readback["expected_value"] == "one\ntwo"
+    assert eff.field_readback["observed_value"] == "on\ntwo"
+
+
+@pytest.mark.parametrize("length", [200, 65_536])
+def test_append_exact_readback_is_separate_bounded_producer_evidence(length):
+    initial = "head"
+    payload = "x" * length
+    ax = FakeAX(initial)
+    b = bridge_for(FakeDriver(doc_snapshot(initial)), ax=ax)
+    nm = run(b.observe())
+    eff = run(b.act(nm, "append", 1, payload))
+    assert eff.effect == "confirmed" and eff.delivery_basis == "ax_insert_ack"
+    assert eff.delivered_count == 1 and eff.readback is None
+    rb = eff.field_readback
+    assert rb["producer"] == {"name": "footwork.native", "version": 1}
+    assert rb["predicate"] == "field_equals" and rb["matches"] is True
+    assert rb["target_id"] == 1 and rb["role"] == "AXTextArea" and rb["snapshot_id"] == nm.snapshot_id
+    if length == 200:
+        assert rb["complete"] is True
+        assert rb["observed_value"] == rb["expected_value"] == initial + "\n" + payload
+        assert rb["before_value"] == initial
+    else:
+        assert rb["complete"] is False
+        assert rb["observed_value"] is rb["expected_value"] is rb["before_value"] is None
+    assert eff.to_record()["field_readback"] == rb
+
+
+def test_ax_menu_acknowledges_delivery_without_application_effect():
+    ax = FakeAX("")
+    b = bridge_for(FakeDriver(doc_snapshot("")), ax=ax, mode="foreground_permitted", fronts=(1,))
+    eff = run(b.menu(run(b.observe()), ["File", "Open"]))
+    assert ax.pressed == (["File", "Open"],)
+    assert eff.delivered_count == 1 and eff.delivery_basis == "ax_menu_press_ack"
+    assert eff.effect == "unverifiable" and eff.field_readback is None and eff.readback is None
 
 
 def test_values_are_whole_and_the_preview_is_not_execution_data():
@@ -520,7 +651,9 @@ def test_menu_hands_the_front_back_but_never_fights_the_person():
     eff = run(b.menu(nm, ["Edit", "Select All"]))
     assert ax.pressed == (["Edit", "Select All"],) and eff.dispatched and eff.route == "accessibility"
     assert eff.foreground["handed_back"] == 77 and b.policy.activity.activated == [1, 77]
-    assert ax.raised == [(1, 2)] and "invoke_menu" not in d.names() and "bring_to_front" not in d.names()
+    assert ax.raised == [(1, 2)] and d.names() == ["bring_to_front"]
+    intent = next(args for name, args in d.calls if name == "bring_to_front")
+    assert intent["pid"] == 1 and intent["window_id"] == 2 and intent["session"]
     # something re-took the front after the person moved to 99: it goes to 99, not back to 77
     d = FakeDriver(doc_snapshot("hello"))
     b = bridge_for(d, "foreground_permitted", fronts=(77, 1, 1, 99), during=(77, 1, 99, 1), ax=FakeAX(""))
@@ -659,6 +792,38 @@ def test_web_field_with_text_is_selected_first_under_the_posture():
     assert eff.error_code == "requires_foreground" and not eff.dispatched and "type_text" not in d.names()
 
 
+def test_uncertain_select_all_does_not_authorize_typing():
+    d = FakeDriver(_web_snapshot("old"), replies={"press_key": [_refused("reply lost")]})
+    b = bridge_for(d)
+    eff = run(b.act(run(b.observe()), "type", 7, "Ada"))
+    assert d.names() == ["press_key"]
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+def test_type_refusal_does_not_erase_prior_select_all_input():
+    d = FakeDriver(_web_snapshot("old"), replies={"type_text": [_ok(effect="REFUSED")]})
+    b = bridge_for(d)
+    eff = run(b.act(run(b.observe()), "type", 7, "Ada"))
+    assert d.names() == ["press_key", "type_text"]
+    assert eff.effect == "unverifiable" and eff.dispatched
+
+
+@pytest.mark.parametrize("initial", ["", "old"])
+def test_web_observation_failure_after_input_cannot_be_no_send(initial, monkeypatch):
+    d = FakeDriver(_web_snapshot(initial))
+    b = bridge_for(d)
+    nm = run(b.observe())
+
+    async def unavailable(*args, **kwargs):
+        raise NativeBridgeError("screen_locked", "locked during readback")
+
+    monkeypatch.setattr(b, "observe", unavailable)
+    with pytest.raises(NativeBridgeError) as exc:
+        run(b.act(nm, "type", 7, "Ada"))
+    assert d.names() == (["type_text"] if not initial else ["press_key"])
+    assert exc.value.dispatched is True
+
+
 def test_a_locked_screen_refuses_every_delivery_and_observation(monkeypatch):
     """G4 (2026-09-26): a run kept deciding and pressing keys for 25 steps against a locked screen."""
     import asyncio
@@ -743,3 +908,22 @@ def test_a_click_that_does_not_key_the_window_still_refuses():
     b = bridge_for(d, "foreground_permitted", fronts=(1,), ax=ax)
     eff = run(b.hotkey(run(b.observe()), ["cmd", "s"]))
     assert len(ax.clicks) == 1 and eff.error_code == "not_key" and "hotkey" not in d.names()
+
+
+def test_foreground_handback_preserves_requested_effect_target():
+    activity = Activity(fronts=(1,))
+    policy = SimpleNamespace(
+        permits=lambda *args, **kwargs: None,
+        before_foreground=lambda: {"front_before": 77},
+        _activity=lambda: activity,
+        persons_choice=lambda *args: 77,
+        after_foreground=lambda before: {**before, "restored": True},
+    )
+    bridge = NativeBridge(None, 1, 2, policy=policy)
+
+    async def call():
+        return _ok()
+
+    effect = run(bridge._foreground("click", 4, "Bold", call, why="owned test"))
+    assert activity.activated == [77]
+    assert effect.target == 4

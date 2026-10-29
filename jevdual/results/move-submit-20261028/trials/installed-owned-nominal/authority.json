@@ -1,0 +1,744 @@
+[
+  {
+    "operation_id": "op_4a005b45a425",
+    "client_token": "rotate",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Preview",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 27282,
+        "start": "0x1.ab8abce190e78p+30",
+        "window_id": 13722
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": "operation outcome unknown; inspect status, do not repeat input",
+      "intended": null,
+      "line": "menu(Tools > Rotate Right)",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "menu",
+      "secret": false,
+      "step": 1,
+      "target_id": null,
+      "target_label": null,
+      "exec_ms": 3706.5046670031734,
+      "execution_interval": {
+        "end": 1793240936.218753,
+        "start": 1793240932.512183
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 27282,
+          "start": "0x1.ab8abce190e78p+30",
+          "window_id": 13722
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "unverifiable",
+        "error": null,
+        "interval": {
+          "end": 1793240936.218753,
+          "start": 1793240932.512183
+        },
+        "kind": "execution",
+        "move": "menu",
+        "observation": "s00000001",
+        "operation_id": "op_4a005b45a425",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 1,
+          "delivery_basis": "ax_menu_press_ack",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Preview",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 27282,
+            "start": "0x1.ab8abce190e78p+30",
+            "window_id": 13722
+          },
+          "dispatched": true,
+          "driver_effect": "unverifiable",
+          "error": null,
+          "exec_ms": 3706.5046670031734,
+          "execution_interval": {
+            "end": 1793240936.218753,
+            "start": 1793240932.512183
+          },
+          "intended": null,
+          "line": "menu(Tools > Rotate Right)",
+          "mode": "native",
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "menu",
+          "operation_id": "op_4a005b45a425",
+          "secret": false,
+          "step": 1,
+          "target_id": null,
+          "target_label": null
+        },
+        "protocol": 1,
+        "request_digest": "570ec6d75d87e3350fd900c0ea535f00fa44bb4892f9e13274cc19e6672555c1",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":27282,\"start\":\"0x1.ab8abce190e78p+30\"}",
+        "schema_version": "1",
+        "session_id": "0d7cb419b3c3430282aaf7fb1628b7d8",
+        "target": null
+      },
+      "operation_id": "op_4a005b45a425"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_61daf04983bc",
+    "client_token": "move",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 13687
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+      "line": "move(textbox) text='/Users/thomasmain/projects/footwork/output/move-submit-20261'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "move",
+      "secret": false,
+      "step": 2,
+      "target_id": 64,
+      "target_label": "textbox",
+      "exec_ms": 6135.421958984807,
+      "execution_interval": {
+        "end": 1793240822.872205,
+        "start": 1793240816.736673
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 13687
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793240822.872205,
+          "start": 1793240816.736673
+        },
+        "kind": "execution",
+        "move": "move",
+        "observation": "s00000001",
+        "operation_id": "op_61daf04983bc",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 5,
+          "delivery_basis": "ax_finder_move_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 13687
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 6135.421958984807,
+          "execution_interval": {
+            "end": 1793240822.872205,
+            "start": 1793240816.736673
+          },
+          "intended": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+          "line": "move(textbox) text='/Users/thomasmain/projects/footwork/output/move-submit-20261'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected",
+              "edit_menu_opened_for_copy",
+              "copy_menu_pressed",
+              "edit_menu_opened_for_move",
+              "move_item_here_pressed"
+            ],
+            "after": {
+              "device": 16777234,
+              "inode": 388399144,
+              "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/renamed.png",
+              "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+              "root_device": 16777234,
+              "root_inode": 388399138
+            },
+            "after_identity": {
+              "device": 16777234,
+              "inode": 388399144,
+              "mtime_ns": 1793240806111299155,
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/renamed.png",
+              "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+              "size": 83
+            },
+            "before": {
+              "ax_url": "file:///.file/id=6571367.388399144",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 388399144,
+                "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+                "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+                "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+                "root_device": 16777234,
+                "root_inode": 388399138
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 87.0,
+                "x": 746.0,
+                "y": 529.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "renamed.png",
+              "window_id": 13687
+            },
+            "clipboard": {
+              "after_change_count": 1054,
+              "before_change_count": 1053,
+              "paths": [
+                "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png"
+              ]
+            },
+            "copy_menu_path": [
+              "Edit",
+              "Copy \u201crenamed.png\u201d"
+            ],
+            "destination": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/renamed.png",
+            "destination_directory": {
+              "device": 16777234,
+              "inode": 388399140,
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+              "sentinel_identity": {
+                "device": 16777234,
+                "inode": 388399147,
+                "mtime_ns": 1793240806111549285,
+                "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+                "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+                "size": 18
+              },
+              "sentinel_path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin"
+            },
+            "destination_window_binding": {
+              "ax_url": "file:///.file/id=6571367.388399147",
+              "basis": "fresh_ax_destination_marker_and_owned_directory",
+              "device": 16777234,
+              "inode": 388399140,
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+              "pid": 81134,
+              "sentinel_identity": {
+                "device": 16777234,
+                "inode": 388399147,
+                "mtime_ns": 1793240806111549285,
+                "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+                "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+                "size": 18
+              },
+              "sentinel_path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+              "window_id": 13688,
+              "window_title": "organized"
+            },
+            "last_window_context": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 13688,
+              "front_pid": 81134,
+              "main_window_id": 13688
+            },
+            "navigation": {
+              "ax_url": "file:///.file/id=6571367.388399147",
+              "basis": "fresh_ax_destination_marker_and_owned_directory",
+              "device": 16777234,
+              "inode": 388399140,
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+              "pid": 81134,
+              "sentinel_identity": {
+                "device": 16777234,
+                "inode": 388399147,
+                "mtime_ns": 1793240806111549285,
+                "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+                "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+                "size": 18
+              },
+              "sentinel_path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+              "window_id": 13688,
+              "window_title": "organized"
+            },
+            "predicate": "finder_move_same_inode",
+            "producer": "footwork.ax.finder",
+            "schema_version": 1,
+            "source_identity": {
+              "device": 16777234,
+              "inode": 388399144,
+              "mtime_ns": 1793240806111299155,
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+              "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+              "size": 83
+            },
+            "transfer_route": "prebound_destination_window"
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "move",
+          "operation_id": "op_61daf04983bc",
+          "secret": false,
+          "step": 2,
+          "target_id": 64,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "600b7e8f611dc7d0f04e9f262f870027d636cdd47e44b1d6b2c19f33c99edede",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "87d7c0d117e34ecbb8748e91ffe73165",
+        "target": "64"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected",
+          "edit_menu_opened_for_copy",
+          "copy_menu_pressed",
+          "edit_menu_opened_for_move",
+          "move_item_here_pressed"
+        ],
+        "after": {
+          "device": 16777234,
+          "inode": 388399144,
+          "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/renamed.png",
+          "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+          "root_device": 16777234,
+          "root_inode": 388399138
+        },
+        "after_identity": {
+          "device": 16777234,
+          "inode": 388399144,
+          "mtime_ns": 1793240806111299155,
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/renamed.png",
+          "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "size": 83
+        },
+        "before": {
+          "ax_url": "file:///.file/id=6571367.388399144",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 388399144,
+            "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+            "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+            "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+            "root_device": 16777234,
+            "root_inode": 388399138
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 87.0,
+            "x": 746.0,
+            "y": 529.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "renamed.png",
+          "window_id": 13687
+        },
+        "clipboard": {
+          "after_change_count": 1054,
+          "before_change_count": 1053,
+          "paths": [
+            "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png"
+          ]
+        },
+        "copy_menu_path": [
+          "Edit",
+          "Copy \u201crenamed.png\u201d"
+        ],
+        "destination": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/renamed.png",
+        "destination_directory": {
+          "device": 16777234,
+          "inode": 388399140,
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+          "sentinel_identity": {
+            "device": 16777234,
+            "inode": 388399147,
+            "mtime_ns": 1793240806111549285,
+            "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+            "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+            "size": 18
+          },
+          "sentinel_path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin"
+        },
+        "destination_window_binding": {
+          "ax_url": "file:///.file/id=6571367.388399147",
+          "basis": "fresh_ax_destination_marker_and_owned_directory",
+          "device": 16777234,
+          "inode": 388399140,
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+          "pid": 81134,
+          "sentinel_identity": {
+            "device": 16777234,
+            "inode": 388399147,
+            "mtime_ns": 1793240806111549285,
+            "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+            "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+            "size": 18
+          },
+          "sentinel_path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+          "window_id": 13688,
+          "window_title": "organized"
+        },
+        "last_window_context": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 13688,
+          "front_pid": 81134,
+          "main_window_id": 13688
+        },
+        "navigation": {
+          "ax_url": "file:///.file/id=6571367.388399147",
+          "basis": "fresh_ax_destination_marker_and_owned_directory",
+          "device": 16777234,
+          "inode": 388399140,
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized",
+          "pid": 81134,
+          "sentinel_identity": {
+            "device": 16777234,
+            "inode": 388399147,
+            "mtime_ns": 1793240806111549285,
+            "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+            "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+            "size": 18
+          },
+          "sentinel_path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/organized/keep.bin",
+          "window_id": 13688,
+          "window_title": "organized"
+        },
+        "predicate": "finder_move_same_inode",
+        "producer": "footwork.ax.finder",
+        "schema_version": 1,
+        "source_identity": {
+          "device": 16777234,
+          "inode": 388399144,
+          "mtime_ns": 1793240806111299155,
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+          "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "size": 83
+        },
+        "transfer_route": "prebound_destination_window"
+      },
+      "operation_id": "op_61daf04983bc"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_7a4aadb84f39",
+    "client_token": "rename",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 13687
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 62,
+      "target_label": "textbox",
+      "exec_ms": 3272.4890829995275,
+      "execution_interval": {
+        "end": 1793240813.4143832,
+        "start": 1793240810.141836
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 13687
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793240813.4143832,
+          "start": 1793240810.141836
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_7a4aadb84f39",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 4,
+          "delivery_basis": "ax_finder_rename_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 13687
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 3272.4890829995275,
+          "execution_interval": {
+            "end": 1793240813.4143832,
+            "start": 1793240810.141836
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected",
+              "file_menu_opened",
+              "rename_menu_pressed",
+              "editor_value_set"
+            ],
+            "after": {
+              "device": 16777234,
+              "inode": 388399144,
+              "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+              "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+              "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+              "root_device": 16777234,
+              "root_inode": 388399138
+            },
+            "after_menu": {
+              "focused_role": "AXApplication",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 13687,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before": {
+              "ax_url": "file:///.file/id=6571367.388399144",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 388399144,
+                "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+                "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/asset.png",
+                "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+                "root_device": 16777234,
+                "root_inode": 388399138
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 66.0,
+                "x": 746.0,
+                "y": 509.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "asset.png",
+              "window_id": 13687
+            },
+            "before_menu": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 13687,
+              "front_pid": 81134,
+              "main_window_id": 13687,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_selection": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 13687,
+              "front_pid": 81134,
+              "main_window_id": 13687,
+              "selection": {
+                "exact_row_only": false,
+                "exact_row_selected": false,
+                "selected_row_count": 0
+              }
+            },
+            "commit": {
+              "delivered_count": null,
+              "effect": "unverifiable",
+              "route": "sdk_foreground_return"
+            },
+            "destination": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+            "editor": {
+              "before_value": "asset.png",
+              "pid": 81134,
+              "role": "AXTextField",
+              "window_id": 13687
+            },
+            "editor_error": {
+              "detail": "the focused Finder editor does not hold the expected name",
+              "reason": "file_editor_missing"
+            },
+            "predicate": "finder_rename_same_inode",
+            "producer": "footwork.ax.finder",
+            "rename_enabled": true,
+            "schema_version": 1
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_7a4aadb84f39",
+          "secret": false,
+          "step": 1,
+          "target_id": 62,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "6120c99df5dd251effaeb37b0305b56c1ead1cbd09cbe9f774758268e23ce61b",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "87d7c0d117e34ecbb8748e91ffe73165",
+        "target": "62"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected",
+          "file_menu_opened",
+          "rename_menu_pressed",
+          "editor_value_set"
+        ],
+        "after": {
+          "device": 16777234,
+          "inode": 388399144,
+          "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+          "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+          "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+          "root_device": 16777234,
+          "root_inode": 388399138
+        },
+        "after_menu": {
+          "focused_role": "AXApplication",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 13687,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before": {
+          "ax_url": "file:///.file/id=6571367.388399144",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 388399144,
+            "manifest_sha256": "a7df938e944b27f197c0151ec8b6e8e69757ed986b1c2832be705a4be57beb65",
+            "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/asset.png",
+            "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture",
+            "root_device": 16777234,
+            "root_inode": 388399138
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 66.0,
+            "x": 746.0,
+            "y": 509.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "asset.png",
+          "window_id": 13687
+        },
+        "before_menu": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 13687,
+          "front_pid": 81134,
+          "main_window_id": 13687,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_selection": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 13687,
+          "front_pid": 81134,
+          "main_window_id": 13687,
+          "selection": {
+            "exact_row_only": false,
+            "exact_row_selected": false,
+            "selected_row_count": 0
+          }
+        },
+        "commit": {
+          "delivered_count": null,
+          "effect": "unverifiable",
+          "route": "sdk_foreground_return"
+        },
+        "destination": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/fixture/inbox/renamed.png",
+        "editor": {
+          "before_value": "asset.png",
+          "pid": 81134,
+          "role": "AXTextField",
+          "window_id": 13687
+        },
+        "editor_error": {
+          "detail": "the focused Finder editor does not hold the expected name",
+          "reason": "file_editor_missing"
+        },
+        "predicate": "finder_rename_same_inode",
+        "producer": "footwork.ax.finder",
+        "rename_enabled": true,
+        "schema_version": 1
+      },
+      "operation_id": "op_7a4aadb84f39"
+    },
+    "error": null
+  }
+]

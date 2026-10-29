@@ -210,7 +210,7 @@ def test_gate_pauses_before_a_destructive_click(snapshot, stub_sdk):
     assert not [n for n, _ in driver.calls if n == "click"]
 
 
-def test_refused_effect_is_recorded_and_run_continues(snapshot, stub_sdk):
+def test_opaque_error_is_recorded_as_unknown_and_run_continues(snapshot, stub_sdk):
     ids = _ids(snapshot)
     policy = SeqPolicy(
         _decision("click", ids["All Clear"]), _decision("click", ids["6"]), _decision("blocked")
@@ -219,11 +219,11 @@ def test_refused_effect_is_recorded_and_run_continues(snapshot, stub_sdk):
     run = asyncio.run(_agent(driver, policy).run())
     assert run.status == "blocked"
     first = run.steps[0]
-    assert first.effect.effect == "refused" and first.error.startswith("driver refused")
-    assert first.executed[0].params["effect"] == "refused"
+    assert first.effect.effect == "unverifiable" and first.error.startswith("input outcome unknown")
+    assert first.executed[0].params["effect"] == "unverifiable"
     assert run.steps[1].effect.effect == "confirmed"
     assert "not dispatched" not in (run.steps[0].memory_line or "")
-    assert agent_memory_mentions(run, "refused")
+    assert agent_memory_mentions(run, "unverifiable")
 
 
 def agent_memory_mentions(run, word):

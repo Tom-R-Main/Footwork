@@ -92,13 +92,25 @@ class SessionState:
     #: Visual answers belong to one observation generation and are advisory only.
     visual_generation: str = ""
     last_visual_check: dict[str, Any] | None = None
+    #: Opt-in native CLI authority domain; old sessions retain their legacy behavior.
+    authority: str = ""
+    session_id: str = ""
+    native_binding: dict[str, Any] = field(default_factory=dict)
+    native_scope: dict[str, str] = field(default_factory=dict)
+    finder_scope: dict[str, Any] = field(default_factory=dict)
+    ticket_scope: dict[str, Any] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
         return Path(self.dir)
 
     def save(self) -> None:
-        (self.path / "session.json").write_text(json.dumps(asdict(self), indent=1))
+        temporary = self.path / f".session-{uuid.uuid4().hex}.tmp"
+        try:
+            temporary.write_text(json.dumps(asdict(self), indent=1))
+            os.replace(temporary, self.path / "session.json")
+        finally:
+            temporary.unlink(missing_ok=True)
 
     @classmethod
     def load(cls, d: Path) -> SessionState:
@@ -148,6 +160,388 @@ def session_dir(arg: str | None) -> Path:
     return Path(arg or os.environ.get("FOOTWORK_SESSION") or "runs/session")
 
 
+async def run_command(args: Any) -> int:
+    """Own a durable domain before loading or writing any participating session state."""
+    from jevdual.capability.journal import JournalError
+    from jevdual.session_operations import SessionOperations
+
+    if not getattr(args, "_session_command", False):
+        return await args.fn(args)
+    directory = session_dir(args.session)
+    metadata = directory / "session.json"
+    raw = json.loads(metadata.read_text()) if metadata.exists() else {}
+    authority = getattr(args, "authority", None) or raw.get("authority")
+    if not authority:
+        return await args.fn(args)
+    args._durable_command = True
+    if getattr(args, "browser", False) or raw.get("mode") == "browser":
+        # Refuse before browser_prepare/launch/navigation, and before mutating a
+        # journal that cannot qualify this route's connection-local identities.
+        from jevdual.browser_driver import durable_authority_refusal
+
+        print(json.dumps(durable_authority_refusal(), sort_keys=True), file=sys.stderr)
+        return 2
+    location = Path(authority)
+    if not location.is_absolute():
+        print("not admitted: authority must be an absolute database path", file=sys.stderr)
+        return 7
+    location = location.resolve()
+    try:
+        with SessionOperations(location) as operations:
+            args._operations = operations
+            args._authority_owned = True
+            try:
+                # Re-read under ownership; the pre-lock read selected only the domain.
+                current = json.loads(metadata.read_text()) if metadata.exists() else {}
+                if current.get("authority") and Path(current["authority"]).resolve() != location:
+                    raise JournalError("session authority changed while acquiring ownership")
+                try:
+                    if current.get("authority") and current.get("session_id"):
+                        state = SessionState.load(directory)
+                        _repair_projection_log(state)
+                        for operation in sorted(
+                            operations.status(state.session_id), key=lambda op: op.created
+                        ):
+                            _project_operation(state, operations, operation)
+                    return await args.fn(args)
+                except (KeyboardInterrupt, SystemExit):
+                    raise
+                except Exception as exc:  # noqa: BLE001 - stop records remain under ownership
+                    from jevdual.cli import _stopped
+
+                    return _stopped(args, exc)
+            finally:
+                args._authority_owned = False
+                args._operations = None
+    except JournalError as exc:
+        print(f"not admitted: {getattr(exc, 'code', 'journal_error')}: {exc}", file=sys.stderr)
+        return 7
+
+
+def _operations(args: Any, state: SessionState) -> Any:
+    operations = getattr(args, "_operations", None)
+    if state.authority and (operations is None or not state.session_id or not state.native_binding):
+        raise NativeBridgeError("authority_required", "durable session requires domain ownership and binding")
+    return operations if state.authority else None
+
+
+def _check_native_binding(state: SessionState) -> None:
+    from jevdual.session_operations import native_identity
+
+    if state.native_binding != native_identity(state.pid, state.window_id):
+        raise NativeBridgeError(
+            "resource_changed", "native process/window binding changed; start a fresh session"
+        )
+
+
+def _operation_request(args: Any) -> dict[str, Any]:
+    request = {
+        "words": list(args.words),
+        "authorize": getattr(args, "authorize", ""),
+        "no_judge": bool(getattr(args, "no_judge", False)),
+        "from_session": str(Path(args.from_session).resolve())
+        if getattr(args, "from_session", None)
+        else None,
+        "route": getattr(args, "route", None),
+    }
+    if getattr(args, "_native_scope", None):
+        request["native_scope"] = dict(args._native_scope)
+    if getattr(args, "_finder_scope", None):
+        request["finder_scope"] = dict(args._finder_scope)
+    if getattr(args, "_ticket_scope", None):
+        request["ticket_scope"] = dict(args._ticket_scope)
+    return request
+
+
+def _native_url_parts(value: str) -> tuple[str, str, int, str, str]:
+    """Exact loopback scope, without DNS, credentials or fragment aliases."""
+    import ipaddress
+    from urllib.parse import urlsplit
+
+    try:
+        if not isinstance(value, str) or value != value.strip() or any(ord(char) < 32 for char in value):
+            raise ValueError("unsupported URL spelling")
+        parsed = urlsplit(value)
+        if (
+            parsed.scheme != "http"
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.fragment
+            or not parsed.hostname
+            or "%" in parsed.hostname
+            or not ipaddress.ip_address(parsed.hostname).is_loopback
+        ):
+            raise ValueError("unsupported URL scope")
+        port = 80 if parsed.port is None else parsed.port
+        if port <= 0:
+            raise ValueError("unsupported port")
+        return parsed.scheme, parsed.hostname, port, parsed.path or "/", parsed.query
+    except (ValueError, TypeError) as exc:
+        raise NativeBridgeError(
+            "native_scope_invalid", "native URL scope requires an exact HTTP numeric-loopback URL"
+        ) from exc
+
+
+def _native_scope_guard(scope: dict[str, str]):
+    if not isinstance(scope, dict) or set(scope) != {"url", "title"} or not isinstance(scope["title"], str):
+        raise NativeBridgeError("native_scope_invalid", "unsupported native browser scope")
+    expected = _native_url_parts(scope["url"])
+
+    def check(nm: NativeMenu) -> None:
+        if nm.app_name not in ("Google Chrome", "Chrome"):
+            raise NativeBridgeError("native_scope_changed", "the observed app is not the scoped Chrome app")
+        if scope["title"] and scope["title"] not in nm.menu.title:
+            raise NativeBridgeError(
+                "native_scope_changed", "the observed window lacks the fixture title nonce"
+            )
+        evidence = getattr(nm, "chrome_scope", None)
+        if (
+            not isinstance(evidence, dict)
+            or evidence.get("method") != "chrome.ax-toolbar/v1"
+            or type(evidence.get("pid")) is not int
+            or type(evidence.get("window_id")) is not int
+            or evidence.get("pid") != nm.pid
+            or evidence.get("window_id") != nm.window_id
+            or evidence.get("complete") is not True
+            or evidence.get("errors") != []
+            or not isinstance(evidence.get("address_bars"), list)
+            or len(evidence["address_bars"]) != 1
+        ):
+            raise NativeBridgeError(
+                "native_scope_unavailable", "one unambiguous Chrome address bar is required"
+            )
+        shown = evidence["address_bars"][0].get("value")
+        if not isinstance(shown, str) or not shown:
+            raise NativeBridgeError("native_scope_unavailable", "the scoped address bar has no readable URL")
+        if "://" not in shown:
+            shown = "http://" + shown
+        try:
+            actual = _native_url_parts(shown)
+        except NativeBridgeError as exc:
+            raise NativeBridgeError(
+                "native_scope_changed", "the observed URL is outside the fixture scope"
+            ) from exc
+        if actual != expected:
+            raise NativeBridgeError(
+                "native_scope_changed", "the observed URL differs from the exact fixture scope"
+            )
+
+    return check
+
+
+def _safe_operation_value(state: SessionState, value: Any, secret: str | None = None) -> Any:
+    """Scrub string values before persistence, including quotes/newlines in secrets."""
+    if isinstance(value, str):
+        for hidden in _secret_values(state, secret):
+            value = value.replace(hidden, "{secret}")
+        return value
+    if isinstance(value, dict):
+        return {key: _safe_operation_value(state, item, secret) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_safe_operation_value(state, item, secret) for item in value]
+    return value
+
+
+def _safe_field_readback(state: SessionState, readback: dict[str, Any], secret: str | None) -> dict[str, Any]:
+    safe = _safe_operation_value(state, readback, secret)
+    if safe != readback:
+        # Redaction is a lossy projection, not an exact value containing the literal placeholder.
+        safe.update(
+            complete=False, redacted=True, observed_value=None, expected_value=None, before_value=None
+        )
+    return safe
+
+
+def _structured_receipt(state: SessionState, pending: dict[str, Any], nm: Any) -> dict[str, Any]:
+    """Facts from actual producers, not from receipt prose or projection previews."""
+    from jevdual.operator_evidence import fact_record
+    from jevdual.session_operations import native_resource
+
+    binding = pending.get("binding") or state.native_binding
+    interval = pending.get("execution_interval") or {"start": time.time(), "end": time.time()}
+    operation_id = pending.get("operation_id")
+    observation = pending.get("observation") or state.last_snapshot
+    resource = native_resource(binding)
+    refs = [f"execution:{operation_id}"]
+    common = {
+        "resource": resource,
+        "binding": binding,
+        "observation": observation,
+        "started_at": interval["start"],
+        "ended_at": interval["end"],
+        "evidence_refs": refs,
+    }
+    facts = []
+    rb = pending.get("field_readback")
+    if (
+        isinstance(rb, dict)
+        and type(rb.get("schema_version")) is int
+        and rb.get("schema_version") == 1
+        and rb.get("producer") == {"name": "footwork.native", "version": 1}
+        and type(rb["producer"].get("version")) is int
+        and rb.get("predicate") == "field_equals"
+        and rb.get("complete") is True
+        and rb.get("decision_target_id") == pending.get("target_id")
+        and type(rb.get("decision_target_id")) is int
+        and type(rb.get("target_id")) is int
+        and rb.get("decision_snapshot_id") == observation
+        and isinstance(rb.get("snapshot_id"), str)
+        and rb["snapshot_id"]
+        and isinstance(rb.get("observed_value"), str)
+        and not pending.get("secret")
+    ):
+        limits = [] if rb.get("matches") is True else ["the requested field postcondition did not match"]
+        roles, frames = getattr(nm, "ax_roles", {}), getattr(nm, "frames", {})
+        same = [
+            candidate
+            for candidate in nm.menu.candidates
+            if roles.get(candidate.id) == rb.get("role")
+            and rb.get("frame") is not None
+            and list(frames.get(candidate.id) or ()) == list(rb["frame"])
+        ]
+        if len(same) != 1:
+            limits.append("the fresh observation cannot bind the field uniquely")
+        else:
+            # Candidate.value is a lossy display preview. Only the fresh raw value can
+            # corroborate the earlier exact readback; prefixes and whitespace changes
+            # may be actual edits rather than projection truncation.
+            current_value = getattr(nm, "values", {}).get(same[0].id)
+            if not isinstance(current_value, str):
+                limits.append("the fresh field value is unavailable")
+            elif rb["observed_value"] != current_value:
+                limits.append("the fresh field projection contradicts the earlier exact readback")
+        facts.append(
+            fact_record(
+                **common,
+                kind="current_state",
+                predicate="field_equals",
+                values=[rb["observed_value"]],
+                parameters={
+                    "source": "native.ax_insert_ack",
+                    "label": rb.get("label"),
+                    "target_id": rb["decision_target_id"],
+                    "source_target_id": rb["target_id"],
+                    "source_observation": rb["snapshot_id"],
+                    "matches": rb.get("matches") is True,
+                },
+                limits=limits,
+            )
+        )
+    elif pending.get("op") in ("type", "append"):
+        facts.append(
+            fact_record(
+                **common,
+                kind="current_state",
+                predicate="projection_field",
+                values=[],
+                parameters={"label": pending.get("target_label"), "target_id": pending.get("target_id")},
+                limits=["no complete exact field readback from a qualified producer"],
+            )
+        )
+    saved = pending.get("save_readback")
+    if isinstance(saved, dict) and saved.get("ok") is True and isinstance(saved.get("path"), str):
+        facts.append(
+            fact_record(
+                **common,
+                kind="persistence",
+                predicate="disk_equals_window",
+                values=[],
+                parameters={"path": saved["path"], "task_postcondition": "not_checked"},
+                limits=["window/disk agreement does not establish intended destination or task correctness"],
+            )
+        )
+    return {
+        "schema_version": "1",
+        "producer": {"name": "footwork.session", "version": 1},
+        "session_id": state.session_id,
+        "operation_id": operation_id,
+        "resource": resource,
+        "binding": binding,
+        "observation": observation,
+        "interval": interval,
+        "evidence_refs": refs,
+        "facts": facts,
+    }
+
+
+def _repair_projection_log(state: SessionState) -> None:
+    """Preserve damaged display bytes before replacing the log with its readable records.
+
+    Called under authority ownership. This repairs only the non-authoritative projection;
+    operation admission, custody and replay continue to come from the authority database.
+    """
+    log = state.path / "session.jsonl"
+    if not log.exists():
+        return
+    original = log.read_bytes()
+    readable, damaged = [], []
+    for number, line in enumerate(original.splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            if not isinstance(json.loads(line), dict):
+                raise TypeError("projection record is not an object")
+        except (TypeError, ValueError, UnicodeError):
+            damaged.append(number)
+        else:
+            readable.append(line + b"\n")
+    missing_separator = bool(original and not original.endswith(b"\n"))
+    if not damaged and not missing_separator:
+        return
+    quarantine = state.path / f"session.interrupted-{uuid.uuid4().hex}.jsonl"
+    with os.fdopen(os.open(quarantine, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+        stream.write(original)
+    repair = {
+        "t": time.time(),
+        "kind": "projection_repair",
+        "quarantine": quarantine.name,
+        "damaged_lines": damaged,
+        "missing_terminal_newline": missing_separator,
+        "authority": state.authority,
+    }
+    readable.append(json.dumps(repair).encode() + b"\n")
+    temporary = state.path / f".projection-{uuid.uuid4().hex}.tmp"
+    try:
+        with os.fdopen(os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+            stream.write(b"".join(readable))
+        os.replace(temporary, log)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _project_operation(state: SessionState, operations: Any, operation: Any) -> None:
+    """Repair a missing JSON projection without repeating the effect or overwriting newer state."""
+    projection = operations.projection(operation)
+    if not projection:
+        return
+    projection = {**projection, "operation_id": operation.id}
+    log = state.path / "session.jsonl"
+    records = []
+    log_text = log.read_text() if log.exists() else ""
+    for line in log_text.splitlines():
+        if line.strip():
+            records.append(json.loads(line))
+    already_logged = any(r.get("kind") == "do" and r.get("operation_id") == operation.id for r in records)
+    reconciled = any(
+        r.get("kind") == "receipt" and (r.get("action") or {}).get("operation_id") == operation.id
+        for r in records
+    )
+    if not already_logged:
+        if log_text and not log_text.endswith("\n"):
+            with log.open("a") as stream:
+                stream.write("\n")
+        state.log({"kind": "do", **projection, "projected_from": operation.id})
+    step = int(projection.get("step", state.step))
+    if reconciled:
+        if state.pending and state.pending.get("operation_id") == operation.id:
+            state.pending = None
+            state.save()
+    elif state.step <= step and (not already_logged or state.pending is None):
+        state.step = step
+        state.pending = projection
+        state.save()
+
+
 # ---- observation and receipts --------------------------------------------------------------
 
 
@@ -177,14 +571,27 @@ def receipt_for(
     r = _field_receipt(r, state.pending, nm, prev=prev, secret_value=secret_value)
     r = _save_receipt(r, state.pending)
     r = _outside_receipt(r, state.pending)
+    if state.pending.get("error") and state.pending.get("dispatched", False) is not False:
+        # A failed acknowledgement is not evidence of non-delivery. The diff
+        # receipt's error handling historically called every error a refusal.
+        r = dataclasses.replace(
+            r,
+            effect="unverifiable",
+            evidence="input outcome unknown after error: " + str(state.pending["error"]),
+        )
     if r.effect == "suspected_noop" and state.pending.get("driver_effect") == "confirmed":
         # the driver confirmed the press but nothing on the menu changed: say both
         text = receipt_text(r) + " The driver reported the press as delivered."
     else:
         text = receipt_text(r)
     out = {"effect": r.effect, "evidence": r.evidence, "text": text}
+    # Scrub text fields before adding non-text metadata below.
     for v in _secret_values(state, secret_value):
         out = {k: w.replace(v, "{secret}") for k, w in out.items()}
+    if "dispatched" in state.pending:
+        out["dispatched"] = state.pending["dispatched"]
+    if state.authority and state.pending.get("operation_id"):
+        out["structured_evidence"] = _structured_receipt(state, state.pending, nm)
     return out
 
 
@@ -193,6 +600,19 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
     land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
     by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
     download looks like, so it is not "not applied": what it did is outside the page."""
+    execution = pending.get("execution_receipt") or {}
+    proof = pending.get("native_readback") or {}
+    basis = (execution.get("producer") or {}).get("delivery_basis")
+    if execution.get("effect") == "confirmed" and basis in {
+        "ax_finder_rename_readback",
+        "ax_finder_move_readback",
+        "ax_menu_effect_readback",
+    }:
+        return dataclasses.replace(
+            r, effect="confirmed", evidence="qualified native readback: " + str(proof.get("predicate"))
+        )
+    if pending.get("dispatched") is False:
+        return r
     if pending.get("save_readback"):
         return r
     error = str(pending.get("error") or "")
@@ -265,12 +685,17 @@ def scrub(state: SessionState, nm: Any, extra: str | None = None) -> Any:
         candidates=tuple(dataclasses.replace(c, label=s(c.label), value=s(c.value)) for c in m.candidates),
     )
     if dataclasses.is_dataclass(nm):
-        out = dataclasses.replace(nm, menu=menu)
+        changes: dict[str, Any] = {"menu": menu}
+        if isinstance(getattr(nm, "values", None), dict):
+            changes["values"] = {k: s(v) for k, v in nm.values.items()}
+        if getattr(nm, "scope_address_bars", None) is not None:
+            changes["scope_address_bars"] = tuple((key, s(value)) for key, value in nm.scope_address_bars)
+        out = dataclasses.replace(nm, **changes)
     else:
         out = copy.copy(nm)
         out.menu = menu
-    if isinstance(getattr(out, "values", None), dict):
-        out.values = {k: s(v) for k, v in out.values.items()}
+        if isinstance(getattr(out, "values", None), dict):
+            out.values = {k: s(v) for k, v in out.values.items()}
     return out
 
 
@@ -307,8 +732,12 @@ def _field_receipt(
     error = pending.get("error") or getattr(r, "error", None)
     if (
         r.effect == "refused"
-        or error
-        or pending.get("driver_effect") in ("not sent", "not dispatched", "refused")
+        or ("dispatched" not in pending and error)
+        or pending.get("dispatched") is False
+        or (
+            "dispatched" not in pending
+            and pending.get("driver_effect") in ("not sent", "not dispatched", "refused")
+        )
     ):
         return dataclasses.replace(
             r, effect="refused", evidence=f"not applied: {str(error or pending.get('driver_effect'))[:120]}"
@@ -413,6 +842,20 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
 
 
 async def bind(state: SessionState):
+    if state.authority and state.mode == "browser":
+        from jevdual.browser_driver import durable_authority_refusal
+
+        refusal = durable_authority_refusal()
+        raise NativeBridgeError(refusal["code"], refusal["message"])
+    if state.authority and any(
+        len(os.environ.get(f"FOOTWORK_SECRET_{name}", "")) < 3 for name in state.secret_names
+    ):
+        # The live window may still contain previously typed plaintext. Names
+        # alone cannot redact it after its value disappears from the environment.
+        raise NativeBridgeError(
+            "secret_unavailable",
+            "restore this durable session's secret values before a new observation or action; status and replay remain available",
+        )
     if state.mode == "browser":
         from jevdual.browser_driver import BrowserBridge, configured_driver
 
@@ -428,15 +871,40 @@ async def bind(state: SessionState):
     from cua_driver import CuaDriver
 
     driver = CuaDriver.create(embedded=True)
+    if state.native_scope or state.finder_scope:
+        return driver, _native_bridge(
+            driver,
+            state.pid,
+            state.window_id,
+            state.posture,
+            native_scope=state.native_scope,
+            finder_scope=state.finder_scope,
+        )
     return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
 
 
-def _native_bridge(driver: Any, pid: int, wid: int, posture: str) -> NativeBridge:
+def _native_bridge(
+    driver: Any,
+    pid: int,
+    wid: int,
+    posture: str,
+    *,
+    native_scope: dict[str, str] | None = None,
+    finder_scope: dict[str, Any] | None = None,
+) -> NativeBridge:
     """The operator's bridge: the session's posture, and a live identity check before every element
     action (the person may have changed the window since the operator looked)."""
     from jevdual.posture import ExecutionPolicy
 
-    return NativeBridge(driver, pid, wid, policy=ExecutionPolicy(posture), live_check=True)  # type: ignore[arg-type]
+    return NativeBridge(
+        driver,
+        pid,
+        wid,
+        policy=ExecutionPolicy(posture),
+        live_check=True,
+        observation_guard=_native_scope_guard(native_scope) if native_scope else None,
+        **({"finder_scope": finder_scope} if finder_scope else {}),
+    )  # type: ignore[arg-type]
 
 
 async def observe(
@@ -452,12 +920,20 @@ async def observe(
         shots = state.path / "screenshots"
         shots.mkdir(exist_ok=True)
         shot = str(shots / f"obs-{state.step:03d}-{int(time.time())}.png")
+    started_at = time.time()
     nm = await bridge.observe(screenshot_path=shot)
-    return finish_observation(state, nm, secret_value=secret_value)
+    return finish_observation(
+        state, nm, secret_value=secret_value, observed_interval=(started_at, time.time())
+    )
 
 
 def finish_observation(
-    state: SessionState, nm: NativeMenu, *, secret_value: str | None = None, generation: str | None = None
+    state: SessionState,
+    nm: NativeMenu,
+    *,
+    secret_value: str | None = None,
+    generation: str | None = None,
+    observed_interval: tuple[float, float] | None = None,
 ) -> tuple[NativeMenu, dict[str, Any] | None]:
     """Reconcile the prior action before replacing its observation baseline."""
     receipt = receipt_for(state, nm, secret_value=secret_value)
@@ -471,6 +947,35 @@ def finish_observation(
     state.remember(nm)
     if generation is not None:
         state.visual_generation = generation
+    if state.authority:
+        from jevdual.session_operations import native_resource
+
+        start, end = observed_interval or (time.time(), time.time())
+        state.log(
+            {
+                "kind": "observation",
+                "schema_version": "1",
+                "producer": {"name": "footwork.session", "version": 1},
+                "session_id": state.session_id,
+                "resource": native_resource(state.native_binding),
+                "binding": state.native_binding,
+                "observation": nm.snapshot_id,
+                "generation": state.visual_generation,
+                "native_scope": state.native_scope,
+                "interval": {"start": start, "end": end},
+                "coverage": {
+                    "elements_complete": bool(getattr(nm, "elements_complete", False)),
+                    "text_truncated": bool(getattr(nm, "text_truncated", False)),
+                    "truncated": bool(getattr(nm, "truncated", False)),
+                    "degraded": bool(getattr(nm, "degraded", False)),
+                    "values_exact": False,
+                    "omitted": nm.menu.omitted,
+                },
+                "text": nm.menu.page_text,
+                "elements": [{k: getattr(c, k) for k in _CAND_FIELDS} for c in nm.menu.candidates],
+                "limits": ["projection values may be previews; window creation identity is unavailable"],
+            }
+        )
     state.save()
     return nm, receipt
 
@@ -481,12 +986,88 @@ def finish_observation(
 async def cmd_start(args: Any) -> int:
     from cua_driver import CuaDriver
 
-    from jevdual.native import address_bar, find_window, navigate_in_window, new_window, require_accessibility
-
-    if not getattr(args, "browser", False):
-        require_accessibility()
+    from jevdual.native import (
+        address_bar,
+        find_window,
+        find_window_for_pid,
+        navigate_in_window,
+        new_window,
+        require_accessibility,
+    )
 
     d = session_dir(args.session)
+    operations = getattr(args, "_operations", None)
+    durable = bool(getattr(args, "authority", None))
+    explicit_pid = getattr(args, "pid", None)
+    if explicit_pid is not None and (explicit_pid <= 0 or getattr(args, "browser", False)):
+        print("not starting: --pid requires a positive native process ID", file=sys.stderr)
+        return 2
+    native_scope = {}
+    finder_scope = {}
+    ticket_scope = {}
+    if getattr(args, "finder_manifest", None):
+        if not durable or getattr(args, "browser", False) or args.app != "Finder":
+            print("not starting: --finder-manifest requires durable native Finder", file=sys.stderr)
+            return 2
+        from jevdual.finder_targets import bind as bind_file
+
+        manifest = json.loads(Path(args.finder_manifest).read_text())
+        selector = "file:" + str(Path(manifest["root"]) / manifest["paths"]["source"])
+        finder_scope = {"manifest": manifest, "binding": bind_file(manifest, selector).to_record()}
+    if getattr(args, "native_url", None) or getattr(args, "native_title", None):
+        if (
+            not durable
+            or getattr(args, "browser", False)
+            or args.app not in ("Google Chrome", "Chrome")
+            or not getattr(args, "native_url", None)
+        ):
+            print(
+                "not starting: native URL/title scope requires durable native Chrome and --native-url",
+                file=sys.stderr,
+            )
+            return 2
+        native_scope = {"url": args.native_url, "title": args.native_title or ""}
+        _native_scope_guard(native_scope)
+    if getattr(args, "ticket_manifest", None):
+        if (
+            not durable
+            or getattr(args, "browser", False)
+            or args.app not in ("Google Chrome", "Chrome")
+            or not native_scope
+            or not native_scope["title"]
+        ):
+            raise NativeBridgeError(
+                "ticket_scope_invalid",
+                "ticket enrollment requires durable native Chrome and exact URL/title scope",
+            )
+        from jevdual.ticket_evidence import bind as bind_ticket
+        from jevdual.ticket_evidence import normalize_origin
+
+        spec = json.loads(Path(args.ticket_manifest).read_text())
+        if set(spec) != {"database", "url", "expected", "artifact", "root"}:
+            raise NativeBridgeError("ticket_scope_invalid", "ticket manifest has unsupported fields")
+        ticket_scope = bind_ticket(**spec)
+        if normalize_origin(native_scope["url"]) != ticket_scope["url"]:
+            raise NativeBridgeError("ticket_scope_invalid", "ticket origin differs from the native scope")
+    old_metadata = d / "session.json"
+    if durable or (old_metadata.exists() and SessionState.load(d).authority):
+        if getattr(args, "browser", False) or getattr(args, "url", None):
+            print(
+                "not starting: durable native start binds an existing window; browser/url startup is unsupported",
+                file=sys.stderr,
+            )
+            return 2
+        if d.exists() and any(d.iterdir()):
+            print(
+                "not starting: durable sessions require a fresh directory; history is retained",
+                file=sys.stderr,
+            )
+            return 2
+        if operations is None:
+            print("not starting: durable authority ownership is required", file=sys.stderr)
+            return 2
+    if not getattr(args, "browser", False):
+        require_accessibility()
     d.mkdir(parents=True, exist_ok=True)
     # a new session inherits nothing: no carried value or destination snapshot from an older one in
     # the same directory can be used as if it were read in this one (secondary audit: stale carries)
@@ -497,7 +1078,56 @@ async def cmd_start(args: Any) -> int:
     driver = CuaDriver.create(embedded=True)
     try:
         try:
-            pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
+            if explicit_pid is not None:
+                pid = explicit_pid
+                wid, title = await find_window_for_pid(driver, pid, title_contains=args.window or "")
+            else:
+                pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
+            if finder_scope:
+                from cua_driver import ListWindowsInput
+
+                from jevdual.finder_targets import FinderBinding, FinderTargetError, resolve, resolve_marker
+
+                windows = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+                matches = []
+                for window in windows.windows:
+                    if args.window and args.window.casefold() not in window.title.casefold():
+                        continue
+                    try:
+                        resolve(
+                            pid,
+                            window.window_id,
+                            FinderBinding.from_record(finder_scope["binding"]),
+                            finder_scope["manifest"],
+                        )
+                    except FinderTargetError as exc:
+                        if exc.reason == "file_target_missing":
+                            continue
+                        raise
+                    matches.append(window)
+                if len(matches) != 1:
+                    raise LookupError("the owned Finder asset must appear in exactly one complete window")
+                wid, title = matches[0].window_id, matches[0].title
+                destination = str(
+                    Path(finder_scope["manifest"]["root"])
+                    / Path(finder_scope["manifest"]["paths"]["organized"]).parent
+                )
+                destinations = []
+                for window in windows.windows:
+                    if window.title != Path(destination).name:
+                        continue
+                    try:
+                        destinations.append(
+                            resolve_marker(pid, window.window_id, finder_scope["manifest"], destination)
+                        )
+                    except FinderTargetError as exc:
+                        if exc.reason == "file_destination_unverified":
+                            continue
+                        raise
+                if len(destinations) > 1:
+                    raise LookupError("the owned Finder destination must appear in exactly one window")
+                if destinations:
+                    finder_scope["destination_window"] = destinations[0]
         except LookupError as exc:
             # not running, installed but not running, or no on-screen window: say which, no traceback
             print(f"not starting: {exc}", file=sys.stderr)
@@ -513,7 +1143,26 @@ async def cmd_start(args: Any) -> int:
             answer_expected=args.answer,
             posture=getattr(args, "mode", None) or "background_only",
         )
-        bridge = _native_bridge(driver, pid, wid, state.posture)
+        if durable:
+            from jevdual.session_operations import native_identity
+
+            state.authority = str(Path(args.authority).resolve())
+            state.session_id = uuid.uuid4().hex
+            state.native_binding = native_identity(pid, wid)
+            state.native_scope = native_scope
+            state.finder_scope = finder_scope
+            state.ticket_scope = ticket_scope
+        bridge = _native_bridge(
+            driver, pid, wid, state.posture, native_scope=state.native_scope, finder_scope=state.finder_scope
+        )
+        if explicit_pid is not None:
+            initial = await bridge.observe()
+            if initial.app_name != args.app or (initial.pid, initial.window_id) != (pid, wid):
+                print(
+                    "not starting: the observed process/window does not match the requested app and PID",
+                    file=sys.stderr,
+                )
+                return 2
         print(f"bound {args.app} window {wid} {title[:60]!r} ({state.posture})")
         if args.url:
             from urllib.parse import urlsplit
@@ -771,7 +1420,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </body></html>'''
 
 
-_ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
 
 
 def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, ...], tuple[str, ...]]:
@@ -801,7 +1450,7 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
     if len(words) < 2:
         raise SystemExit(f'{op} needs an element id or a label, e.g. {op} 65 or {op} "Telephone"')
     text = " ".join(words[2:]) if len(words) > 2 else None
-    if op in ("type", "append") and text is None:
+    if op in ("type", "append", "move") and text is None:
         raise SystemExit(f"{op} needs text")
     if words[1].lstrip("-").isdigit():
         return op, int(words[1]), text, (), ()
@@ -831,6 +1480,17 @@ def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
     )
 
 
+def _file_target(state: SessionState, nm: NativeMenu, selector: str) -> Any:
+    from jevdual.finder_targets import FinderBinding, candidate_id, rebind, resolve
+
+    if state.app != "Finder" or not state.authority or not state.finder_scope:
+        raise NativeBridgeError("file_scope_missing", "file selectors require an owned Finder manifest")
+    manifest = state.finder_scope["manifest"]
+    binding = rebind(FinderBinding.from_record(state.finder_scope["binding"]), manifest, selector)
+    target = resolve(state.pid, state.window_id, binding, manifest)
+    return target, candidate_id(target, nm)
+
+
 def resolve_secrets(text: str | None) -> tuple[str | None, bool]:
     """``{NAME}`` placeholders come from ``$FOOTWORK_SECRET_NAME``; the value never reaches the log."""
     if not text:
@@ -854,6 +1514,26 @@ async def cmd_do(args: Any) -> int:
     from jevdual.native import NativeBridgeError
 
     state = SessionState.load(session_dir(args.session))
+    operations = _operations(args, state)
+    operation = None
+    token = getattr(args, "token", None)
+    args._native_scope = state.native_scope
+    args._finder_scope = state.finder_scope
+    args._ticket_scope = state.ticket_scope
+    request = _operation_request(args)
+    if operations is not None:
+        token = token or uuid.uuid4().hex
+        prior = operations.by_request(state.session_id, token, request)
+        if prior is not None:
+            _project_operation(state, operations, prior)
+            print(json.dumps({**operations.receipt(prior), "replay": True}, sort_keys=True))
+            return 0
+        operations.assert_available()
+        _check_native_binding(state)
+        print(f"operation token: {token}")
+    elif token is not None:
+        print("--token requires a durable session started with --authority", file=sys.stderr)
+        return 2
     op, cid, raw_text, keys, path = parse_do(args.words)
     carried = None
     ref = carry.is_ref(raw_text) if op in ("type", "append") else None
@@ -868,13 +1548,28 @@ async def cmd_do(args: Any) -> int:
         raw_text = carried.text
         print(f"carrying {carried.provenance()}")
     text, secret_used = resolve_secrets(raw_text)
+    if operations is not None and secret_used:
+        names = re.findall(r"\{([A-Za-z_][A-Za-z0-9_]*)\}", raw_text or "")
+        if any(0 < len(os.environ.get(f"FOOTWORK_SECRET_{name}", "")) < 3 for name in names):
+            print(
+                "not admitted: short_secret_unsupported: durable mode requires secret values of at least three characters",
+                file=sys.stderr,
+            )
+            return 2
     shown_text = raw_text if not secret_used else re.sub(r"\{[^}]+\}", "{secret}", raw_text or "")
     if secret_used:
         for name in re.findall(r"\{([A-Za-z_][A-Za-z0-9_]*)\}", raw_text or ""):
             if name not in state.secret_names:
                 state.secret_names.append(name)
+    if operations is not None:
+        args._error_redactor = lambda value: _safe_operation_value(
+            state, value, text if secret_used else None
+        )
     driver, bridge = await bind(state)
     try:
+        if operations is not None and op == "navigate" and not callable(getattr(bridge, "navigate", None)):
+            print("not admitted: this native adapter does not support navigate", file=sys.stderr)
+            return 2
         before = state.last_menu()
         # the ids the operator chose from: the observation before this command, not the fresh one
         chosen_from = {c["id"]: c["label"] for c in state.last_candidates}
@@ -892,8 +1587,13 @@ async def cmd_do(args: Any) -> int:
                     "ids below are from the fresh observation"
                 )
         target = None
+        file_target = None
         if isinstance(cid, str):
-            rid, why = resolve_label(nm, cid)
+            if cid.startswith("file:"):
+                file_target, rid = _file_target(state, nm, cid)
+                why = ""
+            else:
+                rid, why = resolve_label(nm, cid)
             if rid is None:
                 print(why, file=sys.stderr)
                 return 4
@@ -929,6 +1629,8 @@ async def cmd_do(args: Any) -> int:
                 )
                 print(render_observation(nm, text_chars=args.text, receipt=None))
                 return 4
+        if op == "move" and file_target is None:
+            raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
         judge = None
         client = None
         # every route the authorizer judges (authorize.JUDGED_ROUTES), plus navigation: a key or Return
@@ -969,13 +1671,17 @@ async def cmd_do(args: Any) -> int:
             route, nm, "s2", target=target, text=text if op != "navigate" else None, keys=keys, path=path
         )
         if op == "navigate":
-            action = dataclasses.replace(action, label=f"navigate to {text}", route="click")
-        line = f"{op}({target.label if target else (text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
+            action = dataclasses.replace(action, label=f"navigate to {shown_text}", route="click")
+        line = f"{op}({target.label if target else (shown_text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
         if carried is not None:
             line += f" text=@{carried.name} (from {carried.surface} {carried.location or carried.title})"
         elif shown_text:
             line += f" text={shown_text[:60]!r}"
+        if operations is not None:
+            line = _safe_operation_value(state, line, text if secret_used else None)
         hit = await authorizer.check(nm, action, task=state.task)
+        if operations is not None and hit:
+            hit = _safe_operation_value(state, hit, text if secret_used else None)
         if not hit and op in ("navigate", "click"):
             # U52: a repeat of a submission this session already recorded pauses like any gated effect,
             # whatever the label authorization says; a grant for exactly this action clears it
@@ -991,18 +1697,40 @@ async def cmd_do(args: Any) -> int:
             await client.__aexit__(None, None, None)
         if authorizer.judgments:
             j = authorizer.judgments[-1]
+            if operations is not None:
+                j = _safe_operation_value(state, j, text if secret_used else None)
             print(
                 f"destructive judgment: p={j.get('p', 0):.2f} on {j.get('label')!r}"
                 if "p" in j
                 else f"judgment failed: {j.get('error')}"
             )
+        proposal = None
+        authorization_basis = "existing_policy"
         if hit:
             # package H: a grant for exactly this effect on exactly this resource clears the pause once
-            proposal = _proposal(state, nm, op, target, text, keys, path)
-            granted, why = grants.consume(state.path, proposal)
+            proposal = _proposal(
+                state,
+                nm,
+                op,
+                target,
+                text,
+                keys,
+                path,
+                file_ref=file_target.binding.to_record() if file_target else None,
+            )
+            if operations is not None:
+                from jevdual.session_operations import native_binding as binding
+
+                granted, why = operations.matching_grant(
+                    state.session_id, proposal, resource=binding(state.native_binding)
+                )
+            else:
+                granted, why = grants.consume(state.path, proposal)
             if granted is not None:
                 print(f"cleared by grant {granted.id}: {granted.describe()}")
-                state.log({"kind": "grant_used", "grant": granted.id, "reason": hit})
+                if operations is None:
+                    state.log({"kind": "grant_used", "grant": granted.id, "reason": hit})
+                authorization_basis = f"exact_grant: {hit}"
                 hit = None
             else:
                 for w in why:
@@ -1019,11 +1747,81 @@ async def cmd_do(args: Any) -> int:
             )
             return 3
         state.step += 1
+        if operations is not None:
+            from jevdual.session_operations import native_binding as binding
+            from jevdual.session_operations import native_resource
+
+            _check_native_binding(state)
+            prepared = {
+                "step": state.step,
+                "line": line,
+                "driver_effect": "unverifiable",
+                "dispatched": None,
+                "error": "input outcome unknown; admitted operation has no retained result",
+                "op": op,
+                "target_id": target.id if target is not None else None,
+                "target_label": target.label if target is not None else None,
+                "intended": None if secret_used else text,
+                "secret": secret_used,
+                "mode": state.mode,
+                "app": state.app,
+                "native_scope": dict(state.native_scope),
+            }
+            prepared = _safe_operation_value(state, prepared, text if secret_used else None)
+            prepared["binding"] = dict(state.native_binding)
+            prepared["observation"] = nm.snapshot_id
+            if state.ticket_scope and op == "click":
+                from jevdual.ticket_evidence import prepare as prepare_ticket
+
+                if (
+                    args.words != ["click", "button:Register asset"]
+                    or target is None
+                    or target.label != "Register asset"
+                ):
+                    raise NativeBridgeError(
+                        "ticket_target_invalid", "qualified submission requires click button:Register asset"
+                    )
+                for label, expected in state.ticket_scope["expected"].items():
+                    fields = [c for c in nm.menu.candidates if c.role == "textbox" and c.label == label]
+                    if len(fields) != 1 or nm.values.get(fields[0].id, "") != expected:
+                        raise NativeBridgeError(
+                            "ticket_fields_changed",
+                            "the observed form differs from the enrolled ticket intent",
+                        )
+                prepared["ticket_submission"] = prepare_ticket(state.ticket_scope)
+            authorization_basis = _safe_operation_value(
+                state, authorization_basis, text if secret_used else None
+            )
+            operation = operations.admit(
+                session_id=state.session_id,
+                token=token,
+                request=request,
+                resource=native_resource(state.native_binding),
+                observation=nm.snapshot_id,
+                target=str(target.id) if target is not None else None,
+                move=op,
+                proposal=proposal,
+                grant_resource=binding(state.native_binding),
+                authorization_basis=authorization_basis,
+                projection=prepared,
+            )
+            print(f"operation: {operation.id}")
+            operations.start(operation.id)
         t0 = time.perf_counter()
+        started_at = time.time()
+        ended_at = None
+        bridge_returned = False
         error = None
-        eff = None  # a raised dispatch leaves no effect; the refusal below is still recorded
+        eff = None
+        dispatched = None  # a missing acknowledgement cannot establish no-send
         try:
-            if op == "navigate":
+            if file_target is not None:
+                if op not in ("type", "move"):
+                    raise NativeBridgeError(
+                        "file_operation_unsupported", "owned file selectors support type to rename or move"
+                    )
+                eff = await bridge.act_file(nm, op, "file:" + file_target.binding.path, text)
+            elif op == "navigate":
                 eff = await bridge.navigate(text or "")
             elif op == "hotkey":
                 eff = await bridge.hotkey(nm, list(keys))
@@ -1040,20 +1838,38 @@ async def cmd_do(args: Any) -> int:
                     )
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
+            ended_at = time.time()
+            bridge_returned = True
             driver_effect = eff.effect
+            dispatched = getattr(eff, "dispatched", True)
             if not getattr(eff, "dispatched", True):
                 # the posture refused it: nothing reached any window
                 driver_effect = "not sent"
                 error = f"{eff.error_code}: {eff.summary[:140]}"
             elif eff.effect == "refused":
-                error = f"driver refused: {eff.error_code or ''} {eff.summary[:100]}".strip()
+                driver_effect = "unverifiable"
+                error = f"input outcome unknown: {eff.error_code or ''} {eff.summary[:100]}".strip()
+            elif eff.error_code:
+                error = f"{eff.error_code}: {eff.summary[:140]}"
         except (NativeBridgeError, RuntimeError) as exc:
-            driver_effect = "not dispatched"
+            dispatched = getattr(exc, "dispatched", None)
+            driver_effect = "not dispatched" if dispatched is False else "unverifiable"
             error = f"{getattr(exc, 'reason', 'error')}: {exc}"[:160]
+        except BaseException:
+            if operations is not None and operation is not None:
+                operations.finish(
+                    operation.id,
+                    dispatched=None,
+                    effect="unverifiable",
+                    evidence=prepared,
+                    error="input interrupted; execution outcome unknown",
+                )
+            raise
         exec_ms = (time.perf_counter() - t0) * 1000
         state.pending = {
             "line": line,
             "driver_effect": driver_effect,
+            "dispatched": dispatched,
             "error": error,
             "exec_ms": exec_ms,
             "op": op,
@@ -1067,6 +1883,63 @@ async def cmd_do(args: Any) -> int:
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
+        if getattr(eff, "native_readback", None) is not None:
+            state.pending["native_readback"] = _safe_operation_value(state, eff.native_readback)
+        if operations is not None and getattr(eff, "field_readback", None) is not None:
+            state.pending["field_readback"] = _safe_field_readback(
+                state, eff.field_readback, text if secret_used else None
+            )
+        if operations is not None and operation is not None:
+            state.pending["step"] = state.step
+            state.pending["operation_id"] = operation.id
+            # Driver errors can quote arguments; resolved secrets never enter the authority store.
+            state.pending = _safe_operation_value(state, state.pending, text if secret_used else None)
+            state.pending["binding"] = dict(state.native_binding)
+            state.pending["native_scope"] = dict(state.native_scope)
+            if getattr(nm, "chrome_scope", None) is not None:
+                state.pending["chrome_scope_evidence"] = nm.chrome_scope
+            state.pending["observation"] = nm.snapshot_id
+            state.pending["execution_interval"] = {"start": started_at, "end": ended_at or time.time()}
+            phase = (
+                "not_sent"
+                if dispatched is False
+                else ("sent" if getattr(eff, "delivered_count", None) else "ambiguous")
+            )
+            if bridge_returned:
+                from jevdual.operator_evidence import execution_record
+
+                basis = getattr(eff, "delivery_basis", "unknown")
+                record = execution_record(
+                    operation,
+                    binding=state.native_binding,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    producer_evidence={
+                        "name": "footwork.native",
+                        "version": 1,
+                        "delivery_basis": basis,
+                        "delivered_count": getattr(eff, "delivered_count", None),
+                    },
+                    dispatched=dispatched,
+                    phase=phase,
+                    effect="unverifiable" if basis == "ax_menu_press_ack" else eff.effect,
+                    projection=state.pending,
+                    error=state.pending.get("error"),
+                )
+                operations.record_execution(operation.id, record)
+                finished = operations.finish_from_execution(operation.id)
+            else:
+                finished = operations.finish(
+                    operation.id,
+                    dispatched=dispatched,
+                    effect="unverifiable",
+                    evidence=state.pending,
+                    error=state.pending.get("error"),
+                    phase=phase,
+                )
+            state.pending = operations.projection(finished)
+            driver_effect = state.pending["driver_effect"]
+            error = state.pending.get("error")
         state.log({"kind": "do", **state.pending})
         state.save()
         print(
@@ -1090,6 +1963,10 @@ async def cmd_s1(args: Any) -> int:
         print("TYPESAFE_API_KEY missing", file=sys.stderr)
         return 2
     state = SessionState.load(session_dir(args.session))
+    operations = _operations(args, state)
+    if operations is not None and args.act:
+        operations.assert_available()
+        _check_native_binding(state)
     driver, bridge = await bind(state)
     try:
         nm, receipt = await observe(state, bridge)
@@ -1234,6 +2111,84 @@ def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
 
 
 async def cmd_done(args: Any) -> int:
+    from jevdual.capability.journal import Busy, JournalError
+    from jevdual.session_operations import SessionOperations
+
+    state = SessionState.load(session_dir(args.session))
+    owned = _operations(args, state)
+    domains = {Path(state.authority).resolve(): owned} if owned is not None else {}
+
+    def unresolved(current: SessionState, operations: Any) -> str | None:
+        if operations is not None:
+            try:
+                operations.assert_available()  # All rows, including unprojected legacy attempts.
+            except Busy as exc:
+                return str(exc)
+        pending = current.pending
+        canonical = (
+            operations.get(pending["operation_id"])
+            if operations is not None and pending and pending.get("operation_id")
+            else None
+        )
+        if (
+            pending
+            and not (
+                canonical is not None and canonical.task == current.session_id and not canonical.unresolved
+            )
+            and pending.get("dispatched") is not False
+            and (pending.get("driver_effect") not in ("confirmed", "partial") or pending.get("error"))
+        ):
+            return f"pending input in {current.path} has no settled result"
+        return None
+
+    # Journal locks are nonblocking: opposing A -> B / B -> A contexts refuse
+    # busy ownership instead of waiting while each holds its primary domain.
+    with contextlib.ExitStack() as custody:
+        sources = [state]
+        for directory in getattr(args, "context_from", None) or []:
+            current = SessionState.load(Path(directory))
+            if current.authority:
+                location = Path(current.authority)
+                if not location.is_absolute() or not location.exists():
+                    raise JournalError("context authority is unavailable")
+                location = location.resolve()
+                if location not in domains:
+                    domains[location] = custody.enter_context(SessionOperations(location))
+                reloaded = SessionState.load(Path(directory))
+                if reloaded.authority != current.authority or reloaded.session_id != current.session_id:
+                    raise JournalError("context session changed while acquiring ownership")
+                current = reloaded
+            sources.append(current)
+        for current in sources:
+            operations = domains.get(Path(current.authority).resolve()) if current.authority else None
+            reason = unresolved(current, operations)
+            if reason:
+                print(f"not completed: unresolved custody: {reason}", file=sys.stderr)
+                return 5
+        for current in sources:
+            if current.authority:
+                operations = domains[Path(current.authority).resolve()]
+                _repair_projection_log(current)
+                for operation in sorted(operations.status(current.session_id), key=lambda op: op.created):
+                    _project_operation(current, operations, operation)
+            else:
+                # Legacy sources have no authority ownership for projection repair.
+                # Refuse unreadable evidence before app/key/provider work and retain it.
+                from jevdual.completion import _records
+
+                try:
+                    if any(not isinstance(record, dict) for record in _records(current.path)):
+                        raise TypeError("projection record is not an object")
+                except (OSError, ValueError, TypeError) as exc:
+                    print(
+                        f"not completed: context_evidence_unreadable: {current.path} ({type(exc).__name__})",
+                        file=sys.stderr,
+                    )
+                    return 5
+        return await _cmd_done_verified(args, state)
+
+
+async def _cmd_done_verified(args: Any, state: SessionState) -> int:
     from typesafe_sdk import AsyncTypeSafeClient
 
     from jevdual.keys import load_keys
@@ -1242,7 +2197,6 @@ async def cmd_done(args: Any) -> int:
     if not load_keys().get("TYPESAFE_API_KEY"):
         print("TYPESAFE_API_KEY missing", file=sys.stderr)
         return 2
-    state = SessionState.load(session_dir(args.session))
     driver, bridge = await bind(state)
     try:
         nm, receipt = await observe(state, bridge)
@@ -1310,6 +2264,56 @@ async def cmd_done(args: Any) -> int:
 
 async def cmd_status(args: Any) -> int:
     state = SessionState.load(session_dir(args.session))
+    operations = _operations(args, state)
+    if operations is not None:
+        selected = getattr(args, "operation", None)
+        if selected:
+            item = operations.get(selected)
+            if item is None or item.task != state.session_id:
+                raise NativeBridgeError("operation_not_found", "no such operation in this session")
+            items = [item]
+        else:
+            items = operations.status(state.session_id)
+        if getattr(args, "reconcile", False):
+            reconciled = []
+            for prior in items:
+                item = operations.reconcile(prior.id)
+                if (item.state, item.phase, item.disposition) != (
+                    prior.state,
+                    prior.phase,
+                    prior.disposition,
+                ):
+                    state.log(
+                        {
+                            "kind": "execution_resolution",
+                            "operation_id": item.id,
+                            "prior": {
+                                "state": prior.state,
+                                "phase": prior.phase,
+                                "disposition": prior.disposition,
+                            },
+                            "resolution": operations.receipt(item),
+                        }
+                    )
+                _project_operation(state, operations, item)
+                reconciled.append(item)
+            items = reconciled
+        print(
+            json.dumps(
+                {
+                    "authority": state.authority,
+                    "session_id": state.session_id,
+                    "native_scope": state.native_scope,
+                    "operations": [operations.receipt(op) for op in items],
+                    "domain_unresolved": [operations.receipt(op) for op in operations.domain_unresolved()],
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+    if getattr(args, "reconcile", False) or getattr(args, "operation", None):
+        print("reconciliation requires a durable session started with --authority", file=sys.stderr)
+        return 2
     print(
         f"{state.status}: {state.app} window {state.window_id} ({state.posture}), step {state.step}, "
         f"task {state.task!r}"
@@ -1471,10 +2475,12 @@ def _proposal(
     text: str | None,
     keys: tuple[str, ...],
     path: tuple[str, ...],
+    *,
+    file_ref: dict[str, Any] | None = None,
 ) -> grants.Proposal:
     arguments = (
         text
-        if op in ("type", "append", "navigate")
+        if op in ("type", "append", "move", "navigate")
         else ("+".join(keys) if keys else " > ".join(path) or None)
     )
     return grants.Proposal(
@@ -1487,7 +2493,7 @@ def _proposal(
         # a menu item or chord acts on the selection: bind it, so a grant for trashing a.txt does not
         # trash b.txt (the audit's "different selected item")
         selection=tuple(sorted(c.label for c in nm.menu.candidates if c.selected)) if target is None else (),
-        element_ref=_element_ref(nm, target),
+        element_ref=(json.dumps(file_ref, sort_keys=True) if file_ref else _element_ref(nm, target)),
     )
 
 
@@ -1503,6 +2509,9 @@ def _element_ref(nm: Any, target: Any) -> str:
 async def cmd_grant(args: Any) -> int:
     """Package H: allow one exact effect on one resource, issued against the current observation."""
     state = SessionState.load(session_dir(args.session))
+    operations = _operations(args, state)
+    if operations is not None:
+        _check_native_binding(state)
     op, cid, raw_text, keys, path = parse_do(args.words)
     ref = carry.is_ref(raw_text) if op in ("type", "append") else None
     if ref is not None:
@@ -1518,8 +2527,13 @@ async def cmd_grant(args: Any) -> int:
     try:
         nm, _ = await observe(state, bridge)
         target = None
+        file_target = None
         if isinstance(cid, str):
-            rid, why = resolve_label(nm, cid)
+            if cid.startswith("file:"):
+                file_target, rid = _file_target(state, nm, cid)
+                why = ""
+            else:
+                rid, why = resolve_label(nm, cid)
             if rid is None:
                 print(why, file=sys.stderr)
                 return 4
@@ -1530,11 +2544,28 @@ async def cmd_grant(args: Any) -> int:
                 print(f"id {cid} is not on the current observation", file=sys.stderr)
                 return 4
         g = grants.issue(
-            _proposal(state, nm, op, target, raw_text, keys, path), uses=args.uses, step=state.step
+            _proposal(
+                state,
+                nm,
+                op,
+                target,
+                raw_text,
+                keys,
+                path,
+                file_ref=file_target.binding.to_record() if file_target else None,
+            ),
+            uses=args.uses,
+            step=state.step,
         )
     finally:
         await driver.shutdown()
-    grants.record(state.path, g)
+    if operations is not None:
+        from jevdual.session_operations import native_binding
+
+        _check_native_binding(state)
+        operations.issue_grant(state.session_id, g, resource=native_binding(state.native_binding))
+    else:
+        grants.record(state.path, g)
     state.log({"kind": "grant", "grant": grants.as_dict(g)})
     state.save()
     print(f"granted {g.id}: {g.describe()}")

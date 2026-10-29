@@ -318,12 +318,18 @@ def build_parser() -> argparse.ArgumentParser:
     from jevdual import session as S
 
     def common(sp: argparse.ArgumentParser) -> None:
+        sp.set_defaults(_session_command=True)
         sp.add_argument("--session", help="session directory (default $FOOTWORK_SESSION or runs/session)")
         sp.add_argument("--text", type=int, default=3000, help="page text characters to print")
 
     st = sub.add_parser("start", help="bind a window and start a session you drive as System 2")
     st.add_argument("task")
     st.add_argument("--app", default="Google Chrome", help="the running app (native route)")
+    st.add_argument(
+        "--pid",
+        type=int,
+        help="native route: bind only this owned process; never search another app instance",
+    )
     st.add_argument(
         "--browser", action="store_true", help="footwork's own Chrome through the Driver's DevTools route"
     )
@@ -332,6 +338,20 @@ def build_parser() -> argparse.ArgumentParser:
     st.add_argument("--require", default="")
     st.add_argument("--authorize", default="")
     st.add_argument("--answer", action="store_true")
+    st.add_argument("--authority", help="opt-in native durable mode: absolute shared authority database path")
+    st.add_argument(
+        "--finder-manifest", help="durable Finder only: owned fixture manifest for stable file:/ selectors"
+    )
+    st.add_argument(
+        "--ticket-manifest",
+        help="durable native Chrome: pre-bind an owned ticket ledger and exact artifact/fields",
+    )
+    st.add_argument(
+        "--native-url", help="native Chrome only: exact HTTP numeric-loopback URL required before every input"
+    )
+    st.add_argument(
+        "--native-title", help="native Chrome only: required fixture title nonce (requires --native-url)"
+    )
     st.add_argument(
         "--mode",
         default="background_only",
@@ -362,23 +382,34 @@ def build_parser() -> argparse.ArgumentParser:
     visual = sub.add_parser("visual-check", help="record one native advisory visual predicate; never execute")
     visual.add_argument("--request", required=True, help="JSON request manifest inside the session")
     visual.add_argument("--provider", choices=("decisions",), help="explicitly enable one provider request")
-    visual.add_argument("--disclose", action="store_true", help="allow this session capture and supplied asset upload")
-    visual.add_argument("--timeout", type=float, default=10.0, help="operational deadline; not an admission setting")
+    visual.add_argument(
+        "--disclose", action="store_true", help="allow this session capture and supplied asset upload"
+    )
+    visual.add_argument(
+        "--timeout", type=float, default=10.0, help="operational deadline; not an admission setting"
+    )
     visual.add_argument("--max-bytes", type=int, default=4_000_000)
     visual.add_argument("--max-input-tokens", type=int, default=64_000)
-    visual.add_argument("--max-calls", type=int, choices=(1, 2), default=1,
-                        help="fixed workflow cap; two permits one changed-evidence recovery")
+    visual.add_argument(
+        "--max-calls",
+        type=int,
+        choices=(1, 2),
+        default=1,
+        help="fixed workflow cap; two permits one changed-evidence recovery",
+    )
     visual.add_argument("--max-cost", type=float, default=0.0064)
     common(visual)
     visual.set_defaults(fn=cmd_visual_check)
     do = sub.add_parser("do", help="dispatch one action through the boundary and get its receipt")
     do.add_argument("words", nargs="+")
+    do.add_argument("--token", help="durable mode: replay this immutable request without sending input again")
     do.add_argument(
         "--authorize", default="", help="stand the boundary down for these labels, this action only"
     )
     do.add_argument("--settle", type=float, default=S.SETTLE_S)
     do.add_argument(
-        "--no-judge", action="store_true",
+        "--no-judge",
+        action="store_true",
         help="explicit keyword/replacement-only mode; skips Jev judgment on click/menu/key/enter/navigation",
     )
     do.add_argument("--from", dest="from_session", help="the session an @NAME value was read in")
@@ -422,7 +453,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     common(cf)
     cf.set_defaults(fn=S.cmd_check_file)
-    artifact = sub.add_parser("check-artifact", help="read-only exact bytes against a digest-bound expected file")
+    artifact = sub.add_parser(
+        "check-artifact", help="read-only exact bytes against a digest-bound expected file"
+    )
     artifact.add_argument("path")
     artifact.add_argument("--expected-file", required=True)
     artifact.add_argument("--expected-sha256", required=True)
@@ -440,6 +473,12 @@ def build_parser() -> argparse.ArgumentParser:
     common(sf)
     sf.set_defaults(fn=S.cmd_snapshot_file)
     stt = sub.add_parser("status")
+    stt.add_argument(
+        "--reconcile",
+        action="store_true",
+        help="reconcile retained execution or pre-admitted independent ticket evidence; never resend input",
+    )
+    stt.add_argument("--operation", help="select one operation owned by this session")
     common(stt)
     stt.set_defaults(fn=S.cmd_status)
     return ap
@@ -457,7 +496,9 @@ def _legacy_main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
     try:
-        return asyncio.run(args.fn(args))
+        from jevdual.session import run_command
+
+        return asyncio.run(run_command(args))
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as exc:  # noqa: BLE001 - every stop names its reason (G7 pilot, 2026-09-27)
@@ -472,11 +513,14 @@ def _stopped(args: argparse.Namespace, exc: BaseException) -> int:
     """A command that fails outside its own handling stops with a named reason, logged to the session
     when there is one, instead of a traceback: `footwork start` on a TextEdit whose accessibility walk
     timed out printed a Rust-side DriverError trace and left no session behind."""
-    reason = getattr(exc, "reason", None) or type(exc).__name__
-    message = " ".join(str(exc).split())[:300]
+    reason = getattr(exc, "reason", None) or getattr(exc, "code", None) or type(exc).__name__
+    raw_message = str(exc)
+    if getattr(args, "_error_redactor", None) is not None:
+        raw_message = args._error_redactor(raw_message)
+    message = " ".join(raw_message.split())[:300]
     print(f"stopped: {reason}: {message}", file=sys.stderr)
     session = getattr(args, "session", None)
-    if session:
+    if session and (not getattr(args, "_durable_command", False) or getattr(args, "_authority_owned", False)):
         from pathlib import Path
 
         d = Path(session)

@@ -1,0 +1,559 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal",
+  "posture": "exclusive_desktop",
+  "loss": "none",
+  "interrupt": false,
+  "events": [
+    {
+      "label": "finder-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Finder",
+        "--window",
+        "inbox",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--finder-manifest",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/fixture.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "finder-wrong-directory",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/decoy/asset.png",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+        "--no-judge",
+        "--token",
+        "wrong-directory"
+      ],
+      "exit": 7,
+      "summary": [
+        "stopped: file_scope_invalid: file is not an owned fixture asset"
+      ]
+    },
+    {
+      "label": "rename-grant",
+      "words": [
+        "grant",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/asset.png",
+        "renamed.png"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "rename",
+      "words": [
+        "do",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/asset.png",
+        "renamed.png",
+        "--no-judge",
+        "--token",
+        "rename"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(textbox) text='renamed.png': driver says confirmed in 5.9s"
+      ]
+    },
+    {
+      "label": "move-grant",
+      "words": [
+        "grant",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "move",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+        "--no-judge",
+        "--token",
+        "move"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched move(textbox) text='/Users/thomasmain/projects/footwork/output/review-merge-2026': driver says confirmed in 5.2s"
+      ]
+    },
+    {
+      "label": "move-replay",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+        "--no-judge",
+        "--token",
+        "move"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "preview-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Preview",
+        "--window",
+        "renamed.png",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "16374"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "preview-menu",
+      "words": [
+        "look",
+        "--menu-bar"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "rotate",
+      "words": [
+        "do",
+        "menu",
+        "Tools > Rotate Right",
+        "--no-judge",
+        "--token",
+        "rotate"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched menu(Tools > Rotate Right): driver says confirmed in 3.3s"
+      ]
+    },
+    {
+      "label": "chrome-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Google Chrome",
+        "--window",
+        "Footwork owned ticket fixture",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "17480",
+        "--native-url",
+        "http://127.0.0.1:65357",
+        "--native-title",
+        "Footwork owned ticket fixture",
+        "--ticket-manifest",
+        "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-manifest.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "type-request_id",
+      "words": [
+        "do",
+        "type",
+        "textbox:request_id",
+        "7d3eb1a64c654b60a5ae25d1aed013e4",
+        "--no-judge",
+        "--token",
+        "type-request_id"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(request_id) text='7d3eb1a64c654b60a5ae25d1aed013e4': driver says confirmed in 2.4s"
+      ]
+    },
+    {
+      "label": "type-artifact",
+      "words": [
+        "do",
+        "type",
+        "textbox:artifact",
+        "renamed.png",
+        "--no-judge",
+        "--token",
+        "type-artifact"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(artifact) text='renamed.png': driver says confirmed in 1.6s"
+      ]
+    },
+    {
+      "label": "type-orientation",
+      "words": [
+        "do",
+        "type",
+        "textbox:orientation",
+        "clockwise90",
+        "--no-judge",
+        "--token",
+        "type-orientation"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(orientation) text='clockwise90': driver says confirmed in 1.2s"
+      ]
+    },
+    {
+      "label": "type-digest",
+      "words": [
+        "do",
+        "type",
+        "textbox:digest",
+        "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "--no-judge",
+        "--token",
+        "type-digest"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(digest) text='121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f04': driver says confirmed in 3.6s"
+      ]
+    },
+    {
+      "label": "submit",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 7,
+      "summary": [
+        "dispatched click(Register asset): driver says unverifiable (operation outcome unknown; inspect status, do not repeat input) in 0.5s",
+        "stopped: native_scope_changed: the observed window lacks the fixture title nonce"
+      ]
+    },
+    {
+      "label": "reconcile",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "submit-replay",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "reconcile-repeat",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "finder_readiness": {
+    "source": 15192,
+    "destination": 15193
+  },
+  "finder_oracle": {
+    "ok": true,
+    "detail": "asset is at the exact expected path with unchanged bytes and siblings",
+    "claims": [
+      "current_asset_path",
+      "unchanged_asset_bytes",
+      "preserved_fixture_siblings"
+    ],
+    "artifact": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+    "identity": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+      "device": 16777234,
+      "inode": 390050478,
+      "size": 83,
+      "mtime_ns": 1793299164789715417,
+      "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+    },
+    "checked_at": 1793299191.706663,
+    "limits": [
+      "current artifact state does not establish historical UI execution"
+    ]
+  },
+  "finder_closed": {
+    "pid": 81134,
+    "window_id": 15192,
+    "ack": 0,
+    "gone": true
+  },
+  "finder_destination_closed": {
+    "window_id": 15193,
+    "ack": 0
+  },
+  "preview_initial_pixels": {
+    "ok": true,
+    "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+    "claims": [
+      "current_rotated_pixels",
+      "current_image_dimensions",
+      "preserved_fixture_siblings",
+      "rotation_clockwise90"
+    ],
+    "artifact": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+    "identity": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+      "device": 16777234,
+      "inode": 390070049,
+      "size": 548,
+      "mtime_ns": 1793299198780318291,
+      "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+      "width": 3,
+      "height": 5,
+      "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+    },
+    "checked_at": 1793299200.166351,
+    "limits": [
+      "current pixels do not establish historical UI rotation/save",
+      "finite RGB fixture only"
+    ]
+  },
+  "preview_wait_seconds": 0.006750822067260742,
+  "preview_closed": {
+    "pid": 16374,
+    "window_id": 15268,
+    "ack": 0,
+    "gone": true
+  },
+  "preview_oracle": {
+    "ok": true,
+    "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+    "claims": [
+      "current_rotated_pixels",
+      "current_image_dimensions",
+      "preserved_fixture_siblings",
+      "rotation_clockwise90"
+    ],
+    "artifact": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+    "identity": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+      "device": 16777234,
+      "inode": 390070049,
+      "size": 548,
+      "mtime_ns": 1793299198780318291,
+      "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+      "width": 3,
+      "height": 5,
+      "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+    },
+    "checked_at": 1793299200.8285928,
+    "limits": [
+      "current pixels do not establish historical UI rotation/save",
+      "finite RGB fixture only"
+    ]
+  },
+  "expected": {
+    "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4",
+    "artifact": "renamed.png",
+    "orientation": "clockwise90",
+    "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff"
+  },
+  "chrome_readiness": 15282,
+  "submission_before_reconcile": {
+    "operation_id": "op_d0be5cdf4803",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "error": null
+  },
+  "submission_after_reconcile": {
+    "operation_id": "op_d0be5cdf4803",
+    "client_token": "submit",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "error": null
+  },
+  "ticket_oracle": {
+    "schema_version": 1,
+    "kind": "ticket_oracle",
+    "database": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite",
+    "expected": {
+      "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4",
+      "artifact": "renamed.png",
+      "orientation": "clockwise90",
+      "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff"
+    },
+    "checked_at": 1793299221.026443,
+    "ok": true,
+    "detail": "exactly one ingress and matching durable row",
+    "ingress": [
+      {
+        "id": 1,
+        "received": 1793299219.37888,
+        "body_sha": "e0b3479533848228c2a49e3e880cabdbe18148b9ae9c9234c5bbcfd2ab32651b",
+        "fields": {
+          "artifact": "renamed.png",
+          "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+          "orientation": "clockwise90",
+          "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+        },
+        "error": null,
+        "origin": "http://127.0.0.1:65357",
+        "response_mode": "normal"
+      }
+    ],
+    "tickets": [
+      {
+        "artifact": "renamed.png",
+        "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "orientation": "clockwise90",
+        "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+      }
+    ],
+    "responses": [
+      {
+        "ingress_id": 1,
+        "completed": 1793299219.380049,
+        "mode": "normal",
+        "boundary": "headers_flushed"
+      }
+    ]
+  },
+  "native_submission_receipt_preserved": {
+    "binding": {
+      "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+      "pid": 17480,
+      "start": "0x1.ab8e4c03db90ap+30",
+      "window_id": 15282
+    },
+    "custody": "returned",
+    "dispatched": true,
+    "effect": "unverifiable",
+    "error": null,
+    "interval": {
+      "end": 1793299219.692172,
+      "start": 1793299219.2140968
+    },
+    "kind": "execution",
+    "move": "click",
+    "observation": "s00000001",
+    "operation_id": "op_d0be5cdf4803",
+    "phase": "ambiguous",
+    "producer": {
+      "delivered_count": null,
+      "delivery_basis": "unknown",
+      "name": "footwork.native",
+      "version": 1
+    },
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 17480,
+        "start": "0x1.ab8e4c03db90ap+30",
+        "window_id": 15282
+      },
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:65357"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 17480,
+        "visited": 39,
+        "window_id": 15282
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": null,
+      "exec_ms": 478.0767500051297,
+      "execution_interval": {
+        "end": 1793299219.692172,
+        "start": 1793299219.2140968
+      },
+      "intended": null,
+      "line": "click(Register asset)",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:65357"
+      },
+      "observation": "s00000001",
+      "op": "click",
+      "operation_id": "op_d0be5cdf4803",
+      "secret": false,
+      "step": 5,
+      "target_id": 18,
+      "target_label": "Register asset"
+    },
+    "protocol": 1,
+    "request_digest": "703b6a0d260d26c35b779e6b0532605f80d15f28ba797dfd5edc2fcc12542d03",
+    "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+    "schema_version": "1",
+    "session_id": "5d4198db45fd415aa7309affa849c758",
+    "target": "18"
+  },
+  "replay_no_additional_ingress": true,
+  "completed_handoffs": [
+    "finder",
+    "preview",
+    "chrome"
+  ],
+  "status": "passed declared chain"
+}

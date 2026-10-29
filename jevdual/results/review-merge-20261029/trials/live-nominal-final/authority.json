@@ -1,0 +1,298 @@
+[
+  {
+    "operation_id": "op_b18ed8ecb479",
+    "client_token": "rename",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 15113
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": "file_editor_lost_focus: foreground (front app restored); the exact owned rename editor changed before its value write",
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 60,
+      "target_label": "textbox",
+      "exec_ms": 3166.098583023995,
+      "execution_interval": {
+        "end": 1793298970.2488608,
+        "start": 1793298967.0827389
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 15113
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "unverifiable",
+        "error": "file_editor_lost_focus: foreground (front app restored); the exact owned rename editor changed before its value write",
+        "interval": {
+          "end": 1793298970.2488608,
+          "start": 1793298967.0827389
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_b18ed8ecb479",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 3,
+          "delivery_basis": "ax_finder_rename_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 15113
+          },
+          "dispatched": true,
+          "driver_effect": "unverifiable",
+          "error": "file_editor_lost_focus: foreground (front app restored); the exact owned rename editor changed before its value write",
+          "exec_ms": 3166.098583023995,
+          "execution_interval": {
+            "end": 1793298970.2488608,
+            "start": 1793298967.0827389
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected",
+              "file_menu_opened",
+              "rename_menu_pressed"
+            ],
+            "after_menu": {
+              "focused_role": "AXApplication",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15113,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before": {
+              "ax_url": "file:///.file/id=6571367.390009979",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 390009979,
+                "manifest_sha256": "8cc9249ff90591a83551d8a6a1d8afa0c3c762cc1414c04a551f7fa14645ef66",
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/inbox/asset.png",
+                "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture",
+                "root_device": 16777234,
+                "root_inode": 390009971
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 66.0,
+                "x": 241.0,
+                "y": 373.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "asset.png",
+              "window_id": 15113
+            },
+            "before_editor_write": {
+              "focused_role": "AXTextField",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15113,
+              "selection": {
+                "error": "file_row_missing",
+                "exact_row_only": false
+              }
+            },
+            "before_menu": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15113,
+              "front_pid": 81134,
+              "main_window_id": 15113,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_rename": {
+              "focused_role": "AXApplication",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15113,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_selection": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15113,
+              "front_pid": 81134,
+              "main_window_id": 15113,
+              "selection": {
+                "exact_row_only": false,
+                "exact_row_selected": false,
+                "selected_row_count": 0
+              }
+            },
+            "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/inbox/renamed.png",
+            "editor": {
+              "before_value": "asset.png",
+              "pid": 81134,
+              "role": "AXTextField",
+              "window_id": 15113
+            },
+            "editor_error": {
+              "detail": "the focused Finder editor does not hold the expected name",
+              "reason": "file_editor_missing"
+            },
+            "predicate": "finder_rename_same_inode",
+            "producer": "footwork.ax.finder",
+            "rename_enabled": true,
+            "schema_version": 1
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_b18ed8ecb479",
+          "secret": false,
+          "step": 1,
+          "target_id": 60,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "6009e46b0b00ac2b4ebdf3534020543dbc3fd0937f287dfd622f008909990d73",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "9ca4eeb5de644f7a895484d0d1880c87",
+        "target": "60"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected",
+          "file_menu_opened",
+          "rename_menu_pressed"
+        ],
+        "after_menu": {
+          "focused_role": "AXApplication",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15113,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before": {
+          "ax_url": "file:///.file/id=6571367.390009979",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 390009979,
+            "manifest_sha256": "8cc9249ff90591a83551d8a6a1d8afa0c3c762cc1414c04a551f7fa14645ef66",
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/inbox/asset.png",
+            "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture",
+            "root_device": 16777234,
+            "root_inode": 390009971
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 66.0,
+            "x": 241.0,
+            "y": 373.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "asset.png",
+          "window_id": 15113
+        },
+        "before_editor_write": {
+          "focused_role": "AXTextField",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15113,
+          "selection": {
+            "error": "file_row_missing",
+            "exact_row_only": false
+          }
+        },
+        "before_menu": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15113,
+          "front_pid": 81134,
+          "main_window_id": 15113,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_rename": {
+          "focused_role": "AXApplication",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15113,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_selection": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15113,
+          "front_pid": 81134,
+          "main_window_id": 15113,
+          "selection": {
+            "exact_row_only": false,
+            "exact_row_selected": false,
+            "selected_row_count": 0
+          }
+        },
+        "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/inbox/renamed.png",
+        "editor": {
+          "before_value": "asset.png",
+          "pid": 81134,
+          "role": "AXTextField",
+          "window_id": 15113
+        },
+        "editor_error": {
+          "detail": "the focused Finder editor does not hold the expected name",
+          "reason": "file_editor_missing"
+        },
+        "predicate": "finder_rename_same_inode",
+        "producer": "footwork.ax.finder",
+        "rename_enabled": true,
+        "schema_version": 1
+      },
+      "operation_id": "op_b18ed8ecb479"
+    },
+    "error": "file_editor_lost_focus: foreground (front app restored); the exact owned rename editor changed before its value write"
+  }
+]

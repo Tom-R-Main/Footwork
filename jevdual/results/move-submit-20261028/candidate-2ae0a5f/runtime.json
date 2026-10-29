@@ -1,0 +1,47 @@
+{
+  "commit": "2ae0a5f263841008f17986a750fbb1596dc9f91f",
+  "python": "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+  "os": "macOS-26.5.1-arm64-arm-64bit",
+  "sdk": "0.38.0+footwork.d5373879",
+  "modules": {
+    "session": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/session.py",
+      "sha256": "bbcb26faaacd87fb92592863f96a5c5f7129d3c79bb5d67a5a9cbfd18c6b5148"
+    },
+    "session_operations": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/session_operations.py",
+      "sha256": "f4ab32d77ec3f56b095308b51e15b7c6439304b2e8db0de4dbfb027edcd4ee79"
+    },
+    "operator_evidence": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/operator_evidence.py",
+      "sha256": "c9018c67d353e5b5b59626950e9b7fb319cebf1905736300fb0c7e92248de6d7"
+    },
+    "native": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/native.py",
+      "sha256": "fa2fc91292a7b41642cb993d5e86944f0eeb628b4aa463f178a17441fe17b695"
+    },
+    "ax": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/ax.py",
+      "sha256": "70effc2741a0e782f451e43b9c0ea39386349b99e120b9b3d594bb1a231982da"
+    },
+    "finder_targets": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/finder_targets.py",
+      "sha256": "89d874abb1052b63cb2e560a48fd0dae05c6ceb2e14bd7e9c532d8f8ec362838"
+    },
+    "ticket_evidence": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/ticket_evidence.py",
+      "sha256": "784463dd645c208ba40196ad0d6ded13316d3ea8920217523b02ef2a4126564b"
+    },
+    "app_qualification": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/candidate-2ae0a5f/site/jevdual/app_qualification.py",
+      "sha256": "08dcda7265cfd9023beacbe8bcf36b8a7591ff41ff4545f594025af075f16964"
+    }
+  },
+  "Finder": "26.4",
+  "Preview": "11.0",
+  "Chrome": "156.0.8078.48",
+  "harness": {
+    "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/live_driver.py",
+    "sha256": "64045c99d23a2dfddb6bd916c7b285af41358fd9811267cb428d82c234d365c5"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "runtime": "/Users/thomasmain/projects/footwork/jevdual/python/jevdual/native.py",
+  "native_sha256": "009de00da506ee624a46634b0c9145ce1ac4b818cfeba892e80dabab39801f04",
+  "accessibility": "granted",
+  "apps": {
+    "Finder": "26.4",
+    "Preview": "11.0",
+    "Chrome": "156.0.8078.48"
+  }
+}

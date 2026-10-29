@@ -1,0 +1,31 @@
+{
+  "context": {
+    "main_window_id": 13909,
+    "focused_window_id": null,
+    "focused_role": "AXTextField"
+  },
+  "role": "AXTextField",
+  "value": "renamed.png",
+  "actions": [],
+  "attributes": [
+    "AXSelectedTextRange",
+    "AXNumberOfCharacters",
+    "AXEnabled",
+    "AXIdentifier",
+    "AXFrame",
+    "AXParent",
+    "AXSize",
+    "AXFocused",
+    "AXChildren",
+    "AXRole",
+    "AXTopLevelUIElement",
+    "AXInsertionPointLineNumber",
+    "AXHelp",
+    "AXValue",
+    "AXPosition",
+    "AXWindow",
+    "AXRoleDescription",
+    "AXVisibleCharacterRange",
+    "AXSelectedText"
+  ]
+}

@@ -1,0 +1,234 @@
+[
+  {
+    "operation_id": "op_c4372666cac1",
+    "client_token": "rename",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 15097
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": "file_selection_unverified: foreground (front app restored); the bound Finder window or sole selection changed before Rename",
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 60,
+      "target_label": "textbox",
+      "exec_ms": 2635.830624960363,
+      "execution_interval": {
+        "end": 1793298642.4297879,
+        "start": 1793298639.793946
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 15097
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "unverifiable",
+        "error": "file_selection_unverified: foreground (front app restored); the bound Finder window or sole selection changed before Rename",
+        "interval": {
+          "end": 1793298642.4297879,
+          "start": 1793298639.793946
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_c4372666cac1",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 2,
+          "delivery_basis": "ax_finder_rename_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 15097
+          },
+          "dispatched": true,
+          "driver_effect": "unverifiable",
+          "error": "file_selection_unverified: foreground (front app restored); the bound Finder window or sole selection changed before Rename",
+          "exec_ms": 2635.830624960363,
+          "execution_interval": {
+            "end": 1793298642.4297879,
+            "start": 1793298639.793946
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected",
+              "file_menu_opened"
+            ],
+            "before": {
+              "ax_url": "file:///.file/id=6571367.389990839",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 389990839,
+                "manifest_sha256": "951015a16e5945b09ecf055832b670186245938c41b5641dfa37f7a875e4a631",
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/inbox/asset.png",
+                "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture",
+                "root_device": 16777234,
+                "root_inode": 389990833
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 66.0,
+                "x": 241.0,
+                "y": 373.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "asset.png",
+              "window_id": 15097
+            },
+            "before_menu": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15097,
+              "front_pid": 81134,
+              "main_window_id": 15097,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_rename": {
+              "focused_role": "AXApplication",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15097,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_selection": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15097,
+              "front_pid": 81134,
+              "main_window_id": 15097,
+              "selection": {
+                "exact_row_only": false,
+                "exact_row_selected": false,
+                "selected_row_count": 0
+              }
+            },
+            "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/inbox/renamed.png",
+            "predicate": "finder_rename_same_inode",
+            "producer": "footwork.ax.finder",
+            "rename_enabled": true,
+            "schema_version": 1
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_c4372666cac1",
+          "secret": false,
+          "step": 1,
+          "target_id": 60,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "51ab559fe47b2e30297bcce959299d9e644b6fa51926ca032de7927a8bc603a2",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "1d990401b99a4b85bd211a16345cb35f",
+        "target": "60"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected",
+          "file_menu_opened"
+        ],
+        "before": {
+          "ax_url": "file:///.file/id=6571367.389990839",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 389990839,
+            "manifest_sha256": "951015a16e5945b09ecf055832b670186245938c41b5641dfa37f7a875e4a631",
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/inbox/asset.png",
+            "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture",
+            "root_device": 16777234,
+            "root_inode": 389990833
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 66.0,
+            "x": 241.0,
+            "y": 373.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "asset.png",
+          "window_id": 15097
+        },
+        "before_menu": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15097,
+          "front_pid": 81134,
+          "main_window_id": 15097,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_rename": {
+          "focused_role": "AXApplication",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15097,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_selection": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15097,
+          "front_pid": 81134,
+          "main_window_id": 15097,
+          "selection": {
+            "exact_row_only": false,
+            "exact_row_selected": false,
+            "selected_row_count": 0
+          }
+        },
+        "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/inbox/renamed.png",
+        "predicate": "finder_rename_same_inode",
+        "producer": "footwork.ax.finder",
+        "rename_enabled": true,
+        "schema_version": 1
+      },
+      "operation_id": "op_c4372666cac1"
+    },
+    "error": "file_selection_unverified: foreground (front app restored); the bound Finder window or sole selection changed before Rename"
+  }
+]

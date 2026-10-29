@@ -1,0 +1,6 @@
+Baseline commit: 47ed7ad; input projection length: 6001
+Retained text length: 6000
+Reported text_truncated: False
+Traceback (most recent call last):
+  File "<stdin>", line 19, in <module>
+AssertionError: Producer clipping was lost before downstream coverage check

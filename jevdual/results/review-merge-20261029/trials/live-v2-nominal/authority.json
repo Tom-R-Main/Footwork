@@ -1,0 +1,2119 @@
+[
+  {
+    "operation_id": "op_d0be5cdf4803",
+    "client_token": "submit",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 17480,
+        "start": "0x1.ab8e4c03db90ap+30",
+        "window_id": 15282
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": null,
+      "intended": null,
+      "line": "click(Register asset)",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:65357"
+      },
+      "observation": "s00000001",
+      "op": "click",
+      "secret": false,
+      "step": 5,
+      "target_id": 18,
+      "target_label": "Register asset",
+      "ticket_submission": {
+        "baseline": {
+          "counts": {
+            "ingress": 0,
+            "responses": 0,
+            "tickets": 0
+          },
+          "ingress": [],
+          "responses": [],
+          "tickets": []
+        },
+        "baseline_sha256": "f1e00ccfb4bd51fca717fee34d85ab04ecc3250740d463b7b17cbaa3ee084927",
+        "captured_at": 1793299219.21296,
+        "kind": "ticket_preparation",
+        "schema_version": 2,
+        "scope": {
+          "artifact": {
+            "device": 16777234,
+            "inode": 390070049,
+            "mtime_ns": 1793299198780318291,
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+            "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+            "size": 548
+          },
+          "bound_at": 1793299201.768783,
+          "expected": {
+            "artifact": "renamed.png",
+            "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+            "orientation": "clockwise90",
+            "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+          },
+          "kind": "ticket_scope",
+          "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal",
+          "schema_version": 2,
+          "source": {
+            "ancestors": [
+              {
+                "device": 16777234,
+                "inode": 2,
+                "path": "/"
+              },
+              {
+                "device": 16777234,
+                "inode": 17204,
+                "path": "/Users"
+              },
+              {
+                "device": 16777234,
+                "inode": 29517,
+                "path": "/Users/thomasmain"
+              },
+              {
+                "device": 16777234,
+                "inode": 1565109,
+                "path": "/Users/thomasmain/projects"
+              },
+              {
+                "device": 16777234,
+                "inode": 250201729,
+                "path": "/Users/thomasmain/projects/footwork"
+              },
+              {
+                "device": 16777234,
+                "inode": 281924148,
+                "path": "/Users/thomasmain/projects/footwork/output"
+              },
+              {
+                "device": 16777234,
+                "inode": 389935935,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029"
+              },
+              {
+                "device": 16777234,
+                "inode": 390050417,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+              },
+              {
+                "device": 16777234,
+                "inode": 390070601,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture"
+              }
+            ],
+            "database": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite",
+            "fixture_id": "fb67c170d242415098895223c1c1278e",
+            "identity": {
+              "device": 16777234,
+              "inode": 390070602,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite"
+            },
+            "origin": "http://127.0.0.1:65357",
+            "response_mode": "normal",
+            "root": {
+              "device": 16777234,
+              "inode": 390050417,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+            }
+          },
+          "url": "http://127.0.0.1:65357"
+        }
+      },
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:65357"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 17480,
+        "visited": 39,
+        "window_id": 15282
+      },
+      "exec_ms": 478.0767500051297,
+      "execution_interval": {
+        "end": 1793299219.692172,
+        "start": 1793299219.2140968
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 17480,
+          "start": "0x1.ab8e4c03db90ap+30",
+          "window_id": 15282
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "unverifiable",
+        "error": null,
+        "interval": {
+          "end": 1793299219.692172,
+          "start": 1793299219.2140968
+        },
+        "kind": "execution",
+        "move": "click",
+        "observation": "s00000001",
+        "operation_id": "op_d0be5cdf4803",
+        "phase": "ambiguous",
+        "producer": {
+          "delivered_count": null,
+          "delivery_basis": "unknown",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 17480,
+            "start": "0x1.ab8e4c03db90ap+30",
+            "window_id": 15282
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:65357"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 17480,
+            "visited": 39,
+            "window_id": 15282
+          },
+          "dispatched": true,
+          "driver_effect": "unverifiable",
+          "error": null,
+          "exec_ms": 478.0767500051297,
+          "execution_interval": {
+            "end": 1793299219.692172,
+            "start": 1793299219.2140968
+          },
+          "intended": null,
+          "line": "click(Register asset)",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:65357"
+          },
+          "observation": "s00000001",
+          "op": "click",
+          "operation_id": "op_d0be5cdf4803",
+          "secret": false,
+          "step": 5,
+          "target_id": 18,
+          "target_label": "Register asset"
+        },
+        "protocol": 1,
+        "request_digest": "703b6a0d260d26c35b779e6b0532605f80d15f28ba797dfd5edc2fcc12542d03",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+        "schema_version": "1",
+        "session_id": "5d4198db45fd415aa7309affa849c758",
+        "target": "18"
+      },
+      "independent_effect": "confirmed",
+      "operation_id": "op_d0be5cdf4803",
+      "prior_uncertainty": {
+        "error": null,
+        "phase": "ambiguous"
+      },
+      "service_receipt": {
+        "artifact": {
+          "device": 16777234,
+          "inode": 390070049,
+          "mtime_ns": 1793299198780318291,
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+          "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+          "size": 548
+        },
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 17480,
+          "start": "0x1.ab8e4c03db90ap+30",
+          "window_id": 15282
+        },
+        "capture": {
+          "checked_at": 1793299221.005912,
+          "snapshot": {
+            "counts": {
+              "ingress": 1,
+              "responses": 1,
+              "tickets": 1
+            },
+            "ingress": [
+              {
+                "body_sha": "e0b3479533848228c2a49e3e880cabdbe18148b9ae9c9234c5bbcfd2ab32651b",
+                "error": null,
+                "fields": {
+                  "artifact": "renamed.png",
+                  "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+                  "orientation": "clockwise90",
+                  "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+                },
+                "id": 1,
+                "origin": "http://127.0.0.1:65357",
+                "received": 1793299219.37888,
+                "response_mode": "normal"
+              }
+            ],
+            "responses": [
+              {
+                "boundary": "headers_flushed",
+                "completed": 1793299219.380049,
+                "ingress_id": 1,
+                "mode": "normal"
+              }
+            ],
+            "tickets": [
+              {
+                "artifact": "renamed.png",
+                "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+                "orientation": "clockwise90",
+                "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+              }
+            ]
+          },
+          "source": {
+            "ancestors": [
+              {
+                "device": 16777234,
+                "inode": 2,
+                "path": "/"
+              },
+              {
+                "device": 16777234,
+                "inode": 17204,
+                "path": "/Users"
+              },
+              {
+                "device": 16777234,
+                "inode": 29517,
+                "path": "/Users/thomasmain"
+              },
+              {
+                "device": 16777234,
+                "inode": 1565109,
+                "path": "/Users/thomasmain/projects"
+              },
+              {
+                "device": 16777234,
+                "inode": 250201729,
+                "path": "/Users/thomasmain/projects/footwork"
+              },
+              {
+                "device": 16777234,
+                "inode": 281924148,
+                "path": "/Users/thomasmain/projects/footwork/output"
+              },
+              {
+                "device": 16777234,
+                "inode": 389935935,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029"
+              },
+              {
+                "device": 16777234,
+                "inode": 390050417,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+              },
+              {
+                "device": 16777234,
+                "inode": 390070601,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture"
+              }
+            ],
+            "database": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite",
+            "fixture_id": "fb67c170d242415098895223c1c1278e",
+            "identity": {
+              "device": 16777234,
+              "inode": 390070602,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite"
+            },
+            "origin": "http://127.0.0.1:65357",
+            "response_mode": "normal",
+            "root": {
+              "device": 16777234,
+              "inode": 390050417,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+            }
+          }
+        },
+        "effect": "confirmed",
+        "expected": {
+          "artifact": "renamed.png",
+          "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+          "orientation": "clockwise90",
+          "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+        },
+        "interval": {
+          "end": 1793299221.005912,
+          "start": 1793299219.21311
+        },
+        "kind": "ticket_submission",
+        "move": "click",
+        "observation": "s00000001",
+        "operation_id": "op_d0be5cdf4803",
+        "phase": "sent",
+        "predicate": "unique_admitted_ticket_ingress",
+        "preparation_sha256": "cefd71470d610a142da3c3ff90d74eb27c0bb962573bf610677a09584b3cbbfe",
+        "producer": "footwork.ticket_ledger/v2",
+        "projection": {
+          "app": "Google Chrome",
+          "independent_effect": "confirmed",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:65357"
+          },
+          "ticket_submission": {
+            "baseline": {
+              "counts": {
+                "ingress": 0,
+                "responses": 0,
+                "tickets": 0
+              },
+              "ingress": [],
+              "responses": [],
+              "tickets": []
+            },
+            "baseline_sha256": "f1e00ccfb4bd51fca717fee34d85ab04ecc3250740d463b7b17cbaa3ee084927",
+            "captured_at": 1793299219.21296,
+            "kind": "ticket_preparation",
+            "schema_version": 2,
+            "scope": {
+              "artifact": {
+                "device": 16777234,
+                "inode": 390070049,
+                "mtime_ns": 1793299198780318291,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+                "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+                "size": 548
+              },
+              "bound_at": 1793299201.768783,
+              "expected": {
+                "artifact": "renamed.png",
+                "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+                "orientation": "clockwise90",
+                "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4"
+              },
+              "kind": "ticket_scope",
+              "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal",
+              "schema_version": 2,
+              "source": {
+                "ancestors": [
+                  {
+                    "device": 16777234,
+                    "inode": 2,
+                    "path": "/"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 17204,
+                    "path": "/Users"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 29517,
+                    "path": "/Users/thomasmain"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 1565109,
+                    "path": "/Users/thomasmain/projects"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 250201729,
+                    "path": "/Users/thomasmain/projects/footwork"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 281924148,
+                    "path": "/Users/thomasmain/projects/footwork/output"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 389935935,
+                    "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 390050417,
+                    "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+                  },
+                  {
+                    "device": 16777234,
+                    "inode": 390070601,
+                    "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture"
+                  }
+                ],
+                "database": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite",
+                "fixture_id": "fb67c170d242415098895223c1c1278e",
+                "identity": {
+                  "device": 16777234,
+                  "inode": 390070602,
+                  "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite"
+                },
+                "origin": "http://127.0.0.1:65357",
+                "response_mode": "normal",
+                "root": {
+                  "device": 16777234,
+                  "inode": 390050417,
+                  "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+                }
+              },
+              "url": "http://127.0.0.1:65357"
+            }
+          }
+        },
+        "request_digest": "703b6a0d260d26c35b779e6b0532605f80d15f28ba797dfd5edc2fcc12542d03",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+        "schema_version": 2,
+        "session_id": "5d4198db45fd415aa7309affa849c758",
+        "source": {
+          "ancestors": [
+            {
+              "device": 16777234,
+              "inode": 2,
+              "path": "/"
+            },
+            {
+              "device": 16777234,
+              "inode": 17204,
+              "path": "/Users"
+            },
+            {
+              "device": 16777234,
+              "inode": 29517,
+              "path": "/Users/thomasmain"
+            },
+            {
+              "device": 16777234,
+              "inode": 1565109,
+              "path": "/Users/thomasmain/projects"
+            },
+            {
+              "device": 16777234,
+              "inode": 250201729,
+              "path": "/Users/thomasmain/projects/footwork"
+            },
+            {
+              "device": 16777234,
+              "inode": 281924148,
+              "path": "/Users/thomasmain/projects/footwork/output"
+            },
+            {
+              "device": 16777234,
+              "inode": 389935935,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029"
+            },
+            {
+              "device": 16777234,
+              "inode": 390050417,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+            },
+            {
+              "device": 16777234,
+              "inode": 390070601,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture"
+            }
+          ],
+          "database": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite",
+          "fixture_id": "fb67c170d242415098895223c1c1278e",
+          "identity": {
+            "device": 16777234,
+            "inode": 390070602,
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite"
+          },
+          "origin": "http://127.0.0.1:65357",
+          "response_mode": "normal",
+          "root": {
+            "device": 16777234,
+            "inode": 390050417,
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+          }
+        },
+        "target": "18"
+      }
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_bda106489da5",
+    "client_token": "type-digest",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 17480,
+        "start": "0x1.ab8e4c03db90ap+30",
+        "window_id": 15282
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+      "line": "type(digest) text='121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f04'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:65357"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 4,
+      "target_id": 17,
+      "target_label": "digest",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:65357"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 17480,
+        "visited": 39,
+        "window_id": 15282
+      },
+      "exec_ms": 3551.1295840260573,
+      "execution_interval": {
+        "end": 1793299217.468621,
+        "start": 1793299213.917463
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 17480,
+          "start": "0x1.ab8e4c03db90ap+30",
+          "window_id": 15282
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299217.468621,
+          "start": 1793299213.917463
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_bda106489da5",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 64,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 17480,
+            "start": "0x1.ab8e4c03db90ap+30",
+            "window_id": 15282
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:65357"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 17480,
+            "visited": 39,
+            "window_id": 15282
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 3551.1295840260573,
+          "execution_interval": {
+            "end": 1793299217.468621,
+            "start": 1793299213.917463
+          },
+          "intended": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+          "line": "type(digest) text='121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f04'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:65357"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_bda106489da5",
+          "secret": false,
+          "step": 4,
+          "target_id": 17,
+          "target_label": "digest"
+        },
+        "protocol": 1,
+        "request_digest": "8bc6528be06266830d5ac5d05985f790ee4a7d3d0a486e10ac9ce43824de5f26",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+        "schema_version": "1",
+        "session_id": "5d4198db45fd415aa7309affa849c758",
+        "target": "17"
+      },
+      "operation_id": "op_bda106489da5"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_9484359eee04",
+    "client_token": "type-orientation",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 17480,
+        "start": "0x1.ab8e4c03db90ap+30",
+        "window_id": 15282
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "clockwise90",
+      "line": "type(orientation) text='clockwise90'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:65357"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 3,
+      "target_id": 15,
+      "target_label": "orientation",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:65357"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 17480,
+        "visited": 39,
+        "window_id": 15282
+      },
+      "exec_ms": 1174.9252920271829,
+      "execution_interval": {
+        "end": 1793299212.003836,
+        "start": 1793299210.828903
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 17480,
+          "start": "0x1.ab8e4c03db90ap+30",
+          "window_id": 15282
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299212.003836,
+          "start": 1793299210.828903
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_9484359eee04",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 11,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 17480,
+            "start": "0x1.ab8e4c03db90ap+30",
+            "window_id": 15282
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:65357"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 17480,
+            "visited": 39,
+            "window_id": 15282
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 1174.9252920271829,
+          "execution_interval": {
+            "end": 1793299212.003836,
+            "start": 1793299210.828903
+          },
+          "intended": "clockwise90",
+          "line": "type(orientation) text='clockwise90'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:65357"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_9484359eee04",
+          "secret": false,
+          "step": 3,
+          "target_id": 15,
+          "target_label": "orientation"
+        },
+        "protocol": 1,
+        "request_digest": "a6a7da3bccc8f80216af3e52a8d450eb19e68af058ef6ddb828d133caacfb217",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+        "schema_version": "1",
+        "session_id": "5d4198db45fd415aa7309affa849c758",
+        "target": "15"
+      },
+      "operation_id": "op_9484359eee04"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_9665f87789b0",
+    "client_token": "type-artifact",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 17480,
+        "start": "0x1.ab8e4c03db90ap+30",
+        "window_id": 15282
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "renamed.png",
+      "line": "type(artifact) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:65357"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 2,
+      "target_id": 13,
+      "target_label": "artifact",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:65357"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 17480,
+        "visited": 39,
+        "window_id": 15282
+      },
+      "exec_ms": 1610.9743749839254,
+      "execution_interval": {
+        "end": 1793299208.96048,
+        "start": 1793299207.3494961
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 17480,
+          "start": "0x1.ab8e4c03db90ap+30",
+          "window_id": 15282
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299208.96048,
+          "start": 1793299207.3494961
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_9665f87789b0",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 11,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 17480,
+            "start": "0x1.ab8e4c03db90ap+30",
+            "window_id": 15282
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:65357"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 17480,
+            "visited": 39,
+            "window_id": 15282
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 1610.9743749839254,
+          "execution_interval": {
+            "end": 1793299208.96048,
+            "start": 1793299207.3494961
+          },
+          "intended": "renamed.png",
+          "line": "type(artifact) text='renamed.png'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:65357"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_9665f87789b0",
+          "secret": false,
+          "step": 2,
+          "target_id": 13,
+          "target_label": "artifact"
+        },
+        "protocol": 1,
+        "request_digest": "3cd9aad7e4050cc511dbe1ac86dcb5cae9ad2da3cf3438bc9cb320fa4dbbdbc0",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+        "schema_version": "1",
+        "session_id": "5d4198db45fd415aa7309affa849c758",
+        "target": "13"
+      },
+      "operation_id": "op_9665f87789b0"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_6c180a5b0c16",
+    "client_token": "type-request_id",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 17480,
+        "start": "0x1.ab8e4c03db90ap+30",
+        "window_id": 15282
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "7d3eb1a64c654b60a5ae25d1aed013e4",
+      "line": "type(request_id) text='7d3eb1a64c654b60a5ae25d1aed013e4'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:65357"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 11,
+      "target_label": "request_id",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:65357"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 17480,
+        "visited": 39,
+        "window_id": 15282
+      },
+      "exec_ms": 2374.4269169983454,
+      "execution_interval": {
+        "end": 1793299205.572661,
+        "start": 1793299203.198216
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 17480,
+          "start": "0x1.ab8e4c03db90ap+30",
+          "window_id": 15282
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299205.572661,
+          "start": 1793299203.198216
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_6c180a5b0c16",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 32,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 17480,
+            "start": "0x1.ab8e4c03db90ap+30",
+            "window_id": 15282
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:65357"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 17480,
+            "visited": 39,
+            "window_id": 15282
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 2374.4269169983454,
+          "execution_interval": {
+            "end": 1793299205.572661,
+            "start": 1793299203.198216
+          },
+          "intended": "7d3eb1a64c654b60a5ae25d1aed013e4",
+          "line": "type(request_id) text='7d3eb1a64c654b60a5ae25d1aed013e4'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:65357"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_6c180a5b0c16",
+          "secret": false,
+          "step": 1,
+          "target_id": 11,
+          "target_label": "request_id"
+        },
+        "protocol": 1,
+        "request_digest": "747d8faeaf300aa7d545febfdd96ddd7a1020740abe42248410333a600620e50",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":17480,\"start\":\"0x1.ab8e4c03db90ap+30\"}",
+        "schema_version": "1",
+        "session_id": "5d4198db45fd415aa7309affa849c758",
+        "target": "11"
+      },
+      "operation_id": "op_6c180a5b0c16"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_ab8c3c6ec9f3",
+    "client_token": "rotate",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Preview",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 16374,
+        "start": "0x1.ab8e4be11b160p+30",
+        "window_id": 15268
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": null,
+      "line": "menu(Tools > Rotate Right)",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "menu",
+      "secret": false,
+      "step": 1,
+      "target_id": null,
+      "target_label": null,
+      "exec_ms": 3342.0767079805955,
+      "execution_interval": {
+        "end": 1793299198.7884119,
+        "start": 1793299195.446309
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 16374,
+          "start": "0x1.ab8e4be11b160p+30",
+          "window_id": 15268
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299198.7884119,
+          "start": 1793299195.446309
+        },
+        "kind": "execution",
+        "move": "menu",
+        "observation": "s00000001",
+        "operation_id": "op_ab8c3c6ec9f3",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 1,
+          "delivery_basis": "ax_menu_effect_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Preview",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 16374,
+            "start": "0x1.ab8e4be11b160p+30",
+            "window_id": 15268
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 3342.0767079805955,
+          "execution_interval": {
+            "end": 1793299198.7884119,
+            "start": 1793299195.446309
+          },
+          "intended": null,
+          "line": "menu(Tools > Rotate Right)",
+          "mode": "native",
+          "native_readback": {
+            "after": {
+              "document": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+              "edited": null,
+              "identity": {
+                "device": 16777234,
+                "inode": 390050478
+              },
+              "pid": 16374,
+              "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+              "undo": [
+                "Undo Rotate Right"
+              ],
+              "window_id": 15268
+            },
+            "before": {
+              "document": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+              "edited": null,
+              "identity": {
+                "device": 16777234,
+                "inode": 390050478
+              },
+              "pid": 16374,
+              "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+              "undo": [],
+              "window_id": 15268
+            },
+            "predicate": "preview_rotate_right_ui_transition",
+            "producer": "footwork.ax.preview",
+            "schema_version": 1
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "menu",
+          "operation_id": "op_ab8c3c6ec9f3",
+          "secret": false,
+          "step": 1,
+          "target_id": null,
+          "target_label": null
+        },
+        "protocol": 1,
+        "request_digest": "0d07e600b09cfe58d00ebd4e39ecb0dc530b7ad75f2d1ca9a4286b3e087de1bb",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":16374,\"start\":\"0x1.ab8e4be11b160p+30\"}",
+        "schema_version": "1",
+        "session_id": "efd597ad125241faba51ab731b4290c4",
+        "target": null
+      },
+      "native_readback": {
+        "after": {
+          "document": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+          "edited": null,
+          "identity": {
+            "device": 16777234,
+            "inode": 390050478
+          },
+          "pid": 16374,
+          "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "undo": [
+            "Undo Rotate Right"
+          ],
+          "window_id": 15268
+        },
+        "before": {
+          "document": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+          "edited": null,
+          "identity": {
+            "device": 16777234,
+            "inode": 390050478
+          },
+          "pid": 16374,
+          "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "undo": [],
+          "window_id": 15268
+        },
+        "predicate": "preview_rotate_right_ui_transition",
+        "producer": "footwork.ax.preview",
+        "schema_version": 1
+      },
+      "operation_id": "op_ab8c3c6ec9f3"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_5d87e9f6253d",
+    "client_token": "move",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 15192
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+      "line": "move(textbox) text='/Users/thomasmain/projects/footwork/output/review-merge-2026'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "move",
+      "secret": false,
+      "step": 2,
+      "target_id": 62,
+      "target_label": "textbox",
+      "exec_ms": 5232.379042019602,
+      "execution_interval": {
+        "end": 1793299190.1628811,
+        "start": 1793299184.93046
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 15192
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299190.1628811,
+          "start": 1793299184.93046
+        },
+        "kind": "execution",
+        "move": "move",
+        "observation": "s00000001",
+        "operation_id": "op_5d87e9f6253d",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 5,
+          "delivery_basis": "ax_finder_move_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 15192
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 5232.379042019602,
+          "execution_interval": {
+            "end": 1793299190.1628811,
+            "start": 1793299184.93046
+          },
+          "intended": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+          "line": "move(textbox) text='/Users/thomasmain/projects/footwork/output/review-merge-2026'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected",
+              "edit_menu_opened_for_copy",
+              "copy_menu_pressed",
+              "edit_menu_opened_for_move",
+              "move_item_here_pressed"
+            ],
+            "after": {
+              "device": 16777234,
+              "inode": 390050478,
+              "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+              "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+              "root_device": 16777234,
+              "root_inode": 390050472
+            },
+            "after_identity": {
+              "device": 16777234,
+              "inode": 390050478,
+              "mtime_ns": 1793299164789715417,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+              "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+              "size": 83
+            },
+            "before": {
+              "ax_url": "file:///.file/id=6571367.390050478",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 390050478,
+                "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+                "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+                "root_device": 16777234,
+                "root_inode": 390050472
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 87.0,
+                "x": 241.0,
+                "y": 393.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "renamed.png",
+              "window_id": 15192
+            },
+            "clipboard": {
+              "after_change_count": 1143,
+              "before_change_count": 1142,
+              "paths": [
+                "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png"
+              ]
+            },
+            "copy_menu_path": [
+              "Edit",
+              "Copy \u201crenamed.png\u201d"
+            ],
+            "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+            "destination_directory": {
+              "device": 16777234,
+              "inode": 390050474,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+              "sentinel_identity": {
+                "device": 16777234,
+                "inode": 390050481,
+                "mtime_ns": 1793299164789993961,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+                "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+                "size": 18
+              },
+              "sentinel_path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin"
+            },
+            "destination_window_binding": {
+              "ax_url": "file:///.file/id=6571367.390050481",
+              "basis": "fresh_ax_destination_marker_and_owned_directory",
+              "device": 16777234,
+              "inode": 390050474,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+              "pid": 81134,
+              "sentinel_identity": {
+                "device": 16777234,
+                "inode": 390050481,
+                "mtime_ns": 1793299164789993961,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+                "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+                "size": 18
+              },
+              "sentinel_path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+              "window_id": 15193,
+              "window_title": "organized"
+            },
+            "last_window_context": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15193,
+              "front_pid": 81134,
+              "main_window_id": 15193
+            },
+            "navigation": {
+              "ax_url": "file:///.file/id=6571367.390050481",
+              "basis": "fresh_ax_destination_marker_and_owned_directory",
+              "device": 16777234,
+              "inode": 390050474,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+              "pid": 81134,
+              "sentinel_identity": {
+                "device": 16777234,
+                "inode": 390050481,
+                "mtime_ns": 1793299164789993961,
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+                "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+                "size": 18
+              },
+              "sentinel_path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+              "window_id": 15193,
+              "window_title": "organized"
+            },
+            "predicate": "finder_move_same_inode",
+            "producer": "footwork.ax.finder",
+            "schema_version": 1,
+            "source_identity": {
+              "device": 16777234,
+              "inode": 390050478,
+              "mtime_ns": 1793299164789715417,
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+              "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+              "size": 83
+            },
+            "transfer_route": "prebound_destination_window"
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "move",
+          "operation_id": "op_5d87e9f6253d",
+          "secret": false,
+          "step": 2,
+          "target_id": 62,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "81a6b312c857194ff64779b51a641e49c45555effa56b6ac0c186d4c79024852",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "2a96a2f5e20c4258ba394dd3e84bf318",
+        "target": "62"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected",
+          "edit_menu_opened_for_copy",
+          "copy_menu_pressed",
+          "edit_menu_opened_for_move",
+          "move_item_here_pressed"
+        ],
+        "after": {
+          "device": 16777234,
+          "inode": 390050478,
+          "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+          "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+          "root_device": 16777234,
+          "root_inode": 390050472
+        },
+        "after_identity": {
+          "device": 16777234,
+          "inode": 390050478,
+          "mtime_ns": 1793299164789715417,
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+          "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "size": 83
+        },
+        "before": {
+          "ax_url": "file:///.file/id=6571367.390050478",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 390050478,
+            "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+            "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+            "root_device": 16777234,
+            "root_inode": 390050472
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 87.0,
+            "x": 241.0,
+            "y": 393.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "renamed.png",
+          "window_id": 15192
+        },
+        "clipboard": {
+          "after_change_count": 1143,
+          "before_change_count": 1142,
+          "paths": [
+            "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png"
+          ]
+        },
+        "copy_menu_path": [
+          "Edit",
+          "Copy \u201crenamed.png\u201d"
+        ],
+        "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+        "destination_directory": {
+          "device": 16777234,
+          "inode": 390050474,
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+          "sentinel_identity": {
+            "device": 16777234,
+            "inode": 390050481,
+            "mtime_ns": 1793299164789993961,
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+            "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+            "size": 18
+          },
+          "sentinel_path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin"
+        },
+        "destination_window_binding": {
+          "ax_url": "file:///.file/id=6571367.390050481",
+          "basis": "fresh_ax_destination_marker_and_owned_directory",
+          "device": 16777234,
+          "inode": 390050474,
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+          "pid": 81134,
+          "sentinel_identity": {
+            "device": 16777234,
+            "inode": 390050481,
+            "mtime_ns": 1793299164789993961,
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+            "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+            "size": 18
+          },
+          "sentinel_path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+          "window_id": 15193,
+          "window_title": "organized"
+        },
+        "last_window_context": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15193,
+          "front_pid": 81134,
+          "main_window_id": 15193
+        },
+        "navigation": {
+          "ax_url": "file:///.file/id=6571367.390050481",
+          "basis": "fresh_ax_destination_marker_and_owned_directory",
+          "device": 16777234,
+          "inode": 390050474,
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized",
+          "pid": 81134,
+          "sentinel_identity": {
+            "device": 16777234,
+            "inode": 390050481,
+            "mtime_ns": 1793299164789993961,
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+            "sha256": "8a13789cb8a748bcc884f7b86f4ead3a89681ddef19d449f7a84126da87bd1b0",
+            "size": 18
+          },
+          "sentinel_path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/keep.bin",
+          "window_id": 15193,
+          "window_title": "organized"
+        },
+        "predicate": "finder_move_same_inode",
+        "producer": "footwork.ax.finder",
+        "schema_version": 1,
+        "source_identity": {
+          "device": 16777234,
+          "inode": 390050478,
+          "mtime_ns": 1793299164789715417,
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+          "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "size": 83
+        },
+        "transfer_route": "prebound_destination_window"
+      },
+      "operation_id": "op_5d87e9f6253d"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_2675a93585b9",
+    "client_token": "rename",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 15192
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 60,
+      "target_label": "textbox",
+      "exec_ms": 5877.377875032835,
+      "execution_interval": {
+        "end": 1793299181.450064,
+        "start": 1793299175.572639
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 15192
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793299181.450064,
+          "start": 1793299175.572639
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_2675a93585b9",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 4,
+          "delivery_basis": "ax_finder_rename_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 15192
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 5877.377875032835,
+          "execution_interval": {
+            "end": 1793299181.450064,
+            "start": 1793299175.572639
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected",
+              "file_menu_opened",
+              "rename_menu_pressed",
+              "editor_value_set"
+            ],
+            "after": {
+              "device": 16777234,
+              "inode": 390050478,
+              "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+              "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+              "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+              "root_device": 16777234,
+              "root_inode": 390050472
+            },
+            "after_menu": {
+              "focused_role": "AXApplication",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15192,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before": {
+              "ax_url": "file:///.file/id=6571367.390050478",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 390050478,
+                "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/asset.png",
+                "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+                "root_device": 16777234,
+                "root_inode": 390050472
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 66.0,
+                "x": 241.0,
+                "y": 373.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "asset.png",
+              "window_id": 15192
+            },
+            "before_editor_write": {
+              "focused_role": "AXTextField",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15192,
+              "selection": {
+                "error": "file_row_missing",
+                "exact_row_only": false
+              }
+            },
+            "before_menu": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15192,
+              "front_pid": 81134,
+              "main_window_id": 15192,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_rename": {
+              "focused_role": "AXApplication",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15192,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_selection": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15192,
+              "front_pid": 81134,
+              "main_window_id": 15192,
+              "selection": {
+                "exact_row_only": false,
+                "exact_row_selected": false,
+                "selected_row_count": 0
+              }
+            },
+            "commit": {
+              "delivered_count": null,
+              "effect": "unverifiable",
+              "route": "sdk_foreground_return"
+            },
+            "completion_context": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 15192,
+              "front_pid": 81134,
+              "main_window_id": 15192
+            },
+            "completion_reacquire_context": {
+              "focused_role": "AXTextField",
+              "focused_window_id": null,
+              "front_pid": 81134,
+              "main_window_id": 15192
+            },
+            "completion_target": {
+              "ax_url": "file:///.file/id=6571367.390050478",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 390050478,
+                "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+                "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+                "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+                "root_device": 16777234,
+                "root_inode": 390050472
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 87.0,
+                "x": 241.0,
+                "y": 393.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "renamed.png",
+              "window_id": 15192
+            },
+            "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+            "editor": {
+              "before_value": "asset.png",
+              "pid": 81134,
+              "role": "AXTextField",
+              "window_id": 15192
+            },
+            "editor_error": {
+              "detail": "the focused Finder editor does not hold the expected name",
+              "reason": "file_editor_missing"
+            },
+            "predicate": "finder_rename_same_inode",
+            "producer": "footwork.ax.finder",
+            "rename_enabled": true,
+            "schema_version": 1
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_2675a93585b9",
+          "secret": false,
+          "step": 1,
+          "target_id": 60,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "d161793a85da2730ced88c58b979b087ea46b525a25e6cd6c1655d912da4d254",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "2a96a2f5e20c4258ba394dd3e84bf318",
+        "target": "60"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected",
+          "file_menu_opened",
+          "rename_menu_pressed",
+          "editor_value_set"
+        ],
+        "after": {
+          "device": 16777234,
+          "inode": 390050478,
+          "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+          "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+          "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+          "root_device": 16777234,
+          "root_inode": 390050472
+        },
+        "after_menu": {
+          "focused_role": "AXApplication",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15192,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before": {
+          "ax_url": "file:///.file/id=6571367.390050478",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 390050478,
+            "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/asset.png",
+            "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+            "root_device": 16777234,
+            "root_inode": 390050472
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 66.0,
+            "x": 241.0,
+            "y": 373.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "asset.png",
+          "window_id": 15192
+        },
+        "before_editor_write": {
+          "focused_role": "AXTextField",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15192,
+          "selection": {
+            "error": "file_row_missing",
+            "exact_row_only": false
+          }
+        },
+        "before_menu": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15192,
+          "front_pid": 81134,
+          "main_window_id": 15192,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_rename": {
+          "focused_role": "AXApplication",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15192,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_selection": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15192,
+          "front_pid": 81134,
+          "main_window_id": 15192,
+          "selection": {
+            "exact_row_only": false,
+            "exact_row_selected": false,
+            "selected_row_count": 0
+          }
+        },
+        "commit": {
+          "delivered_count": null,
+          "effect": "unverifiable",
+          "route": "sdk_foreground_return"
+        },
+        "completion_context": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 15192,
+          "front_pid": 81134,
+          "main_window_id": 15192
+        },
+        "completion_reacquire_context": {
+          "focused_role": "AXTextField",
+          "focused_window_id": null,
+          "front_pid": 81134,
+          "main_window_id": 15192
+        },
+        "completion_target": {
+          "ax_url": "file:///.file/id=6571367.390050478",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 390050478,
+            "manifest_sha256": "af0a729a4f2e9a34687c019c4ce30b663de701c70fd4cb92caa2127328aba3f7",
+            "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+            "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture",
+            "root_device": 16777234,
+            "root_inode": 390050472
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 87.0,
+            "x": 241.0,
+            "y": 393.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "renamed.png",
+          "window_id": 15192
+        },
+        "destination": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/inbox/renamed.png",
+        "editor": {
+          "before_value": "asset.png",
+          "pid": 81134,
+          "role": "AXTextField",
+          "window_id": 15192
+        },
+        "editor_error": {
+          "detail": "the focused Finder editor does not hold the expected name",
+          "reason": "file_editor_missing"
+        },
+        "predicate": "finder_rename_same_inode",
+        "producer": "footwork.ax.finder",
+        "rename_enabled": true,
+        "schema_version": 1
+      },
+      "operation_id": "op_2675a93585b9"
+    },
+    "error": null
+  }
+]

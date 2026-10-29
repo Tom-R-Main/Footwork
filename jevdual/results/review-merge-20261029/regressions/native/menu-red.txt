@@ -1,0 +1,35 @@
+F...                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_rename_owned_file_menu_can_temporarily_own_application_focus[AXApplication] _
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x107a54ea0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106922600>
+role = 'AXApplication'
+
+    @pytest.mark.parametrize("role", ["AXApplication", "AXTextField", "AXMenu", None])
+    def test_rename_owned_file_menu_can_temporarily_own_application_focus(finder_cli, monkeypatch, role):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        original = ax.finder_window_context
+
+        def context(pid):
+            current = original(pid)
+            if world.file_menu_open and not world.rename_open and not world.rename_committed:
+                current.update(focused_window_id=None, focused_role=role)
+            return current
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "menu-focus")
+        status = json.loads(run("status")[1])
+        if role == "AXApplication":
+>           assert status["operations"][0]["disposition"] == "applied"
+E           AssertionError: assert 'unknown' == 'applied'
+E
+E             - applied
+E             + unknown
+
+tests/test_session_file_targets.py:625: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_file_targets.py::test_rename_owned_file_menu_can_temporarily_own_application_focus[AXApplication]
+1 failed, 3 passed, 17 deselected in 0.45s

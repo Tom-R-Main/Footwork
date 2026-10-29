@@ -1,0 +1,44 @@
+[
+  {
+    "run": "live-v2-nominal",
+    "pid": 17480,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 7
+  },
+  {
+    "run": "live-v2-nominal",
+    "pid": 17468,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "live-v2-nominal",
+    "pid": 16374,
+    "kind": "owned Preview",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "live-v2-interrupted",
+    "pid": 24517,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 6
+  },
+  {
+    "run": "live-v2-interrupted",
+    "pid": 24502,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "live-v2-interrupted",
+    "pid": 23925,
+    "kind": "owned Preview",
+    "stopped": true,
+    "children": 0
+  }
+]

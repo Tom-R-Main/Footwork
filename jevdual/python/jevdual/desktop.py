@@ -512,9 +512,11 @@ class NativeAgent:
         except NativeBridgeError as exc:
             out.error = f"bridge/{exc.reason}: {exc}"
             out.exec_ms = (time.perf_counter() - t0) * 1000
+            params["dispatched"] = exc.dispatched
             out.executed = [ActionRecord(name=name, params=params)]
+            outcome = "input outcome unknown" if exc.dispatched else "not dispatched"
             self.memory.append(
-                f"step {out.step}: {operation} {red(action.label)[:60]!r} -> not dispatched ({exc.reason})"
+                f"step {out.step}: {operation} {red(action.label)[:60]!r} -> {outcome} ({exc.reason})"
             )
             return None
         out.exec_ms = (time.perf_counter() - t0) * 1000
@@ -525,6 +527,8 @@ class NativeAgent:
         out.executed = [ActionRecord(name=name, params=params)]
         if effect.effect == "refused":
             out.error = f"driver refused: {effect.error_code or ''} {effect.summary[:120]}".strip()
+        elif effect.error_code:
+            out.error = f"input outcome unknown: {effect.error_code} {effect.summary[:120]}".strip()
         where = f"[{target.id}] " if target is not None else ""
         outcome = effect.effect if effect.dispatched else "not sent"
         self.memory.append(

@@ -53,7 +53,9 @@ class Observations:
             value = snapshot.values.get(candidate.id, candidate.value)
             if value is not None:
                 row["value"] = value[:4096]
-                row["value_truncated"] = len(value) > 4096
+                row["value_truncated"] = len(value) > 4096 or candidate.id in getattr(
+                    snapshot, "value_truncated", ()
+                )
             if writable and "append" in candidate.operations and candidate.id in snapshot.values:
                 target = "target_" + uuid4().hex
                 self.targets[target] = OfferedTarget(
@@ -88,7 +90,9 @@ class Observations:
             "coverage": {
                 "elements_complete": bool(snapshot.elements_complete),
                 "truncated": bool(snapshot.truncated) or len(snapshot.menu.candidates) > 50,
-                "text_truncated": len(snapshot.menu.page_text) > 6000,
+                "text_truncated": bool(getattr(snapshot, "text_truncated", False))
+                or len(snapshot.menu.page_text) > 6000,
+                "text_original_length": getattr(snapshot, "text_original_length", None),
                 "degraded": bool(snapshot.degraded),
                 "omitted": snapshot.menu.omitted,
             },

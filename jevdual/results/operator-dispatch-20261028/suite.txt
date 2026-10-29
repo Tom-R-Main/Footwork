@@ -1,0 +1,77 @@
+ssss.................................................................... [  4%]
+........................................................................ [  8%]
+.sssssssssssssssssss.................................................... [ 12%]
+........................................................................ [ 16%]
+........................................................................ [ 20%]
+........................................................................ [ 24%]
+........................................................................ [ 28%]
+........................................................................ [ 33%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 45%]
+........................................................................ [ 49%]
+.................................................................F...... [ 53%]
+.........................s.............................................. [ 57%]
+........................................................................ [ 61%]
+....................................................F................... [ 66%]
+........................................................................ [ 70%]
+........................................................................ [ 74%]
+........................................................................ [ 78%]
+...........................................................ss........... [ 82%]
+........................................................................ [ 86%]
+........................................................................ [ 90%]
+........................................................................ [ 95%]
+........................................................................ [ 99%]
+...............                                                          [100%]
+=================================== FAILURES ===================================
+______________ test_refused_effect_is_recorded_and_run_continues _______________
+
+snapshot = {'app_name': 'Calculator', 'degraded': None, 'degraded_reason': None, 'element_count': 155, ...}
+stub_sdk = namespace(GetWindowStateInput=<function stub_sdk.<locals>.<lambda> at 0x317e8c860>, ClickInput=<function stub_sdk.<loc...ground', FOREGROUND='foreground'), ActionTarget=namespace(WINDOW=<function stub_sdk.<locals>.<lambda> at 0x317e8cae0>))
+
+    def test_refused_effect_is_recorded_and_run_continues(snapshot, stub_sdk):
+        ids = _ids(snapshot)
+        policy = SeqPolicy(
+            _decision("click", ids["All Clear"]), _decision("click", ids["6"]), _decision("blocked")
+        )
+        driver = FakeDriver(snapshot, refuse_labels={"All Clear"})
+        run = asyncio.run(_agent(driver, policy).run())
+        assert run.status == "blocked"
+        first = run.steps[0]
+>       assert first.effect.effect == "refused" and first.error.startswith("driver refused")
+E       AssertionError: assert ('unverifiable' == 'refused'
+E         
+E         - refused
+E         + unverifiable)
+
+tests/test_desktop.py:222: AssertionError
+____ test_scroll_is_aimed_at_the_element_and_falls_back_through_the_posture ____
+
+    def test_scroll_is_aimed_at_the_element_and_falls_back_through_the_posture():
+        """Promise: a scroll names its element (no bare screen point with no target); when the Driver will not
+        aim a wheel there, Page Down goes to that element by the key route, under the same posture."""
+        d = FakeDriver(doc_snapshot("hello"))
+        b = bridge_for(d)
+        nm = run(b.observe())
+        run(b.act(nm, "scroll", 3))
+        name, args = d.calls[-1]
+        assert (
+            name == "scroll" and args["element_token"] == nm.tokens[3] and args["delivery_mode"] == "background"
+        )
+        assert "x" not in args and "y" not in args
+    
+        refusal = _ok(effect="REFUSED")
+        d = FakeDriver(doc_snapshot("hello"), replies={"scroll": [refusal], "press_key": [AMBIG]})
+        b = bridge_for(d)
+        nm = run(b.observe())
+>       eff = run(b.act(nm, "scroll", 3))
+E       AssertionError: assert ['scroll'] == ['scroll', 'press_key']
+E         
+E         Right contains one more item: 'press_key'
+E         Use -v to get more diff
+
+tests/test_posture.py:370: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_desktop.py::test_refused_effect_is_recorded_and_run_continues
+FAILED tests/test_posture.py::test_scroll_is_aimed_at_the_element_and_falls_back_through_the_posture
+2 failed, 1715 passed, 26 skipped in 120.85s (0:02:00)

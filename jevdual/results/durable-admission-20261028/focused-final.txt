@@ -1,0 +1,29 @@
+........................................................................ [ 43%]
+...............F........................................................ [ 87%]
+....................                                                     [100%]
+=================================== FAILURES ===================================
+_______________ test_durable_short_secret_refuses_before_binding _______________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1092c3ce0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1092b4440>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-85/test_durable_short_secret_refu0')
+
+    def test_durable_short_secret_refuses_before_binding(world, fw, monkeypatch, tmp_path):
+        from jevdual import session
+
+        _durable_start(fw, monkeypatch, tmp_path)
+        monkeypatch.setenv("FOOTWORK_SECRET_SHORT", "xy")
+
+        def unexpected_bind(*args, **kwargs):
+            raise AssertionError("short secret must be refused before binding")
+
+        monkeypatch.setattr(session, "bind", unexpected_bind)
+        code, out, err = fw("do", "type", "Anything", "{SHORT}", "--token", "short")
+>       assert code != 0 and "short_secret_unsupported" in out + err
+E       AssertionError: assert (2 != 0 and 'short_secret_unsupported' in ('operation token: short\n' + 'not admitted: durable mode requires secret values of at least three characters\n'))
+
+tests/test_session_scenarios.py:1089: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_durable_short_secret_refuses_before_binding
+1 failed, 163 passed in 3.01s

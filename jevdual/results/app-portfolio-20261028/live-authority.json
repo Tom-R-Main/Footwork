@@ -1,0 +1,123 @@
+[
+  {
+    "receipt": {
+      "operation_id": "op_2a989b461564",
+      "client_token": "finder-view-popup",
+      "state": "unknown",
+      "disposition": "unknown",
+      "phase": "ambiguous",
+      "reservation": null,
+      "projection": {
+        "app": "Finder",
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 11530
+        },
+        "dispatched": true,
+        "driver_effect": "unverifiable",
+        "error": "operation outcome unknown; inspect status, do not repeat input",
+        "intended": null,
+        "line": "click(combobox)",
+        "mode": "native",
+        "observation": "s00000001",
+        "op": "click",
+        "secret": false,
+        "step": 1,
+        "target_id": 68,
+        "target_label": "combobox",
+        "exec_ms": 1410.7301670010202,
+        "execution_interval": {
+          "end": 1793231457.0026948,
+          "start": 1793231455.5919418
+        },
+        "execution_receipt": {
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 11530
+          },
+          "custody": "returned",
+          "dispatched": true,
+          "effect": "unverifiable",
+          "error": null,
+          "interval": {
+            "end": 1793231457.0026948,
+            "start": 1793231455.5919418
+          },
+          "kind": "execution",
+          "move": "click",
+          "observation": "s00000001",
+          "operation_id": "op_2a989b461564",
+          "phase": "ambiguous",
+          "producer": {
+            "delivered_count": null,
+            "delivery_basis": "unknown",
+            "name": "footwork.native",
+            "version": 1
+          },
+          "projection": {
+            "app": "Finder",
+            "binding": {
+              "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+              "pid": 81134,
+              "start": "0x1.ab7e9e4188002p+30",
+              "window_id": 11530
+            },
+            "dispatched": true,
+            "driver_effect": "unverifiable",
+            "error": null,
+            "exec_ms": 1410.7301670010202,
+            "execution_interval": {
+              "end": 1793231457.0026948,
+              "start": 1793231455.5919418
+            },
+            "intended": null,
+            "line": "click(combobox)",
+            "mode": "native",
+            "observation": "s00000001",
+            "op": "click",
+            "operation_id": "op_2a989b461564",
+            "secret": false,
+            "step": 1,
+            "target_id": 68,
+            "target_label": "combobox"
+          },
+          "protocol": 1,
+          "request_digest": "dcd3653ad656724555b63a506f6d6ce8dd5651833204c8f96c35cc9c3293f7cc",
+          "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+          "schema_version": "1",
+          "session_id": "f2a4a80046c64bb395aa47dcc4c62d79",
+          "target": "68"
+        },
+        "operation_id": "op_2a989b461564"
+      },
+      "error": null
+    },
+    "events": [
+      {
+        "t": 1793231455.591496,
+        "kind": "intent",
+        "protocol": 1,
+        "authorization": "existing_policy"
+      },
+      {
+        "t": 1793231455.5918632,
+        "kind": "dispatch_started"
+      },
+      {
+        "t": 1793231457.004842,
+        "kind": "execution_retained",
+        "schema_version": "1"
+      },
+      {
+        "t": 1793231457.005093,
+        "kind": "finish",
+        "disposition": "unknown",
+        "phase": "ambiguous"
+      }
+    ]
+  }
+]

@@ -1,0 +1,169 @@
+{
+  "windows": [
+    {
+      "pid": 81134,
+      "window_id": 11856,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 81134,
+      "window_id": 11845,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 81134,
+      "window_id": 11867,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 81134,
+      "window_id": 11814,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 81134,
+      "window_id": 11833,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 81134,
+      "window_id": 11822,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 6514,
+      "window_id": 11808,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 81134,
+      "window_id": 11955,
+      "ack": 0,
+      "closed": true
+    },
+    {
+      "pid": 6514,
+      "window_id": 11971,
+      "ack": 0,
+      "closed": true
+    }
+  ],
+  "processes": [
+    {
+      "pid": 20341,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "pid": 70479,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "pid": 20116,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "pid": 70477,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    }
+  ],
+  "after_close_pixels": {
+    "ok": true,
+    "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+    "claims": [
+      "current_rotated_pixels",
+      "current_image_dimensions",
+      "preserved_fixture_siblings",
+      "rotation_clockwise90"
+    ],
+    "artifact": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/installed/fixture/inbox/renamed.png",
+    "identity": {
+      "path": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/installed/fixture/inbox/renamed.png",
+      "device": 16777234,
+      "inode": 387751450,
+      "size": 548,
+      "mtime_ns": 1793234600346004567,
+      "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+      "width": 3,
+      "height": 5,
+      "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+    },
+    "checked_at": 1793234946.953593,
+    "limits": [
+      "current pixels do not establish historical UI rotation/save",
+      "finite RGB fixture only"
+    ]
+  },
+  "preserved_unknowns": [
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/dev6/authority.sqlite",
+      "id": "op_8511bd9d9ea6",
+      "state": "unknown",
+      "phase": "sent"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/dev2/authority.sqlite",
+      "id": "op_377945323ee8",
+      "state": "unknown",
+      "phase": "sent"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/dev5/authority.sqlite",
+      "id": "op_a7a581460ca3",
+      "state": "unknown",
+      "phase": "sent"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/dev3/authority.sqlite",
+      "id": "op_a418e61f6ad5",
+      "state": "unknown",
+      "phase": "sent"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/dev/preview-authority.sqlite",
+      "id": "op_850d34d184dc",
+      "state": "unknown",
+      "phase": "ambiguous"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/dev/chrome-authority.sqlite",
+      "id": "op_c1afe7e3e5d1",
+      "state": "unknown",
+      "phase": "ambiguous"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/app-portfolio-20261028/authority.sqlite",
+      "id": "op_2a989b461564",
+      "state": "unknown",
+      "phase": "ambiguous"
+    }
+  ],
+  "shared_apps_alive": {
+    "Finder": true,
+    "Preview": true
+  },
+  "listeners": [
+    {
+      "port": 61793,
+      "closed": true
+    },
+    {
+      "port": 55754,
+      "closed": true
+    }
+  ]
+}

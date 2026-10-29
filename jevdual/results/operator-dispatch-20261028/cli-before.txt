@@ -1,0 +1,101 @@
+FF.FF                                                                    [100%]
+=================================== FAILURES ===================================
+___________ test_post_press_driver_error_is_not_reported_as_refusal ____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104f73ec0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104fe34a0>
+
+    def test_post_press_driver_error_is_not_reported_as_refusal(world, fw, monkeypatch):
+        original = world.click
+    
+        async def press_then_fail(inp):
+            await original(inp)
+            raise RuntimeError("post-press acknowledgement lost")
+    
+        fw("start", "Compute", "--app", "Calculator")
+        monkeypatch.setattr(world, "click", press_then_fail)
+        code, out, err = fw("do", "click", "All Clear", "--no-judge")
+        assert code == 0, err
+        assert world.presses == ["All Clear"]
+        records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+        action = next(r for r in records if r["kind"] == "do")
+>       assert action["driver_effect"] == "unverifiable", action
+E       AssertionError: {'t': 1793223578.646786, 'step': 1, 'kind': 'do', 'line': 'click(All Clear)', ...}
+E       assert 'refused' == 'unverifiable'
+E         
+E         - unverifiable
+E         + refused
+
+tests/test_session_scenarios.py:784: AssertionError
+____________ test_post_press_outer_runtime_error_remains_uncertain _____________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1077063e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1077a87d0>
+
+    def test_post_press_outer_runtime_error_remains_uncertain(world, fw, monkeypatch):
+        from jevdual.native import NativeBridge
+    
+        original = NativeBridge.act
+    
+        async def press_then_fail(self, *args, **kwargs):
+            await original(self, *args, **kwargs)
+            raise RuntimeError("bridge reply lost after input")
+    
+        fw("start", "Compute", "--app", "Calculator")
+        monkeypatch.setattr(NativeBridge, "act", press_then_fail)
+        code, out, err = fw("do", "click", "All Clear", "--no-judge")
+        assert code == 0, err
+        assert world.presses == ["All Clear"]
+>       assert "not dispatched" not in out and "not applied" not in out
+E       AssertionError: assert ('not dispatched' not in 'judgment mo...rs):\n0\n0\n'
+E         
+E         'not dispatched' is contained here:
+E           iver says not dispatched (error: bridge reply lost after input) in 0.0s
+E         ?           ++++++++++++++
+E           receipt: Receipt for click(All Clear): refused (not applied: error: bridge reply lost after input; page unchanged).
+E           Calculator: 'Calculator'  [elements_incomplete 1]
+E           note: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown...
+E         
+E         ...Full output truncated (26 lines hidden), use '-vv' to show)
+
+tests/test_session_scenarios.py:803: AssertionError
+_______ test_explicit_uncertain_dispatch_overrides_legacy_refusal[True] ________
+
+dispatched = True
+
+    @pytest.mark.parametrize("dispatched", [True, None])
+    def test_explicit_uncertain_dispatch_overrides_legacy_refusal(dispatched):
+        later = _receipt(
+            2, "type", "outcome unknown", driver_effect="refused", dispatched=dispatched
+        )
+        later["effect"] = "refused"
+        (item,) = effects([_field_readback(1, "27"), later])
+>       assert not item.usable
+E       assert not True
+E        +  where True = Effect(effect='field_holds', resource='Quantity', kind='current_state', step=1, t=1.0, detail="holds '27'", values=('27',), limits=()).usable
+
+tests/test_completion.py:208: AssertionError
+_______ test_explicit_uncertain_dispatch_overrides_legacy_refusal[None] ________
+
+dispatched = None
+
+    @pytest.mark.parametrize("dispatched", [True, None])
+    def test_explicit_uncertain_dispatch_overrides_legacy_refusal(dispatched):
+        later = _receipt(
+            2, "type", "outcome unknown", driver_effect="refused", dispatched=dispatched
+        )
+        later["effect"] = "refused"
+        (item,) = effects([_field_readback(1, "27"), later])
+>       assert not item.usable
+E       assert not True
+E        +  where True = Effect(effect='field_holds', resource='Quantity', kind='current_state', step=1, t=1.0, detail="holds '27'", values=('27',), limits=()).usable
+
+tests/test_completion.py:208: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_post_press_driver_error_is_not_reported_as_refusal
+FAILED tests/test_session_scenarios.py::test_post_press_outer_runtime_error_remains_uncertain
+FAILED tests/test_completion.py::test_explicit_uncertain_dispatch_overrides_legacy_refusal[True]
+FAILED tests/test_completion.py::test_explicit_uncertain_dispatch_overrides_legacy_refusal[None]
+4 failed, 1 passed, 219 deselected in 0.85s

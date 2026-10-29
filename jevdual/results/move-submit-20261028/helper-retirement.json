@@ -1,0 +1,268 @@
+[
+  {
+    "run": "installed-chrome-component",
+    "pid": 91607,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 6
+  },
+  {
+    "run": "installed-chrome-component",
+    "pid": 91605,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "qualified-nominal",
+    "pid": 84753,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 6
+  },
+  {
+    "run": "qualified-nominal",
+    "pid": 84751,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "qualified-nominal",
+    "pid": 84126,
+    "kind": "owned Preview",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "chrome-dev",
+    "pid": 42085,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 6
+  },
+  {
+    "run": "chrome-dev",
+    "pid": 42081,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "installed-owned-nominal",
+    "pid": 27282,
+    "kind": "owned Preview",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "component-truncated",
+    "pid": 40395,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 6
+  },
+  {
+    "run": "component-truncated",
+    "pid": 40393,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "proven-interrupted",
+    "pid": 56426,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 7
+  },
+  {
+    "run": "proven-interrupted",
+    "pid": 56424,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "proven-interrupted",
+    "pid": 55862,
+    "kind": "owned Preview",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "proven-nominal",
+    "pid": 61196,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 8
+  },
+  {
+    "run": "proven-nominal",
+    "pid": 61194,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "proven-nominal",
+    "pid": 60658,
+    "kind": "owned Preview",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "proven-disconnect",
+    "pid": 64460,
+    "kind": "Chrome",
+    "stopped": true,
+    "children": 7
+  },
+  {
+    "run": "proven-disconnect",
+    "pid": 64458,
+    "kind": "server",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "proven-disconnect",
+    "pid": 63909,
+    "kind": "owned Preview",
+    "stopped": true,
+    "children": 0
+  },
+  {
+    "run": "chrome-dev",
+    "pid": 42085,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "chrome-dev",
+    "pid": 42081,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "component-truncated",
+    "pid": 40395,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "component-truncated",
+    "pid": 40393,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "installed-chrome-component",
+    "pid": 91607,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "installed-chrome-component",
+    "pid": 91605,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "installed-owned-nominal",
+    "pid": 27282,
+    "kind": "owned Preview",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-disconnect",
+    "pid": 64460,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-disconnect",
+    "pid": 64458,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-disconnect",
+    "pid": 63909,
+    "kind": "owned Preview",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-interrupted",
+    "pid": 56426,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-interrupted",
+    "pid": 56424,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-interrupted",
+    "pid": 55862,
+    "kind": "owned Preview",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-nominal",
+    "pid": 61196,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-nominal",
+    "pid": 61194,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "proven-nominal",
+    "pid": 60658,
+    "kind": "owned Preview",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "qualified-nominal",
+    "pid": 84753,
+    "kind": "Chrome",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "qualified-nominal",
+    "pid": 84751,
+    "kind": "server",
+    "stopped": true,
+    "already_exited": true
+  },
+  {
+    "run": "qualified-nominal",
+    "pid": 84126,
+    "kind": "owned Preview",
+    "stopped": true,
+    "already_exited": true
+  }
+]

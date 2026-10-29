@@ -1,0 +1,17 @@
+{
+  "commit": "4c2c4cffb29a9c0b31d513b3b3a72e0f808d3426",
+  "module_origins": {
+    "jevdual.native": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/candidate/site/jevdual/native.py",
+    "jevdual.session": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/candidate/site/jevdual/session.py",
+    "jevdual.ax": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/candidate/site/jevdual/ax.py",
+    "jevdual.operator_evidence": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/candidate/site/jevdual/operator_evidence.py",
+    "jevdual.chrome_scope": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/candidate/site/jevdual/chrome_scope.py",
+    "jevdual.finder_targets": "/Users/thomasmain/projects/footwork/output/app-repair-20261028/candidate/site/jevdual/finder_targets.py"
+  },
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.5.1\nBuildVersion:\t\t25F80\n",
+  "app_versions": {
+    "Finder": "26.4",
+    "Preview": "11.0",
+    "Chrome": "156.0.8078.48"
+  }
+}

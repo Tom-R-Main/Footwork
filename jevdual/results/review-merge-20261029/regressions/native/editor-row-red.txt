@@ -1,0 +1,42 @@
+F..                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_rename_transient_row_still_requires_exact_editor_and_original_inode[transient_row] _
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x110444f40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10714b290>
+case = 'transient_row'
+
+    @pytest.mark.parametrize("case", ["transient_row", "read_failure", "replaced_inode"])
+    def test_rename_transient_row_still_requires_exact_editor_and_original_inode(finder_cli, monkeypatch, case):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        original = ax.finder_selection_state
+        replaced = False
+
+        def selection(element):
+            nonlocal replaced
+            if world.rename_open and not world.rename_committed:
+                if case == "replaced_inode" and not replaced:
+                    path = world.current_path
+                    data = path.read_bytes()
+                    path.rename(path.with_name("replaced-original.png"))
+                    path.write_bytes(data)  # Simulated external same-byte inode replacement.
+                    replaced = True
+                raise ax.AXError("ax_read_failed" if case == "read_failure" else "file_row_missing", "row unavailable")
+            return original(element)
+
+        monkeypatch.setattr(ax, "finder_selection_state", selection)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "transient-row")
+        status = json.loads(run("status")[1])
+        if case == "transient_row":
+>           assert status["operations"][0]["disposition"] == "applied"
+E           AssertionError: assert 'unknown' == 'applied'
+E
+E             - applied
+E             + unknown
+
+tests/test_session_file_targets.py:657: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_file_targets.py::test_rename_transient_row_still_requires_exact_editor_and_original_inode[transient_row]
+1 failed, 2 passed, 21 deselected in 1.09s

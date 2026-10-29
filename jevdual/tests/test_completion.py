@@ -24,6 +24,117 @@ def _receipt(step, op, evidence, t=None, **action):
     }
 
 
+def _typed_field(value="27"):
+    from jevdual.operator_evidence import fact_record
+    from jevdual.session_operations import native_resource
+
+    binding = {"boot": "test", "pid": 77, "start": "start", "window_id": 5}
+    resource = native_resource(binding)
+    interval = {"start": 1.0, "end": 1.5}
+    action = {
+        "operation_id": "op_one",
+        "binding": binding,
+        "observation": "obs_one",
+        "execution_interval": interval,
+        "target_id": 3,
+        "dispatched": True,
+    }
+    fact = fact_record(
+        kind="current_state",
+        predicate="field_equals",
+        resource=resource,
+        binding=binding,
+        observation="obs_one",
+        started_at=1.0,
+        ended_at=1.5,
+        values=[value],
+        evidence_refs=["execution:op_one"],
+        parameters={
+            "source": "native.ax_insert_ack",
+            "label": "Quantity",
+            "target_id": 3,
+            "source_target_id": 8,
+            "source_observation": "obs_revalidated",
+            "matches": True,
+        },
+    )
+    record = _receipt(1, "append", "'Quantity' now holds 'misleading prefix'", **action)
+    record["structured_evidence"] = {
+        "schema_version": "1",
+        "producer": {"name": "footwork.session", "version": 1},
+        "session_id": "session_one",
+        "operation_id": "op_one",
+        "resource": resource,
+        "binding": binding,
+        "observation": "obs_one",
+        "interval": interval,
+        "evidence_refs": ["execution:op_one"],
+        "facts": [fact],
+    }
+    return record
+
+
+def test_structured_exact_value_does_not_use_truncated_prose():
+    value = "long field value " * 40
+    (item,) = effects([_typed_field(value)])
+    assert item.values == (value,) and item.usable
+    assert "misleading prefix" not in evidence_values([item])
+
+
+@pytest.mark.parametrize(
+    "mutation", ["version", "operation", "binding", "fact_version", "refs", "empty", "secret"]
+)
+def test_bad_typed_evidence_never_falls_back_to_plausible_prose(mutation):
+    record = _typed_field()
+    payload = record["structured_evidence"]
+    if mutation == "version":
+        payload["producer"]["version"] = True
+    elif mutation == "operation":
+        payload["operation_id"] = "different_operation"
+    elif mutation == "binding":
+        payload["binding"] = {**payload["binding"], "pid": 88}
+    elif mutation == "fact_version":
+        payload["facts"][0]["producer"]["version"] = 999
+    elif mutation == "refs":
+        payload["facts"][0]["evidence_refs"] = ["execution:other"]
+    elif mutation == "empty":
+        payload["facts"] = []
+    else:
+        record["action"]["secret"] = True
+    assert effects([record]) == []
+
+
+def test_later_input_limits_structured_current_state():
+    later = _receipt(2, "click", "uncertain edit", dispatched=True)
+    later["effect"] = "unverifiable"
+    (item,) = effects([_typed_field(), later])
+    assert not item.usable and "later input" in item.limits[0]
+
+
+def test_structured_persistence_is_not_saved_task_proof():
+    from jevdual.operator_evidence import fact_record
+
+    record = _typed_field()
+    payload = record["structured_evidence"]
+    payload["facts"] = [
+        fact_record(
+            kind="persistence",
+            predicate="disk_equals_window",
+            resource=payload["resource"],
+            binding=payload["binding"],
+            observation=payload["observation"],
+            started_at=1.0,
+            ended_at=1.5,
+            evidence_refs=payload["evidence_refs"],
+            parameters={"path": "/s/document.txt", "task_postcondition": "not_checked"},
+        )
+    ]
+    (item,) = effects([record])
+    assert item.effect == "disk_equals_window" and item.kind == "persistence"
+    assert not item.usable and not evidence_values([item])
+    assert floor("Save the intended document", [item], answer_bearing=False) is not None
+
+
 SUBMIT = _receipt(
     3,
     "click",
@@ -196,6 +307,14 @@ def test_no_send_same_field_mutation_does_not_invalidate_readback(driver_effect)
     later["effect"] = "unverifiable"
     (item,) = effects([_field_readback(1, "27"), later])
     assert item.usable
+
+
+@pytest.mark.parametrize("dispatched", [True, None])
+def test_explicit_uncertain_dispatch_overrides_legacy_refusal(dispatched):
+    later = _receipt(2, "type", "outcome unknown", driver_effect="refused", dispatched=dispatched)
+    later["effect"] = "refused"
+    (item,) = effects([_field_readback(1, "27"), later])
+    assert not item.usable
 
 
 def test_refused_same_field_action_retains_readback():

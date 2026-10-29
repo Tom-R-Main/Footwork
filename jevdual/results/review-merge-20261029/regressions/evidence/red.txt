@@ -1,0 +1,119 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+___________ test_reconcile_before_preheader_disconnect_keeps_unknown ___________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-246/test_reconcile_before_preheade0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104eb1310>
+
+    def test_reconcile_before_preheader_disconnect_keeps_unknown(tmp_path, monkeypatch):
+        """The first committed ingress precedes the response that can trigger a replay."""
+        committed, release = threading.Event(), threading.Event()
+        original = TicketStore.record
+
+        def pause_after_commit(store, *args, **kwargs):
+            result = original(store, *args, **kwargs)
+            committed.set()
+            assert release.wait(5), "test did not release the owned handler"
+            return result
+
+        monkeypatch.setattr(TicketStore, "record", pause_after_commit)
+        with TicketFixture(tmp_path / "service", lose_reply_once=True) as fixture:
+            item = package(tmp_path, store=fixture.store, url=fixture.url)
+            failures = []
+
+            def submit():
+                try:
+                    request = Request(
+                        fixture.url + "/tickets", data=ticket_evidence.form_body(item["expected"]), method="POST"
+                    )
+                    request.add_header("Origin", fixture.url)
+                    with urlopen(request, timeout=5) as response:
+                        response.read()
+                except (URLError, OSError) as error:
+                    failures.append(error)
+
+            with SessionOperations(Path(item["authority"])) as operations:
+                issue(operations, item)
+                op, _ = unknown(operations, item, admit(operations, item))
+                child = threading.Thread(target=submit)
+                child.start()
+                try:
+                    assert committed.wait(5)
+                    assert len(fixture.store.snapshot()["ingress"]) == 1
+                    repeated = operations.reconcile(op.id)
+>                   assert repeated.state == "unknown"
+E                   AssertionError: assert 'final' == 'unknown'
+E
+E                     - unknown
+E                     + final
+
+tests/test_session_ticket_reconciliation.py:187: AssertionError
+__________ test_chrome_handoff_rejects_another_service_source[False] ___________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-246/test_chrome_handoff_rejects_an0')
+different_nonce = False
+
+    @pytest.mark.parametrize("different_nonce", [False, True])
+    def test_chrome_handoff_rejects_another_service_source(tmp_path, different_nonce):
+        from jevdual.app_oracles import check_preview
+        from PIL import Image
+
+        run, manifest, artifact = prepare_preview(tmp_path / "run")
+        with Image.open(artifact) as image:
+            image.transpose(Image.Transpose.ROTATE_270).save(artifact)
+        operation = terminal_operation(run.authority, session_id="preview-session", app="Preview")
+        run.complete("preview", [operation], lambda: check_preview(manifest, artifact), artifact)
+        run.begin("chrome", session_id="chrome-session")
+        expected = {
+            **EXPECTED,
+            "request_id": uuid.uuid4().hex,
+            "artifact": artifact.name,
+            "digest": artifact_identity(run.root, artifact)["sha256"],
+        }
+        with TicketFixture(run.root / "admitted") as admitted, TicketFixture(run.root / "other") as other:
+            operation = ticket_operation(run, admitted, artifact, expected)
+            other_expected = {**expected, "request_id": uuid.uuid4().hex} if different_nonce else expected
+            post(other, other_expected)
+            assert other.store.check(other_expected)["ok"]
+>           with pytest.raises(QualificationError, match="admitted"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE QualificationError
+
+tests/test_app_qualification.py:387: Failed
+___________ test_chrome_handoff_rejects_another_service_source[True] ___________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-246/test_chrome_handoff_rejects_an1')
+different_nonce = True
+
+    @pytest.mark.parametrize("different_nonce", [False, True])
+    def test_chrome_handoff_rejects_another_service_source(tmp_path, different_nonce):
+        from jevdual.app_oracles import check_preview
+        from PIL import Image
+
+        run, manifest, artifact = prepare_preview(tmp_path / "run")
+        with Image.open(artifact) as image:
+            image.transpose(Image.Transpose.ROTATE_270).save(artifact)
+        operation = terminal_operation(run.authority, session_id="preview-session", app="Preview")
+        run.complete("preview", [operation], lambda: check_preview(manifest, artifact), artifact)
+        run.begin("chrome", session_id="chrome-session")
+        expected = {
+            **EXPECTED,
+            "request_id": uuid.uuid4().hex,
+            "artifact": artifact.name,
+            "digest": artifact_identity(run.root, artifact)["sha256"],
+        }
+        with TicketFixture(run.root / "admitted") as admitted, TicketFixture(run.root / "other") as other:
+            operation = ticket_operation(run, admitted, artifact, expected)
+            other_expected = {**expected, "request_id": uuid.uuid4().hex} if different_nonce else expected
+            post(other, other_expected)
+            assert other.store.check(other_expected)["ok"]
+>           with pytest.raises(QualificationError, match="admitted"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE QualificationError
+
+tests/test_app_qualification.py:387: Failed
+=========================== short test summary info ============================
+FAILED tests/test_session_ticket_reconciliation.py::test_reconcile_before_preheader_disconnect_keeps_unknown
+FAILED tests/test_app_qualification.py::test_chrome_handoff_rejects_another_service_source[False]
+FAILED tests/test_app_qualification.py::test_chrome_handoff_rejects_another_service_source[True]
+3 failed in 2.82s

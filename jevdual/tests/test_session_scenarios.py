@@ -166,7 +166,9 @@ async def test_capability_lost_setter_permission_refuses_before_input(text_capab
     assert world.content == "Invoice report"
 
 
-async def test_capability_restart_without_durable_execution_evidence_stays_unknown(text_capability, monkeypatch):
+async def test_capability_restart_without_durable_execution_evidence_stays_unknown(
+    text_capability, monkeypatch
+):
     """Baseline: a completed append whose final journal write dies loses its local evidence."""
     from jevdual.capability.backend import ScopedBackend
     from jevdual.capability.contracts import CapabilityError
@@ -219,8 +221,14 @@ def durable_text_capability(text_capability, monkeypatch):
 
     world, tools = text_capability
     tools.backend.durable = True
-    identity = {"boot": "test-boot", "pid": world.pid, "start": "0x1.0p0", "document": str(world.document),
-                "device": 1, "inode": 2}
+    identity = {
+        "boot": "test-boot",
+        "pid": world.pid,
+        "start": "0x1.0p0",
+        "document": str(world.document),
+        "device": 1,
+        "inode": 2,
+    }
     monkeypatch.setattr(recovery, "native_identity", lambda scope: dict(identity))
     monkeypatch.setattr(execution_worker, "native_identity", lambda scope: dict(identity))
     launches = []
@@ -256,7 +264,9 @@ async def _reopened_capability(tools, monkeypatch):
 
 
 @pytest.mark.parametrize("change", ["none", "content", "document", "process", "role", "frame", "ambiguous"])
-async def test_capability_durable_receipt_recovers_historical_applied_after_restart(durable_text_capability, monkeypatch, change):
+async def test_capability_durable_receipt_recovers_historical_applied_after_restart(
+    durable_text_capability, monkeypatch, change
+):
     world, tools, identity, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
     arguments = {"target": row["target"], "text": "17.25 USD", "client_token": "durable-lost-reply"}
@@ -285,7 +295,9 @@ async def test_capability_durable_receipt_recovers_historical_applied_after_rest
         world.ambiguous = True
     restarted = await _reopened_capability(tools, monkeypatch)
     try:
-        status = await restarted.call("status", {"client_token": arguments["client_token"], "reconcile": True})
+        status = await restarted.call(
+            "status", {"client_token": arguments["client_token"], "reconcile": True}
+        )
         assert status["disposition"] == "applied" and status["resolved_by"] == "execution"
         assert status["evidence"]["readback"]["passed"] is True
         assert status["evidence"]["readback"]["historical"] is True
@@ -301,7 +313,9 @@ async def test_capability_durable_receipt_recovers_historical_applied_after_rest
         restarted.service.journal.close()
 
 
-async def test_capability_started_no_receipt_rejects_matching_external_text(durable_text_capability, monkeypatch):
+async def test_capability_started_no_receipt_rejects_matching_external_text(
+    durable_text_capability, monkeypatch
+):
     world, tools, _, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
 
@@ -335,7 +349,9 @@ async def test_capability_started_no_receipt_rejects_matching_external_text(dura
 
 
 @pytest.mark.parametrize("boundary", ["prepare", "start"])
-async def test_capability_durable_storage_admission_failure_never_launches(durable_text_capability, monkeypatch, boundary):
+async def test_capability_durable_storage_admission_failure_never_launches(
+    durable_text_capability, monkeypatch, boundary
+):
     world, tools, _, launches = durable_text_capability
     row = _append_target(await tools.call("bind", {"name": "destination"}))
 
@@ -363,7 +379,9 @@ async def test_capability_second_worker_claim_cannot_replay_packet(durable_text_
     assert len(launches) == 1 and len([v for k, v in world.writes if k == "AXSelectedText"]) == 1
 
 
-async def test_capability_worker_readback_refusal_after_input_remains_unknown(durable_text_capability, monkeypatch):
+async def test_capability_worker_readback_refusal_after_input_remains_unknown(
+    durable_text_capability, monkeypatch
+):
     from jevdual.capability.backend import ScopedBackend
     from jevdual.capability.contracts import CapabilityError
 
@@ -631,14 +649,14 @@ def test_background_only_sends_no_hotkey(world, fw):
     assert world.tool_calls == [] and world.presses == []
 
 
-def test_a_driver_refusal_is_reported_and_the_receipt_follows_the_window(world, fw):
+def test_an_opaque_driver_error_does_not_claim_no_delivery(world, fw):
     fw("start", "Compute 8", "--app", "Calculator")
     _, out, _ = fw("look")
     world.refuse.add("8")
     code, out, _ = fw("do", "click", str(_id(out, "8")), "--no-judge")
-    assert code == 0 and "driver says refused" in out and world.presses == []
-    assert "receipt: Receipt for click(8): refused" in out
-    assert _state(fw)["memory"] == ["step 1: click(8) -> refused"]
+    assert code == 0 and "driver says unverifiable" in out and world.presses == []
+    assert "receipt: Receipt for click(8): unverifiable" in out
+    assert _state(fw)["memory"] == ["step 1: click(8) -> unverifiable"]
 
 
 # ---- package G: a carried value, its provenance and the exact saved-file oracle ----
@@ -700,10 +718,17 @@ def test_a_key_and_a_return_go_to_the_judge_through_the_real_command(world, fw):
         _Verifier.p = 0.05
 
 
-@pytest.mark.parametrize("words", [
-    ("click", "All Clear"), ("key", "Tab"), ("hotkey", "cmd", "s"),
-    ("menu", "File > Save"), ("enter", "All Clear"), ("navigate", "http://127.0.0.1/fixture"),
-])
+@pytest.mark.parametrize(
+    "words",
+    [
+        ("click", "All Clear"),
+        ("key", "Tab"),
+        ("hotkey", "cmd", "s"),
+        ("menu", "File > Save"),
+        ("enter", "All Clear"),
+        ("navigate", "http://127.0.0.1/fixture"),
+    ],
+)
 def test_missing_required_judge_pauses_operator_routes(world, fw, monkeypatch, words):
     import jevdual.keys
     from jevdual.native import NativeBridge
@@ -765,6 +790,726 @@ def test_observations_remain_available_without_judgment_credentials(world, fw, m
     code, out, err = fw("look")
     assert code == 0 and "All Clear" in out, (out, err)
     assert world.presses == []
+
+
+def test_post_press_driver_error_is_not_reported_as_refusal(world, fw, monkeypatch):
+    original = world.click
+
+    async def press_then_fail(inp):
+        await original(inp)
+        raise RuntimeError("post-press acknowledgement lost")
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(world, "click", press_then_fail)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["All Clear"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    action = next(r for r in records if r["kind"] == "do")
+    assert action["driver_effect"] == "unverifiable", action
+    assert "not applied" not in out
+    assert "unverifiable" in out
+
+
+def test_post_press_outer_runtime_error_remains_uncertain(world, fw, monkeypatch):
+    from jevdual.native import NativeBridge
+
+    original = NativeBridge.act
+
+    async def press_then_fail(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise RuntimeError("bridge reply lost after input")
+
+    fw("start", "Compute", "--app", "Calculator")
+    monkeypatch.setattr(NativeBridge, "act", press_then_fail)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["All Clear"]
+    assert "not dispatched" not in out and "not applied" not in out
+    assert "unverifiable" in out
+
+
+def test_cancelled_granted_press_characterizes_missing_durable_intent(world, fw, monkeypatch):
+    """OD2 diagnosis; durable admission must replace this characterization with safety assertions."""
+    import asyncio
+
+    from jevdual.native import NativeBridge
+
+    original = NativeBridge.act
+
+    async def press_then_cancel(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise asyncio.CancelledError()
+
+    fw("start", "Compute", "--app", "Calculator")
+    fw("grant", "click", "Delete")
+    monkeypatch.setattr(NativeBridge, "act", press_then_cancel)
+    with pytest.raises(asyncio.CancelledError):
+        fw("do", "click", "Delete", "--no-judge")
+    assert world.presses == ["Delete"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert any(r["kind"] == "grant_used" for r in records)
+    assert not any(r["kind"] == "do" for r in records)
+    assert json.loads((fw.session / "grants.json").read_text())[0]["uses_left"] == 0
+    monkeypatch.setattr(NativeBridge, "act", original)
+    fw("grant", "click", "Delete")
+    code, _, err = fw("do", "click", "Delete", "--no-judge")
+    assert code == 0, err
+    assert world.presses == ["Delete", "Delete"]
+
+
+def _durable_start(fw, monkeypatch, tmp_path, app="Calculator"):
+    import jevdual.session_operations as operations
+
+    monkeypatch.setattr(
+        operations,
+        "native_identity",
+        lambda pid, window_id: {"boot": "test-boot", "pid": pid, "start": "1.0", "window_id": window_id},
+    )
+    authority = tmp_path / "authority.sqlite"
+    code, out, err = fw("start", "Compute", "--app", app, "--authority", str(authority))
+    assert code == 0, (out, err)
+    return authority
+
+
+def test_durable_cancelled_granted_press_blocks_retry_without_extra_input(world, fw, monkeypatch, tmp_path):
+    import asyncio
+
+    from jevdual.native import NativeBridge
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    fw("grant", "click", "Delete")
+    original = NativeBridge.act
+
+    async def cancel_after_press(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(NativeBridge, "act", cancel_after_press)
+    with pytest.raises(asyncio.CancelledError):
+        fw("do", "click", "Delete", "--no-judge", "--token", "delete-once")
+    assert world.presses == ["Delete"]
+    monkeypatch.setattr(NativeBridge, "act", original)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "delete-once")
+    assert code == 0 and "unknown" in out, (out, err)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "another-delete")
+    assert code != 0 and "busy" in (out + err).lower(), (out, err)
+    assert world.presses == ["Delete"]
+    from jevdual.session_operations import SessionOperations
+
+    with SessionOperations(authority) as ops:
+        assert len(ops.status()) == 1
+        assert ops.status()[0].state == "unknown"
+
+
+def test_durable_replay_needs_no_current_app_and_changed_request_conflicts(world, fw, monkeypatch, tmp_path):
+    from jevdual import session
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")[0] == 0
+
+    def unavailable(*args, **kwargs):
+        raise AssertionError("replay must not bind the app")
+
+    monkeypatch.setattr(session, "bind", unavailable)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "clear-once")
+    assert code == 0 and "operation" in out, (out, err)
+    assert world.presses == ["All Clear"]
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "clear-once")
+    assert code != 0 and "token_conflict" in (out + err), (out, err)
+
+
+def test_durable_lost_projection_replays_finished_operation(world, fw, monkeypatch, tmp_path):
+    from jevdual.session import SessionState
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    original = SessionState.log
+    failed = False
+
+    def lose_do(self, record):
+        nonlocal failed
+        if record.get("kind") == "do" and not failed:
+            failed = True
+            raise OSError("projection write lost after journal finish")
+        return original(self, record)
+
+    monkeypatch.setattr(SessionState, "log", lose_do)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "lost-response")[0] != 0
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "lost-response")
+    assert code == 0, (out, err)
+    assert world.presses == ["All Clear"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert len([r for r in records if r["kind"] == "do"]) == 1
+
+
+def test_durable_partial_projection_is_quarantined_before_replay_click_and_done(
+    world, fw, monkeypatch, tmp_path
+):
+    from jevdual.session import SessionState
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    original = SessionState.log
+    fragment = b'{"kind":"do","operation_id":'
+    failed = False
+
+    def partial_do(self, record):
+        nonlocal failed
+        if record.get("kind") == "do" and not failed:
+            failed = True
+            with (self.path / "session.jsonl").open("ab") as stream:
+                stream.write(fragment)
+            raise OSError("projection interrupted after partial bytes")
+        return original(self, record)
+
+    monkeypatch.setattr(SessionState, "log", partial_do)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "partial-response")[0] != 0
+    with SessionOperations(authority) as operations:
+        (operation,) = operations.status()
+        assert operation.state == "final"
+    damaged = (fw.session / "session.jsonl").read_bytes()
+    assert fragment in damaged
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "partial-response")
+    assert code == 0 and '"replay": true' in out, (out, err)
+    code, out, err = fw("do", "click", "label:7", "--no-judge", "--token", "after-partial")
+    assert code == 0, (out, err)
+    code, out, err = fw("done", "7")
+    assert code == 0 and "accepted" in out, (out, err)
+    assert world.presses == ["All Clear", "7"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    repairs = [record for record in records if record.get("kind") == "projection_repair"]
+    assert len(repairs) == 1
+    assert (fw.session / repairs[0]["quarantine"]).read_bytes() == damaged
+    assert sum(record.get("operation_id") == operation.id for record in records) == 1
+
+
+def _legacy_unknown(authority):
+    from jevdual.capability.journal import Journal
+
+    with_journal = Journal(authority)
+    try:
+        operation, _ = with_journal.begin(
+            task="legacy-task",
+            resource="legacy-resource",
+            observation="legacy-observation",
+            target="legacy-target",
+            move="append",
+            args={"text": "unacknowledged"},
+            client_token="legacy-token",
+        )
+        return operation.id
+    finally:
+        with_journal.close()
+
+
+@pytest.mark.parametrize("later_count", [0, 101])
+def test_durable_status_reports_legacy_unknown_without_operator_proof(
+    world, fw, monkeypatch, tmp_path, later_count
+):
+    from jevdual.capability.journal import Journal
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    operation_id = _legacy_unknown(authority)
+    journal = Journal(authority)
+    try:
+        for index in range(later_count):
+            recent, _ = journal.begin(
+                task="legacy-other",
+                resource=f"resource-{index}",
+                observation="legacy-observation",
+                target="legacy-target",
+                move="append",
+                args={},
+                client_token=f"recent-{index}",
+            )
+            journal.finish(recent.id, disposition="not_sent", phase="not_sent", evidence={})
+    finally:
+        journal.close()
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0, (out, err)
+    (blocker,) = json.loads(out)["domain_unresolved"]
+    assert blocker["operation_id"] == operation_id and blocker["state"] == "unknown"
+    assert blocker["disposition"] == "unknown" and blocker["reservation"] is None
+    assert blocker["projection"] is None and blocker["protocol"] == "legacy"
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code != 0 and "busy" in (out + err).lower()
+    assert world.presses == []
+
+
+@pytest.mark.parametrize(
+    "scope",
+    [
+        "own",
+        "domain",
+        "legacy_domain",
+        "context",
+        "legacy_context",
+        "legacy_own",
+        "authority_pending",
+        "authority_context_pending",
+    ],
+)
+def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+    world, fw, monkeypatch, tmp_path, scope
+):
+    import jevdual.keys
+    from jevdual import session
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "context"
+    extra = []
+    if scope in ("legacy_context", "legacy_own", "authority_pending", "authority_context_pending"):
+        state = session.SessionState.load(fw.session)
+        if scope in ("legacy_context", "authority_context_pending"):
+            context.mkdir()
+            state.dir = str(context)
+            extra = ["--context-from", str(context)]
+        if scope.startswith("legacy"):
+            state.authority = ""
+        state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+        state.save()  # Deliberately no do/receipt projection for the pending unknown.
+    elif scope == "context":
+        context.mkdir()
+        state = session.SessionState.load(fw.session)
+        state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+        state.save()
+        _legacy_unknown(tmp_path / "context.sqlite")
+        extra = ["--context-from", str(context)]
+    elif scope == "legacy_domain":
+        _legacy_unknown(authority)
+    else:
+        state = session.SessionState.load(fw.session)
+        with SessionOperations(authority) as operations:
+            operation = operations.admit(
+                session_id=state.session_id if scope == "own" else "another-session",
+                token="unfinished",
+                request={"words": ["click", "Delete"]},
+                resource="native:fixture",
+                observation="old",
+                target="1",
+                move="click",
+                authorization_basis="existing_policy",
+                projection={"step": 1, "op": "click"},
+            )
+            operations.start(operation.id)
+
+    calls = []
+    monkeypatch.setattr(
+        jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"}
+    )
+    original_bind = session.bind
+
+    async def counted_bind(state):
+        calls.append("app")
+        return await original_bind(state)
+
+    monkeypatch.setattr(session, "bind", counted_bind)
+    original_verify = _Verifier.verify
+
+    async def accepting_verify(self, *args, **kwargs):
+        calls.append("verifier")
+        return await original_verify(self, *args, **kwargs)
+
+    monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+    code, out, err = fw("done", "looks complete", *extra)
+    assert code == 5 and "unresolved" in out + err, (out, err)
+    assert calls == []
+    assert _state(fw)["status"] == "open" and world.presses == []
+
+
+@pytest.mark.parametrize("same_domain", [False, True])
+def test_done_retains_context_ownership_through_verifier_without_relocking_shared_domain(
+    world, fw, monkeypatch, tmp_path, same_domain
+):
+    from jevdual.capability.journal import JournalLocked
+    from jevdual.session import SessionState
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "context"
+    context.mkdir()
+    state = SessionState.load(fw.session)
+    context_authority = authority if same_domain else tmp_path / "context.sqlite"
+    state.dir, state.authority = str(context), str(context_authority)
+    state.save()
+    if not same_domain:
+        SessionOperations(context_authority).close()
+    seen = []
+    original_verify = _Verifier.verify
+
+    async def accept_with_owned_context(self, *args, **kwargs):
+        with pytest.raises(JournalLocked):
+            SessionOperations(context_authority)
+        seen.append("context held")
+        return await original_verify(self, *args, **kwargs)
+
+    monkeypatch.setattr(_Verifier, "verify", accept_with_owned_context)
+    code, out, err = fw("done", "complete", "--context-from", str(context))
+    assert code == 0 and "accepted" in out, (out, err)
+    assert seen == ["context held"]
+    SessionOperations(context_authority).close()  # The bounded command releases both domains.
+
+
+def test_done_repairs_settled_durable_context_projection_without_repeating_effect(
+    world, fw, monkeypatch, tmp_path
+):
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "settled-context"
+    assert (
+        cli.main(
+            [
+                "start",
+                "Compute",
+                "--app",
+                "Calculator",
+                "--session",
+                str(context),
+                "--authority",
+                str(authority),
+            ]
+        )
+        == 0
+    )
+    assert (
+        cli.main(
+            [
+                "do",
+                "click",
+                "All Clear",
+                "--no-judge",
+                "--session",
+                str(context),
+                "--token",
+                "context-once",
+                "--settle",
+                "0",
+            ]
+        )
+        == 0
+    )
+    with SessionOperations(authority) as operations:
+        (operation,) = operations.status()
+        assert operation.state == "final"
+    log = context / "session.jsonl"
+    with log.open("ab") as stream:
+        stream.write(b'{"kind":"interrupted-context"')
+    damaged = log.read_bytes()
+    code, out, err = fw("done", "complete", "--context-from", str(context))
+    assert code == 0 and "accepted" in out, (out, err)
+    assert world.presses == ["All Clear"]
+    records = [json.loads(line) for line in log.read_bytes().splitlines()]
+    repair = next(record for record in records if record.get("kind") == "projection_repair")
+    assert (context / repair["quarantine"]).read_bytes() == damaged
+    assert (
+        sum(record.get("kind") == "do" and record.get("operation_id") == operation.id for record in records)
+        == 1
+    )
+    assert any(record.get("kind") == "receipt" for record in records)
+
+
+def test_done_refuses_corrupt_legacy_context_before_keys_app_or_provider(world, fw, monkeypatch, tmp_path):
+    import jevdual.keys
+    from jevdual import session
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "legacy-context"
+    context.mkdir()
+    state = session.SessionState.load(fw.session)
+    state.dir, state.authority = str(context), ""
+    state.save()
+    log = context / "session.jsonl"
+    original = b'{"kind":"receipt","effect":"confirmed"}\n{"interrupted":'
+    log.write_bytes(original)
+    calls = []
+    monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {})
+
+    async def forbidden_bind(state):
+        calls.append("app")
+        raise AssertionError("corrupt legacy evidence must refuse before app binding")
+
+    monkeypatch.setattr(session, "bind", forbidden_bind)
+    code, out, err = fw("done", "complete", "--context-from", str(context))
+    assert code == 5 and "context_evidence_unreadable" in out + err, (out, err)
+    assert calls == [] and _state(fw)["status"] == "open"
+    assert log.read_bytes() == original and not list(context.glob("session.interrupted-*"))
+
+
+def test_durable_process_change_refuses_new_input_but_status_stays_available(
+    world, fw, monkeypatch, tmp_path
+):
+    import jevdual.session_operations as operations
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    monkeypatch.setattr(
+        operations,
+        "native_identity",
+        lambda pid, window_id: {"boot": "test-boot", "pid": pid, "start": "2.0", "window_id": window_id},
+    )
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "new-process")
+    assert code != 0, (out, err)
+    assert world.presses == []
+    assert fw("status")[0] == 0
+
+
+def test_durable_start_preserves_existing_history(world, fw, monkeypatch, tmp_path):
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "retained")[0] == 0
+    before = (fw.session / "session.jsonl").read_text()
+    code, _, _ = fw("start", "Replacement", "--app", "Calculator", "--authority", str(authority))
+    assert code != 0
+    assert (fw.session / "session.jsonl").read_text().startswith(before)
+
+
+def test_durable_domain_blocks_another_session_before_missing_secret_resolution(
+    world, fw, monkeypatch, tmp_path, capsys
+):
+    from jevdual.native import NativeBridge
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+
+    async def uncertain(self, *args, **kwargs):
+        raise RuntimeError("delivery cannot be determined")
+
+    monkeypatch.setattr(NativeBridge, "act", uncertain)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "uncertain")[0] == 0
+    other = tmp_path / "another-session"
+    assert (
+        cli.main(
+            [
+                "start",
+                "Another",
+                "--app",
+                "Calculator",
+                "--session",
+                str(other),
+                "--authority",
+                str(authority),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    monkeypatch.delenv("FOOTWORK_SECRET_MISSING", raising=False)
+    code = cli.main(
+        [
+            "do",
+            "type",
+            "anything",
+            "{MISSING}",
+            "--session",
+            str(other),
+            "--token",
+            "blocked",
+            "--settle",
+            "0",
+        ]
+    )
+    output = capsys.readouterr()
+    assert code != 0 and "busy" in (output.out + output.err).lower()
+    assert "export FOOTWORK_SECRET" not in output.err
+    assert world.presses == []
+
+
+def test_durable_lock_contention_does_not_write_another_owners_log(world, fw, monkeypatch, tmp_path):
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    before = (fw.session / "session.jsonl").read_bytes()
+    with SessionOperations(authority):
+        code, _, _ = fw("look")
+        assert code != 0
+        assert (fw.session / "session.jsonl").read_bytes() == before
+
+
+def test_durable_secret_request_replays_without_secret_and_never_persists_value(
+    world, fw, monkeypatch, tmp_path
+):
+    import asyncio
+
+    world.base["elements"].append(
+        {
+            "element_index": 999999,
+            "role": "AXTextField",
+            "label": "Fixture input",
+            "value": "",
+            "parent_index": 0,
+        }
+    )
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    value = "fixture-private-value"
+    monkeypatch.setenv("FOOTWORK_SECRET_DEMO", value)
+    attempts = []
+
+    async def set_then_cancel(name, args_json):
+        assert name == "set_value"
+        attempts.append(json.loads(args_json)["value"])
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(world, "call_tool", set_then_cancel)
+    words = ("do", "type", "Fixture input", "{DEMO}", "--no-judge", "--token", "secret-input")
+    try:
+        result = fw(*words)
+    except asyncio.CancelledError:
+        pass
+    else:
+        pytest.fail(f"driver boundary was not reached: {result!r}")
+    assert attempts == [value]
+    monkeypatch.delenv("FOOTWORK_SECRET_DEMO")
+    code, out, err = fw(*words)
+    assert code == 0 and "unknown" in out, (out, err)
+    assert len(attempts) == 1
+    assert value not in out + err
+    assert value.encode() not in authority.read_bytes()
+    for name in ("session.json", "session.jsonl"):
+        assert value not in (fw.session / name).read_text()
+    code, out, err = fw("look")
+    assert code != 0 and "secret_unavailable" in out + err
+    assert fw("status")[0] == 0
+
+
+def test_durable_short_secret_refuses_before_binding(world, fw, monkeypatch, tmp_path):
+    from jevdual import session
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    monkeypatch.setenv("FOOTWORK_SECRET_SHORT", "xy")
+
+    def unexpected_bind(*args, **kwargs):
+        raise AssertionError("short secret must be refused before binding")
+
+    monkeypatch.setattr(session, "bind", unexpected_bind)
+    code, out, err = fw("do", "type", "Anything", "{SHORT}", "--token", "short")
+    assert code != 0 and "short_secret_unsupported" in out + err
+    assert "xy" not in out + err
+    assert world.presses == []
+
+
+def test_retained_execution_reconciles_lost_finish_without_new_input(world, fw, monkeypatch, tmp_path):
+    from jevdual import session
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    fw("grant", "click", "Delete")
+    original = SessionOperations.finish_from_execution
+
+    def lost_finish(self, operation_id):
+        raise OSError("lost journal finalization after retained runtime receipt")
+
+    monkeypatch.setattr(SessionOperations, "finish_from_execution", lost_finish)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "retained-return")
+    assert code != 0, (out, err)
+    assert world.presses == ["Delete"]
+    monkeypatch.setattr(SessionOperations, "finish_from_execution", original)
+
+    def no_live_app(*args, **kwargs):
+        raise AssertionError("qualified reconciliation must not bind or dispatch")
+
+    monkeypatch.setattr(session, "bind", no_live_app)
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0 and "applied" in out, (out, err)
+    assert fw("status", "--reconcile")[0] == 0
+    assert fw("do", "click", "Delete", "--no-judge", "--token", "retained-return")[0] == 0
+    assert world.presses == ["Delete"]
+    with SessionOperations(authority) as operations:
+        op = operations.status()[0]
+        assert op.state == "final" and op.disposition == "applied"
+        assert operations.receipt(op)["reservation"] == "spent"
+        kinds = [event["kind"] for event in operations.events(op.id)]
+        assert "recovered_unknown" in kinds and kinds.count("execution_reconciled") == 1
+
+
+def test_reconciliation_without_retained_return_keeps_cancelled_input_unknown(
+    world, fw, monkeypatch, tmp_path
+):
+    import asyncio
+
+    from jevdual import session
+    from jevdual.native import NativeBridge
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    original = NativeBridge.act
+
+    async def cancelled(self, *args, **kwargs):
+        await original(self, *args, **kwargs)
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(NativeBridge, "act", cancelled)
+    with pytest.raises(asyncio.CancelledError):
+        fw("do", "click", "All Clear", "--no-judge", "--token", "no-return")
+
+    def no_live_app(*args, **kwargs):
+        raise AssertionError("current state must not be used as execution proof")
+
+    monkeypatch.setattr(session, "bind", no_live_app)
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0 and "unknown" in out, (out, err)
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "new-input")
+    assert code != 0 and "busy" in out + err
+    assert world.presses == ["All Clear"]
+
+
+def test_retained_sent_unknown_does_not_become_success_on_reconciliation(world, fw, monkeypatch, tmp_path):
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    fw("grant", "click", "Delete")
+    original = world.click
+
+    async def delivered_unknown(inp):
+        await original(inp)
+        return SimpleNamespace(
+            effect="unverifiable",
+            delivery=SimpleNamespace(mode="background", delivered_count=1),
+            evidence=[],
+            summary="input delivered; app effect unconfirmed",
+        )
+
+    monkeypatch.setattr(world, "click", delivered_unknown)
+    code, out, err = fw("do", "click", "Delete", "--no-judge", "--token", "sent-unknown")
+    assert code == 0, (out, err)
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0 and "unknown" in out, (out, err)
+    assert world.presses == ["Delete"]
+    with SessionOperations(authority) as operations:
+        op = operations.status()[0]
+        assert op.state == "unknown" and op.phase == "sent"
+        assert operations.receipt(op)["reservation"] == "spent"
+
+
+def test_real_cli_live_append_retains_full_typed_value(world, fw, monkeypatch, tmp_path):
+    from jevdual.completion import session_effects
+
+    from tests.fixtures.native_world import TextWorld
+
+    text_world = TextWorld(tmp_path / "note.txt", content="Prefix\n")
+    text_world.install(monkeypatch)
+
+    async def apps(inp):
+        return SimpleNamespace(apps=[SimpleNamespace(name="TextEdit", pid=77, running=True)])
+
+    async def windows(inp):
+        return SimpleNamespace(
+            windows=[
+                SimpleNamespace(
+                    window_id=40335, title="note.txt", bounds=SimpleNamespace(width=400, height=300)
+                )
+            ]
+        )
+
+    monkeypatch.setattr(text_world, "list_apps", apps, raising=False)
+    monkeypatch.setattr(text_world, "list_windows", windows, raising=False)
+    _durable_start(fw, monkeypatch, tmp_path, app="TextEdit")
+    payload = "long-value-" + "x" * 240
+    code, out, err = fw("do", "append", "1", payload, "--no-judge", "--token", "long-append")
+    assert code == 0, (out, err)
+    assert text_world.content == "Prefix\n" + payload
+    assert len([item for item in text_world.writes if item[0] == "AXSelectedText"]) == 1
+    facts = session_effects(fw.session)
+    exact = [fact for fact in facts if fact.effect == "field_holds" and fact.usable]
+    assert len(exact) == 1, [(fact.effect, fact.limits) for fact in facts]
+    assert exact[0].values == (text_world.content,)
 
 
 def test_a_raised_dispatch_error_ends_in_a_named_refusal_not_a_crash(world, fw, monkeypatch):

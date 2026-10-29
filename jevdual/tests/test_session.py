@@ -6,8 +6,112 @@ import dataclasses
 import json
 from types import SimpleNamespace
 
+import pytest
 from jevdual.menu import Candidate, Menu
 from jevdual.session import SessionState, receipt_for
+
+
+def test_projection_repair_retains_valid_records_after_damaged_middle_and_quarantines_bytes(tmp_path):
+    import json
+
+    from jevdual.session import _repair_projection_log
+
+    state = SessionState(
+        dir=str(tmp_path),
+        app="fixture",
+        pid=77,
+        window_id=3,
+        task="observe",
+        authority=str(tmp_path / "authority.sqlite"),
+    )
+    original = b'{"kind":"first"}\n{"interrupted":\n{"kind":"receipt","effect":"unverifiable"}\n'
+    log = tmp_path / "session.jsonl"
+    log.write_bytes(original)
+    _repair_projection_log(state)
+    records = [json.loads(line) for line in log.read_bytes().splitlines()]
+    assert records[:2] == [{"kind": "first"}, {"kind": "receipt", "effect": "unverifiable"}]
+    repair = records[2]
+    assert repair["kind"] == "projection_repair" and repair["damaged_lines"] == [2]
+    assert (tmp_path / repair["quarantine"]).read_bytes() == original
+    _repair_projection_log(state)
+    assert len(list(tmp_path.glob("session.interrupted-*.jsonl"))) == 1
+
+
+def test_projection_repair_separates_complete_record_when_terminal_newline_was_lost(tmp_path):
+    import json
+
+    from jevdual.session import _repair_projection_log
+
+    state = SessionState(dir=str(tmp_path), app="fixture", pid=77, window_id=3, task="observe")
+    log = tmp_path / "session.jsonl"
+    original = b'{"kind":"do","operation_id":"finished"}'
+    log.write_bytes(original)
+    _repair_projection_log(state)
+    state.log({"kind": "receipt", "effect": "confirmed"})
+    first, repair, last = [json.loads(line) for line in log.read_bytes().splitlines()]
+    assert first == {"kind": "do", "operation_id": "finished"}
+    assert repair["missing_terminal_newline"] is True and repair["damaged_lines"] == []
+    assert (tmp_path / repair["quarantine"]).read_bytes() == original
+    assert last["kind"] == "receipt" and last["effect"] == "confirmed"
+
+
+@pytest.mark.parametrize("value", [None, "", "x", "xy"])
+def test_durable_bind_refuses_unavailable_prior_secret_before_driver_creation(tmp_path, monkeypatch, value):
+    import asyncio
+
+    import cua_driver
+    from jevdual.native import NativeBridgeError
+    from jevdual.session import bind
+
+    state = SessionState(
+        dir=str(tmp_path),
+        app="X",
+        pid=1,
+        window_id=2,
+        task="t",
+        authority=str(tmp_path / "authority.sqlite"),
+        secret_names=["FIXTURE"],
+    )
+    if value is None:
+        monkeypatch.delenv("FOOTWORK_SECRET_FIXTURE", raising=False)
+    else:
+        monkeypatch.setenv("FOOTWORK_SECRET_FIXTURE", value)
+
+    def unexpected_driver(**kwargs):
+        raise AssertionError("unavailable-secret gate must run before driver creation")
+
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(unexpected_driver))
+    with pytest.raises(NativeBridgeError) as stopped:
+        asyncio.run(bind(state))
+    assert stopped.value.reason == "secret_unavailable"
+
+
+@pytest.mark.parametrize(("authority", "value"), [("authority.sqlite", "fixture-long-value"), ("", None)])
+def test_bind_allows_restored_durable_secret_and_preserves_legacy_mode(
+    tmp_path, monkeypatch, authority, value
+):
+    import asyncio
+
+    import cua_driver
+    from jevdual import session
+
+    state = SessionState(
+        dir=str(tmp_path),
+        app="X",
+        pid=1,
+        window_id=2,
+        task="t",
+        authority=authority,
+        secret_names=["FIXTURE"],
+    )
+    if value is None:
+        monkeypatch.delenv("FOOTWORK_SECRET_FIXTURE", raising=False)
+    else:
+        monkeypatch.setenv("FOOTWORK_SECRET_FIXTURE", value)
+    driver, bridge = object(), object()
+    monkeypatch.setattr(cua_driver.CuaDriver, "create", staticmethod(lambda **kwargs: driver))
+    monkeypatch.setattr(session, "_native_bridge", lambda *args: bridge)
+    assert asyncio.run(session.bind(state)) == (driver, bridge)
 
 
 def _nm(cands, title="page", page_text=""):
@@ -24,6 +128,128 @@ def _state(tmp_path, cands, pending):
 
 def _field(id, label, value=None, **kw):
     return Candidate(id=id, label=label, role="textbox", operations=("type",), value=value, **kw)
+
+
+def _exact_pending(tmp_path, value):
+    binding = {"boot": "test", "pid": 77, "start": "start", "window_id": 3}
+    state = SessionState(
+        dir=str(tmp_path),
+        app="Native fixture",
+        pid=77,
+        window_id=3,
+        task="append",
+        authority=str(tmp_path / "authority.sqlite"),
+        session_id="session_one",
+        native_binding=binding,
+    )
+    pending = {
+        "operation_id": "op_one",
+        "binding": binding,
+        "observation": "decision",
+        "execution_interval": {"start": 1.0, "end": 2.0},
+        "target_id": 3,
+        "target_label": "Body",
+        "op": "append",
+        "secret": False,
+        "dispatched": True,
+        "field_readback": {
+            "schema_version": 1,
+            "producer": {"name": "footwork.native", "version": 1},
+            "predicate": "field_equals",
+            "observed_value": value,
+            "expected_value": value,
+            "before_value": "Before",
+            "matches": True,
+            "complete": True,
+            "target_id": 8,
+            "label": "Body",
+            "role": "AXTextArea",
+            "frame": [10, 20, 400, 300],
+            "snapshot_id": "revalidated",
+            "decision_snapshot_id": "decision",
+            "decision_target_id": 3,
+        },
+    }
+    fresh = _nm([_field(8, "Body", value=value[:120])])
+    fresh.ax_roles = {8: "AXTextArea"}
+    fresh.frames = {8: (10, 20, 400, 300)}
+    fresh.values = {8: value}
+    return state, pending, fresh
+
+
+def test_exact_readback_links_revalidated_target_without_using_projection_as_full_value(tmp_path):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    value = "Complete long value " * 30
+    state, pending, fresh = _exact_pending(tmp_path, value)
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert item.usable and item.values == (value,)
+    assert payload["facts"][0]["parameters"]["source_observation"] == "revalidated"
+
+
+def test_fresh_contradictory_projection_limits_earlier_exact_readback(tmp_path):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+    fresh.values = {8: "Externally changed"}
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert not item.usable and "contradicts" in item.limits[0]
+
+
+@pytest.mark.parametrize("current", ["", "Expected", "Expected exact field ", " Expected exact field"])
+def test_shorter_or_changed_raw_field_limits_earlier_exact_readback(tmp_path, current):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+    fresh.values = {8: current}
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert not item.usable and "contradicts" in item.limits[0]
+
+
+def test_display_preview_without_raw_value_cannot_confirm_exact_readback(tmp_path):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    state, pending, fresh = _exact_pending(tmp_path, "Complete long value " * 30)
+    fresh.values = {}
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert not item.usable and "unavailable" in item.limits[0]
+
+
+def test_prior_secret_redaction_is_not_exact_literal_placeholder_evidence(tmp_path, monkeypatch):
+    from jevdual.completion import effects
+    from jevdual.session import _safe_field_readback, _structured_receipt
+
+    value = "Previously secret phrase"
+    monkeypatch.setenv("FOOTWORK_SECRET_OLD", value)
+    state, pending, fresh = _exact_pending(tmp_path, value + "\nNew public text")
+    state.secret_names = ["OLD"]
+    pending["field_readback"] = _safe_field_readback(state, pending["field_readback"], None)
+    readback = pending["field_readback"]
+    assert readback["redacted"] and not readback["complete"] and readback["observed_value"] is None
+    payload = _structured_receipt(state, pending, fresh)
+    assert value not in json.dumps(payload) and value not in json.dumps(readback)
+    assert effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}]) == []
+
+
+def test_durable_observation_records_projection_limits_and_generation(tmp_path):
+    from jevdual.session import finish_observation
+
+    state, _, fresh = _exact_pending(tmp_path, "Read value")
+    fresh.elements_complete = False
+    fresh.text_truncated = True
+    finish_observation(state, fresh, observed_interval=(1.0, 2.0))
+    record = json.loads((tmp_path / "session.jsonl").read_text().splitlines()[-1])
+    assert record["kind"] == "observation" and record["generation"] == state.visual_generation
+    assert record["coverage"]["text_truncated"] and not record["coverage"]["values_exact"]
+    assert record["binding"] == state.native_binding and record["interval"] == {"start": 1.0, "end": 2.0}
 
 
 def test_type_receipt_follows_the_field_not_the_element_count(tmp_path):

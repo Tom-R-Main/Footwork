@@ -167,7 +167,31 @@ def test_effect_from_action_result_reads_driver_words():
     assert effect_from_action_result("type", 2, "Username", wrapped).effect == "confirmed"
     bad = SimpleNamespace(action=None, text="nope", is_error=True, error_code="background_unavailable")
     eff = effect_from_action_result("click", 1, "x", bad)
-    assert eff.effect == "refused" and not eff.ok and eff.error_code == "background_unavailable"
+    assert eff.effect == "unverifiable" and eff.dispatched and eff.error_code == "background_unavailable"
+
+
+@pytest.mark.parametrize("count", [None, 0, 1, True, -1, "1"])
+def test_delivery_count_is_distinct_from_input_attempt(count):
+    action = SimpleNamespace(
+        effect="UNVERIFIABLE", delivery=SimpleNamespace(mode="BACKGROUND", delivered_count=count)
+    )
+    eff = effect_from_action_result("click", 1, "Submit", action)
+    assert eff.dispatched
+    assert eff.delivered_count == (count if type(count) is int and count >= 0 else None)
+    assert eff.to_record()["delivered_count"] == eff.delivered_count
+    assert eff.delivery_basis == ("sdk_delivery_count" if type(count) is int and count > 0 else "unknown")
+
+
+def test_refusal_has_qualified_gate_basis_but_opaque_error_does_not():
+    refused = SimpleNamespace(effect="REFUSED", delivery=SimpleNamespace(delivered_count=0))
+    eff = effect_from_action_result("click", 1, "Submit", refused)
+    assert not eff.dispatched and eff.delivery_basis == "qualified_gate"
+    contradictory = SimpleNamespace(effect="REFUSED", delivery=SimpleNamespace(delivered_count=1))
+    eff = effect_from_action_result("click", 1, "Submit", contradictory)
+    assert eff.dispatched and eff.effect == "unverifiable" and eff.delivery_basis == "sdk_delivery_count"
+    opaque = SimpleNamespace(action=None, is_error=True, text="failure", error_code=None)
+    eff = effect_from_action_result("click", 1, "Submit", opaque)
+    assert eff.dispatched and eff.delivery_basis == "unknown"
 
 
 class _FakeDriver:
@@ -201,6 +225,55 @@ class _FakeDriver:
             is_error=False,
             error_code=None,
         )
+
+
+@pytest.mark.parametrize("message", ["lost reply after press", "AX press failed (-25204)"])
+def test_post_press_error_is_uncertain_and_never_retried(snapshot, monkeypatch, message):
+    """The independent input ledger sees the press before the driver loses its reply."""
+    import sys
+
+    class FailedReply(_FakeDriver):
+        async def click(self, inp):
+            self.calls.append(("click", inp))
+            raise RuntimeError(message)
+
+    monkeypatch.setitem(
+        sys.modules,
+        "cua_driver",
+        SimpleNamespace(
+            GetWindowStateInput=lambda **kw: kw,
+            ClickInput=lambda **kw: kw,
+            ClickPosition=SimpleNamespace(ELEMENT=lambda element_token: ("element", element_token)),
+            InputDeliveryMode=SimpleNamespace(BACKGROUND="background"),
+            ActionTarget=SimpleNamespace(WINDOW=lambda pid, window_id: ("window", pid, window_id)),
+        ),
+    )
+    driver = FailedReply(snapshot)
+    bridge = NativeBridge(driver, pid=snapshot["pid"], window_id=snapshot["window_id"])
+    nm = asyncio.run(bridge.observe())
+    six = next(c for c in nm.menu.candidates if c.label == "6")
+    effect = asyncio.run(bridge.act(nm, "click", six.id))
+    assert [name for name, _ in driver.calls].count("click") == 1
+    assert effect.effect == "unverifiable"
+    assert effect.dispatched is True
+
+
+def test_opaque_tool_error_is_not_qualified_no_send():
+    reply = SimpleNamespace(action=None, text="reply lost", is_error=True, error_code="transport")
+    effect = effect_from_action_result("click", 1, "Submit", reply)
+    assert effect.effect == "unverifiable"
+    assert effect.dispatched is True
+
+
+def test_explicit_driver_refusal_qualifies_no_send():
+    reply = SimpleNamespace(
+        action=SimpleNamespace(effect=SimpleNamespace(name="REFUSED"), delivery=None),
+        is_error=True,
+        error_code="stale_token",
+    )
+    effect = effect_from_action_result("click", 1, "Submit", reply)
+    assert effect.effect == "refused"
+    assert effect.dispatched is False
 
 
 def test_bridge_refuses_stale_menu_and_dispatches_by_token(snapshot, monkeypatch):

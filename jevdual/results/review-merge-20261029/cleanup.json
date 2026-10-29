@@ -1,0 +1,88 @@
+{
+  "saved_images": {
+    "live-v2-nominal": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 390070049,
+        "size": 548,
+        "mtime_ns": 1793299198780318291,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793299619.0110238,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    },
+    "live-v2-interrupted": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-interrupted/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-interrupted/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 390092194,
+        "size": 548,
+        "mtime_ns": 1793299320390784061,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793299619.013346,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    }
+  },
+  "old_unknowns_unchanged": true,
+  "ports": [
+    {
+      "run": "live-v2-nominal",
+      "port": 65357,
+      "accepting": false
+    },
+    {
+      "run": "live-v2-interrupted",
+      "port": 49549,
+      "accepting": false
+    }
+  ],
+  "historical_unknown_count": 11,
+  "new_unknowns": [
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/authority.sqlite",
+      "operation": "op_b18ed8ecb479",
+      "state": "unknown"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/authority.sqlite",
+      "operation": "op_c4372666cac1",
+      "state": "unknown"
+    }
+  ],
+  "shared_apps_alive": {
+    "Finder": true,
+    "Preview": true
+  }
+}

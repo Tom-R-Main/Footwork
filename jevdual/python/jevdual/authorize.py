@@ -37,11 +37,11 @@ from jevdual.native import NativeMenu
 
 log = logging.getLogger("jevdual.authorize")
 
-Route = Literal["click", "type", "append", "enter", "key", "hotkey", "menu", "scroll", "hover"]
+Route = Literal["click", "type", "append", "move", "enter", "key", "hotkey", "menu", "scroll", "hover"]
 
 #: chord meanings the keyword gate can read
 #: routes System 2 proposes that get the destructive judgment (type is covered by the replace rule)
-JUDGED_ROUTES = ("click", "menu", "hotkey", "key", "enter")
+JUDGED_ROUTES = ("click", "move", "menu", "hotkey", "key", "enter")
 
 CHORD_MEANING = {
     "cmd+delete": "delete",
@@ -111,6 +111,8 @@ def action_for(
         label = " > ".join(path)
     elif route == "enter":
         label = CHORD_MEANING["return"]
+    elif route == "move":
+        label = f"move {target.value if target else 'file'} to {text}"
     else:
         label = target.label if target is not None else route
     current = nm.values.get(target.id) if target is not None else None
@@ -121,7 +123,19 @@ def action_for(
 
 Judge = Callable[..., Awaitable[list[float]]]  # Verifier.judge_destructive(task, targets, *, url, title)
 
-GRANT_ROUTES = ("click", "type", "append", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+GRANT_ROUTES = (
+    "click",
+    "type",
+    "append",
+    "move",
+    "enter",
+    "scroll",
+    "hover",
+    "key",
+    "hotkey",
+    "menu",
+    "navigate",
+)
 
 
 def checked_probabilities(probs: Any, n: int) -> list[float]:
