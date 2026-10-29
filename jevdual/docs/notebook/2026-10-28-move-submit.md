@@ -52,3 +52,9 @@ Hypothesis: sending valid response headers after commit and losing the body prev
 Test: preserve the original disconnect fault and add an explicit truncated-body fault mode; one actual native click in a fresh owned Chrome fixture, inspect independent ingress/body/row records and read-only reconciliation. Retain the original fault as an adversarial unsupported case rather than deleting it.
 Predicts: the truncated response produces exactly one matching ingress and an independently qualified receipt after lost UI result; repeated status/token replay sends no further input.
 Against: truncated loss also produces duplicate ingress, the receipt accepts mismatched/duplicate events, or the old disconnect failure is misreported as a passing case.
+
+## MSU4 · update · 2026-10-28 21:44
+Observed: the full suite passed 2101 tests with 26 skipped. Thomas said he would leave the desktop idle and only this test should use it. Read-only AX/pixel captures nevertheless measured near-zero HID idle throughout; they did not establish its cause. Qualifier tests now cover actual lost/truncated HTTP responses and retained receipt recovery after real SIGKILL.
+Inferred: reserved-desktop qualification can proceed under the stated availability, without claiming active-user coexistence. Keep old no-send and duplicate-ingress results separate.
+Next: freeze the candidate and run fresh reserved-desktop app and chain qualification with unchanged identity/custody/oracle gates.
+Refs: output/move-submit-20261028/dev3/capture-activity-diagnostic.json; results/move-submit-20261028/full-suite.txt; docs/experiments/MS-move-submit-20261028.md

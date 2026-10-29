@@ -17,3 +17,7 @@ If user activity prevents required foreground work, use a qualified background r
 ## Fault-model amendment · 2026-10-28 21:31
 
 Development observed two HTTP ingresses from one agent click after an empty-response disconnect. Retain that failure and its unknown; do not relax the one-ingress gate. Evaluate a separate explicitly selected truncated-body response-loss mode and an agent RPC/result-loss mode (SIGKILL after server ingress). Report each fault independently. Passing either new mode does not establish support for empty-response disconnects or qualify that retained failed cell.
+
+## Reserved-desktop amendment · 2026-10-28 21:44
+
+Thomas replied that he would leave the desktop idle and that only this test should be using it. Repeated read-only captures still observed near-zero HID idle; the cause remains unproven. For fresh measured fixtures use the existing exclusive_desktop posture under that reserved-desktop condition. Do not change target, grant, URL, custody or independent-oracle checks; require no desktop drag. Retain foreground_permitted no-send attempts. This run qualifies only the reserved-desktop fixture route, not coexistence with active human input. No policy threshold is changed.
