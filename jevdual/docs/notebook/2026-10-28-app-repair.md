@@ -36,3 +36,15 @@ Hypothesis: selecting the exact bound file row and entering Finder's own File > 
 Test: fresh development fixture, bounded selected-row/editor AX probes, one acknowledged edit and commit, independent filename/inode/sibling readback; preserve any unknown and never retry that artifact.
 Predicts: row selection and Rename produce a unique editor for the selected owned file, and its commit changes the path with unchanged inode and bytes.
 Against: the editor cannot be bound, the name changes only on screen, or the operation changes another resource.
+
+## ARU2 · update · 2026-10-28 20:34
+Observed: manual development AX row selection, File > Rename, transient editor write and foreground Return renamed the exact inode with independent bytes/sibling checks passing. The combined CLI producer selected the sole exact row in the correct main/key/front window, but its Rename press returned acknowledgement without opening the editor; retained diagnostics show AXOutline before and after. Chrome typed all four fields and submitted one durable ticket, while the click's missing delivery qualification left custody unknown. Scope refused the resulting response page. Same-title Finder windows also exposed a startup selection defect, now covered by exact-file window selection scenarios.
+Inferred: the remaining Finder divergence is menu activation/validation timing, rather than target identity or window focus. A durable ticket proves service persistence but cannot be promoted to a native execution receipt by the existing reconciler.
+Next: open the File menu explicitly before pressing its now-validated Rename item, then rerun on a fresh fixture. Keep Chrome submission unknown and do not repeat it.
+Refs: output/app-repair-20261028/dev4/rename-oracle.json; output/app-repair-20261028/dev6/finder-deciding-proof.json; output/app-repair-20261028/dev/ticket-probe-snapshot.json
+
+## AR6 · prediction · 2026-10-28 20:34
+Hypothesis: opening Finder's File menu after exact row selection validates the Rename item before its press, removing the combined producer's editor-activation failure.
+Test: add an explicit acknowledged File menu open and read enabled Rename state before the one leaf press; fresh owned development fixture, retained context and exact same-inode independent checks.
+Predicts: Rename opens the unique actual editor and commits the intended path; missing enabled state refuses before the leaf press.
+Against: File menu is enabled but Rename still fails to open the editor, or a wrong resource changes.
