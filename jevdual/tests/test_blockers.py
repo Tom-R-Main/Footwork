@@ -246,3 +246,13 @@ def test_a_stuck_loop_is_diagnosed_and_stays_stuck():
 
     r = asyncio.run(run_micro_loop("read it", _Session(), _QuietTools(), decide=scroll, diagnose=diagnose))
     assert r.status == "stuck" and seen == ["read it"] and r.diagnosis["findings"] == ["loading"]
+
+
+def test_labels_the_request_left_out_make_the_diagnosis_partial():
+    client = FakeClient(_response(_scores()))
+    many = tuple(Candidate(id=i, label=f"Item {i}", role="link", operations=("click",)) for i in range(80))
+    d = asyncio.run(BlockerDiagnoser(client)(_menu(cands=many), "t"))
+    assert d.coverage["elements_sent"] == 60 and d.coverage["elements_complete"] is False
+    assert "partial observation" in d.summary()
+    long = asyncio.run(BlockerDiagnoser(client)(_menu(text="x " * 4000), "t"))
+    assert long.coverage["text_truncated"] is True and "partial observation" in long.summary()

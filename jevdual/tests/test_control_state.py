@@ -310,13 +310,22 @@ def test_live_resolution_keeps_the_position_among_same_label_toggles():
     assert exc.value.reason == "target_changed"
 
 
-def test_repeated_toggles_kept_per_key_are_bounded():
+def test_repeated_toggles_are_offered_only_as_whole_groups():
     from jevdual.menu import MenuBudget
-    from jevdual.native import TOGGLE_REPEATS_KEPT, _prune
+    from jevdual.native import NATIVE_MENU_CAP, TOGGLE_REPEATS_KEPT, _prune
 
-    cands = [cand(i, "0", checked=False) for i in range(40)] + [cand(99, "OK", role="button")]
-    om: dict[str, int] = {}
-    kept, _, _ = _prune(cands, {c.id: str(c.id) for c in cands}, {}, om, MenuBudget())
-    assert [c.id for c in kept] == [*range(TOGGLE_REPEATS_KEPT), 99] and om[
-        "duplicate"
-    ] == 40 - TOGGLE_REPEATS_KEPT
+    def prune(cands):
+        om: dict[str, int] = {}
+        kept, _, _ = _prune(cands, {c.id: str(c.id) for c in cands}, {}, om, MenuBudget())
+        return [c.id for c in kept], om
+
+    small = [cand(i, "Enabled", checked=False) for i in range(TOGGLE_REPEATS_KEPT)]
+    assert prune(small)[0] == list(range(TOGGLE_REPEATS_KEPT))
+    # a larger group cannot be told apart by position among what is offered: its first member only
+    table = [cand(i, "0", checked=False) for i in range(40)] + [cand(99, "OK", role="button")]
+    ids, om = prune(table)
+    assert ids == [0, 99] and om["duplicate"] == 39
+    # a group the cap would cut is offered by its first member, not partially
+    filler = [cand(1000 + i, f"link {i}", role="link") for i in range(NATIVE_MENU_CAP - 2)]
+    ids, om = prune(filler + [cand(i, "Enabled", checked=False) for i in range(3)])
+    assert [i for i in ids if i < 1000] == [0] and "cap" not in om

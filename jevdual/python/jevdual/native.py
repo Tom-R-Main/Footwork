@@ -302,21 +302,47 @@ def _prune(
     """Drop what System 1 cannot choose between: a control whose label is only its role (``button
     'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
     the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
-    state is kept even when repeated, up to ``TOGGLE_REPEATS_KEPT`` of one key: two "Enabled" switches
-    are two settings, and dropping the second hid its change from the effect diff. Then cap the count."""
-    kept: list[Candidate] = []
-    seen: dict[tuple[str, str, str | None, str | None], int] = {}
+    state is kept even when repeated, when its whole group is: two "Enabled" switches are two settings,
+    and dropping the second hid its change from the effect diff. The ``do`` and ``_live`` identity
+    checks tell repeats apart by their position among the offered peers, which only holds when every
+    peer is offered, so a group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first
+    member only, as any other repeat. Then cap the count."""
+
+    def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
+        return (c.role, c.label, c.value, c.section)
+
+    named = []
     for c in candidates:
         if c.label == c.role and c.role not in _TEXT_ROLES:
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
-        key = (c.role, c.label, c.value, c.section)
-        stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
-        if key in seen and (not stateful or seen[key] >= TOGGLE_REPEATS_KEPT):
-            omitted["duplicate"] = omitted.get("duplicate", 0) + 1
-            continue
-        seen[key] = seen.get(key, 0) + 1
-        kept.append(c)
+        named.append(c)
+    group: dict[tuple[str, str, str | None, str | None], int] = {}
+    for c in named:
+        group[key_of(c)] = group.get(key_of(c), 0) + 1
+
+    def dedupe(
+        cands: list[Candidate], whole: set[tuple[str, str, str | None, str | None]]
+    ) -> list[Candidate]:
+        out: list[Candidate] = []
+        seen: set[tuple[str, str, str | None, str | None]] = set()
+        for c in cands:
+            stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
+            if key_of(c) in seen and not (stateful and key_of(c) in whole):
+                omitted["duplicate"] = omitted.get("duplicate", 0) + 1
+                continue
+            seen.add(key_of(c))
+            out.append(c)
+        return out
+
+    whole = {k for k, n in group.items() if n <= TOGGLE_REPEATS_KEPT}
+    kept = dedupe(named, whole)
+    if len(kept) > NATIVE_MENU_CAP:
+        # a repeated group the cap would cut stops being offered whole: keep its first member only
+        tail = {key_of(c) for c in kept[NATIVE_MENU_CAP:]}
+        if tail & whole:
+            omitted.pop("duplicate", None)
+            kept = dedupe(named, whole - tail)
     if len(kept) > NATIVE_MENU_CAP:
         omitted["cap"] = len(kept) - NATIVE_MENU_CAP
         kept = kept[:NATIVE_MENU_CAP]

@@ -117,7 +117,8 @@ class BlockerDiagnosis:
     def summary(self) -> str:
         if self.status == "unavailable":
             return f"Page diagnosis unavailable ({self.reason})."
-        partial = "" if self.coverage.get("elements_complete", True) else " from a partial observation"
+        whole = self.coverage.get("elements_complete", True) and not self.coverage.get("text_truncated")
+        partial = "" if whole else " from a partial observation"
         if not self.findings:
             return f"Page diagnosis{partial}: none of the {len(BLOCKERS)} blocker checks was indicated."
         named = ", ".join(f"{k.replace('_', ' ')} ({self.scores[k]:.2f})" for k in self.findings)
@@ -156,8 +157,10 @@ _PARTIAL_KEYS = ("elements_incomplete", "cap", "overflow", "offscreen", "page_te
 
 
 def _coverage(menu: Menu, state: dict[str, Any]) -> dict[str, Any]:
+    # partial when the builder left elements out or this request did (off-screen, beyond MAX_ELEMENTS)
     return {
-        "elements_complete": not any(menu.omitted.get(k) for k in _PARTIAL_KEYS),
+        "elements_complete": not any(menu.omitted.get(k) for k in _PARTIAL_KEYS)
+        and len(state["elements"]) == len(menu.candidates),
         "omitted": dict(menu.omitted),
         "elements_sent": len(state["elements"]),
         "elements_total": len(menu.candidates),
