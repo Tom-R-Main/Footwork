@@ -46,3 +46,15 @@ Hypothesis: a freshly validated bound main window and sole owned selection remai
 Test: simulate null focused window only after owned File menu opening, with AXApplication focus. Confirm exact rename succeeds; null focus with another role or changed front/main/selection still refuses before Rename. Rerun the fresh installed workflow without repeating the uncertain fixture.
 Predicts: the supported menu state passes without relaxing file URL/inode or initial key-window checks; foreign or unverified ownership receives no Rename/editor input.
 Against: generic null focus becomes authority, a switched window/selection passes, or the live owned menu still blocks the route.
+
+## RVU2 · update · 2026-10-29 14:37
+Observed: a20205f's fresh live run passed the corrected owned File-menu check and entered its exact rename editor. Before the value write, the old filename field no longer had an AXRow ancestor (file_row_missing). Current front/main window and the exact focused editor still matched; no value was written. The partial operation remains unknown.
+Inferred: the editor replaces its filename row during this legitimate transition. Allow only that explicit old-row absence when current editor/name/window/geometry and original inode remain qualified; other selection failures must remain refusals.
+Next: a public transient-row regression, exact original-file check immediately before editor write, and fresh installed verification.
+Refs: output/review-merge-20261029/live-nominal-final/authority.json
+
+## RV7 · prediction · 2026-10-29 14:37
+Hypothesis: qualified current editor ownership plus a fresh original-file inode check safely handles file_row_missing after this operation entered Rename, without weakening selection checks before Rename.
+Test: simulate row replacement only while its exact editor is active; require successful rename. A different selection failure, wrong editor/window/value or replaced original inode must stop before the value write.
+Predicts: the specific old-row replacement passes only with all remaining identity checks; arbitrary selection/read failures and foreign state receive no editor write.
+Against: missing row alone authorizes input, a replaced inode or editor passes, or the real transient-editor route still blocks.
