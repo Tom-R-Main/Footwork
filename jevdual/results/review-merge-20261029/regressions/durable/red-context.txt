@@ -1,0 +1,85 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_done_repairs_settled_durable_context_projection_without_repeating_effect _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x103a2bf60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1039cfd70>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-260/test_done_repairs_settled_dura0')
+
+    def test_done_repairs_settled_durable_context_projection_without_repeating_effect(
+        world, fw, monkeypatch, tmp_path
+    ):
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "settled-context"
+        assert cli.main([
+            "start", "Compute", "--app", "Calculator", "--session", str(context),
+            "--authority", str(authority),
+        ]) == 0
+        assert cli.main([
+            "do", "click", "All Clear", "--no-judge", "--session", str(context),
+            "--token", "context-once", "--settle", "0",
+        ]) == 0
+        with SessionOperations(authority) as operations:
+            (operation,) = operations.status()
+            assert operation.state == "final"
+        log = context / "session.jsonl"
+        with log.open("ab") as stream:
+            stream.write(b'{"kind":"interrupted-context"')
+        damaged = log.read_bytes()
+        code, out, err = fw("done", "complete", "--context-from", str(context))
+>       assert code == 0 and "accepted" in out, (out, err)
+E       AssertionError: ("bound Calculator window 40335 'Calculator' (background_only)
+E         Calculator: 'Calculator'  [elements_incomplete 1]
+E         not...ode'
+E         page text (3 chars):
+E         0
+E         0
+E         ", "stopped: JSONDecodeError: Expecting ',' delimiter: line 1 column 30 (char 29)
+E         ")
+E       assert (7 == 0)
+
+jevdual/tests/test_session_scenarios.py:1177: AssertionError
+_____ test_done_refuses_corrupt_legacy_context_before_keys_app_or_provider _____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x103f23ba0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x103f69e80>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-260/test_done_refuses_corrupt_lega0')
+
+    def test_done_refuses_corrupt_legacy_context_before_keys_app_or_provider(
+        world, fw, monkeypatch, tmp_path
+    ):
+        import jevdual.keys
+        from jevdual import session
+
+        _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "legacy-context"
+        context.mkdir()
+        state = session.SessionState.load(fw.session)
+        state.dir, state.authority = str(context), ""
+        state.save()
+        log = context / "session.jsonl"
+        original = b'{"kind":"receipt","effect":"confirmed"}\n{"interrupted":'
+        log.write_bytes(original)
+        calls = []
+        monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {})
+
+        async def forbidden_bind(state):
+            calls.append("app")
+            raise AssertionError("corrupt legacy evidence must refuse before app binding")
+
+        monkeypatch.setattr(session, "bind", forbidden_bind)
+        code, out, err = fw("done", "complete", "--context-from", str(context))
+>       assert code == 5 and "context_evidence_unreadable" in out + err, (out, err)
+E       AssertionError: ('', 'TYPESAFE_API_KEY missing
+E         ')
+E       assert (2 == 5)
+
+jevdual/tests/test_session_scenarios.py:1210: AssertionError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_session_scenarios.py::test_done_repairs_settled_durable_context_projection_without_repeating_effect
+FAILED jevdual/tests/test_session_scenarios.py::test_done_refuses_corrupt_legacy_context_before_keys_app_or_provider
+2 failed, 110 deselected in 0.50s

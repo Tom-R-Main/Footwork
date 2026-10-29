@@ -1,0 +1,435 @@
+FFFFFFF                                                                  [100%]
+=================================== FAILURES ===================================
+_ test_durable_partial_projection_is_quarantined_before_replay_click_and_done __
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1048b3ba0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10485e4e0>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_durable_partial_projectio0')
+
+    def test_durable_partial_projection_is_quarantined_before_replay_click_and_done(
+        world, fw, monkeypatch, tmp_path
+    ):
+        from jevdual.session import SessionState
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        original = SessionState.log
+        fragment = b'{"kind":"do","operation_id":'
+        failed = False
+
+        def partial_do(self, record):
+            nonlocal failed
+            if record.get("kind") == "do" and not failed:
+                failed = True
+                with (self.path / "session.jsonl").open("ab") as stream:
+                    stream.write(fragment)
+                raise OSError("projection interrupted after partial bytes")
+            return original(self, record)
+
+        monkeypatch.setattr(SessionState, "log", partial_do)
+        assert fw("do", "click", "All Clear", "--no-judge", "--token", "partial-response")[0] != 0
+        with SessionOperations(authority) as operations:
+            (operation,) = operations.status()
+            assert operation.state == "final"
+        damaged = (fw.session / "session.jsonl").read_bytes()
+        assert fragment in damaged
+        code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "partial-response")
+        assert code == 0 and '"replay": true' in out, (out, err)
+        code, out, err = fw("do", "click", "label:7", "--no-judge", "--token", "after-partial")
+>       assert code == 0, (out, err)
+E       AssertionError: ('operation token: after-partial
+E         receipt (previous action): Receipt for click(All Clear): suspected no-op (no change:...t-only checks, no Jev judgment
+E         ', "stopped: JSONDecodeError: Expecting ',' delimiter: line 1 column 150 (char 149)
+E         ")
+E       assert 7 == 0
+
+jevdual/tests/test_session_scenarios.py:975: AssertionError
+______ test_durable_status_reports_legacy_unknown_without_operator_proof _______
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1049ed1c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10485f080>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_durable_status_reports_le0')
+
+    def test_durable_status_reports_legacy_unknown_without_operator_proof(world, fw, monkeypatch, tmp_path):
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        operation_id = _legacy_unknown(authority)
+        code, out, err = fw("status", "--reconcile")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'stopped: journal_error: missing operator projection
+E         ')
+E       assert 7 == 0
+
+jevdual/tests/test_session_scenarios.py:1005: AssertionError
+_ test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[own] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1049ef600>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104a5a210>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_done_refuses_unresolved_c0')
+scope = 'own'
+
+    @pytest.mark.parametrize("scope", ["own", "domain", "context", "legacy_context", "legacy_own"])
+    def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+        world, fw, monkeypatch, tmp_path, scope
+    ):
+        import jevdual.keys
+        import jevdual.session as session
+
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "context"
+        extra = []
+        if scope in ("legacy_context", "legacy_own"):
+            state = session.SessionState.load(fw.session)
+            if scope == "legacy_context":
+                context.mkdir()
+                state.dir = str(context)
+                extra = ["--context-from", str(context)]
+            state.authority = ""
+            state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+            state.save()  # Deliberately no do/receipt projection for the pending unknown.
+        elif scope == "context":
+            context.mkdir()
+            state = session.SessionState.load(fw.session)
+            state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+            state.save()
+            _legacy_unknown(tmp_path / "context.sqlite")
+            extra = ["--context-from", str(context)]
+        elif scope == "domain":
+            _legacy_unknown(authority)
+        else:
+            state = session.SessionState.load(fw.session)
+            with SessionOperations(authority) as operations:
+                operation = operations.admit(
+                    session_id=state.session_id, token="unfinished", request={"words": ["click", "Delete"]},
+                    resource="native:fixture", observation="old", target="1", move="click",
+                    authorization_basis="existing_policy", projection={"step": 1, "op": "click"},
+                )
+                operations.start(operation.id)
+
+        calls = []
+        monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"})
+        original_bind = session.bind
+
+        async def counted_bind(state):
+            calls.append("app")
+            return await original_bind(state)
+
+        monkeypatch.setattr(session, "bind", counted_bind)
+        original_verify = _Verifier.verify
+
+        async def accepting_verify(self, *args, **kwargs):
+            calls.append("verifier")
+            return await original_verify(self, *args, **kwargs)
+
+        monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+        code, out, err = fw("done", "looks complete", *extra)
+>       assert code == 5 and "unresolved" in out + err, (out, err)
+E       AssertionError: ('receipt (previous action): Receipt for action: unverifiable (input outcome unknown after error: process ended during dispatch).
+E         verifier: accept (complete p=0.95) [0 ms]: all requirements on the window
+E         accepted. session closed.
+E         ', '')
+E       assert (0 == 5)
+
+jevdual/tests/test_session_scenarios.py:1072: AssertionError
+_ test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[domain] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104a74400>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104a6d880>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_done_refuses_unresolved_c1')
+scope = 'domain'
+
+    @pytest.mark.parametrize("scope", ["own", "domain", "context", "legacy_context", "legacy_own"])
+    def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+        world, fw, monkeypatch, tmp_path, scope
+    ):
+        import jevdual.keys
+        import jevdual.session as session
+
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "context"
+        extra = []
+        if scope in ("legacy_context", "legacy_own"):
+            state = session.SessionState.load(fw.session)
+            if scope == "legacy_context":
+                context.mkdir()
+                state.dir = str(context)
+                extra = ["--context-from", str(context)]
+            state.authority = ""
+            state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+            state.save()  # Deliberately no do/receipt projection for the pending unknown.
+        elif scope == "context":
+            context.mkdir()
+            state = session.SessionState.load(fw.session)
+            state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+            state.save()
+            _legacy_unknown(tmp_path / "context.sqlite")
+            extra = ["--context-from", str(context)]
+        elif scope == "domain":
+            _legacy_unknown(authority)
+        else:
+            state = session.SessionState.load(fw.session)
+            with SessionOperations(authority) as operations:
+                operation = operations.admit(
+                    session_id=state.session_id, token="unfinished", request={"words": ["click", "Delete"]},
+                    resource="native:fixture", observation="old", target="1", move="click",
+                    authorization_basis="existing_policy", projection={"step": 1, "op": "click"},
+                )
+                operations.start(operation.id)
+
+        calls = []
+        monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"})
+        original_bind = session.bind
+
+        async def counted_bind(state):
+            calls.append("app")
+            return await original_bind(state)
+
+        monkeypatch.setattr(session, "bind", counted_bind)
+        original_verify = _Verifier.verify
+
+        async def accepting_verify(self, *args, **kwargs):
+            calls.append("verifier")
+            return await original_verify(self, *args, **kwargs)
+
+        monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+        code, out, err = fw("done", "looks complete", *extra)
+>       assert code == 5 and "unresolved" in out + err, (out, err)
+E       AssertionError: ('verifier: accept (complete p=0.95) [0 ms]: all requirements on the window
+E         accepted. session closed.
+E         ', '')
+E       assert (0 == 5)
+
+jevdual/tests/test_session_scenarios.py:1072: AssertionError
+_ test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[context] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104d7eb60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104d209e0>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_done_refuses_unresolved_c2')
+scope = 'context'
+
+    @pytest.mark.parametrize("scope", ["own", "domain", "context", "legacy_context", "legacy_own"])
+    def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+        world, fw, monkeypatch, tmp_path, scope
+    ):
+        import jevdual.keys
+        import jevdual.session as session
+
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "context"
+        extra = []
+        if scope in ("legacy_context", "legacy_own"):
+            state = session.SessionState.load(fw.session)
+            if scope == "legacy_context":
+                context.mkdir()
+                state.dir = str(context)
+                extra = ["--context-from", str(context)]
+            state.authority = ""
+            state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+            state.save()  # Deliberately no do/receipt projection for the pending unknown.
+        elif scope == "context":
+            context.mkdir()
+            state = session.SessionState.load(fw.session)
+            state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+            state.save()
+            _legacy_unknown(tmp_path / "context.sqlite")
+            extra = ["--context-from", str(context)]
+        elif scope == "domain":
+            _legacy_unknown(authority)
+        else:
+            state = session.SessionState.load(fw.session)
+            with SessionOperations(authority) as operations:
+                operation = operations.admit(
+                    session_id=state.session_id, token="unfinished", request={"words": ["click", "Delete"]},
+                    resource="native:fixture", observation="old", target="1", move="click",
+                    authorization_basis="existing_policy", projection={"step": 1, "op": "click"},
+                )
+                operations.start(operation.id)
+
+        calls = []
+        monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"})
+        original_bind = session.bind
+
+        async def counted_bind(state):
+            calls.append("app")
+            return await original_bind(state)
+
+        monkeypatch.setattr(session, "bind", counted_bind)
+        original_verify = _Verifier.verify
+
+        async def accepting_verify(self, *args, **kwargs):
+            calls.append("verifier")
+            return await original_verify(self, *args, **kwargs)
+
+        monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+        code, out, err = fw("done", "looks complete", *extra)
+>       assert code == 5 and "unresolved" in out + err, (out, err)
+E       AssertionError: ('verifier: accept (complete p=0.95) [0 ms]: all requirements on the window
+E         accepted. session closed.
+E         ', '')
+E       assert (0 == 5)
+
+jevdual/tests/test_session_scenarios.py:1072: AssertionError
+_ test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[legacy_context] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1049edda0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104a5c4a0>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_done_refuses_unresolved_c3')
+scope = 'legacy_context'
+
+    @pytest.mark.parametrize("scope", ["own", "domain", "context", "legacy_context", "legacy_own"])
+    def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+        world, fw, monkeypatch, tmp_path, scope
+    ):
+        import jevdual.keys
+        import jevdual.session as session
+
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "context"
+        extra = []
+        if scope in ("legacy_context", "legacy_own"):
+            state = session.SessionState.load(fw.session)
+            if scope == "legacy_context":
+                context.mkdir()
+                state.dir = str(context)
+                extra = ["--context-from", str(context)]
+            state.authority = ""
+            state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+            state.save()  # Deliberately no do/receipt projection for the pending unknown.
+        elif scope == "context":
+            context.mkdir()
+            state = session.SessionState.load(fw.session)
+            state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+            state.save()
+            _legacy_unknown(tmp_path / "context.sqlite")
+            extra = ["--context-from", str(context)]
+        elif scope == "domain":
+            _legacy_unknown(authority)
+        else:
+            state = session.SessionState.load(fw.session)
+            with SessionOperations(authority) as operations:
+                operation = operations.admit(
+                    session_id=state.session_id, token="unfinished", request={"words": ["click", "Delete"]},
+                    resource="native:fixture", observation="old", target="1", move="click",
+                    authorization_basis="existing_policy", projection={"step": 1, "op": "click"},
+                )
+                operations.start(operation.id)
+
+        calls = []
+        monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"})
+        original_bind = session.bind
+
+        async def counted_bind(state):
+            calls.append("app")
+            return await original_bind(state)
+
+        monkeypatch.setattr(session, "bind", counted_bind)
+        original_verify = _Verifier.verify
+
+        async def accepting_verify(self, *args, **kwargs):
+            calls.append("verifier")
+            return await original_verify(self, *args, **kwargs)
+
+        monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+        code, out, err = fw("done", "looks complete", *extra)
+>       assert code == 5 and "unresolved" in out + err, (out, err)
+E       AssertionError: ('verifier: accept (complete p=0.95) [0 ms]: all requirements on the window
+E         accepted. session closed.
+E         ', '')
+E       assert (0 == 5)
+
+jevdual/tests/test_session_scenarios.py:1072: AssertionError
+_ test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[legacy_own] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x104d7d300>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1047e0950>
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-247/test_done_refuses_unresolved_c4')
+scope = 'legacy_own'
+
+    @pytest.mark.parametrize("scope", ["own", "domain", "context", "legacy_context", "legacy_own"])
+    def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+        world, fw, monkeypatch, tmp_path, scope
+    ):
+        import jevdual.keys
+        import jevdual.session as session
+
+        from jevdual.session_operations import SessionOperations
+
+        authority = _durable_start(fw, monkeypatch, tmp_path)
+        context = tmp_path / "context"
+        extra = []
+        if scope in ("legacy_context", "legacy_own"):
+            state = session.SessionState.load(fw.session)
+            if scope == "legacy_context":
+                context.mkdir()
+                state.dir = str(context)
+                extra = ["--context-from", str(context)]
+            state.authority = ""
+            state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+            state.save()  # Deliberately no do/receipt projection for the pending unknown.
+        elif scope == "context":
+            context.mkdir()
+            state = session.SessionState.load(fw.session)
+            state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+            state.save()
+            _legacy_unknown(tmp_path / "context.sqlite")
+            extra = ["--context-from", str(context)]
+        elif scope == "domain":
+            _legacy_unknown(authority)
+        else:
+            state = session.SessionState.load(fw.session)
+            with SessionOperations(authority) as operations:
+                operation = operations.admit(
+                    session_id=state.session_id, token="unfinished", request={"words": ["click", "Delete"]},
+                    resource="native:fixture", observation="old", target="1", move="click",
+                    authorization_basis="existing_policy", projection={"step": 1, "op": "click"},
+                )
+                operations.start(operation.id)
+
+        calls = []
+        monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"})
+        original_bind = session.bind
+
+        async def counted_bind(state):
+            calls.append("app")
+            return await original_bind(state)
+
+        monkeypatch.setattr(session, "bind", counted_bind)
+        original_verify = _Verifier.verify
+
+        async def accepting_verify(self, *args, **kwargs):
+            calls.append("verifier")
+            return await original_verify(self, *args, **kwargs)
+
+        monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+        code, out, err = fw("done", "looks complete", *extra)
+>       assert code == 5 and "unresolved" in out + err, (out, err)
+E       AssertionError: ('receipt (previous action): Receipt for action: suspected no-op (no change: same URL , no elements added, removed or ...changed).
+E         verifier: accept (complete p=0.95) [0 ms]: all requirements on the window
+E         accepted. session closed.
+E         ', '')
+E       assert (0 == 5)
+
+jevdual/tests/test_session_scenarios.py:1072: AssertionError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_session_scenarios.py::test_durable_partial_projection_is_quarantined_before_replay_click_and_done
+FAILED jevdual/tests/test_session_scenarios.py::test_durable_status_reports_legacy_unknown_without_operator_proof
+FAILED jevdual/tests/test_session_scenarios.py::test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[own]
+FAILED jevdual/tests/test_session_scenarios.py::test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[domain]
+FAILED jevdual/tests/test_session_scenarios.py::test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[context]
+FAILED jevdual/tests/test_session_scenarios.py::test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[legacy_context]
+FAILED jevdual/tests/test_session_scenarios.py::test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier[legacy_own]
+7 failed, 97 deselected in 0.58s

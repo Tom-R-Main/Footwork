@@ -1,0 +1,12 @@
+{
+  "database": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/ticket-fixture/tickets.sqlite",
+  "url": "http://127.0.0.1:65357",
+  "expected": {
+    "request_id": "7d3eb1a64c654b60a5ae25d1aed013e4",
+    "artifact": "renamed.png",
+    "orientation": "clockwise90",
+    "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff"
+  },
+  "artifact": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal/fixture/organized/renamed.png",
+  "root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal"
+}

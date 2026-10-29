@@ -1,0 +1,26 @@
+[
+  {
+    "name": "live-nominal",
+    "status": "stopped before completion",
+    "private_root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal",
+    "summary": "trials/live-nominal/summary.json"
+  },
+  {
+    "name": "live-nominal-final",
+    "status": "stopped before completion",
+    "private_root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final",
+    "summary": "trials/live-nominal-final/summary.json"
+  },
+  {
+    "name": "live-v2-nominal",
+    "status": "passed declared chain",
+    "private_root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-nominal",
+    "summary": "trials/live-v2-nominal/summary.json"
+  },
+  {
+    "name": "live-v2-interrupted",
+    "status": "passed declared chain",
+    "private_root": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-v2-interrupted",
+    "summary": "trials/live-v2-interrupted/summary.json"
+  }
+]

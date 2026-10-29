@@ -1,0 +1,592 @@
+TAP version 13
+# Subtest: redaction omits signed query values, credentials, JWT, PEM and dynamic JSON keys
+ok 1 - redaction omits signed query values, credentials, JWT, PEM and dynamic JSON keys
+  ---
+  duration_ms: 2.586042
+  type: 'test'
+  ...
+# Subtest: start asserts fresh exact Symbolic origin, no navigation, and explicit domain ownership
+ok 2 - start asserts fresh exact Symbolic origin, no navigation, and explicit domain ownership
+  ---
+  duration_ms: 1.894625
+  type: 'test'
+  ...
+# Subtest: pagination, redirect reuse, immediate bodies, default private suppression and sealed hashes
+ok 3 - pagination, redirect reuse, immediate bodies, default private suppression and sealed hashes
+  ---
+  duration_ms: 169.317083
+  type: 'test'
+  ...
+# Subtest: failure drains once, records safe failed result and never retries UI action
+ok 4 - failure drains once, records safe failed result and never retries UI action
+  ---
+  duration_ms: 156.437917
+  type: 'test'
+  ...
+# Subtest: external, binary and oversized response bodies never requested
+ok 5 - external, binary and oversized response bodies never requested
+  ---
+  duration_ms: 90.119209
+  type: 'test'
+  ...
+# Subtest: truncation and unsupported domains are recorded; unowned domains are not disabled
+ok 6 - truncation and unsupported domains are recorded; unowned domains are not disabled
+  ---
+  duration_ms: 52.924875
+  type: 'test'
+  ...
+# Subtest: safe output folder containment rejects an existing run id
+ok 7 - safe output folder containment rejects an existing run id
+  ---
+  duration_ms: 31.80675
+  type: 'test'
+  ...
+# Subtest: fixture body opt-in preserves bounded synthetic values while deleting credential fields
+ok 8 - fixture body opt-in preserves bounded synthetic values while deleting credential fields
+  ---
+  duration_ms: 36.439333
+  type: 'test'
+  ...
+# Subtest: portable recorder accepts two declared origins and refuses an outside-origin action
+ok 9 - portable recorder accepts two declared origins and refuses an outside-origin action
+  ---
+  duration_ms: 87.274167
+  type: 'test'
+  ...
+# Subtest: numeric tab identity and every source component distinguish reused request ids
+ok 10 - numeric tab identity and every source component distinguish reused request ids
+  ---
+  duration_ms: 55.706917
+  type: 'test'
+  ...
+# Subtest: request structures, direct initiator location and response status omit values, stacks and headers
+ok 11 - request structures, direct initiator location and response status omit values, stacks and headers
+  ---
+  duration_ms: 42.032792
+  type: 'test'
+  ...
+# Subtest: fresh current-origin check prevents retrieval after the tab leaves the declared origin
+ok 12 - fresh current-origin check prevents retrieval after the tab leaves the declared origin
+  ---
+  duration_ms: 49.750833
+  type: 'test'
+  ...
+# Subtest: duplicate step ids are refused before a second UI action
+ok 13 - duplicate step ids are refused before a second UI action
+  ---
+  duration_ms: 35.950167
+  type: 'test'
+  ...
+# Subtest: background polling continues through a UI wait and serializes marks, snapshots and steps
+ok 14 - background polling continues through a UI wait and serializes marks, snapshots and steps
+  ---
+  duration_ms: 148.3545
+  type: 'test'
+  ...
+# Subtest: stop cancels future polls and waits an in-flight drain before closing and hashing journals
+ok 15 - stop cancels future polls and waits an in-flight drain before closing and hashing journals
+  ---
+  duration_ms: 299.229583
+  type: 'test'
+  ...
+# Subtest: stop is a barrier for a pending UI action and step completion
+ok 16 - stop is a barrier for a pending UI action and step completion
+  ---
+  duration_ms: 45.767459
+  type: 'test'
+  ...
+# Subtest: poll bridge failure pauses once and cannot create a tight retry loop or leak its error
+ok 17 - poll bridge failure pauses once and cannot create a tight retry loop or leak its error
+  ---
+  duration_ms: 361.31225
+  type: 'test'
+  ...
+# Subtest: origin hop during a poll discards returned events, pauses and prevents all subsequent bridge reads
+ok 18 - origin hop during a poll discards returned events, pauses and prevents all subsequent bridge reads
+  ---
+  duration_ms: 283.209042
+  type: 'test'
+  ...
+# Subtest: stopPolling flushes before acknowledgement and journal records are readable before sealing
+ok 19 - stopPolling flushes before acknowledgement and journal records are readable before sealing
+  ---
+  duration_ms: 49.209625
+  type: 'test'
+  ...
+# Subtest: disable failure still closes journal handles and reports safe cleanup status
+ok 20 - disable failure still closes journal handles and reports safe cleanup status
+  ---
+  duration_ms: 35.812084
+  type: 'test'
+  ...
+# Subtest: Network retention limits are bounded and fixture websocket values require same-origin creation
+ok 21 - Network retention limits are bounded and fixture websocket values require same-origin creation
+  ---
+  duration_ms: 44.64925
+  type: 'test'
+  ...
+# Subtest: delivered JS source opt-in keeps sanitized same-origin JS while HTML and cross-origin contents remain omitted
+ok 22 - delivered JS source opt-in keeps sanitized same-origin JS while HTML and cross-origin contents remain omitted
+  ---
+  duration_ms: 60.948834
+  type: 'test'
+  ...
+# Subtest: missing browser invocation context is recorded distinctly from actual origin movement
+ok 23 - missing browser invocation context is recorded distinctly from actual origin movement
+  ---
+  duration_ms: 138.993792
+  type: 'test'
+  ...
+# Subtest: WebSocket frame response metadata does not invent an HTTP response or cache fields
+ok 24 - WebSocket frame response metadata does not invent an HTTP response or cache fields
+  ---
+  duration_ms: 0.215125
+  type: 'test'
+  ...
+# Subtest: default JS and CSS content policy avoids body calls while retaining observed encoded sizes and JSON shapes
+ok 25 - default JS and CSS content policy avoids body calls while retaining observed encoded sizes and JSON shapes
+  ---
+  duration_ms: 61.653375
+  type: 'test'
+  ...
+# Subtest: asset inventory retains delivered identities and strips URL credentials and SVG contents
+ok 26 - asset inventory retains delivered identities and strips URL credentials and SVG contents
+  ---
+  duration_ms: 2.439958
+  type: 'test'
+  ...
+# Subtest: origin departure during asset collection writes no frontend artifact
+ok 27 - origin departure during asset collection writes no frontend artifact
+  ---
+  duration_ms: 11.648875
+  type: 'test'
+  ...
+# Subtest: inventory summary preserves only documented aggregate counts
+ok 28 - inventory summary preserves only documented aggregate counts
+  ---
+  duration_ms: 0.209875
+  type: 'test'
+  ...
+# Subtest: inventory count allowlist rejects coercions, invalid counts and unknown fields
+ok 29 - inventory count allowlist rejects coercions, invalid counts and unknown fields
+  ---
+  duration_ms: 0.259375
+  type: 'test'
+  ...
+# Subtest: persisted frontend artifact omits raw summary fields and credential paths
+ok 30 - persisted frontend artifact omits raw summary fields and credential paths
+  ---
+  duration_ms: 29.54675
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /reset/01234567-89ab-4cde-8fab-0123456789ab
+ok 31 - credential path omitted from metadata: /reset/01234567-89ab-4cde-8fab-0123456789ab
+  ---
+  duration_ms: 2.270375
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /files/0123456789abcdef0123456789abcdef
+ok 32 - credential path omitted from metadata: /files/0123456789abcdef0123456789abcdef
+  ---
+  duration_ms: 0.51825
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /files/abcdefghijklmnopqrstuvwxyzabcdef
+ok 33 - credential path omitted from metadata: /files/abcdefghijklmnopqrstuvwxyzabcdef
+  ---
+  duration_ms: 0.534542
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /files/abcdefghijklmnopqrstuvwxyz012345
+ok 34 - credential path omitted from metadata: /files/abcdefghijklmnopqrstuvwxyz012345
+  ---
+  duration_ms: 0.261167
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /files/AbcdefGHIJKLMNOPQRSTuvwxyz0123456
+ok 35 - credential path omitted from metadata: /files/AbcdefGHIJKLMNOPQRSTuvwxyz0123456
+  ---
+  duration_ms: 1.11975
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /invite/ShortInvite7
+ok 36 - credential path omitted from metadata: /invite/ShortInvite7
+  ---
+  duration_ms: 0.432125
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /reset-password/short-reset-value
+ok 37 - credential path omitted from metadata: /reset-password/short-reset-value
+  ---
+  duration_ms: 0.120333
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /password/reset/shortReset7
+ok 38 - credential path omitted from metadata: /password/reset/shortReset7
+  ---
+  duration_ms: 0.211292
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /invitations/accept/shortInvitation7
+ok 39 - credential path omitted from metadata: /invitations/accept/shortInvitation7
+  ---
+  duration_ms: 0.285459
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /magic-link/shortMagic7
+ok 40 - credential path omitted from metadata: /magic-link/shortMagic7
+  ---
+  duration_ms: 0.411458
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /signed/ShortSigned7/download
+ok 41 - credential path omitted from metadata: /signed/ShortSigned7/download
+  ---
+  duration_ms: 0.138084
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /api/token/ShortToken7
+ok 42 - credential path omitted from metadata: /api/token/ShortToken7
+  ---
+  duration_ms: 0.048583
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /%69%6e%76%69%74%65/EncodedInvite7
+ok 43 - credential path omitted from metadata: /%69%6e%76%69%74%65/EncodedInvite7
+  ---
+  duration_ms: 0.036667
+  type: 'test'
+  ...
+# Subtest: credential path omitted from metadata: /invite%2FEncodedBoundary7
+ok 44 - credential path omitted from metadata: /invite%2FEncodedBoundary7
+  ---
+  duration_ms: 0.030541
+  type: 'test'
+  ...
+# Subtest: known noncredential route structure stays available
+ok 45 - known noncredential route structure stays available
+  ---
+  duration_ms: 0.066958
+  type: 'test'
+  ...
+# Subtest: credential path strings never reach persisted capture journals
+ok 46 - credential path strings never reach persisted capture journals
+  ---
+  duration_ms: 287.989167
+  type: 'test'
+  ...
+# Subtest: redirect hops and identical IDs on different targets remain distinct
+ok 47 - redirect hops and identical IDs on different targets remain distinct
+  ---
+  duration_ms: 0.546959
+  type: 'test'
+  ...
+# Subtest: incomplete steps and request failures are not reported as successful effects
+ok 48 - incomplete steps and request failures are not reported as successful effects
+  ---
+  duration_ms: 0.123959
+  type: 'test'
+  ...
+# Subtest: manifest detects tampering and path escape
+ok 49 - manifest detects tampering and path escape
+  ---
+  duration_ms: 29.089833
+  type: 'test'
+  ...
+# Subtest: paired intervals preserve count changes, redirect hops and opaque endpoint identities
+ok 50 - paired intervals preserve count changes, redirect hops and opaque endpoint identities
+  ---
+  duration_ms: 11.233333
+  type: 'test'
+  ...
+# Subtest: missing steps and capture gaps limit conclusions
+ok 51 - missing steps and capture gaps limit conclusions
+  ---
+  duration_ms: 1.571167
+  type: 'test'
+  ...
+# Subtest: new endpoint and changed request structure are reported without request values
+ok 52 - new endpoint and changed request structure are reported without request values
+  ---
+  duration_ms: 1.281666
+  type: 'test'
+  ...
+# Subtest: response shapes compare by run without exposing values or claiming step attribution
+ok 53 - response shapes compare by run without exposing values or claiming step attribution
+  ---
+  duration_ms: 1.041666
+  type: 'test'
+  ...
+# Subtest: sealed-run loader rejects tampering and accepts two distinct packets
+ok 54 - sealed-run loader rejects tampering and accepts two distinct packets
+  ---
+  duration_ms: 161.605
+  type: 'test'
+  ...
+# Subtest: redirect reuse, source identity and optional extra info remain distinct
+ok 55 - redirect reuse, source identity and optional extra info remain distinct
+  ---
+  duration_ms: 0.681667
+  type: 'test'
+  ...
+# Subtest: orphan events, missing response and explicit gaps limit a step without claiming product failure
+ok 56 - orphan events, missing response and explicit gaps limit a step without claiming product failure
+  ---
+  duration_ms: 10.541542
+  type: 'test'
+  ...
+# Subtest: protocol absence is unobserved, not unsupported
+ok 57 - protocol absence is unobserved, not unsupported
+  ---
+  duration_ms: 0.725417
+  type: 'test'
+  ...
+# Subtest: step traffic separates same-origin and external POSTs without retaining URLs
+ok 58 - step traffic separates same-origin and external POSTs without retaining URLs
+  ---
+  duration_ms: 0.848333
+  type: 'test'
+  ...
+# Subtest: sealed packet is verified before coverage and tampering is rejected
+ok 59 - sealed packet is verified before coverage and tampering is rejected
+  ---
+  duration_ms: 50.912042
+  type: 'test'
+  ...
+# Subtest: validates bounded observed, documented, and inferred sources without exporting prose
+ok 60 - validates bounded observed, documented, and inferred sources without exporting prose
+  ---
+  duration_ms: 1.869333
+  type: 'test'
+  ...
+# Subtest: rejects forged packet, nonexistent event, and unsupported inference
+ok 61 - rejects forged packet, nonexistent event, and unsupported inference
+  ---
+  duration_ms: 0.390083
+  type: 'test'
+  ...
+# Subtest: clean proposed range passes and missing private policy fails closed
+ok 62 - clean proposed range passes and missing private policy fails closed
+  ---
+  duration_ms: 621.379083
+  type: 'test'
+  ...
+# Subtest: deleted historical content and current tracked content both block publication without echoing token
+ok 63 - deleted historical content and current tracked content both block publication without echoing token
+  ---
+  duration_ms: 496.749542
+  type: 'test'
+  ...
+# Subtest: checkpoints use separate action/readback steps and persist bounded statuses
+ok 64 - checkpoints use separate action/readback steps and persist bounded statuses
+  ---
+  duration_ms: 25.082792
+  type: 'test'
+  ...
+# Subtest: failed precondition skips action; absent readback cannot verify persistence
+ok 65 - failed precondition skips action; absent readback cannot verify persistence
+  ---
+  duration_ms: 6.352958
+  type: 'test'
+  ...
+# Subtest: session scope, pagination and filtered cursor progression
+ok 66 - session scope, pagination and filtered cursor progression
+  ---
+  duration_ms: 0.849375
+  type: 'test'
+  ...
+# Subtest: eviction and byte cap stay visible as truncation, including when no events remain
+ok 67 - eviction and byte cap stay visible as truncation, including when no events remain
+  ---
+  duration_ms: 0.292417
+  type: 'test'
+  ...
+# Subtest: disconnect lets buffered events drain once and then refuses false empty success
+ok 68 - disconnect lets buffered events drain once and then refuses false empty success
+  ---
+  duration_ms: 0.193333
+  type: 'test'
+  ...
+# Subtest: incoming event object mutation cannot change buffered evidence
+ok 69 - incoming event object mutation cannot change buffered evidence
+  ---
+  duration_ms: 0.67775
+  type: 'test'
+  ...
+# Subtest: ring supplies the recorder bridge and preserves a sealed failed-load trace
+ok 70 - ring supplies the recorder bridge and preserves a sealed failed-load trace
+  ---
+  duration_ms: 181.245375
+  type: 'test'
+  ...
+# Subtest: allowed operation is linked without query, variables, extension or URL values
+ok 71 - allowed operation is linked without query, variables, extension or URL values
+  ---
+  duration_ms: 0.614542
+  type: 'test'
+  ...
+# Subtest: batched, unlisted and anonymous operations retain counts and uncertainty
+ok 72 - batched, unlisted and anonymous operations retain counts and uncertainty
+  ---
+  duration_ms: 2.145458
+  type: 'test'
+  ...
+# Subtest: missing, malformed and oversized bodies remain explicit
+ok 73 - missing, malformed and oversized bodies remain explicit
+  ---
+  duration_ms: 0.14825
+  type: 'test'
+  ...
+# Subtest: origin, path and method fence prevent unrelated requests
+ok 74 - origin, path and method fence prevent unrelated requests
+  ---
+  duration_ms: 0.091125
+  type: 'test'
+  ...
+# Subtest: real-session bridge accepts one target and records only bounded operation/frame metadata
+ok 75 - real-session bridge accepts one target and records only bounded operation/frame metadata
+  ---
+  duration_ms: 1.892542
+  type: 'test'
+  ...
+# Subtest: bridge fences origin and artifact writer refuses sealed runs
+ok 76 - bridge fences origin and artifact writer refuses sealed runs
+  ---
+  duration_ms: 55.942459
+  type: 'test'
+  ...
+# Subtest: cold entry writes sanitized first-document evidence only after origin verification
+ok 77 - cold entry writes sanitized first-document evidence only after origin verification
+  ---
+  duration_ms: 86.283042
+  type: 'test'
+  ...
+# Subtest: cold entry refuses a foreign main document or truncated buffer
+ok 78 - cold entry refuses a foreign main document or truncated buffer
+  ---
+  duration_ms: 1.039208
+  type: 'test'
+  ...
+# Subtest: transient URL failure resumes once only after exact-origin recovery
+ok 79 - transient URL failure resumes once only after exact-origin recovery
+  ---
+  duration_ms: 0.892375
+  type: 'test'
+  ...
+# Subtest: foreign origin and sealed run never resume
+ok 80 - foreign origin and sealed run never resume
+  ---
+  duration_ms: 0.160833
+  type: 'test'
+  ...
+# Subtest: stop during in-flight origin check cannot restart polling
+ok 81 - stop during in-flight origin check cannot restart polling
+  ---
+  duration_ms: 0.596875
+  type: 'test'
+  ...
+# Subtest: never-started and differently paused capture cannot be started
+ok 82 - never-started and differently paused capture cannot be started
+  ---
+  duration_ms: 0.10425
+  type: 'test'
+  ...
+# Subtest: state change while URL is checked prevents a stale recovery attempt
+ok 83 - state change while URL is checked prevents a stale recovery attempt
+  ---
+  duration_ms: 0.154125
+  type: 'test'
+  ...
+# Subtest: actual recorder pauses on transient origin loss and resumes through its own fence
+ok 84 - actual recorder pauses on transient origin loss and resumes through its own fence
+  ---
+  duration_ms: 310.813958
+  type: 'test'
+  ...
+# Subtest: Phoenix array and object envelopes retain only allowlisted structural fields
+ok 85 - Phoenix array and object envelopes retain only allowlisted structural fields
+  ---
+  duration_ms: 0.62975
+  type: 'test'
+  ...
+# Subtest: unknown Phoenix event and topic names do not enter output
+ok 86 - unknown Phoenix event and topic names do not enter output
+  ---
+  duration_ms: 0.764584
+  type: 'test'
+  ...
+# Subtest: GraphQL WebSocket and Socket.IO event envelopes strip IDs and payloads
+ok 87 - GraphQL WebSocket and Socket.IO event envelopes strip IDs and payloads
+  ---
+  duration_ms: 0.199834
+  type: 'test'
+  ...
+# Subtest: binary, malformed, oversized and unsupported frames stay unnamed
+ok 88 - binary, malformed, oversized and unsupported frames stay unnamed
+  ---
+  duration_ms: 0.104
+  type: 'test'
+  ...
+# Subtest: aggregate cadence totals sanitized records without raw frames
+ok 89 - aggregate cadence totals sanitized records without raw frames
+  ---
+  duration_ms: 0.25425
+  type: 'test'
+  ...
+# Subtest: metadata-only clone leaves application response bytes intact
+ok 90 - metadata-only clone leaves application response bytes intact
+  ---
+  duration_ms: 10.57025
+  type: 'test'
+  ...
+# Subtest: cross-origin and ordinary JSON are not cloned or recorded
+ok 91 - cross-origin and ordinary JSON are not cloned or recorded
+  ---
+  duration_ms: 0.5455
+  type: 'test'
+  ...
+# Subtest: caps stream observation and reports only bounded cadence
+ok 92 - caps stream observation and reports only bounded cadence
+  ---
+  duration_ms: 0.799542
+  type: 'test'
+  ...
+# Subtest: fetch failure is unchanged and uninstall restores the original fetch
+ok 93 - fetch failure is unchanged and uninstall restores the original fetch
+  ---
+  duration_ms: 0.232042
+  type: 'test'
+  ...
+# Subtest: stop cancels a pending clone without waiting for the page to consume it
+ok 94 - stop cancels a pending clone without waiting for the page to consume it
+  ---
+  duration_ms: 0.279125
+  type: 'test'
+  ...
+# Subtest: injectable source is idempotent and retains only bounded metadata records
+ok 95 - injectable source is idempotent and retains only bounded metadata records
+  ---
+  duration_ms: 1.23975
+  type: 'test'
+  ...
+# Subtest: artifact writer strips unknown payload fields and refuses a sealed run
+ok 96 - artifact writer strips unknown payload fields and refuses a sealed run
+  ---
+  duration_ms: 82.40525
+  type: 'test'
+  ...
+# Subtest: stream metadata written before recorder stop is covered by the sealed manifest
+ok 97 - stream metadata written before recorder stop is covered by the sealed manifest
+  ---
+  duration_ms: 167.7845
+  type: 'test'
+  ...
+1..97
+# tests 97
+# suites 0
+# pass 97
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2431.19475

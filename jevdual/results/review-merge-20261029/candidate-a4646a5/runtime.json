@@ -1,0 +1,47 @@
+{
+  "commit": "a4646a569c16e9bd6f7550432d092fea29c1e9a6",
+  "python": "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+  "os": "macOS-26.5.1-arm64-arm-64bit",
+  "sdk": "0.38.0+footwork.d5373879",
+  "modules": {
+    "session": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/session.py",
+      "sha256": "757a5d42c07fb0e3c818d80cd6d4216038703ac6a0d9f7bd04ef57fd8cd4dd7f"
+    },
+    "session_operations": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/session_operations.py",
+      "sha256": "c8df80bc7a26e28400680049a57368bcef4a5e130205a392693474e7d4501347"
+    },
+    "operator_evidence": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/operator_evidence.py",
+      "sha256": "c9018c67d353e5b5b59626950e9b7fb319cebf1905736300fb0c7e92248de6d7"
+    },
+    "native": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/native.py",
+      "sha256": "854530aa830c053d313c0496fa5be9eb77cea0a407c5074937d77500300e97ec"
+    },
+    "ax": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/ax.py",
+      "sha256": "70effc2741a0e782f451e43b9c0ea39386349b99e120b9b3d594bb1a231982da"
+    },
+    "finder_targets": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/finder_targets.py",
+      "sha256": "89d874abb1052b63cb2e560a48fd0dae05c6ceb2e14bd7e9c532d8f8ec362838"
+    },
+    "ticket_evidence": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/ticket_evidence.py",
+      "sha256": "da244230e7607b8564e4f31bbe1779ab3d28f84138f9a9c1c7935072bada02c2"
+    },
+    "app_qualification": {
+      "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/candidate-a4646a5/site/jevdual/app_qualification.py",
+      "sha256": "0fcaeaf4635b961fbe8e1eab25f6d8e88d37d7719cda1f0997a588c6028fb161"
+    }
+  },
+  "Finder": "26.4",
+  "Preview": "11.0",
+  "Chrome": "156.0.8078.48",
+  "harness": {
+    "path": "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live_driver.py",
+    "sha256": "6cb1200721b4bda2b2e5a2afe4b0ad08142bce08e51049aed48cc367ecc08dab"
+  }
+}

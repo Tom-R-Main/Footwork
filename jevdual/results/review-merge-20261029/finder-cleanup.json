@@ -1,0 +1,36 @@
+[
+  {
+    "window_id": 15097,
+    "title": "inbox",
+    "paths": [
+      "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/inbox/keep.bin",
+      "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/inbox/asset.png"
+    ],
+    "window_close": 0
+  },
+  {
+    "window_id": 15098,
+    "title": "organized",
+    "paths": [
+      "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal/fixture/organized/keep.bin"
+    ],
+    "window_close": 0
+  },
+  {
+    "window_id": 15113,
+    "title": "inbox",
+    "paths": [
+      "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/inbox/keep.bin",
+      "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/inbox/asset.png"
+    ],
+    "window_close": 0
+  },
+  {
+    "window_id": 15114,
+    "title": "organized",
+    "paths": [
+      "/Users/thomasmain/projects/footwork/output/review-merge-20261029/live-nominal-final/fixture/organized/keep.bin"
+    ],
+    "window_close": 0
+  }
+]

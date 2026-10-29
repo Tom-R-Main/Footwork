@@ -1,0 +1,482 @@
+FFFFFFFFFFF                                                              [100%]
+=================================== FAILURES ===================================
+__ test_ambiguous_keyboard_error_cannot_authorize_a_second_key[opaque_reply] ___
+
+reply_kind = 'opaque_reply'
+
+    @pytest.mark.parametrize("reply_kind", ["opaque_reply", "exception", "delivered_error"])
+    def test_ambiguous_keyboard_error_cannot_authorize_a_second_key(reply_kind):
+        message = f"reply lost after {AMBIGUITY}"
+        if reply_kind == "exception":
+            reply = RuntimeError(message)
+        elif reply_kind == "opaque_reply":
+            reply = _refused(message)
+        else:
+            reply = _ok()
+            reply.is_error = True
+            reply.text = message
+            reply.error_code = AMBIGUITY
+            reply.action.delivery.delivered_count = 1
+        d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [reply]})
+        b = bridge_for(d, "foreground_permitted", idle=30.0)
+        eff = run(b.key(run(b.observe()), "return"))
+>       assert [(name, args["delivery_mode"]) for name, args in d.calls if name == "press_key"] == [
+            ("press_key", "background")
+        ]
+E       AssertionError: assert [('press_key'...'foreground')] == [('press_key', 'background')]
+E
+E         Left contains one more item: ('press_key', 'foreground')
+E         Use -v to get more diff
+
+tests/test_posture.py:339: AssertionError
+____ test_ambiguous_keyboard_error_cannot_authorize_a_second_key[exception] ____
+
+reply_kind = 'exception'
+
+    @pytest.mark.parametrize("reply_kind", ["opaque_reply", "exception", "delivered_error"])
+    def test_ambiguous_keyboard_error_cannot_authorize_a_second_key(reply_kind):
+        message = f"reply lost after {AMBIGUITY}"
+        if reply_kind == "exception":
+            reply = RuntimeError(message)
+        elif reply_kind == "opaque_reply":
+            reply = _refused(message)
+        else:
+            reply = _ok()
+            reply.is_error = True
+            reply.text = message
+            reply.error_code = AMBIGUITY
+            reply.action.delivery.delivered_count = 1
+        d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [reply]})
+        b = bridge_for(d, "foreground_permitted", idle=30.0)
+        eff = run(b.key(run(b.observe()), "return"))
+>       assert [(name, args["delivery_mode"]) for name, args in d.calls if name == "press_key"] == [
+            ("press_key", "background")
+        ]
+E       AssertionError: assert [('press_key'...'foreground')] == [('press_key', 'background')]
+E
+E         Left contains one more item: ('press_key', 'foreground')
+E         Use -v to get more diff
+
+tests/test_posture.py:339: AssertionError
+_ test_ambiguous_keyboard_error_cannot_authorize_a_second_key[delivered_error] _
+
+reply_kind = 'delivered_error'
+
+    @pytest.mark.parametrize("reply_kind", ["opaque_reply", "exception", "delivered_error"])
+    def test_ambiguous_keyboard_error_cannot_authorize_a_second_key(reply_kind):
+        message = f"reply lost after {AMBIGUITY}"
+        if reply_kind == "exception":
+            reply = RuntimeError(message)
+        elif reply_kind == "opaque_reply":
+            reply = _refused(message)
+        else:
+            reply = _ok()
+            reply.is_error = True
+            reply.text = message
+            reply.error_code = AMBIGUITY
+            reply.action.delivery.delivered_count = 1
+        d = FakeDriver(doc_snapshot("hello"), replies={"press_key": [reply]})
+        b = bridge_for(d, "foreground_permitted", idle=30.0)
+        eff = run(b.key(run(b.observe()), "return"))
+>       assert [(name, args["delivery_mode"]) for name, args in d.calls if name == "press_key"] == [
+            ("press_key", "background")
+        ]
+E       AssertionError: assert [('press_key'...'foreground')] == [('press_key', 'background')]
+E
+E         Left contains one more item: ('press_key', 'foreground')
+E         Use -v to get more diff
+
+tests/test_posture.py:339: AssertionError
+_____ test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[front] _____
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e3e8360>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10d2d3170>
+change = 'front'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "selection"])
+    def test_rename_rechecks_ownership_after_waiting_for_enabled_leaf(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_enabled = ax.menu_item_enabled
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        reads = 0
+
+        def enabled(pid, path):
+            nonlocal reads, changed
+            reads += 1
+            if reads == 1:
+                return False  # Force the producer to yield before the menu becomes ready.
+            available = original_enabled(pid, path)
+            changed = True
+            if change == "selection":
+                world.selected = "keep_row"
+            return available
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "menu_item_enabled", enabled)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-leaf")
+        assert reads >= 2
+>       assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
+E       AssertionError: assert [('AXSelected...renamed.png')] == [('AXSelected...ess', 'File')]
+E
+E         Left contains 2 more items, first extra item: ('AXPress', 'File > Rename')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:551: AssertionError
+__ test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[main_window] __
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e53c720>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e3451f0>
+change = 'main_window'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "selection"])
+    def test_rename_rechecks_ownership_after_waiting_for_enabled_leaf(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_enabled = ax.menu_item_enabled
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        reads = 0
+
+        def enabled(pid, path):
+            nonlocal reads, changed
+            reads += 1
+            if reads == 1:
+                return False  # Force the producer to yield before the menu becomes ready.
+            available = original_enabled(pid, path)
+            changed = True
+            if change == "selection":
+                world.selected = "keep_row"
+            return available
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "menu_item_enabled", enabled)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-leaf")
+        assert reads >= 2
+>       assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
+E       AssertionError: assert [('AXSelected...y', 'Return')] == [('AXSelected...ess', 'File')]
+E
+E         Left contains 3 more items, first extra item: ('AXPress', 'File > Rename')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:551: AssertionError
+_ test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[focused_window] _
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e529620>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e3468a0>
+change = 'focused_window'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "selection"])
+    def test_rename_rechecks_ownership_after_waiting_for_enabled_leaf(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_enabled = ax.menu_item_enabled
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        reads = 0
+
+        def enabled(pid, path):
+            nonlocal reads, changed
+            reads += 1
+            if reads == 1:
+                return False  # Force the producer to yield before the menu becomes ready.
+            available = original_enabled(pid, path)
+            changed = True
+            if change == "selection":
+                world.selected = "keep_row"
+            return available
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "menu_item_enabled", enabled)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-leaf")
+        assert reads >= 2
+>       assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
+E       AssertionError: assert [('AXSelected...y', 'Return')] == [('AXSelected...ess', 'File')]
+E
+E         Left contains 3 more items, first extra item: ('AXPress', 'File > Rename')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:551: AssertionError
+___ test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[selection] ___
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e57db20>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e534bf0>
+change = 'selection'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "selection"])
+    def test_rename_rechecks_ownership_after_waiting_for_enabled_leaf(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_enabled = ax.menu_item_enabled
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        reads = 0
+
+        def enabled(pid, path):
+            nonlocal reads, changed
+            reads += 1
+            if reads == 1:
+                return False  # Force the producer to yield before the menu becomes ready.
+            available = original_enabled(pid, path)
+            changed = True
+            if change == "selection":
+                world.selected = "keep_row"
+            return available
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "menu_item_enabled", enabled)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-leaf")
+        assert reads >= 2
+>       assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
+E       AssertionError: assert [('AXSelected...le > Rename')] == [('AXSelected...ess', 'File')]
+E
+E         Left contains one more item: ('AXPress', 'File > Rename')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:551: AssertionError
+____ test_rename_rechecks_exact_editor_ownership_before_value_write[front] _____
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e52a980>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e535970>
+change = 'front'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "editor"])
+    def test_rename_rechecks_exact_editor_ownership_before_value_write(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_writable = ax.can_set_value
+        original_editor = ax.focused_finder_editor
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        def writable(element):
+            nonlocal changed
+            result = original_writable(element)
+            changed = True  # The editor was found, then ownership changes before the write.
+            return result
+
+        def editor(*args):
+            current = original_editor(*args)
+            return "replacement_editor" if changed and change == "editor" else current
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "can_set_value", writable)
+        monkeypatch.setattr(ax, "focused_finder_editor", editor)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-write")
+        assert changed
+>       assert world.inputs == [
+            ("AXSelected", "asset_row"), ("AXPress", "File"), ("AXPress", "File > Rename")
+        ]
+E       AssertionError: assert [('AXSelected...renamed.png')] == [('AXSelected...le > Rename')]
+E
+E         Left contains one more item: ('AXValue', 'editor', 'renamed.png')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:591: AssertionError
+_ test_rename_rechecks_exact_editor_ownership_before_value_write[main_window] __
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e53de40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e387c80>
+change = 'main_window'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "editor"])
+    def test_rename_rechecks_exact_editor_ownership_before_value_write(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_writable = ax.can_set_value
+        original_editor = ax.focused_finder_editor
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        def writable(element):
+            nonlocal changed
+            result = original_writable(element)
+            changed = True  # The editor was found, then ownership changes before the write.
+            return result
+
+        def editor(*args):
+            current = original_editor(*args)
+            return "replacement_editor" if changed and change == "editor" else current
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "can_set_value", writable)
+        monkeypatch.setattr(ax, "focused_finder_editor", editor)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-write")
+        assert changed
+>       assert world.inputs == [
+            ("AXSelected", "asset_row"), ("AXPress", "File"), ("AXPress", "File > Rename")
+        ]
+E       AssertionError: assert [('AXSelected...y', 'Return')] == [('AXSelected...le > Rename')]
+E
+E         Left contains 2 more items, first extra item: ('AXValue', 'editor', 'renamed.png')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:591: AssertionError
+_ test_rename_rechecks_exact_editor_ownership_before_value_write[focused_window] _
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e940400>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e386fc0>
+change = 'focused_window'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "editor"])
+    def test_rename_rechecks_exact_editor_ownership_before_value_write(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_writable = ax.can_set_value
+        original_editor = ax.focused_finder_editor
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        def writable(element):
+            nonlocal changed
+            result = original_writable(element)
+            changed = True  # The editor was found, then ownership changes before the write.
+            return result
+
+        def editor(*args):
+            current = original_editor(*args)
+            return "replacement_editor" if changed and change == "editor" else current
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "can_set_value", writable)
+        monkeypatch.setattr(ax, "focused_finder_editor", editor)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-write")
+        assert changed
+>       assert world.inputs == [
+            ("AXSelected", "asset_row"), ("AXPress", "File"), ("AXPress", "File > Rename")
+        ]
+E       AssertionError: assert [('AXSelected...y', 'Return')] == [('AXSelected...le > Rename')]
+E
+E         Left contains 2 more items, first extra item: ('AXValue', 'editor', 'renamed.png')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:591: AssertionError
+____ test_rename_rechecks_exact_editor_ownership_before_value_write[editor] ____
+
+finder_cli = (FinderWorld(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Finder', 77, True)], window_id=4033...w_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'}), <function finder_cli.<locals>.run at 0x10e53cae0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e3dce00>
+change = 'editor'
+
+    @pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "editor"])
+    def test_rename_rechecks_exact_editor_ownership_before_value_write(finder_cli, monkeypatch, change):
+        world, run = finder_cli
+        start(run)
+        assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+        activity = ExecutionPolicy("foreground_permitted")._activity()
+        original_context = ax.finder_window_context
+        original_writable = ax.can_set_value
+        original_editor = ax.focused_finder_editor
+        changed = False
+
+        def context(pid):
+            current = original_context(pid)
+            if changed and change in {"main_window", "focused_window"}:
+                current[change + "_id"] = world.window_id + 1
+            return current
+
+        def writable(element):
+            nonlocal changed
+            result = original_writable(element)
+            changed = True  # The editor was found, then ownership changes before the write.
+            return result
+
+        def editor(*args):
+            current = original_editor(*args)
+            return "replacement_editor" if changed and change == "editor" else current
+
+        monkeypatch.setattr(ax, "finder_window_context", context)
+        monkeypatch.setattr(ax, "can_set_value", writable)
+        monkeypatch.setattr(ax, "focused_finder_editor", editor)
+        monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+        run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-write")
+        assert changed
+>       assert world.inputs == [
+            ("AXSelected", "asset_row"), ("AXPress", "File"), ("AXPress", "File > Rename")
+        ]
+E       AssertionError: assert [('AXSelected...renamed.png')] == [('AXSelected...le > Rename')]
+E
+E         Left contains one more item: ('AXValue', 'editor', 'renamed.png')
+E         Use -v to get more diff
+
+tests/test_session_file_targets.py:591: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_posture.py::test_ambiguous_keyboard_error_cannot_authorize_a_second_key[opaque_reply]
+FAILED tests/test_posture.py::test_ambiguous_keyboard_error_cannot_authorize_a_second_key[exception]
+FAILED tests/test_posture.py::test_ambiguous_keyboard_error_cannot_authorize_a_second_key[delivered_error]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[front]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[main_window]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[focused_window]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_ownership_after_waiting_for_enabled_leaf[selection]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_exact_editor_ownership_before_value_write[front]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_exact_editor_ownership_before_value_write[main_window]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_exact_editor_ownership_before_value_write[focused_window]
+FAILED tests/test_session_file_targets.py::test_rename_rechecks_exact_editor_ownership_before_value_write[editor]
+11 failed, 53 deselected in 1.16s

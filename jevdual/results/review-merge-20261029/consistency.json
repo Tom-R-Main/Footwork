@@ -1,0 +1,9 @@
+{
+  "runtime": "ddf133f020b65df5abdee854aefb0343382b73bc",
+  "wheel_sha256": "d796055500e309d33318b58cbc319c28f37852a800bb62a89c9a8c0ab997ddfe",
+  "module_hashes_match": true,
+  "live_chains": 2,
+  "v2_service_receipts": true,
+  "interrupted_kills": 3,
+  "artifact_links_checked": true
+}

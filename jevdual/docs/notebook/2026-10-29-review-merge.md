@@ -58,3 +58,51 @@ Hypothesis: qualified current editor ownership plus a fresh original-file inode 
 Test: simulate row replacement only while its exact editor is active; require successful rename. A different selection failure, wrong editor/window/value or replaced original inode must stop before the value write.
 Predicts: the specific old-row replacement passes only with all remaining identity checks; arbitrary selection/read failures and foreign state receive no editor write.
 Against: missing row alone authorizes input, a replaced inode or editor passes, or the real transient-editor route still blocks.
+
+## RVU3 · update · 2026-10-29 14:50
+Resolves: RV1 = held
+Observed: Main integration retained control-state, blocker and installer behavior. Final suite: 2245 passed, 26 skipped; 97 Node tests, isolated offline package, installed discovery and 103-file resource snapshot passed.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVU4 · update · 2026-10-29 14:50
+Resolves: RV2 = held
+Observed: Opaque/mixed key and delayed Finder ownership red cases passed after qualified no-send and current-target repairs. Final installed Finder rename/move passed twice.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVU5 · update · 2026-10-29 14:50
+Resolves: RV3 = held
+Observed: Own/context log corruption, legacy blockers beyond the display limit and unresolved completion cases passed after repair; quarantines preserve original bytes.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVU6 · update · 2026-10-29 14:50
+Resolves: RV4 = held
+Observed: The early-ingress and unrelated ledger/nonce red cases now refuse. V2 response provenance and exact source binding passed both final installed chains; v1 final reads remain supported but v1 unknown cannot newly finalize.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVU7 · update · 2026-10-29 14:50
+Resolves: RV5 = held
+Observed: Foreground handback returned PID 77 as the effect target before repair, then preserved candidate 4 while still restoring PID 77 afterward.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVU8 · update · 2026-10-29 14:50
+Resolves: RV6 = held
+Observed: The owned File-menu/null-window case failed before correction and passed the narrow stage-specific predicate in public and final installed runs.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVU9 · update · 2026-10-29 14:50
+Resolves: RV7 = held
+Observed: The transient-row case failed before correction; exact editor plus original-inode checks now pass it and reject arbitrary read failures/replaced inode before write. Both final installed chains passed.
+Next: retain the bounded support claim and follow the exact PR head through hosted checks and merge.
+Refs: results/review-merge-20261029/report.md
+
+## RVS · summary · 2026-10-29 14:50
+Established: full October 28 operator review, eight repaired findings, preserved main integration, source ddf133f, full local checks and fresh v2 nominal/interrupted-truncated installed chains. Both conservative live guard regressions are retained and corrected by public scenarios.
+Uncertain: pre-header duplicate-ingress cause and full-portfolio qualification remain open; hosted CI and merge have not yet been observed. AX helpers can classify a read failure as file_row_missing, so no authority depends on that label alone.
+Decision: publish the review and PR with explicit limits, follow CI/reviews through the authorized merge, and keep duplication diagnosis separate. Cleanup preserved eleven historical and two new uncertain operations.
+Refs: results/review-merge-20261029/report.md; results/review-merge-20261029/cleanup.json
