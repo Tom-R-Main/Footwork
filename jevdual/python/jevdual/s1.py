@@ -241,7 +241,6 @@ class JevS1:
             ).compose
         self.text_source = text_source
         self.last_menu: Menu | None = None
-        self.last_menu_step: int | None = None
 
     async def _delegated_step(
         self, agent: Any, delegation: Delegation, decision: Decision, menu: Menu, rec: S1Record, step: int
@@ -386,10 +385,9 @@ class JevS1:
                 if rec is not None and rec.verdict is not None
                 else (rec.error if rec is not None else None)
             ) or "handback"
-            status = _handback_status(reason)
-            if self.last_menu_step == agent.state.n_steps:  # only the page this step observed
-                await self._diagnose_handback(delegation, status, self.last_menu, rec)
-            self._end_delegation(agent, delegation, status, reason, getattr(state, "url", "") or "")
+            self._end_delegation(
+                agent, delegation, _handback_status(reason), reason, getattr(state, "url", "") or ""
+            )
         return out
 
     async def _decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
@@ -445,7 +443,6 @@ class JevS1:
             for c in menu.candidates
         )
         self.last_menu = menu
-        self.last_menu_step = step
         ctx = self._context(agent)
 
         try:
@@ -530,8 +527,10 @@ class JevS1:
                 head = verdict.reason.split(":", 1)[0].strip()
                 delegation.escalations += 1
                 status = head if verdict.kind != "confirm" else "paused_before_action"
-                await self._diagnose_handback(delegation, status, menu, rec)
-                self._end_delegation(agent, delegation, status, verdict.reason, menu.url)
+                try:
+                    await self._diagnose_handback(delegation, status, menu, rec)
+                finally:  # a cancelled diagnosis must not leave an escalated assignment open
+                    self._end_delegation(agent, delegation, status, verdict.reason, menu.url)
             return None
 
         text = None

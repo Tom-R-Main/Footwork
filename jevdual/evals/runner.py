@@ -170,7 +170,7 @@ def default_policy_factory() -> PolicyFactory:
                 secrets=store,
                 # Q9 delegate arm: S1 acts only inside a bounded assignment from System 2
                 only_when_delegated=(arm in DELEGATE_ARMS),
-                # advisory page diagnosis on blocked/stalled handbacks; off unless asked for (CS2)
+                # advisory page diagnosis on blocked/stalled handbacks; off unless asked for (CTL2)
                 diagnose=BlockerDiagnoser(client)
                 if os.environ.get("JEVDUAL_BLOCKER_DIAGNOSIS") == "1"
                 else None,
@@ -404,6 +404,7 @@ def _write_trace(
                     memory_line=h.model_output.memory if h.model_output else None,
                     menu=menu,
                     verify=verify,
+                    diagnosis=(rec.diagnosis if rec else None),
                     timings=Timings(
                         step_ms=step_ms,
                         jev_ms=(rec.jev_ms if rec else None),

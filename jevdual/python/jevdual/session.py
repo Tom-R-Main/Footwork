@@ -37,7 +37,7 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import carry, grants
-from jevdual.menu import Candidate, Menu
+from jevdual.menu import Candidate, Menu, peer_position
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
@@ -878,6 +878,7 @@ async def cmd_do(args: Any) -> int:
         before = state.last_menu()
         # the ids the operator chose from: the observation before this command, not the fresh one
         chosen_from = {c["id"]: c["label"] for c in state.last_candidates}
+        chosen_cands = list(state.last_candidates)
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
@@ -907,6 +908,18 @@ async def cmd_do(args: Any) -> int:
                 print(
                     f"id {cid} is not on the current observation{hint}; run `footwork look`", file=sys.stderr
                 )
+                return 4
+            was = peer_position(chosen_cands, cid) if known is not None else None
+            now = peer_position(nm.menu.candidates, cid)
+            if known is not None and known == target.label and was is not None and was[1] > 1 and was != now:
+                # two same-label toggles are both offered: the right label is not enough
+                print(
+                    f"id {cid} is {target.label!r} {now[0] + 1 if now else '?'} of {now[1] if now else '?'} "
+                    f"now; it was {was[0] + 1} of {was[1]} when you looked; the page changed. "
+                    "Nothing dispatched. Choose again from the observation below.",
+                    file=sys.stderr,
+                )
+                print(render_observation(nm, text_chars=args.text, receipt=None))
                 return 4
             if known is not None and known != target.label:
                 print(

@@ -38,7 +38,15 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from jevdual.menu import Candidate, ControlState, Menu, MenuBudget, Operation, estimate_tokens
+from jevdual.menu import (
+    Candidate,
+    ControlState,
+    Menu,
+    MenuBudget,
+    Operation,
+    estimate_tokens,
+    peer_position,
+)
 
 log = logging.getLogger("jevdual.native")
 
@@ -279,6 +287,9 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
 #: candidates a native menu offers Jev at most; beyond this the tail is dropped (``omitted["cap"]``).
 #: A Chrome window offered 296 and Jev refused the request as too large twice per step.
 NATIVE_MENU_CAP = 160
+#: same-key toggles kept per key: a table of unlabelled checkboxes (labelled by their raw value) must
+#: not crowd the window's other controls past the cap
+TOGGLE_REPEATS_KEPT = 4
 
 
 def _prune(
@@ -291,19 +302,20 @@ def _prune(
     """Drop what System 1 cannot choose between: a control whose label is only its role (``button
     'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
     the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
-    state is kept even when repeated: two "Enabled" switches are two settings, and dropping the second
-    hid its change from the effect diff. Then cap the count."""
+    state is kept even when repeated, up to ``TOGGLE_REPEATS_KEPT`` of one key: two "Enabled" switches
+    are two settings, and dropping the second hid its change from the effect diff. Then cap the count."""
     kept: list[Candidate] = []
-    seen: set[tuple[str, str, str | None, str | None]] = set()
+    seen: dict[tuple[str, str, str | None, str | None], int] = {}
     for c in candidates:
         if c.label == c.role and c.role not in _TEXT_ROLES:
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
         key = (c.role, c.label, c.value, c.section)
-        if key in seen and c.checked is None and c.pressed is None and c.expanded is None:
+        stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
+        if key in seen and (not stateful or seen[key] >= TOGGLE_REPEATS_KEPT):
             omitted["duplicate"] = omitted.get("duplicate", 0) + 1
             continue
-        seen.add(key)
+        seen[key] = seen.get(key, 0) + 1
         kept.append(c)
     if len(kept) > NATIVE_MENU_CAP:
         omitted["cap"] = len(kept) - NATIVE_MENU_CAP
@@ -730,7 +742,19 @@ class NativeBridge:
         fresh = await self.observe()
         key = (cand.role, cand.label, cand.section)
         same = fresh.menu.candidate(id)
-        if same is not None and (same.role, same.label, same.section) == key:
+        decided = peer_position(nm.menu.candidates, id)
+        if decided is not None and decided[1] > 1:
+            # one of several same-label controls (repeated toggles are kept): the id alone may now name
+            # a sibling, so the decided one is the same position among the same number of peers
+            peers = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
+            if len(peers) != decided[1]:
+                raise NativeBridgeError(
+                    "target_changed",
+                    f"[{id}] {cand.label!r} was {decided[0] + 1} of {decided[1]} alike; the window now has "
+                    f"{len(peers)}",
+                )
+            hit = peers[decided[0]]
+        elif same is not None and (same.role, same.label, same.section) == key:
             hit = same
         else:
             matches = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]

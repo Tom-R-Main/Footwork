@@ -82,6 +82,24 @@ class Candidate:
         return out
 
 
+def peer_position(candidates: Any, id: int) -> tuple[int, int] | None:
+    """``(position, count)`` of ``id`` among the candidates sharing its role, label and section, in
+    observation order; None when ``id`` is absent. Accepts Candidates or their saved dicts. Two
+    same-label toggles are both offered, so an id that still carries the right label may name the
+    other one after the window shifts; the position among its peers tells them apart."""
+
+    def get(c: Any, k: str) -> Any:
+        return c.get(k) if isinstance(c, dict) else getattr(c, k, None)
+
+    cands = list(candidates)
+    me = next((c for c in cands if get(c, "id") == id), None)
+    if me is None:
+        return None
+    key = (get(me, "role"), get(me, "label"), get(me, "section"))
+    peers = [get(c, "id") for c in cands if (get(c, "role"), get(c, "label"), get(c, "section")) == key]
+    return peers.index(id), len(peers)
+
+
 @dataclass(frozen=True)
 class MenuBudget:
     state_tokens: int = STATE_TOKEN_BUDGET

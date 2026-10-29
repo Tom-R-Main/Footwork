@@ -1,4 +1,4 @@
-"""Advisory page-blocker diagnosis at a handback (docs/notebook/2026-10-28-control-state.md CS2).
+"""Advisory page-blocker diagnosis at a handback (docs/notebook/2026-10-28-control-state.md CTL2).
 
 When System 1 hands control back because it is blocked or stalled, the step's own heads say only that
 (``login_required`` and ``bot_check`` ride along with every decision and change routing only when the
@@ -150,9 +150,15 @@ def build_state(menu: Menu, task: str) -> dict[str, Any]:
     }
 
 
+#: what a menu builder records when it left part of the page out (native: elements_incomplete, cap;
+#: browser-use build_menu: overflow, offscreen and page_text_chars trimmed for the token budget)
+_PARTIAL_KEYS = ("elements_incomplete", "cap", "overflow", "offscreen", "page_text_chars")
+
+
 def _coverage(menu: Menu, state: dict[str, Any]) -> dict[str, Any]:
     return {
-        "elements_complete": not menu.omitted.get("elements_incomplete"),
+        "elements_complete": not any(menu.omitted.get(k) for k in _PARTIAL_KEYS),
+        "omitted": dict(menu.omitted),
         "elements_sent": len(state["elements"]),
         "elements_total": len(menu.candidates),
         "text_chars": len(menu.page_text),
@@ -166,7 +172,7 @@ def observation_id(state: dict[str, Any]) -> str:
 
 
 class BlockerDiagnoser:
-    """``await diagnoser(menu, task)`` -> :class:`BlockerDiagnosis`. Never raises an ordinary exception."""
+    """``await diagnoser(menu, task)`` -> :class:`BlockerDiagnosis`; a failure is ``unavailable``."""
 
     def __init__(
         self, client: SystemOneClient, *, model: str = JEV_MODEL, deadline_s: float = DEFAULT_DEADLINE_S
@@ -216,7 +222,7 @@ class BlockerDiagnoser:
         latency = (time.perf_counter() - started) * 1000
         scores: dict[str, float] = {}
         for name in BLOCKERS:
-            answer = getattr(response, "nouls", {}).get(name)
+            answer = (getattr(response, "nouls", None) or {}).get(name)
             p = getattr(answer, "noul", None)
             if (
                 not isinstance(p, (int, float))

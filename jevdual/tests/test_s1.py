@@ -769,3 +769,21 @@ def test_a_non_blocking_handback_is_not_diagnosed():
     )
     asyncio.run(s1.decide(agent, state))
     assert agent.delegations[0].status == "operation_confidence" and agent.delegations[0].diagnosis is None
+
+
+def test_a_cancelled_diagnosis_still_closes_the_escalated_delegation():
+    class Blocked:
+        def judge(self, decision, menu, ctx, agent):
+            return Verdict("escalate", "blocked: no offered operation can make progress")
+
+    async def diagnose(menu, task):
+        raise asyncio.CancelledError
+
+    state, _ = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    s1 = JevS1(
+        FakePolicy(_decision("blocked")), arbiter=Blocked(), only_when_delegated=True, diagnose=diagnose
+    )
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(s1.decide(agent, state))
+    assert agent.delegation is None and agent.delegations[0].status == "blocked"

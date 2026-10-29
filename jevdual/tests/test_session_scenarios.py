@@ -1004,3 +1004,14 @@ def test_a_reload_with_unchanged_switches_is_not_progress(world, fw):
     assert saved["Enabled"]["checked"] is True and saved["Mixed"]["checked"] == "mixed"
     _, out, _ = fw("look")
     assert "the window changed since" not in out
+
+
+def test_a_shifted_window_refuses_the_wrong_one_of_two_same_label_switches(world, fw):
+    # review of 65bb991: with both "Enabled" switches offered, an id that still says "Enabled" can name
+    # the other one after a switch is inserted above them; the label check alone dispatched it
+    world.toggles = {200: ["Enabled", "0"], 201: ["Enabled", "0"]}
+    fw("start", "Turn on the second switch", "--app", "Calculator")
+    world.toggles = {200: ["Wi-Fi", "1"], 201: ["Enabled", "0"], 202: ["Enabled", "0"]}
+    code, _, err = fw("do", "click", "201", "--no-judge")
+    assert code == 4 and "1 of 2 now; it was 2 of 2" in err and "Nothing dispatched" in err
+    assert world.presses == [] and [v for _, v in world.toggles.values()] == ["1", "0", "0"]

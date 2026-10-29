@@ -213,3 +213,36 @@ def test_a_reached_loop_is_not_diagnosed():
 
     r = asyncio.run(run_micro_loop("read it", _Session(), _NoActTools(), decide=done, diagnose=diagnose))
     assert r.status == "reached" and calls == [] and r.diagnosis is None
+
+
+def test_a_budget_trimmed_browser_menu_is_reported_as_partial():
+    client = FakeClient(_response(_scores()))
+    m = _menu(omitted={"overflow": 120, "page_text_chars": 40000})
+    d = asyncio.run(BlockerDiagnoser(client)(m, "t"))
+    assert d.coverage["elements_complete"] is False and d.coverage["omitted"]["overflow"] == 120
+    assert "partial observation" in d.summary()
+
+
+class _QuietTools(Tools):
+    """Every action succeeds and changes nothing, so the loop stops stuck."""
+
+    async def act(self, *a, **k):
+        from browser_use.agent.views import ActionResult
+
+        return ActionResult()
+
+
+def test_a_stuck_loop_is_diagnosed_and_stays_stuck():
+    seen = []
+
+    async def diagnose(menu, task):
+        seen.append(task)
+        return BlockerDiagnosis(
+            "available", menu.url, "sha256:x", {}, scores={"loading": 0.8}, findings=("loading",)
+        )
+
+    async def scroll(menu, ctx):
+        return _decision("scroll_page")
+
+    r = asyncio.run(run_micro_loop("read it", _Session(), _QuietTools(), decide=scroll, diagnose=diagnose))
+    assert r.status == "stuck" and seen == ["read it"] and r.diagnosis["findings"] == ["loading"]

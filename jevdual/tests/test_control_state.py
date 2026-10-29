@@ -262,3 +262,61 @@ def test_the_capability_observation_reports_known_state_only():
     )
     rows = Observations().project("r", snap, writable=False)["elements"]
     assert rows[0]["state"] == {"checked": "mixed"} and "state" not in rows[1]
+
+
+_NM = {
+    "pid": 1,
+    "window_id": 2,
+    "app_name": "Demo",
+    "elements_complete": True,
+    "truncated": False,
+    "degraded": False,
+}
+
+
+def _bridge_observing(fresh_cands):
+    import asyncio as _a
+
+    from jevdual.native import NativeBridge, NativeMenu
+
+    b = NativeBridge.__new__(NativeBridge)
+
+    async def observe(**kw):
+        return NativeMenu(
+            **_NM, menu=menu(*fresh_cands), snapshot_id="s2", tokens={c.id: str(c.id) for c in fresh_cands}
+        )
+
+    b.observe = observe  # type: ignore[method-assign]
+    return b, _a, NativeMenu
+
+
+def test_live_resolution_keeps_the_position_among_same_label_toggles():
+    import pytest
+    from jevdual.native import NativeBridgeError
+
+    decided = (cand(200, "Enabled", checked=False), cand(201, "Enabled", checked=False))
+    shifted = (
+        cand(200, "Wi-Fi", checked=True),
+        cand(201, "Enabled", checked=False),
+        cand(202, "Enabled", checked=False),
+    )
+    b, aio, NativeMenu = _bridge_observing(shifted)
+    nm = NativeMenu(**_NM, menu=menu(*decided), snapshot_id="s1", tokens={200: "a", 201: "b"})
+    _, hit = aio.run(b._live(nm, 201, "click"))
+    assert hit == 202  # the second "Enabled", not id 201 which is now the first
+    b, aio, _ = _bridge_observing((cand(201, "Enabled", checked=False),))
+    with pytest.raises(NativeBridgeError) as exc:
+        aio.run(b._live(nm, 201, "click"))
+    assert exc.value.reason == "target_changed"
+
+
+def test_repeated_toggles_kept_per_key_are_bounded():
+    from jevdual.menu import MenuBudget
+    from jevdual.native import TOGGLE_REPEATS_KEPT, _prune
+
+    cands = [cand(i, "0", checked=False) for i in range(40)] + [cand(99, "OK", role="button")]
+    om: dict[str, int] = {}
+    kept, _, _ = _prune(cands, {c.id: str(c.id) for c in cands}, {}, om, MenuBudget())
+    assert [c.id for c in kept] == [*range(TOGGLE_REPEATS_KEPT), 99] and om[
+        "duplicate"
+    ] == 40 - TOGGLE_REPEATS_KEPT
