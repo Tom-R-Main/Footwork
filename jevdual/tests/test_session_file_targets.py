@@ -37,6 +37,9 @@ class FinderWorld(World):
         self.extra_window = None
         self.inputs = []
         self.fields = {}
+        self.retain_editor_after_commit = False
+        self.rename_committed = False
+        self.dismiss_editor_on_reacquire = True
 
     async def list_windows(self, inp):
         windows = [
@@ -130,6 +133,7 @@ class FinderWorld(World):
             return {
                 "AXRole": "AXTextField",
                 "AXValue": self.editor_value,
+                "AXFocused": self.rename_open,
                 "AXWindow": None,  # Actual Finder transient editor is parented under the application.
                 "AXParent": "application",
                 "AXChildren": [],
@@ -152,7 +156,7 @@ class FinderWorld(World):
             "keep": self.current_path.parent / "keep.bin",
             "decoy": Path(self.manifest["root"]) / "decoy/asset.png",
         }[element]
-        return {
+        attributes = {
             "AXRole": "AXTextField",
             "AXValue": self.cell_value if element == "asset" and self.cell_value is not None else path.name,
             "AXURL": path.as_uri(),
@@ -160,6 +164,9 @@ class FinderWorld(World):
             "AXParent": element + "_row",
             "AXWindow": "window",
         }
+        if element == "asset" and self.retain_editor_after_commit and self.rename_open:
+            del attributes["AXURL"]
+        return attributes
 
     def attr(self, element, name):
         return self.attributes(element).get(name)
@@ -171,11 +178,18 @@ class FinderWorld(World):
     def settable(self, element, name, _):
         return 0, (
             (element in {"asset", "editor"} and name == "AXValue")
+            or (element == "editor" and name == "AXFocused")
             or (element == "asset_row" and name == "AXSelected")
             or (element == "window" and name == "AXMain")
         )
 
     def set_attribute(self, element, name, value):
+        if (element, name) == ("editor", "AXFocused"):
+            assert value is False and self.rename_open
+            self.inputs.append(("AXFocused", "editor", False))
+            self.rename_open = False
+            self.editor_value = None
+            return 0
         if (element, name) == ("window", "AXMain"):
             return 0
         if (element, name) == ("asset_row", "AXSelected"):
@@ -223,7 +237,17 @@ class FinderWorld(World):
         if name == "bring_to_front":
             assert arguments["pid"] == 77 and arguments["window_id"] == self.window_id
             assert arguments["session"]
-            return SimpleNamespace(action=None, text="", is_error=False, error_code=None, structured_json=None)
+            if (
+                self.retain_editor_after_commit
+                and self.rename_committed
+                and self.rename_open
+                and self.dismiss_editor_on_reacquire
+            ):
+                self.rename_open = False
+                self.editor_value = None
+            return SimpleNamespace(
+                action=None, text="", is_error=False, error_code=None, structured_json=None
+            )
         assert name == "hotkey"
         assert arguments["pid"] == 77 and arguments["window_id"] == self.window_id
         assert arguments["keys"] == ["Return"] and arguments["delivery_mode"] == "foreground"
@@ -233,8 +257,11 @@ class FinderWorld(World):
             destination = self.current_path.with_name(self.editor_value)
             self.current_path.rename(destination)  # External app at the actual commit boundary.
             self.current_path = destination
-            self.cell_value = self.editor_value = None
-            self.rename_open = False
+            self.rename_committed = True
+            self.cell_value = None
+            if not self.retain_editor_after_commit:
+                self.editor_value = None
+                self.rename_open = False
         # Match the live SDK's missing delivery count. Qualified AX acknowledgements
         # and the independent inode/path check must carry the execution evidence.
         return SimpleNamespace(action=None, text="", is_error=False, error_code=None, structured_json=None)

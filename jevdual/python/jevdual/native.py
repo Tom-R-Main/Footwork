@@ -1541,7 +1541,7 @@ class NativeBridge:
         self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
     ) -> NativeEffect:
         """Source-qualified rename producer; called only after front/key qualification."""
-        from jevdual.finder_targets import rebind
+        from jevdual.finder_targets import rebind, resolve
 
         target, id = self.resolve_file(nm, selector)
         self._require_fresh(nm, id)
@@ -1699,6 +1699,45 @@ class NativeBridge:
                 or Path(target.binding.path).is_symlink()
             ):
                 raise self.ax.AXError("rename_unverified", "same-inode rename is not established")
+
+            def completion_owned() -> bool:
+                current = self.ax.finder_window_context(self.pid)
+                proof["completion_context"] = {
+                    **current,
+                    "front_pid": self.policy._activity().frontmost_pid(),
+                }
+                return (
+                    proof["completion_context"]["front_pid"] == self.pid
+                    and current["main_window_id"] == self.window_id
+                    and current["focused_window_id"] == self.window_id
+                )
+
+            if not completion_owned():
+                raise self.ax.AXError(
+                    "file_completion_lost_focus", "the owned rename window lost foreground before completion"
+                )
+            await self._front_and_key()
+            completion = None
+            for _ in range(20):
+                if not completion_owned():
+                    raise self.ax.AXError(
+                        "file_completion_lost_focus",
+                        "the owned rename window lost foreground during completion",
+                    )
+                try:
+                    completion = resolve(self.pid, self.window_id, rebound, self.finder_scope["manifest"])
+                    if completion_owned():
+                        break
+                    completion = None
+                except self.ax.AXError:
+                    completion = None
+                await asyncio.sleep(0.05)
+            if completion is None:
+                raise self.ax.AXError(
+                    "file_completion_unverified",
+                    "the renamed file's exact filename target did not become ready",
+                )
+            proof["completion_target"] = completion.to_record()
             proof["after"] = rebound.to_record()
             return NativeEffect(
                 operation,

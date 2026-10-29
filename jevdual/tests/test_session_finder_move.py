@@ -229,6 +229,58 @@ def test_public_owned_move_records_applied_receipt_and_replay_sends_nothing(move
     assert world.inputs == before
 
 
+def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli):
+    world, run = move_cli
+    world.retain_editor_after_commit = True
+    renamed(world, run)
+    selector = "file:" + str(world.current_path)
+    directory = str(Path(world.manifest["root"]) / "organized")
+    code, out, err = run("grant", "move", selector, directory)
+    assert code == 0, (out, err)
+    assert not world.rename_open
+    assert world.inputs.count(("hotkey", "Return")) == 1
+    assert world.inputs.count(("AXFocused", "editor", False)) == 0
+    intents = [args for name, args in world.tool_calls if name == "bring_to_front"]
+    assert len(intents) == 2
+    assert all(args["pid"] == 77 and args["window_id"] == world.window_id for args in intents)
+    code, out, err = run("do", "move", selector, directory, "--no-judge", "--token", "after-editor")
+    assert code == 0, (out, err)
+    assert check_finder(world.manifest, "organized/renamed.png").ok
+
+
+@pytest.mark.parametrize("change", ["front", "window", "editor_persists"])
+def test_rename_completion_refuses_foreign_ownership_or_missing_filename(move_cli, monkeypatch, change):
+    world, run = move_cli
+    world.retain_editor_after_commit = True
+    if change == "editor_persists":
+        world.dismiss_editor_on_reacquire = False
+    elif change == "front":
+        activity = file_tests.ExecutionPolicy("foreground_permitted")._activity()
+        activity.frontmost_pid = lambda: 99 if world.rename_committed else 77
+    else:
+        original = file_tests.ax.finder_window_context
+        monkeypatch.setattr(
+            file_tests.ax,
+            "finder_window_context",
+            lambda pid: {
+                **original(pid),
+                "main_window_id": 999 if world.rename_committed else world.window_id,
+            },
+        )
+    file_tests.start(run)
+    code, out, err = run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "incomplete-ui")
+    assert code == 0, (out, err)
+    assert check_finder(world.manifest, "inbox/renamed.png").ok
+    assert world.rename_open and world.inputs.count(("hotkey", "Return")) == 1
+    assert not any(event[0] == "AXFocused" for event in world.inputs)
+    intents = [args for name, args in world.tool_calls if name == "bring_to_front"]
+    assert len(intents) == (2 if change == "editor_persists" else 1)
+    code, out, err = run("status")
+    assert code == 0, (out, err)
+    operation = json.loads(out)["operations"][0]
+    assert operation["disposition"] != "applied"
+
+
 def test_public_move_stale_copy_blocks_navigation_and_retry(move_cli):
     world, run = move_cli
     renamed(world, run)
