@@ -173,7 +173,7 @@ def _exact_pending(tmp_path, value):
     fresh = _nm([_field(8, "Body", value=value[:120])])
     fresh.ax_roles = {8: "AXTextArea"}
     fresh.frames = {8: (10, 20, 400, 300)}
-    fresh.values = {8: value[:120]}
+    fresh.values = {8: value}
     return state, pending, fresh
 
 
@@ -198,6 +198,29 @@ def test_fresh_contradictory_projection_limits_earlier_exact_readback(tmp_path):
     payload = _structured_receipt(state, pending, fresh)
     (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
     assert not item.usable and "contradicts" in item.limits[0]
+
+
+@pytest.mark.parametrize("current", ["", "Expected", "Expected exact field ", " Expected exact field"])
+def test_shorter_or_changed_raw_field_limits_earlier_exact_readback(tmp_path, current):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+    fresh.values = {8: current}
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert not item.usable and "contradicts" in item.limits[0]
+
+
+def test_display_preview_without_raw_value_cannot_confirm_exact_readback(tmp_path):
+    from jevdual.completion import effects
+    from jevdual.session import _structured_receipt
+
+    state, pending, fresh = _exact_pending(tmp_path, "Complete long value " * 30)
+    fresh.values = {}
+    payload = _structured_receipt(state, pending, fresh)
+    (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+    assert not item.usable and "unavailable" in item.limits[0]
 
 
 def test_prior_secret_redaction_is_not_exact_literal_placeholder_evidence(tmp_path, monkeypatch):

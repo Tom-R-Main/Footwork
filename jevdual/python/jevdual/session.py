@@ -402,10 +402,13 @@ def _structured_receipt(state: SessionState, pending: dict[str, Any], nm: Any) -
         if len(same) != 1:
             limits.append("the fresh observation cannot bind the field uniquely")
         else:
-            preview = getattr(nm, "values", {}).get(same[0].id, same[0].value)
-            if not isinstance(preview, str):
+            # Candidate.value is a lossy display preview. Only the fresh raw value can
+            # corroborate the earlier exact readback; prefixes and whitespace changes
+            # may be actual edits rather than projection truncation.
+            current_value = getattr(nm, "values", {}).get(same[0].id)
+            if not isinstance(current_value, str):
                 limits.append("the fresh field value is unavailable")
-            elif not rb["observed_value"].strip().startswith(preview.strip()):
+            elif rb["observed_value"] != current_value:
                 limits.append("the fresh field projection contradicts the earlier exact readback")
         facts.append(
             fact_record(
