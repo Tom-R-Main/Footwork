@@ -161,3 +161,16 @@ Observed: c7a5d6d's first installed rename stopped at the new completion guard. 
 Inferred: before reacquisition, a null focused-window attribute needs the stronger exact retained-editor/window/value check; it must not be accepted generically or mistaken for a different actual focused window. After reacquisition the ordinary exact window and filename URL remain required.
 Next: red null-focused-window ownership case, minimal guard correction, then fresh installed qualification.
 Refs: output/move-submit-20261028/final-interrupted/authority.json; tests/test_session_finder_move.py
+
+## MSU13 · update · 2026-10-28 23:43
+Resolves: MS14 = failed
+Observed: 1bd8f51 still stopped before reacquisition. After Return, the old editor object no longer has a readable frame; Finder publishes a replacement focused editor with value renamed.png, a fresh frame, no AXWindow and the exact bound AXMainWindow. Requiring identity equality with the pre-Return editor cannot represent this transition. The strict renamed file remains unchanged on disk, and no uncertain action was repeated.
+Inferred: qualifying exact-window reactivation requires the actual current owned transient editor, not the obsolete object. This authorizes window focus only; file input continues to require the original strict filename URL/inode binding after reactivation.
+Next: replacement-editor regression and a narrow Finder-only current-editor ownership helper, then fresh installed trials.
+Refs: output/move-submit-20261028/verified-interrupted/replacement-editor.json; tests/test_session_finder_move.py
+
+## MS15 · prediction · 2026-10-28 23:43
+Hypothesis: the replacement rename editor's exact new value and bound Finder main-window ownership safely permit reacquiring that same window, after which the normal exact filename AXURL returns.
+Test: model the old editor becoming unreadable and a replacement current editor with no AXWindow but exact bound AXMainWindow; refuse wrong value/app/main/explicit window, then reassert only that window and require strict filename URL/inode before confirming. Run the installed interrupted chain on a fresh fixture.
+Predicts: no editor write or extra Return is needed, no foreign window receives file input, and replacement-editor completion permits the move.
+Against: another window/editor value is accepted, the final exact filename target is unavailable, or the installed chain still stops on this state.
