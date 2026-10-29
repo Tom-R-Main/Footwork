@@ -116,3 +116,16 @@ Hypothesis: a separately launched owned Preview process provides a fresh first-r
 Test: launch a new process for a fresh moved fixture; bind its exact new PID and document path after readiness; invoke one Rotate Right and independently check saved pixels. Keep the shared-process unknown and do not repeat its action.
 Predicts: a new undo transition qualifies custody and saved pixels permit the linked Chrome handoff; process/window/document ambiguity refuses before input.
 Against: the fresh process already exposes the same undo label, cannot qualify the rotation, or affects another document.
+
+## MSU9 · update · 2026-10-28 22:29
+Resolves: MS11 = failed
+Observed: a new Preview process restored prior documents, and the exact-document assertion stopped before input. A fresh process launched with process-local state restoration suppressed exposed the intended file and an initial generic Undo label; its one Rotate Right still retained only a menu acknowledgement. The rotation evidence loop runs after the foreground helper restores the previous app, when Preview's menu labels may be unavailable. No uncertain rotation was repeated.
+Inferred: process freshness alone does not qualify the current producer; test readback while the proven document is still foreground rather than changing the accepted predicate.
+Next: red regression for loss of foreground-dependent menu evidence, then move the existing proof acquisition inside the foreground lease and test a fresh artifact.
+Refs: output/move-submit-20261028/installed-owned-nominal; python/jevdual/native.py
+
+## MS12 · prediction · 2026-10-28 22:29
+Hypothesis: obtaining the existing Preview result predicate before foreground restoration preserves the bound app's fresh Undo transition; the current after-restoration read loses that evidence.
+Test: simulate menu state available only while exact foreground ownership holds; reproduce unknown before correction, capture the unchanged predicate inside the foreground call, then run a fresh live chain. Preserve all earlier unknowns.
+Predicts: the native producer qualifies only the same bound document's new Undo transition while ownership holds, and saved pixels independently qualify task correctness; changing window/front or no transition remains uncertain.
+Against: a stale/foreign state qualifies, or the live first rotation still cannot produce the predicate before restoration.
