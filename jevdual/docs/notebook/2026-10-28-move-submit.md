@@ -142,3 +142,16 @@ Hypothesis: setting AXFocused false on the exact retained, still focused Finder 
 Test: verify owned window, focused field/value and same-inode settled rename, write only the advertised focus attribute, then re-resolve the strict filename target. Reproduce editor persistence in public simulated commands before adding conditional release within rename's foreground boundary; challenge changed editor/window/focus.
 Predicts: subsequent exact move admission succeeds without relaxing URL/file identity checks or repeating rename; changed ownership prevents the release input.
 Against: focus release changes file contents/path, targets another editor, or leaves the filename unavailable.
+
+## MSU11 · update · 2026-10-28 23:33
+Resolves: MS13 = inconclusive
+Observed: the exact-window foreground acquisition in the focus-release probe ended editing before its field assertion, so no AXFocused write occurred. The renamed path retained its inode/bytes and its strict filename AXURL became resolvable again. The public simulated stale-editor case fails before correction.
+Inferred: complete the same authorized rename by reasserting its owned window and requiring the strict renamed filename target; do not add another Return or weaken targeting.
+Next: conditional exact-window completion inside the rename foreground boundary, then a fresh installed interrupted chain.
+Refs: output/move-submit-20261028/qualified-interrupted-final/editor-activation-probe.json; tests/test_session_finder_move.py
+
+## MS14 · prediction · 2026-10-28 23:33
+Hypothesis: after the committed same-inode rename, exact-window foreground reassertion restores the normal filename AXURL before returning from the producer.
+Test: simulated SDK Return leaves the editor active until exact-window reacquisition; require strict resolve of the renamed file before qualification, reject foreign foreground/window ownership, then fresh installed nominal and interrupted chains.
+Predicts: the next move can target the renamed file by its exact URL/inode without another Return or focus write; unavailable or changed ownership stays uncertain.
+Against: a different resource receives input, the file changes, or the strict filename target remains unavailable.
