@@ -155,3 +155,9 @@ Hypothesis: after the committed same-inode rename, exact-window foreground reass
 Test: simulated SDK Return leaves the editor active until exact-window reacquisition; require strict resolve of the renamed file before qualification, reject foreign foreground/window ownership, then fresh installed nominal and interrupted chains.
 Predicts: the next move can target the renamed file by its exact URL/inode without another Return or focus write; unavailable or changed ownership stays uncertain.
 Against: a different resource receives input, the file changes, or the strict filename target remains unavailable.
+
+## MSU12 · update · 2026-10-28 23:39
+Observed: c7a5d6d's first installed rename stopped at the new completion guard. Its front PID and main window still exactly matched the bound Finder window, but AXFocusedWindow was null while the focused role was the retained filename editor. The guard treated that owned editing state as a foreign window. No completion reacquisition was attempted and the operation remains unknown.
+Inferred: before reacquisition, a null focused-window attribute needs the stronger exact retained-editor/window/value check; it must not be accepted generically or mistaken for a different actual focused window. After reacquisition the ordinary exact window and filename URL remain required.
+Next: red null-focused-window ownership case, minimal guard correction, then fresh installed qualification.
+Refs: output/move-submit-20261028/final-interrupted/authority.json; tests/test_session_finder_move.py
