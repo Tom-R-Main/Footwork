@@ -1669,11 +1669,19 @@ class NativeBridge:
                 "selection": selection,
             }
 
-        def selection_owned(current: dict[str, Any]) -> bool:
+        def selection_owned(current: dict[str, Any], *, menu_focus: bool = False) -> bool:
+            # Opening our File menu can move AX focus to the application. Only
+            # this acknowledged menu stage permits a missing focused window;
+            # the exact front/main window and sole owned row remain mandatory.
+            focused = current["focused_window_id"] == self.window_id or (
+                menu_focus
+                and current["focused_window_id"] is None
+                and current["focused_role"] == "AXApplication"
+            )
             return (
                 current["front_pid"] == self.pid
                 and current["main_window_id"] == self.window_id
-                and current["focused_window_id"] == self.window_id
+                and focused
                 and current["selection"]["exact_row_only"]
             )
 
@@ -1701,7 +1709,7 @@ class NativeBridge:
             if not rename_enabled:
                 raise self.ax.AXError("file_rename_disabled", "the opened File menu did not enable Rename")
             proof["before_rename"] = context()
-            if not selection_owned(proof["before_rename"]):
+            if not selection_owned(proof["before_rename"], menu_focus=True):
                 raise self.ax.AXError(
                     "file_selection_unverified",
                     "the bound Finder window or sole selection changed before Rename",

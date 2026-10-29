@@ -603,3 +603,28 @@ def test_simulated_rename_leaf_ack_without_file_menu_does_not_enter_editing(find
     assert not world.rename_open
     assert ax.value("asset") == "asset.png"
     assert check_finder(world.manifest, "inbox/asset.png").ok
+
+
+@pytest.mark.parametrize("role", ["AXApplication", "AXTextField", "AXMenu", None])
+def test_rename_owned_file_menu_can_temporarily_own_application_focus(finder_cli, monkeypatch, role):
+    world, run = finder_cli
+    start(run)
+    assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+    original = ax.finder_window_context
+
+    def context(pid):
+        current = original(pid)
+        if world.file_menu_open and not world.rename_open and not world.rename_committed:
+            current.update(focused_window_id=None, focused_role=role)
+        return current
+
+    monkeypatch.setattr(ax, "finder_window_context", context)
+    run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "menu-focus")
+    status = json.loads(run("status")[1])
+    if role == "AXApplication":
+        assert status["operations"][0]["disposition"] == "applied"
+        assert check_finder(world.manifest, "inbox/renamed.png").ok
+    else:
+        assert status["operations"][0]["disposition"] == "unknown"
+        assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
+        assert check_finder(world.manifest, "inbox/asset.png").ok
