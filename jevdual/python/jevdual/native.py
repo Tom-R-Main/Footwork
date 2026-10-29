@@ -1994,23 +1994,36 @@ class NativeBridge:
         self.dispatches += 1
         label = " > ".join(path)
         ax = self.ax
-        preview_before = None
+        preview_path = nm.app_name == "Preview" and path in (
+            ["Tools", "Rotate Left"],
+            ["Tools", "Rotate Right"],
+            ["File", "Save"],
+        )
+
+        def preview_owned() -> bool:
+            return (
+                self.policy._activity().frontmost_pid() == self.pid
+                and ax.focused_window_id(self.pid) == self.window_id
+            )
 
         async def call() -> Any:
-            nonlocal preview_before
+            preview_before = None
             await self._front_and_key()
             if self.observation_guard is not None:
                 await self.observe()
-            if nm.app_name == "Preview" and path in (
-                ["Tools", "Rotate Left"],
-                ["Tools", "Rotate Right"],
-                ["File", "Save"],
-            ):
+            if preview_path:
                 try:
-                    preview_before = ax.preview_document_state(self.pid, self.window_id)
+                    if preview_owned():
+                        preview_before = ax.preview_document_state(self.pid, self.window_id)
+                        if not preview_owned():
+                            preview_before = None
                 except (ax.AXError, OSError):
                     preview_before = None
             try:
+                if preview_path and not preview_owned():
+                    raise NativeBridgeError(
+                        "not_key", "the exact Preview window lost foreground/key ownership; menu not pressed"
+                    )
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:
                 if exc.reason == "menu_missing" and self.policy.mode == "exclusive_desktop":
@@ -2022,28 +2035,35 @@ class NativeBridge:
                         )
                     )
                 raise
+            if preview_before is not None:
+                for _ in range(20):
+                    try:
+                        if not preview_owned():
+                            break
+                        after = ax.preview_document_state(self.pid, self.window_id)
+                        if not preview_owned():
+                            break
+                        proof = preview_menu_readback(path, preview_before, after)
+                    except (ax.AXError, OSError):
+                        proof = None
+                    if proof is not None:
+                        acknowledged = self._effect("menu", -1, label, _PRESSED, "foreground")
+                        return dataclasses.replace(
+                            acknowledged,
+                            effect="confirmed",
+                            delivery_basis="ax_menu_effect_readback",
+                            native_readback=proof,
+                            evidence=(*acknowledged.evidence, "native_ui_readback: " + proof["predicate"]),
+                        )
+                    await asyncio.sleep(0.05)
             return _PRESSED
 
         eff = await self._foreground(
             "menu", -1, label, call, why=f"menu {label} (a menu acts on the key window)"
         )
         eff = dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
-        if preview_before is not None and eff.delivery_basis == "ax_menu_press_ack":
-            for _ in range(20):
-                try:
-                    after = ax.preview_document_state(self.pid, self.window_id)
-                    proof = preview_menu_readback(path, preview_before, after)
-                except (ax.AXError, OSError):
-                    proof = None
-                if proof is not None:
-                    return dataclasses.replace(
-                        eff,
-                        effect="confirmed",
-                        delivery_basis="ax_menu_effect_readback",
-                        native_readback=proof,
-                        evidence=(*eff.evidence, "native_ui_readback: " + proof["predicate"]),
-                    )
-                await asyncio.sleep(0.05)
+        if eff.delivery_basis == "ax_menu_effect_readback":
+            return eff
         return await self._after_save(eff, path=path)
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:

@@ -8,7 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from jevdual.native import NativeBridge, effect_from_action_result, menu_from_snapshot
+from jevdual.native import NativeBridge, NativeBridgeError, effect_from_action_result, menu_from_snapshot
 
 
 def test_direct_action_error_is_retained_without_fabricating_delivery():
@@ -95,6 +95,96 @@ def test_preview_save_file_transition_retains_atomic_replacement():
 
 
 @pytest.mark.parametrize(
+    "change",
+    [
+        None,
+        "front",
+        "window",
+        "unavailable",
+        "no_transition",
+        "baseline_front",
+        "baseline_window",
+        "baseline_unavailable",
+    ],
+)
+def test_preview_transition_is_read_while_exact_foreground_is_owned(change):
+    from jevdual.ax import AXError
+
+    active, front, focused = False, 77, 12
+    reads_after_foreground = []
+
+    class PreviewAX:
+        pressed = False
+
+        def focused_window_id(self, pid):
+            return focused
+
+        def preview_document_state(self, pid, window_id):
+            nonlocal front, focused
+            if not active:
+                reads_after_foreground.append(True)
+            if not self.pressed and change == "baseline_unavailable":
+                raise AXError("document_state_missing", "baseline unavailable")
+            if self.pressed and change == "unavailable":
+                raise AXError("document_state_missing", "readback unavailable")
+            marker = self.pressed and active and change != "no_transition"
+            result = state(None, ["Undo Rotate Right"] if marker else [])
+            if self.pressed and change == "front":
+                front = 99
+            if self.pressed and change == "window":
+                focused = 99
+            if not self.pressed and change == "baseline_front":
+                front = 99
+            if not self.pressed and change == "baseline_window":
+                focused = 99
+            return result
+
+        def press_menu(self, pid, path):
+            self.pressed = True
+
+    PreviewAX.AXError = AXError
+
+    class Bridge(NativeBridge):
+        async def _front_and_key(self):
+            pass
+
+        async def _foreground(self, operation, target, label, call, *, why):
+            nonlocal active
+            active = True
+            try:
+                result = await call()
+            except NativeBridgeError as exc:
+                result = exc
+            finally:
+                active = False
+            return self._effect(operation, target, label, result, "foreground")
+
+    snapshot = json.loads((Path(__file__).parent / "fixtures/native/calculator.json").read_text())
+    nm = dataclasses.replace(menu_from_snapshot(snapshot), pid=77, window_id=12, app_name="Preview")
+    bridge = Bridge(
+        None,
+        77,
+        12,
+        ax=PreviewAX(),
+        policy=SimpleNamespace(_activity=lambda: SimpleNamespace(frontmost_pid=lambda: front)),
+    )
+    bridge.last = nm
+    effect = asyncio.run(bridge.menu(nm, ["Tools", "Rotate Right"]))
+    if change in {"baseline_front", "baseline_window"}:
+        assert not bridge.ax.pressed
+        assert not effect.dispatched and effect.effect == "refused" and effect.error_code == "not_key"
+        assert effect.delivered_count == 0
+    elif change is None:
+        assert effect.delivered_count == 1
+        assert effect.effect == "confirmed"
+        assert effect.native_readback["predicate"] == "preview_rotate_right_ui_transition"
+    else:
+        assert bridge.ax.pressed and effect.delivered_count == 1
+        assert effect.effect == "unverifiable" and effect.native_readback is None
+    assert reads_after_foreground == []
+
+
+@pytest.mark.parametrize(
     "new_undo, expected", [("Undo Rotate Right", "confirmed"), ("Undo Rotate Left", "unverifiable")]
 )
 def test_preview_menu_ack_requires_observed_contract(new_undo, expected):
@@ -103,6 +193,9 @@ def test_preview_menu_ack_requires_observed_contract(new_undo, expected):
     class PreviewAX:
         def __init__(self):
             self.pressed = False
+
+        def focused_window_id(self, pid):
+            return 12
 
         def preview_document_state(self, pid, window_id):
             return state(None, [new_undo] if self.pressed else [])
@@ -120,8 +213,14 @@ def test_preview_menu_ack_requires_observed_contract(new_undo, expected):
             return self._effect(operation, target, label, await call(), "foreground")
 
     snapshot = json.loads((Path(__file__).parent / "fixtures/native/calculator.json").read_text())
-    nm = dataclasses.replace(menu_from_snapshot(snapshot), app_name="Preview")
-    bridge = Bridge(None, nm.pid, nm.window_id, ax=PreviewAX())
+    nm = dataclasses.replace(menu_from_snapshot(snapshot), pid=77, window_id=12, app_name="Preview")
+    bridge = Bridge(
+        None,
+        nm.pid,
+        nm.window_id,
+        ax=PreviewAX(),
+        policy=SimpleNamespace(_activity=lambda: SimpleNamespace(frontmost_pid=lambda: 77)),
+    )
     bridge.last = nm
     effect = asyncio.run(bridge.menu(nm, ["Tools", "Rotate Right"]))
     assert effect.effect == expected
@@ -138,6 +237,9 @@ def test_public_preview_binary_save_preserves_qualified_native_predicate(predica
 
     class BinaryPreviewAX:
         saved = False
+
+        def focused_window_id(self, pid):
+            return 12
 
         def preview_document_state(self, pid, window_id):
             if predicate == "preview_save_ui_transition":
@@ -161,8 +263,14 @@ def test_public_preview_binary_save_preserves_qualified_native_predicate(predica
             return self._effect(operation, target, label, await call(), "foreground")
 
     snapshot = json.loads((Path(__file__).parent / "fixtures/native/calculator.json").read_text())
-    nm = dataclasses.replace(menu_from_snapshot(snapshot), app_name="Preview")
-    bridge = Bridge(None, nm.pid, nm.window_id, ax=BinaryPreviewAX())
+    nm = dataclasses.replace(menu_from_snapshot(snapshot), pid=77, window_id=12, app_name="Preview")
+    bridge = Bridge(
+        None,
+        nm.pid,
+        nm.window_id,
+        ax=BinaryPreviewAX(),
+        policy=SimpleNamespace(_activity=lambda: SimpleNamespace(frontmost_pid=lambda: 77)),
+    )
     bridge.last = nm
     effect = asyncio.run(bridge.menu(nm, ["File", "Save"]))
     assert effect.effect == "confirmed"
