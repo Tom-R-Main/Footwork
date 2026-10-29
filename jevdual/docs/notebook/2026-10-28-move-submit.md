@@ -71,3 +71,16 @@ Hypothesis: removing redundant SDK captures between owned Finder foreground bind
 Test: retain the last observed candidate only for admission bookkeeping, re-resolve the exact owned file through fresh strict AX after foreground acquisition, and perform no extra SDK capture before AX input. Add source/window-change refusal coverage and run a fresh reserved fixture.
 Predicts: the intended file remains live-bound and the foreground stays Finder through selection/menu actions; changed or missing files refuse before input.
 Against: a stale/wrong file can be touched, or foreign foreground still interrupts the same sequence.
+
+## MSU5 · update · 2026-10-28 22:03
+Resolves: MS8 = failed
+Observed: avoiding redundant captures allowed rename to settle but a later owned Go sheet still lost foreground to Chrome before its path write. Source audits of the installed d5373879 SDK identify process-local action/focus restoration guards and a supported bring_to_front operation that explicitly ends their tails and advances intentional-activation epoch. Ordinary captures do not arm those guards in the inspected source, so causality remains unproven.
+Inferred: use the supported explicit foreground-intent boundary as a discriminating test while retaining all front/modal checks; do not blame a human or claim a capture-induced race as established.
+Next: declare exact-window foreground intent through the pinned SDK, then fresh owned AX/modal work.
+Refs: output/move-submit-20261028/direct-ax-dev/move-proof.json; vendor/cua-driver/PROVENANCE.md
+
+## MS9 · prediction · 2026-10-28 22:03
+Hypothesis: the supported exact-window bring_to_front boundary synchronizes SDK intentional foreground state with the direct AX workflow and prevents restoration guards from undoing its owned modal activation.
+Test: invoke the registered exact PID/window bring_to_front only after posture permission, then retain direct AX identity/key/modal checks; red regression simulates a stale background restoration tail, and a fresh live fixture tests the full move.
+Predicts: the SDK intent boundary cancels the interfering tail and the exact owned modal stays foreground; other-window/refused intents still stop without file input.
+Against: foreign foreground still interrupts a fresh trial, or wrong-window SDK activation is accepted.
