@@ -34,3 +34,9 @@ Refs: output/move-submit-20261028/dev; output/move-submit-20261028/dev2; tests/t
 ## MS5 · exploratory · 2026-10-28 21:20
 Question: do read-only driver creation, window listing or bound capture reset the HID idle counter or change the foreground process?
 Test: capture idle/front metadata immediately before and after those calls on the owned Finder window; send no input and retain timings. Distinguish driver-induced changes from concurrent external activity before choosing the next live readiness step.
+
+## MSU2 · update · 2026-10-28 21:24
+Observed: the complete development rename settled applied. Move retained five acknowledged inputs through opening Go to Folder, then stopped before writing its path. The bound Finder window contains a direct AXSheet with its own CGWindowID; while that sheet is active, AXMainWindow and AXFocusedWindow name the sheet rather than the parent. The current guard interpreted that owned modal transition as a foreign window. Read-only driver creation/list/capture did not reset HID idle or change foreground in the measured diagnostic.
+Inferred: allow only the exact Go sheet descended from the bound window and its focused field, while continuing to reject other windows. Keep the partial move unknown and use a fresh fixture.
+Next: correct modal ownership, complete the move, and qualify background Chrome renderer accessibility.
+Refs: output/move-submit-20261028/dev2/move-deciding-proof.json; output/move-submit-20261028/dev2/sheet-window-diagnostic.json; output/move-submit-20261028/dev2/activity-diagnostic.json
