@@ -977,3 +977,41 @@ async def test_capability_resource_replacement_during_live_observation_sends_not
     result = await tools.call("act", {"target": row["target"], "text": "17.25 USD"})
     assert result["phase"] == "not_sent"
     assert world.writes == [] and world.content == "Invoice report"
+
+
+def test_the_second_of_two_same_label_switches_is_offered_and_its_toggle_is_named(world, fw):
+    # 2026-10-28 (notebook CTL3): native pruning kept only the first of two "Enabled" switches, so
+    # the second could not be chosen and a change to it was invisible to the effect diff
+    world.toggles = {200: ["Enabled", "1"], 201: ["Enabled", "0"]}
+    _, out, _ = fw("start", "Turn on the second switch", "--app", "Calculator")
+    rows = [ln.strip() for ln in out.splitlines() if ln.strip().startswith("[") and "'Enabled'" in ln]
+    assert [int(r[1 : r.index("]")]) for r in rows] == [200, 201]
+    assert "checked=True" in rows[0] and "checked=False" in rows[1]
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 0, err
+    assert world.toggles[201][1] == "1" and world.toggles[200][1] == "1"
+    assert "'Enabled' checked False -> True" in out
+    assert _state(fw)["memory"][-1].endswith("-> confirmed")
+
+
+def test_a_reload_with_unchanged_switches_is_not_progress(world, fw):
+    # the saved baseline must carry every state the fresh observation reports, or an untouched
+    # control reads as changed after the session is reloaded by the next command
+    world.toggles = {200: ["Enabled", "1"], 201: ["Mixed", "2"]}
+    fw("start", "Look twice", "--app", "Calculator")
+    st = _state(fw)
+    saved = {c["label"]: c for c in st["last_candidates"] if c["label"] in ("Enabled", "Mixed")}
+    assert saved["Enabled"]["checked"] is True and saved["Mixed"]["checked"] == "mixed"
+    _, out, _ = fw("look")
+    assert "the window changed since" not in out
+
+
+def test_a_shifted_window_refuses_the_wrong_one_of_two_same_label_switches(world, fw):
+    # review of 65bb991: with both "Enabled" switches offered, an id that still says "Enabled" can name
+    # the other one after a switch is inserted above them; the label check alone dispatched it
+    world.toggles = {200: ["Enabled", "0"], 201: ["Enabled", "0"]}
+    fw("start", "Turn on the second switch", "--app", "Calculator")
+    world.toggles = {200: ["Wi-Fi", "1"], 201: ["Enabled", "0"], 202: ["Enabled", "0"]}
+    code, _, err = fw("do", "click", "201", "--no-judge")
+    assert code == 4 and "1 of 2 now; it was 2 of 2" in err and "Nothing dispatched" in err
+    assert world.presses == [] and [v for _, v in world.toggles.values()] == ["1", "0", "0"]

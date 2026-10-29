@@ -7,6 +7,12 @@ stable identity that survives selector-index reallocation, candidate values
 
 ``key_fn`` is injectable: the default is a tuple of stable attributes; task R3
 swaps in upstream's SHA-256 element hashes computed in Rust.
+
+Controls that share a key are matched in document order when both observations hold the same number
+of them; otherwise the count difference is what appeared or disappeared. A control state (checked,
+selected, expanded, pressed) is compared only when both observations report it: a state reported on
+one side only is counted in ``unknown``, and a step whose only difference is unknown state is
+``inconclusive``, neither progress nor a proven no-op.
 """
 
 from __future__ import annotations
@@ -14,6 +20,7 @@ from __future__ import annotations
 from collections.abc import Callable, Hashable
 from dataclasses import dataclass
 from difflib import SequenceMatcher
+from typing import Literal
 from urllib.parse import urlsplit
 
 from jevdual.menu import Candidate, Menu
@@ -22,6 +29,10 @@ KeyFn = Callable[[Candidate], Hashable]
 
 #: Page text similarity at or above this ratio counts as unchanged text.
 TEXT_UNCHANGED_RATIO = 0.98
+
+STATE_FIELDS = ("checked", "selected", "expanded", "pressed")
+#: transitions named in the summary; the rest are counted
+_TRANSITIONS_SHOWN = 3
 
 
 def default_key(c: Candidate) -> Hashable:
@@ -39,10 +50,14 @@ class Effect:
     dialog_changed: bool
     tabs_changed: bool
     summary: str
+    #: state comparisons that could not be made: a matched control reported the state on one side only
+    unknown: int = 0
+    #: control state transitions, e.g. ``'Details' expanded False -> True``
+    transitions: tuple[str, ...] = ()
 
     @property
-    def no_effect(self) -> bool:
-        return not (
+    def visible_change(self) -> bool:
+        return bool(
             self.url_changed
             or self.title_changed
             or self.added
@@ -53,6 +68,22 @@ class Effect:
             or self.text_ratio < TEXT_UNCHANGED_RATIO
         )
 
+    @property
+    def no_effect(self) -> bool:
+        """Proven unchanged: every comparison was made and none differed."""
+        return not self.visible_change and not self.unknown
+
+    @property
+    def inconclusive(self) -> bool:
+        """Nothing differed, but some control state was not observed on both sides."""
+        return not self.visible_change and bool(self.unknown)
+
+    @property
+    def status(self) -> Literal["changed", "unchanged", "inconclusive"]:
+        if self.visible_change:
+            return "changed"
+        return "inconclusive" if self.unknown else "unchanged"
+
 
 def _path(url: str) -> str:
     try:
@@ -62,11 +93,28 @@ def _path(url: str) -> str:
     return parts.path + (f"?{parts.query}" if parts.query else "")
 
 
-def _index(menu: Menu, key_fn: KeyFn) -> dict[Hashable, Candidate]:
-    out: dict[Hashable, Candidate] = {}
+def _index(menu: Menu, key_fn: KeyFn) -> dict[Hashable, list[Candidate]]:
+    out: dict[Hashable, list[Candidate]] = {}
     for c in menu.candidates:
-        out.setdefault(key_fn(c), c)
+        out.setdefault(key_fn(c), []).append(c)
     return out
+
+
+def _compare(before: Candidate, after: Candidate) -> tuple[bool, int, list[str]]:
+    """(changed, unknown state comparisons, transitions) for one matched control."""
+    changed = before.value != after.value
+    unknown = 0
+    transitions: list[str] = []
+    for name in STATE_FIELDS:
+        a, b = getattr(before, name), getattr(after, name)
+        if a == b:
+            continue
+        if a is None or b is None:
+            unknown += 1
+            continue
+        changed = True
+        transitions.append(f"{after.label!r} {name} {a} -> {b}")
+    return changed, unknown, transitions
 
 
 def diff(
@@ -95,19 +143,19 @@ def diff(
     title_changed = prev.title != cur.title
     before = _index(prev, key_fn)
     after = _index(cur, key_fn)
-    added = sum(1 for k in after if k not in before)
-    removed = sum(1 for k in before if k not in after)
-    changed = sum(
-        1
-        for k, c in after.items()
-        if k in before
-        and (
-            before[k].value != c.value
-            or before[k].checked != c.checked
-            or before[k].selected != c.selected
-            or before[k].expanded != c.expanded
-        )
-    )
+    added = sum(max(0, len(cs) - len(before.get(k, ()))) for k, cs in after.items())
+    removed = sum(max(0, len(cs) - len(after.get(k, ()))) for k, cs in before.items())
+    changed = unknown = 0
+    transitions: list[str] = []
+    for k, cs in after.items():
+        prior = before.get(k)
+        if not prior or len(prior) != len(cs):
+            continue  # identity unresolved: the count difference is reported as added/removed
+        for b, a in zip(prior, cs, strict=True):
+            moved, unk, trans = _compare(b, a)
+            changed += moved
+            unknown += unk
+            transitions.extend(trans)
     if prev.page_text == cur.page_text:
         text_ratio = 1.0
     elif not prev.page_text or not cur.page_text:
@@ -128,13 +176,31 @@ def diff(
         parts.append(f"{added} elements appeared, {removed} disappeared")
     if changed:
         parts.append(f"{changed} element values changed")
+    if transitions:
+        more = len(transitions) - _TRANSITIONS_SHOWN
+        parts.append(", ".join(transitions[:_TRANSITIONS_SHOWN]) + (f" and {more} more" if more > 0 else ""))
     if dialog_changed:
         parts.append("dialog opened" if cur_dialog is not None else "dialog closed")
     if tabs_changed:
         parts.append(f"tabs {len(prev.tabs)} -> {len(cur.tabs)}")
     if not parts and text_ratio < TEXT_UNCHANGED_RATIO:
         parts.append(f"page text changed ({text_ratio:.0%} similar)")
-    summary = "; ".join(parts) if parts else "no visible change"
+    if parts:
+        summary = "; ".join(parts)
+    elif unknown:
+        summary = f"no visible change; {unknown} control states not observed both before and after"
+    else:
+        summary = "no visible change"
     return Effect(
-        url_changed, title_changed, added, removed, changed, text_ratio, dialog_changed, tabs_changed, summary
+        url_changed,
+        title_changed,
+        added,
+        removed,
+        changed,
+        text_ratio,
+        dialog_changed,
+        tabs_changed,
+        summary,
+        unknown=unknown,
+        transitions=tuple(transitions),
     )

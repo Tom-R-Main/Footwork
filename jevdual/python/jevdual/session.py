@@ -37,11 +37,26 @@ from pathlib import Path
 from typing import Any
 
 from jevdual import carry, grants
-from jevdual.menu import Candidate, Menu
+from jevdual.menu import Candidate, Menu, peer_position
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
-_CAND_FIELDS = ("id", "label", "role", "operations", "value", "input_type", "checked", "selected", "section")
+#: every Candidate field the effect diff reads (identity and state). A session written before a field
+#: was added reads it back as None, which the diff treats as "not observed", never as a change.
+_CAND_FIELDS = (
+    "id",
+    "label",
+    "role",
+    "operations",
+    "value",
+    "href",
+    "input_type",
+    "checked",
+    "selected",
+    "expanded",
+    "pressed",
+    "section",
+)
 
 
 @dataclass
@@ -105,7 +120,12 @@ class SessionState:
     def last_menu(self) -> Menu | None:
         if not self.last_candidates:
             return None
-        cands = tuple(Candidate(**{**c, "operations": tuple(c["operations"])}) for c in self.last_candidates)
+        cands = tuple(
+            Candidate(
+                **{**{k: v for k, v in c.items() if k in _CAND_FIELDS}, "operations": tuple(c["operations"])}
+            )
+            for c in self.last_candidates
+        )
         return Menu(
             url=self.last_url,
             title=self.last_title,
@@ -377,8 +397,11 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
     lines.append(f"{len(m.candidates)} elements:")
     for c in m.candidates:
         extra = f" = {c.value!r}" if c.value else ""
-        if c.checked is not None:
-            extra += f" checked={c.checked}"
+        for key in ("checked", "pressed", "expanded"):
+            if getattr(c, key) is not None:
+                extra += f" {key}={getattr(c, key)}"
+        if c.selected:
+            extra += " selected"
         sect = f"  [{c.section}]" if c.section else ""
         lines.append(f"  [{c.id:>4}] {c.role:<10} {c.label!r}{extra}{sect}")
     txt = m.page_text
@@ -855,6 +878,7 @@ async def cmd_do(args: Any) -> int:
         before = state.last_menu()
         # the ids the operator chose from: the observation before this command, not the fresh one
         chosen_from = {c["id"]: c["label"] for c in state.last_candidates}
+        chosen_cands = list(state.last_candidates)
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
@@ -862,7 +886,7 @@ async def cmd_do(args: Any) -> int:
             from jevdual.effects import diff
 
             drift = diff(before, nm.menu)
-            if not drift.no_effect:
+            if drift.visible_change:
                 print(
                     f"note: the window changed since your last look ({drift.summary[:120]}); "
                     "ids below are from the fresh observation"
@@ -884,6 +908,18 @@ async def cmd_do(args: Any) -> int:
                 print(
                     f"id {cid} is not on the current observation{hint}; run `footwork look`", file=sys.stderr
                 )
+                return 4
+            was = peer_position(chosen_cands, cid) if known is not None else None
+            now = peer_position(nm.menu.candidates, cid)
+            if known is not None and known == target.label and was is not None and was[1] > 1 and was != now:
+                # two same-label toggles are both offered: the right label is not enough
+                print(
+                    f"id {cid} is {target.label!r} {now[0] + 1 if now else '?'} of {now[1] if now else '?'} "
+                    f"now; it was {was[0] + 1} of {was[1]} when you looked; the page changed. "
+                    "Nothing dispatched. Choose again from the observation below.",
+                    file=sys.stderr,
+                )
+                print(render_observation(nm, text_chars=args.text, receipt=None))
                 return 4
             if known is not None and known != target.label:
                 print(

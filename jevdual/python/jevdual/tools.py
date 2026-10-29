@@ -22,6 +22,7 @@ from browser_use.agent.views import ActionResult
 from browser_use.browser.session import BrowserSession
 from pydantic import BaseModel, Field
 
+from jevdual.blockers import DiagnoseFn, diagnose_safely
 from jevdual.bridge import Bridge, BridgeError
 from jevdual.effects import diff
 from jevdual.menu import Menu, build_menu
@@ -39,6 +40,9 @@ Status = Literal[
     "stuck",
     "error",
 ]
+
+#: stops whose page is worth a blocker diagnosis: nothing offered could progress, or nothing changed
+DIAGNOSED_STATUSES = ("blocked", "stuck")
 
 DEFAULT_PAUSE_KEYWORDS: tuple[str, ...] = (
     "delete",
@@ -77,16 +81,20 @@ class MicroLoopResult:
     reason: str = ""
     jev_calls: int = 0
     wall_ms: float = 0.0
+    #: jevdual.blockers.BlockerDiagnosis.to_json() of the page a blocked/stuck loop stopped on (advisory)
+    diagnosis: dict[str, Any] | None = None
+    diagnosis_text: str = ""
 
     def summary(self) -> str:
         acts = "; ".join(
             f"{s['operation']} {s.get('label', '')}".strip() for s in self.steps if s.get("executed")
         )
         tail = f" Last: {acts}." if acts else ""
-        return f"act_toward_goal({self.goal!r}) -> {self.status} after {len(self.steps)} step(s) at {self.final_url}. {self.reason}{tail}".strip()
+        diag = f" {self.diagnosis_text}" if self.diagnosis_text else ""
+        return f"act_toward_goal({self.goal!r}) -> {self.status} after {len(self.steps)} step(s) at {self.final_url}. {self.reason}{tail}{diag}".strip()
 
     def to_json(self) -> dict[str, Any]:
-        return {
+        out = {
             "status": self.status,
             "goal": self.goal,
             "final_url": self.final_url,
@@ -95,6 +103,9 @@ class MicroLoopResult:
             "jev_calls": self.jev_calls,
             "wall_ms": round(self.wall_ms, 1),
         }
+        if self.diagnosis is not None:
+            out["diagnosis"] = self.diagnosis
+        return out
 
 
 class GoalParams(BaseModel):
@@ -127,7 +138,10 @@ async def run_micro_loop(
     text_source: TextFn | None = None,
     config: MicroLoopConfig | None = None,
     max_steps: int | None = None,
+    diagnose: DiagnoseFn | None = None,
 ) -> MicroLoopResult:
+    """``diagnose`` (opt-in, jevdual.blockers) runs once when the loop stops blocked or stuck; it is
+    attached to the result and never changes the status or dispatches anything."""
     cfg = config or MicroLoopConfig()
     budget = max_steps or cfg.max_steps
     action_model = tools.registry.create_action_model()
@@ -135,6 +149,7 @@ async def run_micro_loop(
     result = MicroLoopResult(status="budget_exhausted", goal=goal)
     t0 = time.perf_counter()
     prev_menu: Menu | None = None
+    menu: Menu | None = None
     no_effect = 0
     lines: list[str] = []
 
@@ -144,7 +159,11 @@ async def run_micro_loop(
         result.final_url = menu.url
         effect = diff(prev_menu, menu)
         if prev_menu is not None:
-            no_effect = no_effect + 1 if effect.no_effect else 0
+            # an inconclusive comparison neither extends nor breaks a no-effect run; the step budget still bounds it
+            if effect.no_effect:
+                no_effect += 1
+            elif not effect.inconclusive:
+                no_effect = 0
             if no_effect >= cfg.no_effect_limit:
                 result.status, result.reason = (
                     "stuck",
@@ -227,6 +246,9 @@ async def run_micro_loop(
             lines.append(bridged.memory_line)
             continue
         break
+    if diagnose is not None and menu is not None and result.status in DIAGNOSED_STATUSES:
+        diagnosis = await diagnose_safely(diagnose, menu, goal)
+        result.diagnosis, result.diagnosis_text = diagnosis.to_json(), diagnosis.summary()
     result.wall_ms = (time.perf_counter() - t0) * 1000
     if result.final_url is None:
         result.final_url = await browser_session.get_current_page_url()
@@ -242,7 +264,12 @@ class _OutputShim:
 
 
 def register_act_toward_goal(
-    tools: Any, *, decide: DecideFn, text_source: TextFn | None = None, config: MicroLoopConfig | None = None
+    tools: Any,
+    *,
+    decide: DecideFn,
+    text_source: TextFn | None = None,
+    config: MicroLoopConfig | None = None,
+    diagnose: DiagnoseFn | None = None,
 ) -> None:
     """Register ``act_toward_goal`` on a browser-use Tools registry."""
 
@@ -263,6 +290,7 @@ def register_act_toward_goal(
             text_source=text_source,
             config=config,
             max_steps=params.max_steps,
+            diagnose=diagnose,
         )
         log.info("act_toward_goal: %s", result.summary())
         return ActionResult(

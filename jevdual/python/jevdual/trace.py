@@ -100,6 +100,8 @@ class StepRecord(BaseModel):
     #: the page text System 1 saw before acting (redacted, capped); native runs record it, browser runs may
     page_text: str | None = None
     verify: dict[str, Any] | None = None
+    #: advisory page diagnosis attached to a blocked/stalled S1 handback (jevdual.blockers), when enabled
+    diagnosis: dict[str, Any] | None = None
     timings: Timings = Field(default_factory=Timings)
     cost: Cost = Field(default_factory=Cost)
     ts: float = Field(default_factory=time.time)

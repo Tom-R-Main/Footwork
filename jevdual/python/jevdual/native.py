@@ -38,7 +38,15 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from jevdual.menu import Candidate, Menu, MenuBudget, Operation, estimate_tokens
+from jevdual.menu import (
+    Candidate,
+    ControlState,
+    Menu,
+    MenuBudget,
+    Operation,
+    estimate_tokens,
+    peer_position,
+)
 
 log = logging.getLogger("jevdual.native")
 
@@ -195,7 +203,8 @@ class NativeMenu:
         return self.tokens.get(id)
 
 
-def _checked(value: Any) -> bool | None:
+def _checked(value: Any) -> ControlState:
+    """An AX checkbox/radio/switch value: 0 off, 1 on, 2 mixed (NSControlStateValueMixed)."""
     if value is None:
         return None
     if isinstance(value, bool):
@@ -205,6 +214,8 @@ def _checked(value: Any) -> bool | None:
         return True
     if s in ("0", "false", "off", "unchecked"):
         return False
+    if s in ("2", "mixed"):
+        return "mixed"
     return None
 
 
@@ -276,6 +287,9 @@ def _page_text(tree_markdown: str | None, elements: list[Any], cap: int) -> str:
 #: candidates a native menu offers Jev at most; beyond this the tail is dropped (``omitted["cap"]``).
 #: A Chrome window offered 296 and Jev refused the request as too large twice per step.
 NATIVE_MENU_CAP = 160
+#: same-key toggles kept per key: a table of unlabelled checkboxes (labelled by their raw value) must
+#: not crowd the window's other controls past the cap
+TOGGLE_REPEATS_KEPT = 4
 
 
 def _prune(
@@ -287,19 +301,48 @@ def _prune(
 ) -> tuple[list[Candidate], dict[int, str], dict[int, tuple[float, float, float, float]]]:
     """Drop what System 1 cannot choose between: a control whose label is only its role (``button
     'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
-    the first (a page with 27 identical "More actions" buttons offers one). Then cap the count."""
-    kept: list[Candidate] = []
-    seen: set[tuple[str, str, str | None, str | None]] = set()
+    the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
+    state is kept even when repeated, when its whole group is: two "Enabled" switches are two settings,
+    and dropping the second hid its change from the effect diff. The ``do`` and ``_live`` identity
+    checks tell repeats apart by their position among the offered peers, which only holds when every
+    peer is offered, so a group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first
+    member only, as any other repeat. Then cap the count."""
+
+    def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
+        return (c.role, c.label, c.value, c.section)
+
+    named = []
     for c in candidates:
         if c.label == c.role and c.role not in _TEXT_ROLES:
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
-        key = (c.role, c.label, c.value, c.section)
-        if key in seen:
-            omitted["duplicate"] = omitted.get("duplicate", 0) + 1
-            continue
-        seen.add(key)
-        kept.append(c)
+        named.append(c)
+    group: dict[tuple[str, str, str | None, str | None], int] = {}
+    for c in named:
+        group[key_of(c)] = group.get(key_of(c), 0) + 1
+
+    def dedupe(
+        cands: list[Candidate], whole: set[tuple[str, str, str | None, str | None]]
+    ) -> list[Candidate]:
+        out: list[Candidate] = []
+        seen: set[tuple[str, str, str | None, str | None]] = set()
+        for c in cands:
+            stateful = c.checked is not None or c.pressed is not None or c.expanded is not None
+            if key_of(c) in seen and not (stateful and key_of(c) in whole):
+                omitted["duplicate"] = omitted.get("duplicate", 0) + 1
+                continue
+            seen.add(key_of(c))
+            out.append(c)
+        return out
+
+    whole = {k for k, n in group.items() if n <= TOGGLE_REPEATS_KEPT}
+    kept = dedupe(named, whole)
+    if len(kept) > NATIVE_MENU_CAP:
+        # a repeated group the cap would cut stops being offered whole: keep its first member only
+        tail = {key_of(c) for c in kept[NATIVE_MENU_CAP:]}
+        if tail & whole:
+            omitted.pop("duplicate", None)
+            kept = dedupe(named, whole - tail)
     if len(kept) > NATIVE_MENU_CAP:
         omitted["cap"] = len(kept) - NATIVE_MENU_CAP
         kept = kept[:NATIVE_MENU_CAP]
@@ -725,7 +768,19 @@ class NativeBridge:
         fresh = await self.observe()
         key = (cand.role, cand.label, cand.section)
         same = fresh.menu.candidate(id)
-        if same is not None and (same.role, same.label, same.section) == key:
+        decided = peer_position(nm.menu.candidates, id)
+        if decided is not None and decided[1] > 1:
+            # one of several same-label controls (repeated toggles are kept): the id alone may now name
+            # a sibling, so the decided one is the same position among the same number of peers
+            peers = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
+            if len(peers) != decided[1]:
+                raise NativeBridgeError(
+                    "target_changed",
+                    f"[{id}] {cand.label!r} was {decided[0] + 1} of {decided[1]} alike; the window now has "
+                    f"{len(peers)}",
+                )
+            hit = peers[decided[0]]
+        elif same is not None and (same.role, same.label, same.section) == key:
             hit = same
         else:
             matches = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
@@ -741,7 +796,9 @@ class NativeBridge:
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} holds different text than when decided"
             )
-        if cand.checked is not None and hit.checked != cand.checked:
+        if (cand.checked is not None and hit.checked != cand.checked) or (
+            cand.pressed is not None and hit.pressed != cand.pressed
+        ):
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} changed state since the decision"
             )
