@@ -58,3 +58,10 @@ Observed: the full suite passed 2101 tests with 26 skipped. Thomas said he would
 Inferred: reserved-desktop qualification can proceed under the stated availability, without claiming active-user coexistence. Keep old no-send and duplicate-ingress results separate.
 Next: freeze the candidate and run fresh reserved-desktop app and chain qualification with unchanged identity/custody/oracle gates.
 Refs: output/move-submit-20261028/dev3/capture-activity-diagnostic.json; results/move-submit-20261028/full-suite.txt; docs/experiments/MS-move-submit-20261028.md
+
+## MS7 · prediction · 2026-10-28 21:51
+Hypothesis: the Go to Folder Return must target the exact proven owned modal sheet CGWindowID rather than its parent window; the parent-targeted key explains the observed missing destination navigation.
+Test: red producer/public scenarios reject parent-targeted Return, then change only that target to the already verified direct child-sheet ID; fresh live fixture, exact destination-marker readback and same-inode move oracle.
+Predicts: the owned sheet commits navigation and the subsequent Move Item Here qualifies; foreign or replaced modal IDs still refuse.
+Against: child-targeted Return still leaves the sheet open or the destination marker absent, or a foreign window can receive the key.
+Refs: output/move-submit-20261028/reserved-dev/move-proof.json
