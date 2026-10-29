@@ -65,3 +65,9 @@ Test: red producer/public scenarios reject parent-targeted Return, then change o
 Predicts: the owned sheet commits navigation and the subsequent Move Item Here qualifies; foreign or replaced modal IDs still refuse.
 Against: child-targeted Return still leaves the sheet open or the destination marker absent, or a foreign window can receive the key.
 Refs: output/move-submit-20261028/reserved-dev/move-proof.json
+
+## MS8 · prediction · 2026-10-28 21:57
+Hypothesis: removing redundant SDK captures between owned Finder foreground binding and its direct AX input avoids a focus-restoration race while exact live file/row/inode validation still supplies the input precondition.
+Test: retain the last observed candidate only for admission bookkeeping, re-resolve the exact owned file through fresh strict AX after foreground acquisition, and perform no extra SDK capture before AX input. Add source/window-change refusal coverage and run a fresh reserved fixture.
+Predicts: the intended file remains live-bound and the foreground stays Finder through selection/menu actions; changed or missing files refuse before input.
+Against: a stale/wrong file can be touched, or foreign foreground still interrupts the same sequence.
