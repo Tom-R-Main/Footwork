@@ -113,3 +113,10 @@ Test: reproduce empty, shortened-prefix, whitespace-only difference and absent-r
 Predicts: the changed-value and missing-raw regressions fail before repair and pass afterward; complete matching raw values still qualify independently of display truncation.
 Against: shortened or unavailable raw values remain usable, or display truncation alone invalidates matching complete raw values.
 Refs: PR 9 review comment 4416606138; tests/test_session.py
+
+## RVU10 · update · 2026-10-29 15:18
+Resolves: RV8 = held
+Observed: five new changed/missing raw-value regressions failed before repair and passed after 497c2f6; matching complete long raw values still qualify with a shortened display preview. Targeted suite: 337 passed. Full suite: 2250 passed, 26 skipped; Ruff and offline consumer package passed.
+Inferred: strict fresh raw equality removes the stale exact-field completion authority. Lossy normalization can now limit evidence conservatively.
+Next: push this correction, resolve the review thread with retained evidence, and require fresh hosted checks before merging. Live results remain identified with ddf133f, whose native targeting and service/oracle modules are unchanged.
+Refs: results/review-merge-20261029/regressions/exact-field/; results/review-merge-20261029/full-suite-review-fix.txt; results/review-merge-20261029/review-fix/

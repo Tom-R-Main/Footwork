@@ -1,0 +1,102 @@
+.FFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+______ test_shorter_or_changed_raw_field_limits_earlier_exact_readback[] _______
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-271/test_shorter_or_changed_raw_fi0')
+current = ''
+
+    @pytest.mark.parametrize("current", ["", "Expected", "Expected exact field ", " Expected exact field"])
+    def test_shorter_or_changed_raw_field_limits_earlier_exact_readback(tmp_path, current):
+        from jevdual.completion import effects
+        from jevdual.session import _structured_receipt
+
+        state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+        fresh.values = {8: current}
+        payload = _structured_receipt(state, pending, fresh)
+        (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+>       assert not item.usable and "contradicts" in item.limits[0]
+E       assert (not True)
+E        +  where True = Effect(effect='field_holds', resource='Body', kind='current_state', step=0, t=2.0, detail="holds 'Expected exact field' at the captured interval", values=('Expected exact field',), limits=()).usable
+
+jevdual/tests/test_session.py:212: AssertionError
+__ test_shorter_or_changed_raw_field_limits_earlier_exact_readback[Expected] ___
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-271/test_shorter_or_changed_raw_fi1')
+current = 'Expected'
+
+    @pytest.mark.parametrize("current", ["", "Expected", "Expected exact field ", " Expected exact field"])
+    def test_shorter_or_changed_raw_field_limits_earlier_exact_readback(tmp_path, current):
+        from jevdual.completion import effects
+        from jevdual.session import _structured_receipt
+
+        state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+        fresh.values = {8: current}
+        payload = _structured_receipt(state, pending, fresh)
+        (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+>       assert not item.usable and "contradicts" in item.limits[0]
+E       assert (not True)
+E        +  where True = Effect(effect='field_holds', resource='Body', kind='current_state', step=0, t=2.0, detail="holds 'Expected exact field' at the captured interval", values=('Expected exact field',), limits=()).usable
+
+jevdual/tests/test_session.py:212: AssertionError
+_ test_shorter_or_changed_raw_field_limits_earlier_exact_readback[Expected exact field ] _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-271/test_shorter_or_changed_raw_fi2')
+current = 'Expected exact field '
+
+    @pytest.mark.parametrize("current", ["", "Expected", "Expected exact field ", " Expected exact field"])
+    def test_shorter_or_changed_raw_field_limits_earlier_exact_readback(tmp_path, current):
+        from jevdual.completion import effects
+        from jevdual.session import _structured_receipt
+
+        state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+        fresh.values = {8: current}
+        payload = _structured_receipt(state, pending, fresh)
+        (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+>       assert not item.usable and "contradicts" in item.limits[0]
+E       assert (not True)
+E        +  where True = Effect(effect='field_holds', resource='Body', kind='current_state', step=0, t=2.0, detail="holds 'Expected exact field' at the captured interval", values=('Expected exact field',), limits=()).usable
+
+jevdual/tests/test_session.py:212: AssertionError
+_ test_shorter_or_changed_raw_field_limits_earlier_exact_readback[ Expected exact field] _
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-271/test_shorter_or_changed_raw_fi3')
+current = ' Expected exact field'
+
+    @pytest.mark.parametrize("current", ["", "Expected", "Expected exact field ", " Expected exact field"])
+    def test_shorter_or_changed_raw_field_limits_earlier_exact_readback(tmp_path, current):
+        from jevdual.completion import effects
+        from jevdual.session import _structured_receipt
+
+        state, pending, fresh = _exact_pending(tmp_path, "Expected exact field")
+        fresh.values = {8: current}
+        payload = _structured_receipt(state, pending, fresh)
+        (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+>       assert not item.usable and "contradicts" in item.limits[0]
+E       assert (not True)
+E        +  where True = Effect(effect='field_holds', resource='Body', kind='current_state', step=0, t=2.0, detail="holds 'Expected exact field' at the captured interval", values=('Expected exact field',), limits=()).usable
+
+jevdual/tests/test_session.py:212: AssertionError
+_____ test_display_preview_without_raw_value_cannot_confirm_exact_readback _____
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-271/test_display_preview_without_r0')
+
+    def test_display_preview_without_raw_value_cannot_confirm_exact_readback(tmp_path):
+        from jevdual.completion import effects
+        from jevdual.session import _structured_receipt
+
+        state, pending, fresh = _exact_pending(tmp_path, "Complete long value " * 30)
+        fresh.values = {}
+        payload = _structured_receipt(state, pending, fresh)
+        (item,) = effects([{"kind": "receipt", "action": pending, "structured_evidence": payload}])
+>       assert not item.usable and "unavailable" in item.limits[0]
+E       assert (not True)
+E        +  where True = Effect(effect='field_holds', resource='Body', kind='current_state', step=0, t=2.0, detail="holds 'Complete long value ...lue Complete long value Complete long value Complete long value Complete long value Complete long value ',), limits=()).usable
+
+jevdual/tests/test_session.py:223: AssertionError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_session.py::test_shorter_or_changed_raw_field_limits_earlier_exact_readback[]
+FAILED jevdual/tests/test_session.py::test_shorter_or_changed_raw_field_limits_earlier_exact_readback[Expected]
+FAILED jevdual/tests/test_session.py::test_shorter_or_changed_raw_field_limits_earlier_exact_readback[Expected exact field ]
+FAILED jevdual/tests/test_session.py::test_shorter_or_changed_raw_field_limits_earlier_exact_readback[ Expected exact field]
+FAILED jevdual/tests/test_session.py::test_display_preview_without_raw_value_cannot_confirm_exact_readback
+5 failed, 1 passed, 28 deselected in 0.81s
