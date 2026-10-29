@@ -24,3 +24,13 @@ Test: full suite, offline wheel install and fresh owned live fixtures; nominal a
 Predicts: required Finder organized path, saved clockwise pixels, exact ticket fields/one ingress and resumed handoffs agree; old unknown history is untouched.
 Against: any missing cell, wrong artifact, duplicate input or unqualified custody leaves the full portfolio gate open.
 Refs: docs/experiments/MS-move-submit-20261028.md
+
+## MSU1 · update · 2026-10-28 21:20
+Observed: native move and independent ticket evidence now have focused/public protocol coverage, including a real controller kill after independent receipt retention. Live Finder Copy uses a dynamic quoted filename and asynchronously updates the clipboard; Go to Folder is a direct AXSheet child with one writable field and a Close button, without a Go button. Its AXConfirm acknowledged without navigating. A later foreground Return probe refused before input because the front changed; another actual rename command also returned qualified no-send for recent input despite an earlier idle observation.
+Inferred: background/foreground readiness must be settled at the actual input boundary. The unexplained idle reset may be user activity or observation-induced activity; do not weaken the three-second gate.
+Next: measure activity around read-only driver calls, then complete a bounded idle-gated UI burst and retain any no-send attempts.
+Refs: output/move-submit-20261028/dev; output/move-submit-20261028/dev2; tests/test_session_ticket_reconciliation.py
+
+## MS5 · exploratory · 2026-10-28 21:20
+Question: do read-only driver creation, window listing or bound capture reset the HID idle counter or change the foreground process?
+Test: capture idle/front metadata immediately before and after those calls on the owned Finder window; send no input and retain timings. Distinguish driver-induced changes from concurrent external activity before choosing the next live readiness step.
