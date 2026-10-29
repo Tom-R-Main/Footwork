@@ -9,7 +9,7 @@ import time
 from types import SimpleNamespace
 
 import pytest
-from jevdual import browser_driver, cli, session
+from jevdual import browser_driver, chrome_scope, cli, session
 from jevdual.native import NativeBridge, NativeBridgeError
 from jevdual.operator_evidence import EvidenceError, execution_record, validate_binding, validate_execution
 
@@ -133,10 +133,12 @@ class NativeChromeDriver:
         self.snapshots = list(snapshots)
         self.inputs = []
         self.captures = []
+        self.current = None
 
     async def get_window_state(self, inp):
         self.captures.append(inp.include_screenshot)
-        return self.snapshots.pop(0)
+        self.current = self.snapshots.pop(0)
+        return self.current
 
     async def click(self, inp):
         self.inputs.append("click")
@@ -157,7 +159,83 @@ def _native(driver, monkeypatch):
 
     monkeypatch.setattr("jevdual.native.require_accessibility", lambda: None)
     monkeypatch.setattr(ExecutionPolicy, "locked", lambda _: False)
+
+    def scoped_capture(pid, window_id):
+        snapshot = driver.current
+        assert snapshot is not None
+        assert (pid, window_id) == (snapshot["pid"], snapshot["window_id"])
+        if "scope_evidence" in snapshot:
+            return SimpleNamespace(to_record=lambda: snapshot["scope_evidence"])
+        return chrome_scope.ChromeScopeEvidence(
+            pid=pid,
+            window_id=window_id,
+            method=chrome_scope.METHOD,
+            complete=True,
+            visited=10,
+            excluded_web_areas=1,
+            address_bars=tuple(
+                chrome_scope.AddressBar(
+                    value=element.get("value"),
+                    role="AXTextField",
+                    identifier=None,
+                    ancestry=("AXWindow", "AXToolbar"),
+                )
+                for element in snapshot["elements"]
+                if element.get("label") == "Address and search bar"
+            ),
+            errors=(),
+        )
+
+    monkeypatch.setattr(chrome_scope, "capture", scoped_capture)
     return NativeBridge(driver, 77, 1, observation_guard=session._native_scope_guard(SCOPE))
+
+
+def _scoped_record():
+    return chrome_scope.ChromeScopeEvidence(
+        pid=77,
+        window_id=1,
+        method=chrome_scope.METHOD,
+        complete=True,
+        visited=10,
+        excluded_web_areas=1,
+        address_bars=(chrome_scope.AddressBar(SCOPE["url"], "AXTextField", None, ("AXWindow", "AXToolbar")),),
+        errors=(),
+    ).to_record()
+
+
+def test_complete_trusted_toolbar_qualifies_when_global_page_snapshot_is_incomplete(monkeypatch):
+    snapshot = _snapshot()
+    snapshot.update(elements_complete=False, truncated=True)
+    driver = NativeChromeDriver([snapshot])
+    observed = asyncio.run(_native(driver, monkeypatch).observe())
+    assert not observed.elements_complete and observed.truncated
+    assert observed.chrome_scope["complete"]
+    assert driver.inputs == []
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        None,
+        {"complete": False},
+        {"complete": True, "errors": ["scope_read_failed"]},
+        {"pid": 78},
+        {"window_id": 2},
+        {"pid": True},
+        {"window_id": True},
+        {"method": "unknown/v1"},
+        {"address_bars": []},
+    ],
+)
+def test_global_completeness_does_not_override_missing_or_unqualified_toolbar(change, monkeypatch):
+    snapshot = _snapshot()
+    evidence = None if change is None else {**_scoped_record(), **change}
+    snapshot["scope_evidence"] = evidence
+    driver = NativeChromeDriver([snapshot])
+    with pytest.raises(NativeBridgeError) as exc:
+        asyncio.run(_native(driver, monkeypatch).observe())
+    assert exc.value.reason == "native_scope_unavailable"
+    assert not exc.value.dispatched and driver.inputs == []
 
 
 @pytest.mark.parametrize("url", [SCOPE["url"], "127.0.0.1:8765/form?run=1"])

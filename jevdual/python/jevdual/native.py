@@ -13,9 +13,9 @@ Contract:
   snapshots can be replayed offline) into a :class:`NativeMenu`: the ordinary :class:`Menu`
   plus the per-id ``element_token`` map and the snapshot identity.
 * ``NativeBridge`` observes a window and executes one ``(operation, id)`` against the menu it
-  was decided from, refusing a stale menu. Every dispatch returns a :class:`NativeEffect` that
-  carries the Driver's own ``effect``/``route``/``evidence`` verbatim; ``confirmed`` is the
-  Driver's word, never ours.
+  was decided from, refusing a stale menu. Each :class:`NativeEffect` names its producer:
+  SDK results preserve the Driver's account, while bounded AX routes retain their own
+  acknowledgement and exact readback predicate. Neither establishes overall task correctness.
 
 Role mapping is conservative: an element becomes a candidate only when the Driver gave it a
 token (it advertises an action or a writable value) and its role maps to one of our operations.
@@ -192,6 +192,7 @@ class NativeMenu:
     visual_capture_error: str | None = None
     #: Pre-pruning address bars for scope checks; deduplication cannot prove uniqueness.
     scope_address_bars: tuple[tuple[int, str | None], ...] | None = None
+    chrome_scope: Any = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -515,8 +516,9 @@ def require_accessibility() -> None:
 
 @dataclass(frozen=True)
 class NativeEffect:
-    """The Driver's account of one dispatched action, verbatim. ``effect`` is one of the Driver's
-    words (confirmed, partial, unverifiable, suspected_noop, refused); ``ok`` is our reading of it.
+    """One native producer's account of an action and its declared local predicate.
+    ``effect`` uses confirmed, partial, unverifiable, suspected_noop or refused.
+    ``delivery_basis`` identifies the SDK or source-qualified AX route.
 
     ``delivery`` is how the bridge declared it would reach the target before sending anything
     (background, foreground, desktop; see ``jevdual.posture``) and ``driver_delivery`` how the Driver says
@@ -539,12 +541,15 @@ class NativeEffect:
     foreground: dict[str, Any] | None = None
     #: package G: after a save, the file the window names read against its text (``save_readback``)
     readback: dict[str, Any] | None = None
-    #: Qualified SDK delivery count; dispatched alone only means input was attempted.
+    #: Qualified acknowledged-input lower bound; uncounted SDK input is excluded.
+    #: Dispatched alone only means input was attempted.
     delivered_count: int | None = None
     #: Producer of qualified delivery; an attempted input has basis ``unknown``.
     delivery_basis: str = "unknown"
     #: Exact AX current-state readback, separate from disk/window persistence.
     field_readback: dict[str, Any] | None = None
+    #: Source-qualified non-text UI predicates, never task-correctness claims.
+    native_readback: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -570,6 +575,8 @@ class NativeEffect:
             rec["foreground"] = dict(self.foreground)
         if self.field_readback is not None:
             rec["field_readback"] = dict(self.field_readback)
+        if self.native_readback is not None:
+            rec["native_readback"] = dict(self.native_readback)
         return rec
 
 
@@ -590,7 +597,7 @@ def effect_from_action_result(operation: str, target: int, label: str, result: A
         for e in (getattr(action, "evidence", None) or ())
     )
     summary = str(getattr(action, "summary", None) or getattr(result, "text", "") or "")
-    code = getattr(result, "error_code", None)
+    code = getattr(result, "error_code", None) or getattr(getattr(action, "error", None), "code", None)
     delivered = _enum_name(getattr(getattr(action, "delivery", None), "mode", None))
     if getattr(result, "is_error", False) and effect != "refused":
         # An error reply alone cannot establish that input was never delivered.
@@ -659,6 +666,62 @@ class AppendPrecondition:
     resource_check: Callable[[], bool] | None = field(default=None, repr=False, compare=False)
 
 
+def preview_menu_readback(path: list[str], before: Any, after: Any) -> dict[str, Any] | None:
+    """Qualify only the named Preview UI transition, independently of image correctness."""
+    if not isinstance(before, dict) or not isinstance(after, dict):
+        return None
+    for item in (before, after):
+        identity = item.get("identity")
+        if (
+            not isinstance(item.get("document"), str)
+            or not Path(item["document"]).is_absolute()
+            or not isinstance(identity, dict)
+            or set(identity) != {"device", "inode"}
+            or any(type(value) is not int or value < 0 for value in identity.values())
+            or any(type(item.get(key)) is not int or item[key] <= 0 for key in ("pid", "window_id"))
+            or not isinstance(item.get("undo"), list)
+            or any(not isinstance(title, str) for title in item["undo"])
+        ):
+            return None
+    if (
+        not before.get("document")
+        or not before.get("identity")
+        or before.get("document") != after.get("document")
+        or before["pid"] != after["pid"]
+        or before["window_id"] != after["window_id"]
+    ):
+        return None
+    predicate = None
+    if path in (["Tools", "Rotate Left"], ["Tools", "Rotate Right"]):
+        undo = f"Undo {path[1]}"
+        if (
+            before.get("identity") == after.get("identity")
+            and undo not in before.get("undo", [])
+            and undo in after.get("undo", [])
+        ):
+            predicate = "preview_rotate_" + path[1].split()[-1].lower() + "_ui_transition"
+    elif path == ["File", "Save"] and before.get("edited") is True and after.get("edited") is False:
+        predicate = "preview_save_ui_transition"
+    elif (
+        path == ["File", "Save"]
+        and all(
+            isinstance(item.get("sha256"), str) and re.fullmatch(r"[0-9a-f]{64}", item["sha256"])
+            for item in (before, after)
+        )
+        and before["sha256"] != after["sha256"]
+    ):
+        predicate = "preview_save_file_transition"
+    if predicate is None:
+        return None
+    return {
+        "schema_version": 1,
+        "producer": "footwork.ax.preview",
+        "predicate": predicate,
+        "before": before,
+        "after": after,
+    }
+
+
 class NativeBridge:
     """Observe one native window through the Driver and execute menu decisions against it.
 
@@ -678,6 +741,7 @@ class NativeBridge:
         live_check: bool = False,
         ax: Any = None,
         observation_guard: Callable[[NativeMenu], None] | None = None,
+        finder_scope: dict[str, Any] | None = None,
     ):
         from jevdual.posture import ExecutionPolicy
 
@@ -691,6 +755,7 @@ class NativeBridge:
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
         self.observation_guard = observation_guard
+        self.finder_scope = finder_scope
         self._foreground_inputs = 0
         self._ax = ax
         self.last: NativeMenu | None = None
@@ -741,6 +806,12 @@ class NativeBridge:
         )
         self.last = None
         observed = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
+        if self.observation_guard is not None and observed.app_name in {"Chrome", "Google Chrome"}:
+            from jevdual.chrome_scope import capture
+
+            observed = dataclasses.replace(
+                observed, chrome_scope=capture(observed.pid, observed.window_id).to_record()
+            )
         if self.observation_guard is not None:
             self.observation_guard(observed)
         if capture_path is not None:
@@ -820,6 +891,8 @@ class NativeBridge:
         )
 
     def _effect(self, operation: str, target: int, label: str, outcome: Any, delivery: str) -> NativeEffect:
+        if isinstance(outcome, NativeEffect):
+            return dataclasses.replace(outcome, delivery=delivery)
         if isinstance(outcome, BaseException):
             code = (
                 getattr(outcome, "code", None) or getattr(outcome, "reason", None) or type(outcome).__name__
@@ -1182,6 +1255,222 @@ class NativeBridge:
             )
         )
 
+    def resolve_file(self, nm: NativeMenu, selector: str) -> tuple[Any, int]:
+        """Resolve the exact retained Finder inode in this fresh window."""
+        from jevdual.finder_targets import FinderBinding, candidate_id, rebind, resolve
+
+        if not self.finder_scope or nm.app_name != "Finder":
+            raise NativeBridgeError("file_scope_missing", "an owned Finder manifest is required")
+        binding = FinderBinding.from_record(self.finder_scope["binding"])
+        binding = rebind(binding, self.finder_scope["manifest"], selector)
+        target = resolve(self.pid, self.window_id, binding, self.finder_scope["manifest"])
+        return target, candidate_id(target, nm)
+
+    async def act_file(
+        self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
+    ) -> NativeEffect:
+        """Rename the owned Finder file in its exact front/key window through AX."""
+        target, id = self.resolve_file(nm, selector)
+        self._require_fresh(nm, id)
+
+        async def call() -> NativeEffect:
+            await self._front_and_key()
+            fresh = await self.observe()
+            return await self._rename_file(fresh, operation, selector, text)
+
+        return await self._foreground(
+            operation, id, target.value, call, why="Finder filename editing requires its front/key window"
+        )
+
+    async def _rename_file(
+        self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
+    ) -> NativeEffect:
+        """Source-qualified rename producer; called only after front/key qualification."""
+        from jevdual.finder_targets import rebind
+
+        target, id = self.resolve_file(nm, selector)
+        self._require_fresh(nm, id)
+        if (
+            operation != "type"
+            or not text
+            or Path(text).name != text
+            or text in {".", ".."}
+            or "\x00" in text
+        ):
+            raise NativeBridgeError(
+                "file_operation_unsupported", "Finder filename input requires one basename"
+            )
+        destination = str(Path(target.binding.path).with_name(text))
+        if destination == target.binding.path or Path(destination).exists() or Path(destination).is_symlink():
+            raise NativeBridgeError("file_destination_exists", "the destination must be a fresh owned path")
+        # Check the destination is a declared fixture path before any input.
+        from jevdual.app_oracles import OracleError, _asset_path
+
+        try:
+            _asset_path(self.finder_scope["manifest"], destination)
+        except OracleError as exc:
+            raise NativeBridgeError(
+                "file_scope_invalid", "destination is outside declared fixture paths"
+            ) from exc
+        fresh = await self.observe()
+        target, id = self.resolve_file(fresh, selector)
+        self.last = None
+        self.dispatches += 1
+        count = 0
+        proof = {
+            "schema_version": 1,
+            "producer": "footwork.ax.finder",
+            "predicate": "finder_rename_same_inode",
+            "before": target.to_record(),
+            "destination": destination,
+            "acknowledgements": [],
+        }
+
+        def context() -> dict[str, Any]:
+            try:
+                selection = self.ax.finder_selection_state(target.element)
+            except self.ax.AXError as exc:
+                selection = {"exact_row_only": False, "error": exc.reason}
+            return {
+                **self.ax.finder_window_context(self.pid),
+                "front_pid": self.policy._activity().frontmost_pid(),
+                "selection": selection,
+            }
+
+        try:
+            proof["before_selection"] = context()
+            self.ax.select_finder_row_ack(target.element)
+            count += 1
+            proof["acknowledgements"].append("exact_row_selected")
+            proof["before_menu"] = context()
+            if (
+                proof["before_menu"]["front_pid"] != self.pid
+                or proof["before_menu"]["main_window_id"] != self.window_id
+                or not proof["before_menu"]["selection"]["exact_row_only"]
+            ):
+                raise self.ax.AXError(
+                    "file_selection_unverified",
+                    "the exact bound row is not the sole selected row in the front window",
+                )
+            self.ax.press_menu(self.pid, ["File"])
+            count += 1
+            proof["acknowledgements"].append("file_menu_opened")
+            rename_enabled = False
+            for _ in range(20):
+                rename_enabled = self.ax.menu_item_enabled(self.pid, ["File", "Rename"])
+                if rename_enabled:
+                    break
+                await asyncio.sleep(0.05)
+            proof["rename_enabled"] = rename_enabled
+            if not rename_enabled:
+                raise self.ax.AXError("file_rename_disabled", "the opened File menu did not enable Rename")
+            self.ax.press_menu(self.pid, ["File", "Rename"])
+            count += 1
+            proof["acknowledgements"].append("rename_menu_pressed")
+            proof["after_menu"] = context()
+            editor = None
+            for _ in range(20):
+                try:
+                    editor = self.ax.focused_finder_editor(
+                        self.pid, self.window_id, target.frame, target.value
+                    )
+                    if self.ax.value(editor) == target.value:
+                        break
+                except self.ax.AXError as exc:
+                    proof["editor_error"] = {"reason": exc.reason, "detail": str(exc)[:200]}
+                    editor = None
+                await asyncio.sleep(0.05)
+            if editor is None or self.ax.value(editor) != target.value or not self.ax.can_set_value(editor):
+                proof["editor_failure_context"] = context()
+                raise self.ax.AXError("file_editor_missing", "the actual rename editor was not established")
+            proof["editor"] = {
+                "pid": self.pid,
+                "window_id": self.window_id,
+                "role": "AXTextField",
+                "before_value": self.ax.value(editor),
+            }
+            self.ax.set_value_ack(editor, text)
+            count += 1
+            proof["acknowledgements"].append("editor_value_set")
+            if self.ax.value(editor) != text:
+                raise self.ax.AXError(
+                    "file_editor_unverified", "the actual editor did not retain the new name"
+                )
+            rebind(target.binding, self.finder_scope["manifest"], selector)
+            current_editor = self.ax.focused_finder_editor(self.pid, self.window_id, target.frame, text)
+            if self.policy._activity().frontmost_pid() != self.pid or current_editor != editor:
+                raise self.ax.AXError(
+                    "file_editor_lost_focus", "the bound rename window lost foreground before commit"
+                )
+            if Path(destination).exists() or Path(destination).is_symlink():
+                raise self.ax.AXError(
+                    "file_destination_changed", "the rename destination appeared before commit"
+                )
+            outcome = await self.driver.call_tool(
+                "hotkey",
+                json.dumps(
+                    {
+                        "pid": self.pid,
+                        "window_id": self.window_id,
+                        "keys": ["Return"],
+                        "delivery_mode": "foreground",
+                        "session": self.session,
+                    }
+                ),
+            )
+            commit = effect_from_action_result("enter", id, target.value, outcome)
+            proof["commit"] = {
+                "route": "sdk_foreground_return",
+                "effect": commit.effect,
+                "delivered_count": commit.delivered_count,
+            }
+            if commit.delivered_count:
+                count += commit.delivered_count
+            if not commit.dispatched or commit.error_code:
+                raise self.ax.AXError(
+                    "file_commit_uncertain", "the rename commit did not return a successful acknowledgement"
+                )
+            rebound = None
+            for _ in range(20):
+                try:
+                    rebound = rebind(target.binding, self.finder_scope["manifest"], "file:" + destination)
+                    if not Path(target.binding.path).exists() and not Path(target.binding.path).is_symlink():
+                        break
+                except self.ax.AXError:
+                    rebound = None
+                await asyncio.sleep(0.05)
+            if (
+                rebound is None
+                or Path(target.binding.path).exists()
+                or Path(target.binding.path).is_symlink()
+            ):
+                raise self.ax.AXError("rename_unverified", "same-inode rename is not established")
+            proof["after"] = rebound.to_record()
+            return NativeEffect(
+                operation,
+                id,
+                target.value,
+                "confirmed",
+                route="accessibility",
+                summary="rename editor input acknowledged; same-inode rename observed; count is acknowledged-input lower bound",
+                delivered_count=count,
+                delivery_basis="ax_finder_rename_readback",
+                native_readback=proof,
+            )
+        except Exception as exc:  # noqa: BLE001 - a write may have landed
+            return NativeEffect(
+                operation,
+                id,
+                target.value,
+                "unverifiable",
+                route="accessibility",
+                summary=str(exc)[:200],
+                error_code=getattr(exc, "reason", type(exc).__name__),
+                delivered_count=count or None,
+                delivery_basis="ax_finder_rename_readback" if count else "unknown",
+                native_readback=proof,
+            )
+
     async def act(
         self,
         nm: NativeMenu,
@@ -1395,11 +1684,22 @@ class NativeBridge:
         self.dispatches += 1
         label = " > ".join(path)
         ax = self.ax
+        preview_before = None
 
         async def call() -> Any:
+            nonlocal preview_before
             await self._front_and_key()
             if self.observation_guard is not None:
                 await self.observe()
+            if nm.app_name == "Preview" and path in (
+                ["Tools", "Rotate Left"],
+                ["Tools", "Rotate Right"],
+                ["File", "Save"],
+            ):
+                try:
+                    preview_before = ax.preview_document_state(self.pid, self.window_id)
+                except (ax.AXError, OSError):
+                    preview_before = None
             try:
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:
@@ -1418,6 +1718,22 @@ class NativeBridge:
             "menu", -1, label, call, why=f"menu {label} (a menu acts on the key window)"
         )
         eff = dataclasses.replace(eff, route=eff.route or ("accessibility" if eff.dispatched else None))
+        if preview_before is not None and eff.delivery_basis == "ax_menu_press_ack":
+            for _ in range(20):
+                try:
+                    after = ax.preview_document_state(self.pid, self.window_id)
+                    proof = preview_menu_readback(path, preview_before, after)
+                except (ax.AXError, OSError):
+                    proof = None
+                if proof is not None:
+                    return dataclasses.replace(
+                        eff,
+                        effect="confirmed",
+                        delivery_basis="ax_menu_effect_readback",
+                        native_readback=proof,
+                        evidence=(*eff.evidence, "native_ui_readback: " + proof["predicate"]),
+                    )
+                await asyncio.sleep(0.05)
         return await self._after_save(eff, path=path)
 
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:

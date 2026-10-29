@@ -48,3 +48,10 @@ Hypothesis: opening Finder's File menu after exact row selection validates the R
 Test: add an explicit acknowledged File menu open and read enabled Rename state before the one leaf press; fresh owned development fixture, retained context and exact same-inode independent checks.
 Predicts: Rename opens the unique actual editor and commits the intended path; missing enabled state refuses before the leaf press.
 Against: File menu is enabled but Rename still fails to open the editor, or a wrong resource changes.
+
+## ARU3 · update · 2026-10-28 20:38
+Resolves: AR6 = held
+Observed: development fixture dev7 completed the combined CLI rename with four acknowledged AX inputs, one foreground Return whose SDK count remained unavailable, a retained final/applied operation and independently unchanged bytes/siblings at the exact same-inode destination. Opening File and observing enabled Rename removed the editor-activation failure. Same-title window selection and strict AX read-error/cycle refusal now have public CLI/module regressions.
+Inferred: the file selector and app-specific rename producer can qualify this bounded operation without fabricating an SDK input count. This does not establish a Finder move or a complete portfolio pass.
+Next: freeze the candidate, run the full suite, offline-install its wheel and rerun the fresh connected fixture. Retain unsupported move and unresolved browser submission as open gates.
+Refs: output/app-repair-20261028/dev7/finder-outcome.json; tests/test_session_file_targets.py; tests/test_finder_targets.py

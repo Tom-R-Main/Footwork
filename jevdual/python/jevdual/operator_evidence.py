@@ -10,10 +10,21 @@ from __future__ import annotations
 import json
 import math
 import time
+from pathlib import Path
 from typing import Any
 
 VERSION = "1"
-BASES = frozenset({"sdk_delivery_count", "ax_insert_ack", "ax_menu_press_ack", "qualified_gate", "unknown"})
+BASES = frozenset(
+    {
+        "sdk_delivery_count",
+        "ax_insert_ack",
+        "ax_menu_press_ack",
+        "ax_menu_effect_readback",
+        "ax_finder_rename_readback",
+        "qualified_gate",
+        "unknown",
+    }
+)
 EFFECTS = frozenset({"confirmed", "partial", "unverifiable", "suspected_noop", "refused"})
 MAX_RECORD_BYTES = 1_048_576
 
@@ -55,6 +66,113 @@ def validate_binding(value: Any) -> dict[str, Any]:
     if any(type(value[k]) is not int or value[k] <= 0 for k in ("pid", "window_id")):
         raise EvidenceError("invalid native binding")
     return value
+
+
+def _validate_native_readback(
+    proof: Any, basis: str, binding: dict[str, Any], effect: str, op: Any, projection: dict[str, Any]
+) -> None:
+    if not isinstance(proof, dict) or (
+        type(proof.get("schema_version")) is not int or proof.get("schema_version") != 1
+    ):
+        raise EvidenceError("missing qualified native readback")
+    if basis == "ax_menu_effect_readback":
+        from jevdual.native import preview_menu_readback
+
+        paths = {
+            "preview_rotate_right_ui_transition": ["Tools", "Rotate Right"],
+            "preview_rotate_left_ui_transition": ["Tools", "Rotate Left"],
+            "preview_save_ui_transition": ["File", "Save"],
+            "preview_save_file_transition": ["File", "Save"],
+        }
+        path = paths.get(proof.get("predicate"))
+        if (
+            path is None
+            or proof.get("producer") != "footwork.ax.preview"
+            or preview_menu_readback(path, proof.get("before"), proof.get("after")) != proof
+        ):
+            raise EvidenceError("unqualified Preview readback")
+        words = getattr(op, "args", {}).get("words", [])
+        if (
+            op.move != "menu"
+            or not words
+            or words[0] != "menu"
+            or [p.strip() for p in " ".join(words[1:]).split(">") if p.strip()] != path
+            or projection.get("app") != "Preview"
+        ):
+            raise EvidenceError("Preview predicate differs from admitted menu")
+        for state in (proof["before"], proof["after"]):
+            if any(
+                type(state.get(key)) is not int or state[key] != binding[key] for key in ("pid", "window_id")
+            ):
+                raise EvidenceError("Preview readback window differs")
+    else:
+        from jevdual.finder_targets import FinderBinding
+
+        if (
+            proof.get("producer") != "footwork.ax.finder"
+            or proof.get("predicate") != "finder_rename_same_inode"
+        ):
+            raise EvidenceError("unqualified Finder readback")
+        before = proof.get("before")
+        if (
+            not isinstance(before, dict)
+            or type(before.get("pid")) is not int
+            or type(before.get("window_id")) is not int
+            or before.get("pid") != binding["pid"]
+            or before.get("window_id") != binding["window_id"]
+        ):
+            raise EvidenceError("Finder readback window differs")
+        if effect in {"confirmed", "partial"}:
+            try:
+                old = FinderBinding.from_record(before["binding"])
+                new = FinderBinding.from_record(proof["after"])
+            except Exception as exc:
+                raise EvidenceError("invalid Finder identity readback") from exc
+            if (
+                new.path != proof.get("destination")
+                or old.path == new.path
+                or {**old.to_record(), "path": new.path} != new.to_record()
+            ):
+                raise EvidenceError("Finder identity transition differs")
+            if (
+                proof.get("acknowledgements")
+                != ["exact_row_selected", "file_menu_opened", "rename_menu_pressed", "editor_value_set"]
+                or proof.get("rename_enabled") is not True
+                or proof.get("editor")
+                != {
+                    "pid": binding["pid"],
+                    "window_id": binding["window_id"],
+                    "role": "AXTextField",
+                    "before_value": Path(old.path).name,
+                }
+                or not isinstance(proof.get("commit"), dict)
+                or proof["commit"].get("route") != "sdk_foreground_return"
+                or proof["commit"].get("effect")
+                not in {"confirmed", "unverifiable", "partial", "suspected_noop"}
+                or (
+                    proof["commit"].get("delivered_count") is not None
+                    and (
+                        type(proof["commit"]["delivered_count"]) is not int
+                        or proof["commit"]["delivered_count"] < 0
+                    )
+                )
+            ):
+                raise EvidenceError("Finder rename lacks qualified editor input")
+            words = getattr(op, "args", {}).get("words", [])
+
+            if (
+                op.move != "type"
+                or len(words) < 3
+                or words[:2] != ["type", "file:" + old.path]
+                or " ".join(words[2:]) != Path(new.path).name
+                or new.path != str(Path(old.path).with_name(" ".join(words[2:])))
+                or projection.get("app") != "Finder"
+            ):
+                raise EvidenceError("Finder predicate differs from admitted rename")
+            scope = getattr(op, "args", {}).get("finder_scope", {})
+            original = scope.get("binding", {})
+            if not original or {**original, "path": old.path} != old.to_record():
+                raise EvidenceError("Finder readback differs from admitted file identity")
 
 
 def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict[str, Any]:
@@ -154,7 +272,14 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     elif phase == "sent":
         if (
             dispatched is not True
-            or basis not in {"sdk_delivery_count", "ax_insert_ack", "ax_menu_press_ack"}
+            or basis
+            not in {
+                "sdk_delivery_count",
+                "ax_insert_ack",
+                "ax_menu_press_ack",
+                "ax_menu_effect_readback",
+                "ax_finder_rename_readback",
+            }
             or not count
         ):
             raise EvidenceError("sent phase lacks delivery evidence")
@@ -169,6 +294,8 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     ):
         raise EvidenceError("invalid execution projection/error")
     projection = record["projection"]
+    if basis in {"ax_menu_effect_readback", "ax_finder_rename_readback"}:
+        _validate_native_readback(projection.get("native_readback"), basis, binding, effect, op, projection)
     arguments = getattr(op, "args", {})
     if not isinstance(arguments, dict) or projection.get("native_scope", {}) != arguments.get(
         "native_scope", {}

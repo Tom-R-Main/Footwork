@@ -142,6 +142,109 @@ def can_insert(el: Any) -> bool:
     return True
 
 
+def can_set_value(el: Any) -> bool:
+    from ApplicationServices import AXUIElementIsAttributeSettable
+
+    err, writable = AXUIElementIsAttributeSettable(el, "AXValue", None)
+    return err == 0 and bool(writable)
+
+
+def set_value_ack(el: Any, text: str) -> None:
+    """One AXValue setter. A returned acknowledgement counts one accepted AX input."""
+    from ApplicationServices import AXUIElementSetAttributeValue
+
+    err = AXUIElementSetAttributeValue(el, "AXValue", text)
+    if err:
+        raise AXError("value_write_uncertain", f"AXValue did not acknowledge the write ({err})")
+
+
+def finder_row(el: Any) -> Any:
+    """Find the filename's own row through its short, exact AX ancestry."""
+    node = el
+    for _ in range(5):
+        if _attr(node, "AXRole") == "AXRow":
+            return node
+        node = _attr(node, "AXParent")
+        if node is None:
+            break
+    raise AXError("file_row_missing", "filename has no exact Finder row")
+
+
+def select_finder_row_ack(el: Any) -> None:
+    from ApplicationServices import AXUIElementIsAttributeSettable, AXUIElementSetAttributeValue
+
+    row = finder_row(el)
+    err, writable = AXUIElementIsAttributeSettable(row, "AXSelected", None)
+    if err or not writable:
+        raise AXError("file_row_not_selectable", "Finder row selection is unavailable")
+    err = AXUIElementSetAttributeValue(row, "AXSelected", True)
+    if err:
+        raise AXError("file_selection_uncertain", f"Finder row selection was not acknowledged ({err})")
+    if not _attr(row, "AXSelected"):
+        raise AXError("file_selection_unverified", "Finder did not report the exact row selected")
+
+
+def focused_finder_editor(pid: int, window_id: int, frame: Frame, expect: str) -> Any:
+    """Bind Finder's transient rename editor when AXWindow is absent.
+
+    Finder publishes that editor directly under AXApplication. Its main window,
+    exact focused value and overlapping filename frame jointly qualify this case.
+    This exception is not used for arbitrary text fields or other apps.
+    """
+    import objc
+    from ApplicationServices import AXUIElementCreateApplication
+
+    app = AXUIElementCreateApplication(pid)
+    if _attr(app, "AXTitle") not in ("Finder", None):
+        raise AXError("file_editor_wrong_app", "the transient editor does not belong to Finder")
+    element = _attr(app, "AXFocusedUIElement")
+    if element is None or _attr(element, "AXRole") != "AXTextField" or value(element) != expect:
+        raise AXError("file_editor_missing", "the focused Finder editor does not hold the expected name")
+    window = _attr(element, "AXWindow") or _attr(app, "AXMainWindow")
+    wid = ctypes.c_uint32(0)
+    if window is None or _hi()(objc.pyobjc_id(window), ctypes.byref(wid)) != 0 or wid.value != window_id:
+        raise AXError("file_editor_wrong_window", "Finder's main window differs from the bound window")
+    actual = frame_of(element)
+    if actual is None or not (
+        frame.x - _FRAME_TOL <= actual.x + actual.w / 2 <= frame.x + frame.w + _FRAME_TOL
+        and frame.y - _FRAME_TOL <= actual.y + actual.h / 2 <= frame.y + frame.h + _FRAME_TOL
+    ):
+        raise AXError(
+            "file_editor_wrong_frame", "the focused editor does not overlap the exact filename field"
+        )
+    return element
+
+
+def finder_selection_state(el: Any) -> dict[str, Any]:
+    row = finder_row(el)
+    outline = _attr(row, "AXParent")
+    rows = _attr(outline, "AXSelectedRows") if outline is not None else None
+    return {
+        "exact_row_selected": bool(_attr(row, "AXSelected")),
+        "selected_row_count": len(rows) if rows is not None else None,
+        "exact_row_only": len(rows) == 1 and rows[0] == row if rows is not None else False,
+    }
+
+
+def finder_window_context(pid: int) -> dict[str, Any]:
+    import objc
+    from ApplicationServices import AXUIElementCreateApplication
+
+    app = AXUIElementCreateApplication(pid)
+    result = {}
+    for attribute, key in (("AXMainWindow", "main_window_id"), ("AXFocusedWindow", "focused_window_id")):
+        element = _attr(app, attribute)
+        wid = ctypes.c_uint32(0)
+        result[key] = (
+            wid.value
+            if element is not None and _hi()(objc.pyobjc_id(element), ctypes.byref(wid)) == 0
+            else None
+        )
+    focused = _attr(app, "AXFocusedUIElement")
+    result["focused_role"] = str(_attr(focused, "AXRole")) if focused is not None else None
+    return result
+
+
 def document_path(pid: int, window_id: int) -> str | None:
     """The file a document window shows (its AXDocument URL as a path), or None when it names none."""
     from urllib.parse import unquote, urlsplit
@@ -151,6 +254,43 @@ def document_path(pid: int, window_id: int) -> str | None:
         return None
     parts = urlsplit(str(doc))
     return unquote(parts.path) if parts.scheme == "file" else None
+
+
+def preview_document_state(pid: int, window_id: int) -> dict[str, Any]:
+    """Bounded Preview UI state; disk identity binds the named document, not its pixels."""
+    import hashlib
+    import os
+    import stat
+
+    window = window_element(pid, window_id)
+    path = document_path(pid, window_id)
+    edited = _attr(window, "AXEdited")
+    if not path:
+        raise AXError("document_state_missing", "document path unavailable")
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    try:
+        identity = os.fstat(fd)
+        if not stat.S_ISREG(identity.st_mode) or identity.st_size > 64 * 1024 * 1024:
+            raise AXError("document_state_missing", "the document is not a bounded regular file")
+        digest = hashlib.sha256()
+        while data := os.read(fd, 65536):
+            digest.update(data)
+        after = os.fstat(fd)
+        current = os.stat(path, follow_symlinks=False)
+        stamp = lambda info: (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+        if stamp(identity) != stamp(after) or stamp(identity) != stamp(current):
+            raise AXError("document_state_changed", "the document changed while being observed")
+    finally:
+        os.close(fd)
+    return {
+        "pid": pid,
+        "window_id": window_id,
+        "document": path,
+        "identity": {"device": identity.st_dev, "inode": identity.st_ino},
+        "sha256": digest.hexdigest(),
+        "edited": bool(edited) if isinstance(edited, (bool, int)) and edited in (0, 1) else None,
+        "undo": [p.split(" > ", 1)[1] for p in menu_paths(pid) if p.startswith("Edit > Undo ")],
+    }
 
 
 def text_area_values(pid: int, window_id: int) -> list[str]:
@@ -305,6 +445,25 @@ def press_menu(pid: int, path: list[str]) -> None:
     err = AXUIElementPerformAction(node, "AXPress")
     if err != 0:
         raise AXError("press_refused", f"AXPress on {' > '.join(path)} refused ({err})")
+
+
+def menu_item_enabled(pid: int, path: list[str]) -> bool:
+    """Read the exact menu item's validated enabled state after opening its menu."""
+    from ApplicationServices import AXUIElementCreateApplication
+
+    node = _attr(AXUIElementCreateApplication(pid), "AXMenuBar")
+    if node is None:
+        raise AXError("menu_missing", "the application menu bar is unavailable")
+    for name in path:
+        want = name.strip().removesuffix("…").removesuffix("...").strip().casefold()
+        hits = [item for item in _menu_items(node) if _title(item) == want]
+        if len(hits) != 1:
+            raise AXError(
+                "menu_missing" if not hits else "menu_ambiguous", "the exact menu item is unavailable"
+            )
+        node = hits[0]
+    enabled = _attr(node, "AXEnabled")
+    return isinstance(enabled, (bool, int)) and enabled == 1
 
 
 def raise_window(pid: int, window_id: int) -> None:

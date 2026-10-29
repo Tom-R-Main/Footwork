@@ -340,6 +340,9 @@ def build_parser() -> argparse.ArgumentParser:
     st.add_argument("--answer", action="store_true")
     st.add_argument("--authority", help="opt-in native durable mode: absolute shared authority database path")
     st.add_argument(
+        "--finder-manifest", help="durable Finder only: owned fixture manifest for stable file:/ selectors"
+    )
+    st.add_argument(
         "--native-url", help="native Chrome only: exact HTTP numeric-loopback URL required before every input"
     )
     st.add_argument(

@@ -28,7 +28,15 @@ footwork desktop start "Owned local fixture" --app "Google Chrome" --pid OWNED_P
   --authority /absolute/run/authority.sqlite --session /absolute/run/chrome
 ```
 
-An explicit PID selects only that process, with first-observation app/PID/window checks. URL/title scope is persisted and bound into request identity and receipts. Every fresh/internal observation and input boundary rechecks the complete AX source and one pre-pruning address bar; unavailable or changed scope refuses input. Foreground-key fallback rechecks after its policy wait. Guarded observations withhold screenshots. A native Chrome result does not qualify the semantic browser adapter, arbitrary origins or tab/window birth.
+An explicit PID selects only that process, with first-observation app/PID/window checks. URL/title scope is persisted and bound into request identity and receipts. Every fresh/internal observation and input boundary obtains a separate bounded complete trusted-toolbar capture (`chrome.ax-toolbar/v1`), excluding web-content descendants. Exact PID/window, one real toolbar address bar, readable URL and fixture title are required. An incomplete page capture does not invalidate a complete toolbar capture; an incomplete toolbar refuses. Scope coverage is retained with execution evidence. Foreground-key fallback rechecks after its policy wait. Guarded observations withhold screenshots. A native Chrome result does not qualify the semantic browser adapter, arbitrary origins or tab/window birth.
+
+## Owned Finder targets and native predicates
+
+For the synthetic asset fixture, start durable Finder with `--finder-manifest /absolute/fixture/fixture.json`. Startup finds the unique window containing the exact seeded file, even among identically titled windows. Use `do type file:/absolute/fixture/inbox/asset.png renamed.png` for a rename. Grants accept the same selector. Fresh Foundation-resolved AXURL, retained device/inode, manifest scope, complete bounded AX traversal and current geometry establish the target; stale numeric IDs and basename matching do not. Wrong directories, symlinks, replaced inodes, duplicate windows and unreadable subtrees refuse.
+
+The rename producer selects the sole exact row, opens File to validate Rename, enters the real editor, writes its value and sends one foreground Return. It retains acknowledged input counts as a lower bound and qualifies only an observed same-inode path transition. Name-cell display changes alone remain insufficient. This route currently supports rename, not move.
+
+Preview's first Rotate Left/Right can qualify a new exact Undo Rotate marker on the same bound document. Save qualifies only an observed edited-state or file-digest transition following its acknowledged menu press. A plain menu acknowledgement stays unknown. Preview can autosave independently; saved pixels and persistence require the separate oracle. These narrow native predicates are checked against the admitted operation, arguments, PID/window and producer schema before reconciliation.
 
 ## Installed qualification gate
 

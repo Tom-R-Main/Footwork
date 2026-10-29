@@ -82,6 +82,7 @@ class SessionState:
     session_id: str = ""
     native_binding: dict[str, Any] = field(default_factory=dict)
     native_scope: dict[str, str] = field(default_factory=dict)
+    finder_scope: dict[str, Any] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
@@ -223,6 +224,8 @@ def _operation_request(args: Any) -> dict[str, Any]:
     }
     if getattr(args, "_native_scope", None):
         request["native_scope"] = dict(args._native_scope)
+    if getattr(args, "_finder_scope", None):
+        request["finder_scope"] = dict(args._finder_scope)
     return request
 
 
@@ -267,12 +270,23 @@ def _native_scope_guard(scope: dict[str, str]):
             raise NativeBridgeError(
                 "native_scope_changed", "the observed window lacks the fixture title nonce"
             )
-        bars = nm.scope_address_bars
-        if not nm.elements_complete or nm.truncated or bars is None or len(bars) != 1:
+        evidence = getattr(nm, "chrome_scope", None)
+        if (
+            not isinstance(evidence, dict)
+            or evidence.get("method") != "chrome.ax-toolbar/v1"
+            or type(evidence.get("pid")) is not int
+            or type(evidence.get("window_id")) is not int
+            or evidence.get("pid") != nm.pid
+            or evidence.get("window_id") != nm.window_id
+            or evidence.get("complete") is not True
+            or evidence.get("errors") != []
+            or not isinstance(evidence.get("address_bars"), list)
+            or len(evidence["address_bars"]) != 1
+        ):
             raise NativeBridgeError(
                 "native_scope_unavailable", "one unambiguous Chrome address bar is required"
             )
-        shown = bars[0][1]
+        shown = evidence["address_bars"][0].get("value")
         if not isinstance(shown, str) or not shown:
             raise NativeBridgeError("native_scope_unavailable", "the scoped address bar has no readable URL")
         if "://" not in shown:
@@ -516,6 +530,18 @@ def _outside_receipt(r: Any, pending: dict[str, Any]) -> Any:
     land in another app, so the window's own change cannot confirm it; a save is the exception, confirmed
     by its readback. A browser navigation Chrome ends with ERR_ABORTED is what a navigation that becomes a
     download looks like, so it is not "not applied": what it did is outside the page."""
+    execution = pending.get("execution_receipt") or {}
+    proof = pending.get("native_readback") or {}
+    basis = (execution.get("producer") or {}).get("delivery_basis")
+    if execution.get("effect") == "confirmed" and basis in {
+        "ax_finder_rename_readback",
+        "ax_menu_effect_readback",
+    }:
+        return dataclasses.replace(
+            r, effect="confirmed", evidence="qualified native readback: " + str(proof.get("predicate"))
+        )
+    if pending.get("dispatched") is False:
+        return r
     if pending.get("save_readback"):
         return r
     error = str(pending.get("error") or "")
@@ -771,15 +797,26 @@ async def bind(state: SessionState):
     from cua_driver import CuaDriver
 
     driver = CuaDriver.create(embedded=True)
-    if state.native_scope:
+    if state.native_scope or state.finder_scope:
         return driver, _native_bridge(
-            driver, state.pid, state.window_id, state.posture, native_scope=state.native_scope
+            driver,
+            state.pid,
+            state.window_id,
+            state.posture,
+            native_scope=state.native_scope,
+            finder_scope=state.finder_scope,
         )
     return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
 
 
 def _native_bridge(
-    driver: Any, pid: int, wid: int, posture: str, *, native_scope: dict[str, str] | None = None
+    driver: Any,
+    pid: int,
+    wid: int,
+    posture: str,
+    *,
+    native_scope: dict[str, str] | None = None,
+    finder_scope: dict[str, Any] | None = None,
 ) -> NativeBridge:
     """The operator's bridge: the session's posture, and a live identity check before every element
     action (the person may have changed the window since the operator looked)."""
@@ -792,6 +829,7 @@ def _native_bridge(
         policy=ExecutionPolicy(posture),
         live_check=True,
         observation_guard=_native_scope_guard(native_scope) if native_scope else None,
+        **({"finder_scope": finder_scope} if finder_scope else {}),
     )  # type: ignore[arg-type]
 
 
@@ -891,6 +929,16 @@ async def cmd_start(args: Any) -> int:
         print("not starting: --pid requires a positive native process ID", file=sys.stderr)
         return 2
     native_scope = {}
+    finder_scope = {}
+    if getattr(args, "finder_manifest", None):
+        if not durable or getattr(args, "browser", False) or args.app != "Finder":
+            print("not starting: --finder-manifest requires durable native Finder", file=sys.stderr)
+            return 2
+        from jevdual.finder_targets import bind as bind_file
+
+        manifest = json.loads(Path(args.finder_manifest).read_text())
+        selector = "file:" + str(Path(manifest["root"]) / manifest["paths"]["source"])
+        finder_scope = {"manifest": manifest, "binding": bind_file(manifest, selector).to_record()}
     if getattr(args, "native_url", None) or getattr(args, "native_title", None):
         if (
             not durable
@@ -939,6 +987,31 @@ async def cmd_start(args: Any) -> int:
                 wid, title = await find_window_for_pid(driver, pid, title_contains=args.window or "")
             else:
                 pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
+            if finder_scope:
+                from cua_driver import ListWindowsInput
+
+                from jevdual.finder_targets import FinderBinding, FinderTargetError, resolve
+
+                windows = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+                matches = []
+                for window in windows.windows:
+                    if args.window and args.window.casefold() not in window.title.casefold():
+                        continue
+                    try:
+                        resolve(
+                            pid,
+                            window.window_id,
+                            FinderBinding.from_record(finder_scope["binding"]),
+                            finder_scope["manifest"],
+                        )
+                    except FinderTargetError as exc:
+                        if exc.reason == "file_target_missing":
+                            continue
+                        raise
+                    matches.append(window)
+                if len(matches) != 1:
+                    raise LookupError("the owned Finder asset must appear in exactly one complete window")
+                wid, title = matches[0].window_id, matches[0].title
         except LookupError as exc:
             # not running, installed but not running, or no on-screen window: say which, no traceback
             print(f"not starting: {exc}", file=sys.stderr)
@@ -961,7 +1034,10 @@ async def cmd_start(args: Any) -> int:
             state.session_id = uuid.uuid4().hex
             state.native_binding = native_identity(pid, wid)
             state.native_scope = native_scope
-        bridge = _native_bridge(driver, pid, wid, state.posture, native_scope=state.native_scope)
+            state.finder_scope = finder_scope
+        bridge = _native_bridge(
+            driver, pid, wid, state.posture, native_scope=state.native_scope, finder_scope=state.finder_scope
+        )
         if explicit_pid is not None:
             initial = await bridge.observe()
             if initial.app_name != args.app or (initial.pid, initial.window_id) != (pid, wid):
@@ -1287,6 +1363,17 @@ def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
     )
 
 
+def _file_target(state: SessionState, nm: NativeMenu, selector: str) -> Any:
+    from jevdual.finder_targets import FinderBinding, candidate_id, rebind, resolve
+
+    if state.app != "Finder" or not state.authority or not state.finder_scope:
+        raise NativeBridgeError("file_scope_missing", "file selectors require an owned Finder manifest")
+    manifest = state.finder_scope["manifest"]
+    binding = rebind(FinderBinding.from_record(state.finder_scope["binding"]), manifest, selector)
+    target = resolve(state.pid, state.window_id, binding, manifest)
+    return target, candidate_id(target, nm)
+
+
 def resolve_secrets(text: str | None) -> tuple[str | None, bool]:
     """``{NAME}`` placeholders come from ``$FOOTWORK_SECRET_NAME``; the value never reaches the log."""
     if not text:
@@ -1314,6 +1401,7 @@ async def cmd_do(args: Any) -> int:
     operation = None
     token = getattr(args, "token", None)
     args._native_scope = state.native_scope
+    args._finder_scope = state.finder_scope
     request = _operation_request(args)
     if operations is not None:
         token = token or uuid.uuid4().hex
@@ -1380,8 +1468,13 @@ async def cmd_do(args: Any) -> int:
                     "ids below are from the fresh observation"
                 )
         target = None
+        file_target = None
         if isinstance(cid, str):
-            rid, why = resolve_label(nm, cid)
+            if cid.startswith("file:"):
+                file_target, rid = _file_target(state, nm, cid)
+                why = ""
+            else:
+                rid, why = resolve_label(nm, cid)
             if rid is None:
                 print(why, file=sys.stderr)
                 return 4
@@ -1482,7 +1575,16 @@ async def cmd_do(args: Any) -> int:
         authorization_basis = "existing_policy"
         if hit:
             # package H: a grant for exactly this effect on exactly this resource clears the pause once
-            proposal = _proposal(state, nm, op, target, text, keys, path)
+            proposal = _proposal(
+                state,
+                nm,
+                op,
+                target,
+                text,
+                keys,
+                path,
+                file_ref=file_target.binding.to_record() if file_target else None,
+            )
             if operations is not None:
                 from jevdual.session_operations import native_binding as binding
 
@@ -1561,7 +1663,13 @@ async def cmd_do(args: Any) -> int:
         eff = None
         dispatched = None  # a missing acknowledgement cannot establish no-send
         try:
-            if op == "navigate":
+            if file_target is not None:
+                if op != "type":
+                    raise NativeBridgeError(
+                        "file_operation_unsupported", "owned file selectors currently support type to rename"
+                    )
+                eff = await bridge.act_file(nm, op, "file:" + file_target.binding.path, text)
+            elif op == "navigate":
                 eff = await bridge.navigate(text or "")
             elif op == "hotkey":
                 eff = await bridge.hotkey(nm, list(keys))
@@ -1623,6 +1731,8 @@ async def cmd_do(args: Any) -> int:
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback
+        if getattr(eff, "native_readback", None) is not None:
+            state.pending["native_readback"] = _safe_operation_value(state, eff.native_readback)
         if operations is not None and getattr(eff, "field_readback", None) is not None:
             state.pending["field_readback"] = _safe_field_readback(
                 state, eff.field_readback, text if secret_used else None
@@ -1634,6 +1744,8 @@ async def cmd_do(args: Any) -> int:
             state.pending = _safe_operation_value(state, state.pending, text if secret_used else None)
             state.pending["binding"] = dict(state.native_binding)
             state.pending["native_scope"] = dict(state.native_scope)
+            if getattr(nm, "chrome_scope", None) is not None:
+                state.pending["chrome_scope_evidence"] = nm.chrome_scope
             state.pending["observation"] = nm.snapshot_id
             state.pending["execution_interval"] = {"start": started_at, "end": ended_at or time.time()}
             phase = (
@@ -2136,6 +2248,8 @@ def _proposal(
     text: str | None,
     keys: tuple[str, ...],
     path: tuple[str, ...],
+    *,
+    file_ref: dict[str, Any] | None = None,
 ) -> grants.Proposal:
     arguments = (
         text
@@ -2152,7 +2266,7 @@ def _proposal(
         # a menu item or chord acts on the selection: bind it, so a grant for trashing a.txt does not
         # trash b.txt (the audit's "different selected item")
         selection=tuple(sorted(c.label for c in nm.menu.candidates if c.selected)) if target is None else (),
-        element_ref=_element_ref(nm, target),
+        element_ref=(json.dumps(file_ref, sort_keys=True) if file_ref else _element_ref(nm, target)),
     )
 
 
@@ -2186,8 +2300,13 @@ async def cmd_grant(args: Any) -> int:
     try:
         nm, _ = await observe(state, bridge)
         target = None
+        file_target = None
         if isinstance(cid, str):
-            rid, why = resolve_label(nm, cid)
+            if cid.startswith("file:"):
+                file_target, rid = _file_target(state, nm, cid)
+                why = ""
+            else:
+                rid, why = resolve_label(nm, cid)
             if rid is None:
                 print(why, file=sys.stderr)
                 return 4
@@ -2198,7 +2317,18 @@ async def cmd_grant(args: Any) -> int:
                 print(f"id {cid} is not on the current observation", file=sys.stderr)
                 return 4
         g = grants.issue(
-            _proposal(state, nm, op, target, raw_text, keys, path), uses=args.uses, step=state.step
+            _proposal(
+                state,
+                nm,
+                op,
+                target,
+                raw_text,
+                keys,
+                path,
+                file_ref=file_target.binding.to_record() if file_target else None,
+            ),
+            uses=args.uses,
+            step=state.step,
         )
     finally:
         await driver.shutdown()
