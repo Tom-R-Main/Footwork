@@ -196,7 +196,11 @@ class Arbiter:
         """Track visible change between consecutive judged menus."""
         effect = diff(self._prev_menu, menu) if self._prev_menu is not None else None
         if effect is not None:
-            self._no_effect_run = self._no_effect_run + 1 if effect.no_effect else 0
+            # an inconclusive comparison neither extends nor breaks a no-effect run
+            if effect.no_effect:
+                self._no_effect_run += 1
+            elif not effect.inconclusive:
+                self._no_effect_run = 0
         self._prev_menu = menu
         self._last_effect = effect
         return effect

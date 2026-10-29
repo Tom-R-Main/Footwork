@@ -38,7 +38,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from jevdual.menu import Candidate, Menu, MenuBudget, Operation, estimate_tokens
+from jevdual.menu import Candidate, ControlState, Menu, MenuBudget, Operation, estimate_tokens
 
 log = logging.getLogger("jevdual.native")
 
@@ -195,7 +195,8 @@ class NativeMenu:
         return self.tokens.get(id)
 
 
-def _checked(value: Any) -> bool | None:
+def _checked(value: Any) -> ControlState:
+    """An AX checkbox/radio/switch value: 0 off, 1 on, 2 mixed (NSControlStateValueMixed)."""
     if value is None:
         return None
     if isinstance(value, bool):
@@ -205,6 +206,8 @@ def _checked(value: Any) -> bool | None:
         return True
     if s in ("0", "false", "off", "unchecked"):
         return False
+    if s in ("2", "mixed"):
+        return "mixed"
     return None
 
 
@@ -287,7 +290,9 @@ def _prune(
 ) -> tuple[list[Candidate], dict[int, str], dict[int, tuple[float, float, float, float]]]:
     """Drop what System 1 cannot choose between: a control whose label is only its role (``button
     'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
-    the first (a page with 27 identical "More actions" buttons offers one). Then cap the count."""
+    the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
+    state is kept even when repeated: two "Enabled" switches are two settings, and dropping the second
+    hid its change from the effect diff. Then cap the count."""
     kept: list[Candidate] = []
     seen: set[tuple[str, str, str | None, str | None]] = set()
     for c in candidates:
@@ -295,7 +300,7 @@ def _prune(
             omitted["unnamed"] = omitted.get("unnamed", 0) + 1
             continue
         key = (c.role, c.label, c.value, c.section)
-        if key in seen:
+        if key in seen and c.checked is None and c.pressed is None and c.expanded is None:
             omitted["duplicate"] = omitted.get("duplicate", 0) + 1
             continue
         seen.add(key)
@@ -741,7 +746,9 @@ class NativeBridge:
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} holds different text than when decided"
             )
-        if cand.checked is not None and hit.checked != cand.checked:
+        if (cand.checked is not None and hit.checked != cand.checked) or (
+            cand.pressed is not None and hit.pressed != cand.pressed
+        ):
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} changed state since the decision"
             )

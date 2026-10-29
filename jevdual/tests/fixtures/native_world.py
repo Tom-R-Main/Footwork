@@ -72,6 +72,8 @@ class World:
     #: labels whose press the Driver refuses
     refuse: set[str] = field(default_factory=set)
     presses: list[str] = field(default_factory=list)
+    #: element_index -> [label, AX value "0" | "1" | "2"]: extra AXCheckBox elements a click toggles
+    toggles: dict[int, list[str]] = field(default_factory=dict)
     tool_calls: list[tuple[str, dict[str, Any]]] = field(default_factory=list)
     n: int = 0
     base: dict[str, Any] = field(default_factory=lambda: json.loads(FIXTURE.read_text()))
@@ -111,7 +113,20 @@ class World:
         sid = f"s{self.n:08x}"
         snap = dict(self.base)
         snap["snapshot_id"] = sid
-        snap["elements"] = [self._element(e, sid) for e in self.base["elements"]]
+        snap["elements"] = [self._element(e, sid) for e in self.base["elements"]] + [
+            {
+                "element_index": idx,
+                "element_token": f"{sid}:{idx}",
+                "role": "AXCheckBox",
+                "label": label,
+                "value": value,
+                "parent_index": 0,
+                "enabled": True,
+                "actions": ["AXPress"],
+                "frame": {"x": 440.0, "y": 380.0 + 20 * (idx % 10), "w": 100.0, "h": 18.0},
+            }
+            for idx, (label, value) in self.toggles.items()
+        ]
         snap["tree_markdown"] = self._markdown()
         return snap
 
@@ -125,7 +140,10 @@ class World:
         if label in self.refuse:
             raise RuntimeError("tool='click', message='AX action failed', error_code='ax_failed'")
         self.presses.append(label)
-        self.calc.press(label)
+        if int(idx) in self.toggles:
+            self.toggles[int(idx)][1] = "0" if self.toggles[int(idx)][1] == "1" else "1"
+        else:
+            self.calc.press(label)
         return cd.ActionResult(
             effect=cd.ActionEffect.CONFIRMED,
             route=cd.ActionRoute.ACCESSIBILITY,
@@ -150,6 +168,8 @@ class World:
     def _label(self, idx: int) -> str | None:
         if idx in self.relabels:
             return self.relabels[idx]
+        if idx in self.toggles:
+            return self.toggles[idx][0]
         el = next((e for e in self.base["elements"] if e["element_index"] == idx), None)
         return el.get("label") if el else None
 

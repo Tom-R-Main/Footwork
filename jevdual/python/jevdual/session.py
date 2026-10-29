@@ -41,7 +41,22 @@ from jevdual.menu import Candidate, Menu
 from jevdual.native import NativeBridge, NativeBridgeError, NativeMenu
 
 SETTLE_S = 1.0
-_CAND_FIELDS = ("id", "label", "role", "operations", "value", "input_type", "checked", "selected", "section")
+#: every Candidate field the effect diff reads (identity and state). A session written before a field
+#: was added reads it back as None, which the diff treats as "not observed", never as a change.
+_CAND_FIELDS = (
+    "id",
+    "label",
+    "role",
+    "operations",
+    "value",
+    "href",
+    "input_type",
+    "checked",
+    "selected",
+    "expanded",
+    "pressed",
+    "section",
+)
 
 
 @dataclass
@@ -105,7 +120,12 @@ class SessionState:
     def last_menu(self) -> Menu | None:
         if not self.last_candidates:
             return None
-        cands = tuple(Candidate(**{**c, "operations": tuple(c["operations"])}) for c in self.last_candidates)
+        cands = tuple(
+            Candidate(
+                **{**{k: v for k, v in c.items() if k in _CAND_FIELDS}, "operations": tuple(c["operations"])}
+            )
+            for c in self.last_candidates
+        )
         return Menu(
             url=self.last_url,
             title=self.last_title,
@@ -377,8 +397,11 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
     lines.append(f"{len(m.candidates)} elements:")
     for c in m.candidates:
         extra = f" = {c.value!r}" if c.value else ""
-        if c.checked is not None:
-            extra += f" checked={c.checked}"
+        for key in ("checked", "pressed", "expanded"):
+            if getattr(c, key) is not None:
+                extra += f" {key}={getattr(c, key)}"
+        if c.selected:
+            extra += " selected"
         sect = f"  [{c.section}]" if c.section else ""
         lines.append(f"  [{c.id:>4}] {c.role:<10} {c.label!r}{extra}{sect}")
     txt = m.page_text
@@ -862,7 +885,7 @@ async def cmd_do(args: Any) -> int:
             from jevdual.effects import diff
 
             drift = diff(before, nm.menu)
-            if not drift.no_effect:
+            if drift.visible_change:
                 print(
                     f"note: the window changed since your last look ({drift.summary[:120]}); "
                     "ids below are from the fresh observation"

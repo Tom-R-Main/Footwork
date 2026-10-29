@@ -27,6 +27,9 @@ if TYPE_CHECKING:
     from browser_use.dom.views import EnhancedDOMTreeNode
 
 Operation = Literal["click", "type", "append", "select", "enter", "hover", "scroll"]
+#: A toggle's state: True, False, "mixed" (a tristate checkbox or button part-way on), or None when the
+#: producer did not report it. None is "not observed", never "off".
+ControlState = bool | Literal["mixed"] | None
 OPERATIONS: tuple[Operation, ...] = ("click", "type", "append", "select", "enter", "hover", "scroll")
 
 #: Jev 1.13 limits (docs.typesafe.ai/models): 255 options per Choice; 32k tokens for
@@ -47,7 +50,7 @@ class Candidate:
     value: str | None = None
     href: str | None = None
     input_type: str | None = None
-    checked: bool | None = None
+    checked: ControlState = None
     selected: bool | None = None
     expanded: bool | None = None
     section: str | None = None
@@ -55,6 +58,8 @@ class Candidate:
     options: tuple[str, ...] | None = None
     #: a secure field never carries its value; True says it holds one (a person can judge readiness)
     has_value: bool | None = None
+    #: a toggle button's state (aria-pressed / the AX ``pressed`` property)
+    pressed: ControlState = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -64,7 +69,7 @@ class Candidate:
             "role": self.role,
             "operations": list(self.operations),
         }
-        for key in ("value", "href", "input_type", "checked", "selected", "expanded", "section"):
+        for key in ("value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section"):
             val = getattr(self, key)
             if val is not None:
                 out[key] = val
@@ -185,7 +190,7 @@ def _ax_props(node: EnhancedDOMTreeNode) -> dict[str, Any]:
 
 
 def _tri(value: Any) -> bool | None:
-    """Coerce an attribute/AX property to a tri-state bool."""
+    """Coerce an attribute/AX property to a tri-state bool. "mixed" is not a boolean answer: None."""
     if value is None:
         return None
     if isinstance(value, bool):
@@ -193,11 +198,19 @@ def _tri(value: Any) -> bool | None:
     v = str(value).strip().lower()
     if v in ("true", "1", "checked", "selected", "expanded", "yes"):
         return True
-    if v in ("false", "0", "no", "mixed"):
+    if v in ("false", "0", "no"):
         return False
     if v == "":
         return True  # bare boolean attribute (checked, selected)
     return None
+
+
+def control_state(value: Any) -> ControlState:
+    """Coerce a checked/pressed attribute or AX property, keeping "mixed" distinct from off (it was read
+    as False, so a mixed -> unchecked toggle compared equal and read as a no-op)."""
+    if isinstance(value, str) and value.strip().lower() == "mixed":
+        return "mixed"
+    return _tri(value)
 
 
 def _label(node: EnhancedDOMTreeNode, attrs: dict[str, str], tag: str) -> str:
@@ -371,14 +384,14 @@ def candidate_from_node(index: int, node: EnhancedDOMTreeNode, vp: _Viewport | N
     if tag == "A" and attrs.get("href"):
         href = _clean(attrs["href"], _HREF_CAP)
     checked = (
-        _tri(props.get("checked"))
+        control_state(props.get("checked"))
         if "checked" in props
         else _tri(attrs.get("checked"))
         if "checked" in attrs
         else None
     )
     if checked is None and "aria-checked" in attrs:
-        checked = _tri(attrs["aria-checked"])
+        checked = control_state(attrs["aria-checked"])
     selected = (
         _tri(props.get("selected"))
         if "selected" in props
@@ -391,6 +404,9 @@ def candidate_from_node(index: int, node: EnhancedDOMTreeNode, vp: _Viewport | N
     expanded = _tri(props.get("expanded")) if "expanded" in props else None
     if expanded is None and "aria-expanded" in attrs:
         expanded = _tri(attrs["aria-expanded"])
+    pressed = control_state(props.get("pressed")) if "pressed" in props else None
+    if pressed is None and "aria-pressed" in attrs:
+        pressed = control_state(attrs["aria-pressed"])
     return Candidate(
         id=index,
         label=_label(node, attrs, tag),
@@ -402,6 +418,7 @@ def candidate_from_node(index: int, node: EnhancedDOMTreeNode, vp: _Viewport | N
         checked=checked,
         selected=selected,
         expanded=expanded,
+        pressed=pressed,
         section=_section(node),
         offscreen=_offscreen(node, vp),
         options=_select_options(node) if tag == "SELECT" else None,

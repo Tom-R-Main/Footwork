@@ -144,7 +144,11 @@ async def run_micro_loop(
         result.final_url = menu.url
         effect = diff(prev_menu, menu)
         if prev_menu is not None:
-            no_effect = no_effect + 1 if effect.no_effect else 0
+            # an inconclusive comparison neither extends nor breaks a no-effect run; the step budget still bounds it
+            if effect.no_effect:
+                no_effect += 1
+            elif not effect.inconclusive:
+                no_effect = 0
             if no_effect >= cfg.no_effect_limit:
                 result.status, result.reason = (
                     "stuck",
