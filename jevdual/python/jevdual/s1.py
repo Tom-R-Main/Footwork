@@ -19,6 +19,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal, Protocol
 
+from jevdual.blockers import DiagnoseFn, diagnose_safely
 from jevdual.bridge import Bridge, Bridged, BridgeError, assert_fresh
 from jevdual.menu import Candidate, Menu, build_menu
 from jevdual.policy import Decision, JevPolicy, PolicyError, StepContext
@@ -66,6 +67,10 @@ _HANDBACK_STATUS = (
     ("policy error", "error"),
     ("idle", "idle"),
 )
+
+
+#: handbacks whose page is worth a blocker diagnosis: nothing offered could progress, or nothing changed
+DIAGNOSED_HANDBACKS = frozenset({"blocked", "no_effect", "stuck", "repeated_target"})
 
 
 def _handback_status(reason: str) -> str:
@@ -120,6 +125,7 @@ class S1Record:
     error: str | None = None
     menu_ms: float = 0.0
     jev_ms: float = 0.0
+    diagnosis: dict[str, Any] | None = None
 
 
 def redact_menu(menu: Menu, red: Callable[[str], str]) -> Menu:
@@ -164,11 +170,15 @@ class Delegation:
     jev_calls: int = 0
     status: str = "active"
     reason: str = ""
+    #: jevdual.blockers.BlockerDiagnosis.to_json() of the page a blocked/stalled handback stopped on
+    diagnosis: dict[str, Any] | None = None
+    diagnosis_text: str = ""
 
     def summary(self, url: str) -> str:
+        diag = f" {self.diagnosis_text}" if self.diagnosis_text else ""
         return (
             f"Fast navigator finished the subgoal {self.goal!r}: {self.status} ({self.reason}) after "
-            f"{self.steps_taken} step(s) and {self.jev_calls} fast-model call(s); now at {url}. "
+            f"{self.steps_taken} step(s) and {self.jev_calls} fast-model call(s); now at {url}.{diag} "
             "Control is back with you. Decide what to do next."
         )
 
@@ -201,7 +211,10 @@ class JevS1:
         s2_control_steps: int = 3,
         only_when_delegated: bool = False,
         subgoal_done_floor: float = 0.85,
+        diagnose: DiagnoseFn | None = None,
     ):
+        #: opt-in advisory page diagnosis (jevdual.blockers) when a delegation hands back blocked or stalled
+        self.diagnose = diagnose
         #: Q9 delegate arms: S1 decides only inside a Delegation; ordinary System 2 steps never call Jev.
         self.only_when_delegated = only_when_delegated
         self.subgoal_done_floor = subgoal_done_floor
@@ -228,6 +241,7 @@ class JevS1:
             ).compose
         self.text_source = text_source
         self.last_menu: Menu | None = None
+        self.last_menu_step: int | None = None
 
     async def _delegated_step(
         self, agent: Any, delegation: Delegation, decision: Decision, menu: Menu, rec: S1Record, step: int
@@ -258,6 +272,18 @@ class JevS1:
             log.info("step %s: %s", step, rec.verdict.reason)
             return True
         return False  # goal_done was high but unsupported: keep acting
+
+    async def _diagnose_handback(
+        self, delegation: Delegation, status: str, menu: Menu | None, rec: S1Record | None
+    ) -> None:
+        """Opt-in: attach an advisory page diagnosis to a blocked or stalled handback. It changes neither
+        the status nor what happens next; System 2 reads it in the summary."""
+        if self.diagnose is None or menu is None or status not in DIAGNOSED_HANDBACKS:
+            return
+        diagnosis = await diagnose_safely(self.diagnose, menu, delegation.goal)
+        delegation.diagnosis, delegation.diagnosis_text = diagnosis.to_json(), diagnosis.summary()
+        if rec is not None:
+            rec.diagnosis = delegation.diagnosis
 
     def _end_delegation(self, agent: Any, delegation: Delegation, status: str, reason: str, url: str) -> None:
         delegation.status, delegation.reason = status, reason
@@ -360,9 +386,10 @@ class JevS1:
                 if rec is not None and rec.verdict is not None
                 else (rec.error if rec is not None else None)
             ) or "handback"
-            self._end_delegation(
-                agent, delegation, _handback_status(reason), reason, getattr(state, "url", "") or ""
-            )
+            status = _handback_status(reason)
+            if self.last_menu_step == agent.state.n_steps:  # only the page this step observed
+                await self._diagnose_handback(delegation, status, self.last_menu, rec)
+            self._end_delegation(agent, delegation, status, reason, getattr(state, "url", "") or "")
         return out
 
     async def _decide(self, agent: DualProcessAgent, state: BrowserStateSummary) -> Any | None:
@@ -418,6 +445,7 @@ class JevS1:
             for c in menu.candidates
         )
         self.last_menu = menu
+        self.last_menu_step = step
         ctx = self._context(agent)
 
         try:
@@ -501,13 +529,9 @@ class JevS1:
                 # acts inside someone else's assignment.
                 head = verdict.reason.split(":", 1)[0].strip()
                 delegation.escalations += 1
-                self._end_delegation(
-                    agent,
-                    delegation,
-                    head if verdict.kind != "confirm" else "paused_before_action",
-                    verdict.reason,
-                    menu.url,
-                )
+                status = head if verdict.kind != "confirm" else "paused_before_action"
+                await self._diagnose_handback(delegation, status, menu, rec)
+                self._end_delegation(agent, delegation, status, verdict.reason, menu.url)
             return None
 
         text = None
