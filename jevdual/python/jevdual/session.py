@@ -198,6 +198,7 @@ async def run_command(args: Any) -> int:
                 try:
                     if current.get("authority") and current.get("session_id"):
                         state = SessionState.load(directory)
+                        _repair_projection_log(state)
                         for operation in sorted(
                             operations.status(state.session_id), key=lambda op: op.created
                         ):
@@ -460,6 +461,51 @@ def _structured_receipt(state: SessionState, pending: dict[str, Any], nm: Any) -
     }
 
 
+def _repair_projection_log(state: SessionState) -> None:
+    """Preserve damaged display bytes before replacing the log with its readable records.
+
+    Called under authority ownership. This repairs only the non-authoritative projection;
+    operation admission, custody and replay continue to come from the authority database.
+    """
+    log = state.path / "session.jsonl"
+    if not log.exists():
+        return
+    original = log.read_bytes()
+    readable, damaged = [], []
+    for number, line in enumerate(original.splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            if not isinstance(json.loads(line), dict):
+                raise TypeError("projection record is not an object")
+        except (TypeError, ValueError, UnicodeError):
+            damaged.append(number)
+        else:
+            readable.append(line + b"\n")
+    missing_separator = bool(original and not original.endswith(b"\n"))
+    if not damaged and not missing_separator:
+        return
+    quarantine = state.path / f"session.interrupted-{uuid.uuid4().hex}.jsonl"
+    with os.fdopen(os.open(quarantine, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+        stream.write(original)
+    repair = {
+        "t": time.time(),
+        "kind": "projection_repair",
+        "quarantine": quarantine.name,
+        "damaged_lines": damaged,
+        "missing_terminal_newline": missing_separator,
+        "authority": state.authority,
+    }
+    readable.append(json.dumps(repair).encode() + b"\n")
+    temporary = state.path / f".projection-{uuid.uuid4().hex}.tmp"
+    try:
+        with os.fdopen(os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+            stream.write(b"".join(readable))
+        os.replace(temporary, log)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def _project_operation(state: SessionState, operations: Any, operation: Any) -> None:
     """Repair a missing JSON projection without repeating the effect or overwriting newer state."""
     projection = operations.projection(operation)
@@ -470,10 +516,8 @@ def _project_operation(state: SessionState, operations: Any, operation: Any) -> 
     records = []
     log_text = log.read_text() if log.exists() else ""
     for line in log_text.splitlines():
-        try:
+        if line.strip():
             records.append(json.loads(line))
-        except ValueError:
-            continue  # retain interrupted projection bytes; the authority journal remains canonical
     already_logged = any(r.get("kind") == "do" and r.get("operation_id") == operation.id for r in records)
     reconciled = any(
         r.get("kind") == "receipt" and (r.get("action") or {}).get("operation_id") == operation.id
@@ -2064,6 +2108,84 @@ def cross_context(d: Path, *, last: int = 12) -> list[dict[str, Any]]:
 
 
 async def cmd_done(args: Any) -> int:
+    from jevdual.capability.journal import Busy, JournalError
+    from jevdual.session_operations import SessionOperations
+
+    state = SessionState.load(session_dir(args.session))
+    owned = _operations(args, state)
+    domains = {Path(state.authority).resolve(): owned} if owned is not None else {}
+
+    def unresolved(current: SessionState, operations: Any) -> str | None:
+        if operations is not None:
+            try:
+                operations.assert_available()  # All rows, including unprojected legacy attempts.
+            except Busy as exc:
+                return str(exc)
+        pending = current.pending
+        canonical = (
+            operations.get(pending["operation_id"])
+            if operations is not None and pending and pending.get("operation_id")
+            else None
+        )
+        if (
+            pending
+            and not (
+                canonical is not None and canonical.task == current.session_id and not canonical.unresolved
+            )
+            and pending.get("dispatched") is not False
+            and (pending.get("driver_effect") not in ("confirmed", "partial") or pending.get("error"))
+        ):
+            return f"pending input in {current.path} has no settled result"
+        return None
+
+    # Journal locks are nonblocking: opposing A -> B / B -> A contexts refuse
+    # busy ownership instead of waiting while each holds its primary domain.
+    with contextlib.ExitStack() as custody:
+        sources = [state]
+        for directory in getattr(args, "context_from", None) or []:
+            current = SessionState.load(Path(directory))
+            if current.authority:
+                location = Path(current.authority)
+                if not location.is_absolute() or not location.exists():
+                    raise JournalError("context authority is unavailable")
+                location = location.resolve()
+                if location not in domains:
+                    domains[location] = custody.enter_context(SessionOperations(location))
+                reloaded = SessionState.load(Path(directory))
+                if reloaded.authority != current.authority or reloaded.session_id != current.session_id:
+                    raise JournalError("context session changed while acquiring ownership")
+                current = reloaded
+            sources.append(current)
+        for current in sources:
+            operations = domains.get(Path(current.authority).resolve()) if current.authority else None
+            reason = unresolved(current, operations)
+            if reason:
+                print(f"not completed: unresolved custody: {reason}", file=sys.stderr)
+                return 5
+        for current in sources:
+            if current.authority:
+                operations = domains[Path(current.authority).resolve()]
+                _repair_projection_log(current)
+                for operation in sorted(operations.status(current.session_id), key=lambda op: op.created):
+                    _project_operation(current, operations, operation)
+            else:
+                # Legacy sources have no authority ownership for projection repair.
+                # Refuse unreadable evidence before app/key/provider work and retain it.
+                from jevdual.completion import _records
+
+                try:
+                    if any(not isinstance(record, dict) for record in _records(current.path)):
+                        raise TypeError("projection record is not an object")
+                except (OSError, ValueError, TypeError) as exc:
+                    print(
+                        f"not completed: context_evidence_unreadable: {current.path} ({type(exc).__name__})",
+                        file=sys.stderr,
+                    )
+                    return 5
+        return await _cmd_done_verified(args, state)
+
+
+async def _cmd_done_verified(args: Any, state: SessionState) -> int:
     from typesafe_sdk import AsyncTypeSafeClient
 
     from jevdual.keys import load_keys
@@ -2072,7 +2194,6 @@ async def cmd_done(args: Any) -> int:
     if not load_keys().get("TYPESAFE_API_KEY"):
         print("TYPESAFE_API_KEY missing", file=sys.stderr)
         return 2
-    state = SessionState.load(session_dir(args.session))
     driver, bridge = await bind(state)
     try:
         nm, receipt = await observe(state, bridge)
@@ -2181,9 +2302,7 @@ async def cmd_status(args: Any) -> int:
                     "session_id": state.session_id,
                     "native_scope": state.native_scope,
                     "operations": [operations.receipt(op) for op in items],
-                    "domain_unresolved": [
-                        operations.receipt(op) for op in operations.status() if op.unresolved
-                    ],
+                    "domain_unresolved": [operations.receipt(op) for op in operations.domain_unresolved()],
                 },
                 sort_keys=True,
             )

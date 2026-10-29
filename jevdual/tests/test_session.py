@@ -11,6 +11,50 @@ from jevdual.menu import Candidate, Menu
 from jevdual.session import SessionState, receipt_for
 
 
+def test_projection_repair_retains_valid_records_after_damaged_middle_and_quarantines_bytes(tmp_path):
+    import json
+
+    from jevdual.session import _repair_projection_log
+
+    state = SessionState(
+        dir=str(tmp_path),
+        app="fixture",
+        pid=77,
+        window_id=3,
+        task="observe",
+        authority=str(tmp_path / "authority.sqlite"),
+    )
+    original = b'{"kind":"first"}\n{"interrupted":\n{"kind":"receipt","effect":"unverifiable"}\n'
+    log = tmp_path / "session.jsonl"
+    log.write_bytes(original)
+    _repair_projection_log(state)
+    records = [json.loads(line) for line in log.read_bytes().splitlines()]
+    assert records[:2] == [{"kind": "first"}, {"kind": "receipt", "effect": "unverifiable"}]
+    repair = records[2]
+    assert repair["kind"] == "projection_repair" and repair["damaged_lines"] == [2]
+    assert (tmp_path / repair["quarantine"]).read_bytes() == original
+    _repair_projection_log(state)
+    assert len(list(tmp_path.glob("session.interrupted-*.jsonl"))) == 1
+
+
+def test_projection_repair_separates_complete_record_when_terminal_newline_was_lost(tmp_path):
+    import json
+
+    from jevdual.session import _repair_projection_log
+
+    state = SessionState(dir=str(tmp_path), app="fixture", pid=77, window_id=3, task="observe")
+    log = tmp_path / "session.jsonl"
+    original = b'{"kind":"do","operation_id":"finished"}'
+    log.write_bytes(original)
+    _repair_projection_log(state)
+    state.log({"kind": "receipt", "effect": "confirmed"})
+    first, repair, last = [json.loads(line) for line in log.read_bytes().splitlines()]
+    assert first == {"kind": "do", "operation_id": "finished"}
+    assert repair["missing_terminal_newline"] is True and repair["damaged_lines"] == []
+    assert (tmp_path / repair["quarantine"]).read_bytes() == original
+    assert last["kind"] == "receipt" and last["effect"] == "confirmed"
+
+
 @pytest.mark.parametrize("value", [None, "", "x", "xy"])
 def test_durable_bind_refuses_unavailable_prior_secret_before_driver_creation(tmp_path, monkeypatch, value):
     import asyncio

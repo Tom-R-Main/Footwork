@@ -942,6 +942,301 @@ def test_durable_lost_projection_replays_finished_operation(world, fw, monkeypat
     assert len([r for r in records if r["kind"] == "do"]) == 1
 
 
+def test_durable_partial_projection_is_quarantined_before_replay_click_and_done(
+    world, fw, monkeypatch, tmp_path
+):
+    from jevdual.session import SessionState
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    original = SessionState.log
+    fragment = b'{"kind":"do","operation_id":'
+    failed = False
+
+    def partial_do(self, record):
+        nonlocal failed
+        if record.get("kind") == "do" and not failed:
+            failed = True
+            with (self.path / "session.jsonl").open("ab") as stream:
+                stream.write(fragment)
+            raise OSError("projection interrupted after partial bytes")
+        return original(self, record)
+
+    monkeypatch.setattr(SessionState, "log", partial_do)
+    assert fw("do", "click", "All Clear", "--no-judge", "--token", "partial-response")[0] != 0
+    with SessionOperations(authority) as operations:
+        (operation,) = operations.status()
+        assert operation.state == "final"
+    damaged = (fw.session / "session.jsonl").read_bytes()
+    assert fragment in damaged
+    code, out, err = fw("do", "click", "All Clear", "--no-judge", "--token", "partial-response")
+    assert code == 0 and '"replay": true' in out, (out, err)
+    code, out, err = fw("do", "click", "label:7", "--no-judge", "--token", "after-partial")
+    assert code == 0, (out, err)
+    code, out, err = fw("done", "7")
+    assert code == 0 and "accepted" in out, (out, err)
+    assert world.presses == ["All Clear", "7"]
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    repairs = [record for record in records if record.get("kind") == "projection_repair"]
+    assert len(repairs) == 1
+    assert (fw.session / repairs[0]["quarantine"]).read_bytes() == damaged
+    assert sum(record.get("operation_id") == operation.id for record in records) == 1
+
+
+def _legacy_unknown(authority):
+    from jevdual.capability.journal import Journal
+
+    with_journal = Journal(authority)
+    try:
+        operation, _ = with_journal.begin(
+            task="legacy-task",
+            resource="legacy-resource",
+            observation="legacy-observation",
+            target="legacy-target",
+            move="append",
+            args={"text": "unacknowledged"},
+            client_token="legacy-token",
+        )
+        return operation.id
+    finally:
+        with_journal.close()
+
+
+@pytest.mark.parametrize("later_count", [0, 101])
+def test_durable_status_reports_legacy_unknown_without_operator_proof(
+    world, fw, monkeypatch, tmp_path, later_count
+):
+    from jevdual.capability.journal import Journal
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    operation_id = _legacy_unknown(authority)
+    journal = Journal(authority)
+    try:
+        for index in range(later_count):
+            recent, _ = journal.begin(
+                task="legacy-other",
+                resource=f"resource-{index}",
+                observation="legacy-observation",
+                target="legacy-target",
+                move="append",
+                args={},
+                client_token=f"recent-{index}",
+            )
+            journal.finish(recent.id, disposition="not_sent", phase="not_sent", evidence={})
+    finally:
+        journal.close()
+    code, out, err = fw("status", "--reconcile")
+    assert code == 0, (out, err)
+    (blocker,) = json.loads(out)["domain_unresolved"]
+    assert blocker["operation_id"] == operation_id and blocker["state"] == "unknown"
+    assert blocker["disposition"] == "unknown" and blocker["reservation"] is None
+    assert blocker["projection"] is None and blocker["protocol"] == "legacy"
+    code, out, err = fw("do", "click", "All Clear", "--no-judge")
+    assert code != 0 and "busy" in (out + err).lower()
+    assert world.presses == []
+
+
+@pytest.mark.parametrize(
+    "scope",
+    [
+        "own",
+        "domain",
+        "legacy_domain",
+        "context",
+        "legacy_context",
+        "legacy_own",
+        "authority_pending",
+        "authority_context_pending",
+    ],
+)
+def test_done_refuses_unresolved_custody_before_keys_app_or_accepting_verifier(
+    world, fw, monkeypatch, tmp_path, scope
+):
+    import jevdual.keys
+    from jevdual import session
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "context"
+    extra = []
+    if scope in ("legacy_context", "legacy_own", "authority_pending", "authority_context_pending"):
+        state = session.SessionState.load(fw.session)
+        if scope in ("legacy_context", "authority_context_pending"):
+            context.mkdir()
+            state.dir = str(context)
+            extra = ["--context-from", str(context)]
+        if scope.startswith("legacy"):
+            state.authority = ""
+        state.pending = {"op": "click", "driver_effect": "unverifiable", "dispatched": None}
+        state.save()  # Deliberately no do/receipt projection for the pending unknown.
+    elif scope == "context":
+        context.mkdir()
+        state = session.SessionState.load(fw.session)
+        state.dir, state.authority = str(context), str(tmp_path / "context.sqlite")
+        state.save()
+        _legacy_unknown(tmp_path / "context.sqlite")
+        extra = ["--context-from", str(context)]
+    elif scope == "legacy_domain":
+        _legacy_unknown(authority)
+    else:
+        state = session.SessionState.load(fw.session)
+        with SessionOperations(authority) as operations:
+            operation = operations.admit(
+                session_id=state.session_id if scope == "own" else "another-session",
+                token="unfinished",
+                request={"words": ["click", "Delete"]},
+                resource="native:fixture",
+                observation="old",
+                target="1",
+                move="click",
+                authorization_basis="existing_policy",
+                projection={"step": 1, "op": "click"},
+            )
+            operations.start(operation.id)
+
+    calls = []
+    monkeypatch.setattr(
+        jevdual.keys, "load_keys", lambda: calls.append("keys") or {"TYPESAFE_API_KEY": "test"}
+    )
+    original_bind = session.bind
+
+    async def counted_bind(state):
+        calls.append("app")
+        return await original_bind(state)
+
+    monkeypatch.setattr(session, "bind", counted_bind)
+    original_verify = _Verifier.verify
+
+    async def accepting_verify(self, *args, **kwargs):
+        calls.append("verifier")
+        return await original_verify(self, *args, **kwargs)
+
+    monkeypatch.setattr(_Verifier, "verify", accepting_verify)
+    code, out, err = fw("done", "looks complete", *extra)
+    assert code == 5 and "unresolved" in out + err, (out, err)
+    assert calls == []
+    assert _state(fw)["status"] == "open" and world.presses == []
+
+
+@pytest.mark.parametrize("same_domain", [False, True])
+def test_done_retains_context_ownership_through_verifier_without_relocking_shared_domain(
+    world, fw, monkeypatch, tmp_path, same_domain
+):
+    from jevdual.capability.journal import JournalLocked
+    from jevdual.session import SessionState
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "context"
+    context.mkdir()
+    state = SessionState.load(fw.session)
+    context_authority = authority if same_domain else tmp_path / "context.sqlite"
+    state.dir, state.authority = str(context), str(context_authority)
+    state.save()
+    if not same_domain:
+        SessionOperations(context_authority).close()
+    seen = []
+    original_verify = _Verifier.verify
+
+    async def accept_with_owned_context(self, *args, **kwargs):
+        with pytest.raises(JournalLocked):
+            SessionOperations(context_authority)
+        seen.append("context held")
+        return await original_verify(self, *args, **kwargs)
+
+    monkeypatch.setattr(_Verifier, "verify", accept_with_owned_context)
+    code, out, err = fw("done", "complete", "--context-from", str(context))
+    assert code == 0 and "accepted" in out, (out, err)
+    assert seen == ["context held"]
+    SessionOperations(context_authority).close()  # The bounded command releases both domains.
+
+
+def test_done_repairs_settled_durable_context_projection_without_repeating_effect(
+    world, fw, monkeypatch, tmp_path
+):
+    from jevdual.session_operations import SessionOperations
+
+    authority = _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "settled-context"
+    assert (
+        cli.main(
+            [
+                "start",
+                "Compute",
+                "--app",
+                "Calculator",
+                "--session",
+                str(context),
+                "--authority",
+                str(authority),
+            ]
+        )
+        == 0
+    )
+    assert (
+        cli.main(
+            [
+                "do",
+                "click",
+                "All Clear",
+                "--no-judge",
+                "--session",
+                str(context),
+                "--token",
+                "context-once",
+                "--settle",
+                "0",
+            ]
+        )
+        == 0
+    )
+    with SessionOperations(authority) as operations:
+        (operation,) = operations.status()
+        assert operation.state == "final"
+    log = context / "session.jsonl"
+    with log.open("ab") as stream:
+        stream.write(b'{"kind":"interrupted-context"')
+    damaged = log.read_bytes()
+    code, out, err = fw("done", "complete", "--context-from", str(context))
+    assert code == 0 and "accepted" in out, (out, err)
+    assert world.presses == ["All Clear"]
+    records = [json.loads(line) for line in log.read_bytes().splitlines()]
+    repair = next(record for record in records if record.get("kind") == "projection_repair")
+    assert (context / repair["quarantine"]).read_bytes() == damaged
+    assert (
+        sum(record.get("kind") == "do" and record.get("operation_id") == operation.id for record in records)
+        == 1
+    )
+    assert any(record.get("kind") == "receipt" for record in records)
+
+
+def test_done_refuses_corrupt_legacy_context_before_keys_app_or_provider(world, fw, monkeypatch, tmp_path):
+    import jevdual.keys
+    from jevdual import session
+
+    _durable_start(fw, monkeypatch, tmp_path)
+    context = tmp_path / "legacy-context"
+    context.mkdir()
+    state = session.SessionState.load(fw.session)
+    state.dir, state.authority = str(context), ""
+    state.save()
+    log = context / "session.jsonl"
+    original = b'{"kind":"receipt","effect":"confirmed"}\n{"interrupted":'
+    log.write_bytes(original)
+    calls = []
+    monkeypatch.setattr(jevdual.keys, "load_keys", lambda: calls.append("keys") or {})
+
+    async def forbidden_bind(state):
+        calls.append("app")
+        raise AssertionError("corrupt legacy evidence must refuse before app binding")
+
+    monkeypatch.setattr(session, "bind", forbidden_bind)
+    code, out, err = fw("done", "complete", "--context-from", str(context))
+    assert code == 5 and "context_evidence_unreadable" in out + err, (out, err)
+    assert calls == [] and _state(fw)["status"] == "open"
+    assert log.read_bytes() == original and not list(context.glob("session.interrupted-*"))
+
+
 def test_durable_process_change_refuses_new_input_but_status_stays_available(
     world, fw, monkeypatch, tmp_path
 ):

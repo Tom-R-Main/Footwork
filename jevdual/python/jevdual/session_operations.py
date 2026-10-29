@@ -512,7 +512,7 @@ class SessionOperations(Journal):
         return service if service is not None else self._retained_execution(op)
 
     def _reconcile_ticket(self, op: Operation) -> Operation:
-        from jevdual.ticket_evidence import TicketEvidenceError, canonical, qualify
+        from jevdual.ticket_evidence import VERSION, TicketEvidenceError, canonical, qualify
 
         prepared = self._ticket_preparation(op)
         if prepared is None or op.state != "unknown" or op.execution_stage != "started":
@@ -523,7 +523,9 @@ class SessionOperations(Journal):
                 record = qualify(op, prepared, self._execution_binding(op.id))
         except (TicketEvidenceError, ValueError, TypeError, KeyError):
             return op
-        if record is None:
+        if record is None or record.get("schema_version") != VERSION:
+            # Historical receipts remain readable, but may not release unknown
+            # custody without the current independent response-boundary contract.
             return op
         body = canonical(record)
         digest = hashlib.sha256(body.encode()).hexdigest()
@@ -578,6 +580,15 @@ class SessionOperations(Journal):
             for row in self._db.execute("SELECT * FROM operations ORDER BY created DESC LIMIT 100")
         ]
 
+    def domain_unresolved(self) -> list[Operation]:
+        """Blocking custody is never limited to the recent-operation display window."""
+        return [
+            Operation._from_row(row)
+            for row in self._db.execute(
+                "SELECT * FROM operations WHERE state IN ('dispatching','unknown') ORDER BY created"
+            )
+        ]
+
     def projection(self, op: Operation) -> dict[str, Any]:
         row = self._db.execute(
             "SELECT projection FROM operator_admissions WHERE operation=?", (op.id,)
@@ -599,13 +610,21 @@ class SessionOperations(Journal):
         row = self._db.execute(
             "SELECT state FROM operator_reservations WHERE operation=?", (op.id,)
         ).fetchone()
-        return {
+        admission = self._db.execute(
+            "SELECT protocol FROM operator_admissions WHERE operation=?", (op.id,)
+        ).fetchone()
+        receipt = {
             "operation_id": op.id,
             "client_token": op.client_token,
             "state": op.state,
             "disposition": op.disposition,
             "phase": op.phase,
             "reservation": row[0] if row is not None else None,
-            "projection": self.projection(op),
+            "projection": self.projection(op) if admission is not None else None,
             "error": op.error,
         }
+        if admission is None:
+            # Existing capability rows retain their own protocol and custody. Missing
+            # operator evidence cannot confer operator recovery or grant authority.
+            receipt["protocol"] = "legacy"
+        return receipt
