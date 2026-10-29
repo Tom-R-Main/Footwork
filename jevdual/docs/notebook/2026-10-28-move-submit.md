@@ -129,3 +129,16 @@ Hypothesis: obtaining the existing Preview result predicate before foreground re
 Test: simulate menu state available only while exact foreground ownership holds; reproduce unknown before correction, capture the unchanged predicate inside the foreground call, then run a fresh live chain. Preserve all earlier unknowns.
 Predicts: the native producer qualifies only the same bound document's new Undo transition while ownership holds, and saved pixels independently qualify task correctness; changing window/front or no transition remains uncertain.
 Against: a stale/foreign state qualifies, or the live first rotation still cannot produce the predicate before restoration.
+
+## MSU10 · update · 2026-10-28 22:46
+Resolves: MS12 = held
+Observed: installed 1406a53 completed the nominal full chain with qualified Preview rotation, saved pixels and one reconciled Chrome ingress. Its full suite passed 2125 tests, 26 skipped. Two interrupted trajectories stopped at move preflight after qualified rename because the rename editor remained active and the exact filename AXURL disappeared; the second occurred with all cleanup finished before the trial. The earlier cleanup overlap is therefore insufficient to explain this state. The exact focused editor advertises a writable AXFocused attribute but no actions.
+Inferred: rename's file effect is established but its UI completion is incomplete. Stop repeating unchanged trials; test exact editor focus release, preserving strict AXURL targeting for subsequent moves.
+Next: probe focus release on the already settled owned rename, then reproduce the stale-editor preflight failure before implementation.
+Refs: output/move-submit-20261028/qualified-nominal; output/move-submit-20261028/qualified-interrupted-ready/focused-editor-diagnostic.json; output/move-submit-20261028/qualified-interrupted-final
+
+## MS13 · prediction · 2026-10-28 22:46
+Hypothesis: setting AXFocused false on the exact retained, still focused Finder rename editor exits editing without another Return, preserving the committed inode/path and restoring its filename AXURL.
+Test: verify owned window, focused field/value and same-inode settled rename, write only the advertised focus attribute, then re-resolve the strict filename target. Reproduce editor persistence in public simulated commands before adding conditional release within rename's foreground boundary; challenge changed editor/window/focus.
+Predicts: subsequent exact move admission succeeds without relaxing URL/file identity checks or repeating rename; changed ownership prevents the release input.
+Against: focus release changes file contents/path, targets another editor, or leaves the filename unavailable.
