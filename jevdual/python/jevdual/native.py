@@ -1748,12 +1748,19 @@ class NativeBridge:
                 current["front_pid"] != self.pid
                 or current["main_window_id"] != self.window_id
                 or current["focused_window_id"] not in (None, self.window_id)
-                or not current["selection"]["exact_row_only"]
+                or (
+                    not current["selection"]["exact_row_only"]
+                    and current["selection"].get("error") != "file_row_missing"
+                )
                 or current_editor != editor
             ):
                 raise self.ax.AXError(
                     "file_editor_lost_focus", "the exact owned rename editor changed before its value write"
                 )
+            # Finder replaces the filename row with this already qualified
+            # transient editor. Its absence cannot replace the editor/window
+            # checks above or the exact original inode check before writing.
+            rebind(target.binding, self.finder_scope["manifest"], selector)
             self.ax.set_value_ack(editor, text)
             count += 1
             proof["acknowledgements"].append("editor_value_set")

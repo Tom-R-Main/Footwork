@@ -628,3 +628,40 @@ def test_rename_owned_file_menu_can_temporarily_own_application_focus(finder_cli
         assert status["operations"][0]["disposition"] == "unknown"
         assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
         assert check_finder(world.manifest, "inbox/asset.png").ok
+
+
+@pytest.mark.parametrize("case", ["transient_row", "read_failure", "replaced_inode"])
+def test_rename_transient_row_still_requires_exact_editor_and_original_inode(finder_cli, monkeypatch, case):
+    world, run = finder_cli
+    start(run)
+    assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+    original = ax.finder_selection_state
+    replaced = False
+
+    def selection(element):
+        nonlocal replaced
+        if world.rename_open and not world.rename_committed:
+            if case == "replaced_inode" and not replaced:
+                path = world.current_path
+                data = path.read_bytes()
+                path.rename(path.with_name("replaced-original.png"))
+                path.write_bytes(data)  # Simulated external same-byte inode replacement.
+                replaced = True
+            raise ax.AXError(
+                "ax_read_failed" if case == "read_failure" else "file_row_missing", "row unavailable"
+            )
+        return original(element)
+
+    monkeypatch.setattr(ax, "finder_selection_state", selection)
+    run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "transient-row")
+    status = json.loads(run("status")[1])
+    if case == "transient_row":
+        assert status["operations"][0]["disposition"] == "applied"
+        assert check_finder(world.manifest, "inbox/renamed.png").ok
+    else:
+        assert status["operations"][0]["disposition"] == "unknown"
+        assert world.inputs == [
+            ("AXSelected", "asset_row"),
+            ("AXPress", "File"),
+            ("AXPress", "File > Rename"),
+        ]
