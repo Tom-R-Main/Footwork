@@ -84,3 +84,16 @@ Hypothesis: the supported exact-window bring_to_front boundary synchronizes SDK 
 Test: invoke the registered exact PID/window bring_to_front only after posture permission, then retain direct AX identity/key/modal checks; red regression simulates a stale background restoration tail, and a fresh live fixture tests the full move.
 Predicts: the SDK intent boundary cancels the interfering tail and the exact owned modal stays foreground; other-window/refused intents still stop without file input.
 Against: foreign foreground still interrupts a fresh trial, or wrong-window SDK activation is accepted.
+
+## MSU6 · update · 2026-10-28 22:15
+Resolves: MS9 = inconclusive
+Observed: the actual bring_to_front success payload used informational code bring_to_front_exact_window_verified, initially misclassified as an error. A red regression corrected that exact success contract without masking explicit errors. Rename then settled, but Go-sheet foreground still changed before path input in a fresh reserved trial. The same-window modal dependency remains unqualified and no file move occurred in those attempts.
+Inferred: stop repeating the modal workflow. The destination can be independently bound before input using its existing owned marker; navigation need not create a modal during the compound mutation.
+Next: two pre-bound owned Finder windows with Copy and Move Item Here; keep failed modal histories.
+Refs: output/move-submit-20261028/intent-dev/sdk-intent-refusal.json; output/move-submit-20261028/direct-ax-dev/move-proof.json
+
+## MS10 · prediction · 2026-10-28 22:15
+Hypothesis: Copy from the exact source window and Move Item Here in a separately pre-bound destination window avoids the observed modal focus transition while preserving logical file/destination identity.
+Test: open both owned folders during fixture setup; register the unique destination window via its protected marker before admission; revalidate it before focusing and before Move Item Here. Fresh live rename/move, wrong/duplicate/stale destination-window scenarios and same-inode/bytes/sibling oracle.
+Predicts: five acknowledged AX selection/menu inputs and exact source/destination readbacks qualify the move; missing or mismatched destination binding refuses before file input.
+Against: another window receives the move, contents/inode change, or the qualified destination loses focus and the move still proceeds.
