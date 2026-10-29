@@ -106,3 +106,10 @@ Established: full October 28 operator review, eight repaired findings, preserved
 Uncertain: pre-header duplicate-ingress cause and full-portfolio qualification remain open; hosted CI and merge have not yet been observed. AX helpers can classify a read failure as file_row_missing, so no authority depends on that label alone.
 Decision: publish the review and PR with explicit limits, follow CI/reviews through the authorized merge, and keep duplication diagnosis separate. Cleanup preserved eleven historical and two new uncertain operations.
 Refs: results/review-merge-20261029/report.md; results/review-merge-20261029/cleanup.json
+
+## RV8 · prediction · 2026-10-29 15:12
+Hypothesis: prefix comparison of a fresh raw field value incorrectly preserves an earlier exact completion fact after clearing or shortening; the display preview is not current exact-value authority.
+Test: reproduce empty, shortened-prefix, whitespace-only difference and absent-raw-value cases through structured receipts and completion effects. Preserve a long full raw value with a shortened display preview as usable. Require full raw equality before leaving the earlier fact unlimited.
+Predicts: the changed-value and missing-raw regressions fail before repair and pass afterward; complete matching raw values still qualify independently of display truncation.
+Against: shortened or unavailable raw values remain usable, or display truncation alone invalidates matching complete raw values.
+Refs: PR 9 review comment 4416606138; tests/test_session.py
