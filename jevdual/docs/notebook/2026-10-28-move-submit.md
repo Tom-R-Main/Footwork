@@ -174,3 +174,52 @@ Hypothesis: the replacement rename editor's exact new value and bound Finder mai
 Test: model the old editor becoming unreadable and a replacement current editor with no AXWindow but exact bound AXMainWindow; refuse wrong value/app/main/explicit window, then reassert only that window and require strict filename URL/inode before confirming. Run the installed interrupted chain on a fresh fixture.
 Predicts: no editor write or extra Return is needed, no foreign window receives file input, and replacement-editor completion permits the move.
 Against: another window/editor value is accepted, the final exact filename target is unavailable, or the installed chain still stops on this state.
+
+## MSU14 · update · 2026-10-28 23:53
+Resolves: MS2 = held; MS3 = held; MS4 = failed; MS6 = held; MS15 = held
+Observed: frozen installed 2ae0a5f passed the full nominal chain and a full interrupted chain with truncated response loss. The latter recovered after three real SIGKILLs, including after submission ingress, with one ingress/row and no extra request on replay. Finder completion and strict two-window move, Preview native result plus saved pixels, and qualified Chrome service evidence all passed. A final pre-header disconnect again produced two ingresses and one row; it retained unknown custody, zero qualified service receipts and no Chrome handoff. Replay/reconciliation added no ingress. The final suite passed 2142 tests, 26 skipped. Cleanup retained all eleven package unknown-row hashes and saved pixels, closed owned listeners/helpers and preserved shared Finder/Preview.
+Inferred: the requested implementation supports these reserved-desktop fixture workflows and qualified one-ingress recovery. It does not satisfy the full portfolio gate for pre-header disconnects, and a deduplicated row cannot stand in for unique ingress. The second request's source remains unproven.
+Next: publish exact support boundaries and retain the failed fault cell for a separately preregistered duplication investigation.
+Refs: results/move-submit-20261028/report.md; results/move-submit-20261028/tests-final.txt; results/move-submit-20261028/cleanup.json
+
+## MSS · summary · 2026-10-28 23:53
+Established: source-qualified two-window Finder move, explicit rename UI completion, Preview evidence before foreground restoration, pre-admitted independent Chrome receipt recovery and installed nominal/interrupted-truncated complete chains on 2ae0a5f. Final tests, module origins, wheel identity, trial accounting and cleanup are retained in the run directory.
+Uncertain: pre-header-disconnect duplicate ingress; unexplained early HID/focus observations; generic apps/origins, active-human coexistence and the abandoned Go-sheet route remain outside the support claim. Eleven uncertain package operations remain retained.
+Decision: close this implementation package with the supported boundaries checked and the full portfolio gate explicitly open for the retained disconnect fault. Do not retry that uncertain submission or retroactively enroll old operations.
+Refs: results/move-submit-20261028/report.md; docs/experiments/MS-move-submit-20261028.md
+
+## MSU15 · update · 2026-10-28 23:57
+Resolves: MS3 = held
+Observed: The owned renderer-accessibility profile exposed and accepted the four form fields with source-bound scope checks enabled. The reader accepts one resolution per entry; this makes the earlier multi-resolution update explicit.
+Next: Retain the finite owned-profile support boundary.
+Refs: results/move-submit-20261028/report.md; MSU14
+
+## MSU16 · update · 2026-10-28 23:57
+Resolves: MS4 = failed
+Observed: The full primary gate remains open: final pre-header disconnect produced two ingresses and could not complete Chrome. The reader accepts one resolution per entry; this makes the earlier multi-resolution update explicit.
+Next: Keep that attempt unknown and investigate duplication separately.
+Refs: results/move-submit-20261028/report.md; MSU14
+
+## MSU17 · update · 2026-10-28 23:57
+Resolves: MS6 = held
+Observed: Truncated response loss retained one ingress in the component test and the complete interrupted installed chain. The reader accepts one resolution per entry; this makes the earlier multi-resolution update explicit.
+Next: Keep this fault distinct from pre-header disconnect.
+Refs: results/move-submit-20261028/report.md; MSU14
+
+## MSU18 · update · 2026-10-28 23:57
+Resolves: MS7 = failed
+Observed: The modal Return route never completed a qualified move; its uncertain attempts remain retained. The reader accepts one resolution per entry; this makes the earlier multi-resolution update explicit.
+Next: Use only the qualified pre-bound two-window route.
+Refs: results/move-submit-20261028/report.md; MSU14
+
+## MSU19 · update · 2026-10-28 23:57
+Resolves: MS10 = held
+Observed: The final nominal and interrupted installed chains completed the two-window same-inode move and independent sibling/byte checks. The reader accepts one resolution per entry; this makes the earlier multi-resolution update explicit.
+Next: Retain strict registered-window and filename targeting.
+Refs: results/move-submit-20261028/report.md; MSU14
+
+## MSU20 · update · 2026-10-28 23:57
+Resolves: MS15 = held
+Observed: The final installed current-editor completion restored strict filename targeting and completed both connected chains. The reader accepts one resolution per entry; this makes the earlier multi-resolution update explicit.
+Next: Limit replacement-editor recognition to owned-window reacquisition.
+Refs: results/move-submit-20261028/report.md; MSU14

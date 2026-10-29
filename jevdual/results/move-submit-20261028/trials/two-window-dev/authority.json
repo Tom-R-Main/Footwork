@@ -1,0 +1,100 @@
+[
+  {
+    "operation_id": "op_75bb80738b56",
+    "client_token": "rename",
+    "state": "final",
+    "disposition": "not_sent",
+    "phase": "not_sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 13486
+      },
+      "dispatched": false,
+      "driver_effect": "not sent",
+      "error": "not_key: foreground (front app restored); the bound window did not become the key window and its title bar is covered; not pressed",
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 62,
+      "target_label": "textbox",
+      "exec_ms": 3620.391832984751,
+      "execution_interval": {
+        "end": 1793240441.009297,
+        "start": 1793240437.3888938
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 13486
+        },
+        "custody": "returned",
+        "dispatched": false,
+        "effect": "refused",
+        "error": "not_key: foreground (front app restored); the bound window did not become the key window and its title bar is covered; not pressed",
+        "interval": {
+          "end": 1793240441.009297,
+          "start": 1793240437.3888938
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_75bb80738b56",
+        "phase": "not_sent",
+        "producer": {
+          "delivered_count": 0,
+          "delivery_basis": "qualified_gate",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 13486
+          },
+          "dispatched": false,
+          "driver_effect": "not sent",
+          "error": "not_key: foreground (front app restored); the bound window did not become the key window and its title bar is covered; not pressed",
+          "exec_ms": 3620.391832984751,
+          "execution_interval": {
+            "end": 1793240441.009297,
+            "start": 1793240437.3888938
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_75bb80738b56",
+          "secret": false,
+          "step": 1,
+          "target_id": 62,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "92e69c591e23cf44e2dc5d4675398a568bb1d67c4e455c398c06867ac205bf04",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "08f3c32373a442889e08e78cc0b26006",
+        "target": "62"
+      },
+      "operation_id": "op_75bb80738b56"
+    },
+    "error": "not_key: foreground (front app restored); the bound window did not become the key window and its title bar is covered; not pressed"
+  }
+]

@@ -1,0 +1,208 @@
+[
+  {
+    "operation_id": "op_e2a60f5c6865",
+    "client_token": "rename",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Finder",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 81134,
+        "start": "0x1.ab7e9e4188002p+30",
+        "window_id": 13173
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": "file_selection_unverified: foreground (front app restored); the exact bound row is not the sole selected row in the front window",
+      "intended": "renamed.png",
+      "line": "type(textbox) text='renamed.png'",
+      "mode": "native",
+      "native_scope": {},
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 62,
+      "target_label": "textbox",
+      "exec_ms": 2721.140249981545,
+      "execution_interval": {
+        "end": 1793238837.3663208,
+        "start": 1793238834.6451719
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 81134,
+          "start": "0x1.ab7e9e4188002p+30",
+          "window_id": 13173
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "unverifiable",
+        "error": "file_selection_unverified: foreground (front app restored); the exact bound row is not the sole selected row in the front window",
+        "interval": {
+          "end": 1793238837.3663208,
+          "start": 1793238834.6451719
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_e2a60f5c6865",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 1,
+          "delivery_basis": "ax_finder_rename_readback",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Finder",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 81134,
+            "start": "0x1.ab7e9e4188002p+30",
+            "window_id": 13173
+          },
+          "dispatched": true,
+          "driver_effect": "unverifiable",
+          "error": "file_selection_unverified: foreground (front app restored); the exact bound row is not the sole selected row in the front window",
+          "exec_ms": 2721.140249981545,
+          "execution_interval": {
+            "end": 1793238837.3663208,
+            "start": 1793238834.6451719
+          },
+          "intended": "renamed.png",
+          "line": "type(textbox) text='renamed.png'",
+          "mode": "native",
+          "native_readback": {
+            "acknowledgements": [
+              "exact_row_selected"
+            ],
+            "before": {
+              "ax_url": "file:///.file/id=6571367.388202558",
+              "basis": "fresh_ax_file_url_and_owned_inode",
+              "binding": {
+                "device": 16777234,
+                "inode": 388202558,
+                "manifest_sha256": "90e1577cccdaf8f47c311d2bbb0400ed44324914299d06a73a6e12677e206b9c",
+                "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/fixture/inbox/asset.png",
+                "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/fixture",
+                "root_device": 16777234,
+                "root_inode": 388202552
+              },
+              "frame": {
+                "h": 18.0,
+                "w": 66.0,
+                "x": 270.0,
+                "y": 402.0
+              },
+              "pid": 81134,
+              "role": "AXTextField",
+              "value": "asset.png",
+              "window_id": 13173
+            },
+            "before_menu": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 13173,
+              "front_pid": 71442,
+              "main_window_id": 13173,
+              "selection": {
+                "exact_row_only": true,
+                "exact_row_selected": true,
+                "selected_row_count": 1
+              }
+            },
+            "before_selection": {
+              "focused_role": "AXOutline",
+              "focused_window_id": 13173,
+              "front_pid": 71442,
+              "main_window_id": 13173,
+              "selection": {
+                "exact_row_only": false,
+                "exact_row_selected": false,
+                "selected_row_count": 1
+              }
+            },
+            "destination": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/fixture/inbox/renamed.png",
+            "predicate": "finder_rename_same_inode",
+            "producer": "footwork.ax.finder",
+            "schema_version": 1
+          },
+          "native_scope": {},
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_e2a60f5c6865",
+          "secret": false,
+          "step": 1,
+          "target_id": 62,
+          "target_label": "textbox"
+        },
+        "protocol": 1,
+        "request_digest": "077414fa603fcf1dde482213c5989c7077bbf45737524e04afe916cfb7876272",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":81134,\"start\":\"0x1.ab7e9e4188002p+30\"}",
+        "schema_version": "1",
+        "session_id": "311f4f45c56a439abf61c628b1952f5c",
+        "target": "62"
+      },
+      "native_readback": {
+        "acknowledgements": [
+          "exact_row_selected"
+        ],
+        "before": {
+          "ax_url": "file:///.file/id=6571367.388202558",
+          "basis": "fresh_ax_file_url_and_owned_inode",
+          "binding": {
+            "device": 16777234,
+            "inode": 388202558,
+            "manifest_sha256": "90e1577cccdaf8f47c311d2bbb0400ed44324914299d06a73a6e12677e206b9c",
+            "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/fixture/inbox/asset.png",
+            "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/fixture",
+            "root_device": 16777234,
+            "root_inode": 388202552
+          },
+          "frame": {
+            "h": 18.0,
+            "w": 66.0,
+            "x": 270.0,
+            "y": 402.0
+          },
+          "pid": 81134,
+          "role": "AXTextField",
+          "value": "asset.png",
+          "window_id": 13173
+        },
+        "before_menu": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 13173,
+          "front_pid": 71442,
+          "main_window_id": 13173,
+          "selection": {
+            "exact_row_only": true,
+            "exact_row_selected": true,
+            "selected_row_count": 1
+          }
+        },
+        "before_selection": {
+          "focused_role": "AXOutline",
+          "focused_window_id": 13173,
+          "front_pid": 71442,
+          "main_window_id": 13173,
+          "selection": {
+            "exact_row_only": false,
+            "exact_row_selected": false,
+            "selected_row_count": 1
+          }
+        },
+        "destination": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/fixture/inbox/renamed.png",
+        "predicate": "finder_rename_same_inode",
+        "producer": "footwork.ax.finder",
+        "schema_version": 1
+      },
+      "operation_id": "op_e2a60f5c6865"
+    },
+    "error": "file_selection_unverified: foreground (front app restored); the exact bound row is not the sole selected row in the front window"
+  }
+]

@@ -1,0 +1,78 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted",
+  "posture": "exclusive_desktop",
+  "loss": "truncated",
+  "interrupt": true,
+  "events": [
+    {
+      "label": "finder-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Finder",
+        "--window",
+        "inbox",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--finder-manifest",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/fixture/fixture.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "finder-wrong-directory",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/fixture/decoy/asset.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/fixture/organized",
+        "--no-judge",
+        "--token",
+        "wrong-directory"
+      ],
+      "exit": 7,
+      "summary": [
+        "stopped: file_scope_invalid: file is not an owned fixture asset"
+      ]
+    },
+    {
+      "label": "rename-grant",
+      "words": [
+        "grant",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/fixture/inbox/asset.png",
+        "renamed.png"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "rename",
+      "words": [
+        "do",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/fixture/inbox/asset.png",
+        "renamed.png",
+        "--no-judge",
+        "--token",
+        "rename"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(textbox) text='renamed.png': driver says unverifiable (file_completion_lost_focus: foreground (front app restored); the owned rename window lost foreground before completion) in 3.2s"
+      ]
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "finder_readiness": {
+    "source": 14038,
+    "destination": 14039
+  }
+}

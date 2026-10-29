@@ -1,0 +1,91 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready",
+  "posture": "exclusive_desktop",
+  "loss": "none",
+  "interrupt": true,
+  "events": [
+    {
+      "label": "finder-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Finder",
+        "--window",
+        "inbox",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--finder-manifest",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/fixture.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "finder-wrong-directory",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/decoy/asset.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/organized",
+        "--no-judge",
+        "--token",
+        "wrong-directory"
+      ],
+      "exit": 7,
+      "summary": [
+        "stopped: file_scope_invalid: file is not an owned fixture asset"
+      ]
+    },
+    {
+      "label": "rename-grant",
+      "words": [
+        "grant",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/inbox/asset.png",
+        "renamed.png"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "rename",
+      "words": [
+        "do",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/inbox/asset.png",
+        "renamed.png",
+        "--no-judge",
+        "--token",
+        "rename"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(textbox) text='renamed.png': driver says confirmed in 3.2s"
+      ]
+    },
+    {
+      "label": "move-grant",
+      "words": [
+        "grant",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready/fixture/organized"
+      ],
+      "exit": 7,
+      "summary": [
+        "stopped: file_target_missing: 0 Finder filename fields resolve to the exact owned file"
+      ]
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "finder_readiness": {
+    "source": 13909,
+    "destination": 13910
+  }
+}

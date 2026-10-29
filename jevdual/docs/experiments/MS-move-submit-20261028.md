@@ -21,3 +21,13 @@ Development observed two HTTP ingresses from one agent click after an empty-resp
 ## Reserved-desktop amendment · 2026-10-28 21:44
 
 Thomas replied that he would leave the desktop idle and that only this test should be using it. Repeated read-only captures still observed near-zero HID idle; the cause remains unproven. For fresh measured fixtures use the existing exclusive_desktop posture under that reserved-desktop condition. Do not change target, grant, URL, custody or independent-oracle checks; require no desktop drag. Retain foreground_permitted no-send attempts. This run qualifies only the reserved-desktop fixture route, not coexistence with active human input. No policy threshold is changed.
+
+## Result
+
+Frozen installed runtime `2ae0a5f263841008f17986a750fbb1596dc9f91f` completed the nominal Finder→Preview→Chrome chain and a second full chain with truncated HTTP response loss and three real controller SIGKILLs. Both passed the independent artifact/ingress oracles and all three retained handoff gates; each had one ingress and original-token replay added none. The full suite passed 2142 tests, with 26 skipped.
+
+The original pre-header-disconnect fault again produced two ingress events and one deduplicated row. Reconciliation refused, the operation stayed unknown, and Chrome could not advance. Therefore the primary full-portfolio gate failed; passing the revised fault models does not qualify this retained cell. No target, grant, custody, duplicate-ingress or task-correctness check was relaxed to obtain a pass.
+
+The final route uses pre-bound Finder source/destination windows, current owned-editor recognition solely for window reactivation, strict ordinary filename URL/inode targeting, Preview result capture before foreground restoration, and a separate pre-admitted ticket receipt. The latest trials use the announced reserved-desktop amendment and a fresh owned Preview process with process-local state restoration suppressed. All early trajectories and mechanism changes remain in the notebook and trial inventory.
+
+See [the final report](../../results/move-submit-20261028/report.md) for source/wheel identity, independent proof, 22-trajectory accounting, limitations and cleanup. Owned helpers/listeners were retired; eleven uncertain package rows retained their hashes across cleanup, and shared Finder/Preview remained running.

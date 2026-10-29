@@ -1,0 +1,23 @@
+{
+  "before_ingress": 2,
+  "after_ingress": 2,
+  "no_extra_ingress": true,
+  "state": "unknown",
+  "disposition": "unknown",
+  "service_receipts": 0,
+  "native_count": null,
+  "events": [
+    {
+      "label": "replay",
+      "exit": 0
+    },
+    {
+      "label": "reconcile-repeat",
+      "exit": 0
+    }
+  ],
+  "completed_handoffs": [
+    "finder",
+    "preview"
+  ]
+}

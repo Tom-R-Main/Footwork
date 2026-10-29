@@ -1,0 +1,205 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal",
+  "posture": "exclusive_desktop",
+  "loss": "none",
+  "interrupt": false,
+  "events": [
+    {
+      "label": "finder-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Finder",
+        "--window",
+        "inbox",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--finder-manifest",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/fixture.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "finder-wrong-directory",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/decoy/asset.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized",
+        "--no-judge",
+        "--token",
+        "wrong-directory"
+      ],
+      "exit": 7,
+      "summary": [
+        "stopped: file_scope_invalid: file is not an owned fixture asset"
+      ]
+    },
+    {
+      "label": "rename-grant",
+      "words": [
+        "grant",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/inbox/asset.png",
+        "renamed.png"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "rename",
+      "words": [
+        "do",
+        "type",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/inbox/asset.png",
+        "renamed.png",
+        "--no-judge",
+        "--token",
+        "rename"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(textbox) text='renamed.png': driver says confirmed in 3.4s"
+      ]
+    },
+    {
+      "label": "move-grant",
+      "words": [
+        "grant",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "move",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized",
+        "--no-judge",
+        "--token",
+        "move"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched move(textbox) text='/Users/thomasmain/projects/footwork/output/move-submit-20261': driver says confirmed in 6.1s"
+      ]
+    },
+    {
+      "label": "move-replay",
+      "words": [
+        "do",
+        "move",
+        "file:/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/inbox/renamed.png",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized",
+        "--no-judge",
+        "--token",
+        "move"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "preview-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Preview",
+        "--window",
+        "renamed.png",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/authority.sqlite",
+        "--mode",
+        "exclusive_desktop"
+      ],
+      "exit": 2,
+      "summary": []
+    },
+    {
+      "label": "preview-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Preview",
+        "--window",
+        "renamed.png",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/authority.sqlite",
+        "--mode",
+        "exclusive_desktop"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "preview-menu",
+      "words": [
+        "look",
+        "--menu-bar"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "rotate",
+      "words": [
+        "do",
+        "menu",
+        "Tools > Rotate Right",
+        "--no-judge",
+        "--token",
+        "rotate"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched menu(Tools > Rotate Right): driver says unverifiable (operation outcome unknown; inspect status, do not repeat input) in 3.7s"
+      ]
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "finder_oracle": {
+    "ok": true,
+    "detail": "asset is at the exact expected path with unchanged bytes and siblings",
+    "claims": [
+      "current_asset_path",
+      "unchanged_asset_bytes",
+      "preserved_fixture_siblings"
+    ],
+    "artifact": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized/renamed.png",
+    "identity": {
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized/renamed.png",
+      "device": 16777234,
+      "inode": 388370723,
+      "size": 83,
+      "mtime_ns": 1793240635133798745,
+      "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+    },
+    "checked_at": 1793240656.169487,
+    "limits": [
+      "current artifact state does not establish historical UI execution"
+    ]
+  },
+  "finder_closed": {
+    "pid": 81134,
+    "window_id": 13601,
+    "ack": 0,
+    "gone": true
+  },
+  "finder_destination_closed": {
+    "window_id": 13603,
+    "ack": 0
+  }
+}

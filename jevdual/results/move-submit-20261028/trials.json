@@ -1,0 +1,875 @@
+[
+  {
+    "run": "chrome-dev",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/chrome-dev",
+    "files": [
+      "ticket-duplicate-diagnostic.json"
+    ],
+    "operations": [
+      {
+        "id": "op_6a00ab7f9a6c",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_10f46a58cb78",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_6ad6b029732b",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_813ebc2954ca",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_779abcb1337d",
+        "client_token": "submit-once",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "ambiguous",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "component-truncated",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/component-truncated",
+    "files": [
+      "summary.json",
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_43d69b7e6782",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_9e8acc673755",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_8e7c77acbe21",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_1da9c568ed38",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_bcec20475709",
+        "client_token": "submit",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": "ticket_ledger"
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: chrome-start CLI refused"
+    ]
+  },
+  {
+    "run": "dev2",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/dev2",
+    "files": [],
+    "operations": [
+      {
+        "id": "op_5c4f83baa3e0",
+        "client_token": "move-dev2",
+        "state": "final",
+        "disposition": "not_sent",
+        "phase": "not_sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_8e562e0cb831",
+        "client_token": "rename-dev2",
+        "state": "final",
+        "disposition": "not_sent",
+        "phase": "not_sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_8bffefb352ea",
+        "client_token": "rename-dev2-idle",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_666703f65f6a",
+        "client_token": "move-dev2-idle",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "dev3",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/dev3",
+    "files": [
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_ff3037ab0637",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "not_sent",
+        "phase": "not_sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "direct-ax-dev",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/direct-ax-dev",
+    "files": [
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_7dc38f9c5db0",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_5998b072f41e",
+        "client_token": "move",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "final-interrupted",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/final-interrupted",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_d5772c3a7d11",
+        "client_token": "rename",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: rename has unsettled custody: file_completion_lost_focus: foreground (front app restored); the owned rename window lost foreground before completion"
+    ]
+  },
+  {
+    "run": "installed-chrome-component",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-chrome-component",
+    "files": [
+      "summary.json",
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_58f24fe0766b",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_27d29527ca5f",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_53e45f9d96ef",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_557ad4045b93",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_86d21ea5520a",
+        "client_token": "submit",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": "ticket_ledger"
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "installed-nominal",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json",
+      "preview-diagnostic.json"
+    ],
+    "operations": [
+      {
+        "id": "op_d61393d4e8b5",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_09977dfaebb3",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_f88a3549bb51",
+        "client_token": "rotate",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: preview-start CLI refused"
+    ]
+  },
+  {
+    "run": "installed-owned-nominal",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_7a4aadb84f39",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_61daf04983bc",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_4a005b45a425",
+        "client_token": "rotate",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "AssertionError"
+    ]
+  },
+  {
+    "run": "intent-dev",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/intent-dev",
+    "files": [
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_82d49d9aa35a",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "not_sent",
+        "phase": "not_sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_a94f595b3973",
+        "client_token": "rename-valid",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_47aec2725330",
+        "client_token": "move-valid",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "modal-target-dev",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev",
+    "files": [
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_e2a60f5c6865",
+        "client_token": "rename",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "proven-disconnect",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-disconnect",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json",
+      "disconnect-oracle.json",
+      "disconnect-replay.json"
+    ],
+    "operations": [
+      {
+        "id": "op_f1e2962fb7f9",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_bacde7e38f30",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_3d3b2fe2b802",
+        "client_token": "rotate",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_e3a4a32790c2",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_cd5a23252318",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_178dfaea6401",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_ce7f4a2b852f",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_25b9416dc393",
+        "client_token": "submit",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "ambiguous",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: submit has unsettled custody: None"
+    ]
+  },
+  {
+    "run": "proven-interrupted",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-interrupted",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_1eb11b9a4db0",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_693563b8858b",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_1c49f4251388",
+        "client_token": "rotate",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_caea6d2fdca9",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_8b6db1eb9ee6",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_1488966e74d7",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_e98d29e2bf90",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_e229b51c86df",
+        "client_token": "submit",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": "ticket_ledger"
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "proven-nominal",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-nominal",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_533bb73d3a5a",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_6e3445b9f74f",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_00a38a7c00a7",
+        "client_token": "rotate",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_564f5da01d66",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_bbf9568ed321",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_a8ca9a5cdc87",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_7019d1534dea",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_b3547c755ca2",
+        "client_token": "submit",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": "ticket_ledger"
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "qualified-interrupted",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_808915a49ea6",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_162d117dad82",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "not_sent",
+        "phase": "not_sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: move has unsettled custody: file_destination_window_missing: one separately pre-bound owned destination window is required"
+    ]
+  },
+  {
+    "run": "qualified-interrupted-final",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-final",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json",
+      "editor-activation-probe.json"
+    ],
+    "operations": [
+      {
+        "id": "op_304dfa002429",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: move-grant CLI refused"
+    ]
+  },
+  {
+    "run": "qualified-interrupted-ready",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-interrupted-ready",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json",
+      "finder-after-rename-diagnostic.json",
+      "focused-editor-diagnostic.json"
+    ],
+    "operations": [
+      {
+        "id": "op_362618e78ec0",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: move-grant CLI refused"
+    ]
+  },
+  {
+    "run": "qualified-nominal",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/qualified-nominal",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_6b222923bf49",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_79255e89c835",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_6ffa472bb8bf",
+        "client_token": "rotate",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_5e6a5e84661e",
+        "client_token": "type-request_id",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_e94d5236fb5c",
+        "client_token": "type-artifact",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_308236ec82b3",
+        "client_token": "type-orientation",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_8fa53a477629",
+        "client_token": "type-digest",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_3a9755e590cd",
+        "client_token": "submit",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": "ticket_ledger"
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "reserved-dev",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/reserved-dev",
+    "files": [
+      "authority.json"
+    ],
+    "operations": [
+      {
+        "id": "op_9baae5529f50",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_2b8714ba7cb3",
+        "client_token": "move",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "two-window-dev",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/two-window-dev",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_75bb80738b56",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "not_sent",
+        "phase": "not_sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: rename has unsettled custody: not_key: foreground (front app restored); the bound window did not become the key window and its title bar is covered; not pressed"
+    ]
+  },
+  {
+    "run": "two-window-dev2",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/two-window-dev2",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json"
+    ],
+    "operations": [
+      {
+        "id": "op_856f9e7fe357",
+        "client_token": "rename",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      },
+      {
+        "id": "op_913b3af235fa",
+        "client_token": "move",
+        "state": "final",
+        "disposition": "applied",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": []
+  },
+  {
+    "run": "verified-interrupted",
+    "private_root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted",
+    "files": [
+      "summary.json",
+      "authority.json",
+      "handoff.json",
+      "replacement-editor.json"
+    ],
+    "operations": [
+      {
+        "id": "op_af30236c63f1",
+        "client_token": "rename",
+        "state": "unknown",
+        "disposition": "unknown",
+        "phase": "sent",
+        "resolved_by": null
+      }
+    ],
+    "terminal_failures": [
+      "RuntimeError: rename has unsettled custody: file_completion_lost_focus: foreground (front app restored); the owned rename window lost foreground before completion"
+    ]
+  }
+]

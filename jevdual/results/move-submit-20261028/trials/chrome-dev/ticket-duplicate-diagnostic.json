@@ -1,0 +1,38 @@
+{
+  "ingress": [
+    {
+      "id": 1,
+      "received": 1793237146.8215292,
+      "body_sha": "236f513c4575bd96df56c12b76bd57b7472e240567255ef0fbb43b13356731a6",
+      "fields": {
+        "artifact": "asset.png",
+        "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+        "orientation": "clockwise90",
+        "request_id": "193d217cc9174f0fa5289cfb15b79623"
+      },
+      "error": null,
+      "origin": "http://127.0.0.1:52108"
+    },
+    {
+      "id": 2,
+      "received": 1793237146.824096,
+      "body_sha": "236f513c4575bd96df56c12b76bd57b7472e240567255ef0fbb43b13356731a6",
+      "fields": {
+        "artifact": "asset.png",
+        "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+        "orientation": "clockwise90",
+        "request_id": "193d217cc9174f0fa5289cfb15b79623"
+      },
+      "error": null,
+      "origin": "http://127.0.0.1:52108"
+    }
+  ],
+  "tickets": [
+    {
+      "artifact": "asset.png",
+      "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+      "orientation": "clockwise90",
+      "request_id": "193d217cc9174f0fa5289cfb15b79623"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Diversified app qualification
 
-The October 28 harness covers Finder file organization, Preview image transformation, Chrome ticket submission and interrupted handoffs. **The installed portfolio has not passed qualification.** See [the run report](../results/app-portfolio-20261028/report.md) for separate offline and installed evidence.
+The October 28 harness covers Finder file organization, Preview image transformation, Chrome ticket submission and interrupted handoffs. The [latest installed run](../results/move-submit-20261028/report.md) passed the owned nominal chain and an interrupted chain with truncated HTTP response loss. **The full portfolio gate remains open for disconnects before HTTP response headers**, which produced duplicate ingress and correctly remained unknown. Earlier runs remain linked below as historical evidence.
 
 ## Fixture and independent checks
 
@@ -53,3 +53,11 @@ For the fresh owned ticket fixture, additionally pass `--ticket-manifest /absolu
 Only the exact `click button:Register asset` with all four expected observed form values can carry that preparation into admission. `status --reconcile` may resolve an unknown started attempt from one new matching ingress and one durable row, with the exact request body, origin, source and artifact bindings. Duplicate ingress, missing records, changed sources, reused nonce or mismatched fields leave it unknown. Historical operations cannot enroll after execution. The independently retained `ticket_submission` receipt survives controller death before finalization; it does not invent a native delivery count or replace the original uncertainty capsule. Token replay and reconciliation send no input.
 
 The response-loss fixture has distinct modes: default `--lose-reply-once` disconnects before response headers; `--lose-reply-once --reply-loss truncated` sends headers and loses the body. Qualification reports each mode separately. A deduplicated server row alone never proves one submission.
+
+## October 28 final installed boundary
+
+Frozen runtime `2ae0a5f` completed Finder rename/move, persisted Preview clockwise rotation and Chrome submission/reconciliation on fresh owned fixtures. A connected trial recovered after actual controller kills at both app boundaries and after submission ingress, together with truncated HTTP body loss; it retained exactly one ingress. Original-token replay added no request. The full suite passed 2142 tests, with 26 skipped.
+
+Rename now reacquires only its owned window after the actual rename and requires the normal filename AXURL to return. Finder may replace the transient editor, so that setup step binds the current expected-name editor to the exact main window; file input still requires strict URL/inode identity. Preview obtains the existing Undo/save predicate before foreground restoration and checks exact ownership around input/readback. These live trials use a reserved desktop and a fresh owned Preview process with state restoration suppressed.
+
+The pre-header-disconnect trial again produced two ingress events and one row. It has no qualified service receipt, remains unknown, and cannot advance Chrome. The [final report](../results/move-submit-20261028/report.md) records the successful boundaries, complete trial accounting, retained failures and cleanup.

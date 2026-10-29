@@ -1,0 +1,303 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-chrome-component",
+  "posture": "exclusive_desktop",
+  "loss": "none",
+  "interrupt": false,
+  "events": [
+    {
+      "label": "chrome-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Google Chrome",
+        "--window",
+        "Footwork owned ticket fixture",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-chrome-component/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "91607",
+        "--native-url",
+        "http://127.0.0.1:51056",
+        "--native-title",
+        "Footwork owned ticket fixture",
+        "--ticket-manifest",
+        "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-chrome-component/ticket-manifest.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "type-request_id",
+      "words": [
+        "do",
+        "type",
+        "textbox:request_id",
+        "590bac444def4b488c7f8c054ebb7cf0",
+        "--no-judge",
+        "--token",
+        "type-request_id"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(request_id) text='590bac444def4b488c7f8c054ebb7cf0': driver says confirmed in 2.1s"
+      ]
+    },
+    {
+      "label": "type-artifact",
+      "words": [
+        "do",
+        "type",
+        "textbox:artifact",
+        "renamed.png",
+        "--no-judge",
+        "--token",
+        "type-artifact"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(artifact) text='renamed.png': driver says confirmed in 1.2s"
+      ]
+    },
+    {
+      "label": "type-orientation",
+      "words": [
+        "do",
+        "type",
+        "textbox:orientation",
+        "clockwise90",
+        "--no-judge",
+        "--token",
+        "type-orientation"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(orientation) text='clockwise90': driver says confirmed in 1.2s"
+      ]
+    },
+    {
+      "label": "type-digest",
+      "words": [
+        "do",
+        "type",
+        "textbox:digest",
+        "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "--no-judge",
+        "--token",
+        "type-digest"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(digest) text='121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f04': driver says confirmed in 3.5s"
+      ]
+    },
+    {
+      "label": "submit",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 7,
+      "summary": [
+        "dispatched click(Register asset): driver says unverifiable (operation outcome unknown; inspect status, do not repeat input) in 0.5s",
+        "stopped: native_scope_changed: the observed window lacks the fixture title nonce"
+      ]
+    },
+    {
+      "label": "reconcile",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "submit-replay",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "reconcile-repeat",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "component_only": "Preview custody unknown in separate retained authority; no handoff advanced",
+  "expected": {
+    "request_id": "590bac444def4b488c7f8c054ebb7cf0",
+    "artifact": "renamed.png",
+    "orientation": "clockwise90",
+    "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff"
+  },
+  "submission_before_reconcile": {
+    "operation_id": "op_86d21ea5520a",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "error": null
+  },
+  "submission_after_reconcile": {
+    "operation_id": "op_86d21ea5520a",
+    "client_token": "submit",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "error": null
+  },
+  "ticket_oracle": {
+    "schema_version": 1,
+    "kind": "ticket_oracle",
+    "database": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-chrome-component/ticket-fixture/tickets.sqlite",
+    "expected": {
+      "request_id": "590bac444def4b488c7f8c054ebb7cf0",
+      "artifact": "renamed.png",
+      "orientation": "clockwise90",
+      "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff"
+    },
+    "checked_at": 1793241143.664208,
+    "ok": true,
+    "detail": "exactly one ingress and matching durable row",
+    "ingress": [
+      {
+        "id": 1,
+        "received": 1793241142.0090659,
+        "body_sha": "e9b91b83983a9d5a60e6c79b8a914a42b8ffb280f873f1b53cf9911d88b56a8a",
+        "fields": {
+          "artifact": "renamed.png",
+          "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+          "orientation": "clockwise90",
+          "request_id": "590bac444def4b488c7f8c054ebb7cf0"
+        },
+        "error": null,
+        "origin": "http://127.0.0.1:51056"
+      }
+    ],
+    "tickets": [
+      {
+        "artifact": "renamed.png",
+        "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "orientation": "clockwise90",
+        "request_id": "590bac444def4b488c7f8c054ebb7cf0"
+      }
+    ]
+  },
+  "native_submission_receipt_preserved": {
+    "binding": {
+      "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+      "pid": 91607,
+      "start": "0x1.ab8ac09336c09p+30",
+      "window_id": 13754
+    },
+    "custody": "returned",
+    "dispatched": true,
+    "effect": "unverifiable",
+    "error": null,
+    "interval": {
+      "end": 1793241142.318649,
+      "start": 1793241141.8525949
+    },
+    "kind": "execution",
+    "move": "click",
+    "observation": "s00000001",
+    "operation_id": "op_86d21ea5520a",
+    "phase": "ambiguous",
+    "producer": {
+      "delivered_count": null,
+      "delivery_basis": "unknown",
+      "name": "footwork.native",
+      "version": 1
+    },
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 91607,
+        "start": "0x1.ab8ac09336c09p+30",
+        "window_id": 13754
+      },
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:51056"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 91607,
+        "visited": 39,
+        "window_id": 13754
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": null,
+      "exec_ms": 466.04995799134485,
+      "execution_interval": {
+        "end": 1793241142.318649,
+        "start": 1793241141.8525949
+      },
+      "intended": null,
+      "line": "click(Register asset)",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:51056"
+      },
+      "observation": "s00000001",
+      "op": "click",
+      "operation_id": "op_86d21ea5520a",
+      "secret": false,
+      "step": 5,
+      "target_id": 18,
+      "target_label": "Register asset"
+    },
+    "protocol": 1,
+    "request_digest": "2e502997573654993b8822a37cd60c31957a3ef3b931efde2646afd2d7fe169f",
+    "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":91607,\"start\":\"0x1.ab8ac09336c09p+30\"}",
+    "schema_version": "1",
+    "session_id": "a29b401ad64a4d398ac19dfdf80e53bf",
+    "target": "18"
+  },
+  "replay_no_additional_ingress": true,
+  "completed_handoffs": [],
+  "status": "passed Chrome component only"
+}

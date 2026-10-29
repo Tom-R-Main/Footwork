@@ -1,0 +1,326 @@
+{
+  "windows": [
+    {
+      "pid": 6514,
+      "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/fixture/organized/renamed.png",
+      "close_ack": 0
+    }
+  ],
+  "ports": [
+    {
+      "run": "installed-chrome-component",
+      "port": 51056,
+      "accepting": false
+    },
+    {
+      "run": "proven-disconnect",
+      "port": 60437,
+      "accepting": false
+    },
+    {
+      "run": "proven-interrupted",
+      "port": 60062,
+      "accepting": false
+    },
+    {
+      "run": "proven-nominal",
+      "port": 60322,
+      "accepting": false
+    },
+    {
+      "run": "qualified-nominal",
+      "port": 52102,
+      "accepting": false
+    },
+    {
+      "run": "chrome-dev",
+      "port": 52108,
+      "accepting": false
+    },
+    {
+      "run": "component-truncated",
+      "port": 57275,
+      "accepting": false
+    }
+  ],
+  "helpers": [
+    {
+      "run": "chrome-dev",
+      "pid": 42085,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "chrome-dev",
+      "pid": 42081,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "component-truncated",
+      "pid": 40395,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "component-truncated",
+      "pid": 40393,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "installed-chrome-component",
+      "pid": 91607,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "installed-chrome-component",
+      "pid": 91605,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "installed-owned-nominal",
+      "pid": 27282,
+      "kind": "owned Preview",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-disconnect",
+      "pid": 64460,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-disconnect",
+      "pid": 64458,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-disconnect",
+      "pid": 63909,
+      "kind": "owned Preview",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-interrupted",
+      "pid": 56426,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-interrupted",
+      "pid": 56424,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-interrupted",
+      "pid": 55862,
+      "kind": "owned Preview",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-nominal",
+      "pid": 61196,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-nominal",
+      "pid": 61194,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "proven-nominal",
+      "pid": 60658,
+      "kind": "owned Preview",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "qualified-nominal",
+      "pid": 84753,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "qualified-nominal",
+      "pid": 84751,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "qualified-nominal",
+      "pid": 84126,
+      "kind": "owned Preview",
+      "stopped": true,
+      "already_exited": true
+    }
+  ],
+  "saved_images": {
+    "proven-nominal": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-nominal/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-nominal/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 388614857,
+        "size": 548,
+        "mtime_ns": 1793245713530708136,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793245924.906516,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    },
+    "proven-interrupted": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-interrupted/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-interrupted/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 388602652,
+        "size": 548,
+        "mtime_ns": 1793245619862764971,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793245924.908617,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    },
+    "proven-disconnect": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-disconnect/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-disconnect/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 388617277,
+        "size": 548,
+        "mtime_ns": 1793245787112888321,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793245924.9104588,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    }
+  },
+  "unknowns_unchanged": true,
+  "retained_unknowns": [
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/chrome-dev/authority.sqlite",
+      "operation": "op_779abcb1337d",
+      "row_sha256": "f0760454373d378d6eede0e66b4cbe8e0ca4b61dd29f00766bcd899847276d4a"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/dev2/authority.sqlite",
+      "operation": "op_666703f65f6a",
+      "row_sha256": "342313dcd8b9fb7fa2f59a9e2662e25378b1b946da7a6e336e5190fa179ebff3"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/direct-ax-dev/authority.sqlite",
+      "operation": "op_5998b072f41e",
+      "row_sha256": "c530b2e2491f10ef8e8653ca34981351b179c0b3957db0211bc4136954cad8fd"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/final-interrupted/authority.sqlite",
+      "operation": "op_d5772c3a7d11",
+      "row_sha256": "3976b7264b170d21cab7921aa8dd0af5912c994b5efe66caadac210281236407"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-nominal/authority.sqlite",
+      "operation": "op_f88a3549bb51",
+      "row_sha256": "e445ba0711cd300b3d156a5688a01e57687fa209a7faebb5f4014a3d8ef25589"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/installed-owned-nominal/authority.sqlite",
+      "operation": "op_4a005b45a425",
+      "row_sha256": "3507e8628bacd8c78f02eebd9011a2c360a0cd6a6295dcfaec727d386e8b0ded"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/intent-dev/authority.sqlite",
+      "operation": "op_47aec2725330",
+      "row_sha256": "bb60fd5ebcc777a7da6d548ca472c81e5fc1b91195a098e8fc89ee37241c2927"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/modal-target-dev/authority.sqlite",
+      "operation": "op_e2a60f5c6865",
+      "row_sha256": "7de0e90a00a5e6f5faeb871e4487c1f7c24d93afb869db2ddb5745c398f564c8"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-disconnect/authority.sqlite",
+      "operation": "op_25b9416dc393",
+      "row_sha256": "b9be4e35465f0c06d02ce0fa2998f6a95de73eeeaa8b7650468e30bc9ececad3"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/reserved-dev/authority.sqlite",
+      "operation": "op_2b8714ba7cb3",
+      "row_sha256": "bd85da67866f295541f9a0a9c49c7b2495e732bc486434712adf279d33c8e481"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/verified-interrupted/authority.sqlite",
+      "operation": "op_af30236c63f1",
+      "row_sha256": "59f770a09b95fc0301db407d8b5f81f294437011e99e5e5fd9e9ae15bc7c0103"
+    }
+  ],
+  "shared_apps_alive": {
+    "Finder": true,
+    "Preview": true
+  }
+}

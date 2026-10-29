@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "ticket_oracle",
+  "database": "/Users/thomasmain/projects/footwork/output/move-submit-20261028/proven-disconnect/ticket-fixture/tickets.sqlite",
+  "expected": {
+    "request_id": "54b1f08d827f423aa0a14379da53f3a2",
+    "artifact": "renamed.png",
+    "orientation": "clockwise90",
+    "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff"
+  },
+  "checked_at": 1793245837.050572,
+  "ok": false,
+  "detail": "ticket fields, row or independent ingress count differ",
+  "ingress": [
+    {
+      "id": 1,
+      "received": 1793245806.730137,
+      "body_sha": "989e7d338201c9d19754d0e224b46df6026186de7befb11f58dcdac1840a7956",
+      "fields": {
+        "artifact": "renamed.png",
+        "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "orientation": "clockwise90",
+        "request_id": "54b1f08d827f423aa0a14379da53f3a2"
+      },
+      "error": null,
+      "origin": "http://127.0.0.1:60437"
+    },
+    {
+      "id": 2,
+      "received": 1793245806.731463,
+      "body_sha": "989e7d338201c9d19754d0e224b46df6026186de7befb11f58dcdac1840a7956",
+      "fields": {
+        "artifact": "renamed.png",
+        "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "orientation": "clockwise90",
+        "request_id": "54b1f08d827f423aa0a14379da53f3a2"
+      },
+      "error": null,
+      "origin": "http://127.0.0.1:60437"
+    }
+  ],
+  "tickets": [
+    {
+      "artifact": "renamed.png",
+      "digest": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+      "orientation": "clockwise90",
+      "request_id": "54b1f08d827f423aa0a14379da53f3a2"
+    }
+  ]
+}

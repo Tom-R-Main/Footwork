@@ -1,0 +1,17 @@
+{
+  "context": {
+    "main_window_id": 14038,
+    "focused_window_id": null,
+    "focused_role": "AXTextField"
+  },
+  "role": "AXTextField",
+  "value": "renamed.png",
+  "window": 0,
+  "window_error": null,
+  "frame": {
+    "x": 688.0,
+    "y": 471.5,
+    "w": 83.0,
+    "h": 16.5
+  }
+}
