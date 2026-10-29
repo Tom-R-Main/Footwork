@@ -34,3 +34,15 @@ Test: run the foreground helper with an acknowledged action on candidate 4 and a
 Predicts: the red case returns target 77 before repair and target 4 afterward, while foreground restoration still activates PID 77.
 Against: the original candidate target is already preserved, or separating handback metadata changes delivery/refusal behavior.
 Refs: python/jevdual/native.py NativeBridge._foreground; RV2
+
+## RVU1 · update · 2026-10-29 14:33
+Observed: independent review findings reproduced before repair: eleven native cases, seven core recovery/completion cases, two context-log cases and three service/handoff cases failed. The integrated frozen a4646a5 suite passed 2238 tests, 26 skipped; package isolation, resource snapshot and 97 Node tests passed. Its first installed rename retained two acknowledged inputs then stopped before Rename because the owned File menu cleared AXFocusedWindow while front/main window and sole selection stayed exact; focused role was AXApplication. The partial operation remains unknown.
+Inferred: focused-window absence in this proven owned menu transition is not evidence of a foreign key window. Keep strict initial focus and changed-window/selection refusals, and recognize only the narrow post-menu application-focus state before the Rename leaf.
+Next: reproduce that actual state in the public scenario, correct the narrow guard, then fresh installed qualification.
+Refs: output/review-merge-20261029/live-nominal/authority.json; output/review-merge-20261029/full-suite.txt
+
+## RV6 · prediction · 2026-10-29 14:33
+Hypothesis: a freshly validated bound main window and sole owned selection remain sufficient to target Rename when this operation's acknowledged File menu reports AXApplication focus and no focused-window ID.
+Test: simulate null focused window only after owned File menu opening, with AXApplication focus. Confirm exact rename succeeds; null focus with another role or changed front/main/selection still refuses before Rename. Rerun the fresh installed workflow without repeating the uncertain fixture.
+Predicts: the supported menu state passes without relaxing file URL/inode or initial key-window checks; foreign or unverified ownership receives no Rename/editor input.
+Against: generic null focus becomes authority, a switched window/selection passes, or the live owned menu still blocks the route.
