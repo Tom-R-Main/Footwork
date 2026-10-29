@@ -104,3 +104,15 @@ Observed: the modal route never completed a qualified move. After closing verifi
 Inferred: qualify only the explicit two-window route; do not infer modal support or active-human coexistence.
 Next: freeze source, install its offline wheel and run nominal/interrupted/response-loss full chains.
 Refs: output/move-submit-20261028/two-window-dev2; tests/test_session_finder_move.py; tests/test_finder_move.py
+
+## MSU8 · update · 2026-10-28 22:26
+Observed: frozen installed 68807ed completed exact Finder rename/move and replay. Preview start initially preceded window readiness; read-only continuation found the exact file, but rotation retained only its menu acknowledgement because the before-menu already advertised Undo Rotate Right. Saved pixels later matched clockwise90; matching pixels did not release uncertain custody or advance the handoff. The complete frozen suite passed 2117 tests, 26 skipped.
+Inferred: shared Preview menu state is not a reliable fresh undo baseline; a fresh owned application process may supply the supported first-rotation transition without widening its predicate.
+Next: retain this chain failure, then test the unchanged installed runtime with a fresh owned Preview process and fresh full-chain artifact.
+Refs: results/move-submit-20261028/full-suite-frozen.txt; output/move-submit-20261028/installed-nominal/preview-diagnostic.json
+
+## MS11 · prediction · 2026-10-28 22:26
+Hypothesis: a separately launched owned Preview process provides a fresh first-rotation undo baseline and exact document binding for the existing narrow qualified rotation predicate.
+Test: launch a new process for a fresh moved fixture; bind its exact new PID and document path after readiness; invoke one Rotate Right and independently check saved pixels. Keep the shared-process unknown and do not repeat its action.
+Predicts: a new undo transition qualifies custody and saved pixels permit the linked Chrome handoff; process/window/document ambiguity refuses before input.
+Against: the fresh process already exposes the same undo label, cannot qualify the rotation, or affects another document.
