@@ -1700,7 +1700,7 @@ class NativeBridge:
             ):
                 raise self.ax.AXError("rename_unverified", "same-inode rename is not established")
 
-            def completion_owned(*, allow_retained_editor: bool = False) -> bool:
+            def completion_owned(*, allow_current_editor: bool = False) -> bool:
                 current = self.ax.finder_window_context(self.pid)
                 proof["completion_context"] = {
                     **current,
@@ -1713,16 +1713,11 @@ class NativeBridge:
                     return False
                 if current["focused_window_id"] == self.window_id:
                     return True
-                if allow_retained_editor and current["focused_window_id"] is None:
-                    retained_frame = self.ax.frame_of(editor)
-                    return (
-                        retained_frame is not None
-                        and self.ax.focused_finder_editor(self.pid, self.window_id, retained_frame, text)
-                        == editor
-                    )
+                if allow_current_editor and current["focused_window_id"] is None:
+                    return self.ax.finder_completion_editor(self.pid, self.window_id, text) is not None
                 return False
 
-            if not completion_owned(allow_retained_editor=True):
+            if not completion_owned(allow_current_editor=True):
                 raise self.ax.AXError(
                     "file_completion_lost_focus", "the owned rename window lost foreground before completion"
                 )

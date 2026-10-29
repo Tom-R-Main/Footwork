@@ -41,6 +41,7 @@ class FinderWorld(World):
         self.rename_committed = False
         self.dismiss_editor_on_reacquire = True
         self.null_focused_window_after_commit = False
+        self.completion_replacement_editor = False
 
     async def list_windows(self, inp):
         windows = [
@@ -105,7 +106,13 @@ class FinderWorld(World):
             return {
                 "AXRole": "AXApplication",
                 "AXTitle": "Finder",
-                "AXFocusedUIElement": "editor" if self.rename_open else "asset",
+                "AXFocusedUIElement": (
+                    "completion_editor"
+                    if self.rename_open and self.rename_committed and self.completion_replacement_editor
+                    else "editor"
+                    if self.rename_open
+                    else "asset"
+                ),
                 "AXFocusedWindow": (
                     None
                     if self.null_focused_window_after_commit and self.rename_committed and self.rename_open
@@ -134,7 +141,7 @@ class FinderWorld(World):
                 "AXSelected": self.selected == element,
                 "AXParent": "outline",
             }
-        if element == "editor":
+        if element in {"editor", "completion_editor"}:
             return {
                 "AXRole": "AXTextField",
                 "AXValue": self.editor_value,

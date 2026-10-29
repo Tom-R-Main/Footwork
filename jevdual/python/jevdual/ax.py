@@ -215,6 +215,33 @@ def focused_finder_editor(pid: int, window_id: int, frame: Frame, expect: str) -
     return element
 
 
+def finder_completion_editor(pid: int, window_id: int, expect: str) -> Any:
+    """Authorize reactivation of an owned Finder window from its current editor.
+
+    Finder may replace the rename editor after Return and omit its AXWindow.
+    This read establishes only window ownership; file input still requires the
+    normal filename AXURL/inode target after the window is reacquired.
+    """
+    import objc
+    from ApplicationServices import AXUIElementCreateApplication
+
+    from jevdual.finder_targets import _attribute_names, _read_attribute
+
+    app = AXUIElementCreateApplication(pid)
+    if _attr(app, "AXTitle") != "Finder":
+        raise AXError("file_editor_wrong_app", "the completion editor does not belong to Finder")
+    element = _attr(app, "AXFocusedUIElement")
+    if element is None or _attr(element, "AXRole") != "AXTextField" or value(element) != expect:
+        raise AXError("file_editor_missing", "the current completion editor does not hold the new name")
+    main = _attr(app, "AXMainWindow")
+    explicit = _read_attribute(element, _attribute_names(element), "AXWindow", optional=True)
+    for window in (main, explicit) if explicit is not None else (main,):
+        wid = ctypes.c_uint32(0)
+        if window is None or _hi()(objc.pyobjc_id(window), ctypes.byref(wid)) != 0 or wid.value != window_id:
+            raise AXError("file_editor_wrong_window", "the current completion editor names another window")
+    return element
+
+
 def finder_selection_state(el: Any) -> dict[str, Any]:
     row = finder_row(el)
     outline = _attr(row, "AXParent")

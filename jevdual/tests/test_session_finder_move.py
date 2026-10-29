@@ -230,11 +230,22 @@ def test_public_owned_move_records_applied_receipt_and_replay_sends_nothing(move
     assert world.inputs == before
 
 
-@pytest.mark.parametrize("null_focused_window", [False, True])
-def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli, null_focused_window):
+@pytest.mark.parametrize("editor_case", ["normal", "retained_null", "replacement_null"])
+def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli, monkeypatch, editor_case):
     world, run = move_cli
     world.retain_editor_after_commit = True
-    world.null_focused_window_after_commit = null_focused_window
+    world.null_focused_window_after_commit = editor_case != "normal"
+    world.completion_replacement_editor = editor_case == "replacement_null"
+    frame = file_tests.ax.frame_of
+    monkeypatch.setattr(
+        file_tests.ax,
+        "frame_of",
+        lambda element: (
+            None
+            if element == "editor" and world.rename_committed and world.completion_replacement_editor
+            else frame(element)
+        ),
+    )
     renamed(world, run)
     selector = "file:" + str(world.current_path)
     directory = str(Path(world.manifest["root"]) / "organized")
@@ -252,7 +263,7 @@ def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli
 
 
 @pytest.mark.parametrize(
-    "change", ["front", "window", "focused_window", "editor_persists", "retained_editor", "retained_value"]
+    "change", ["front", "window", "focused_window", "editor_persists", "retained_value", "editor_window"]
 )
 def test_rename_completion_refuses_foreign_ownership_or_missing_filename(move_cli, monkeypatch, change):
     world, run = move_cli
@@ -281,10 +292,10 @@ def test_rename_completion_refuses_foreign_ownership_or_missing_filename(move_cl
         def changed(element):
             result = attributes(element)
             if world.rename_committed:
-                if change == "retained_editor" and element == "application":
-                    return {**result, "AXFocusedUIElement": "asset"}
                 if change == "retained_value" and element == "editor":
                     return {**result, "AXValue": "foreign.png"}
+                if change == "editor_window" and element == "editor":
+                    return {**result, "AXWindow": "destination_window"}
             return result
 
         monkeypatch.setattr(world, "attributes", changed)
