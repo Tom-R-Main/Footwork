@@ -28,7 +28,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from jevdual.menu import Candidate, Menu
+from jevdual.menu import Candidate, Menu, _tri, control_state
 
 log = logging.getLogger("jevdual.browser")
 
@@ -201,8 +201,6 @@ def menu_from_semantic(s: dict[str, Any]) -> WebMenu:
             ops: tuple[str, ...] = ("type",)
         else:
             ops = ("click",)
-        checked = states.get("checked")
-        checked_b = None if checked is None else str(checked).lower() == "true"
         label = str(x.get("name") or "").strip() or role
         cands.append(
             Candidate(
@@ -212,7 +210,12 @@ def menu_from_semantic(s: dict[str, Any]) -> WebMenu:
                 operations=ops,  # type: ignore[arg-type]
                 value=(str(x["value"])[:200] if x.get("value") not in (None, "") else None),
                 input_type=("textarea" if states.get("editable") == "richtext" else None),
-                checked=checked_b,
+                # the Driver keeps CDP's AX states: checked/pressed are "true", "false" or "mixed";
+                # selected/expanded are booleans. Unreported states stay None (not observed).
+                checked=control_state(states.get("checked")),
+                selected=_tri(states.get("selected")),
+                expanded=_tri(states.get("expanded")),
+                pressed=control_state(states.get("pressed")),
                 offscreen=x.get("visibility") not in (None, "in_viewport", "near_viewport"),
             )
         )

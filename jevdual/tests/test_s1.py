@@ -722,3 +722,68 @@ def test_destructive_judgment_is_not_asked_for_system_1_decisions():
     """System 1's own arbiter already answered the destructive noul for its decision; no second call."""
     agent, asked = _gate_fake("Submit order", [0.95], system="s1")
     assert asked == [] and "click" in agent.executed[0]
+
+
+def test_a_blocked_delegation_hands_back_with_an_advisory_diagnosis():
+    from jevdual.blockers import BlockerDiagnosis
+
+    class Blocked:
+        def judge(self, decision, menu, ctx, agent):
+            return Verdict("escalate", "blocked: login_required 0.81 >= 0.6")
+
+    calls = []
+
+    async def diagnose(menu, task):
+        calls.append((menu.url, task))
+        return BlockerDiagnosis(
+            "available", menu.url, "sha256:x", {}, scores={"login_wall": 0.9}, findings=("login_wall",)
+        )
+
+    state, _ = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    s1 = JevS1(
+        FakePolicy(_decision("blocked")), arbiter=Blocked(), only_when_delegated=True, diagnose=diagnose
+    )
+    assert asyncio.run(s1.decide(agent, state)) is None
+    ended = agent.delegations[0]
+    assert ended.status == "blocked" and calls == [(state.url, "open the About page")]
+    assert ended.diagnosis["findings"] == ["login_wall"]
+    assert "login wall (0.90)" in agent.messages[0].content and "blocked" in agent.messages[0].content
+
+
+def test_a_non_blocking_handback_is_not_diagnosed():
+    class LowConfidence:
+        def judge(self, decision, menu, ctx, agent):
+            return Verdict("escalate", "operation_confidence: operation confidence 0.40 < 0.55")
+
+    async def diagnose(menu, task):
+        raise AssertionError("not a blocked or stalled handback")
+
+    state, idx = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    s1 = JevS1(
+        FakePolicy(_decision("click", idx)),
+        arbiter=LowConfidence(),
+        only_when_delegated=True,
+        diagnose=diagnose,
+    )
+    asyncio.run(s1.decide(agent, state))
+    assert agent.delegations[0].status == "operation_confidence" and agent.delegations[0].diagnosis is None
+
+
+def test_a_cancelled_diagnosis_still_closes_the_escalated_delegation():
+    class Blocked:
+        def judge(self, decision, menu, ctx, agent):
+            return Verdict("escalate", "blocked: no offered operation can make progress")
+
+    async def diagnose(menu, task):
+        raise asyncio.CancelledError
+
+    state, _ = _fresh_state_and_link()
+    agent = _delegating_agent(state)
+    s1 = JevS1(
+        FakePolicy(_decision("blocked")), arbiter=Blocked(), only_when_delegated=True, diagnose=diagnose
+    )
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(s1.decide(agent, state))
+    assert agent.delegation is None and agent.delegations[0].status == "blocked"

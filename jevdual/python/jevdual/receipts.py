@@ -8,7 +8,8 @@ effect in the driver's five words:
 
 ``confirmed``       the page or window changed in a way the harness observed
 ``partial``         something changed but an action in the step also failed
-``unverifiable``    the harness could not observe the outcome (no readback)
+``unverifiable``    the harness could not observe the outcome (no readback, or a control's state
+                    was reported on only one side of the step and nothing else changed)
 ``suspected_noop``  nothing observable changed: same URL, no elements added, removed or changed,
                     text unchanged, no dialog or tab change
 ``refused``         the harness did not dispatch the action (a gate pause, a refused input)
@@ -94,7 +95,7 @@ def receipt_from_effect(
     changed_value = "a form control's value changed" in observed and all(
         a.startswith(("select_dropdown(", "input(", "select_dropdown_option(")) for a in actions
     )
-    if effect.no_effect and not error and ((only_scrolls and scrolled) or changed_value):
+    if not effect.visible_change and not error and ((only_scrolls and scrolled) or changed_value):
         return Receipt(
             step=step,
             actions=tuple(actions),
@@ -104,7 +105,16 @@ def receipt_from_effect(
             delivery=delivered,
             observed=observed,
         )
-    if effect.no_effect:
+    if effect.inconclusive:
+        # a state seen on one side only is neither progress nor a proven no-op
+        word = "refused" if error else "unverifiable"
+        evidence = (
+            f"not applied: {error[:120]}; page otherwise unchanged"
+            if error
+            else f"same URL {_path(url_after)}, no elements added, removed or changed, text unchanged; "
+            f"{effect.unknown} control states were not observed both before and after"
+        )
+    elif effect.no_effect:
         word = "suspected_noop"
         evidence = (
             f"no change: same URL {_path(url_after)}, no elements added, removed or changed, text unchanged"
@@ -120,6 +130,8 @@ def receipt_from_effect(
             parts.append("title changed")
         if effect.added or effect.removed or effect.changed:
             parts.append(f"{effect.added} elements added, {effect.removed} removed, {effect.changed} changed")
+        if effect.transitions:
+            parts.append(", ".join(effect.transitions[:3]))
         if effect.dialog_changed:
             parts.append("a dialog opened or closed")
         if effect.tabs_changed:

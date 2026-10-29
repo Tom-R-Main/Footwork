@@ -42,6 +42,14 @@ class Observations:
         unavailable = unavailable or {}
         for candidate in snapshot.menu.candidates[:50]:
             row: dict[str, Any] = {"label": candidate.label, "role": candidate.role}
+            # only states the producer reported; an absent key means not observed, not off
+            state = {
+                k: v
+                for k in ("checked", "selected", "expanded", "pressed")
+                if (v := getattr(candidate, k, None)) is not None
+            }
+            if state:
+                row["state"] = state
             value = snapshot.values.get(candidate.id, candidate.value)
             if value is not None:
                 row["value"] = value[:4096]
