@@ -102,11 +102,20 @@ class TicketStore:
                     request_id TEXT PRIMARY KEY, fields TEXT NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS fixture_state (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS responses (
+                    ingress_id INTEGER PRIMARY KEY, completed REAL NOT NULL,
+                    mode TEXT NOT NULL, boundary TEXT NOT NULL
+                );
             """)
             columns = {row[1] for row in db.execute("PRAGMA table_info(ingress)")}
             if "origin" not in columns:
                 db.execute("ALTER TABLE ingress ADD COLUMN origin TEXT")
+            if "response_mode" not in columns:
+                db.execute("ALTER TABLE ingress ADD COLUMN response_mode TEXT")
             db.execute("INSERT OR IGNORE INTO fixture_state VALUES ('fixture_id',?)", (uuid.uuid4().hex,))
+            # Legacy populated ledgers are never upgraded into response provenance.
+            if not db.execute("SELECT 1 FROM ingress LIMIT 1").fetchone():
+                db.execute("INSERT OR IGNORE INTO fixture_state VALUES ('response_mode','normal')")
         self.path.chmod(0o600)
 
     def bind_origin(self, origin: str) -> None:
@@ -116,6 +125,18 @@ class TicketStore:
         origin = normalize_origin(origin)
         with self._db() as db:
             db.execute("INSERT OR REPLACE INTO fixture_state VALUES ('origin',?)", (origin,))
+
+    def bind_response_mode(self, mode: str) -> None:
+        """Configure the response protocol before enrollment; never rewrite populated evidence."""
+        if mode not in ("normal", "truncated", "disconnect"):
+            raise QualificationError("unsupported response mode")
+        with self._db() as db:
+            previous = db.execute("SELECT value FROM fixture_state WHERE key='response_mode'").fetchone()
+            if previous is not None and previous[0] == mode:
+                return
+            if db.execute("SELECT 1 FROM ingress LIMIT 1").fetchone():
+                raise QualificationError("response mode cannot change after ingress")
+            db.execute("INSERT OR REPLACE INTO fixture_state VALUES ('response_mode',?)", (mode,))
 
     @contextlib.contextmanager
     def _db(self):
@@ -130,8 +151,13 @@ class TicketStore:
             db.close()
 
     def record(
-        self, body: bytes, *, lose_reply_once: bool = False, origin: str | None = None
-    ) -> tuple[dict, str | None, bool]:
+        self,
+        body: bytes,
+        *,
+        lose_reply_once: bool = False,
+        origin: str | None = None,
+        include_ingress_id: bool = False,
+    ) -> tuple:
         error = None
         fields: dict[str, str] = {}
         try:
@@ -151,10 +177,13 @@ class TicketStore:
             error = "invalid_fields"
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
-            db.execute(
-                "INSERT INTO ingress(received,body_sha,fields,error,origin) VALUES (?,?,?,?,?)",
-                (time.time(), hashlib.sha256(body).hexdigest(), _json(fields), error, origin),
+            mode = db.execute("SELECT value FROM fixture_state WHERE key='response_mode'").fetchone()
+            mode = mode[0] if mode is not None else None
+            cursor = db.execute(
+                "INSERT INTO ingress(received,body_sha,fields,error,origin,response_mode) VALUES (?,?,?,?,?,?)",
+                (time.time(), hashlib.sha256(body).hexdigest(), _json(fields), error, origin, mode),
             )
+            ingress_id = cursor.lastrowid
             if error is None:
                 db.execute(
                     "INSERT OR IGNORE INTO tickets VALUES (?,?)", (fields["request_id"], _json(fields))
@@ -167,7 +196,37 @@ class TicketStore:
             ):
                 db.execute("INSERT INTO fixture_state VALUES ('reply_lost','1')")
                 lost = True
-        return fields, error, lost
+        result = (fields, error, lost)
+        return (*result, ingress_id) if include_ingress_id else result
+
+    def record_response(self, ingress_id: int, boundary: str) -> None:
+        """Append the producer's acknowledged response boundary after its actual flush.
+
+        Component tests generate the same explicit event after a simulated flush.
+        Ingress alone, and every pre-header disconnect, remain insufficient.
+        """
+        with self._db() as db:
+            row = db.execute("SELECT response_mode,error FROM ingress WHERE id=?", (ingress_id,)).fetchone()
+            if (
+                type(ingress_id) is not int
+                or row is None
+                or row["error"] is not None
+                or (row["response_mode"], boundary)
+                not in (
+                    ("normal", "headers_flushed"),
+                    ("truncated", "headers_flushed"),
+                )
+            ):
+                raise QualificationError("unsupported response boundary")
+            prior = db.execute("SELECT * FROM responses WHERE ingress_id=?", (ingress_id,)).fetchone()
+            if prior is not None:
+                if (prior["mode"], prior["boundary"]) != (row["response_mode"], boundary):
+                    raise QualificationError("response evidence is immutable")
+                return
+            db.execute(
+                "INSERT INTO responses VALUES (?,?,?,?)",
+                (ingress_id, time.time(), row["response_mode"], boundary),
+            )
 
     def snapshot(self) -> dict:
         with self._db() as db:
@@ -180,6 +239,7 @@ class TicketStore:
                 "tickets": [
                     json.loads(row[0]) for row in db.execute("SELECT fields FROM tickets ORDER BY request_id")
                 ],
+                "responses": [dict(row) for row in db.execute("SELECT * FROM responses ORDER BY ingress_id")],
             }
 
     def reject(self, body: bytes, error: str) -> None:
@@ -194,12 +254,15 @@ class TicketStore:
 
     @staticmethod
     def _checked(snapshot: dict, expected: dict[str, str], path: Path) -> dict:
+        from jevdual.ticket_evidence import response_matches
+
         ok = (
             set(expected) == set(FIELDS)
             and len(snapshot["ingress"]) == 1
             and snapshot["ingress"][0]["error"] is None
             and snapshot["ingress"][0]["fields"] == expected
             and snapshot["tickets"] == [expected]
+            and response_matches(snapshot, ended=time.time())
         )
         return {
             "schema_version": 1,
@@ -229,6 +292,7 @@ class TicketStore:
                 "tickets": [
                     json.loads(row[0]) for row in db.execute("SELECT fields FROM tickets ORDER BY request_id")
                 ],
+                "responses": [dict(row) for row in db.execute("SELECT * FROM responses ORDER BY ingress_id")],
             }
             return TicketStore._checked(snapshot, expected, path)
         finally:
@@ -254,6 +318,7 @@ class TicketFixture:
         self.store = TicketStore(self.root / "tickets.sqlite")
         self.lose_reply_once = lose_reply_once
         self.reply_loss = reply_loss
+        self.store.bind_response_mode(reply_loss if lose_reply_once else "normal")
         fixture = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -294,8 +359,8 @@ class TicketFixture:
                     fixture.store.reject(body, "origin_refused")
                     self.send_error(403)
                     return
-                fields, error, lost = fixture.store.record(
-                    body, lose_reply_once=fixture.lose_reply_once, origin=fixture.url
+                fields, error, lost, ingress_id = fixture.store.record(
+                    body, lose_reply_once=fixture.lose_reply_once, origin=fixture.url, include_ingress_id=True
                 )
                 data = _json({"recorded": error is None, "fields": fields, "error": error}).encode()
                 if lost:
@@ -308,6 +373,7 @@ class TicketFixture:
                         self.send_header("Content-Length", str(len(data)))
                         self.end_headers()
                         self.wfile.flush()
+                        fixture.store.record_response(ingress_id, "headers_flushed")
                     with contextlib.suppress(OSError):
                         self.connection.shutdown(socket.SHUT_RDWR)
                     self.connection.close()
@@ -316,6 +382,9 @@ class TicketFixture:
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
+                self.wfile.flush()
+                if error is None and not (fixture.lose_reply_once and fixture.reply_loss == "disconnect"):
+                    fixture.store.record_response(ingress_id, "headers_flushed")
                 self.wfile.write(data)
 
             def log_message(self, *_):
@@ -480,6 +549,7 @@ class HandoffRun:
             ):
                 raise QualificationError("handoff must be begun and name distinct operation receipts")
             receipts = []
+            ticket_scope = None
             for op_id in operation_ids:
                 op = operations.get(op_id)
                 if (
@@ -493,7 +563,10 @@ class HandoffRun:
                     raise QualificationError("operation belongs to another runtime session")
                 if op.created < state["active"]["began"]:
                     raise QualificationError("operation predates this handoff")
-                retained = operations.qualified_receipt(op)
+                try:
+                    retained = operations.qualified_receipt(op)
+                except (ValueError, TypeError, KeyError, AttributeError) as error:
+                    raise QualificationError("invalid retained execution proof") from error
                 if (
                     retained is None
                     or retained["phase"] != "sent"
@@ -502,6 +575,17 @@ class HandoffRun:
                     raise QualificationError("operation lacks qualified retained execution")
                 if retained["projection"].get("app") not in APP_NAMES[stage]:
                     raise QualificationError("operation belongs to another app")
+                if stage == "chrome":
+                    from jevdual import ticket_evidence
+
+                    if (
+                        len(operation_ids) != 1
+                        or retained.get("kind") != "ticket_submission"
+                        or type(retained.get("schema_version")) is not int
+                        or retained["schema_version"] != ticket_evidence.VERSION
+                    ):
+                        raise QualificationError("Chrome requires its admitted v2 ticket service receipt")
+                    ticket_scope = retained["projection"]["ticket_submission"]["scope"]
                 receipts.append(operations.receipt(op))
             before = artifact_identity(self.root, artifact)
             check = verify()
@@ -520,7 +604,7 @@ class HandoffRun:
                 if (
                     not isinstance(check, dict)
                     or type(check.get("schema_version")) is not int
-                    or check["schema_version"] != 1
+                    or check["schema_version"] not in (1, 2)
                     or check.get("kind") != "ticket_oracle"
                 ):
                     raise QualificationError("Chrome requires a bound independent ticket oracle")
@@ -533,11 +617,19 @@ class HandoffRun:
                     or expected.get("orientation") != "clockwise90"
                 ):
                     raise QualificationError("ticket oracle names a different artifact or transformation")
-                database = Path(check.get("database", ""))
-                if not database.is_absolute():
-                    raise QualificationError("ticket oracle database must be absolute")
-                artifact_identity(self.root, database)
-                check = TicketStore.readonly_check(database, expected)
+                if (
+                    ticket_scope is None
+                    or expected != ticket_scope["expected"]
+                    or check.get("database") != ticket_scope["source"]["database"]
+                    or ticket_scope["artifact"] != after
+                    or "source" in check
+                    and check["source"] != ticket_scope["source"]
+                ):
+                    raise QualificationError("ticket oracle differs from the admitted submission")
+                try:
+                    check = ticket_evidence.check_bound(ticket_scope, began=state["active"]["began"])
+                except (ValueError, TypeError, KeyError, AttributeError, OSError) as error:
+                    raise QualificationError("admitted ticket source no longer qualifies") from error
                 if check["ok"] is not True:
                     raise QualificationError("independent ticket readback no longer matches")
                 if check["ingress"][0]["received"] < state["active"]["began"]:
@@ -552,9 +644,7 @@ class HandoffRun:
                 ):
                     raise QualificationError("oracle checked a different artifact identity")
                 if stage == "preview" and "rotation_clockwise90" not in getattr(check, "claims", ()):
-                    raise QualificationError(
-                        "Preview oracle does not check the intended clockwise transform"
-                    )
+                    raise QualificationError("Preview oracle does not check the intended clockwise transform")
             if artifact_identity(self.root, artifact) != after:
                 raise QualificationError("artifact changed before handoff commit")
             row = {

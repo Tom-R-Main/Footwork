@@ -23,13 +23,14 @@ BINDING = {"boot": "test-boot", "pid": 77, "start": "test-start", "window_id": 1
 URL = "http://127.0.0.1:8765"
 
 
-def setup(tmp_path):
+def setup(tmp_path, *, response_mode="normal"):
     root = tmp_path / "owned"
     root.mkdir()
     artifact = root / "renamed.png"
     artifact.write_bytes(b"independently preserved synthetic artifact")
     store = TicketStore(root / "tickets.sqlite")
     store.bind_origin(URL)
+    store.bind_response_mode(response_mode)
     expected = {
         "request_id": uuid.uuid4().hex,
         "artifact": artifact.name,
@@ -61,7 +62,9 @@ def setup(tmp_path):
 
 
 def submit(store, expected):
-    return store.record(te.form_body(expected), origin=URL)
+    *result, ingress_id = store.record(te.form_body(expected), origin=URL, include_ingress_id=True)
+    store.record_response(ingress_id, "headers_flushed")
+    return tuple(result)
 
 
 def test_unique_prebound_ingress_qualifies_and_receipt_is_historical(tmp_path):
@@ -69,7 +72,7 @@ def test_unique_prebound_ingress_qualifies_and_receipt_is_historical(tmp_path):
     submit(store, expected)
     receipt = te.qualify(op, prepared, BINDING)
     assert receipt["kind"] == "ticket_submission"
-    assert receipt["producer"] == "footwork.ticket_ledger/v1"
+    assert receipt["producer"] == "footwork.ticket_ledger/v2"
     assert receipt["operation_id"] == op.id and receipt["phase"] == "sent"
     assert receipt["effect"] == "confirmed"
     assert "delivered_count" not in receipt
@@ -185,8 +188,11 @@ def test_retained_receipt_cannot_be_transplanted_or_rewritten(tmp_path, change):
 
 
 def test_restart_same_origin_keeps_fixture_identity_and_qualifies_lost_response(tmp_path):
-    _, _, store, expected, scope, prepared, op = setup(tmp_path)
-    _, error, lost = store.record(te.form_body(expected), origin=URL, lose_reply_once=True)
+    _, _, store, expected, scope, prepared, op = setup(tmp_path, response_mode="truncated")
+    _, error, lost, ingress_id = store.record(
+        te.form_body(expected), origin=URL, lose_reply_once=True, include_ingress_id=True
+    )
+    store.record_response(ingress_id, "headers_flushed")
     assert error is None and lost
     restarted = TicketStore(store.path)
     restarted.bind_origin(URL)
@@ -222,7 +228,7 @@ def test_known_no_send_cannot_be_overruled_by_a_service_event(tmp_path):
         te.qualify(op, prepared, BINDING)
 
 
-def test_real_lost_http_reply_is_qualified_after_server_exit_without_resubmission(tmp_path):
+def test_preheader_disconnect_does_not_qualify_even_after_server_exit(tmp_path):
     root = tmp_path / "owned"
     root.mkdir()
     artifact = root / "renamed.png"
@@ -261,9 +267,53 @@ def test_real_lost_http_reply_is_qualified_after_server_exit_without_resubmissio
             urlopen(request, timeout=3)
         before = fixture.store.snapshot()
     receipt = te.qualify(op, prepared, BINDING)
-    assert receipt["capture"]["snapshot"]["ingress"][0]["fields"] == expected
+    assert receipt is None
     after = TicketStore(fixture.store.path).snapshot()
     assert after == before and len(after["ingress"]) == 1
+
+
+def test_ingress_without_response_boundary_does_not_qualify(tmp_path):
+    _, _, store, expected, _, prepared, op = setup(tmp_path)
+    store.record(te.form_body(expected), origin=URL)
+    assert te.qualify(op, prepared, BINDING) is None
+
+
+@pytest.mark.parametrize(
+    "variant", ["missing", "foreign_ingress", "mode", "before_ingress", "future", "boolean_time", "boundary"]
+)
+def test_response_boundary_must_match_its_ingress(tmp_path, variant):
+    _, _, store, expected, _, prepared, op = setup(tmp_path)
+    submit(store, expected)
+    receipt = te.qualify(op, prepared, BINDING)
+    response = receipt["capture"]["snapshot"]["responses"][0]
+    if variant == "missing":
+        receipt["capture"]["snapshot"]["responses"] = []
+    elif variant == "foreign_ingress":
+        response["ingress_id"] += 1
+    elif variant == "mode":
+        response["mode"] = "disconnect"
+    elif variant == "before_ingress":
+        response["completed"] = op.created - 1
+    elif variant == "future":
+        response["completed"] = time.time() + 100
+    elif variant == "boolean_time":
+        response["completed"] = True
+    else:
+        response["boundary"] = "ingress_committed"
+    with pytest.raises(te.TicketEvidenceError):
+        te.validate_receipt(receipt, op, prepared, BINDING)
+
+
+def test_bound_response_mode_cannot_change_or_forge_completion(tmp_path):
+    _, _, store, expected, _, prepared, op = setup(tmp_path, response_mode="disconnect")
+    *_, ingress_id = store.record(
+        te.form_body(expected), origin=URL, lose_reply_once=True, include_ingress_id=True
+    )
+    with pytest.raises(ValueError, match="response mode"):
+        store.bind_response_mode("truncated")
+    with pytest.raises(ValueError, match="response boundary"):
+        store.record_response(ingress_id, "headers_flushed")
+    assert te.qualify(op, prepared, BINDING) is None
 
 
 @pytest.mark.parametrize("field", ["counts", "binding"])

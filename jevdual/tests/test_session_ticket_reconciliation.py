@@ -9,11 +9,13 @@ from __future__ import annotations
 
 import contextlib
 import hashlib
+import http.client
 import json
 import multiprocessing
 import os
 import signal
 import sys
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -142,9 +144,201 @@ def unknown(operations, item, op):
 
 def service_event(item, *, fields=None, origin=None):
     store = TicketStore(Path(item["scope"]["source"]["database"]))
-    return store.record(
-        ticket_evidence.form_body(fields or item["expected"]), origin=origin or item["scope"]["url"]
+    *result, ingress_id = store.record(
+        ticket_evidence.form_body(fields or item["expected"]),
+        origin=origin or item["scope"]["url"],
+        include_ingress_id=True,
     )
+    store.record_response(ingress_id, "headers_flushed")
+    return tuple(result)
+
+
+@pytest.mark.parametrize("mode", ["disconnect", "normal", "truncated"])
+def test_reconcile_before_preheader_disconnect_keeps_unknown(tmp_path, monkeypatch, mode):
+    """The first committed ingress precedes the response that can trigger a replay."""
+    committed, release = threading.Event(), threading.Event()
+    original = TicketStore.record
+
+    def pause_after_commit(store, *args, **kwargs):
+        result = original(store, *args, **kwargs)
+        committed.set()
+        assert release.wait(5), "test did not release the owned handler"
+        return result
+
+    monkeypatch.setattr(TicketStore, "record", pause_after_commit)
+    with TicketFixture(
+        tmp_path / "service",
+        lose_reply_once=mode != "normal",
+        reply_loss=mode if mode != "normal" else "disconnect",
+    ) as fixture:
+        item = package(tmp_path, store=fixture.store, url=fixture.url)
+        failures = []
+
+        def submit():
+            try:
+                request = Request(
+                    fixture.url + "/tickets", data=ticket_evidence.form_body(item["expected"]), method="POST"
+                )
+                request.add_header("Origin", fixture.url)
+                with urlopen(request, timeout=5) as response:
+                    response.read()
+            except (URLError, OSError, http.client.IncompleteRead) as error:
+                failures.append(error)
+
+        with SessionOperations(Path(item["authority"])) as operations:
+            issue(operations, item)
+            op, _ = unknown(operations, item, admit(operations, item))
+            child = threading.Thread(target=submit)
+            child.start()
+            try:
+                assert committed.wait(5)
+                assert len(fixture.store.snapshot()["ingress"]) == 1
+                repeated = operations.reconcile(op.id)
+                assert repeated.state == "unknown"
+                assert (
+                    operations._db.execute("SELECT COUNT(*) FROM operator_service_receipts").fetchone()[0]
+                    == 0
+                )
+            finally:
+                release.set()
+                child.join(5)
+            assert not child.is_alive()
+            assert bool(failures) is (mode != "normal")
+            assert operations.reconcile(op.id).state == ("unknown" if mode == "disconnect" else "final")
+
+
+def install_historical_v1(operations, item, *, final):
+    """Construct an old producer's retained row; production never migrates it."""
+    issue(operations, item)
+    op = admit(operations, item)
+    operations.start(op.id)
+    op = operations.finish(op.id, dispatched=None, effect="unverifiable", evidence={})
+    service_event(item)
+    record = ticket_evidence.qualify(op, item["prepared"], BINDING)
+
+    def old(value):
+        if isinstance(value, list):
+            return [old(part) for part in value]
+        if not isinstance(value, dict):
+            return "footwork.ticket_ledger/v1" if value == "footwork.ticket_ledger/v2" else value
+        result = {key: old(part) for key, part in value.items() if key not in ("responses", "response_mode")}
+        if result.get("schema_version") == 2:
+            result["schema_version"] = 1
+        if "baseline_sha256" in result:
+            result["baseline_sha256"] = ticket_evidence.digest(result["baseline"])
+        return result
+
+    request, projection, record = old(item["request"]), old(item["projection"]), old(record)
+    prepared = projection["ticket_submission"]
+    request_digest = ticket_evidence.digest({"session": SESSION, "request": request})
+    record["request_digest"] = request_digest
+    record["preparation_sha256"] = ticket_evidence.digest(prepared)
+    body = ticket_evidence.canonical(record)
+    with operations._tx() as db:
+        db.execute(
+            "UPDATE operations SET args=?,request_digest=?,state=?,disposition=?,phase=?,evidence=?,resolved_by=? WHERE id=?",
+            (
+                ticket_evidence.canonical(request),
+                request_digest,
+                "final" if final else "unknown",
+                "applied" if final else "unknown",
+                "sent" if final else "ambiguous",
+                ticket_evidence.canonical({"service_receipt": record}) if final else "{}",
+                "ticket_ledger" if final else None,
+                op.id,
+            ),
+        )
+        db.execute(
+            "UPDATE operator_admissions SET request=?,projection=? WHERE operation=?",
+            (ticket_evidence.canonical(request), ticket_evidence.canonical(projection), op.id),
+        )
+        db.execute(
+            "INSERT INTO operator_service_receipts VALUES (?,?,?,?)",
+            (op.id, body, hashlib.sha256(body.encode()).hexdigest(), time.time()),
+        )
+        if final:
+            operations._settle(db, op.id, "spent")
+    item.update(request=request, scope=request["ticket_scope"], prepared=prepared, projection=projection)
+    assert operations._retained_service(operations.get(op.id)) == record
+    return op.id
+
+
+def test_retained_v1_unknown_cannot_gain_new_qualification(tmp_path):
+    item = package(tmp_path / "owned")
+    with SessionOperations(Path(item["authority"])) as operations:
+        op_id = install_historical_v1(operations, item, final=False)
+        before = operations._db.execute(
+            "SELECT * FROM operator_service_receipts WHERE operation=?", (op_id,)
+        ).fetchone()
+        previous = operations.receipt(operations.get(op_id))
+        assert operations.reconcile(op_id).state == "unknown"
+        assert operations.receipt(operations.get(op_id)) == previous
+        after = operations._db.execute(
+            "SELECT * FROM operator_service_receipts WHERE operation=?", (op_id,)
+        ).fetchone()
+        assert tuple(before) == tuple(after)
+        with pytest.raises(ticket_evidence.TicketEvidenceError):
+            ticket_evidence.qualify(operations.get(op_id), item["prepared"], BINDING)
+
+
+def test_final_v1_public_status_and_token_replay_preserve_raw_evidence(tmp_path, monkeypatch, capsys):
+    item = package(tmp_path / "owned")
+    with SessionOperations(Path(item["authority"])) as operations:
+        op_id = install_historical_v1(operations, item, final=True)
+        before = tuple(
+            operations._db.execute(
+                "SELECT * FROM operator_service_receipts WHERE operation=?", (op_id,)
+            ).fetchone()
+        )
+        previous = operations.receipt(operations.get(op_id))
+    directory = Path(item["root"]) / "session"
+    directory.mkdir()
+    state = session.SessionState(
+        dir=str(directory),
+        app="Google Chrome",
+        pid=BINDING["pid"],
+        window_id=BINDING["window_id"],
+        task="Historical ticket",
+        authority=item["authority"],
+        session_id=SESSION,
+        native_binding=BINDING,
+        native_scope=item["request"]["native_scope"],
+        ticket_scope=item["scope"],
+    )
+    state.save()
+
+    def forbidden(*_, **__):
+        raise AssertionError("historical status/replay must not recapture or dispatch")
+
+    monkeypatch.setattr(ticket_evidence, "_capture", forbidden)
+    monkeypatch.setattr(session, "bind", forbidden)
+    assert cli.main(["status", "--reconcile", "--session", str(directory)]) == 0
+    assert json.loads(capsys.readouterr().out)["operations"][0]["state"] == "final"
+    assert (
+        cli.main(
+            [
+                "do",
+                "click",
+                "button:Register asset",
+                "--no-judge",
+                "--token",
+                "submit-once",
+                "--session",
+                str(directory),
+            ]
+        )
+        == 0
+    )
+    assert "replay" in capsys.readouterr().out.lower()
+    with SessionOperations(Path(item["authority"])) as operations:
+        assert operations.qualified_receipt(operations.get(op_id))["schema_version"] == 1
+        assert operations.receipt(operations.get(op_id)) == previous
+        after = tuple(
+            operations._db.execute(
+                "SELECT * FROM operator_service_receipts WHERE operation=?", (op_id,)
+            ).fetchone()
+        )
+        assert after == before
 
 
 def test_independent_receipt_settles_once_and_preserves_native_unknown(tmp_path):
@@ -391,7 +585,7 @@ def test_public_status_reconciles_dead_browser_and_replay_avoids_driver(tmp_path
 def test_actual_lost_http_reply_reconciles_without_second_request(tmp_path):
     root = tmp_path / "owned"
     root.mkdir()
-    with TicketFixture(root / "service", lose_reply_once=True) as fixture:
+    with TicketFixture(root / "service", lose_reply_once=True, reply_loss="truncated") as fixture:
         item = package(root, store=fixture.store, url=fixture.url)
         with SessionOperations(Path(item["authority"])) as operations:
             issue(operations, item)
@@ -400,8 +594,8 @@ def test_actual_lost_http_reply_reconciles_without_second_request(tmp_path):
                 fixture.url + "/tickets", data=ticket_evidence.form_body(item["expected"]), method="POST"
             )
             request.add_header("Origin", fixture.url)
-            with pytest.raises((URLError, OSError)):
-                urlopen(request, timeout=3)
+            with urlopen(request, timeout=3) as response, pytest.raises(http.client.IncompleteRead):
+                response.read()
             assert operations.reconcile(op.id).state == "final"
             assert operations.reconcile(op.id).state == "final"
             assert len(fixture.store.snapshot()["ingress"]) == 1

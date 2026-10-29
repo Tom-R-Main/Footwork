@@ -24,8 +24,8 @@ from urllib.parse import quote, urlsplit
 
 from jevdual.app_qualification import FIELDS, artifact_identity
 
-VERSION = 1
-PRODUCER = "footwork.ticket_ledger/v1"
+VERSION = 2
+PRODUCER = "footwork.ticket_ledger/v2"
 PREDICATE = "unique_admitted_ticket_ingress"
 MAX_JSON = 1_048_576
 
@@ -137,22 +137,27 @@ def _snapshot(database: Path, root: Path) -> tuple[dict[str, Any], dict[str, Any
         connection.execute("PRAGMA query_only=ON")
         connection.execute("BEGIN")
         fixture = dict(
-            connection.execute("SELECT key,value FROM fixture_state WHERE key IN ('fixture_id','origin')")
+            connection.execute(
+                "SELECT key,value FROM fixture_state WHERE key IN ('fixture_id','origin','response_mode')"
+            )
         )
         if not re.fullmatch(r"[0-9a-f]{32}", fixture.get("fixture_id", "")):
             raise TicketEvidenceError("ledger lacks a persistent fixture identity")
         origin = normalize_origin(fixture.get("origin", ""))
+        if fixture.get("response_mode") not in {"normal", "truncated", "disconnect"}:
+            raise TicketEvidenceError("ledger lacks pre-bound response provenance")
         counts = {
             table: connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-            for table in ("ingress", "tickets")
+            for table in ("ingress", "tickets", "responses")
         }
         # More than one row already falsifies this narrow fresh-ledger protocol.
         # Keep bounded diagnostic counts rather than read arbitrary accumulated data.
         rows = []
         tickets = []
-        if counts["ingress"] <= 2 and counts["tickets"] <= 2:
+        responses = []
+        if all(count <= 2 for count in counts.values()):
             for row in connection.execute(
-                "SELECT id,received,body_sha,fields,error,origin FROM ingress ORDER BY id"
+                "SELECT id,received,body_sha,fields,error,origin,response_mode FROM ingress ORDER BY id"
             ):
                 fields = json.loads(row["fields"])
                 rows.append({**dict(row), "fields": fields})
@@ -160,7 +165,10 @@ def _snapshot(database: Path, root: Path) -> tuple[dict[str, Any], dict[str, Any
                 json.loads(row[0])
                 for row in connection.execute("SELECT fields FROM tickets ORDER BY request_id")
             ]
-        snapshot = {"ingress": rows, "tickets": tickets, "counts": counts}
+            responses = [
+                dict(row) for row in connection.execute("SELECT * FROM responses ORDER BY ingress_id")
+            ]
+        snapshot = {"ingress": rows, "tickets": tickets, "responses": responses, "counts": counts}
         source = {
             "database": str(database),
             "identity": before[-1],
@@ -168,6 +176,7 @@ def _snapshot(database: Path, root: Path) -> tuple[dict[str, Any], dict[str, Any
             "root": root_chain[-1],
             "fixture_id": fixture["fixture_id"],
             "origin": origin,
+            "response_mode": fixture["response_mode"],
         }
         canonical(snapshot)
         if before != _chain(database, file=True) or root_chain != _chain(root, file=False):
@@ -230,7 +239,7 @@ def bind(database: Path, url: str, expected: dict[str, str], artifact: Path, roo
     origin, expected = normalize_origin(url), _expected(expected)
     source, snapshot = _snapshot(database, root)
     identity = _artifact(root, artifact)
-    if source["origin"] != origin or snapshot["counts"] != {"ingress": 0, "tickets": 0}:
+    if source["origin"] != origin or snapshot["counts"] != {"ingress": 0, "tickets": 0, "responses": 0}:
         raise TicketEvidenceError("ticket source must match the origin and be empty before enrollment")
     if expected["artifact"] != artifact.name or expected["digest"] != identity["sha256"]:
         raise TicketEvidenceError("ticket intent differs from its exact input artifact")
@@ -248,13 +257,13 @@ def bind(database: Path, url: str, expected: dict[str, str], artifact: Path, roo
     return scope
 
 
-def _validate_scope(scope: Any) -> None:
+def _validate_scope(scope: Any, *, version: int = VERSION) -> None:
     if (
         not isinstance(scope, dict)
         or set(scope)
         != {"schema_version", "kind", "root", "url", "source", "expected", "artifact", "bound_at"}
         or type(scope["schema_version"]) is not int
-        or scope["schema_version"] != VERSION
+        or scope["schema_version"] != version
         or scope["kind"] != "ticket_scope"
         or not isinstance(scope["source"], dict)
         or not isinstance(scope["artifact"], dict)
@@ -267,7 +276,12 @@ def _validate_scope(scope: Any) -> None:
     _time(scope["bound_at"])
     root = _path(scope["root"])
     source = scope["source"]
-    if set(source) != {"database", "identity", "ancestors", "root", "fixture_id", "origin"}:
+    source_keys = {"database", "identity", "ancestors", "root", "fixture_id", "origin"}
+    if version == 2:
+        source_keys.add("response_mode")
+        if source.get("response_mode") not in {"normal", "truncated", "disconnect"}:
+            raise TicketEvidenceError("unsupported ticket response mode")
+    if set(source) != source_keys:
         raise TicketEvidenceError("unsupported ticket source identity")
     database = _path(source["database"])
     artifact = scope["artifact"]
@@ -321,7 +335,7 @@ def _capture(scope: dict[str, Any]) -> dict[str, Any]:
 def prepare(scope: dict[str, Any]) -> dict[str, Any]:
     """Capture a fresh baseline immediately before admission, without input."""
     capture = _capture(scope)
-    if capture["snapshot"]["counts"] != {"ingress": 0, "tickets": 0}:
+    if capture["snapshot"]["counts"] != {"ingress": 0, "tickets": 0, "responses": 0}:
         raise TicketEvidenceError("ticket baseline is no longer empty")
     return {
         "schema_version": VERSION,
@@ -333,24 +347,29 @@ def prepare(scope: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _admission(op: Any, prepared: Any, binding: Any, *, allow_prepared: bool = False) -> None:
+def _admission(
+    op: Any, prepared: Any, binding: Any, *, allow_prepared: bool = False, version: int = VERSION
+) -> None:
     from jevdual.operator_evidence import validate_binding
 
     try:
         validate_binding(binding)
+        baseline = {"ingress": [], "tickets": [], "counts": {"ingress": 0, "tickets": 0}}
+        if version == 2:
+            baseline["responses"] = []
+            baseline["counts"]["responses"] = 0
         if (
             not isinstance(prepared, dict)
             or set(prepared)
             != {"schema_version", "kind", "scope", "baseline", "baseline_sha256", "captured_at"}
             or type(prepared["schema_version"]) is not int
-            or prepared["schema_version"] != VERSION
+            or prepared["schema_version"] != version
             or prepared["kind"] != "ticket_preparation"
-            or canonical(prepared["baseline"])
-            != canonical({"ingress": [], "tickets": [], "counts": {"ingress": 0, "tickets": 0}})
+            or canonical(prepared["baseline"]) != canonical(baseline)
             or prepared["baseline_sha256"] != digest(prepared["baseline"])
         ):
             raise TicketEvidenceError("unsupported pre-admitted ticket preparation")
-        _validate_scope(prepared["scope"])
+        _validate_scope(prepared["scope"], version=version)
         _time(prepared["captured_at"])
         _time(op.created)
         if (
@@ -382,22 +401,69 @@ def validate_preparation(op: Any, prepared: dict[str, Any], binding: dict[str, A
     return prepared
 
 
-def _matches(snapshot: Any, expected: dict[str, str], origin: str, *, began: float, ended: float) -> bool:
+def response_matches(snapshot: Any, *, ended: float, mode: str | None = None) -> bool:
+    """One explicit supported header boundary; no timer stands in for completion."""
     if (
         not isinstance(snapshot, dict)
-        or set(snapshot) != {"counts", "ingress", "tickets"}
+        or not isinstance(snapshot.get("ingress"), list)
+        or len(snapshot["ingress"]) != 1
+        or not isinstance(snapshot.get("responses"), list)
+        or len(snapshot["responses"]) != 1
+    ):
+        return False
+    ingress, response = snapshot["ingress"][0], snapshot["responses"][0]
+    if not isinstance(ingress, dict) or not isinstance(response, dict):
+        return False
+    actual_mode = ingress.get("response_mode")
+    return (
+        actual_mode in {"normal", "truncated"}
+        and (mode is None or actual_mode == mode)
+        and set(response) == {"ingress_id", "completed", "mode", "boundary"}
+        and type(response.get("ingress_id")) is int
+        and response["ingress_id"] == ingress.get("id")
+        and response.get("mode") == actual_mode
+        and response.get("boundary") == "headers_flushed"
+        and type(response.get("completed")) in (int, float)
+        and math.isfinite(response["completed"])
+        and type(ingress.get("received")) in (int, float)
+        and ingress["received"] <= response["completed"] <= ended
+    )
+
+
+def _matches(
+    snapshot: Any,
+    expected: dict[str, str],
+    origin: str,
+    *,
+    began: float,
+    ended: float,
+    version: int = VERSION,
+    response_mode: str | None = None,
+) -> bool:
+    keys = {"counts", "ingress", "tickets"}
+    counts = {"ingress": 1, "tickets": 1}
+    if version == 2:
+        keys.add("responses")
+        counts["responses"] = 1
+    if (
+        not isinstance(snapshot, dict)
+        or set(snapshot) != keys
         or not isinstance(snapshot.get("counts"), dict)
         or any(type(value) is not int for value in snapshot["counts"].values())
-        or snapshot.get("counts") != {"ingress": 1, "tickets": 1}
+        or snapshot.get("counts") != counts
         or not isinstance(snapshot.get("ingress"), list)
         or len(snapshot["ingress"]) != 1
         or snapshot.get("tickets") != [expected]
     ):
         return False
+    if version == 2 and not response_matches(snapshot, ended=ended, mode=response_mode):
+        return False
     row = snapshot["ingress"][0]
     return (
         isinstance(row, dict)
-        and set(row) == {"id", "received", "body_sha", "fields", "error", "origin"}
+        and set(row)
+        == {"id", "received", "body_sha", "fields", "error", "origin"}
+        | ({"response_mode"} if version == 2 else set())
         and type(row.get("id")) is int
         and row["id"] > 0
         and type(row.get("received")) in (int, float)
@@ -418,7 +484,12 @@ def qualify(op: Any, prepared: dict[str, Any], binding: dict[str, Any]) -> dict[
     scope = prepared["scope"]
     capture = _capture(scope)
     if not _matches(
-        capture["snapshot"], scope["expected"], scope["url"], began=op.created, ended=capture["checked_at"]
+        capture["snapshot"],
+        scope["expected"],
+        scope["url"],
+        began=op.created,
+        ended=capture["checked_at"],
+        response_mode=scope["source"]["response_mode"],
     ):
         return None
     receipt = {
@@ -456,7 +527,6 @@ def validate_receipt(
     record: Any, op: Any, prepared: dict[str, Any], binding: dict[str, Any]
 ) -> dict[str, Any]:
     """Validate retained historical evidence without opening the app, artifact or ledger."""
-    _admission(op, prepared, binding)
     keys = {
         "schema_version",
         "kind",
@@ -482,6 +552,11 @@ def validate_receipt(
     }
     if not isinstance(record, dict) or set(record) != keys:
         raise TicketEvidenceError("unsupported ticket receipt")
+    version = record["schema_version"]
+    if type(version) is not int or version not in (1, VERSION):
+        raise TicketEvidenceError("unsupported ticket receipt version")
+    # Historical v1 validation remains I/O-free. Only v2 can enroll or qualify now.
+    _admission(op, prepared, binding, version=version)
     from jevdual.operator_evidence import validate_binding
 
     try:
@@ -490,9 +565,9 @@ def validate_receipt(
         raise TicketEvidenceError("invalid ticket receipt native binding") from error
     canonical(record)
     expected = {
-        "schema_version": VERSION,
+        "schema_version": version,
         "kind": "ticket_submission",
-        "producer": PRODUCER,
+        "producer": f"footwork.ticket_ledger/v{version}",
         "predicate": PREDICATE,
         "operation_id": op.id,
         "session_id": op.task,
@@ -533,7 +608,33 @@ def validate_receipt(
             record["source"]["origin"],
             began=op.created,
             ended=capture["checked_at"],
+            version=version,
+            response_mode=record["source"].get("response_mode"),
         )
     ):
         raise TicketEvidenceError("ticket capture does not establish the admitted service effect")
     return record
+
+
+def check_bound(scope: dict[str, Any], *, began: float) -> dict[str, Any]:
+    """Recheck the actual pre-admitted source for a new handoff, never legacy state."""
+    capture = _capture(scope)
+    passed = _matches(
+        capture["snapshot"],
+        scope["expected"],
+        scope["url"],
+        began=began,
+        ended=capture["checked_at"],
+        response_mode=scope["source"]["response_mode"],
+    )
+    return {
+        "schema_version": VERSION,
+        "kind": "ticket_oracle",
+        "ok": passed,
+        "database": scope["source"]["database"],
+        "source": capture["source"],
+        "expected": scope["expected"],
+        "artifact": scope["artifact"],
+        "checked_at": capture["checked_at"],
+        **capture["snapshot"],
+    }

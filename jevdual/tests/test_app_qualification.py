@@ -8,6 +8,7 @@ import multiprocessing
 import os
 import signal
 import time
+import uuid
 from pathlib import Path
 from types import SimpleNamespace
 from urllib.error import URLError
@@ -15,6 +16,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 import pytest
+from jevdual import ticket_evidence
 from jevdual.app_qualification import (
     HandoffRun,
     QualificationError,
@@ -28,7 +30,7 @@ from jevdual.session_operations import SessionOperations, native_resource
 
 BINDING = {"boot": "fixture-boot", "pid": 77, "start": "fixture-start", "window_id": 2}
 EXPECTED = {
-    "request_id": "ticket-1",
+    "request_id": "d04ecb1630c74adfab25f102c01e2a7a",
     "artifact": "renamed.png",
     "orientation": "clockwise90",
     "digest": hashlib.sha256(b"fixture").hexdigest(),
@@ -61,13 +63,15 @@ def test_deduplicated_row_does_not_hide_duplicate_ingress(tmp_path):
         assert not result["ok"]
 
 
-def test_lost_reply_after_commit_keeps_independent_durable_receipt(tmp_path):
+def test_preheader_disconnect_keeps_ingress_but_no_qualified_boundary(tmp_path):
     with TicketFixture(tmp_path, lose_reply_once=True) as fixture:
         with pytest.raises((URLError, OSError)) as caught:
             post(fixture)
         assert caught.value is not None
-        assert fixture.store.check(EXPECTED)["ok"]
-    assert TicketStore(tmp_path / "tickets.sqlite").check(EXPECTED)["ok"]
+        assert not fixture.store.check(EXPECTED)["ok"]
+        assert len(fixture.store.snapshot()["ingress"]) == 1
+        assert fixture.store.snapshot()["responses"] == []
+    assert not TicketStore(tmp_path / "tickets.sqlite").check(EXPECTED)["ok"]
 
 
 def test_malformed_or_duplicate_form_fields_are_retained_as_failed_ingress(tmp_path):
@@ -148,6 +152,34 @@ def terminal_operation(authority, session_id="finder-session", app="Finder", *, 
         )
         store.record_execution(op.id, capsule)
         store.finish_from_execution(op.id)
+        return op.id
+
+
+def ticket_operation(run, fixture, artifact, expected):
+    """Real pre-admission and loopback event; no browser UI is claimed."""
+    scope = ticket_evidence.bind(fixture.store.path, fixture.url, expected, artifact, run.root)
+    prepared = ticket_evidence.prepare(scope)
+    native_scope = {"url": fixture.url, "title": "Footwork owned ticket fixture"}
+    with SessionOperations(run.authority) as operations:
+        op = operations.admit(
+            session_id="chrome-session",
+            token=uuid.uuid4().hex,
+            request={
+                "words": ["click", "button:Register asset"],
+                "native_scope": native_scope,
+                "ticket_scope": scope,
+            },
+            resource=native_resource(BINDING),
+            observation="form",
+            target="18",
+            move="click",
+            authorization_basis="fixture",
+            projection={"binding": BINDING, "app": "Google Chrome", "ticket_submission": prepared},
+        )
+        operations.start(op.id)
+        operations.finish(op.id, dispatched=None, effect="unverifiable", evidence={})
+        post(fixture, expected)
+        assert operations.reconcile(op.id).state == "final"
         return op.id
 
 
@@ -276,8 +308,7 @@ def test_three_app_handoff_protocol_with_independent_oracles_and_restarts(tmp_pa
     run.begin("chrome", session_id="chrome-session")
     expected = {**EXPECTED, "artifact": artifact.name, "digest": artifact_identity(root, artifact)["sha256"]}
     with TicketFixture(root / "ticket-server") as fixture:
-        post(fixture, expected)
-        chrome_op = terminal_operation(authority, session_id="chrome-session", app="Google Chrome")
+        chrome_op = ticket_operation(run, fixture, artifact, expected)
         run.complete("chrome", [chrome_op], lambda: fixture.store.check(expected), artifact)
     assert [stage["stage"] for stage in run.snapshot()["completed"]] == ["finder", "preview", "chrome"]
 
@@ -334,6 +365,88 @@ def prepare_preview(root):
     )
     run.begin("preview", session_id="preview-session")
     return run, manifest, artifact
+
+
+@pytest.mark.parametrize("variant", ["database", "nonce", "fixture_id", "origin"])
+def test_chrome_handoff_rejects_another_service_source(tmp_path, variant):
+    from jevdual.app_oracles import check_preview
+    from PIL import Image
+
+    run, manifest, artifact = prepare_preview(tmp_path / "run")
+    with Image.open(artifact) as image:
+        image.transpose(Image.Transpose.ROTATE_270).save(artifact)
+    operation = terminal_operation(run.authority, session_id="preview-session", app="Preview")
+    run.complete("preview", [operation], lambda: check_preview(manifest, artifact), artifact)
+    run.begin("chrome", session_id="chrome-session")
+    expected = {
+        **EXPECTED,
+        "request_id": uuid.uuid4().hex,
+        "artifact": artifact.name,
+        "digest": artifact_identity(run.root, artifact)["sha256"],
+    }
+    with TicketFixture(run.root / "admitted") as admitted, TicketFixture(run.root / "other") as other:
+        operation = ticket_operation(run, admitted, artifact, expected)
+        other_expected = {**expected, "request_id": uuid.uuid4().hex} if variant == "nonce" else expected
+        if variant == "database":
+            post(other, other_expected)
+            checked = other
+        else:
+            checked = admitted
+            with admitted.store._db() as database:
+                if variant == "nonce":
+                    database.execute(
+                        "UPDATE ingress SET fields=?,body_sha=?",
+                        (
+                            json.dumps(other_expected),
+                            hashlib.sha256(ticket_evidence.form_body(other_expected)).hexdigest(),
+                        ),
+                    )
+                    database.execute(
+                        "UPDATE tickets SET request_id=?,fields=?",
+                        (other_expected["request_id"], json.dumps(other_expected)),
+                    )
+                else:
+                    database.execute(
+                        "UPDATE fixture_state SET value=? WHERE key=?",
+                        (uuid.uuid4().hex if variant == "fixture_id" else "http://127.0.0.1:8766", variant),
+                    )
+        assert checked.store.check(other_expected)["ok"]
+        with pytest.raises(QualificationError, match="admitted"):
+            run.complete("chrome", [operation], lambda: checked.store.check(other_expected), artifact)
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_new_chrome_handoff_requires_current_service_contract(tmp_path, monkeypatch, legacy):
+    from jevdual.app_oracles import check_preview
+    from PIL import Image
+
+    run, manifest, artifact = prepare_preview(tmp_path / "run")
+    with Image.open(artifact) as image:
+        image.transpose(Image.Transpose.ROTATE_270).save(artifact)
+    operation = terminal_operation(run.authority, session_id="preview-session", app="Preview")
+    run.complete("preview", [operation], lambda: check_preview(manifest, artifact), artifact)
+    run.begin("chrome", session_id="chrome-session")
+    expected = {
+        **EXPECTED,
+        "artifact": artifact.name,
+        "digest": artifact_identity(run.root, artifact)["sha256"],
+    }
+    with TicketFixture(run.root / "service") as fixture:
+        if legacy:
+            operation = ticket_operation(run, fixture, artifact, expected)
+            original = SessionOperations.qualified_receipt
+
+            def historical(store, op):
+                # Historical v1 parsing is exercised with literal persisted rows
+                # in test_session_ticket_reconciliation; challenge this gate here.
+                result = original(store, op)
+                return {**result, "schema_version": 1} if op.id == operation else result
+
+            monkeypatch.setattr(SessionOperations, "qualified_receipt", historical)
+        else:
+            operation = terminal_operation(run.authority, session_id="chrome-session", app="Google Chrome")
+        with pytest.raises(QualificationError, match="admitted v2"):
+            run.complete("chrome", [operation], lambda: fixture.store.check(expected), artifact)
 
 
 def test_preview_rejects_counterclockwise_oracle_even_when_it_passes(tmp_path):
