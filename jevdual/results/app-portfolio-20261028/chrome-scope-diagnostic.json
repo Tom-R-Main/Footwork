@@ -1,0 +1,51 @@
+{
+  "status": "observed",
+  "pid": 64263,
+  "window_id": 11666,
+  "title": "Footwork owned ticket fixture",
+  "elements_complete": false,
+  "truncated": false,
+  "address_bars": [
+    [
+      3,
+      "127.0.0.1:58971"
+    ]
+  ],
+  "candidate_roles": [
+    [
+      3,
+      "textbox",
+      "Address and search bar"
+    ],
+    [
+      11,
+      "textbox",
+      "request_id"
+    ],
+    [
+      13,
+      "textbox",
+      "artifact"
+    ],
+    [
+      15,
+      "textbox",
+      "orientation"
+    ],
+    [
+      17,
+      "textbox",
+      "digest"
+    ],
+    [
+      18,
+      "button",
+      "Register asset"
+    ],
+    [
+      19,
+      "combobox",
+      "Tab search"
+    ]
+  ]
+}

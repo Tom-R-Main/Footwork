@@ -22,3 +22,7 @@ Keep all planned attempts and failures. Real subprocess kill tests must use owne
 ## Route amendment · 2026-10-28 19:45
 
 Source inspection found the semantic browser route lacks retained tab/document incarnation and qualified delivery. Its durable admission remains refused. The Chrome qualification candidate is instead explicitly native Chrome UI in an owned dedicated profile/window, guarded at every fresh/internal observation by exact loopback address-bar URL and unique fixture title. Unavailable, ambiguous or changed URL/title refuses input. This is a separate route and cannot qualify the semantic browser adapter. Retain any failed native observation/action attempts. Use an offline-installed frozen wheel and record its module origins/hashes; existing host dependencies do not constitute independent first-use evidence.
+
+## Result
+
+Installed portfolio: unqualified. Finder produced an unresolved runtime result without qualified delivery; Preview and cross-app advancement were blocked. Guarded native Chrome refused incomplete scope and no ticket was submitted. Fixtures were independently unchanged; owned resources were cleaned up without clearing uncertainty. Offline harness: 86 focused tests pass, including five real SIGKILL checkpoints with simulated app effects. Final suite: 1943 passed, 26 skipped; Ruff/notebook/diff checks clean. AP1/AP2 remain inconclusive for successful installed execution. See `results/app-portfolio-20261028/report.md` for exact artifact identities, observations, corrected review findings and remaining gaps.

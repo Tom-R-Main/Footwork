@@ -1,0 +1,20 @@
+{
+  "preview": {
+    "status": "confirmed",
+    "reason": "window_disappeared",
+    "pid": 6514
+  },
+  "finder": {
+    "status": "confirmed",
+    "close_error": 0,
+    "window_gone": true
+  },
+  "chrome": {
+    "status": "confirmed",
+    "owned_processes_remaining": []
+  },
+  "server": {
+    "status": "confirmed",
+    "listener_closed": true
+  }
+}

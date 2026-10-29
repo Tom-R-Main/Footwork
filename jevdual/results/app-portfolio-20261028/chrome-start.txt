@@ -1,0 +1,1 @@
+stopped: native_scope_unavailable: one unambiguous Chrome address bar is required

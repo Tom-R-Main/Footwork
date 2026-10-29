@@ -1,0 +1,11 @@
+{
+  "protected_and_source_unchanged": {
+    "original/asset.png": true,
+    "decoy/asset.png": true,
+    "inbox/keep.bin": true,
+    "organized/keep.bin": true,
+    "inbox/asset.png": true
+  },
+  "rename_destination_exists": false,
+  "move_destination_exists": false
+}
