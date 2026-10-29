@@ -40,3 +40,15 @@ Observed: the complete development rename settled applied. Move retained five ac
 Inferred: allow only the exact Go sheet descended from the bound window and its focused field, while continuing to reject other windows. Keep the partial move unknown and use a fresh fixture.
 Next: correct modal ownership, complete the move, and qualify background Chrome renderer accessibility.
 Refs: output/move-submit-20261028/dev2/move-deciding-proof.json; output/move-submit-20261028/dev2/sheet-window-diagnostic.json; output/move-submit-20261028/dev2/activity-diagnostic.json
+
+## MSU3 · update · 2026-10-28 21:31
+Observed: renderer-accessibility Chrome supplied all form fields and accepted four native background writes without bringing the owned profile forward. One agent click against the empty-response-disconnect fixture produced two identical ingress events 2.5 milliseconds apart and one deduplicated row. Qualified reconciliation correctly refused, and token replay sent no new input. Pinned SDK source uses one AXPress on this route; this does not independently identify the browser/network cause of the second request.
+Inferred: a lost HTTP response may trigger transport behavior separate from agent replay. Keep the duplicate-ingress gate and the old unknown, and distinguish HTTP response loss from an agent process losing its returned result.
+Next: compare a truncated-body response with the retained disconnect case, using a fresh fixture; also test agent result loss by killing the owned CLI after ingress and before result retention.
+Refs: output/move-submit-20261028/chrome-dev/ticket-duplicate-diagnostic.json; output/move-submit-20261028/chrome-dev/authority-final.json
+
+## MS6 · prediction · 2026-10-28 21:31
+Hypothesis: sending valid response headers after commit and losing the body prevents the automatic request replay seen after an empty-response disconnect, while still withholding the submission result.
+Test: preserve the original disconnect fault and add an explicit truncated-body fault mode; one actual native click in a fresh owned Chrome fixture, inspect independent ingress/body/row records and read-only reconciliation. Retain the original fault as an adversarial unsupported case rather than deleting it.
+Predicts: the truncated response produces exactly one matching ingress and an independently qualified receipt after lost UI result; repeated status/token replay sends no further input.
+Against: truncated loss also produces duplicate ingress, the receipt accepts mismatched/duplicate events, or the old disconnect failure is misreported as a passing case.
