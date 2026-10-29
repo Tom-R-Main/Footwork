@@ -200,6 +200,52 @@ def test_file_reference_url_uses_foundation_path_resolution(monkeypatch):
     assert calls == ["resolved"]
 
 
+@pytest.mark.parametrize(
+    "case",
+    [
+        "no_window",
+        "bound_window",
+        "wrong_app",
+        "wrong_value",
+        "wrong_role",
+        "wrong_main",
+        "wrong_window",
+        "unreadable_window",
+    ],
+)
+def test_current_completion_editor_qualifies_only_owned_window_reactivation(boundary, monkeypatch, case):
+    main = {"wid": 12}
+    current = {"AXRole": "AXTextField", "AXValue": "renamed.png"}
+    app = {"AXTitle": "Finder", "AXFocusedUIElement": current, "AXMainWindow": main}
+    if case != "no_window":
+        current["AXWindow"] = {"wid": 99 if case == "wrong_window" else 12}
+    if case == "wrong_app":
+        app["AXTitle"] = "Preview"
+    elif case == "wrong_value":
+        current["AXValue"] = "foreign.png"
+    elif case == "wrong_role":
+        current["AXRole"] = "AXTextArea"
+    elif case == "wrong_main":
+        main["wid"] = 99
+    elif case == "unreadable_window":
+        current["_errors"] = {"AXWindow": -25204}
+    monkeypatch.setattr(
+        sys.modules["ApplicationServices"], "AXUIElementCreateApplication", lambda pid: app, raising=False
+    )
+    monkeypatch.setitem(sys.modules, "objc", SimpleNamespace(pyobjc_id=lambda element: element["wid"]))
+
+    def window_id(element_id, pointer):
+        pointer._obj.value = element_id
+        return 0
+
+    monkeypatch.setattr(ax, "_hi", lambda: window_id)
+    if case in {"no_window", "bound_window"}:
+        assert ax.finder_completion_editor(77, 12, "renamed.png") is current
+    else:
+        with pytest.raises(ax.AXError):
+            ax.finder_completion_editor(77, 12, "renamed.png")
+
+
 def test_duplicate_current_candidate_geometry_is_not_guessed(owned, boundary):
     manifest, binding = owned
     boundary([file_field(binding.path)])
