@@ -56,10 +56,11 @@ class MoveCLIWorld(file_tests.FinderWorld):
 
     def attributes(self, element):
         if element == "application":
+            focused = super().attributes(element)["AXFocusedWindow"]
             return {
                 **super().attributes(element),
                 "AXMainWindow": self.active_window,
-                "AXFocusedWindow": self.active_window,
+                "AXFocusedWindow": self.active_window if focused is not None else None,
             }
         if element == "window":
             return {"AXRole": "AXWindow", "AXTitle": "inbox", "AXChildren": ["outline"]}
@@ -229,9 +230,11 @@ def test_public_owned_move_records_applied_receipt_and_replay_sends_nothing(move
     assert world.inputs == before
 
 
-def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli):
+@pytest.mark.parametrize("null_focused_window", [False, True])
+def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli, null_focused_window):
     world, run = move_cli
     world.retain_editor_after_commit = True
+    world.null_focused_window_after_commit = null_focused_window
     renamed(world, run)
     selector = "file:" + str(world.current_path)
     directory = str(Path(world.manifest["root"]) / "organized")
@@ -248,7 +251,9 @@ def test_committed_rename_reacquires_exact_window_before_move_admission(move_cli
     assert check_finder(world.manifest, "organized/renamed.png").ok
 
 
-@pytest.mark.parametrize("change", ["front", "window", "editor_persists"])
+@pytest.mark.parametrize(
+    "change", ["front", "window", "focused_window", "editor_persists", "retained_editor", "retained_value"]
+)
 def test_rename_completion_refuses_foreign_ownership_or_missing_filename(move_cli, monkeypatch, change):
     world, run = move_cli
     world.retain_editor_after_commit = True
@@ -257,16 +262,32 @@ def test_rename_completion_refuses_foreign_ownership_or_missing_filename(move_cl
     elif change == "front":
         activity = file_tests.ExecutionPolicy("foreground_permitted")._activity()
         activity.frontmost_pid = lambda: 99 if world.rename_committed else 77
-    else:
+    elif change in {"window", "focused_window"}:
         original = file_tests.ax.finder_window_context
         monkeypatch.setattr(
             file_tests.ax,
             "finder_window_context",
             lambda pid: {
                 **original(pid),
-                "main_window_id": 999 if world.rename_committed else world.window_id,
+                "main_window_id" if change == "window" else "focused_window_id": (
+                    999 if world.rename_committed else world.window_id
+                ),
             },
         )
+    else:
+        world.null_focused_window_after_commit = True
+        attributes = world.attributes
+
+        def changed(element):
+            result = attributes(element)
+            if world.rename_committed:
+                if change == "retained_editor" and element == "application":
+                    return {**result, "AXFocusedUIElement": "asset"}
+                if change == "retained_value" and element == "editor":
+                    return {**result, "AXValue": "foreign.png"}
+            return result
+
+        monkeypatch.setattr(world, "attributes", changed)
     file_tests.start(run)
     code, out, err = run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "incomplete-ui")
     assert code == 0, (out, err)
