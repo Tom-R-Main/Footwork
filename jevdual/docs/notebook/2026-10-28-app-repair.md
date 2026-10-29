@@ -55,3 +55,37 @@ Observed: development fixture dev7 completed the combined CLI rename with four a
 Inferred: the file selector and app-specific rename producer can qualify this bounded operation without fabricating an SDK input count. This does not establish a Finder move or a complete portfolio pass.
 Next: freeze the candidate, run the full suite, offline-install its wheel and rerun the fresh connected fixture. Retain unsupported move and unresolved browser submission as open gates.
 Refs: output/app-repair-20261028/dev7/finder-outcome.json; tests/test_session_file_targets.py; tests/test_finder_targets.py
+
+## ARU4 · update · 2026-10-28 20:52
+Resolves: AR1 = held
+Observed: frozen installed CLI renamed the manifest-owned file with a final/applied retained receipt; independent exact path, same inode, bytes and siblings matched. Wrong-directory same-basename input refused before admission, and token replay after rename produced no second effect. Public CLI scenarios cover numeric renumbering, identical window titles and duplicate source windows.
+Inferred: exact file identity survives the observed ID/window ambiguity for this bounded rename route; move remains outside its support.
+Next: preserve the qualified rename route and implement a separately qualified move.
+Refs: results/app-repair-20261028/live-summary.json; results/app-repair-20261028/live-authority.json
+
+## ARU5 · update · 2026-10-28 20:52
+Resolves: AR3 = held
+Observed: the frozen installed native Chrome start accepted exact URL/title/PID scope despite incomplete page coverage; mismatched URL refused. Separate trusted captures and synthetic web-spoof/partial/error/window tests support the toolbar boundary. Foreground setup yielded twice to recent user input; background form fields were absent, so no installed submission was admitted.
+Inferred: complete toolbar scope does not establish page/form readiness or delivery. The active-user posture remains a real capability boundary.
+Next: establish background form readiness or an idle foreground run before the next Chrome input trial.
+Refs: results/app-repair-20261028/live-summary.json; results/app-repair-20261028/development.json
+
+## ARU6 · update · 2026-10-28 20:52
+Resolves: AR5 = held
+Observed: the actual selected-row Rename editor plus explicit File-menu validation committed the same inode's intended pathname, both in development and through the frozen installed CLI. Earlier cell-only writes and unvalidated leaf presses failed and remain retained unknowns.
+Inferred: Finder's real edit mode and menu validation were required; neither a display value nor an AX leaf acknowledgement supplied that transition.
+Next: retain the failed mechanisms as regression scenarios.
+Refs: results/app-repair-20261028/development.json; results/app-repair-20261028/live-authority.json
+
+## ARU7 · update · 2026-10-28 20:52
+Resolves: AR4 = inconclusive
+Observed: installed rename and Preview rotation/autosave passed with retained applied custody and independent artifacts. Controller SIGKILL after Finder's settled rename recovered and advanced Preview. The first 12-second pixel wait timed out, then a read-only continuation found correct saved pixels; no input repeated. Required Finder move was unsupported; Chrome form readiness stopped before input under active-user constraints. A development-only submission persisted one synthetic ticket but its click stayed unknown. Cleanup preserved seven prior/development unknowns and confirmed closed owned windows/listeners/process trees and correct saved pixels after window closure.
+Inferred: the three targeted prerequisites improved, but the full installed portfolio and successful complete interrupted chain remain unqualified. Renamed-only handoff completion and service persistence cannot fill those gaps.
+Next: qualified Finder move and bound Chrome submission reconciliation, then another frozen installed portfolio run.
+Refs: results/app-repair-20261028/report.md; results/app-repair-20261028/cleanup.json
+
+## ARS1 · summary · 2026-10-28 20:52
+Established: stable owned Finder targeting and real-editor rename, source-qualified native predicates, complete trusted Chrome toolbar scope and strict evidence validation are implemented in commit 4c2c4cf. Full suite passes 2025 tests with 26 skipped; Ruff and notebook checks pass. Installed rename, saved rotation and partial stage-boundary restart have retained evidence. No unknown was manually cleared or retried.
+Uncertain: required move support, installed Chrome form completion/lost-response qualification, and the complete release-gate chain remain unproven. Existing host dependencies were reused; no clean-machine onboarding claim is made.
+Decision: retain the open portfolio gate, commit exact support boundaries and rerun evidence, and stop owned helpers while preserving all artifacts/history.
+Refs: results/app-repair-20261028/report.md; docs/app-qualification.md
