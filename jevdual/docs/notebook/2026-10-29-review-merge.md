@@ -27,3 +27,10 @@ Test: Pause a handler after first ingress before pre-header disconnect and attem
 Predicts: Transient first ingress or unsupported disconnect never seals a success; supported completed response and matching admission may qualify; an unrelated ledger/nonce cannot advance Chrome.
 Against: An early snapshot irreversibly qualifies a later-duplicating fault, or evidence from submission B completes submission A.
 Refs: independent read-only reviews of a9b260180980e305ebc414568cf92ab02987f941; docs/plans/five-directions-20261028/IMPLEMENTATION-PLAN.md
+
+## RV5 · prediction · 2026-10-29 14:26
+Hypothesis: foreground handback must preserve the requested candidate ID in the returned NativeEffect; reusing its target variable for a restoration PID currently replaces that identity.
+Test: run the foreground helper with an acknowledged action on candidate 4 and a handback to PID 77; assert both the activation and the original receipt target. Then use a distinct restoration variable and rerun native regressions.
+Predicts: the red case returns target 77 before repair and target 4 afterward, while foreground restoration still activates PID 77.
+Against: the original candidate target is already preserved, or separating handback metadata changes delivery/refusal behavior.
+Refs: python/jevdual/native.py NativeBridge._foreground; RV2
