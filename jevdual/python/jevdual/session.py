@@ -81,6 +81,7 @@ class SessionState:
     authority: str = ""
     session_id: str = ""
     native_binding: dict[str, Any] = field(default_factory=dict)
+    native_scope: dict[str, str] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
@@ -151,6 +152,13 @@ async def run_command(args: Any) -> int:
     if not authority:
         return await args.fn(args)
     args._durable_command = True
+    if getattr(args, "browser", False) or raw.get("mode") == "browser":
+        # Refuse before browser_prepare/launch/navigation, and before mutating a
+        # journal that cannot qualify this route's connection-local identities.
+        from jevdual.browser_driver import durable_authority_refusal
+
+        print(json.dumps(durable_authority_refusal(), sort_keys=True), file=sys.stderr)
+        return 2
     location = Path(authority)
     if not location.is_absolute():
         print("not admitted: authority must be an absolute database path", file=sys.stderr)
@@ -204,7 +212,7 @@ def _check_native_binding(state: SessionState) -> None:
 
 
 def _operation_request(args: Any) -> dict[str, Any]:
-    return {
+    request = {
         "words": list(args.words),
         "authorize": getattr(args, "authorize", ""),
         "no_judge": bool(getattr(args, "no_judge", False)),
@@ -213,6 +221,74 @@ def _operation_request(args: Any) -> dict[str, Any]:
         else None,
         "route": getattr(args, "route", None),
     }
+    if getattr(args, "_native_scope", None):
+        request["native_scope"] = dict(args._native_scope)
+    return request
+
+
+def _native_url_parts(value: str) -> tuple[str, str, int, str, str]:
+    """Exact loopback scope, without DNS, credentials or fragment aliases."""
+    import ipaddress
+    from urllib.parse import urlsplit
+
+    try:
+        if not isinstance(value, str) or value != value.strip() or any(ord(char) < 32 for char in value):
+            raise ValueError("unsupported URL spelling")
+        parsed = urlsplit(value)
+        if (
+            parsed.scheme != "http"
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.fragment
+            or not parsed.hostname
+            or "%" in parsed.hostname
+            or not ipaddress.ip_address(parsed.hostname).is_loopback
+        ):
+            raise ValueError("unsupported URL scope")
+        port = 80 if parsed.port is None else parsed.port
+        if port <= 0:
+            raise ValueError("unsupported port")
+        return parsed.scheme, parsed.hostname, port, parsed.path or "/", parsed.query
+    except (ValueError, TypeError) as exc:
+        raise NativeBridgeError(
+            "native_scope_invalid", "native URL scope requires an exact HTTP numeric-loopback URL"
+        ) from exc
+
+
+def _native_scope_guard(scope: dict[str, str]):
+    if not isinstance(scope, dict) or set(scope) != {"url", "title"} or not isinstance(scope["title"], str):
+        raise NativeBridgeError("native_scope_invalid", "unsupported native browser scope")
+    expected = _native_url_parts(scope["url"])
+
+    def check(nm: NativeMenu) -> None:
+        if nm.app_name not in ("Google Chrome", "Chrome"):
+            raise NativeBridgeError("native_scope_changed", "the observed app is not the scoped Chrome app")
+        if scope["title"] and scope["title"] not in nm.menu.title:
+            raise NativeBridgeError(
+                "native_scope_changed", "the observed window lacks the fixture title nonce"
+            )
+        bars = nm.scope_address_bars
+        if not nm.elements_complete or nm.truncated or bars is None or len(bars) != 1:
+            raise NativeBridgeError(
+                "native_scope_unavailable", "one unambiguous Chrome address bar is required"
+            )
+        shown = bars[0][1]
+        if not isinstance(shown, str) or not shown:
+            raise NativeBridgeError("native_scope_unavailable", "the scoped address bar has no readable URL")
+        if "://" not in shown:
+            shown = "http://" + shown
+        try:
+            actual = _native_url_parts(shown)
+        except NativeBridgeError as exc:
+            raise NativeBridgeError(
+                "native_scope_changed", "the observed URL is outside the fixture scope"
+            ) from exc
+        if actual != expected:
+            raise NativeBridgeError(
+                "native_scope_changed", "the observed URL differs from the exact fixture scope"
+            )
+
+    return check
 
 
 def _safe_operation_value(state: SessionState, value: Any, secret: str | None = None) -> Any:
@@ -515,6 +591,8 @@ def scrub(state: SessionState, nm: Any, extra: str | None = None) -> Any:
         changes: dict[str, Any] = {"menu": menu}
         if isinstance(getattr(nm, "values", None), dict):
             changes["values"] = {k: s(v) for k, v in nm.values.items()}
+        if getattr(nm, "scope_address_bars", None) is not None:
+            changes["scope_address_bars"] = tuple((key, s(value)) for key, value in nm.scope_address_bars)
         out = dataclasses.replace(nm, **changes)
     else:
         out = copy.copy(nm)
@@ -664,6 +742,11 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
 
 
 async def bind(state: SessionState):
+    if state.authority and state.mode == "browser":
+        from jevdual.browser_driver import durable_authority_refusal
+
+        refusal = durable_authority_refusal()
+        raise NativeBridgeError(refusal["code"], refusal["message"])
     if state.authority and any(
         len(os.environ.get(f"FOOTWORK_SECRET_{name}", "")) < 3 for name in state.secret_names
     ):
@@ -688,15 +771,28 @@ async def bind(state: SessionState):
     from cua_driver import CuaDriver
 
     driver = CuaDriver.create(embedded=True)
+    if state.native_scope:
+        return driver, _native_bridge(
+            driver, state.pid, state.window_id, state.posture, native_scope=state.native_scope
+        )
     return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
 
 
-def _native_bridge(driver: Any, pid: int, wid: int, posture: str) -> NativeBridge:
+def _native_bridge(
+    driver: Any, pid: int, wid: int, posture: str, *, native_scope: dict[str, str] | None = None
+) -> NativeBridge:
     """The operator's bridge: the session's posture, and a live identity check before every element
     action (the person may have changed the window since the operator looked)."""
     from jevdual.posture import ExecutionPolicy
 
-    return NativeBridge(driver, pid, wid, policy=ExecutionPolicy(posture), live_check=True)  # type: ignore[arg-type]
+    return NativeBridge(
+        driver,
+        pid,
+        wid,
+        policy=ExecutionPolicy(posture),
+        live_check=True,
+        observation_guard=_native_scope_guard(native_scope) if native_scope else None,
+    )  # type: ignore[arg-type]
 
 
 async def observe(
@@ -753,6 +849,7 @@ def finish_observation(
                 "binding": state.native_binding,
                 "observation": nm.snapshot_id,
                 "generation": state.visual_generation,
+                "native_scope": state.native_scope,
                 "interval": {"start": start, "end": end},
                 "coverage": {
                     "elements_complete": bool(getattr(nm, "elements_complete", False)),
@@ -777,11 +874,37 @@ def finish_observation(
 async def cmd_start(args: Any) -> int:
     from cua_driver import CuaDriver
 
-    from jevdual.native import address_bar, find_window, navigate_in_window, new_window, require_accessibility
+    from jevdual.native import (
+        address_bar,
+        find_window,
+        find_window_for_pid,
+        navigate_in_window,
+        new_window,
+        require_accessibility,
+    )
 
     d = session_dir(args.session)
     operations = getattr(args, "_operations", None)
     durable = bool(getattr(args, "authority", None))
+    explicit_pid = getattr(args, "pid", None)
+    if explicit_pid is not None and (explicit_pid <= 0 or getattr(args, "browser", False)):
+        print("not starting: --pid requires a positive native process ID", file=sys.stderr)
+        return 2
+    native_scope = {}
+    if getattr(args, "native_url", None) or getattr(args, "native_title", None):
+        if (
+            not durable
+            or getattr(args, "browser", False)
+            or args.app not in ("Google Chrome", "Chrome")
+            or not getattr(args, "native_url", None)
+        ):
+            print(
+                "not starting: native URL/title scope requires durable native Chrome and --native-url",
+                file=sys.stderr,
+            )
+            return 2
+        native_scope = {"url": args.native_url, "title": args.native_title or ""}
+        _native_scope_guard(native_scope)
     old_metadata = d / "session.json"
     if durable or (old_metadata.exists() and SessionState.load(d).authority):
         if getattr(args, "browser", False) or getattr(args, "url", None):
@@ -811,7 +934,11 @@ async def cmd_start(args: Any) -> int:
     driver = CuaDriver.create(embedded=True)
     try:
         try:
-            pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
+            if explicit_pid is not None:
+                pid = explicit_pid
+                wid, title = await find_window_for_pid(driver, pid, title_contains=args.window or "")
+            else:
+                pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
         except LookupError as exc:
             # not running, installed but not running, or no on-screen window: say which, no traceback
             print(f"not starting: {exc}", file=sys.stderr)
@@ -833,7 +960,16 @@ async def cmd_start(args: Any) -> int:
             state.authority = str(Path(args.authority).resolve())
             state.session_id = uuid.uuid4().hex
             state.native_binding = native_identity(pid, wid)
-        bridge = _native_bridge(driver, pid, wid, state.posture)
+            state.native_scope = native_scope
+        bridge = _native_bridge(driver, pid, wid, state.posture, native_scope=state.native_scope)
+        if explicit_pid is not None:
+            initial = await bridge.observe()
+            if initial.app_name != args.app or (initial.pid, initial.window_id) != (pid, wid):
+                print(
+                    "not starting: the observed process/window does not match the requested app and PID",
+                    file=sys.stderr,
+                )
+                return 2
         print(f"bound {args.app} window {wid} {title[:60]!r} ({state.posture})")
         if args.url:
             from urllib.parse import urlsplit
@@ -1177,6 +1313,7 @@ async def cmd_do(args: Any) -> int:
     operations = _operations(args, state)
     operation = None
     token = getattr(args, "token", None)
+    args._native_scope = state.native_scope
     request = _operation_request(args)
     if operations is not None:
         token = token or uuid.uuid4().hex
@@ -1393,6 +1530,7 @@ async def cmd_do(args: Any) -> int:
                 "secret": secret_used,
                 "mode": state.mode,
                 "app": state.app,
+                "native_scope": dict(state.native_scope),
             }
             prepared = _safe_operation_value(state, prepared, text if secret_used else None)
             prepared["binding"] = dict(state.native_binding)
@@ -1495,6 +1633,7 @@ async def cmd_do(args: Any) -> int:
             # Driver errors can quote arguments; resolved secrets never enter the authority store.
             state.pending = _safe_operation_value(state, state.pending, text if secret_used else None)
             state.pending["binding"] = dict(state.native_binding)
+            state.pending["native_scope"] = dict(state.native_scope)
             state.pending["observation"] = nm.snapshot_id
             state.pending["execution_interval"] = {"start": started_at, "end": ended_at or time.time()}
             phase = (
@@ -1823,6 +1962,7 @@ async def cmd_status(args: Any) -> int:
                 {
                     "authority": state.authority,
                     "session_id": state.session_id,
+                    "native_scope": state.native_scope,
                     "operations": [operations.receipt(op) for op in items],
                     "domain_unresolved": [
                         operations.receipt(op) for op in operations.status() if op.unresolved

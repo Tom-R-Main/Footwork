@@ -190,6 +190,8 @@ class NativeMenu:
     web: frozenset[int] = frozenset()
     visual_capture: NativeVisualCapture | None = None
     visual_capture_error: str | None = None
+    #: Pre-pruning address bars for scope checks; deduplication cannot prove uniqueness.
+    scope_address_bars: tuple[tuple[int, str | None], ...] | None = None
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -430,6 +432,12 @@ def menu_from_snapshot(
             if None not in (fx, fy, fw, fh):
                 frames[cand.id] = (float(fx), float(fy), float(fw), float(fh))
 
+    scope_address_bars = tuple(
+        (candidate.id, values.get(candidate.id))
+        for candidate in candidates
+        if candidate.role in ("textbox", "searchbox")
+        and any(hint in candidate.label.casefold() for hint in ADDRESS_BAR_HINTS)
+    )
     candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
     kept = {c.id for c in candidates}
     values = {i: v for i, v in values.items() if i in kept}
@@ -471,6 +479,7 @@ def menu_from_snapshot(
         values=values,
         ax_roles=ax_roles,
         web=frozenset(i for i in web if i in kept),
+        scope_address_bars=scope_address_bars,
     )
 
 
@@ -668,6 +677,7 @@ class NativeBridge:
         policy: Any = None,
         live_check: bool = False,
         ax: Any = None,
+        observation_guard: Callable[[NativeMenu], None] | None = None,
     ):
         from jevdual.posture import ExecutionPolicy
 
@@ -680,6 +690,7 @@ class NativeBridge:
         self.session = session or f"footwork-native-{uuid.uuid4().hex}"
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
+        self.observation_guard = observation_guard
         self._foreground_inputs = 0
         self._ax = ax
         self.last: NativeMenu | None = None
@@ -708,6 +719,9 @@ class NativeBridge:
             # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
             raise NativeBridgeError("screen_locked", "the screen is locked; unlock it to continue")
         require_accessibility()
+        # Scope must be checked before retaining pixels. This bounded route uses
+        # AX observations only rather than capture a possibly changed page.
+        capture_path = screenshot_path if self.observation_guard is None else None
         snap = await self.driver.get_window_state(
             GetWindowStateInput(
                 pid=self.pid,
@@ -715,8 +729,8 @@ class NativeBridge:
                 session=self.session,
                 query=query,
                 include_accessibility_tree=True,
-                include_screenshot=screenshot_path is not None,
-                screenshot_out_file=screenshot_path,
+                include_screenshot=capture_path is not None,
+                screenshot_out_file=capture_path,
                 max_elements=max_elements,
                 max_depth=None,
                 max_dimension=None,
@@ -725,10 +739,16 @@ class NativeBridge:
                 full_output=True,
             )
         )
-        self.last = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
-        if screenshot_path is not None:
-            capture, error = _visual_capture(snap, screenshot_path)
-            self.last = dataclasses.replace(self.last, visual_capture=capture, visual_capture_error=error)
+        self.last = None
+        observed = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
+        if self.observation_guard is not None:
+            self.observation_guard(observed)
+        if capture_path is not None:
+            capture, error = _visual_capture(snap, capture_path)
+            observed = dataclasses.replace(observed, visual_capture=capture, visual_capture_error=error)
+        elif screenshot_path is not None:
+            observed = dataclasses.replace(observed, visual_capture_error="scope_guard_withheld_pixels")
+        self.last = observed
         return self.last
 
     def _target(self) -> Any:
@@ -897,11 +917,17 @@ class NativeBridge:
         if AMBIGUITY not in _refusal_text(outcome):
             return self._effect(operation, target, label, outcome, "background")
         fg = {**args, "delivery_mode": "foreground"}
+
+        async def foreground_call() -> Any:
+            if self.observation_guard is not None:
+                await self.observe()
+            return await self.driver.call_tool("press_key", json.dumps(fg))
+
         eff = await self._foreground(
             operation,
             target,
             label,
-            lambda: self.driver.call_tool("press_key", json.dumps(fg)),
+            foreground_call,
             why=f"{label} (the process owns other windows, so a background key cannot be proven to reach this one; {AMBIGUITY})",
         )
         if not eff.dispatched:
@@ -1179,7 +1205,7 @@ class NativeBridge:
         if operation in ("type", "append") and text is None:
             raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
         decision_snapshot, decision_target = nm.snapshot_id, id
-        if self.live_check:
+        if self.live_check or self.observation_guard is not None:
             decided_values = nm.values
             nm, fresh_id = await self._live(nm, id, operation)
             # the text the decision was based on is what the append compares against
@@ -1261,6 +1287,8 @@ class NativeBridge:
         mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
+        if self.observation_guard is not None:
+            await self.observe()
         self.last = None
         self.dispatches += 1
         return await self._key_route("key", -1, "+".join([*mods, key]), key, mods, None)
@@ -1315,6 +1343,8 @@ class NativeBridge:
         background chord. Asked of the posture first; ``key`` is the background route for a chord."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
+        if self.observation_guard is not None:
+            await self.observe()
         self.last = None
         self.dispatches += 1
         label = "+".join(keys)
@@ -1329,6 +1359,8 @@ class NativeBridge:
 
         async def call() -> Any:
             await self._front_and_key()
+            if self.observation_guard is not None:
+                await self.observe()
             return await self.driver.call_tool("hotkey", json.dumps(args))
 
         eff = await self._foreground("hotkey", -1, label, call, why=f"hotkey {label} (a menu key-equivalent)")
@@ -1357,6 +1389,8 @@ class NativeBridge:
         invoke_menu remains the route only in exclusive_desktop, for a path AX cannot resolve."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
+        if self.observation_guard is not None:
+            await self.observe()
         self.last = None
         self.dispatches += 1
         label = " > ".join(path)
@@ -1364,6 +1398,8 @@ class NativeBridge:
 
         async def call() -> Any:
             await self._front_and_key()
+            if self.observation_guard is not None:
+                await self.observe()
             try:
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:

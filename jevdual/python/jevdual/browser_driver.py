@@ -39,6 +39,27 @@ PROFILE_DIR = Path(
 PORT = int(os.environ.get("FOOTWORK_CHROME_PORT", "9333"))
 SESSION_LABEL = "footwork"
 
+
+def durable_authority_refusal() -> dict[str, Any]:
+    """Describe the missing custody contract without preparing or launching Chrome.
+
+    Current tab handles are connection-local, URL rebinding is not persistent
+    identity, and browser replies carry no qualified delivery receipt. A durable
+    authority database must not turn those legacy mechanics into guarantees.
+    """
+    return {
+        "code": "browser_authority_unqualified",
+        "surface": "browser",
+        "dispatched": False,
+        "missing_capabilities": [
+            "persistent_browser_context_and_tab_identity",
+            "document_generation_bound_input",
+            "qualified_browser_delivery_receipt",
+        ],
+        "message": "Durable browser admission is unavailable; no browser was launched or input sent.",
+    }
+
+
 #: semantic roles that take text
 _TEXT_ROLES = {"textbox", "searchbox", "inputtime", "inputdate", "combobox", "spinbutton"}
 

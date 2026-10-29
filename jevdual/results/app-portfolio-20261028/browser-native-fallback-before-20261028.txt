@@ -1,0 +1,48 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_native_key_foreground_fallback_rechecks_scope_after_background_refusal[True] _
+
+changed = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x105090620>
+
+    @pytest.mark.parametrize("changed", [False, True])
+    def test_native_key_foreground_fallback_rechecks_scope_after_background_refusal(changed, monkeypatch):
+        from jevdual.native import AMBIGUITY
+
+        third = _snapshot("http://127.0.0.1:9999/" if changed else SCOPE["url"], sid="s3")
+        driver = NativeChromeDriver([_snapshot(), _snapshot(sid="s2"), third])
+        calls, inputs = [], []
+
+        async def key_tool(name, args_json):
+            arguments = json.loads(args_json)
+            calls.append(arguments["delivery_mode"])
+            if arguments["delivery_mode"] == "background":
+                return SimpleNamespace(
+                    action=SimpleNamespace(effect="REFUSED", delivery=SimpleNamespace(mode="BACKGROUND", delivered_count=0)),
+                    is_error=True, text=f"Background input refused ({AMBIGUITY})", error_code=AMBIGUITY,
+                )
+            inputs.append("foreground-key")
+            return SimpleNamespace(effect="CONFIRMED", delivery=SimpleNamespace(mode="FOREGROUND", delivered_count=1))
+
+        monkeypatch.setattr(driver, "call_tool", key_tool)
+        bridge = _native(driver, monkeypatch)
+        bridge.policy = SimpleNamespace(
+            locked=lambda: False, permits=lambda *args, **kwargs: None,
+            before_foreground=lambda: {}, after_foreground=lambda before: {"restored": True},
+            _activity=lambda: SimpleNamespace(frontmost_pid=lambda: 0),
+        )
+
+        async def scenario():
+            nm = await bridge.observe()
+            return await bridge.key(nm, "return")
+
+        result = asyncio.run(scenario())
+        if changed:
+>           assert result.dispatched is False and result.error_code == "native_scope_changed"
+E           AssertionError: assert (True is False)
+E            +  where True = NativeEffect(operation='key', target=-1, label='return', effect='confirmed', route=None, evidence=(), summary='foregro...eground={'restored': True}, readback=None, delivered_count=1, delivery_basis='sdk_delivery_count', field_readback=None).dispatched
+
+tests/test_browser_authority.py:435: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_browser_authority.py::test_native_key_foreground_fallback_rechecks_scope_after_background_refusal[True]
+1 failed, 1 passed, 34 deselected in 0.32s

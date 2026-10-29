@@ -169,6 +169,11 @@ def validate_execution(record: Any, op: Any, *, binding: dict[str, Any]) -> dict
     ):
         raise EvidenceError("invalid execution projection/error")
     projection = record["projection"]
+    arguments = getattr(op, "args", {})
+    if not isinstance(arguments, dict) or projection.get("native_scope", {}) != arguments.get(
+        "native_scope", {}
+    ):
+        raise EvidenceError("projection native scope differs from admitted request")
     for key, expected_value in (("operation_id", op.id), ("binding", binding)):
         if key in projection and projection[key] != expected_value:
             raise EvidenceError("projection differs from execution identity")

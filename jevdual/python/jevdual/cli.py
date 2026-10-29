@@ -326,6 +326,11 @@ def build_parser() -> argparse.ArgumentParser:
     st.add_argument("task")
     st.add_argument("--app", default="Google Chrome", help="the running app (native route)")
     st.add_argument(
+        "--pid",
+        type=int,
+        help="native route: bind only this owned process; never search another app instance",
+    )
+    st.add_argument(
         "--browser", action="store_true", help="footwork's own Chrome through the Driver's DevTools route"
     )
     st.add_argument("--url")
@@ -334,6 +339,12 @@ def build_parser() -> argparse.ArgumentParser:
     st.add_argument("--authorize", default="")
     st.add_argument("--answer", action="store_true")
     st.add_argument("--authority", help="opt-in native durable mode: absolute shared authority database path")
+    st.add_argument(
+        "--native-url", help="native Chrome only: exact HTTP numeric-loopback URL required before every input"
+    )
+    st.add_argument(
+        "--native-title", help="native Chrome only: required fixture title nonce (requires --native-url)"
+    )
     st.add_argument(
         "--mode",
         default="background_only",
