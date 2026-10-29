@@ -685,12 +685,30 @@ AMBIGUITY = "same_pid_keyboard_ambiguity"
 _TEXT_EDIT_ROLES = frozenset({"AXTextArea", "AXTextField", "AXComboBox", "AXSearchField"})
 
 
-def _refusal_text(outcome: Any) -> str:
-    if isinstance(outcome, BaseException):
-        return str(outcome)
-    if getattr(outcome, "is_error", False):
-        return str(getattr(outcome, "text", "") or "")
-    return ""
+def _keyboard_ambiguity_no_send(outcome: Any, effect: NativeEffect, pid: int, window_id: int) -> bool:
+    if isinstance(outcome, BaseException) or effect.error_code != AMBIGUITY:
+        return False
+    if not effect.dispatched:
+        return True
+    if getattr(outcome, "action", None) is not None or not getattr(outcome, "is_error", False):
+        return False
+    # The pinned SDK leaves action=None for error replies. Its native background
+    # gate publishes this exact target-bound shape before running an actuator.
+    structured = getattr(outcome, "structured_json", None)
+    try:
+        record = json.loads(structured) if isinstance(structured, str) else structured
+    except (TypeError, ValueError):
+        return False
+    return (
+        isinstance(record, dict)
+        and set(record) <= {"code", "effect", "pid", "window_id", "reason", "escalation"}
+        and record.get("code") == AMBIGUITY
+        and record.get("effect") == "refused"
+        and all(
+            type(record.get(key)) is int and record[key] == expected
+            for key, expected in (("pid", pid), ("window_id", window_id))
+        )
+    )
 
 
 def _norm_tail(s: str) -> str:
@@ -1004,10 +1022,10 @@ class NativeBridge:
         # It goes to the person's latest choice during the step, never to where they were before it.
         act = self.policy._activity()
         if act.frontmost_pid() == self.pid:
-            target = self.policy.persons_choice(self.pid, before.get("front_before"))
-            if target not in (None, self.pid):
-                ok = act.activate(int(target))  # type: ignore[arg-type]
-                before = {**before, "handed_back": target, "hand_back_ok": ok}
+            restore_target = self.policy.persons_choice(self.pid, before.get("front_before"))
+            if restore_target not in (None, self.pid):
+                ok = act.activate(int(restore_target))  # type: ignore[arg-type]
+                before = {**before, "handed_back": restore_target, "hand_back_ok": ok}
         rec = self.policy.after_foreground(before)
         eff = self._effect(operation, target, label, outcome, "foreground")
         if not eff.dispatched and self._foreground_inputs != prior_inputs:
@@ -1044,8 +1062,11 @@ class NativeBridge:
             outcome = await self.driver.call_tool("press_key", json.dumps(args))
         except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
             outcome = exc
-        if AMBIGUITY not in _refusal_text(outcome):
-            return self._effect(operation, target, label, outcome, "background")
+        background = self._effect(operation, target, label, outcome, "background")
+        # Only the SDK's structured no-send refusal authorizes another input.
+        # Prose, exceptions and contradictory positive delivery stay uncertain.
+        if not _keyboard_ambiguity_no_send(outcome, background, self.pid, self.window_id):
+            return background
         fg = {**args, "delivery_mode": "foreground"}
 
         async def foreground_call() -> Any:
@@ -1648,17 +1669,21 @@ class NativeBridge:
                 "selection": selection,
             }
 
+        def selection_owned(current: dict[str, Any]) -> bool:
+            return (
+                current["front_pid"] == self.pid
+                and current["main_window_id"] == self.window_id
+                and current["focused_window_id"] == self.window_id
+                and current["selection"]["exact_row_only"]
+            )
+
         try:
             proof["before_selection"] = context()
             self.ax.select_finder_row_ack(target.element)
             count += 1
             proof["acknowledgements"].append("exact_row_selected")
             proof["before_menu"] = context()
-            if (
-                proof["before_menu"]["front_pid"] != self.pid
-                or proof["before_menu"]["main_window_id"] != self.window_id
-                or not proof["before_menu"]["selection"]["exact_row_only"]
-            ):
+            if not selection_owned(proof["before_menu"]):
                 raise self.ax.AXError(
                     "file_selection_unverified",
                     "the exact bound row is not the sole selected row in the front window",
@@ -1675,6 +1700,12 @@ class NativeBridge:
             proof["rename_enabled"] = rename_enabled
             if not rename_enabled:
                 raise self.ax.AXError("file_rename_disabled", "the opened File menu did not enable Rename")
+            proof["before_rename"] = context()
+            if not selection_owned(proof["before_rename"]):
+                raise self.ax.AXError(
+                    "file_selection_unverified",
+                    "the bound Finder window or sole selection changed before Rename",
+                )
             self.ax.press_menu(self.pid, ["File", "Rename"])
             count += 1
             proof["acknowledgements"].append("rename_menu_pressed")
@@ -1700,6 +1731,21 @@ class NativeBridge:
                 "role": "AXTextField",
                 "before_value": self.ax.value(editor),
             }
+            current_editor = self.ax.focused_finder_editor(
+                self.pid, self.window_id, target.frame, target.value
+            )
+            proof["before_editor_write"] = context()
+            current = proof["before_editor_write"]
+            if (
+                current["front_pid"] != self.pid
+                or current["main_window_id"] != self.window_id
+                or current["focused_window_id"] not in (None, self.window_id)
+                or not current["selection"]["exact_row_only"]
+                or current_editor != editor
+            ):
+                raise self.ax.AXError(
+                    "file_editor_lost_focus", "the exact owned rename editor changed before its value write"
+                )
             self.ax.set_value_ack(editor, text)
             count += 1
             proof["acknowledgements"].append("editor_value_set")

@@ -514,6 +514,87 @@ def test_disabled_rename_stops_after_menu_open_and_retains_unknown_barrier(finde
     assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
 
 
+@pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "selection"])
+def test_rename_rechecks_ownership_after_waiting_for_enabled_leaf(finder_cli, monkeypatch, change):
+    world, run = finder_cli
+    start(run)
+    assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+    activity = ExecutionPolicy("foreground_permitted")._activity()
+    original_context = ax.finder_window_context
+    original_enabled = ax.menu_item_enabled
+    changed = False
+
+    def context(pid):
+        current = original_context(pid)
+        if changed and change in {"main_window", "focused_window"}:
+            current[change + "_id"] = world.window_id + 1
+        return current
+
+    reads = 0
+
+    def enabled(pid, path):
+        nonlocal reads, changed
+        reads += 1
+        if reads == 1:
+            return False  # Force the producer to yield before the menu becomes ready.
+        available = original_enabled(pid, path)
+        changed = True
+        if change == "selection":
+            world.selected = "keep_row"
+        return available
+
+    monkeypatch.setattr(ax, "finder_window_context", context)
+    monkeypatch.setattr(ax, "menu_item_enabled", enabled)
+    monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+    run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-leaf")
+    assert reads >= 2
+    assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File")]
+    assert check_finder(world.manifest, "inbox/asset.png").ok
+    status = json.loads(run("status")[1])
+    assert status["operations"][0]["disposition"] == "unknown"
+    assert len(status["domain_unresolved"]) == 1
+
+
+@pytest.mark.parametrize("change", ["front", "main_window", "focused_window", "editor"])
+def test_rename_rechecks_exact_editor_ownership_before_value_write(finder_cli, monkeypatch, change):
+    world, run = finder_cli
+    start(run)
+    assert run("grant", "type", run.selector, "renamed.png")[0] == 0
+    activity = ExecutionPolicy("foreground_permitted")._activity()
+    original_context = ax.finder_window_context
+    original_writable = ax.can_set_value
+    original_editor = ax.focused_finder_editor
+    changed = False
+
+    def context(pid):
+        current = original_context(pid)
+        if changed and change in {"main_window", "focused_window"}:
+            current[change + "_id"] = world.window_id + 1
+        return current
+
+    def writable(element):
+        nonlocal changed
+        result = original_writable(element)
+        changed = True  # The editor was found, then ownership changes before the write.
+        return result
+
+    def editor(*args):
+        current = original_editor(*args)
+        return "replacement_editor" if changed and change == "editor" else current
+
+    monkeypatch.setattr(ax, "finder_window_context", context)
+    monkeypatch.setattr(ax, "can_set_value", writable)
+    monkeypatch.setattr(ax, "focused_finder_editor", editor)
+    monkeypatch.setattr(activity, "frontmost_pid", lambda: 99 if changed and change == "front" else 77)
+    run("do", "type", run.selector, "renamed.png", "--no-judge", "--token", "changed-before-write")
+    assert changed
+    assert world.inputs == [("AXSelected", "asset_row"), ("AXPress", "File"), ("AXPress", "File > Rename")]
+    assert check_finder(world.manifest, "inbox/asset.png").ok
+    status = json.loads(run("status")[1])
+    assert status["operations"][0]["disposition"] == "unknown"
+    assert len(status["domain_unresolved"]) == 1
+
+
 def test_simulated_rename_leaf_ack_without_file_menu_does_not_enter_editing(finder_cli):
     world, _ = finder_cli
     ax.select_finder_row_ack("asset")
