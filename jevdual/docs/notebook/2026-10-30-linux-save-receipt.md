@@ -18,3 +18,15 @@ Established: a source-qualified Linux activation refusal reports no dispatch and
 Uncertain: the corrected build has not yet repeated the real cloud VM failure. The cloud task's evidence commit bd0acb1 remains local to its VM.
 Decision: retain the narrow fix and regression record on codex/linux-support; provide the new commit for cloud retesting before further Linux rollout.
 Refs: results/linux-save-refusal-20261030/report.md
+
+## SRU2 · update · 2026-10-30 12:17
+Observed: cloud retest at 045fc5d disproves the four-field envelope assumption. Pinned recovery_hint.rs decorates the refusal with hint and next_call. The recorded actual ToolResult and offline replay reject the recognizer, while the four-field control passes. Original SR1's local simulation result did not establish the public envelope contract.
+Next: test the captured SDK envelope before another fix; keep code/effect/action/error predicates strict while allowing only the two documented recovery metadata fields.
+Refs: results/linux-vm-save-receipt-20261030/045fc5d-refused-profile-sdk.json; results/linux-vm-save-receipt-20261030/sdk-replay.json
+
+## SR2 · prediction · 2026-10-30 12:17
+Hypothesis: allowing the pinned core's hint and next_call metadata fixes the captured refusal without granting those advisory fields input authority.
+Test: reconstruct the actual public SDK ToolResult from cloud capture in a public CLI scenario; reproduce failure, then permit those optional keys while retaining all existing refusal predicates. Challenge unknown keys and contradictory actions; run focused regressions and the recorded replay without starting a driver.
+Predicts: both captured and minimal envelopes refuse with zero input; arbitrary advisory content is never executed; unknown semantics and contradictory delivery remain uncertain.
+Against: capture remains unrecognized, advisory content triggers an operation, or unrelated error/delivery shapes become no-input claims.
+Refs: python/jevdual/native.py; vendor/cua-driver/native-source.tar.gz; tests/test_session_scenarios.py
