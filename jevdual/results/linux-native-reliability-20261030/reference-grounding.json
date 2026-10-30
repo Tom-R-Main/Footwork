@@ -1,0 +1,78 @@
+{
+  "sources": [
+    {
+      "repository": "coder/coder",
+      "commit": "b15958555d9e7904055b0c2a76c511e53f044a3d",
+      "path": "agent/reaper/reaper_unix.go",
+      "url": "https://github.com/coder/coder/blob/b15958555d9e7904055b0c2a76c511e53f044a3d/agent/reaper/reaper_unix.go",
+      "sha256": "1faeb96a4473f52a1b278ed3be5c89bb8adca403847111c94ca81cb75355ff08",
+      "lines": [
+        95,
+        124
+      ],
+      "transfer_limit": "wait/exit observability only; no global reaper or numeric-signal transfer"
+    },
+    {
+      "repository": "hyprwm/Hyprland",
+      "commit": "27bdfef92d25c73b51a1cc0c3defded09e0a0344",
+      "path": "src/managers/eventLoop/EventLoopManager.cpp",
+      "url": "https://github.com/hyprwm/Hyprland/blob/27bdfef92d25c73b51a1cc0c3defded09e0a0344/src/managers/eventLoop/EventLoopManager.cpp",
+      "sha256": "934797a68b888aabb77457bc8f23c772dd34ea09f58bc20dc76ce4060bbdacd7",
+      "lines": [
+        95,
+        112
+      ],
+      "transfer_limit": "own/remove callback waiter state before callback execution; no Wayland expansion"
+    },
+    {
+      "repository": "systemd/systemd",
+      "commit": "8cd79c27cf58ae24fa21378ddbe11962d0294db8",
+      "path": "man/systemd.service.xml",
+      "url": "https://github.com/systemd/systemd/blob/8cd79c27cf58ae24fa21378ddbe11962d0294db8/man/systemd.service.xml",
+      "sha256": "97646bea7b1452f89c8e70d85cc4e1e2c857d430e9200808d78e91a45dd4ff0b",
+      "lines": [
+        545,
+        574
+      ],
+      "transfer_limit": "synchronous completion and partial-start cleanup contract; no systemd runtime dependency"
+    },
+    {
+      "repository": "trycua/cua",
+      "commit": "2d974f1843c7343a70affba9d21e7362979edec3",
+      "path": "libs/cua-driver/rust/crates/cua-driver-sdk/src/runtime.rs",
+      "url": "https://github.com/trycua/cua/blob/2d974f1843c7343a70affba9d21e7362979edec3/libs/cua-driver/rust/crates/cua-driver-sdk/src/runtime.rs",
+      "sha256": "681b1a2e58b441be176a4ea46e22a664ccf2d4eb8e60c53818e67a55eeeef14e",
+      "lines": [
+        228,
+        260
+      ],
+      "transfer_limit": "complete file equals original pinned archive; admitted-operation drain does not by itself join hook tasks"
+    },
+    {
+      "repository": "trycua/cua",
+      "commit": "2d974f1843c7343a70affba9d21e7362979edec3",
+      "path": "libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs",
+      "url": "https://github.com/trycua/cua/blob/2d974f1843c7343a70affba9d21e7362979edec3/libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs",
+      "sha256": "e15a9da1a1b7b696a79ded21f9df7c61545b531a481bf87e24eefc43ad007eea",
+      "lines": [
+        179,
+        229
+      ],
+      "transfer_limit": "complete file equals original pinned archive; static AT-SPI runtime is a seam, not a demonstrated abort cause"
+    },
+    {
+      "package": "openbox3.6.1-12",
+      "path": "openbox-3.6.1/openbox/screen.c",
+      "sha256": "132f34ed1edafafb6e8e0fc45d11dc35a93205ba126cce0f6167ae72c3982fde",
+      "transfer_limit": "matching Debian source inspection; not a complete proof of all historical target timeouts"
+    },
+    {
+      "package": "openbox3.6.1-12",
+      "path": "openbox-3.6.1/openbox/openbox.c",
+      "sha256": "cab3810052b27df1de07b28da5ae2fc3e090d3e4604238b9bb0a1338bb08025d",
+      "transfer_limit": "matching Debian source inspection; not a complete proof of all historical target timeouts"
+    }
+  ],
+  "kernel_source": "unavailable; not reviewed",
+  "mac_library": "not mounted; existing shipped learning export read; no replacement store created"
+}

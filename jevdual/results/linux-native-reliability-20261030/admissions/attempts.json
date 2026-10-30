@@ -1,0 +1,62 @@
+[
+  {
+    "attempt": 0,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-00"
+  },
+  {
+    "attempt": 1,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-01"
+  },
+  {
+    "attempt": 2,
+    "ready": false,
+    "returncode": 1,
+    "state": "/work/session-02"
+  },
+  {
+    "attempt": 3,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-03"
+  },
+  {
+    "attempt": 4,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-04"
+  },
+  {
+    "attempt": 5,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-05"
+  },
+  {
+    "attempt": 6,
+    "ready": false,
+    "returncode": 1,
+    "state": "/work/session-06"
+  },
+  {
+    "attempt": 7,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-07"
+  },
+  {
+    "attempt": 8,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-08"
+  },
+  {
+    "attempt": 9,
+    "ready": true,
+    "returncode": 0,
+    "state": "/work/session-09"
+  }
+]

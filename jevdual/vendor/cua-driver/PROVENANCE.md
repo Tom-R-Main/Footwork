@@ -5,7 +5,7 @@ Reference commit: `d5373879e9e0baf5a63999ac4d26902340c0ce20` (2026-10-27).
 Source directory: `libs/cua-driver/python/src/cua_driver`.
 Python/native version: `0.38.0`. License: upstream MIT (`LICENSE.md`, copied as `LICENSE`).
 
-The six Python files below are copied byte-for-byte from the reference. `README.md` is the upstream Python package README. Packaging metadata and build helpers are Footwork-owned. Distribution version `0.38.0+footwork.d5373879` distinguishes this exact native source snapshot from the earlier upstream 0.38.0 release. The unchanged upstream Python `__version__` remains `0.38.0`.
+The six Python files below are copied byte-for-byte from the reference. `README.md` is the upstream Python package README. Packaging metadata and build helpers are Footwork-owned. Distribution version `0.38.0+footwork.d5373879.cleanup2` distinguishes this exact native source snapshot from the earlier upstream 0.38.0 release. The unchanged upstream Python `__version__` remains `0.38.0`.
 
 | Source file | SHA256 |
 | --- | --- |
@@ -18,7 +18,9 @@ The six Python files below are copied byte-for-byte from the reference. `README.
 
 ## Native source snapshot
 
-`native-source.tar.gz` SHA256: `606d8c8696aa54afcff32f285f8f6730a8eef1b6c2b4730372f5ce2b0fe426b1` (5,887,584 bytes).
+`native-source.tar.gz` SHA256: `5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401` (5,932,039 bytes).
+
+The upstream archive before the local patch has SHA256 `606d8c8696aa54afcff32f285f8f6730a8eef1b6c2b4730372f5ce2b0fe426b1`. The reviewed local diff and per-file before/after hashes are in `patches/session-cleanup-join.patch` and `patches/session-cleanup-join.json`. Only four Rust source files differ; no Cargo dependency, generated Python binding, authorization predicate or other upstream resource changed.
 
 Created from the same exact commit with this path selection, then compressed with Python `gzip.GzipFile(fileobj=buffer, filename="", mode="wb", mtime=0, compresslevel=9)` (empty gzip filename, fixed timestamp and OS-neutral header):
 
@@ -30,6 +32,14 @@ git -C /path/to/reference/cua archive d5373879e9e0baf5a63999ac4d26902340c0ce20 \
   libs/cua/crates/cua-teleport/src/ux/targets.json LICENSE.md
 ```
 
-These are unmodified upstream source files, including `Cargo.lock`, `rust-toolchain.toml`, the Rust workspace's `THIRD_PARTY_NOTICES.md` and bundled asset notices. The archive contains no compiled CLI or shared library, no Cargo target directory, and no files from the reference working tree outside Git. The source hash is verified before every build and each extracted cache member is restored from the archive; unexpected members and links refuse the build.
+Apart from that explicit Footwork cleanup patch, these are upstream source files, including `Cargo.lock`, `rust-toolchain.toml`, the Rust workspace's `THIRD_PARTY_NOTICES.md` and bundled asset notices. The archive contains no compiled CLI or shared library, no Cargo target directory, and no files from the reference working tree outside Git. The source hash is verified before every build and each extracted cache member is restored from the archive; unexpected members and links refuse the build.
 
 The hook runs Cargo 1.97.1 with `--release --locked --jobs 2` and embeds the exact commit through `CUA_DRIVER_GIT_SHA`. No old release native binary is used. Build prerequisites and consumer installation: [`../../docs/upstream/cua-driver-build.md`](../../docs/upstream/cua-driver-build.md).
+
+## Footwork cleanup1
+
+The SDK closed operation admission and revoked sessions, but browser and protected-grant end hooks spawned untracked asynchronous cleanup. A Debian x86-64 public browser recovery reproduced SIGABRT after shutdown returned; the native stack identified the BrowserEngine session-end task on async-compat/to during Python finalization. The patch owns both hook tasks through the runtime-owned ApprovalBroker and joins them after revocation before shutdown returns. Cancelled drains retain pending joins; task panics prevent successful completion. It changes no consent or input scope. The distribution suffix identifies this local native change; embedded CUA_DRIVER_GIT_SHA still identifies the upstream base, so use it together with the distribution version and archive/wheel hashes. See results/linux-native-reliability-20261030 in the project for retained failure and qualification evidence.
+
+## Footwork cleanup2 resource review
+
+PR12 review found that cleanup1 retained completed task handles until shutdown and removed them with a quadratic pointer search. cleanup2 reaps only fully finished Tokio handles during ordinary cleanup spawn. A guard captured before the first poll preserves sticky failure on abnormal drop even after a handle is pruned. Cancelled drains retain unfinished handles; a linear drain pass removes empty joined slots. A 1000-completed-cleanup regression fails before this correction and passes afterward, including failure after pruning. cleanup1 evidence is retained separately and does not qualify the cleanup2 wheel.

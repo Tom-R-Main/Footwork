@@ -1,0 +1,313 @@
+{
+  "Id": "fc3f0efd9db0945357986d94e796a57bc49edb3196511f7fee03abbef09e7666",
+  "State": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-30T20:01:59.680763319Z",
+    "FinishedAt": "2026-10-30T20:02:14.623315239Z"
+  },
+  "HostConfig": {
+    "Binds": null,
+    "ContainerIDFile": "",
+    "LogConfig": {
+      "Type": "json-file",
+      "Config": {}
+    },
+    "NetworkMode": "none",
+    "PortBindings": {},
+    "RestartPolicy": {
+      "Name": "no",
+      "MaximumRetryCount": 0
+    },
+    "AutoRemove": false,
+    "VolumeDriver": "",
+    "VolumesFrom": null,
+    "ConsoleSize": [
+      0,
+      0
+    ],
+    "CapAdd": null,
+    "CapDrop": [
+      "ALL"
+    ],
+    "CgroupnsMode": "private",
+    "Dns": [],
+    "DnsOptions": [],
+    "DnsSearch": [],
+    "ExtraHosts": null,
+    "GroupAdd": null,
+    "IpcMode": "private",
+    "Cgroup": "",
+    "Links": null,
+    "OomScoreAdj": 0,
+    "PidMode": "",
+    "Privileged": false,
+    "PublishAllPorts": false,
+    "ReadonlyRootfs": false,
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "UTSMode": "",
+    "UsernsMode": "",
+    "ShmSize": 536870912,
+    "Runtime": "runc",
+    "Isolation": "",
+    "CpuShares": 0,
+    "Memory": 3221225472,
+    "NanoCpus": 2000000000,
+    "CgroupParent": "",
+    "BlkioWeight": 0,
+    "BlkioWeightDevice": [],
+    "BlkioDeviceReadBps": [],
+    "BlkioDeviceWriteBps": [],
+    "BlkioDeviceReadIOps": [],
+    "BlkioDeviceWriteIOps": [],
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "CpuRealtimePeriod": 0,
+    "CpuRealtimeRuntime": 0,
+    "CpusetCpus": "",
+    "CpusetMems": "",
+    "Devices": [],
+    "DeviceCgroupRules": null,
+    "DeviceRequests": null,
+    "MemoryReservation": 0,
+    "MemorySwap": 3221225472,
+    "MemorySwappiness": null,
+    "OomKillDisable": null,
+    "PidsLimit": 512,
+    "Ulimits": [],
+    "CpuCount": 0,
+    "CpuPercent": 0,
+    "IOMaximumIOps": 0,
+    "IOMaximumBandwidth": 0,
+    "Mounts": [
+      {
+        "Type": "bind",
+        "Source": "/usr/bin",
+        "Target": "/usr/bin",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/usr/lib",
+        "Target": "/usr/lib",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/usr/libexec",
+        "Target": "/usr/libexec",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/usr/share",
+        "Target": "/usr/share",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/etc/alternatives",
+        "Target": "/etc/alternatives",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/etc/fonts",
+        "Target": "/etc/fonts",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/etc/dbus-1",
+        "Target": "/etc/dbus-1",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "Target": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/workspace/Footwork",
+        "Target": "/workspace/Footwork",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/workspace/.footwork-setup/sysroot",
+        "Target": "/workspace/.footwork-setup/sysroot",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/workspace/scratch/fw-reliability-diag-consumer",
+        "Target": "/workspace/scratch/fw-reliability-diag-consumer",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/workspace/scratch/fw-reliability-recovery-gdb/passwd",
+        "Target": "/etc/passwd",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/workspace/scratch/fw-reliability-recovery-gdb/group",
+        "Target": "/etc/group",
+        "ReadOnly": true
+      },
+      {
+        "Type": "bind",
+        "Source": "/workspace/scratch/fw-reliability-recovery-gdb",
+        "Target": "/work"
+      }
+    ],
+    "MaskedPaths": [
+      "/proc/asound",
+      "/proc/acpi",
+      "/proc/interrupts",
+      "/proc/kcore",
+      "/proc/keys",
+      "/proc/latency_stats",
+      "/proc/timer_list",
+      "/proc/timer_stats",
+      "/proc/sched_debug",
+      "/proc/scsi",
+      "/sys/firmware",
+      "/sys/devices/virtual/powercap"
+    ],
+    "ReadonlyPaths": [
+      "/proc/bus",
+      "/proc/fs",
+      "/proc/irq",
+      "/proc/sys",
+      "/proc/sysrq-trigger"
+    ],
+    "Init": true
+  },
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "/workspace/scratch/fw-reliability-diag-consumer",
+      "Destination": "/workspace/scratch/fw-reliability-diag-consumer",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/etc/alternatives",
+      "Destination": "/etc/alternatives",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/etc/dbus-1",
+      "Destination": "/etc/dbus-1",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/workspace/.footwork-setup/sysroot",
+      "Destination": "/workspace/.footwork-setup/sysroot",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/workspace/scratch/fw-reliability-recovery-gdb/passwd",
+      "Destination": "/etc/passwd",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/workspace/scratch/fw-reliability-recovery-gdb/group",
+      "Destination": "/etc/group",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/workspace/scratch/fw-reliability-recovery-gdb",
+      "Destination": "/work",
+      "Mode": "",
+      "RW": true,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/usr/bin",
+      "Destination": "/usr/bin",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/usr/lib",
+      "Destination": "/usr/lib",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/usr/libexec",
+      "Destination": "/usr/libexec",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/usr/share",
+      "Destination": "/usr/share",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/etc/fonts",
+      "Destination": "/etc/fonts",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+      "Destination": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "/workspace/Footwork",
+      "Destination": "/workspace/Footwork",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ]
+}

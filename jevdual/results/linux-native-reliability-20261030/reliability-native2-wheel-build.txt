@@ -1,0 +1,14 @@
+Building wheel...
+   Compiling cua-driver-contract v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling cua-cursor-motion v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/cua-cursor-motion)
+   Compiling pip-preview v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/pip-preview)
+   Compiling cua-telemetry v0.9.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua/crates/cua-telemetry)
+   Compiling cua-driver-sdk v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/cua-driver-sdk)
+   Compiling cua-driver v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/cua-driver)
+   Compiling cua-driver-core v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/cua-driver-core)
+   Compiling cursor-overlay v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/cursor-overlay)
+   Compiling platform-linux v0.38.0 (/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/source-5588fa808559/libs/cua-driver/rust/crates/platform-linux)
+    Finished `release` profile [optimized] target(s) in 3m 36s
+warning: the following packages contain code that will be rejected by a future version of Rust: nom v1.2.4
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+Successfully built /workspace/scratch/fw-reliability-native2-wheel/cua_driver-0.38.0+footwork.d5373879.cleanup2-py3-none-linux_x86_64.whl

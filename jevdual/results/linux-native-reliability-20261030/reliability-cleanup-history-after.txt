@@ -1,0 +1,107 @@
+   Compiling cua-driver-core v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.69s
+     Running unittests src/lib.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cua_driver_core-b502810164e709f4)
+
+running 3 tests
+test consent::cleanup_lifecycle_tests::drain_reports_task_panic_instead_of_completed_shutdown ... ok
+test consent::cleanup_lifecycle_tests::completed_history_is_reaped_without_hiding_failed_tasks ... ok
+test consent::cleanup_lifecycle_tests::drain_joins_captures_and_isolated_runtime_owners ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1093 filtered out; finished in 0.02s
+
+     Running tests/batch_nudge_dispatch.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/batch_nudge_dispatch-51c3866cb8552ae7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/contract_parity.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/contract_parity-047ead4cd2f9ad23)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/cursor_hook_inert.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cursor_hook_inert-fc2bf3c14d4f85a0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/cursor_hook_platform_support.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cursor_hook_platform_support-f8a14c7650316c8b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/cursor_hook_registered.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cursor_hook_registered-b61f19d95a6d6a9e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/get_guide_tool.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/get_guide_tool-77b227e0450af1e0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/recording_action_timestamp.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/recording_action_timestamp-4a7cafb1d8428452)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/recording_semantic_evidence.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/recording_semantic_evidence-457dc0867652fc1f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/recording_shutdown_errors.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/recording_shutdown_errors-8369e9237337af9f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/recording_transport_identity.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/recording_transport_identity-1b713afe89d145c7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/recording_turn_latency.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/recording_turn_latency-e39a752b74c0e356)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/recovery_hints_dispatch.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/recovery_hints_dispatch-f87434a6d63e120f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/session_lifecycle.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/session_lifecycle-70fa88a2abeb6ef2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/snapshot_dispatch_invariants.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/snapshot_dispatch_invariants-0f0ef872d28ab145)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/snapshot_invariants.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/snapshot_invariants-8e5b8d0b36473d29)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/tool_arguments_boundary.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/tool_arguments_boundary-62cfd9b2b99893a0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+

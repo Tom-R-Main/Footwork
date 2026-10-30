@@ -1,0 +1,18 @@
+{
+  "product_source": "51ee6e2f57c3959ce30e19f168baa864d9d38a6b",
+  "product_sha256": "c8fdc3644f3e109377a819dc327f5f7621aab71a136e5ca3c214665e8b312e4b",
+  "native_sha256": "3d63eff31c16bcbeffe4acdea9a2291d10a26b4110bbbfa652906d8ed8a69a20",
+  "policy": {
+    "startup": 30,
+    "probe": 3,
+    "grace": 2,
+    "wm_service_per_attempt": 1
+  },
+  "pid1": "docker-init",
+  "limits": {
+    "pids.max": "512",
+    "memory.max": "3221225472",
+    "memory.swap.max": "0",
+    "cpu.max": "200000 100000"
+  }
+}

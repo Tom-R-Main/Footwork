@@ -1,0 +1,25 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libbabeltrace1 libdebuginfod-common libdebuginfod1t64 libdw1t64 libipt2
+  libsource-highlight-common libsource-highlight4t64
+Suggested packages:
+  gdb-doc gdbserver
+The following NEW packages will be installed:
+  gdb libbabeltrace1 libc6-dbg libdebuginfod-common libdebuginfod1t64
+  libdw1t64 libipt2 libsource-highlight-common libsource-highlight4t64
+0 upgraded, 9 newly installed, 0 to remove and 50 not upgraded.
+Need to get 12.3 MB of archives.
+After this operation, 33.2 MB of additional disk space will be used.
+Get:1 https://deb.debian.org/debian trixie/main amd64 libdebuginfod-common all 0.192-4 [23.7 kB]
+Get:2 https://deb.debian.org/debian trixie/main amd64 libdw1t64 amd64 0.192-4 [255 kB]
+Get:3 https://deb.debian.org/debian trixie/main amd64 libbabeltrace1 amd64 1.5.11-4+b2 [176 kB]
+Get:4 https://deb.debian.org/debian trixie/main amd64 libdebuginfod1t64 amd64 0.192-4 [32.4 kB]
+Get:5 https://deb.debian.org/debian trixie/main amd64 libipt2 amd64 2.1.2-1 [47.8 kB]
+Get:6 https://deb.debian.org/debian trixie/main amd64 libsource-highlight-common all 3.1.9-4.3 [77.5 kB]
+Get:7 https://deb.debian.org/debian trixie/main amd64 libsource-highlight4t64 amd64 3.1.9-4.3+b1 [335 kB]
+Get:8 https://deb.debian.org/debian trixie/main amd64 gdb amd64 16.3-1 [3992 kB]
+Get:9 https://deb.debian.org/debian trixie/main amd64 libc6-dbg amd64 2.41-12+deb13u4 [7373 kB]
+Fetched 12.3 MB in 1s (11.9 MB/s)
+Download complete and in download only mode

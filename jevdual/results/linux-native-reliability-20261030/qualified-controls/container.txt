@@ -1,0 +1,67 @@
+refusal 0
+Traceback (most recent call last):
+  File "/work/run.py", line 13, in <module>
+    assert p.returncode==0,p.stdout[-3000:]+p.stderr[-3000:]
+           ^^^^^^^^^^^^^^^
+AssertionError:            ^^^^^^^^^^^^^^^
+AssertionError: ...................F.........................................            [100%]
+=================================== FAILURES ===================================
+_____________ test_denied_signal_is_an_explicit_unresolved_cleanup _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0d0a14e1e0>
+tmp_path = PosixPath('/tmp/pytest-of-fixture/pytest-0/test_denied_signal_is_an_expli0')
+
+    def test_denied_signal_is_an_explicit_unresolved_cleanup(monkeypatch, tmp_path):
+        target = session.Session(tmp_path / 'denied', grace=.01)
+        target.processes = {'root': SimpleNamespace(pid=42, poll=lambda: None)}
+        observed = {42: {'state': 'S', 'start': 'owned-A', 'session': 42, 'parent': 1}}
+        monkeypatch.setattr(target, 'capture', lambda: observed)
+        monkeypatch.setattr(session, 'pin_signal', lambda *_: {'pid': 42, 'status': 'denied', 'delivery': None})
+>       r = target.cleanup()
+            ^^^^^^^^^^^^^^^^
+
+tests/test_linux_process.py:168: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <jevdual.linux_session.Session object at 0x7f0d0a14ebd0>
+
+    def cleanup(self) -> dict:
+        self.signal_owned(list(self.processes), signal.SIGTERM)
+        end = time.monotonic() + self.grace
+        while time.monotonic() < end:
+            for process in self.processes.values():
+                process.poll()  # only reap direct children whose Popen handles we own
+            if not any(r['state'] != 'Z' for r in self.capture().values()):
+                break
+            time.sleep(.03)
+        alive = self.capture()
+        forced = [pid for pid, r in alive.items() if r['state'] != 'Z']
+        if forced:
+            self.signal_owned(list(self.processes), signal.SIGKILL)
+        end = time.monotonic() + self.grace
+        while time.monotonic() < end:
+            for process in self.processes.values():
+                process.poll()
+            if not any(r['state'] != 'Z' for r in self.capture().values()):
+                break
+            time.sleep(.03)
+        before_reap = self.capture()
+        direct_waits = {}
+        for name, process in self.processes.items():
+            code = process.poll()
+            if code is None:
+                # /proc can expose Z before waitpid reports the child. Join
+                # through its sole Popen owner within the already-running
+                # cleanup deadline; another nonblocking poll is insufficient.
+                try:
+>                   code = process.wait(timeout=max(0, end - time.monotonic()))
+                           ^^^^^^^^^^^^
+E                   AttributeError: 'types.SimpleNamespace' object has no attribute 'wait'
+
+python/jevdual/linux_session.py:363: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_linux_process.py::test_denied_signal_is_an_explicit_unresolved_cleanup
+1 failed, 60 passed in 14.86s
+
+
+faults 1

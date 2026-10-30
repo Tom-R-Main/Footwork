@@ -1,0 +1,16 @@
+{
+  "source": "5324f6f",
+  "product_sha256": "db820e3ee44d3f8051d5a2a6cebe5a158bb5a48e430e93a41e6d84f5f403fb85",
+  "native_sha256": "0595b6042a98538b3c79ddef07301dd9481e477a5fbf64278b6cc63c2ed474c9",
+  "policy": {
+    "startup": 30,
+    "probe": 3,
+    "grace": 2
+  },
+  "limits": {
+    "pids.max": "512",
+    "memory.max": "3221225472",
+    "memory.swap.max": "0",
+    "cpu.max": "200000 100000"
+  }
+}

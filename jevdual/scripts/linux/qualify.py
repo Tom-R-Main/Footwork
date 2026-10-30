@@ -20,17 +20,36 @@ from pathlib import Path
 
 
 def cli(out: Path, name: str, *args: str) -> str:
-    result = subprocess.run([sys.executable, "-I", "-m", "jevdual.cli", *args],
-                            capture_output=True, text=True, timeout=90, check=False)
-    (out / f"{name}.stdout").write_text(result.stdout)
-    (out / f"{name}.stderr").write_text(result.stderr)
-    if result.returncode:
-        raise RuntimeError(f"{name} exited {result.returncode}; see its retained output")
-    return result.stdout
+    started = time.monotonic()
+    process = subprocess.Popen([sys.executable, "-I", "-m", "jevdual.cli", *args],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    timed_out, termination = False, []
+    try:
+        stdout, stderr = process.communicate(timeout=90)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        termination.append("TERM")
+        process.terminate()
+        try:
+            stdout, stderr = process.communicate(timeout=2)
+        except subprocess.TimeoutExpired:
+            termination.append("KILL")
+            process.kill()
+            stdout, stderr = process.communicate(timeout=3)
+    (out / f"{name}.stdout").write_text(stdout)
+    (out / f"{name}.stderr").write_text(stderr)
+    (out / f"{name}.exit.json").write_text(json.dumps({
+        "started": started, "finished": time.monotonic(), "returncode": process.returncode,
+        "signal": -process.returncode if process.returncode < 0 else None,
+        "wait_complete": True, "timeout": timed_out, "termination": termination}))
+    if timed_out or process.returncode:
+        raise RuntimeError(f"{name} exited {process.returncode}; timeout={timed_out}; see retained output")
+    return stdout
 
 
 class MCP:
     def __init__(self, scope: Path, journal: Path, out: Path, name: str):
+        self.out, self.name, self.closed = out, name, False
         self.stderr = (out / f"{name}.stderr").open("w")
         self.transcript = (out / f"{name}.jsonl").open("w")
         self.process = subprocess.Popen(
@@ -65,14 +84,33 @@ class MCP:
         return result["structuredContent"]
 
     def close(self):
-        self.process.stdin.close()
+        if self.closed:
+            return
+        self.closed = True
+        try:
+            self.process.stdin.close()
+        except BrokenPipeError:
+            pass
+        termination = []
         try:
             self.process.wait(timeout=15)
         except subprocess.TimeoutExpired:
+            termination.append("TERM")
             self.process.terminate()
-            self.process.wait(timeout=5)
+            try:
+                self.process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                termination.append("KILL")
+                self.process.kill()
+                self.process.wait(timeout=3)
         self.stderr.close()
         self.transcript.close()
+        code = self.process.returncode
+        (self.out / f"{self.name}.exit.json").write_text(json.dumps({
+            "returncode": code, "signal": -code if code < 0 else None,
+            "termination": termination, "wait_complete": True}))
+        if code != 0 or termination:
+            raise RuntimeError(f"MCP {self.name} exited {code}; see retained output")
 
 
 async def identities(pid: int) -> int:
@@ -229,17 +267,19 @@ def main():
         (out / "receipt.json").write_text(json.dumps(result, indent=2))
         print(json.dumps(result))
     finally:
-        if mcp is not None:
-            mcp.close()
-        for process in reversed(processes):
-            process.terminate()
-            try:
-                process.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
-        for handle in handles:
-            handle.close()
+        try:
+            if mcp is not None:
+                mcp.close()
+        finally:
+            for process in reversed(processes):
+                process.terminate()
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+            for handle in handles:
+                handle.close()
 
 
 if __name__ == "__main__":

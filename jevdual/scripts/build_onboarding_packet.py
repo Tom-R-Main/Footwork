@@ -39,6 +39,8 @@ CUA_SOURCES = (
     "README.md",
     "LICENSE",
     "PROVENANCE.md",
+    "patches/session-cleanup-join.patch",
+    "patches/session-cleanup-join.json",
     "src/cua_driver/__init__.py",
     "src/cua_driver/__main__.py",
     "src/cua_driver/_daemon.py",

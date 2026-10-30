@@ -1,0 +1,35 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_cleanup_reaps_child_that_exits_between_poll_and_capture _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5fd7cc5fa0>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-31/test_cleanup_reaps_child_that_0')
+
+    def test_cleanup_reaps_child_that_exits_between_poll_and_capture(monkeypatch, tmp_path):
+        target = FixtureSession(tmp_path / 'reap-race')
+        target.state.mkdir()
+        class Child:
+            pid = 424242
+            returncode = None
+            calls = 0
+            def poll(self):
+                self.calls += 1
+                if self.calls >= 3:
+                    self.returncode = -signal.SIGTERM
+                return self.returncode
+        child = Child()
+        target.processes['editor'] = child
+        monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+        monkeypatch.setattr(target, 'capture', lambda: {} if child.returncode is not None else {
+            child.pid: {'state': 'Z', 'start': 'original'}})
+        receipt = target.cleanup()
+>       assert receipt['zombies'] == []
+E       assert [424242] == []
+E         
+E         Left contains one more item: 424242
+E         Use -v to get more diff
+
+tests/test_linux_session.py:391: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_linux_session.py::test_cleanup_reaps_child_that_exits_between_poll_and_capture
+1 failed in 0.23s

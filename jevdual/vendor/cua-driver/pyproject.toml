@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cua-driver"
-version = "0.38.0+footwork.d5373879"
+version = "0.38.0+footwork.d5373879.cleanup2"
 description = "Rust-backed Cua Driver SDK and bundled executable for client applications"
 readme = "README.md"
 license = { text = "MIT" }
@@ -19,7 +19,7 @@ packages = ["src/cua_driver"]
 pure-python = false
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "pyproject.toml", "hatch_build.py", "build_support.py", "native-source.tar.gz", "README.md", "LICENSE", "PROVENANCE.md"]
+include = ["patches", "src", "pyproject.toml", "hatch_build.py", "build_support.py", "native-source.tar.gz", "README.md", "LICENSE", "PROVENANCE.md"]
 
 [tool.hatch.build.hooks.custom]
 path = "hatch_build.py"

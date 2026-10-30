@@ -1,0 +1,47 @@
+{
+  "measured_source": "3e0c1cf",
+  "terminal_reason": "target:probe_timeout",
+  "attempts": [
+    {
+      "stage": "target",
+      "attempt": 1,
+      "started": 20186.261248551,
+      "timeout": false,
+      "termination": [],
+      "result": {
+        "ready": true
+      },
+      "pid": 132759,
+      "returncode": -6,
+      "exit_code": null,
+      "signal": 6,
+      "wait_complete": true,
+      "finished": 20186.325313527,
+      "events": [],
+      "last_phase": null,
+      "reason": "probe_abnormal_exit"
+    },
+    {
+      "stage": "target",
+      "attempt": 2,
+      "started": 20186.448682868,
+      "timeout": true,
+      "termination": [
+        {
+          "signal": 15,
+          "monotonic": 20186.57031883
+        }
+      ],
+      "result": null,
+      "pid": 132760,
+      "returncode": -15,
+      "exit_code": null,
+      "signal": 15,
+      "wait_complete": true,
+      "finished": 20186.589946353,
+      "events": [],
+      "last_phase": null,
+      "reason": "probe_timeout"
+    }
+  ]
+}

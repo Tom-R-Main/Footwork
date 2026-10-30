@@ -1,0 +1,6 @@
+Resolved 1 package in 1ms
+Prepared 1 package in 244ms
+Uninstalled 1 package in 0.93ms
+Installed 1 package in 1ms
+ - cua-driver==0.38.0+footwork.d5373879.cleanup1 (from file:///workspace/scratch/fw-reliability-native-wheel/cua_driver-0.38.0+footwork.d5373879.cleanup1-py3-none-linux_x86_64.whl)
+ + cua-driver==0.38.0+footwork.d5373879.cleanup2 (from file:///workspace/scratch/fw-reliability-native2-wheel/cua_driver-0.38.0+footwork.d5373879.cleanup2-py3-none-linux_x86_64.whl)

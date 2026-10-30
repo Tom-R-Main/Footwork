@@ -1,0 +1,12 @@
+refusal 0
+faults 1
+Traceback (most recent call last):
+  File "/work/run.py", line 13, in <module>
+    assert p.returncode==0,p.stdout[-3000:]+p.stderr[-3000:]
+           ^^^^^^^^^^^^^^^
+AssertionError: Traceback (most recent call last):
+  File "/workspace/scratch/fw-reliability-final-consumer/faults-control.py", line 61, in <module>
+    elif label=='selection-only':assert r['reason']=='wm:wm_ewmh_unavailable'
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+

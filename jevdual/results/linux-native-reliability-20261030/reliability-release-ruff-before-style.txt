@@ -1,0 +1,20 @@
+PIE807 [*] Prefer `dict` over useless lambda
+   --> tests/test_linux_session.py:431:44
+    |
+429 |     target.processes['editor'] = Child()
+430 |     monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+431 |     monkeypatch.setattr(target, 'capture', lambda: {})
+    |                                            ^^^^^^^^^^
+432 |     receipt = target.cleanup()
+433 |     assert receipt['pending_direct_waits'] == ['editor']
+    |
+help: Replace with `lambda` with `dict`
+    |
+430 |     monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    -     monkeypatch.setattr(target, 'capture', lambda: {})
+431 +     monkeypatch.setattr(target, 'capture', dict)
+432 |     receipt = target.cleanup()
+    |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

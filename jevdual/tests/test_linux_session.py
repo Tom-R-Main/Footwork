@@ -312,3 +312,136 @@ def test_unavailable_pinned_signalling_refuses_before_starting_components(monkey
     assert not target.processes
     assert target.report['reason'] == 'pinned_signalling_unavailable:unsupported'
     assert not (target.state / 'started').exists()
+
+
+def test_probe_attempts_preserve_results_stderr_phases_and_signal_exit(tmp_path):
+    target = FixtureSession(tmp_path / 'attempts')
+    target.probe_timeout = 2
+    target.prepare()
+    original_check = target.check
+
+    def check():
+        original_check()
+        if len(list(target.state.glob('probe-target-*.json'))) == 2:
+            raise session.SessionError('fixture_attempts_complete')
+
+    target.check = check
+
+    def command(stage):
+        path = str(target.probe_events)
+        return [sys.executable, '-c',
+                ('import ctypes,os,signal,time,json; from pathlib import Path; '
+                 # Keep SIGABRT's numeric exit without invoking host core handlers.
+                 'assert ctypes.CDLL(None).prctl(4,0,0,0,0) == 0; '
+                 f'Path({path!r}).write_text(json.dumps({{"phase":"shutdown_returned","monotonic":time.monotonic()}})+"\\n"); '
+                 'print("diagnostic",file=__import__("sys").stderr,flush=True); '
+                 'print(\'{"ready":true}\',flush=True); os.kill(os.getpid(),signal.SIGABRT)')]
+    target.probe_command = command
+    with pytest.raises(session.SessionError, match='fixture_attempts_complete'):
+        target.await_probe('target', time.monotonic() + 10)
+    records = sorted(target.state.glob('probe-target-*.json'))
+    assert len(records) == 2
+    for path in records:
+        row = json.loads(path.read_text())
+        assert row['reason'] == 'probe_abnormal_exit' and not row['timeout']
+        assert row['signal'] == signal.SIGABRT and row['returncode'] == -signal.SIGABRT
+        assert row['wait_complete'] and row['last_phase'] == 'shutdown_returned'
+        assert row['result']['ready'] is True
+        assert path.with_suffix('.stderr.log').read_text().strip() == 'diagnostic'
+        assert json.loads(path.with_suffix('.log').read_text()) == {'ready': True}
+    target.cleanup()
+
+
+def test_probe_timeout_retains_phase_escalation_and_final_wait(tmp_path):
+    target = FixtureSession(tmp_path / 'phase-timeout')
+    target.prepare()
+    def command(stage):
+        return [sys.executable, '-c',
+                ('import signal,time,json; from pathlib import Path; '
+                 'signal.signal(signal.SIGTERM,signal.SIG_IGN); '
+                 f'Path({str(target.probe_events)!r}).write_text(json.dumps({{"phase":"shutdown","monotonic":time.monotonic()}})+"\\n"); '
+                 'time.sleep(60)')]
+    target.probe_command = command
+    with pytest.raises(session.SessionError, match='probe_timeout'):
+        target.await_probe('target', time.monotonic() + .25)
+    rows = [json.loads(p.read_text()) for p in target.state.glob('probe-target-*.json')]
+    assert rows
+    for row in rows:
+        assert row['timeout'] and row['last_phase'] == 'shutdown'
+        assert [r['signal'] for r in row['termination']] == [signal.SIGTERM, signal.SIGKILL]
+        assert row['signal'] == signal.SIGKILL and row['wait_complete']
+    target.cleanup()
+
+
+def test_editor_waits_for_window_manager_mapping_acknowledgement(tmp_path):
+    target = FixtureSession(tmp_path / 'not-servicing')
+    target.blocked, target.reason = 'wm_ready', 'wm_not_servicing'
+    assert target.run() == 1
+    assert 'editor' not in target.processes
+    assert not (target.state / 'started').exists()
+    assert target.report['reason'] == 'wm_ready:wm_not_servicing'
+    assert not target.report['cleanup']['survivors']
+
+
+def test_cleanup_reaps_child_that_exits_between_poll_and_capture(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'reap-race')
+    target.state.mkdir()
+    class Child:
+        pid = 424242
+        returncode = None
+        calls = 0
+        def poll(self):
+            self.calls += 1
+            if self.calls >= 3:
+                self.returncode = -signal.SIGTERM
+            return self.returncode
+    child = Child()
+    target.processes['editor'] = child
+    monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    monkeypatch.setattr(target, 'capture', lambda: {} if child.returncode is not None else {
+        child.pid: {'state': 'Z', 'start': 'original'}})
+    receipt = target.cleanup()
+    assert receipt['zombies'] == []
+    assert receipt['pre_reap_zombies'] == [child.pid]
+    assert receipt['direct_waits']['editor']['signal'] == signal.SIGTERM
+
+
+def test_cleanup_waits_for_owned_zombie_to_become_waitable(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'waitable-race')
+    target.state.mkdir()
+    class Child:
+        pid = 424243
+        returncode = None
+        def poll(self):
+            return self.returncode
+        def wait(self, timeout):
+            assert 0 < timeout <= target.grace
+            self.returncode = -signal.SIGTERM
+            return self.returncode
+    child = Child()
+    target.processes['editor'] = child
+    monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    monkeypatch.setattr(target, 'capture', lambda: {} if child.returncode is not None else {
+        child.pid: {'state': 'Z', 'start': 'original'}})
+    receipt = target.cleanup()
+    assert receipt['direct_waits']['editor']['wait_complete']
+    assert receipt['pre_reap_zombies'] == [child.pid]
+    assert receipt['zombies'] == [] and not receipt['uncertain']
+
+
+def test_pending_direct_wait_prevents_complete_cleanup_claim(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'pending-wait')
+    target.state.mkdir()
+    class Child:
+        pid = 424244
+        returncode = None
+        def poll(self):
+            return None
+        def wait(self, timeout):
+            raise session.subprocess.TimeoutExpired('fixture child', timeout)
+    target.processes['editor'] = Child()
+    monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    monkeypatch.setattr(target, 'capture', dict)
+    receipt = target.cleanup()
+    assert receipt['pending_direct_waits'] == ['editor']
+    assert receipt['uncertain'] and not receipt['survivors']
