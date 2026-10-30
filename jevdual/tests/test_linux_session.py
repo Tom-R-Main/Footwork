@@ -391,3 +391,44 @@ def test_cleanup_reaps_child_that_exits_between_poll_and_capture(monkeypatch, tm
     assert receipt['zombies'] == []
     assert receipt['pre_reap_zombies'] == [child.pid]
     assert receipt['direct_waits']['editor']['signal'] == signal.SIGTERM
+
+
+def test_cleanup_waits_for_owned_zombie_to_become_waitable(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'waitable-race')
+    target.state.mkdir()
+    class Child:
+        pid = 424243
+        returncode = None
+        def poll(self):
+            return self.returncode
+        def wait(self, timeout):
+            assert 0 < timeout <= target.grace
+            self.returncode = -signal.SIGTERM
+            return self.returncode
+    child = Child()
+    target.processes['editor'] = child
+    monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    monkeypatch.setattr(target, 'capture', lambda: {} if child.returncode is not None else {
+        child.pid: {'state': 'Z', 'start': 'original'}})
+    receipt = target.cleanup()
+    assert receipt['direct_waits']['editor']['wait_complete']
+    assert receipt['pre_reap_zombies'] == [child.pid]
+    assert receipt['zombies'] == [] and not receipt['uncertain']
+
+
+def test_pending_direct_wait_prevents_complete_cleanup_claim(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'pending-wait')
+    target.state.mkdir()
+    class Child:
+        pid = 424244
+        returncode = None
+        def poll(self):
+            return None
+        def wait(self, timeout):
+            raise session.subprocess.TimeoutExpired('fixture child', timeout)
+    target.processes['editor'] = Child()
+    monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    monkeypatch.setattr(target, 'capture', lambda: {})
+    receipt = target.cleanup()
+    assert receipt['pending_direct_waits'] == ['editor']
+    assert receipt['uncertain'] and not receipt['survivors']

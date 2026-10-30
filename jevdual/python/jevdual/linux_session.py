@@ -354,10 +354,19 @@ class Session:
         before_reap = self.capture()
         direct_waits = {}
         for name, process in self.processes.items():
-            code = process.poll()  # final nonblocking reap, sole direct-child owner
-            direct_waits[name] = {'returncode': code, 'wait_complete': code is not None,
+            code = process.poll()
+            if code is None:
+                # /proc can expose Z before waitpid reports the child. Join
+                # through its sole Popen owner within the already-running
+                # cleanup deadline; another nonblocking poll is insufficient.
+                try:
+                    code = process.wait(timeout=max(0, end - time.monotonic()))
+                except subprocess.TimeoutExpired:
+                    pass
+            direct_waits[name] = {'pid': process.pid, 'returncode': code, 'wait_complete': code is not None,
                                   'exit_code': code if code is not None and code >= 0 else None,
                                   'signal': -code if code is not None and code < 0 else None}
+        pending_waits = [name for name, row in direct_waits.items() if not row['wait_complete']]
         remaining = self.capture()
         failures = [r for (pid, start), r in self.signal_failures.items()
                     if pid in self.unknown_identities or (pid in remaining and remaining[pid]['start'] == start)]
@@ -370,13 +379,13 @@ class Session:
         (self.state / 'started').unlink(missing_ok=True)
         return {'forced_pids': forced,
                 'pre_reap_zombies': [pid for pid, r in before_reap.items() if r['state'] == 'Z'],
-                'direct_waits': direct_waits,
+                'direct_waits': direct_waits, 'pending_direct_waits': pending_waits,
                 'survivors': [pid for pid, r in remaining.items() if r['state'] != 'Z'],
                 'zombies': [pid for pid, r in remaining.items() if r['state'] == 'Z'],
                 'inventory_complete': not self.inventory_reasons and not self.unknown_identities,
                 'inventory_reasons': sorted(self.inventory_reasons),
                 'unknown_identities': sorted(self.unknown_identities), 'signal_failures': failures,
-                'uncertain': bool(self.inventory_reasons or self.unknown_identities or failures),
+                'uncertain': bool(self.inventory_reasons or self.unknown_identities or failures or pending_waits),
                 'signal_policy': 'individual pidfd only; no numeric fallback',
                 'scope': 'group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans'}
 
