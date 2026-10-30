@@ -1,0 +1,8 @@
+refusal 0
+faults 0
+xvfb 0
+bus 0
+editor 0
+wm 0
+atspi 0
+cancel-early 0

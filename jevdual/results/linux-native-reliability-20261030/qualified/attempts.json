@@ -1579,5 +1579,464 @@
       "signal_policy": "individual pidfd only; no numeric fallback",
       "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
     }
+  },
+  {
+    "kind": "journey",
+    "attempt": 1,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 3879,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 3885,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 3887,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 3893,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 2,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 4500,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 4506,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 4508,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 4514,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 3,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 5130,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 5136,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 5138,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 5144,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 4,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 5761,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 5767,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 5769,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 5775,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 5,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 6401,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 6407,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 6409,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 6415,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 6,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 7027,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 7033,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 7035,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 7041,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 7,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 7657,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 7663,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 7665,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 7671,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 8,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 8280,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 8286,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 8288,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 8294,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
+  },
+  {
+    "kind": "journey",
+    "attempt": 9,
+    "ready": true,
+    "passed": true,
+    "supervisor_returncode": 0,
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 8910,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 8916,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 8918,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 8924,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    }
   }
 ]

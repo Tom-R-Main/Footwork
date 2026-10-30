@@ -1,0 +1,29 @@
+   Compiling cua-driver-core v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-core)
+   Compiling cursor-overlay v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cursor-overlay)
+   Compiling platform-linux v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/platform-linux)
+   Compiling cua-driver-sdk v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-sdk)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 50.92s
+warning: the following packages contain code that will be rejected by a future version of Rust: nom v1.2.4
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cua_driver_sdk-472851e1d4734820)
+
+running 4 tests
+test runtime::tests::shutdown_stops_lifecycle_maintenance ... ok
+test tests::shutdown_drains_an_already_admitted_call ... ok
+test runtime::tests::shutdown_waits_for_owned_session_cleanup_after_cancelled_drain ... ok
+test snapshot_lifecycle_tests::sdk_shutdown_drains_snapshot_publication_and_retires_the_result ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 101 filtered out; finished in 0.10s
+
+     Running tests/async_io_embedding.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/async_io_embedding-5f7229237556532c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/runtime_configuration.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/runtime_configuration-368902a2f548c865)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+

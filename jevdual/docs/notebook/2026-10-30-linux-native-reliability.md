@@ -128,3 +128,41 @@ Test: extract the verified original archive into a fresh temporary directory, ap
 Predicts: the rebuilt archive is byte-identical to5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401; a wrong base/diff/output path refuses.
 Against: metadata or source differs, reconstruction requires undocumented cache state, or the helper silently rewrites an existing artifact.
 Refs: vendor/cua-driver/patches/session-cleanup-join.patch; vendor/cua-driver/patches/session-cleanup-join.json; results/linux-native-reliability-20261030/harness/
+
+## LRU7 · update · 2026-10-30 21:06
+Resolves: LR6 = held
+Observed: cleanup2 product c8fdc364/native3d63eff3 passed all40/40 primary attempts:30 fresh admissions,90 worker driver cycles,10 complete installed CLI/MCP/save/replay/restart/artifact journeys and10 delayed-helper recoveries with original-root identity retained and normal exit. Every final cleanup completed direct waits with no survivors/zombies/uncertainty; pre-reap zombie snapshots remain visible, including an editor joined successfully in the last journey. Six negative gates, no-WM unchanged-byte refusal, five component failures, early cancellation and61 process/resource tests pass under the original limits/deadlines. Final non-browser suite passes2537 with28 skips;13 browser tests,97 JS tests,103 resources, lint and Rust checks pass. The native archive rebuild exactly matches5588fa80; existing-output and wrong-base controls refuse. Independent review of implementation dd728e6 reports no findings; the completed-history finding is resolved.
+Inferred: the demonstrated unjoined browser session-end task is repaired on this measured artifact. The bounded direct-child wait handles observed zombie-to-waitable latency. Finished cleanup history is bounded without discarding pending joins or failure. These are finite tested-configuration claims.
+Next: publish the final evidence/preview limits and require final-head hosted CI before merge. A fixture lambda-to-dict style correction passes its focused test and full lint without changing assertions or wheel bytes. The earlier failed broad-readable-directory invocation and candidate cleanup snapshots remain retained. Owned qualification containers are stopped/removed after evidence capture; wheel/consumer/source caches remain for inspection.
+Refs: results/linux-native-reliability-20261030/report.md; results/linux-native-reliability-20261030/release/attempts.json; results/linux-native-reliability-20261030/owned-container-cleanup.json; https://github.com/Tom-R-Main/Footwork/pull/12#issuecomment-6533266387
+
+## LRU8 · update · 2026-10-30 21:06
+Resolves: LR7 = inconclusive
+Observed: repeated pre-acknowledgement admissions exposed sustained zero-window targets; native/X11 views found an unmapped editor without WM_STATE or client-list membership while the WM loop lived. The new disposable-client service acknowledgement passed10/10 with the original native wheel and all30 lifecycle plus10 journey admissions on each corrected artifact. A valid-EWMH fake WM that never handles mapping is refused before editor launch. The older timeout logs overwrote attempts, and no complete phase history identifies their exact internal failure.
+Inferred: WM service acknowledgement is a stronger evidenced admission boundary and avoids the newly reproduced zero-window condition in these batches. It cannot retroactively prove the cause of every historical target timeout, nor the precise cause of the prior arm64 zombie snapshot.
+Next: retain those historical classification gaps and preview/platform limits explicitly; do not generalize finite zero-failure batches into universal Linux reliability.
+Refs: results/linux-native-reliability-20261030/windowattrs10/captures.jsonl; results/linux-native-reliability-20261030/release-controls/faults.json; results/linux-native-reliability-20261030/report.md
+
+## LRS · summary · 2026-10-30 21:06
+Established: the public native abort was reproduced with numeric SIGABRT and a native stack; one patched, source-hash-bound CUA dependency joins runtime-owned session-end work, preserves cancelled-drain ownership and bounds completed history. Footwork retains distinct phase/result/exit evidence, requires initial WM service acknowledgement and completes sole-owner child waits within the existing cleanup deadline. Exact cleanup2 artifacts pass30+10 native qualification, public refusal/identity controls, all required local checks and a real mechanism review. No identity predicate, authority scope, unresolved-mutation barrier, pidfd policy or Chrome sandbox default was weakened.
+Uncertain: historical overwritten target timeout causes and the precise earlier arm64 snapshot cause remain unclassified. Other kernels/distributions/architectures, Wayland, shared foreground, physical devices and provider-backed planning are outside this VM qualification. Finite tests do not prove universal reliability.
+Decision: ship the focused PR only after final-head hosted checks and unresolved-review gates pass, merge using an expected head SHA while preserving notebook history, and verify the actual main merge result. Final hosted-check and merge receipts belong to PR12, separately from these exact local artifacts.
+Refs: results/linux-native-reliability-20261030/report.md; docs/linux-support.md; https://github.com/Tom-R-Main/Footwork/pull/12
+
+## LRU9 · update · 2026-10-30 21:08
+Resolves: LR10 = held
+Observed: all40 final cleanup2 attempts complete their direct waits inside the existing grace policy, with no final zombies or uncertainty. The pre-reap snapshot retains an actual editor zombie in the last journey and the final wait joins it. The pending-wait negative model remains uncertain even when its visible survivor list is empty.
+Next: preserve sole Popen wait ownership, pre/final snapshots and explicit pending uncertainty; keep the older arm64 cause unclassified.
+Refs: results/linux-native-reliability-20261030/release/attempts.json; results/linux-native-reliability-20261030/release/sessions.jsonl; tests/test_linux_session.py
+
+## LRU10 · update · 2026-10-30 21:08
+Resolves: LR11 = held
+Observed: the1000-completed-task regression fails before pruning and all three cleanup2 core tests pass after it, including sticky task failure after pruning, owner isolation and cancelled-drain retention. Four SDK shutdown tests pass; the distinct cleanup2 installed artifact also passes all40 primary attempts. Independent review of implementation dd728e6 completes with no further findings.
+Next: retain bounded finished history and owned pending joins; final hosted checks remain required before merge.
+Refs: results/linux-native-reliability-20261030/reliability-cleanup-history-before.txt; results/linux-native-reliability-20261030/reliability-cleanup-history-after.txt; https://github.com/Tom-R-Main/Footwork/pull/12#issuecomment-6533266387
+
+## LRU11 · update · 2026-10-30 21:08
+Resolves: LR12 = held
+Observed: fresh extraction of the original hash-pinned archive plus the shipped diff reconstructs exactly5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401, with all four changed-file hashes matching. Existing-output and wrong-base controls fail without changing/creating output. The standalone helper uses no mutable source cache.
+Next: publish the reproducible patch provenance and final exact-artifact evidence with PR12; record final-head CI and merge externally on that PR to avoid changing the checked head after verification.
+Refs: results/linux-native-reliability-20261030/reliability-native2-reconstruction.json; results/linux-native-reliability-20261030/reconstruction-negative.json; results/linux-native-reliability-20261030/harness/rebuild_native_archive.py

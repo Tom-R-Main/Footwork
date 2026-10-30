@@ -1,0 +1,716 @@
+{
+  "selection-only": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 17513.816076957
+      },
+      {
+        "phase": "x11",
+        "monotonic": 17513.85912043
+      },
+      {
+        "phase": "session_bus",
+        "monotonic": 17513.952915232
+      },
+      {
+        "phase": "wm",
+        "monotonic": 17514.047577066
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 17518.810454673,
+        "reason": "wm:wm_ewmh_unavailable"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 17518.842795975,
+        "reason": "wm:wm_ewmh_unavailable"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 161,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 167,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 169,
+          "returncode": -15,
+          "wait_complete": true,
+          "exit_code": null,
+          "signal": 15
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 16894099456
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3193487360,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3193487360,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "pid": 160,
+      "signal": 0,
+      "status": "sent",
+      "delivery": "pidfd"
+    },
+    "display": ":0",
+    "reason": "wm:wm_ewmh_unavailable"
+  },
+  "partial-inventory": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 17518.915557277
+      },
+      {
+        "phase": "x11",
+        "monotonic": 17518.959437169
+      },
+      {
+        "phase": "session_bus",
+        "monotonic": 17519.05349641
+      },
+      {
+        "phase": "wm",
+        "monotonic": 17519.17858639
+      },
+      {
+        "phase": "accessibility",
+        "monotonic": 17520.577267732
+      },
+      {
+        "phase": "target",
+        "monotonic": 17520.732482347
+      },
+      {
+        "phase": "ready",
+        "monotonic": 17521.814090055,
+        "target": {
+          "ready": true,
+          "pid": 210,
+          "window_id": 4194307,
+          "document": "/work/fault-partial-inventory/document.txt",
+          "exact_fixture_text": true
+        }
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 17521.814762222,
+        "reason": "process_inventory_incomplete"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 17521.88378486,
+        "reason": "process_inventory_incomplete"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 196,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 202,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 204,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        },
+        "editor": {
+          "pid": 210,
+          "returncode": 1,
+          "wait_complete": true,
+          "exit_code": 1,
+          "signal": null
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": false,
+      "inventory_reasons": [
+        "entry_limit"
+      ],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": true,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 16848273408
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3192795136,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3192795136,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "pid": 195,
+      "signal": 0,
+      "status": "sent",
+      "delivery": "pidfd"
+    },
+    "display": ":0",
+    "wm_identity": {
+      "ready": true,
+      "wm_window": 2097439,
+      "selection_owner": 2097439
+    },
+    "target": {
+      "ready": true,
+      "pid": 210,
+      "window_id": 4194307,
+      "document": "/work/fault-partial-inventory/document.txt",
+      "exact_fixture_text": true
+    },
+    "reason": "process_inventory_incomplete"
+  },
+  "ewmh-no-service": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 17521.955288722
+      },
+      {
+        "phase": "x11",
+        "monotonic": 17521.996804848
+      },
+      {
+        "phase": "session_bus",
+        "monotonic": 17522.090474906
+      },
+      {
+        "phase": "wm",
+        "monotonic": 17522.185400838
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 17526.969006133,
+        "reason": "wm_ready:probe_timeout"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 17527.001690017,
+        "reason": "wm_ready:probe_timeout"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {
+        "xvfb": {
+          "pid": 259,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "bus": {
+          "pid": 265,
+          "returncode": 0,
+          "wait_complete": true,
+          "exit_code": 0,
+          "signal": null
+        },
+        "wm": {
+          "pid": 267,
+          "returncode": -15,
+          "wait_complete": true,
+          "exit_code": null,
+          "signal": 15
+        }
+      },
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 16864804864
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3190849536,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3190849536,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "pid": 258,
+      "signal": 0,
+      "status": "sent",
+      "delivery": "pidfd"
+    },
+    "display": ":0",
+    "wm_identity": {
+      "ready": true,
+      "wm_window": 2097153,
+      "selection_owner": 2097153
+    },
+    "reason": "wm_ready:probe_timeout"
+  },
+  "unsupported": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 17527.071569638
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 17527.071920348,
+        "reason": "pinned_signalling_unavailable:unsupported"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 17527.073048391,
+        "reason": "pinned_signalling_unavailable:unsupported"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {},
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 16901308416
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3190636544,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3190636544,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "status": "unsupported",
+      "delivery": null
+    },
+    "reason": "pinned_signalling_unavailable:unsupported"
+  },
+  "denied": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 17527.158377495
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 17527.158803848,
+        "reason": "pinned_signalling_unavailable:denied"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 17527.160527725,
+        "reason": "pinned_signalling_unavailable:denied"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {},
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 16901304320
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3190505472,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3190505472,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "status": "denied",
+      "delivery": null
+    },
+    "reason": "pinned_signalling_unavailable:denied"
+  },
+  "resource_exhausted": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 17527.238687671
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 17527.238996429,
+        "reason": "pinned_signalling_unavailable:resource_exhausted"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 17527.240438618,
+        "reason": "pinned_signalling_unavailable:resource_exhausted"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "pre_reap_zombies": [],
+      "direct_waits": {},
+      "pending_direct_waits": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 16901353472
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3190669312,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3190669312,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "status": "resource_exhausted",
+      "delivery": null
+    },
+    "reason": "pinned_signalling_unavailable:resource_exhausted"
+  }
+}

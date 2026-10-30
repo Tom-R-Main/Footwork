@@ -2,7 +2,7 @@
 import json,shutil
 from pathlib import Path
 ROOT=Path('/workspace/Footwork/jevdual/results/linux-native-reliability-20261030')
-labels=['initial','minimal','callback','recovery','recovery-isolated','recovery-gdb','recovery-gdb20','recovery-capture','admissions','windows','windows10','windowattrs10','wm10','editor10','wm-ack10','final','controls','qualified','qualified-controls']
+labels=['initial','minimal','callback','recovery','recovery-isolated','recovery-gdb','recovery-gdb20','recovery-capture','admissions','windows','windows10','windowattrs10','wm10','editor10','wm-ack10','final','controls','qualified','qualified-controls','qualified-controls2','release','release-controls']
 for label in labels:
  source=Path('/workspace/scratch/fw-reliability-'+label)
  if not source.exists():continue
@@ -24,7 +24,7 @@ for label in labels:
     if log.exists():
      data=log.read_bytes();row[key]=data[:32768].decode(errors='replace');row[key+'_truncated']=len(data)>32768
    probes.append(row)
-  elif p.suffix=='.gdb' or p.name.startswith(('minimal-','recovery-')) and p.suffix in ['.stdout','.stderr','.events'] or p.name in ['native-view.txt','x11-view.txt','x11-attributes.txt','wm-properties.txt','editor-properties.txt','failure.txt']:
+  elif p.name in ['driver.events','driver.stdout','driver.stderr','journey.stdout','journey.stderr','recovery.stdout','recovery.stderr','mcp-first.jsonl','mcp-restart.jsonl'] or (relative.startswith(('journey-','lifecycle-')) and p.suffix in ['.stdout','.stderr']) or p.suffix=='.gdb' or p.name.startswith(('minimal-','recovery-')) and p.suffix in ['.stdout','.stderr','.events'] or p.name in ['native-view.txt','x11-view.txt','x11-attributes.txt','wm-properties.txt','editor-properties.txt','failure.txt']:
    captures.append({'path':relative,'text':p.read_text(errors='replace')})
   elif p.suffix=='.json' and (p.name.endswith('.exit.json') or p.name in ['supervisor-exit.json','recovery-exit.json','receipt.json','driver-save.json','restarted-status.json']):
    receipts.append({'path':relative,'record':json.loads(p.read_text())})

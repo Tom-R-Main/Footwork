@@ -1,0 +1,5 @@
+{
+  "pids.current": "8",
+  "pids.events": "max 0",
+  "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+}
