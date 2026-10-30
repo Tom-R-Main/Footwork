@@ -41,3 +41,10 @@ Test: build the prepared image and exact source wheel, install a fresh real depe
 Predicts: the library loads and provides window/tree observations and at least one target-bound input with independent readback; Footwork's macOS-specific seams can be isolated from those working primitives.
 Against: the pinned source cannot build or load on this host, the driver cannot bind a Linux app, or delivered input lacks reliable target identity/readback.
 Refs: scripts/linux/Dockerfile; vendor/cua-driver/PROVENANCE.md; docs/linux-support.md
+
+## L4 · prediction · 2026-10-30 00:48
+Hypothesis: a bounded direct AT-SPI Text/EditableText adapter can preserve complete exact text and append readback where the pinned CUA Linux snapshot truncates at 4096 characters.
+Test: implement at the existing injected native accessibility seam; bind process incarnation, X11 window, accessibility bus identity and unique owner/object path; challenge long text, Unicode, trailing whitespace, changed/replaced targets and uncertain replies against an owned Linux editor.
+Predicts: exact before/after strings survive the snapshot cap, append inserts only at the measured end, and lost identity or incomplete reads refuse before input. Uncertain write replies remain uncertain rather than retried.
+Against: the editor cannot expose a unique stable window/element binding, reads remain lossy, a replacement object is silently accepted, or the backend duplicates a mutation after a failed acknowledgement.
+Refs: python/jevdual/native.py; vendor/cua-driver/native-source.tar.gz; https://jeepney.readthedocs.io/en/latest/api/blocking.html
