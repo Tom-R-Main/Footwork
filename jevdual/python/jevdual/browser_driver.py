@@ -124,14 +124,50 @@ def chrome_pid() -> int | None:
     return pids[0] if pids else None
 
 
-def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
-    """Start footwork's Chrome if it is not running, and return its pid."""
-    pid = chrome_pid()
-    if pid is not None:
-        return pid
-    PROFILE_DIR.mkdir(parents=True, exist_ok=True)
-    args = [
-        chrome_executable(),
+@dataclass(frozen=True)
+class _ChromeIdentity:
+    pid: int
+    incarnation: float
+    executable: str
+
+
+def _require_chrome(identity: _ChromeIdentity) -> None:
+    import psutil
+
+    try:
+        matches = (chrome_executable() == identity.executable and chrome_pid() == identity.pid
+                   and psutil.Process(identity.pid).create_time() == identity.incarnation)
+    except (psutil.Error, OSError) as exc:
+        raise RuntimeError("the owned Chrome process is no longer available") from exc
+    if not matches:
+        raise RuntimeError("the owned Chrome process identity changed before attachment")
+
+
+def _stop_child(child: subprocess.Popen | None) -> None:
+    """Reap only this invocation's child; never signal a discovered persistent browser."""
+    if child is None:
+        return
+    try:
+        if child.poll() is None:
+            child.terminate()
+        try:
+            child.wait(timeout=1.0)
+        except subprocess.TimeoutExpired:
+            child.kill()
+            child.wait(timeout=1.0)
+    except (OSError, subprocess.TimeoutExpired):
+        log.warning("owned Chrome child cleanup did not complete within its bound")
+
+
+def _spawn_chrome(command: list[str]) -> subprocess.Popen:
+    # Retain child custody synchronously, before the next async cancellation point.
+    return subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                            start_new_session=True)
+
+
+def _chrome_args(executable: str) -> list[str]:
+    return [
+        executable,
         f"--user-data-dir={PROFILE_DIR}",
         f"--remote-debugging-port={PORT}",
         "--remote-debugging-address=127.0.0.1",
@@ -139,17 +175,60 @@ def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
         "--no-default-browser-check",
         "--window-size=1200,900",
     ]
-    if url:
-        args.append(url)
-    subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-    deadline = time.time() + settle_s + 10
-    while time.time() < deadline:
-        time.sleep(0.5)
+
+
+class _ChromeLaunch:
+    """Keep new-child custody separate from reusing the owned profile."""
+
+    def __init__(self, url: str | None):
+        import psutil
+
+        self.child = None
+        self.qualified_at = None
         pid = chrome_pid()
-        if pid is not None:
-            time.sleep(settle_s)
-            return pid
-    raise RuntimeError("footwork's Chrome did not start")
+        executable = chrome_executable()
+        if pid is None:
+            PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+            args = _chrome_args(executable)
+            if url:
+                args.append(url)
+            self.child = _spawn_chrome(args)
+            pid = self.child.pid
+        try:
+            self.identity = _ChromeIdentity(pid, psutil.Process(pid).create_time(), executable)
+            if self.child is None:
+                _require_chrome(self.identity)
+        except BaseException:
+            _stop_child(self.child)
+            raise
+
+    def ready(self, settle_s: float) -> bool:
+        if self.child is not None and self.child.poll() is not None:
+            raise RuntimeError("footwork's Chrome exited before it was ready")
+        if self.child is not None and chrome_pid() is None:
+            return False
+        _require_chrome(self.identity)
+        if self.child is None:
+            return True
+        now = time.monotonic()
+        if self.qualified_at is None:
+            self.qualified_at = now
+        return now - self.qualified_at >= settle_s
+
+
+def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
+    """Start or reuse the exact owned browser, retaining new-child custody until ready."""
+    deadline = time.monotonic() + max(0.0, settle_s) + 10.0
+    launch = _ChromeLaunch(url)
+    try:
+        while time.monotonic() < deadline:
+            if launch.ready(max(0.0, settle_s)):
+                return launch.identity.pid
+            time.sleep(min(0.1, max(0.0, deadline - time.monotonic())))
+        raise RuntimeError("footwork's Chrome did not start before its deadline")
+    except BaseException:
+        _stop_child(launch.child)
+        raise
 
 
 def _host_class(pid: int) -> Any:
@@ -545,36 +624,77 @@ class BrowserBridge:
         )
 
 
-async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) -> tuple[Any, BrowserBridge]:
-    """Launch or find footwork's Chrome, build the configured Driver, bind its largest window."""
+async def bind_footwork_chrome(
+    url: str | None = None, *, policy: Any = None, startup_timeout_s: float = 20.0,
+) -> tuple[Any, BrowserBridge]:
+    """Bind the owned Chrome under one monotonic launch/recovery/attachment deadline."""
     from cua_driver import ListWindowsInput
 
-    pid = launch_chrome(url)
-    driver = configured_driver(pid)
-    wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
-    if not wins.windows:
-        # Q19 R4: Chrome running with every window closed; open one in footwork's profile rather than stop
-        await asyncio.to_thread(
-            subprocess.run,
-            [
-                "open",
-                "-na",
-                "Google Chrome",
-                "--args",
-                f"--user-data-dir={PROFILE_DIR}",
-                "--new-window",
-                url or "about:blank",
-            ],
-            check=False,
-        )
-        for _ in range(20):
-            await asyncio.sleep(0.5)
-            wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
-            if wins.windows:
-                break
-    if not wins.windows:
-        raise RuntimeError("footwork's Chrome has no on-screen window, and opening one did not show one")
-    w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
-    bridge = BrowserBridge(driver, pid, w.window_id, policy=policy)
-    await bridge.attach()
-    return driver, bridge
+    deadline = time.monotonic() + startup_timeout_s
+
+    def check_deadline() -> None:
+        if time.monotonic() >= deadline:
+            raise TimeoutError("owned Chrome startup deadline expired")
+
+    launch = None
+    helper = None
+    driver = None
+    try:
+        check_deadline()
+        async with asyncio.timeout(startup_timeout_s):
+            launch = _ChromeLaunch(url)
+            while not launch.ready(4.0):
+                await asyncio.sleep(0.1)
+            check_deadline()
+            identity = launch.identity
+            _require_chrome(identity)
+            driver = configured_driver(identity.pid)
+            check_deadline()
+            wins = await driver.list_windows(ListWindowsInput(pid=identity.pid, on_screen_only=True))
+            _require_chrome(identity)
+            check_deadline()
+            if not wins.windows:
+                if sys.platform == "linux":
+                    command = [*_chrome_args(identity.executable), "--new-window", url or "about:blank"]
+                elif sys.platform == "darwin":
+                    command = ["open", "-na", "Google Chrome", "--args",
+                               f"--user-data-dir={PROFILE_DIR}", "--new-window", url or "about:blank"]
+                else:
+                    raise RuntimeError("new-window recovery is unavailable on this platform")
+                helper = _spawn_chrome(command)
+                # A profile-forwarding helper may temporarily share the root's command line.
+                # Reap it before requiring unique process discovery again.
+                while helper.poll() is None:
+                    await asyncio.sleep(0.1)
+                if helper.wait(timeout=0) != 0:
+                    raise RuntimeError("owned Chrome new-window helper failed")
+                while True:
+                    _require_chrome(identity)
+                    wins = await driver.list_windows(ListWindowsInput(pid=identity.pid, on_screen_only=True))
+                    _require_chrome(identity)
+                    if wins.windows:
+                        break
+                    await asyncio.sleep(0.1)
+            _require_chrome(identity)
+            if any(window.pid != identity.pid or not window.is_on_screen
+                   or type(window.window_id) is not int or window.window_id <= 0
+                   or window.bounds.width <= 0 or window.bounds.height <= 0 for window in wins.windows):
+                raise RuntimeError("window discovery returned an unqualified browser window")
+            window = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
+            bridge = BrowserBridge(driver, identity.pid, window.window_id, policy=policy)
+            await bridge.attach()
+            _require_chrome(identity)
+            check_deadline()
+            return driver, bridge
+    except BaseException:
+        # Cancellation must not strand a new helper or stop a reused persistent browser.
+        await asyncio.to_thread(_stop_child, helper)
+        if launch is not None:
+            await asyncio.to_thread(_stop_child, launch.child)
+        if driver is not None:
+            try:
+                async with asyncio.timeout(2.0):
+                    await driver.shutdown()
+            except (Exception, asyncio.CancelledError):  # noqa: BLE001 - preserve the original failure
+                log.warning("failed browser attachment driver shutdown did not complete")
+        raise
