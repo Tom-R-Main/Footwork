@@ -9,3 +9,6 @@ Guardrails: owned numeric-loopback origins, fresh profiles and assets; no provid
 Decision rule: only identify a cause when traces distinguish activation, request/retry and ledger accounting. Fix a demonstrated local mechanism; if browser retransmission cannot be controlled under the current route, retain explicit unsupported status and single-ingress gate. Do not weaken qualification or substitute truncated loss. Any new guarantee requires explicit versioned contract decision.
 Caps: 120 seconds per action, 30 minutes per live chain, at most two diagnostic reruns after a repaired probe; zero model-provider spend.
 Verification: regression red/green, full key-free suite, Ruff/notebook/package checks, independent review, frozen installed nominal/interrupted chain. Record source and wheel hashes and finite support boundaries.
+
+## Amendment: route comparison before execution
+Add two fresh isolated Chrome fetch POST controls against the identical pre-header disconnect fault. Same fields/body and one activation, NetLog and handler observations; no fixture/runtime change. A passing diagnostic does not qualify native submission or create new reconciliation authority.

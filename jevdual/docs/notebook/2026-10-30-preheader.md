@@ -6,3 +6,10 @@ Test: fresh owned loopback fixtures, direct HTTP and isolated Chrome controls; c
 Predicts: disconnect duplication can occur without Footwork while a single native activation is retained; supported response modes retain one ingress.
 Against: duplication requires repeated native activation, server accounting fabricates rows, or controls cannot attribute the second request.
 Refs: docs/experiments/preheader-20261030.md
+
+## PH2 · prediction · 2026-10-30 00:18
+Hypothesis: an explicit fetch POST from a single owned submission event may avoid the Chromium form-navigation transaction restart under the identical zero-header fault.
+Test: two fresh owned Chrome fetch controls with unchanged TicketFixture disconnect mode, same request fields/body, browser submission-event count and NetLog/independent handler records.
+Predicts: each fetch control produces one ingress and retains the failed application response.
+Against: fetch also restarts the transaction, duplicates ingress or requires weakening the fault/ledger.
+Refs: output/preheader-20261030/controls-initial
