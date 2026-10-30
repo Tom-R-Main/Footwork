@@ -128,7 +128,24 @@ def main():
     out = args.output.resolve()
     out.mkdir(mode=0o700)  # fresh evidence only
     state = args.state.resolve()
-    os.environ["DISPLAY"] = ":99"
+    session_record = state / "session.json"
+    if session_record.exists():
+        session = json.loads(session_record.read_text())
+        if session.get("state") != "ready":
+            raise RuntimeError("owned desktop is not ready")
+        display = session.get("display", "")
+        import re
+        if not re.fullmatch(r":[0-9]{1,5}", display):
+            raise RuntimeError("invalid owned desktop display")
+        os.environ["DISPLAY"] = display
+        for name in ("XDG_RUNTIME_DIR", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME", "XDG_STATE_HOME",
+                     "XDG_DATA_DIRS", "XDG_CONFIG_DIRS"):
+            value = session["environment"][name]
+            if not isinstance(value, str):
+                raise TypeError("invalid owned session environment")
+            os.environ[name] = value
+    else:
+        os.environ["DISPLAY"] = ":99"  # historical fixture compatibility
     os.environ["DBUS_SESSION_BUS_ADDRESS"] = (state / "session-bus").read_text()
     os.environ["ANONYMIZED_TELEMETRY"] = "false"
     os.environ["BROWSER_USE_CLOUD_SYNC"] = "false"
