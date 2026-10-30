@@ -86,3 +86,50 @@ Test: the drafted test freezes only the producer's monotonic clock during prepar
 Predicts: the request dispatches once, times out, and retains an unsettled cost reservation; the independent pre-dispatch expiry tests keep their existing refusals.
 Against: the request retries, returns a probability, releases its cost reservation, or still fails after setup scheduling is isolated.
 Refs: tests/test_visual_decisions.py; python/jevdual/visual_decisions.py
+
+## LU7 · update · 2026-10-30 01:45
+Resolves: L4 = held
+Observed: the direct Linux adapter retained Unicode and trailing whitespace, read the complete 5014-character fixture, and refused a stale expected value. Conformance checks cover identity changes and uncertain write replies without retries. Observable identity checks cannot detect every hypothetical object replacement that preserves all exposed identity fields.
+Next: retain the bounded guarantee and final installed-bundle evidence separately from adapter conformance.
+Refs: results/linux-support-20261030/runtime/exact-text.jsonl; tests/test_linux_ax.py; tests/test_linux_native.py
+
+## LU8 · update · 2026-10-30 01:45
+Resolves: L6 = held
+Observed: installed direct and mirrored synthetic OCR retained original bytes, produced the exact expected fixture candidate, accepted its approved digest and passed saved-artifact checks on replay. Camera inventory and explicit missing-device refusal passed without opening a device; no physical acquisition was established. Mac camera receipt replay compatibility and both platform adapter conformance passed.
+Next: qualify a real explicitly selected camera only on a host that provides one; do not promote inventory or synthetic-image evidence into hardware claims.
+Refs: results/linux-support-20261030/runtime/optional-runtime.json; results/linux-support-20261030/runtime/linux-optional-tests.txt; scripts/linux/qualify_optional.py
+
+## LU9 · update · 2026-10-30 01:45
+Resolves: L7 = held
+Observed: both platform suites pass the intended visual dispatch timeout and independent pre-dispatch expiry contracts after setup scheduling is isolated. The final Mac suite passed 2405 tests with 70 skips. The final-source Linux suite passed 2402 with 72 skips and one unrelated browser readiness timeout.
+Next: preserve production deadlines and investigate the browser execution environment before reporting a clean Linux browser group.
+Refs: results/linux-support-20261030/runtime/macos-tests.txt; results/linux-support-20261030/runtime/linux-tests.txt; tests/test_visual_decisions.py
+
+## LU10 · update · 2026-10-30 01:45
+Observed: the original container used sleep as PID 1 and accumulated hundreds of unreaped browser descendants. Its cgroup reported process-limit hits and zero OOM events; repeated browser tests failed as process capacity ran out. The first final-wheel installed repeat also stopped without a success receipt when exact text could not be qualified. Earlier successful receipts do not establish final-wheel success.
+Inferred: container process lifecycle is a plausible common cause; the prior notebook's phrase final installed bundle referred to the earlier successful bundle, before the last source fixes. Final artifact qualification requires its own repeat.
+Next: use a fresh task-owned container with --init under the same CPU/memory/process restrictions, verify installed package bytes against the final wheel, and repeat native qualification and browser tests sequentially without changing product predicates.
+Refs: results/linux-support-20261030/runtime/qualification-final-initial.txt; scripts/linux/qualify.py; docs/linux-support.md
+
+## LU11 · update · 2026-10-30 01:46
+Resolves: L3 = held
+Observed: exact pinned CUA wheels built for amd64 and arm64. The final portable product wheel matched all 191 installed package files, then completed public CLI/browser/MCP append, replay and restart in the clean native Linux container. Independent artifact readback confirmed saved bytes. No consumer compiler was used for the binary installation.
+Next: retain the architecture/distribution-specific bundles and explicitly scoped installation requirements; actual Meta sandbox installation remains separate validation.
+Refs: results/linux-support-20261030/runtime/installed-wheel-identity.json; results/linux-support-20261030/runtime/installed-runtime.json; results/linux-support-20261030/runtime/saved-artifact.json
+
+## LU12 · update · 2026-10-30 01:46
+Resolves: L5 = held
+Observed: native Linux process identities passed the existing checks without an emulation exception. In the clean --init container with unchanged resource limits, all 13 browser tests passed unchanged and the final installed CLI/MCP journey passed. The process-limit counter remained zero. The prior full-suite failure and failed installed repeat remain retained rather than rewritten as successes.
+Next: require process reaping in repeated container qualification and preserve strict product identity predicates.
+Refs: results/linux-support-20261030/runtime/linux-browser-reaped.txt; results/linux-support-20261030/runtime/linux-browser-other-reaped.txt; results/linux-support-20261030/runtime/restart-status.json; results/linux-support-20261030/runtime/browser-resource-diagnosis.txt
+
+## LS2 · summary · 2026-10-30 01:46
+Established: Linux X11 browser/native text paths, explicit Mousepad document binding, durable CLI/MCP replay/restart and independently checked saved bytes work in the installed bundle. Linux synthetic OCR/review/replay and missing-camera refusal passed. Both architecture bundles contain prebuilt CUA wheels, and consumer installs use binary dependencies. Mac regression suite passed 2405 tests; Linux full suite retained 2402 passes and one browser failure, followed by all 13 browser tests passing cleanly. Ruff, packaged resources and notebook checks passed.
+Uncertain: actual Meta sandbox installation, Wayland, shared-desktop foreground coexistence, physical cameras/robots, provider-backed planning and hosted CI remain unqualified. The arm64 Ubuntu 26.04 wheel does not establish older-glibc compatibility; bundles still download other binary dependencies unless cached.
+Decision: retain implementation commits 818d586 and 653ee74, the local bundles and redacted evidence on codex/linux-support. Stop owned temporary Linux helpers. Do not merge, publish, allocate cloud resources or generalize these results to other Linux environments.
+Refs: docs/linux-support.md; results/linux-support-20261030/runtime/report.md; results/linux-support-20261030/runtime/archives.json
+
+## LU13 · update · 2026-10-30 01:47
+Observed: final Docker configuration inspection found the clean repeat used a 6 GiB combined memory/swap ceiling, while the original explicitly disabled swap at 3 GiB. CPU, RAM, process and shared-memory limits matched. This corrects the earlier same-resource-limits shorthand; successful final bundle receipts remain valid, but the reaping diagnosis is not a perfectly controlled single-variable comparison.
+Next: retain both selected container configurations and this limitation with the process-limit counters; do not claim that every environment setting was identical.
+Refs: results/linux-support-20261030/runtime/container-limits.json; results/linux-support-20261030/runtime/report.md

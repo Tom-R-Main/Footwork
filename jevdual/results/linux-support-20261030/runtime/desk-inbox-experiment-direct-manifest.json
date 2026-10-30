@@ -1,0 +1,40 @@
+{
+  "approval": {
+    "reviewed_input_path": null,
+    "sha256": "74abfe1124bc7970940069519ef7a38579a8669d5d69e07ea0ab183a514af11e"
+  },
+  "approval_time_unix": 1793338106.6646938,
+  "candidate_bytes": 39,
+  "candidate_sha256": "74abfe1124bc7970940069519ef7a38579a8669d5d69e07ea0ab183a514af11e",
+  "historical_save_outcome": "saved",
+  "note_name": "inbox/note.txt",
+  "ocr_helper": "inbox.py",
+  "ocr_helper_sha256": "d6dfe5ca50b004a9ffd6a0411af851e3f61c749a68eaddf833ef372d1a06f87f",
+  "prepare_time_unix": 1793338106.3183331,
+  "preview_name": "review.html",
+  "request": {
+    "mirror_input": false,
+    "source_kind": "synthetic_fixture",
+    "source_path": "/workspace/optional-qualification-2/fixture.png",
+    "source_sha256": "32ee1112c8251e874cd95abeb9897d167b0846df9c0fd6271e699ce204adaf3b"
+  },
+  "review_kind": "original_ocr",
+  "saved_artifact_check": {
+    "claims": [
+      "current_artifact_byte_equality"
+    ],
+    "detail": "current bytes equal the digest-bound expected source",
+    "expected_bytes": 39,
+    "expected_file": "/workspace/optional-qualification-2/runs/desk-inbox-experiment/direct/approved.txt",
+    "expected_sha256": "74abfe1124bc7970940069519ef7a38579a8669d5d69e07ea0ab183a514af11e",
+    "limit_bytes": 1048576,
+    "observed_bytes": 39,
+    "observed_sha256": "74abfe1124bc7970940069519ef7a38579a8669d5d69e07ea0ab183a514af11e",
+    "ok": true,
+    "path": "/workspace/optional-qualification-2/runs/desk-inbox-experiment/direct/inbox/note.txt",
+    "source_sha256": "74abfe1124bc7970940069519ef7a38579a8669d5d69e07ea0ab183a514af11e"
+  },
+  "saved_time_unix": 1793338106.72895,
+  "state": "saved",
+  "version": 1
+}

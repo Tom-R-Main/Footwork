@@ -1,0 +1,21 @@
+49
+max 0
+1330483200
+3221225472
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0
+      2 Sl      2904 sort
+      1 Ss         0 sh
+      1 Ss         0 docker-init
+      1 Ss         0 dbus-run-sessio
+      1 Sl       123 openbox
+      1 Sl       123 mousepad
+      1 Sl         1 xdg-permission-
+      1 Sl         1 xdg-desktop-por
+      1 Sl         1 gvfsd-metadata
+      1 Sl         1 gvfsd

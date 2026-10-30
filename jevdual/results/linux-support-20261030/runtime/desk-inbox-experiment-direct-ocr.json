@@ -1,0 +1,48 @@
+{
+  "engine": "Tesseract",
+  "engine_version": "tesseract 5.5.0",
+  "engine_executable": "/usr/bin/tesseract",
+  "recognition_level": "LSTM automatic page segmentation",
+  "languages": [
+    "eng"
+  ],
+  "language_correction": null,
+  "config": {
+    "oem": 1,
+    "psm": 3,
+    "load_system_dawg": false,
+    "load_freq_dawg": false
+  },
+  "confidence_semantics": "mean word score divided by 100; not a calibrated probability or Vision equivalent",
+  "line_construction": "TSV hierarchy; words joined with one space, original spacing not recovered",
+  "bounds_coordinate_system": "normalized_bottom_left",
+  "orientation": "up",
+  "preprocessing": {
+    "horizontal_mirror": false,
+    "derived_image": null,
+    "source_sha256": "32ee1112c8251e874cd95abeb9897d167b0846df9c0fd6271e699ce204adaf3b"
+  },
+  "tsv_sha256": "9f9f898dce23a22fcd52c11f1098de16298e8c1d6a3fee76bb740efb75bf81a6",
+  "lines": [
+    {
+      "text": "FOOTWORK LINUX",
+      "confidence": 0.9643701949999999,
+      "bounds": {
+        "x": 0.03333333333333333,
+        "y": 0.6625,
+        "width": 0.36333333333333334,
+        "height": 0.15416666666666667
+      }
+    },
+    {
+      "text": "Exact reviewed note 42.",
+      "confidence": 0.964993075,
+      "bounds": {
+        "x": 0.03333333333333333,
+        "y": 0.4125,
+        "width": 0.4766666666666667,
+        "height": 0.15416666666666667
+      }
+    }
+  ]
+}

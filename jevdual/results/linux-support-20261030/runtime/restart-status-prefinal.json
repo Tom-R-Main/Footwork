@@ -1,0 +1,75 @@
+{
+  "schema_version": "1",
+  "operation_id": "op_5e5c84dcf34e",
+  "disposition": "applied",
+  "state": "final",
+  "phase": "sent",
+  "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+  "repeat": false,
+  "evidence": {
+    "execution_receipt": {
+      "disposition": "applied",
+      "error": null,
+      "evidence": {
+        "after": {
+          "length": 109,
+          "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c"
+        },
+        "before": {
+          "length": 88,
+          "sha256": "d0f5c00085f940a391d7ff405bb2b4019d57ef59363e1355e79da839d5ed47d3"
+        },
+        "driver_effect": "confirmed",
+        "identity": {
+          "boot": "0c96729f-faff-469c-b88b-1acbfa64ebed",
+          "device": 73,
+          "document": "/workspace/linux-desktop/document.txt",
+          "inode": 1478129,
+          "pid": 157,
+          "start": "0x1.ab90aa2dae148p+30"
+        },
+        "identity_after": {
+          "boot": "0c96729f-faff-469c-b88b-1acbfa64ebed",
+          "device": 73,
+          "document": "/workspace/linux-desktop/document.txt",
+          "inode": 1478129,
+          "pid": 157,
+          "start": "0x1.ab90aa2dae148p+30"
+        },
+        "readback": {
+          "kind": "exact_field_readback",
+          "passed": true,
+          "persistence": "not_checked"
+        }
+      },
+      "nonce": "d20df4676b894ec1805df9e8ce5a24cf",
+      "operation_id": "op_5e5c84dcf34e",
+      "packet_digest": "270b09fabc56cc22988ef4fe1038208799ef96d9753b805100f0c0dce35bba5c",
+      "phase": "sent",
+      "request_digest": "506ca58c78ddad2bfa8bd45521e0b42c9018d0af7cc68201f6b206c41d6ee46f",
+      "version": 1
+    },
+    "readback": {
+      "kind": "exact_field_readback",
+      "passed": true,
+      "persistence": "not_checked",
+      "outcome": "applied",
+      "historical": true
+    }
+  },
+  "reporting": {
+    "historical_effect": "applied",
+    "disk_persistence": "not_checked",
+    "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+  },
+  "client_token": "linux-once",
+  "current": {
+    "agreement": "yes",
+    "value": {
+      "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c",
+      "length": 109
+    },
+    "disk_identity_changed": false,
+    "persistence": "not_checked"
+  }
+}

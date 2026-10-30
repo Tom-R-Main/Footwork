@@ -1,0 +1,9 @@
+bound footwork's Chrome (pid 312) window 6291458, tab tab-fcab5359-77a6-4d46-911f-cd04f5227c30
+navigate http://127.0.0.1:8765/: unverifiable navigated tab-fcab5359-77a6-4d46-911f-cd04f5227c30 to http://127.0.0.1:8765/
+Google Chrome (footwork): 'Linux qualification'
+0 elements:
+page text (34 chars):
+Owned fixture
+Linux source: café 🧪
+
+session: /artifacts/final-runtime/qualified-reaped-ready/browser-session  (export FOOTWORK_SESSION=/artifacts/final-runtime/qualified-reaped-ready/browser-session to omit --session)

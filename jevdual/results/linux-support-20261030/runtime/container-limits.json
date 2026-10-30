@@ -1,0 +1,34 @@
+[
+  {
+    "name": "footwork-linux-final-20261030",
+    "status": "exited",
+    "Memory": 3221225472,
+    "MemorySwap": 3221225472,
+    "NanoCpus": 2000000000,
+    "PidsLimit": 512,
+    "ShmSize": 536870912,
+    "Init": null,
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ]
+  },
+  {
+    "name": "footwork-linux-reaped-20261030",
+    "status": "exited",
+    "Memory": 3221225472,
+    "MemorySwap": 6442450944,
+    "NanoCpus": 2000000000,
+    "PidsLimit": 512,
+    "ShmSize": 536870912,
+    "Init": true,
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ]
+  }
+]

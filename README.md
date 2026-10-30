@@ -13,6 +13,10 @@ fork) or the operator at the keyboard: a person, or an agent such as a Claude Co
 time. Native apps are driven in the background through the [Cua Driver](https://github.com/trycua/cua)'s
 accessibility tree, beside a person still using the same Mac.
 
+The [Linux X11 port](jevdual/docs/linux-support.md) also supports the installed browser/desktop CLI,
+scoped Mousepad MCP append and recovery, and Linux OCR. Its isolated runtime evidence is separate
+from the macOS benchmarks below. Wayland, shared foreground control and physical cameras remain unqualified.
+
 The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the project. Every number below is
 from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
 [`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
@@ -21,7 +25,9 @@ For an agent integration, start with [capability installation](jevdual/docs/capa
 and the [agent-host recipe](jevdual/docs/installed-agent-host.md).
 CUA is built from the [pinned Python and Rust reference source](jevdual/docs/upstream/cua-driver-build.md); building its dependency wheel requires Rust 1.97.1 and native development tools. The wheel supplies five MCP tools
 for one scoped browser-to-TextEdit job on macOS, with durable operation results and validated completion
-reports. It needs existing Python, uv, Chrome and applicable host permissions. The current candidate
+reports. The Linux destination is Mousepad; see the platform guide for its narrower document contract.
+It needs existing Python, Chrome and applicable host permissions. The bundle installer can use uv or pip.
+The current candidate
 does not discover arbitrary apps; its disposable fixture helpers derive the identifiers for that test job.
 
 Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,

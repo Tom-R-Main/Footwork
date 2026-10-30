@@ -1,0 +1,10 @@
+{
+  "footwork-linux-aarch64.zip": {
+    "sha256": "64aed11c3ad85d1460b8beea6097160ca386fa43b252612d4c59a15899300227",
+    "bytes": 34545828
+  },
+  "footwork-linux-x86_64.zip": {
+    "sha256": "553e9a6443c23a755561d8002804b0fa79163c99820b7ea7436658c903d37c03",
+    "bytes": 34625375
+  }
+}

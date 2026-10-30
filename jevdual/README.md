@@ -12,6 +12,10 @@ paths in the DOM pipeline run in Rust through PyO3, each with a pure-Python twin
 
 For the standalone agent capability wheel, see [installation and per-job configuration](docs/capability-packaging.md). It includes a journal-validated completion adapter for the scoped browser-to-TextEdit flow; it does not require Rust or a model provider account.
 
+For Linux, see [installation and qualification](docs/linux-support.md): X11/AT-SPI desktop control,
+the scoped browser-to-Mousepad capability, exact text and recovery, and Tesseract OCR. The guide
+distinguishes installed-runtime checks from unqualified Wayland, shared foreground and physical-device paths.
+
 The browser tables below are the Q6 to Q9 measurements; native and coexistence results (Q10, Q15) are in
 the top-level README and `docs/experiments/`.
 
