@@ -1,0 +1,8 @@
+Resolved 300 packages in 6ms
+   Building jevdual @ file:///workspace/Footwork/jevdual
+      Built jevdual @ file:///workspace/Footwork/jevdual
+Prepared 2 packages in 1.76s
+Uninstalled 1 package in 1ms
+Installed 2 packages in 2ms
+ + jeepney==0.9.0
+ ~ jevdual==0.0.1 (from file:///workspace/Footwork/jevdual)

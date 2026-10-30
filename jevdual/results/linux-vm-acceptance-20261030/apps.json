@@ -1,0 +1,11 @@
+{
+  "command": [
+    "footwork",
+    "--json",
+    "desktop",
+    "apps"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"      0  3D Slicer\\n      0  About Xfce\\n      0  Accessibility\\n      0  Appearance\\n      0  Application Finder\\n    977  bash\\n    978  bash\\n    982  bash\\n      0  Blender\\n      0  Bulk Rename\\n      3  caas-prefix-tra\\n      0  Chromium Web Browser\\n      2  cloud-agent-log\\n    530  codex\\n      0  Color Profiles\\n    260  containerd\\n      0  Default Applications\\n      0  Desktop\\n      0  Display\\n    207  dockerd\\n      0  File Manager\\n   1031  footwork\\n      0  FreeCAD\\n      0  GNU Image Manipulation Program\\n      0  Godot\\n      0  Htop\\n      0  ImageMagick (color depth=q16)\\n      0  Inkscape\\n      0  Kdenlive\\n      0  Keyboard\\n      0  KiCad\\n      0  KiCad Gerber Viewer\\n      0  KiCad Image Converter\\n      0  KiCad PCB Calculator\\n      0  KiCad PCB Editor (Standalone)\\n      0  KiCad Schematic Editor (Standalone)\\n      0  Log Out\\n      0  Mail Reader\\n      0  Mouse and Touchpad\\n      0  Mousepad\\n      0  OpenSCAD\\n      0  Panel\\n      0  ParaView\\n      0  ParaView Client\\n    996  pytest\\n    997  pytest\\n    995  python\\n      0  QGIS Desktop\\n      0  Qt 5 Assistant\\n      0  Qt 5 Designer\\n      0  Qt 5 Linguist\\n      0  Run Program...\\n      0  Session and Startup\\n      0  Settings Editor\\n      0  Settings Manager\\n      1  tail\\n      0  Terminal Emulator\\n      0  TeXdoctk\\n      0  Text Editor Settings\\n      0  Thunar File Manager\\n      0  Thunar Preferences\\n    981  uv\\n    985  uv\\n    988  uv\\n      0  Vim\\n      0  Web Browser\\n      0  Window Manager\\n      0  Window Manager Tweaks\\n      0  Workspaces\\n      0  Xfce Terminal\\n      0  Xfce Terminal Settings\\n\", \"diagnostics\": \"\", \"data\": null}\n",
+  "stderr": ""
+}

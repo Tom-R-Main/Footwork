@@ -50,3 +50,15 @@ Test: repeat the unchanged installed-wheel qualification with fresh fixture stat
 Predicts: Openbox remains running, CUA can activate the exact owned editor window, and Control-S plus independent byte comparison complete the journey.
 Against: Openbox still exits, foreground identity refuses with a functioning manager, or saved bytes fail after a qualified delivery.
 Refs: scripts/linux/qualify.py; results/linux-vm-acceptance-20261030/; original package bytes retained in installed-identity.json
+
+## LINUXVMU5 · update · 2026-10-30 15:59
+Resolves: LINUXVM4 = held
+Observed: exposing the rootless Debian sysroot's XDG data/config paths kept Openbox running. The unchanged installed product completed CLI/browser/MCP append, replay, restart agreement, scoped native save and independent artifact checking: 109 codepoints / 117 UTF-8 bytes with the handoff's expected SHA256. Linux-branch offline tests passed 2434 with 28 skips, and all thirteen browser tests passed. Synthetic OCR/review/replay, missing-camera refusal and installed simulator initialization/status passed. Ruff and 103 packaged resource comparisons passed. All directly owned temporary desktop/browser/fixture processes stopped.
+Next: retain successful and failed evidence together; report required rootless prerequisites and the refused-save dispatched flag inconsistency without weakening predicates.
+Refs: results/linux-vm-acceptance-20261030/report.md; results/linux-vm-acceptance-20261030/runtime/receipt.json; results/linux-vm-acceptance-20261030/linux-pytest.txt; results/linux-vm-acceptance-20261030/linux-browser.txt
+
+## LINUXVMS · summary · 2026-10-30 15:59
+Established: the exact 0b1e82c product wheel works for the documented deterministic X11/AT-SPI CLI/MCP and explicit artifact journey in this Debian 13 x86-64 VM with the cached pinned native CUA wheel. All 191 installed product files match. Missing Xvfb/Openbox and rootless desktop library/data/config setup were supplied. The initial failed save remains visible alongside the clean repeat and independent saved-byte proof.
+Uncertain: the bridge reports dispatched=true on the earlier foreground refusal despite a no-input driver summary; this was not repaired. Wayland, shared foreground coexistence, real devices, provider-backed planning, hosted CI and the smaller Muse hardware profile remain unqualified. The separately built cached CUA wheel is not the original handoff CUA artifact, and dependency resolution is recorded separately from the development lockfile.
+Decision: retain the consumer installation, bundle, exact artifact hashes, failures and acceptance evidence locally on codex/linux-support. Product code and identity checks stay unchanged; no publication or merge.
+Refs: results/linux-vm-acceptance-20261030/report.md; results/linux-vm-acceptance-20261030/installed-identity.json; commit 0b1e82c

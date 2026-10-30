@@ -1,0 +1,12 @@
+{
+  "scope": "Pinned CUA driver and isolated VM desktop only; unpublished Footwork Linux support is not present.",
+  "editor_pid": 4223,
+  "editor_running": true,
+  "windows": "ListWindowsOutput()",
+  "owned_windows": 1,
+  "snapshots": [
+    "WindowStateOutput()"
+  ],
+  "fixture_observed": false,
+  "passed": false
+}

@@ -1,0 +1,27 @@
+dispatched append(text area) text='CLI Unicode 🧪 café with trailing spaces  ': driver says confirmed in 1.0s
+receipt: Receipt for append(text area) text='CLI Unicode 🧪 café with trailing spaces  ': confirmed ('text area' now holds 'Footwork Linux fixture\nkeep trailing spaces\nCLI Unicode 🧪 café with trailing spa').
+Mousepad: '*/workspace/scratch/footwork-debian-desktop-ready/document.txt - Mousepad'
+19 elements:
+  [   0] menu       'File'
+  [   1] menu       'Edit'
+  [   2] menu       'Search'
+  [   3] menu       'View'
+  [   4] menu       'Document'
+  [   5] menu       'Help'
+  [  19] textbox    'text area' = 'Footwork Linux fixture\nkeep trailing spaces\nCLI Unicode 🧪 café with trailing spaces'
+  [   6] button     'New'
+  [   7] button     'Open...'
+  [   8] button     'Save'
+  [   9] button     'Save As...'
+  [  10] button     'Revert'
+  [  11] button     'Close Tab'
+  [  12] button     'Undo'
+  [  13] button     'Paste'
+  [  14] button     'Find'
+  [  15] button     'Find and Replace...'
+  [  16] button     'Go to...'
+  [  17] button     'Fullscreen'
+page text (88 chars):
+Footwork Linux fixture
+	keep trailing spaces  
+CLI Unicode 🧪 café with trailing spaces  

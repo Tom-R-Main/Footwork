@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/workspace/scratch/footwork-debian-consumer/bin/footwork",
+    "browser-inspection",
+    "export"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"family\": \"browser-inspection\", \"modules\": {\"capture.mjs\": \"/workspace/scratch/footwork-debian-consumer/lib/python3.12/site-packages/jevdual/_tool_resources/browser-inspection/capture.mjs\", \"frontend.mjs\": \"/workspace/scratch/footwork-debian-consumer/lib/python3.12/site-packages/jevdual/_tool_resources/browser-inspection/frontend.mjs\", \"redaction.mjs\": \"/workspace/scratch/footwork-debian-consumer/lib/python3.12/site-packages/jevdual/_tool_resources/browser-inspection/redaction.mjs\"}, \"capture\": \"adapter_required\", \"attaches_browser\": false}\n",
+  "stderr": ""
+}

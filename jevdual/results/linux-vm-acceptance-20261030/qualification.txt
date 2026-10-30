@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 244, in <module>
+    main()
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 217, in main
+    assert document.read_text() == expected
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
