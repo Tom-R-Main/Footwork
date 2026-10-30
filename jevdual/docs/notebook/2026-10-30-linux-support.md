@@ -73,3 +73,16 @@ Refs: tools/camera-capture-experiment/capture.py; tools/desk-inbox-experiment/in
 Observed: native arm64 CUA built and the complete bundle installed. Its process executable identity is /usr/bin/mousepad. Public explicit-PID startup still refuses: Linux app discovery names the process Mousepad with desktop ID org.xfce.mousepad, while its window snapshot reports Org.xfce.mousepad. The fixture retained this failure before any input.
 Inferred: the current equality check conflates a desktop app ID with its display name. Normalize only a unique same-PID discovery record whose name or desktop ID matches the observed identifier; preserve all PID/window and unrelated-name refusals. Add a regression before changing this path.
 Refs: python/jevdual/native.py; python/jevdual/session.py; scripts/linux/qualify.py
+Next: rerun the corrected app-ID regression and installed CLI/MCP journey, then validate optional Linux adapters and the final source snapshot.
+
+## LU6 · update · 2026-10-30 01:31
+Observed: the final installed Linux bundle completed the public CLI/browser/MCP journey, repeated tokens and restart agreement, direct native save, and independent public artifact verification. Direct and mirrored synthetic OCR produced exact reviewed text and saved artifacts; a missing camera refused. Linux full-suite failures narrowed to a fixture caller not forwarding its new Mac-contract dependency, an unnecessary app-list query for ordinary display names, and a 15 ms visual timeout test expiring before dispatch under the constrained VM.
+Next: preserve strict same-PID normalization for desktop IDs, forward the explicit synthetic-Mac fixture dependency, and isolate the visual test's intended in-flight timeout from setup scheduling. Then rerun both platform suites and retain checked artifact identities.
+Refs: scripts/linux/qualify.py; tests/test_bounded.py; tests/test_visual_decisions.py; python/jevdual/native.py
+
+## L7 · prediction · 2026-10-30 01:31
+Hypothesis: the visual timeout failure is test setup crossing its 15 ms pre-dispatch deadline, rather than a lost timeout or retry in production.
+Test: the drafted test freezes only the producer's monotonic clock during preparation while retaining asyncio's real 15 ms timeout around a 50 ms simulated response. Rerun this contract and both platform suites without changing production deadlines.
+Predicts: the request dispatches once, times out, and retains an unsettled cost reservation; the independent pre-dispatch expiry tests keep their existing refusals.
+Against: the request retries, returns a probability, releases its cost reservation, or still fails after setup scheduling is isolated.
+Refs: tests/test_visual_decisions.py; python/jevdual/visual_decisions.py
