@@ -17,26 +17,26 @@ failed (the diagnoses to learn from):
   V3 (2026-09-26-e-verifier-evidence.md): in strict mode, (1) apply the no-fact demotion only when the task asks for an answer, and (2) give Jev the non
       resolved by U32: `results/claims-audit-20260927b`, strict full verifier after the two changes: false acceptance 0/10, false rej
   V4 (2026-09-26-e-verifier-evidence.md): task 1 was refused because the verifier read the destination window alone ("The document's last line is the fi
-      resolved by U41: `results/v4-offline-20260928.json`: correct destination without the other surface's context: verify (complete 
+      resolved by U41: `results/v4-offline-20260928.json`: correct destination without the other surface's context: verify (complete
   V5 (2026-09-26-e-verifier-evidence.md): at `done`, for each carried value this session typed or appended, the harness compares the field's current val
       resolved by U42: `results/v5-offline-20260928.json`: with the harness check, the tampered destination is rejected ("The documen
   V6 (2026-09-26-e-verifier-evidence.md): with the match's surrounding lines in the carry ("A Light in the Attic / £51.77 / In stock / Add to basket", f
-      resolved by U43: `results/v6-offline-20260928.json`: with the carry's occurrence ("match 1 of 3 on the page") and surroundings 
+      resolved by U43: `results/v6-offline-20260928.json`: with the carry's occurrence ("match 1 of 3 on the page") and surroundings
   V7 (2026-09-26-e-verifier-evidence.md): split task 1's requirements by surface: on the books page, "the value read is the first book's price" (the ver
       resolved by U44: `results/v7-q13-task1-20260928` (task 1, three repeats, per-surface requirements): the oracle confirmed 3 of 3
-  G1 (2026-09-26-g-cross-surface.md): yes, end to end, with every step's receipt true: the read names the page and the match; the append's readback 
+  G1 (2026-09-26-g-cross-surface.md): yes, end to end, with every step's receipt true: the read names the page and the match; the append's readback
       resolved by U22: `scripts/pilot_cross_surface.sh` on c81c0e5 exited 0. `read --match` carried '£51.77' from books.toscrape.com;
   G6 (2026-09-26-g-cross-surface.md): early reads: TextEdit finishes writing after 0.5 s, so polling for up to 3 s turns them into `confirmed`.
       resolved by U28: `results/g6-native-append` on 809e346 (polling up to 3 s): 6 of 6 verified again; the first Command-S read `pa
   N1 (2026-09-26-notebook-practice.md): across packages A to C, at least one prediction per package fails or is revised, and each failure names a chan
-      resolved by U21: `uv run python -m evals.notebook docs/notebook` and `git log -S` per entry, after package C closed: every one 
+      resolved by U21: `uv run python -m evals.notebook docs/notebook` and `git log -S` per entry, after package C closed: every one
   R5 (2026-09-28-q19-rounds.md): with the app activated before the bound window is raised, the bound TextEdit document becomes key, so Command-
       resolved by U48: Command-S through the D17 session was refused `not_key` again; d15.txt and other.txt unchanged. Probes with Te
   M1 (2026-09-29-model-completion.md): two of the three are the done decision's evidence model, not the verifier's judgment. H10's done ("QUIET-83 27
       resolved by U50: `results/m1-offline-20260929.json` (scripts/m1_offline.py, 3 replays per case and arm). Positives, before → M1
   M3 (2026-09-29-model-completion.md): H03's twenty steps and H02's duplicate attempt are control gaps. The loop sees only the tail of each observati
       resolved by U52: `results/m3-dev/` (`scripts/m3_summary.py`), 3 repeats per arm. X1 (withdrawn archive): A exhausted its budget
-  M4 (2026-09-29-model-completion.md): with progress counted only from a state not seen before, a newly carried value, or a new effect record (saved 
+  M4 (2026-09-29-model-completion.md): with progress counted only from a state not seen before, a newly carried value, or a new effect record (saved
       resolved by U53: `results/m4-dev/` on 861249a (`scripts/m3_summary.py results/m4-dev`). X1 ended before the budget in 5 of 6 (M
   M6 (2026-09-29-model-completion.md): the verifier cannot connect a bare number to the task's qualifier. The page lists 95 washers (reserved) and 60
       resolved by U55: `results/m6-offline-20260929.json` (scripts/m6_offline.py on the stored X3 session, 5 replays each, mean compl
@@ -45,21 +45,21 @@ failed (the diagnoses to learn from):
   DAPI4 (2026-10-08-decisions-jev.md): combined image/text resolves visual proposals better than normal observed text, with abstention on ambiguous i
       resolved by U-D3RESULT: All216calls and72first-replay reconstruction checks finish on c465377. Combined all-three correctness19/24 exc
   CR7B (2026-10-09-capability-comparison.md): the bounded large-frame repair removes the raw host's transport failures while preserving exact four/seven too
-      resolved by CR7B-U1: development v2 passed inventory isolation and large-response transport. Clean Footwork completed, raw stopped 
+      resolved by CR7B-U1: development v2 passed inventory isolation and large-response transport. Clean Footwork completed, raw stopped
   SIM4 (2026-10-10-independent-controller-recovery.md): a separately running controller with durable acceptance, exact operation identity and lower-layer receipt reco
       resolved by SIM4-U3: targeted process scenarios failed before fixes: a saved unknown controller fallback with intact lower terminal
   AA1 (2026-10-10-restart-agent-acceptance.md): fresh Claude and Codex callers can recover qualified historical append results from the public four-tool inter
       resolved by AAU3: v1 Claude Opus5.5 executed all four scenarios safely with one operation each and $0.2771692 reported cost, but
   AA4 (2026-10-10-restart-agent-acceptance.md): explicit operation reporting guidance (unknown execution cannot be attributed from matching text; disk persist
       resolved by AAU9: root final-answer review passes Claude4/4 and Codex3/4. In the no-receipt case, Codex received unknown histori
-  SIM5 (2026-10-10-versioned-application-fulfillment.md): an immutable leased order snapshot plus a current-revision compare-and-swap and exact controller evidence can 
-      resolved by SIM5-U1: the first implementation permitted mutations with missing or foreign expected application identity; SIM5-ID's 
+  SIM5 (2026-10-10-versioned-application-fulfillment.md): an immutable leased order snapshot plus a current-revision compare-and-swap and exact controller evidence can
+      resolved by SIM5-U1: the first implementation permitted mutations with missing or foreign expected application identity; SIM5-ID's
   SIM8-CLI (2026-10-11-bench-operator.md): the installed authenticated Codex CLI can return one schema-valid image-based action with action tools disable
       resolved by SIM8-CLI-U1: the first committed-source probe exited 0 with a valid movement action but the adapter refused it as unexpecte
   UF1 (2026-10-12-onboarding-fixture-v4.md): closing the unique fixture document by exact AXDocument identity and its AXCloseButton, with any discard butto
       resolved by UFU6: installed native-v1 exits0 and reports passed with its actual installed worker observed. Exact fixture PID5262
   UF3 (2026-10-12-onboarding-fixture-v4.md): a source-frozen packetv4 with the unchanged reviewed wheel permits a separately recorded denied-to-granted gue
-      resolved by UFU7: UFU6 records two resolutions on one field, but the notebook reader recognizes only its first prediction. This 
+      resolved by UFU7: UFU6 records two resolutions on one field, but the notebook reader recognizes only its first prediction. This
   SIM14-P4 (2026-10-12-reusable-body-recovery.md): a blocking prompt write can prevent the guardian from observing host death if its planner never reads stdin; m
       resolved by SIM14-U4: the current guardian retired a never-reading planner after host-only SIGKILL with a valid 60000-byte prompt; c
   UC1 (2026-10-27-unified-cli.md): a packaged command router and discoverable machine-readable catalog can expose existing browser/native operati
@@ -67,20 +67,20 @@ failed (the diagnoses to learn from):
   MS1 (2026-10-28-move-submit.md): Finder's own Copy, Go to Folder and Move Item Here UI can move the exact manifest-bound inode with qualified i
       resolved by MSU7: the modal route never completed a qualified move. After closing verified owned leftover modal windows, a fresh
   MS4 (2026-10-28-move-submit.md): the frozen installed candidate completes all required app tasks and a process-interrupted full cross-app chain
-      resolved by MSU16: The full primary gate remains open: final pre-header disconnect produced two ingresses and could not complete 
+      resolved by MSU16: The full primary gate remains open: final pre-header disconnect produced two ingresses and could not complete
   MS7 (2026-10-28-move-submit.md): the Go to Folder Return must target the exact proven owned modal sheet CGWindowID rather than its parent windo
       resolved by MSU18: The modal Return route never completed a qualified move; its uncertain attempts remain retained. The reader ac
   MS8 (2026-10-28-move-submit.md): removing redundant SDK captures between owned Finder foreground binding and its direct AX input avoids a focus
       resolved by MSU5: avoiding redundant captures allowed rename to settle but a later owned Go sheet still lost foreground to Chrom
   MS11 (2026-10-28-move-submit.md): a separately launched owned Preview process provides a fresh first-rotation undo baseline and exact document b
       resolved by MSU9: a new Preview process restored prior documents, and the exact-document assertion stopped before input. A fresh
-  MS14 (2026-10-28-move-submit.md): after the committed same-inode rename, exact-window foreground reassertion restores the normal filename AXURL 
+  MS14 (2026-10-28-move-submit.md): after the committed same-inode rename, exact-window foreground reassertion restores the normal filename AXURL
       resolved by MSU13: 1bd8f51 still stopped before reacquisition. After Return, the old editor object no longer has a readable frame
 
 open:
-  W1 (2026-10-01-inspection-v2.md, 2026-10-01 16:34): each exercised step has distinct precondition/action/immediate/settled/readback statuses; an absent 
+  W1 (2026-10-01-inspection-v2.md, 2026-10-01 16:34): each exercised step has distinct precondition/action/immediate/settled/readback statuses; an absent
   SIM14-P2 (2026-10-12-reusable-body-recovery.md, 2026-10-12 22:14): old planner authority is revoked, verified owned children retire before new planning, unresolved own
-  SIM14-P3 (2026-10-12-reusable-body-recovery.md, 2026-10-12 22:14): wire semantics and existing bounds remain unchanged, unknown bench operations stay refused, generic 
+  SIM14-P3 (2026-10-12-reusable-body-recovery.md, 2026-10-12 22:14): wire semantics and existing bounds remain unchanged, unknown bench operations stay refused, generic
   SIM14-P5 (2026-10-12-reusable-body-recovery.md, 2026-10-12 22:45): normal image-guided planning remains functional, actual startup has no shell-snapshot group, and all
   CA1 (2026-10-14-consolidation-adoption.md, 2026-10-14 12:51): merged tree includes both disjoint work streams, tests/review/CI pass, existing qualified8dc81c72 re
   CA2 (2026-10-14-consolidation-adoption.md, 2026-10-14 12:51): actual Codex can follow README-only setup, identify permittedtargets through the publicsurface, comp

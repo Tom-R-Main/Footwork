@@ -37,7 +37,7 @@ _____________ test_lazy_uuid_subclass_keeps_upstream_repr_and_hash _____________
         """A regenerated dataclass __repr__ walks every child; bubus reprs handler results, so on a live
         Wikipedia page one step took minutes. The subclass must inherit upstream's __repr__ and __hash__."""
         from browser_use.dom import service, views
-    
+
         patch.uninstall()
 >       assert patch.install_lazy_uuid() is True
 E       assert False is True
