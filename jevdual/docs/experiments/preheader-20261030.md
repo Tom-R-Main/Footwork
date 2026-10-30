@@ -12,3 +12,6 @@ Verification: regression red/green, full key-free suite, Ruff/notebook/package c
 
 ## Amendment: route comparison before execution
 Add two fresh isolated Chrome fetch POST controls against the identical pre-header disconnect fault. Same fields/body and one activation, NetLog and handler observations; no fixture/runtime change. A passing diagnostic does not qualify native submission or create new reconciliation authority.
+
+## Amendment: positively sealed fixture contract
+Evaluate an optional new preadmitted evidence version whose terminal boundary is an irreversibly closed fixture producer, all request handlers drained, and final ledger snapshot atomically sealed. Same unique-ingress predicate and original fault. No claim of browser/network exactly-once delivery. Existing v1/v2 reads/unknowns retain their contracts. Test active-handler drainage, late input, source restart, tampering, duplicates, wrong operation/source and no retroactive enrollment. Installed schedule adds one fresh native fetch disconnect trial under this new policy, including actual controller kill after ingress, and read-only reconciliation after closure.

@@ -20,3 +20,10 @@ Test: add opt-in fetch submission route with unchanged default navigation route,
 Predicts: fetch native trials each have one ingress, preserved unknown custody and no extra ingress on token replay; navigation challenge still duplicates.
 Against: native fetch duplicates, the fault is weakened, or evidence falsely finalizes.
 Refs: output/preheader-20261030/controls-fetch/results.json
+
+## PH4 · prediction · 2026-10-30 00:24
+Hypothesis: a new preadmitted sealed-fixture policy can qualify one committed ingress after pre-header loss using irreversible producer closure, without asserting browser delivery/termination or weakening v2.
+Test: stop accepts, positively drain request handlers, prohibit all later ledger writes/reopen via durable terminal state, atomically seal the final snapshot; adversarial active-handler, late request, restart, tamper, duplicate and legacy-enrollment tests. New policy opt-in must bind before dispatch and old unknowns remain ineligible.
+Predicts: only a new policy-bound operation with one exact ingress/row and an authentic closed/drained immutable source finalizes; any incomplete closure or contradictory evidence remains unknown.
+Against: process exit or a timer alone grants authority, handlers can write after sealing, source reopens, duplicates qualify, or historical operations enroll.
+Refs: docs/experiments/preheader-20261030.md
