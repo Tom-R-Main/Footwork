@@ -99,3 +99,8 @@ Test: reproduce with a child model whose poll remains pending until wait, then u
 Predicts: direct children complete their waits within the existing budget; a truly unjoinable child is recorded pending and prevents success. No orphan is waited by this supervisor and earlier failed snapshots remain intact.
 Against: any completed-cleanup claim has a pending direct wait, deadline bounds grow beyond the documented grace policy, or a foreign child is reaped.
 Refs: python/jevdual/linux_session.py:cleanup; results/linux-native-reliability-20261030/
+
+## LRF2 · exploratory · 2026-10-30 20:30
+Question: does the corrected bounded direct-wait artifact satisfy the same finite criteria that candidate c43a044 failed?
+Test: product source 6ff8370f16849abd42a74994e544b202e9e76642 (resolved by the following artifact manifest's git commit), product wheel a52b8db77f57b391f109dacd150a51dfe9cfe4a08ef0777ac47aa2f8b9230d21 and unchanged cleanup1 native wheel b94c00c0abda1b039e4dc3ce3f72217fe053544fbf3ec2d18a81dd7ef273fd11. Repeat exactly the LRF30 lifecycle plus10 full journey design, all original timeouts and zero-zombie/zero-pending/normal-exit criteria, with every attempt retained. New source cannot substitute for the earlier candidate's two failed cleanup attempts. Byte-verify both installed packages first. Additional final controls require per-attempt semantic WM refusals (including the earlier fixed fake WM result), conservative final failure and no editor/ready marker; final budget exhaustion must not erase those earlier reasons.
+Refs: /workspace/scratch/fw-reliability-qualified-bundle/MANIFEST.json; /workspace/scratch/reliability-qualified-batch.py; /workspace/scratch/reliability-bounded-wait-tests.txt
