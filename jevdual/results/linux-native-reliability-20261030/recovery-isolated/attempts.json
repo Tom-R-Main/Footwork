@@ -1,0 +1,72 @@
+[
+  {
+    "attempt": 0,
+    "returncode": 0,
+    "signal": null,
+    "helper": 158,
+    "same_root": true
+  },
+  {
+    "attempt": 1,
+    "returncode": -6,
+    "signal": 6,
+    "helper": 204,
+    "same_root": true
+  },
+  {
+    "attempt": 2,
+    "returncode": 0,
+    "signal": null,
+    "helper": 251,
+    "same_root": true
+  },
+  {
+    "attempt": 3,
+    "returncode": 0,
+    "signal": null,
+    "helper": 296,
+    "same_root": true
+  },
+  {
+    "attempt": 4,
+    "returncode": 0,
+    "signal": null,
+    "helper": 344,
+    "same_root": true
+  },
+  {
+    "attempt": 5,
+    "returncode": 0,
+    "signal": null,
+    "helper": 389,
+    "same_root": true
+  },
+  {
+    "attempt": 6,
+    "returncode": 0,
+    "signal": null,
+    "helper": 434,
+    "same_root": true
+  },
+  {
+    "attempt": 7,
+    "returncode": -6,
+    "signal": 6,
+    "helper": 478,
+    "same_root": true
+  },
+  {
+    "attempt": 8,
+    "returncode": 0,
+    "signal": null,
+    "helper": 524,
+    "same_root": true
+  },
+  {
+    "attempt": 9,
+    "returncode": -6,
+    "signal": 6,
+    "helper": 570,
+    "same_root": true
+  }
+]

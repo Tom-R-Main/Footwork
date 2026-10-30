@@ -1,0 +1,23 @@
+[
+  {
+    "kind": "lifecycle",
+    "attempt": 26,
+    "snapshot_pid": 2835,
+    "proc_exists_now": false,
+    "monotonic": 16981.426121999
+  },
+  {
+    "kind": "lifecycle",
+    "attempt": 28,
+    "snapshot_pid": 3052,
+    "proc_exists_now": false,
+    "monotonic": 16981.426193545
+  },
+  {
+    "kind": "journey",
+    "attempt": 5,
+    "snapshot_pid": 6405,
+    "proc_exists_now": false,
+    "monotonic": 16981.426239353
+  }
+]

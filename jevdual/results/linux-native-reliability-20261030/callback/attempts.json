@@ -1,0 +1,32 @@
+[
+  {
+    "case": "baseline",
+    "attempt": 0,
+    "returncode": 0
+  },
+  {
+    "case": "baseline",
+    "attempt": 1,
+    "returncode": 0
+  },
+  {
+    "case": "baseline",
+    "attempt": 2,
+    "returncode": 0
+  },
+  {
+    "case": "delay",
+    "attempt": 0,
+    "returncode": 0
+  },
+  {
+    "case": "delay",
+    "attempt": 1,
+    "returncode": 0
+  },
+  {
+    "case": "delay",
+    "attempt": 2,
+    "returncode": 0
+  }
+]

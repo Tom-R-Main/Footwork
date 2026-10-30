@@ -1,0 +1,6 @@
+Resolved 1 package in 1ms
+Prepared 1 package in 115ms
+Uninstalled 1 package in 1ms
+Installed 1 package in 2ms
+ - cua-driver==0.38.0+footwork.d5373879 (from file:///workspace/Footwork/jevdual/vendor/cua-driver)
+ + cua-driver==0.38.0+footwork.d5373879.cleanup1 (from file:///workspace/scratch/fw-reliability-native-wheel/cua_driver-0.38.0+footwork.d5373879.cleanup1-py3-none-linux_x86_64.whl)

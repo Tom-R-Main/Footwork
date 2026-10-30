@@ -1,0 +1,32 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_cleanup_waits_for_owned_zombie_to_become_waitable ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdd87d6bd40>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-34/test_cleanup_waits_for_owned_z0')
+
+    def test_cleanup_waits_for_owned_zombie_to_become_waitable(monkeypatch, tmp_path):
+        target = FixtureSession(tmp_path / 'waitable-race')
+        target.state.mkdir()
+        class Child:
+            pid = 424243
+            returncode = None
+            def poll(self):
+                return self.returncode
+            def wait(self, timeout):
+                assert 0 < timeout <= target.grace
+                self.returncode = -signal.SIGTERM
+                return self.returncode
+        child = Child()
+        target.processes['editor'] = child
+        monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+        monkeypatch.setattr(target, 'capture', lambda: {} if child.returncode is not None else {
+            child.pid: {'state': 'Z', 'start': 'original'}})
+        receipt = target.cleanup()
+>       assert receipt['direct_waits']['editor']['wait_complete']
+E       assert False
+
+tests/test_linux_session.py:414: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_linux_session.py::test_cleanup_waits_for_owned_zombie_to_become_waitable
+1 failed in 0.20s
