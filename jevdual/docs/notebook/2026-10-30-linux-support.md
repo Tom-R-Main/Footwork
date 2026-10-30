@@ -68,3 +68,8 @@ Test: add explicit V4L2 device selection and Tesseract TSV OCR adapters; exercis
 Predicts: Linux OCR produces reviewable artifacts with engine-specific provenance; camera requests either bind a selected real character device or refuse before capture. Existing macOS conformance remains green.
 Against: adapter selection silently guesses a device, source pixels are modified, synthetic success is reported as physical capture, or the original review/replay boundary is bypassed.
 Refs: tools/camera-capture-experiment/capture.py; tools/desk-inbox-experiment/inbox.py; scripts/sync_tool_resources.py
+
+## LU5 · update · 2026-10-30 01:20
+Observed: native arm64 CUA built and the complete bundle installed. Its process executable identity is /usr/bin/mousepad. Public explicit-PID startup still refuses: Linux app discovery names the process Mousepad with desktop ID org.xfce.mousepad, while its window snapshot reports Org.xfce.mousepad. The fixture retained this failure before any input.
+Inferred: the current equality check conflates a desktop app ID with its display name. Normalize only a unique same-PID discovery record whose name or desktop ID matches the observed identifier; preserve all PID/window and unrelated-name refusals. Add a regression before changing this path.
+Refs: python/jevdual/native.py; python/jevdual/session.py; scripts/linux/qualify.py
