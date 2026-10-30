@@ -1,0 +1,62 @@
+{
+  "pid": 48598,
+  "window_id": 18262,
+  "candidates": [
+    {
+      "label": "Reload",
+      "value": null
+    },
+    {
+      "label": "View site information",
+      "value": null
+    },
+    {
+      "label": "Address and search bar",
+      "value": "127.0.0.1:57363"
+    },
+    {
+      "label": "Bookmark this tab",
+      "value": null
+    },
+    {
+      "label": "You",
+      "value": null
+    },
+    {
+      "label": "Chrome",
+      "value": null
+    },
+    {
+      "label": "request_id",
+      "value": "373e3c04209240c78de859a2de64c1b0"
+    },
+    {
+      "label": "artifact",
+      "value": "asset.png"
+    },
+    {
+      "label": "orientation",
+      "value": "clockwise90"
+    },
+    {
+      "label": "digest",
+      "value": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+    },
+    {
+      "label": "Tab search",
+      "value": null
+    },
+    {
+      "label": "Footwork owned ticket fixture - Memory usage - 36.2 MB",
+      "value": null
+    },
+    {
+      "label": "Close",
+      "value": null
+    },
+    {
+      "label": "New Tab",
+      "value": null
+    }
+  ]
+}

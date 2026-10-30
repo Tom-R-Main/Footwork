@@ -1,0 +1,47 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-sealed-interrupted",
+  "completion_policy": "sealed_fixture",
+  "submission_route": "fetch",
+  "posture": "exclusive_desktop",
+  "loss": "disconnect",
+  "interrupt": true,
+  "events": [
+    {
+      "label": "chrome-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Google Chrome",
+        "--window",
+        "Footwork owned ticket fixture",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-sealed-interrupted/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "76154",
+        "--native-url",
+        "http://127.0.0.1:61020",
+        "--native-title",
+        "Footwork owned ticket fixture",
+        "--ticket-manifest",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-sealed-interrupted/ticket-manifest.json"
+      ],
+      "exit": 2,
+      "summary": []
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "component_only": "native Chrome diagnostic; no cross-app qualification claimed",
+  "expected": {
+    "request_id": "9f3f89d0667b48c784dd72f9bb010abd",
+    "artifact": "asset.png",
+    "orientation": "clockwise90",
+    "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+  },
+  "chrome_readiness": 18451
+}

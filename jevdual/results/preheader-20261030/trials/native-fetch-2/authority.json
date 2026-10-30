@@ -1,0 +1,882 @@
+[
+  {
+    "operation_id": "op_529c08217759",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 51479,
+        "start": "0x1.ab906efe9d413p+30",
+        "window_id": 18340
+      },
+      "dispatched": true,
+      "driver_effect": "unverifiable",
+      "error": "operation outcome unknown; inspect status, do not repeat input",
+      "intended": null,
+      "line": "click(Register asset)",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:58126"
+      },
+      "observation": "s00000001",
+      "op": "click",
+      "secret": false,
+      "step": 5,
+      "target_id": 18,
+      "target_label": "Register asset",
+      "ticket_submission": {
+        "baseline": {
+          "counts": {
+            "ingress": 0,
+            "responses": 0,
+            "tickets": 0
+          },
+          "ingress": [],
+          "responses": [],
+          "tickets": []
+        },
+        "baseline_sha256": "f1e00ccfb4bd51fca717fee34d85ab04ecc3250740d463b7b17cbaa3ee084927",
+        "captured_at": 1793334226.2457879,
+        "kind": "ticket_preparation",
+        "schema_version": 2,
+        "scope": {
+          "artifact": {
+            "device": 16777234,
+            "inode": 391705567,
+            "mtime_ns": 1793334207514657364,
+            "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/fixture/inbox/asset.png",
+            "sha256": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+            "size": 83
+          },
+          "bound_at": 1793334208.7795131,
+          "expected": {
+            "artifact": "asset.png",
+            "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+            "orientation": "clockwise90",
+            "request_id": "32288bffd538425997d33fbf811e8ce6"
+          },
+          "kind": "ticket_scope",
+          "root": "/Users/thomasmain/projects/footwork/output/preheader-20261030",
+          "schema_version": 2,
+          "source": {
+            "ancestors": [
+              {
+                "device": 16777234,
+                "inode": 2,
+                "path": "/"
+              },
+              {
+                "device": 16777234,
+                "inode": 17204,
+                "path": "/Users"
+              },
+              {
+                "device": 16777234,
+                "inode": 29517,
+                "path": "/Users/thomasmain"
+              },
+              {
+                "device": 16777234,
+                "inode": 1565109,
+                "path": "/Users/thomasmain/projects"
+              },
+              {
+                "device": 16777234,
+                "inode": 250201729,
+                "path": "/Users/thomasmain/projects/footwork"
+              },
+              {
+                "device": 16777234,
+                "inode": 281924148,
+                "path": "/Users/thomasmain/projects/footwork/output"
+              },
+              {
+                "device": 16777234,
+                "inode": 391608781,
+                "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030"
+              },
+              {
+                "device": 16777234,
+                "inode": 391705528,
+                "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2"
+              },
+              {
+                "device": 16777234,
+                "inode": 391705582,
+                "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/ticket-fixture"
+              }
+            ],
+            "database": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/ticket-fixture/tickets.sqlite",
+            "fixture_id": "0a2564f61acf4db4ad3e211440d9b6b2",
+            "identity": {
+              "device": 16777234,
+              "inode": 391705583,
+              "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/ticket-fixture/tickets.sqlite"
+            },
+            "origin": "http://127.0.0.1:58126",
+            "response_mode": "disconnect",
+            "root": {
+              "device": 16777234,
+              "inode": 391608781,
+              "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030"
+            }
+          },
+          "url": "http://127.0.0.1:58126"
+        }
+      },
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:58126"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 51479,
+        "visited": 39,
+        "window_id": 18340
+      },
+      "exec_ms": 480.73004197794944,
+      "execution_interval": {
+        "end": 1793334226.728031,
+        "start": 1793334226.247297
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 51479,
+          "start": "0x1.ab906efe9d413p+30",
+          "window_id": 18340
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "unverifiable",
+        "error": null,
+        "interval": {
+          "end": 1793334226.728031,
+          "start": 1793334226.247297
+        },
+        "kind": "execution",
+        "move": "click",
+        "observation": "s00000001",
+        "operation_id": "op_529c08217759",
+        "phase": "ambiguous",
+        "producer": {
+          "delivered_count": null,
+          "delivery_basis": "unknown",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 51479,
+            "start": "0x1.ab906efe9d413p+30",
+            "window_id": 18340
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:58126"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 51479,
+            "visited": 39,
+            "window_id": 18340
+          },
+          "dispatched": true,
+          "driver_effect": "unverifiable",
+          "error": null,
+          "exec_ms": 480.73004197794944,
+          "execution_interval": {
+            "end": 1793334226.728031,
+            "start": 1793334226.247297
+          },
+          "intended": null,
+          "line": "click(Register asset)",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:58126"
+          },
+          "observation": "s00000001",
+          "op": "click",
+          "operation_id": "op_529c08217759",
+          "secret": false,
+          "step": 5,
+          "target_id": 18,
+          "target_label": "Register asset"
+        },
+        "protocol": 1,
+        "request_digest": "44da64befb503f46d9ca49935c0fdda75a25c8cb0978fa4537df07b086a9eb08",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":51479,\"start\":\"0x1.ab906efe9d413p+30\"}",
+        "schema_version": "1",
+        "session_id": "6896dc151ebe4057b8d4ce55fc9dd62c",
+        "target": "18"
+      },
+      "operation_id": "op_529c08217759"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_3c68ab78a23b",
+    "client_token": "type-digest",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 51479,
+        "start": "0x1.ab906efe9d413p+30",
+        "window_id": 18340
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+      "line": "type(digest) text='f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa9'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:58126"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 4,
+      "target_id": 17,
+      "target_label": "digest",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:58126"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 51479,
+        "visited": 39,
+        "window_id": 18340
+      },
+      "exec_ms": 3482.88066603709,
+      "execution_interval": {
+        "end": 1793334224.429407,
+        "start": 1793334220.946496
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 51479,
+          "start": "0x1.ab906efe9d413p+30",
+          "window_id": 18340
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793334224.429407,
+          "start": 1793334220.946496
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_3c68ab78a23b",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 64,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 51479,
+            "start": "0x1.ab906efe9d413p+30",
+            "window_id": 18340
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:58126"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 51479,
+            "visited": 39,
+            "window_id": 18340
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 3482.88066603709,
+          "execution_interval": {
+            "end": 1793334224.429407,
+            "start": 1793334220.946496
+          },
+          "intended": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "line": "type(digest) text='f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa9'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:58126"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_3c68ab78a23b",
+          "secret": false,
+          "step": 4,
+          "target_id": 17,
+          "target_label": "digest"
+        },
+        "protocol": 1,
+        "request_digest": "a34862229243f445921d99abef30162193f2025ad1e7078f70927865d85a27ea",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":51479,\"start\":\"0x1.ab906efe9d413p+30\"}",
+        "schema_version": "1",
+        "session_id": "6896dc151ebe4057b8d4ce55fc9dd62c",
+        "target": "17"
+      },
+      "operation_id": "op_3c68ab78a23b"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_8550105b57d2",
+    "client_token": "type-orientation",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 51479,
+        "start": "0x1.ab906efe9d413p+30",
+        "window_id": 18340
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "clockwise90",
+      "line": "type(orientation) text='clockwise90'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:58126"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 3,
+      "target_id": 15,
+      "target_label": "orientation",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:58126"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 51479,
+        "visited": 39,
+        "window_id": 18340
+      },
+      "exec_ms": 1256.5996249904856,
+      "execution_interval": {
+        "end": 1793334219.113031,
+        "start": 1793334217.8564212
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 51479,
+          "start": "0x1.ab906efe9d413p+30",
+          "window_id": 18340
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793334219.113031,
+          "start": 1793334217.8564212
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_8550105b57d2",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 11,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 51479,
+            "start": "0x1.ab906efe9d413p+30",
+            "window_id": 18340
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:58126"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 51479,
+            "visited": 39,
+            "window_id": 18340
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 1256.5996249904856,
+          "execution_interval": {
+            "end": 1793334219.113031,
+            "start": 1793334217.8564212
+          },
+          "intended": "clockwise90",
+          "line": "type(orientation) text='clockwise90'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:58126"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_8550105b57d2",
+          "secret": false,
+          "step": 3,
+          "target_id": 15,
+          "target_label": "orientation"
+        },
+        "protocol": 1,
+        "request_digest": "d423fc943daa5535d6d416e15ba87196043294ebf772e7dc1637edae5262343c",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":51479,\"start\":\"0x1.ab906efe9d413p+30\"}",
+        "schema_version": "1",
+        "session_id": "6896dc151ebe4057b8d4ce55fc9dd62c",
+        "target": "15"
+      },
+      "operation_id": "op_8550105b57d2"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_9b2ba4902ce6",
+    "client_token": "type-artifact",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 51479,
+        "start": "0x1.ab906efe9d413p+30",
+        "window_id": 18340
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "asset.png",
+      "line": "type(artifact) text='asset.png'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:58126"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 2,
+      "target_id": 13,
+      "target_label": "artifact",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:58126"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 51479,
+        "visited": 39,
+        "window_id": 18340
+      },
+      "exec_ms": 1191.9871250283904,
+      "execution_interval": {
+        "end": 1793334215.988085,
+        "start": 1793334214.7960892
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 51479,
+          "start": "0x1.ab906efe9d413p+30",
+          "window_id": 18340
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793334215.988085,
+          "start": 1793334214.7960892
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_9b2ba4902ce6",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 9,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 51479,
+            "start": "0x1.ab906efe9d413p+30",
+            "window_id": 18340
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:58126"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 51479,
+            "visited": 39,
+            "window_id": 18340
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 1191.9871250283904,
+          "execution_interval": {
+            "end": 1793334215.988085,
+            "start": 1793334214.7960892
+          },
+          "intended": "asset.png",
+          "line": "type(artifact) text='asset.png'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:58126"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_9b2ba4902ce6",
+          "secret": false,
+          "step": 2,
+          "target_id": 13,
+          "target_label": "artifact"
+        },
+        "protocol": 1,
+        "request_digest": "5394b2eda0417a459ffd6a361e93a756a533be15c436b896bf57f2e2a970eef1",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":51479,\"start\":\"0x1.ab906efe9d413p+30\"}",
+        "schema_version": "1",
+        "session_id": "6896dc151ebe4057b8d4ce55fc9dd62c",
+        "target": "13"
+      },
+      "operation_id": "op_9b2ba4902ce6"
+    },
+    "error": null
+  },
+  {
+    "operation_id": "op_41795114c422",
+    "client_token": "type-request_id",
+    "state": "final",
+    "disposition": "applied",
+    "phase": "sent",
+    "reservation": null,
+    "projection": {
+      "app": "Google Chrome",
+      "binding": {
+        "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+        "pid": 51479,
+        "start": "0x1.ab906efe9d413p+30",
+        "window_id": 18340
+      },
+      "dispatched": true,
+      "driver_effect": "confirmed",
+      "error": null,
+      "intended": "32288bffd538425997d33fbf811e8ce6",
+      "line": "type(request_id) text='32288bffd538425997d33fbf811e8ce6'",
+      "mode": "native",
+      "native_scope": {
+        "title": "Footwork owned ticket fixture",
+        "url": "http://127.0.0.1:58126"
+      },
+      "observation": "s00000001",
+      "op": "type",
+      "secret": false,
+      "step": 1,
+      "target_id": 11,
+      "target_label": "request_id",
+      "chrome_scope_evidence": {
+        "address_bars": [
+          {
+            "ancestry": [
+              "AXWindow",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXGroup",
+              "AXToolbar",
+              "AXGroup"
+            ],
+            "identifier": null,
+            "role": "AXTextField",
+            "value": "127.0.0.1:58126"
+          }
+        ],
+        "complete": true,
+        "errors": [],
+        "excluded_web_areas": 1,
+        "method": "chrome.ax-toolbar/v1",
+        "pid": 51479,
+        "visited": 39,
+        "window_id": 18340
+      },
+      "exec_ms": 2196.6809579753317,
+      "execution_interval": {
+        "end": 1793334212.934599,
+        "start": 1793334210.7379
+      },
+      "execution_receipt": {
+        "binding": {
+          "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+          "pid": 51479,
+          "start": "0x1.ab906efe9d413p+30",
+          "window_id": 18340
+        },
+        "custody": "returned",
+        "dispatched": true,
+        "effect": "confirmed",
+        "error": null,
+        "interval": {
+          "end": 1793334212.934599,
+          "start": 1793334210.7379
+        },
+        "kind": "execution",
+        "move": "type",
+        "observation": "s00000001",
+        "operation_id": "op_41795114c422",
+        "phase": "sent",
+        "producer": {
+          "delivered_count": 32,
+          "delivery_basis": "sdk_delivery_count",
+          "name": "footwork.native",
+          "version": 1
+        },
+        "projection": {
+          "app": "Google Chrome",
+          "binding": {
+            "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+            "pid": 51479,
+            "start": "0x1.ab906efe9d413p+30",
+            "window_id": 18340
+          },
+          "chrome_scope_evidence": {
+            "address_bars": [
+              {
+                "ancestry": [
+                  "AXWindow",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXGroup",
+                  "AXToolbar",
+                  "AXGroup"
+                ],
+                "identifier": null,
+                "role": "AXTextField",
+                "value": "127.0.0.1:58126"
+              }
+            ],
+            "complete": true,
+            "errors": [],
+            "excluded_web_areas": 1,
+            "method": "chrome.ax-toolbar/v1",
+            "pid": 51479,
+            "visited": 39,
+            "window_id": 18340
+          },
+          "dispatched": true,
+          "driver_effect": "confirmed",
+          "error": null,
+          "exec_ms": 2196.6809579753317,
+          "execution_interval": {
+            "end": 1793334212.934599,
+            "start": 1793334210.7379
+          },
+          "intended": "32288bffd538425997d33fbf811e8ce6",
+          "line": "type(request_id) text='32288bffd538425997d33fbf811e8ce6'",
+          "mode": "native",
+          "native_scope": {
+            "title": "Footwork owned ticket fixture",
+            "url": "http://127.0.0.1:58126"
+          },
+          "observation": "s00000001",
+          "op": "type",
+          "operation_id": "op_41795114c422",
+          "secret": false,
+          "step": 1,
+          "target_id": 11,
+          "target_label": "request_id"
+        },
+        "protocol": 1,
+        "request_digest": "93513ddc4616b094b073fedea859afa0b3f2f79e526ba0a63c852d26ed1e120c",
+        "resource": "native:{\"boot\":\"1F825449-CCDF-4D20-874A-5B4751D91889\",\"pid\":51479,\"start\":\"0x1.ab906efe9d413p+30\"}",
+        "schema_version": "1",
+        "session_id": "6896dc151ebe4057b8d4ce55fc9dd62c",
+        "target": "11"
+      },
+      "operation_id": "op_41795114c422"
+    },
+    "error": null
+  }
+]

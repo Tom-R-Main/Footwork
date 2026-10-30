@@ -1,0 +1,229 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-2",
+  "posture": "exclusive_desktop",
+  "loss": "disconnect",
+  "interrupt": false,
+  "events": [
+    {
+      "label": "chrome-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Google Chrome",
+        "--window",
+        "Footwork owned ticket fixture",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-2/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "17828",
+        "--native-url",
+        "http://127.0.0.1:53339",
+        "--native-title",
+        "Footwork owned ticket fixture",
+        "--ticket-manifest",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-2/ticket-manifest.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "type-request_id",
+      "words": [
+        "do",
+        "type",
+        "textbox:request_id",
+        "9f3f450811454b8fafaa31d4a3ba4150",
+        "--no-judge",
+        "--token",
+        "type-request_id"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(request_id) text='9f3f450811454b8fafaa31d4a3ba4150': driver says confirmed in 2.2s"
+      ]
+    },
+    {
+      "label": "type-artifact",
+      "words": [
+        "do",
+        "type",
+        "textbox:artifact",
+        "asset.png",
+        "--no-judge",
+        "--token",
+        "type-artifact"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(artifact) text='asset.png': driver says confirmed in 1.2s"
+      ]
+    },
+    {
+      "label": "type-orientation",
+      "words": [
+        "do",
+        "type",
+        "textbox:orientation",
+        "clockwise90",
+        "--no-judge",
+        "--token",
+        "type-orientation"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(orientation) text='clockwise90': driver says confirmed in 1.3s"
+      ]
+    },
+    {
+      "label": "type-digest",
+      "words": [
+        "do",
+        "type",
+        "textbox:digest",
+        "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+        "--no-judge",
+        "--token",
+        "type-digest"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(digest) text='f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa9': driver says confirmed in 3.7s"
+      ]
+    },
+    {
+      "label": "submit",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 7,
+      "summary": [
+        "dispatched click(Register asset): driver says unverifiable (operation outcome unknown; inspect status, do not repeat input) in 0.5s",
+        "stopped: native_scope_changed: the observed window lacks the fixture title nonce"
+      ]
+    },
+    {
+      "label": "reconcile",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "submit-replay",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "reconcile-repeat",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "component_only": "native Chrome diagnostic; no cross-app qualification claimed",
+  "expected": {
+    "request_id": "9f3f450811454b8fafaa31d4a3ba4150",
+    "artifact": "asset.png",
+    "orientation": "clockwise90",
+    "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+  },
+  "chrome_readiness": 18109,
+  "submission_before_reconcile": {
+    "operation_id": "op_e4029f9cfa61",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "error": null
+  },
+  "submission_after_reconcile": {
+    "operation_id": "op_e4029f9cfa61",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "error": null
+  },
+  "ticket_oracle": {
+    "schema_version": 1,
+    "kind": "ticket_oracle",
+    "database": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-2/ticket-fixture/tickets.sqlite",
+    "expected": {
+      "request_id": "9f3f450811454b8fafaa31d4a3ba4150",
+      "artifact": "asset.png",
+      "orientation": "clockwise90",
+      "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+    },
+    "checked_at": 1793333839.1690938,
+    "ok": false,
+    "detail": "ticket fields, row or independent ingress count differ",
+    "ingress": [
+      {
+        "id": 1,
+        "received": 1793333837.539489,
+        "body_sha": "199be7af2d343e67c6af541a884412deefc9d11080f9469254a2b03c40edf765",
+        "fields": {
+          "artifact": "asset.png",
+          "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "orientation": "clockwise90",
+          "request_id": "9f3f450811454b8fafaa31d4a3ba4150"
+        },
+        "error": null,
+        "origin": "http://127.0.0.1:53339",
+        "response_mode": "disconnect"
+      },
+      {
+        "id": 2,
+        "received": 1793333837.544412,
+        "body_sha": "199be7af2d343e67c6af541a884412deefc9d11080f9469254a2b03c40edf765",
+        "fields": {
+          "artifact": "asset.png",
+          "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "orientation": "clockwise90",
+          "request_id": "9f3f450811454b8fafaa31d4a3ba4150"
+        },
+        "error": null,
+        "origin": "http://127.0.0.1:53339",
+        "response_mode": "disconnect"
+      }
+    ],
+    "tickets": [
+      {
+        "artifact": "asset.png",
+        "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+        "orientation": "clockwise90",
+        "request_id": "9f3f450811454b8fafaa31d4a3ba4150"
+      }
+    ],
+    "responses": []
+  },
+  "replay_no_additional_ingress": true,
+  "status": "observed"
+}

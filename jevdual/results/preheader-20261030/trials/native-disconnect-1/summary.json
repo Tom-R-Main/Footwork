@@ -1,0 +1,44 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-1",
+  "posture": "exclusive_desktop",
+  "loss": "disconnect",
+  "interrupt": false,
+  "events": [
+    {
+      "label": "chrome-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Google Chrome",
+        "--window",
+        "Footwork owned ticket fixture",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-1/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "16435",
+        "--native-url",
+        "http://127.0.0.1:53239",
+        "--native-title",
+        "Footwork owned ticket fixture",
+        "--ticket-manifest",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-1/ticket-manifest.json"
+      ],
+      "exit": 2,
+      "summary": []
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "component_only": "native Chrome diagnostic; no cross-app qualification claimed",
+  "expected": {
+    "request_id": "ba309674ce0a42c4bed82e0646c13d2b",
+    "artifact": "asset.png",
+    "orientation": "clockwise90",
+    "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+  }
+}

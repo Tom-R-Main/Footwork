@@ -8,7 +8,7 @@ footwork desktop start "Inspect the selected window" --app Calculator \
 footwork desktop status --session /absolute/path/session-a
 ```
 
-Every participating session must select the same canonical absolute authority database. Existing sessions without `authority`, the browser route, MCP, autonomous loops, older binaries and other authority databases are outside this coordination guarantee. The [October 28 installed trials](../results/move-submit-20261028/report.md) exercised the owned nominal and interrupted/truncated-response app chains. Those are finite fixture results; the pre-header-disconnect qualification gate remains open. The October 29 review tightens recovery and service-evidence gates without expanding that support claim.
+Every participating session must select the same canonical absolute authority database. Existing sessions without `authority`, the browser route, MCP, autonomous loops, older binaries and other authority databases are outside this coordination guarantee. The [October 28 installed trials](../results/move-submit-20261028/report.md) exercised the owned nominal and interrupted/truncated-response app chains. Those are finite historical fixture results. The [October 30 qualification](../results/preheader-20261030/report.md) additionally checks the narrow fetch/sealed-source v3 workflow under interrupted pre-header loss; the default navigation fault remains unsupported. The October 29 review tightens recovery and service-evidence gates without expanding that support claim.
 
 ## Commands and replay
 
@@ -54,7 +54,7 @@ For a fresh owned fixture, the optional manifest field `"completion_policy": "se
 
 V3 binds a fresh source epoch before admission and remains unknown while that source is open. In the owned qualification workflow, retire the exact browser, then cooperatively terminate the recorded fixture process. Its context manager stops accepts, closes the listener, drains every accepted request handler and atomically seals the final snapshot. Later source writes and reopening refuse. Reconciliation can then validate one exact committed ingress/row against that pre-admitted epoch and its terminal seal without requiring response headers. Duplicate ingress, missing or contradictory seals and changed source/artifact identity remain unknown; replay dispatches no input. Abrupt process death or waiting alone is insufficient.
 
-This is cooperative source-epoch completion, not browser/network termination or authentication of arbitrary SQLite contents. A v1/v2 unknown cannot acquire the v3 policy retrospectively. The retained service proof stays distinct from native delivery evidence, and Chrome handoff recaptures the same bound sealed source. Installed v3 qualification is pending; see the [phase report](../results/preheader-20261030/report.md) for the eventual artifact and verdict.
+This is cooperative source-epoch completion, not browser/network termination or authentication of arbitrary SQLite contents. A v1/v2 unknown cannot acquire the v3 policy retrospectively. The retained service proof stays distinct from native delivery evidence, and Chrome handoff recaptures the same bound sealed source. Installed v3 qualification passed on runtime 6c0f8a0; see the [phase report](../results/preheader-20261030/report.md) for the eventual artifact and verdict.
 
 ## Current limits
 

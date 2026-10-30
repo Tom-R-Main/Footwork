@@ -1,0 +1,3563 @@
+{
+  "group": "controls-initial",
+  "schedule": [
+    {
+      "id": "http-normal-1",
+      "kind": "http",
+      "mode": "normal",
+      "state": "observed"
+    },
+    {
+      "id": "http-normal-2",
+      "kind": "http",
+      "mode": "normal",
+      "state": "observed"
+    },
+    {
+      "id": "http-truncated-1",
+      "kind": "http",
+      "mode": "truncated",
+      "state": "observed"
+    },
+    {
+      "id": "http-truncated-2",
+      "kind": "http",
+      "mode": "truncated",
+      "state": "observed"
+    },
+    {
+      "id": "http-disconnect-1",
+      "kind": "http",
+      "mode": "disconnect",
+      "state": "observed"
+    },
+    {
+      "id": "http-disconnect-2",
+      "kind": "http",
+      "mode": "disconnect",
+      "state": "observed"
+    },
+    {
+      "id": "chrome-normal-1",
+      "kind": "chrome",
+      "mode": "normal",
+      "state": "observed"
+    },
+    {
+      "id": "chrome-normal-2",
+      "kind": "chrome",
+      "mode": "normal",
+      "state": "observed"
+    },
+    {
+      "id": "chrome-truncated-1",
+      "kind": "chrome",
+      "mode": "truncated",
+      "state": "observed"
+    },
+    {
+      "id": "chrome-truncated-2",
+      "kind": "chrome",
+      "mode": "truncated",
+      "state": "observed"
+    },
+    {
+      "id": "chrome-disconnect-1",
+      "kind": "chrome",
+      "mode": "disconnect",
+      "state": "observed"
+    },
+    {
+      "id": "chrome-disconnect-2",
+      "kind": "chrome",
+      "mode": "disconnect",
+      "state": "observed"
+    }
+  ],
+  "results": [
+    {
+      "kind": "http",
+      "mode": "normal",
+      "client": {
+        "activation_calls": 1,
+        "error": null
+      },
+      "handlers": [
+        {
+          "received": 1793333836.528756,
+          "connection": [
+            "127.0.0.1",
+            53542
+          ],
+          "path": "/tickets",
+          "returned": 1793333836.5305989
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "47bb7c653b0b2c1441f2fe3cd3fbc73475d724ac7a8e2035e037b5f1fd298b6e"
+      ],
+      "native_qualification": false,
+      "id": "http-normal-1"
+    },
+    {
+      "kind": "http",
+      "mode": "normal",
+      "client": {
+        "activation_calls": 1,
+        "error": null
+      },
+      "handlers": [
+        {
+          "received": 1793333837.0354822,
+          "connection": [
+            "127.0.0.1",
+            53544
+          ],
+          "path": "/tickets",
+          "returned": 1793333837.037184
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "16ebd3e8d74d6bc984eddef5ecd0d60ffa49be8c8a94379a302a09cbc1049f24"
+      ],
+      "native_qualification": false,
+      "id": "http-normal-2"
+    },
+    {
+      "kind": "http",
+      "mode": "truncated",
+      "client": {
+        "activation_calls": 1,
+        "error": "IncompleteRead"
+      },
+      "handlers": [
+        {
+          "received": 1793333837.547881,
+          "connection": [
+            "127.0.0.1",
+            53548
+          ],
+          "path": "/tickets",
+          "returned": 1793333837.549641
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "26061775e8f931f7c04c4aa438dd42529b0f9cf3570a5adcce2b6c0b3b0affa9"
+      ],
+      "native_qualification": false,
+      "id": "http-truncated-1"
+    },
+    {
+      "kind": "http",
+      "mode": "truncated",
+      "client": {
+        "activation_calls": 1,
+        "error": "IncompleteRead"
+      },
+      "handlers": [
+        {
+          "received": 1793333838.06033,
+          "connection": [
+            "127.0.0.1",
+            53550
+          ],
+          "path": "/tickets",
+          "returned": 1793333838.061611
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "7d0df0d73621b6779e963ee682f2cc902ee7c2528c382ddf14e5714294248d76"
+      ],
+      "native_qualification": false,
+      "id": "http-truncated-2"
+    },
+    {
+      "kind": "http",
+      "mode": "disconnect",
+      "client": {
+        "activation_calls": 1,
+        "error": "RemoteDisconnected"
+      },
+      "handlers": [
+        {
+          "received": 1793333838.575588,
+          "connection": [
+            "127.0.0.1",
+            53552
+          ],
+          "path": "/tickets",
+          "returned": 1793333838.577332
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "b5a73fc2e81d25360909318a5310d77de50bed5564029b1022ed9e47d41d7cac"
+      ],
+      "native_qualification": false,
+      "id": "http-disconnect-1"
+    },
+    {
+      "kind": "http",
+      "mode": "disconnect",
+      "client": {
+        "activation_calls": 1,
+        "error": "RemoteDisconnected"
+      },
+      "handlers": [
+        {
+          "received": 1793333839.082697,
+          "connection": [
+            "127.0.0.1",
+            53554
+          ],
+          "path": "/tickets",
+          "returned": 1793333839.083271
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "6ba9c8a226de79ffe9712269c7bf0b07b92a0c1eea91c9fe407e0b4af2aa03ae"
+      ],
+      "native_qualification": false,
+      "id": "http-disconnect-2"
+    },
+    {
+      "kind": "chrome",
+      "mode": "normal",
+      "client": {
+        "activation_calls": 1,
+        "submit_events": 1,
+        "post_requests": [
+          "64B5BD968C112F483483E1207A4C7210"
+        ],
+        "network_failures": [],
+        "browser_version": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.79",
+          "revision": "@a21ce95c24ce3964416f09ae1862f53f319eb4d0",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "observation_limit": "two-second diagnostic observation; not a terminal service proof",
+        "netlog_events": [
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475196",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475196",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342475196",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475228",
+            "source": {
+              "id": 79,
+              "start_time": "342475227",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475228",
+            "source": {
+              "id": 79,
+              "start_time": "342475227",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342475228",
+            "source": {
+              "id": 79,
+              "start_time": "342475227",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342475229",
+            "source": {
+              "id": 79,
+              "start_time": "342475227",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475229",
+            "source": {
+              "id": 79,
+              "start_time": "342475227",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475269",
+            "source": {
+              "id": 104,
+              "start_time": "342475268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475269",
+            "source": {
+              "id": 104,
+              "start_time": "342475268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342475269",
+            "source": {
+              "id": 104,
+              "start_time": "342475268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342475269",
+            "source": {
+              "id": 104,
+              "start_time": "342475268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475269",
+            "source": {
+              "id": 104,
+              "start_time": "342475268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475280",
+            "source": {
+              "id": 112,
+              "start_time": "342475280",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475280",
+            "source": {
+              "id": 112,
+              "start_time": "342475280",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342475280",
+            "source": {
+              "id": 112,
+              "start_time": "342475280",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342475283",
+            "source": {
+              "id": 112,
+              "start_time": "342475280",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475283",
+            "source": {
+              "id": 112,
+              "start_time": "342475280",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342475339",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342475339",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342475339",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475339",
+            "source": {
+              "id": 9,
+              "start_time": "342475165",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475405",
+            "source": {
+              "id": 66,
+              "start_time": "342475213",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475405",
+            "source": {
+              "id": 66,
+              "start_time": "342475213",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475406",
+            "source": {
+              "id": 29,
+              "start_time": "342475183",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475406",
+            "source": {
+              "id": 29,
+              "start_time": "342475183",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475407",
+            "source": {
+              "id": 25,
+              "start_time": "342475179",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475407",
+            "source": {
+              "id": 25,
+              "start_time": "342475179",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475407",
+            "source": {
+              "id": 88,
+              "start_time": "342475256",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475407",
+            "source": {
+              "id": 88,
+              "start_time": "342475256",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475410",
+            "source": {
+              "id": 22,
+              "start_time": "342475170",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475410",
+            "source": {
+              "id": 22,
+              "start_time": "342475170",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475431",
+            "source": {
+              "id": 29,
+              "start_time": "342475183",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475451",
+            "source": {
+              "id": 66,
+              "start_time": "342475213",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475451",
+            "source": {
+              "id": 22,
+              "start_time": "342475170",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475451",
+            "source": {
+              "id": 25,
+              "start_time": "342475179",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475452",
+            "source": {
+              "id": 88,
+              "start_time": "342475256",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475475",
+            "source": {
+              "id": 148,
+              "start_time": "342475452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475475",
+            "source": {
+              "id": 148,
+              "start_time": "342475452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342475475",
+            "source": {
+              "id": 148,
+              "start_time": "342475452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342475508",
+            "source": {
+              "id": 148,
+              "start_time": "342475452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475508",
+            "source": {
+              "id": 148,
+              "start_time": "342475452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342475556",
+            "source": {
+              "id": 155,
+              "start_time": "342475554",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342475556",
+            "source": {
+              "id": 155,
+              "start_time": "342475554",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342475601",
+            "source": {
+              "id": 155,
+              "start_time": "342475554",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342477322",
+            "source": {
+              "id": 177,
+              "start_time": "342477321",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342477322",
+            "source": {
+              "id": 177,
+              "start_time": "342477321",
+              "type": 1
+            },
+            "params": {}
+          }
+        ]
+      },
+      "handlers": [
+        {
+          "received": 1793333840.1379762,
+          "connection": [
+            "127.0.0.1",
+            53576
+          ],
+          "path": "/tickets",
+          "returned": 1793333840.140963
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "3ac546bf9ee794ab064e9293fc0753a3668cc07b4aac397fde5c491a13a6f577"
+      ],
+      "native_qualification": false,
+      "id": "chrome-normal-1"
+    },
+    {
+      "kind": "chrome",
+      "mode": "normal",
+      "client": {
+        "activation_calls": 1,
+        "submit_events": 1,
+        "post_requests": [
+          "AFA64FED91AD7C39C3FEA4E17C633C41"
+        ],
+        "network_failures": [],
+        "browser_version": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.79",
+          "revision": "@a21ce95c24ce3964416f09ae1862f53f319eb4d0",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "observation_limit": "two-second diagnostic observation; not a terminal service proof",
+        "netlog_events": [
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478239",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478239",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342478239",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478266",
+            "source": {
+              "id": 79,
+              "start_time": "342478266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478266",
+            "source": {
+              "id": 79,
+              "start_time": "342478266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342478266",
+            "source": {
+              "id": 79,
+              "start_time": "342478266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342478267",
+            "source": {
+              "id": 79,
+              "start_time": "342478266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478267",
+            "source": {
+              "id": 79,
+              "start_time": "342478266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478289",
+            "source": {
+              "id": 104,
+              "start_time": "342478289",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478289",
+            "source": {
+              "id": 104,
+              "start_time": "342478289",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342478289",
+            "source": {
+              "id": 104,
+              "start_time": "342478289",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342478290",
+            "source": {
+              "id": 104,
+              "start_time": "342478289",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478290",
+            "source": {
+              "id": 104,
+              "start_time": "342478289",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478299",
+            "source": {
+              "id": 112,
+              "start_time": "342478299",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478299",
+            "source": {
+              "id": 112,
+              "start_time": "342478299",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342478299",
+            "source": {
+              "id": 112,
+              "start_time": "342478299",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342478301",
+            "source": {
+              "id": 112,
+              "start_time": "342478299",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478301",
+            "source": {
+              "id": 112,
+              "start_time": "342478299",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342478308",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342478308",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342478308",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478308",
+            "source": {
+              "id": 9,
+              "start_time": "342478215",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478449",
+            "source": {
+              "id": 29,
+              "start_time": "342478229",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478449",
+            "source": {
+              "id": 29,
+              "start_time": "342478229",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478450",
+            "source": {
+              "id": 66,
+              "start_time": "342478254",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478450",
+            "source": {
+              "id": 66,
+              "start_time": "342478254",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478450",
+            "source": {
+              "id": 25,
+              "start_time": "342478228",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478450",
+            "source": {
+              "id": 25,
+              "start_time": "342478228",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478450",
+            "source": {
+              "id": 22,
+              "start_time": "342478216",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478450",
+            "source": {
+              "id": 22,
+              "start_time": "342478216",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478451",
+            "source": {
+              "id": 88,
+              "start_time": "342478284",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478451",
+            "source": {
+              "id": 88,
+              "start_time": "342478284",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478478",
+            "source": {
+              "id": 29,
+              "start_time": "342478229",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478488",
+            "source": {
+              "id": 22,
+              "start_time": "342478216",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478493",
+            "source": {
+              "id": 25,
+              "start_time": "342478228",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478493",
+            "source": {
+              "id": 88,
+              "start_time": "342478284",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478499",
+            "source": {
+              "id": 66,
+              "start_time": "342478254",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478525",
+            "source": {
+              "id": 155,
+              "start_time": "342478500",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478525",
+            "source": {
+              "id": 155,
+              "start_time": "342478500",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342478525",
+            "source": {
+              "id": 155,
+              "start_time": "342478500",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342478554",
+            "source": {
+              "id": 155,
+              "start_time": "342478500",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478554",
+            "source": {
+              "id": 155,
+              "start_time": "342478500",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342478594",
+            "source": {
+              "id": 162,
+              "start_time": "342478592",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342478594",
+            "source": {
+              "id": 162,
+              "start_time": "342478592",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342478638",
+            "source": {
+              "id": 162,
+              "start_time": "342478592",
+              "type": 1
+            },
+            "params": {}
+          }
+        ]
+      },
+      "handlers": [
+        {
+          "received": 1793333843.156289,
+          "connection": [
+            "127.0.0.1",
+            53616
+          ],
+          "path": "/tickets",
+          "returned": 1793333843.158753
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "52afae7a847bfb9108aeed31cbb141912304d59f91b0b298d43dfa3e8815f780"
+      ],
+      "native_qualification": false,
+      "id": "chrome-normal-2"
+    },
+    {
+      "kind": "chrome",
+      "mode": "truncated",
+      "client": {
+        "activation_calls": 1,
+        "submit_events": 1,
+        "post_requests": [
+          "3275301AF3E23D4A0A4C984A92E8771A"
+        ],
+        "network_failures": [
+          "net::ERR_CONTENT_LENGTH_MISMATCH"
+        ],
+        "browser_version": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.79",
+          "revision": "@a21ce95c24ce3964416f09ae1862f53f319eb4d0",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "observation_limit": "two-second diagnostic observation; not a terminal service proof",
+        "netlog_events": [
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481219",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481219",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342481219",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342481258",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342481258",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342481258",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481258",
+            "source": {
+              "id": 9,
+              "start_time": "342481192",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481269",
+            "source": {
+              "id": 91,
+              "start_time": "342481268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481269",
+            "source": {
+              "id": 91,
+              "start_time": "342481268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342481269",
+            "source": {
+              "id": 91,
+              "start_time": "342481268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342481269",
+            "source": {
+              "id": 91,
+              "start_time": "342481268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481269",
+            "source": {
+              "id": 91,
+              "start_time": "342481268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481317",
+            "source": {
+              "id": 112,
+              "start_time": "342481317",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481317",
+            "source": {
+              "id": 112,
+              "start_time": "342481317",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342481317",
+            "source": {
+              "id": 112,
+              "start_time": "342481317",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342481317",
+            "source": {
+              "id": 112,
+              "start_time": "342481317",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481317",
+            "source": {
+              "id": 112,
+              "start_time": "342481317",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481331",
+            "source": {
+              "id": 124,
+              "start_time": "342481331",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481331",
+            "source": {
+              "id": 124,
+              "start_time": "342481331",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342481331",
+            "source": {
+              "id": 124,
+              "start_time": "342481331",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342481333",
+            "source": {
+              "id": 124,
+              "start_time": "342481331",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481333",
+            "source": {
+              "id": 124,
+              "start_time": "342481331",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481336",
+            "source": {
+              "id": 29,
+              "start_time": "342481208",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481336",
+            "source": {
+              "id": 29,
+              "start_time": "342481208",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481340",
+            "source": {
+              "id": 25,
+              "start_time": "342481206",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481340",
+            "source": {
+              "id": 25,
+              "start_time": "342481206",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481341",
+            "source": {
+              "id": 66,
+              "start_time": "342481260",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481341",
+            "source": {
+              "id": 66,
+              "start_time": "342481260",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481341",
+            "source": {
+              "id": 22,
+              "start_time": "342481193",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481341",
+            "source": {
+              "id": 22,
+              "start_time": "342481193",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481359",
+            "source": {
+              "id": 100,
+              "start_time": "342481290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481359",
+            "source": {
+              "id": 100,
+              "start_time": "342481290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481361",
+            "source": {
+              "id": 29,
+              "start_time": "342481208",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481385",
+            "source": {
+              "id": 25,
+              "start_time": "342481206",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481385",
+            "source": {
+              "id": 22,
+              "start_time": "342481193",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481386",
+            "source": {
+              "id": 66,
+              "start_time": "342481260",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481398",
+            "source": {
+              "id": 100,
+              "start_time": "342481290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342481411",
+            "source": {
+              "id": 150,
+              "start_time": "342481389",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342481411",
+            "source": {
+              "id": 150,
+              "start_time": "342481389",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342481411",
+            "source": {
+              "id": 150,
+              "start_time": "342481389",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342481443",
+            "source": {
+              "id": 150,
+              "start_time": "342481389",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342481443",
+            "source": {
+              "id": 150,
+              "start_time": "342481389",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342483305",
+            "source": {
+              "id": 157,
+              "start_time": "342483304",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342483305",
+            "source": {
+              "id": 157,
+              "start_time": "342483304",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342483349",
+            "source": {
+              "id": 157,
+              "start_time": "342483304",
+              "type": 1
+            },
+            "params": {}
+          }
+        ]
+      },
+      "handlers": [
+        {
+          "received": 1793333846.189072,
+          "connection": [
+            "127.0.0.1",
+            53659
+          ],
+          "path": "/tickets",
+          "returned": 1793333846.191125
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "b7cea0204f0fb292ec810fb5b9f4d8dc1fa314efc4f98795e1f67ba5049b4632"
+      ],
+      "native_qualification": false,
+      "id": "chrome-truncated-1"
+    },
+    {
+      "kind": "chrome",
+      "mode": "truncated",
+      "client": {
+        "activation_calls": 1,
+        "submit_events": 1,
+        "post_requests": [
+          "00CF5AF7D7EDC90A1144B7332861D18C"
+        ],
+        "network_failures": [
+          "net::ERR_CONTENT_LENGTH_MISMATCH"
+        ],
+        "browser_version": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.79",
+          "revision": "@a21ce95c24ce3964416f09ae1862f53f319eb4d0",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "observation_limit": "two-second diagnostic observation; not a terminal service proof",
+        "netlog_events": [
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484272",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484272",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342484272",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484303",
+            "source": {
+              "id": 79,
+              "start_time": "342484303",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484304",
+            "source": {
+              "id": 79,
+              "start_time": "342484303",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342484304",
+            "source": {
+              "id": 79,
+              "start_time": "342484303",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342484304",
+            "source": {
+              "id": 79,
+              "start_time": "342484303",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484304",
+            "source": {
+              "id": 79,
+              "start_time": "342484303",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484334",
+            "source": {
+              "id": 100,
+              "start_time": "342484334",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484334",
+            "source": {
+              "id": 100,
+              "start_time": "342484334",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342484334",
+            "source": {
+              "id": 100,
+              "start_time": "342484334",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342484335",
+            "source": {
+              "id": 100,
+              "start_time": "342484334",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484335",
+            "source": {
+              "id": 100,
+              "start_time": "342484334",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342484340",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342484340",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342484340",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484340",
+            "source": {
+              "id": 9,
+              "start_time": "342484245",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484341",
+            "source": {
+              "id": 29,
+              "start_time": "342484268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484341",
+            "source": {
+              "id": 29,
+              "start_time": "342484268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484341",
+            "source": {
+              "id": 25,
+              "start_time": "342484266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484341",
+            "source": {
+              "id": 25,
+              "start_time": "342484266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484347",
+            "source": {
+              "id": 125,
+              "start_time": "342484347",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484347",
+            "source": {
+              "id": 125,
+              "start_time": "342484347",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342484347",
+            "source": {
+              "id": 125,
+              "start_time": "342484347",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342484349",
+            "source": {
+              "id": 125,
+              "start_time": "342484347",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484349",
+            "source": {
+              "id": 125,
+              "start_time": "342484347",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484385",
+            "source": {
+              "id": 29,
+              "start_time": "342484268",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484386",
+            "source": {
+              "id": 25,
+              "start_time": "342484266",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484402",
+            "source": {
+              "id": 66,
+              "start_time": "342484290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484402",
+            "source": {
+              "id": 66,
+              "start_time": "342484290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484407",
+            "source": {
+              "id": 88,
+              "start_time": "342484330",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484407",
+            "source": {
+              "id": 88,
+              "start_time": "342484330",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484409",
+            "source": {
+              "id": 22,
+              "start_time": "342484246",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484409",
+            "source": {
+              "id": 22,
+              "start_time": "342484246",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484449",
+            "source": {
+              "id": 22,
+              "start_time": "342484246",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484450",
+            "source": {
+              "id": 88,
+              "start_time": "342484330",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484450",
+            "source": {
+              "id": 66,
+              "start_time": "342484290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342484474",
+            "source": {
+              "id": 147,
+              "start_time": "342484452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342484474",
+            "source": {
+              "id": 147,
+              "start_time": "342484452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342484474",
+            "source": {
+              "id": 147,
+              "start_time": "342484452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342484506",
+            "source": {
+              "id": 147,
+              "start_time": "342484452",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342484506",
+            "source": {
+              "id": 147,
+              "start_time": "342484452",
+              "type": 1
+            },
+            "params": {}
+          }
+        ]
+      },
+      "handlers": [
+        {
+          "received": 1793333849.20458,
+          "connection": [
+            "127.0.0.1",
+            53692
+          ],
+          "path": "/tickets",
+          "returned": 1793333849.207098
+        }
+      ],
+      "ingresses": 1,
+      "tickets": 1,
+      "body_hashes": [
+        "4463cb6b0c93e1759a71098439fb0fa62591c928575cd41c0e3619b62eb9cc69"
+      ],
+      "native_qualification": false,
+      "id": "chrome-truncated-2"
+    },
+    {
+      "kind": "chrome",
+      "mode": "disconnect",
+      "client": {
+        "activation_calls": 1,
+        "submit_events": 1,
+        "post_requests": [
+          "FC50A70064DE0B353048F9903C348C94"
+        ],
+        "network_failures": [],
+        "browser_version": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.79",
+          "revision": "@a21ce95c24ce3964416f09ae1862f53f319eb4d0",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "observation_limit": "two-second diagnostic observation; not a terminal service proof",
+        "netlog_events": [
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487231",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487231",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487231",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487281",
+            "source": {
+              "id": 79,
+              "start_time": "342487281",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487281",
+            "source": {
+              "id": 79,
+              "start_time": "342487281",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487281",
+            "source": {
+              "id": 79,
+              "start_time": "342487281",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487286",
+            "source": {
+              "id": 79,
+              "start_time": "342487281",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487286",
+            "source": {
+              "id": 79,
+              "start_time": "342487281",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487322",
+            "source": {
+              "id": 106,
+              "start_time": "342487321",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487322",
+            "source": {
+              "id": 106,
+              "start_time": "342487321",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487322",
+            "source": {
+              "id": 106,
+              "start_time": "342487321",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487323",
+            "source": {
+              "id": 106,
+              "start_time": "342487321",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487323",
+            "source": {
+              "id": 106,
+              "start_time": "342487321",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487329",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487329",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487329",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487331",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {
+              "net_error": -324
+            }
+          },
+          {
+            "name": "HTTP_TRANSACTION_RESTART_AFTER_ERROR",
+            "phase": 0,
+            "time": "342487331",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {
+              "net_error": -324
+            }
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487331",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487331",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487331",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487331",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487332",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487332",
+            "source": {
+              "id": 112,
+              "start_time": "342487329",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487366",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487366",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487366",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487366",
+            "source": {
+              "id": 9,
+              "start_time": "342487204",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487367",
+            "source": {
+              "id": 25,
+              "start_time": "342487216",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487367",
+            "source": {
+              "id": 25,
+              "start_time": "342487216",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487367",
+            "source": {
+              "id": 29,
+              "start_time": "342487221",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487367",
+            "source": {
+              "id": 29,
+              "start_time": "342487221",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487393",
+            "source": {
+              "id": 29,
+              "start_time": "342487221",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487411",
+            "source": {
+              "id": 25,
+              "start_time": "342487216",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487429",
+            "source": {
+              "id": 66,
+              "start_time": "342487253",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487429",
+            "source": {
+              "id": 66,
+              "start_time": "342487253",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487429",
+            "source": {
+              "id": 91,
+              "start_time": "342487306",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487429",
+            "source": {
+              "id": 91,
+              "start_time": "342487306",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487438",
+            "source": {
+              "id": 22,
+              "start_time": "342487205",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487438",
+            "source": {
+              "id": 22,
+              "start_time": "342487205",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487472",
+            "source": {
+              "id": 91,
+              "start_time": "342487306",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487476",
+            "source": {
+              "id": 22,
+              "start_time": "342487205",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487506",
+            "source": {
+              "id": 66,
+              "start_time": "342487253",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342487529",
+            "source": {
+              "id": 149,
+              "start_time": "342487507",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342487529",
+            "source": {
+              "id": 149,
+              "start_time": "342487507",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342487529",
+            "source": {
+              "id": 149,
+              "start_time": "342487507",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342487553",
+            "source": {
+              "id": 149,
+              "start_time": "342487507",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342487553",
+            "source": {
+              "id": 149,
+              "start_time": "342487507",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342489366",
+            "source": {
+              "id": 166,
+              "start_time": "342489366",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342489366",
+            "source": {
+              "id": 166,
+              "start_time": "342489366",
+              "type": 1
+            },
+            "params": {}
+          }
+        ]
+      },
+      "handlers": [
+        {
+          "received": 1793333852.1865118,
+          "connection": [
+            "127.0.0.1",
+            53739
+          ],
+          "path": "/tickets",
+          "returned": 1793333852.1879199
+        },
+        {
+          "received": 1793333852.188288,
+          "connection": [
+            "127.0.0.1",
+            53742
+          ],
+          "path": "/tickets",
+          "returned": 1793333852.1892102
+        }
+      ],
+      "ingresses": 2,
+      "tickets": 1,
+      "body_hashes": [
+        "7f53d4fa4728c8dcd950d2298911758b603f55c171e2d7bd1d26db177e54e6ea",
+        "7f53d4fa4728c8dcd950d2298911758b603f55c171e2d7bd1d26db177e54e6ea"
+      ],
+      "native_qualification": false,
+      "id": "chrome-disconnect-1"
+    },
+    {
+      "kind": "chrome",
+      "mode": "disconnect",
+      "client": {
+        "activation_calls": 1,
+        "submit_events": 1,
+        "post_requests": [
+          "49A0A2DCC8F0F5DB99355E556E9855A7"
+        ],
+        "network_failures": [],
+        "browser_version": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.79",
+          "revision": "@a21ce95c24ce3964416f09ae1862f53f319eb4d0",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "observation_limit": "two-second diagnostic observation; not a terminal service proof",
+        "netlog_events": [
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490210",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490210",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490210",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490264",
+            "source": {
+              "id": 79,
+              "start_time": "342490263",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490264",
+            "source": {
+              "id": 79,
+              "start_time": "342490263",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490264",
+            "source": {
+              "id": 79,
+              "start_time": "342490263",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490265",
+            "source": {
+              "id": 79,
+              "start_time": "342490263",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490265",
+            "source": {
+              "id": 79,
+              "start_time": "342490263",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490277",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490277",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490277",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490277",
+            "source": {
+              "id": 9,
+              "start_time": "342490182",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490290",
+            "source": {
+              "id": 29,
+              "start_time": "342490195",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490290",
+            "source": {
+              "id": 29,
+              "start_time": "342490195",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490290",
+            "source": {
+              "id": 25,
+              "start_time": "342490193",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490290",
+            "source": {
+              "id": 25,
+              "start_time": "342490193",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490295",
+            "source": {
+              "id": 22,
+              "start_time": "342490184",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490295",
+            "source": {
+              "id": 22,
+              "start_time": "342490184",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490295",
+            "source": {
+              "id": 112,
+              "start_time": "342490295",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490295",
+            "source": {
+              "id": 112,
+              "start_time": "342490295",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490295",
+            "source": {
+              "id": 112,
+              "start_time": "342490295",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490295",
+            "source": {
+              "id": 112,
+              "start_time": "342490295",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490295",
+            "source": {
+              "id": 112,
+              "start_time": "342490295",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490307",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490307",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490307",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490309",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {
+              "net_error": -324
+            }
+          },
+          {
+            "name": "HTTP_TRANSACTION_RESTART_AFTER_ERROR",
+            "phase": 0,
+            "time": "342490309",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {
+              "net_error": -324
+            }
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490309",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490309",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "request_line": "POST /tickets HTTP/1.1",
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490309",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490309",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490311",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490311",
+            "source": {
+              "id": 126,
+              "start_time": "342490307",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490314",
+            "source": {
+              "id": 29,
+              "start_time": "342490195",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490333",
+            "source": {
+              "id": 25,
+              "start_time": "342490193",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490337",
+            "source": {
+              "id": 22,
+              "start_time": "342490184",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490355",
+            "source": {
+              "id": 62,
+              "start_time": "342490255",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490355",
+            "source": {
+              "id": 62,
+              "start_time": "342490255",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_HTTP2_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490355",
+            "source": {
+              "id": 95,
+              "start_time": "342490290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490355",
+            "source": {
+              "id": 95,
+              "start_time": "342490290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490399",
+            "source": {
+              "id": 95,
+              "start_time": "342490290",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490404",
+            "source": {
+              "id": 62,
+              "start_time": "342490255",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_SEND_REQUEST_HEADERS",
+            "phase": 0,
+            "time": "342490503",
+            "source": {
+              "id": 148,
+              "start_time": "342490405",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 1,
+            "time": "342490503",
+            "source": {
+              "id": 148,
+              "start_time": "342490405",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 1,
+            "time": "342490503",
+            "source": {
+              "id": 148,
+              "start_time": "342490405",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_STREAM_PARSER_READ_HEADERS",
+            "phase": 2,
+            "time": "342490529",
+            "source": {
+              "id": 148,
+              "start_time": "342490405",
+              "type": 1
+            },
+            "params": {}
+          },
+          {
+            "name": "HTTP_TRANSACTION_READ_HEADERS",
+            "phase": 2,
+            "time": "342490529",
+            "source": {
+              "id": 148,
+              "start_time": "342490405",
+              "type": 1
+            },
+            "params": {}
+          }
+        ]
+      },
+      "handlers": [
+        {
+          "received": 1793333855.165057,
+          "connection": [
+            "127.0.0.1",
+            53780
+          ],
+          "path": "/tickets",
+          "returned": 1793333855.166476
+        },
+        {
+          "received": 1793333855.166743,
+          "connection": [
+            "127.0.0.1",
+            53781
+          ],
+          "path": "/tickets",
+          "returned": 1793333855.1678662
+        }
+      ],
+      "ingresses": 2,
+      "tickets": 1,
+      "body_hashes": [
+        "2968738abb81a73d36f7d6b11a55d94dd150ed36c7232df89d3f99ed3a0eafd0",
+        "2968738abb81a73d36f7d6b11a55d94dd150ed36c7232df89d3f99ed3a0eafd0"
+      ],
+      "native_qualification": false,
+      "id": "chrome-disconnect-2"
+    }
+  ],
+  "native_qualification": false
+}

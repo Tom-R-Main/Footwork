@@ -15,3 +15,6 @@ Add two fresh isolated Chrome fetch POST controls against the identical pre-head
 
 ## Amendment: positively sealed fixture contract
 Evaluate an optional new preadmitted evidence version whose terminal boundary is an irreversibly closed fixture producer, all request handlers drained, and final ledger snapshot atomically sealed. Same unique-ingress predicate and original fault. No claim of browser/network exactly-once delivery. Existing v1/v2 reads/unknowns retain their contracts. Test active-handler drainage, late input, source restart, tampering, duplicates, wrong operation/source and no retroactive enrollment. Installed schedule adds one fresh native fetch disconnect trial under this new policy, including actual controller kill after ingress, and read-only reconciliation after closure.
+
+## Result
+Observed causal evidence, fetch correction, sealed-source v3 qualification and finite limits are retained in results/preheader-20261030/report.md. Twenty-six controls and twelve live slots include failures and probe repairs. No old unknown was upgraded. Final suite: 2269 passed, 26 skipped. Hosted CI/merge remain separate follow-through.
