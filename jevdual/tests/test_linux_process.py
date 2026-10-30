@@ -168,3 +168,25 @@ def test_denied_signal_is_an_explicit_unresolved_cleanup(monkeypatch, tmp_path):
     r = target.cleanup()
     assert r['survivors'] == [42] and r['uncertain']
     assert r['signal_failures'] == [{'pid': 42, 'status': 'denied', 'delivery': None}]
+
+
+def test_new_direct_child_custody_is_not_lost_to_inventory_truncation(monkeypatch, tmp_path):
+    target = session.Session(tmp_path / 'direct-child')
+    target.state.mkdir()
+    def partial():
+        value = process.ProcessInventory()
+        value.incomplete('entry_limit')
+        return value
+    row = {'start': 'owned-A', 'uid': os.getuid(), 'parent': os.getpid(),
+           'group': 42, 'session': 42, 'state': 'S'}
+    monkeypatch.setattr(session, 'process_table', partial)
+    monkeypatch.setattr(session, 'read_process', lambda pid: row)
+    monkeypatch.setattr(session.subprocess, 'Popen', lambda *_, **__: SimpleNamespace(pid=42))
+    try:
+        target.spawn('owned', ['fixture'])
+        assert target.root_identities[42] == 'owned-A'
+        assert target.capture()[42]['start'] == 'owned-A'
+        assert 'entry_limit' in target.inventory_reasons
+    finally:
+        for log in target.logs.values():
+            log.close()

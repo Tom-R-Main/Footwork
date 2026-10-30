@@ -153,6 +153,18 @@ class Session:
         # A bounded inventory may omit a still-owned process. Re-read known
         # identities individually; never retire them merely because of omission.
         self.unknown_identities.clear()
+        # Direct Popen custody is independent of the global census. An
+        # unreaped child cannot be replaced by a recycled numeric PID while
+        # this supervisor remains its only wait owner.
+        for process in self.processes.values():
+            if process.pid not in self.root_identities and getattr(process, 'returncode', None) is None:
+                try:
+                    row = read_process(process.pid)
+                    self.root_identities[process.pid] = row['start']
+                    self.identities[process.pid] = row['start']
+                except (OSError, ValueError, IndexError):
+                    self.unknown_identities.add(process.pid)
+                    self.inventory_reasons.add('owned_child_identity_unavailable')
         for pid in self.identities:
             if pid not in table:
                 try:
@@ -195,9 +207,12 @@ class Session:
         process = subprocess.Popen(self.commands.get(name, command), env=self.env, stdout=log,
                                    stderr=subprocess.STDOUT, start_new_session=True, pass_fds=pass_fds)
         self.processes[name] = process
-        row = process_table().get(process.pid)
-        if row is not None:
+        try:
+            row = read_process(process.pid)
             self.root_identities[process.pid] = row['start']
+            self.identities[process.pid] = row['start']
+        except (OSError, ValueError, IndexError):
+            self.inventory_reasons.add('owned_child_identity_unavailable')
         self.capture()
         return process
 
