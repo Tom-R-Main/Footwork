@@ -583,6 +583,51 @@ def fw(tmp_path, capsys):
     return run
 
 
+def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, monkeypatch):
+    from jevdual import browser_driver as browser
+
+    opened, running = [], [False]
+    monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
+    monkeypatch.setattr(browser, 'launch_chrome', lambda *_: 42)
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
+    monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
+    monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0, raising=False)
+
+    class Driver:
+        async def list_windows(self, _):
+            window = SimpleNamespace(pid=42, window_id=7, bounds=SimpleNamespace(width=100, height=100))
+            return SimpleNamespace(windows=[window] if running[0] else [])
+
+        async def shutdown(self):
+            pass
+
+    def spawn(args, **_):
+        opened.append(args)
+        running[0] = True
+        return SimpleNamespace(pid=99, poll=lambda: 0, wait=lambda **_: 0)
+
+    async def attach(self):
+        self.target_id, self.tab_id = 'target', 'tab'
+        return {}
+
+    async def observe(self, **_):
+        return browser.menu_from_semantic({'snapshot': {'id': 'fixture', 'complete': True},
+                                           'content_refs': [{'role': 'paragraph', 'name': 'Recovered page'}]})
+
+    monkeypatch.setattr(browser, 'configured_driver', lambda pid: Driver())
+    monkeypatch.setattr(browser.subprocess, 'run', spawn)
+    monkeypatch.setattr(browser.subprocess, 'Popen', spawn)
+    monkeypatch.setattr(browser.BrowserBridge, 'attach', attach)
+    monkeypatch.setattr(browser.BrowserBridge, 'observe', observe)
+    code, out, err = fw('start', 'Recover the owned browser', '--browser')
+    assert code == 0, err
+    assert 'Recovered page' in out
+    assert opened and opened[0][0] == '/qualified/chromium'
+    assert '--new-window' in opened[0]
+    assert f'--user-data-dir={browser.PROFILE_DIR}' in opened[0]
+
+
 def _state(fw) -> dict:
     return json.loads((fw.session / "session.json").read_text())
 

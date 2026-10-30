@@ -1,5 +1,6 @@
 """Browser ownership must survive platform discovery without widening attachment."""
 
+import asyncio
 from types import SimpleNamespace
 
 import pytest
@@ -95,3 +96,139 @@ async def test_attachment_requires_fingerprint_and_same_process_incarnation(monk
     assert await decision([]) == "deny"
     start[0] = 2.0
     assert await decision(resource) == "deny"
+
+
+@pytest.fixture
+def recovery(monkeypatch):
+    closed, killed, spawned = [], [], []
+
+    class Driver:
+        def __init__(self):
+            self.windows = []
+
+        async def list_windows(self, _):
+            return SimpleNamespace(windows=self.windows)
+
+        async def shutdown(self):
+            closed.append(True)
+
+    class Process:
+        pid = 99
+        status = None
+
+        def poll(self):
+            return self.status
+
+        def wait(self, **_):
+            self.status = 0
+            return 0
+
+    driver, helper = Driver(), Process()
+    monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0)
+    monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
+    monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
+    monkeypatch.setattr(browser, 'configured_driver', lambda pid: driver)
+    monkeypatch.setattr(browser.os, 'killpg', lambda pid, sig: killed.append(pid))
+
+    def spawn(args, **_):
+        spawned.append(args)
+        return helper
+
+    async def attach(self):
+        self.target_id, self.tab_id = 'target', 'tab'
+
+    monkeypatch.setattr(browser.subprocess, 'Popen', spawn)
+    monkeypatch.setattr(browser.BrowserBridge, 'attach', attach)
+    return SimpleNamespace(driver=driver, helper=helper, closed=closed, killed=killed, spawned=spawned)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('new', [False, True])
+async def test_cancelled_bind_reaps_only_new_owned_processes(monkeypatch, recovery, new):
+    began = asyncio.Event()
+
+    async def blocked(_):
+        began.set()
+        await asyncio.Event().wait()
+
+    monkeypatch.setattr(recovery.driver, 'list_windows', blocked)
+    if new:
+        recovery.helper.pid = 42
+        monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, recovery.helper))
+    task = asyncio.create_task(browser.bind_footwork_chrome())
+    await began.wait()
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert recovery.closed == [True]
+    assert recovery.killed == ([42] if new else [])
+
+
+@pytest.mark.asyncio
+async def test_failed_window_helper_does_not_kill_persistent_browser(recovery):
+    recovery.helper.status = 7
+    with pytest.raises(RuntimeError, match='helper exited'):
+        await browser.bind_footwork_chrome()
+    assert recovery.closed == [True] and recovery.killed == []
+    assert recovery.spawned[0][0] == '/qualified/chromium'
+    assert f'--remote-debugging-port={browser.PORT}' in recovery.spawned[0]
+
+
+@pytest.mark.asyncio
+async def test_failed_spawn_closes_driver_without_killing_reused_browser(monkeypatch, recovery):
+    def fail(*_, **__):
+        raise FileNotFoundError('new-window executable unavailable')
+    monkeypatch.setattr(browser.subprocess, 'Popen', fail)
+    with pytest.raises(FileNotFoundError):
+        await browser.bind_footwork_chrome()
+    assert recovery.closed == [True] and recovery.killed == []
+
+
+@pytest.mark.asyncio
+async def test_wrong_window_pid_is_never_attached(recovery):
+    recovery.driver.windows = [SimpleNamespace(pid=999)]
+    with pytest.raises(RuntimeError, match='unrelated browser'):
+        await browser.bind_footwork_chrome()
+    assert recovery.closed == [True] and recovery.spawned == []
+
+
+@pytest.mark.asyncio
+async def test_changed_browser_incarnation_refuses_before_recovery(monkeypatch, recovery):
+    values = iter([1.0, 2.0])
+    monkeypatch.setattr(browser, '_incarnation', lambda pid: next(values))
+    with pytest.raises(RuntimeError, match='changed identity'):
+        await browser.bind_footwork_chrome()
+    assert not recovery.spawned and not recovery.killed
+
+
+@pytest.mark.asyncio
+async def test_cancelled_recovery_helper_is_reaped_but_persistent_root_survives(monkeypatch, recovery):
+    second = asyncio.Event()
+    calls = 0
+
+    async def windows(_):
+        nonlocal calls
+        calls += 1
+        if calls > 1:
+            second.set()
+            await asyncio.Event().wait()
+        return SimpleNamespace(windows=[])
+
+    monkeypatch.setattr(recovery.driver, 'list_windows', windows)
+    task = asyncio.create_task(browser.bind_footwork_chrome())
+    await second.wait()
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert recovery.killed == [99] and recovery.closed == [True]
+
+
+def test_early_browser_exit_has_no_discovered_process_cleanup_authority(monkeypatch, recovery):
+    recovery.helper.status = 1
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (99, recovery.helper))
+    monkeypatch.setattr(browser, 'chrome_pid', lambda: None)
+    with pytest.raises(RuntimeError, match='exited'):
+        browser.launch_chrome(settle_s=0)
+    assert recovery.killed == []
