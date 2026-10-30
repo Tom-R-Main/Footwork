@@ -415,7 +415,7 @@ def test_a_save_is_confirmed_only_by_the_file_on_disk(tmp_path):
         assert r is not None and r["effect"] == effect and rb["detail"] in r["evidence"], r
 
 
-def test_save_readback_compares_the_disk_with_the_window(tmp_path):
+def test_save_readback_compares_the_disk_with_the_window(tmp_path, mac_native_contract):
     from types import SimpleNamespace
 
     from jevdual.native import NativeEffect, is_save, save_readback, with_save_readback

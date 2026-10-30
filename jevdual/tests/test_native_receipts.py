@@ -107,7 +107,7 @@ def test_preview_save_file_transition_retains_atomic_replacement():
         "baseline_unavailable",
     ],
 )
-def test_preview_transition_is_read_while_exact_foreground_is_owned(change):
+def test_preview_transition_is_read_while_exact_foreground_is_owned(change, mac_native_contract):
     from jevdual.ax import AXError
 
     active, front, focused = False, 77, 12
@@ -187,7 +187,7 @@ def test_preview_transition_is_read_while_exact_foreground_is_owned(change):
 @pytest.mark.parametrize(
     "new_undo, expected", [("Undo Rotate Right", "confirmed"), ("Undo Rotate Left", "unverifiable")]
 )
-def test_preview_menu_ack_requires_observed_contract(new_undo, expected):
+def test_preview_menu_ack_requires_observed_contract(new_undo, expected, mac_native_contract):
     from jevdual.ax import AXError
 
     class PreviewAX:
@@ -232,7 +232,7 @@ def test_preview_menu_ack_requires_observed_contract(new_undo, expected):
 
 
 @pytest.mark.parametrize("predicate", ["preview_save_ui_transition", "preview_save_file_transition"])
-def test_public_preview_binary_save_preserves_qualified_native_predicate(predicate):
+def test_public_preview_binary_save_preserves_qualified_native_predicate(predicate, mac_native_contract):
     from jevdual.ax import AXError
 
     class BinaryPreviewAX:

@@ -17,6 +17,8 @@ from jevdual.authorize import action_for
 from jevdual.native import AMBIGUITY, NativeBridge, NativeBridgeError, menu_from_snapshot
 from jevdual.posture import ExecutionPolicy
 
+pytestmark = pytest.mark.usefixtures("mac_native_contract")
+
 
 class Activity:
     """Idle seconds, a scripted sequence of front pids (the last repeats), the fronts a foreground step

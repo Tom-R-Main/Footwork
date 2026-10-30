@@ -1,0 +1,7 @@
+Resolved 300 packages in 2ms
+   Building jevdual @ file:///workspace/Footwork/jevdual
+      Built jevdual @ file:///workspace/Footwork/jevdual
+Prepared 1 package in 552ms
+Uninstalled 1 package in 0.47ms
+Installed 1 package in 1ms
+ ~ jevdual==0.0.1 (from file:///workspace/Footwork/jevdual)

@@ -1,0 +1,84 @@
+3ba3963470e5935b4d4022b3b62d8e06c55d346f
+/workspace/footwork/lib/python3.14/site-packages/pytest_asyncio/plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+ssss.................................................................... [  2%]
+.............ssssssssssssssssssssssssss...........ssssssssssss.......... [  5%]
+.sssssssssssssssssss.............................................F...... [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+............................................................s........... [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 43%]
+............................................................s........... [ 46%]
+...............s........................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+.......ss.ss.s.......................................................... [ 66%]
+.......................s................................................ [ 69%]
+........................................................................ [ 72%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 81%]
+........................................................................ [ 84%]
+...............................................................ss....... [ 87%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+........................................................................ [ 98%]
+...........................                                              [100%]
+=================================== FAILURES ===================================
+____________ test_s2_done_rejection_uses_typed_feedback_when_given _____________
+
+httpserver = <HTTPServer host=localhost port=34553>
+
+    async def test_s2_done_rejection_uses_typed_feedback_when_given(httpserver):
+        """Q11 guarded_legible: the refused done's message comes from the verdict, with the refusals left."""
+        from jevdual.verify import Verdict
+    
+        verdict = Verdict(band="reject", complete=0.2, unmet={"Balance reported": 0.9}, claims=[], reason="x")
+        policy = EscalatingPolicy("reject")
+        policy.verifier.last = verdict
+        calls: list[tuple[object, int]] = []
+    
+        def feedback(v, left):
+            calls.append((v, left))
+            return "Missing: Balance reported"
+    
+        llm = create_mock_llm([done("Balance is $99.00"), done("Balance is $99.00"), done("Balance is $99.00")])
+        _agent, history, _ = await _run(httpserver, llm, policy=policy, rejection_feedback=feedback)
+>       assert calls == [(verdict, 1), (verdict, 0)]
+E       AssertionError: assert [] == [(Verdict(ban...y_ms=0.0), 0)]
+E         
+E         Right contains 2 more items, first extra item: (Verdict(band='reject', complete=0.2, unmet={'Balance reported': 0.9}, claims=[], reason='x', unmet_effective={}, supported_answer=None, unsupported_claims=(), model='jev-1.13.0', latency_ms=0.0), 1)
+E         Use -v to get more diff
+
+tests/test_agent_loop.py:111: AssertionError
+------------------------------ Captured log call -------------------------------
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [30/Oct/2026 05:33:55] "GET / HTTP/1.1" 200 -
+WARNING  browser_use.BrowserSession🅑 ae9c 🅣 39:session.py:1154 ⚠️ Page readiness timeout (8.0s, 8013ms) for http://localhost:34553/
+=============================== warnings summary ===============================
+../../footwork/lib/python3.14/site-packages/browser_use/observability.py:69: 20 warnings
+tests/test_agent_loop.py: 10 warnings
+  /workspace/footwork/lib/python3.14/site-packages/browser_use/observability.py:69: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+    if asyncio.iscoroutinefunction(func):
+
+tests/test_agent_loop.py: 11 warnings
+  /workspace/footwork/lib/python3.14/site-packages/backoff/_decorator.py:201: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+    if asyncio.iscoroutinefunction(target):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_agent_loop.py::test_s2_done_rejection_uses_typed_feedback_when_given
+1 failed, 2402 passed, 72 skipped, 41 warnings in 175.25s (0:02:55)

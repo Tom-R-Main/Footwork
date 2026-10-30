@@ -1,0 +1,79 @@
+{
+  "architecture": "x86_64",
+  "distribution": {
+    "ID": "ubuntu",
+    "PRETTY_NAME": "Ubuntu 24.04.4 LTS",
+    "VERSION_ID": "24.04"
+  },
+  "effect_verification": "not_asserted",
+  "executables_present": {
+    "Xvfb": true,
+    "cargo": false,
+    "cc": true,
+    "chromium": false,
+    "chromium-browser": false,
+    "clang": false,
+    "dbus-run-session": false,
+    "dbus-send": false,
+    "ffmpeg": false,
+    "gdbus": false,
+    "google-chrome": false,
+    "google-chrome-stable": false,
+    "node": true,
+    "pip": false,
+    "pip3": false,
+    "pkg-config": false,
+    "rustc": false,
+    "rustup": false,
+    "tesseract": false,
+    "uv": false
+  },
+  "kernel": "7.0.14-linuxkit",
+  "libc": "glibc 2.39",
+  "limitations": [
+    "Executable and environment presence do not establish connection, permissions, or driver support.",
+    "No browser, desktop, accessibility service, native CUA library, or provider was started or queried.",
+    "Resource values are a transient upper bound, not a reservation or build-capacity guarantee.",
+    "Prebuilt installation avoids compilers; Python fallback does not replace native CUA desktop control."
+  ],
+  "platform": "linux",
+  "prerequisite_candidates": {
+    "browser_executable": false,
+    "graphical_session_indicator": false,
+    "session_bus_indicator": false
+  },
+  "python": {
+    "ensurepip_module": true,
+    "pip_module": false,
+    "venv_module": true,
+    "version": "3.12.3"
+  },
+  "resources": {
+    "available_memory_upper_bound_bytes": 2129309696,
+    "cgroup": {
+      "cpu_quota_cores": 2.0,
+      "membership_readable": true,
+      "memory_limit_bytes": 2147483648,
+      "memory_remaining_bytes": 2129309696,
+      "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+      "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+      "versions": [
+        2
+      ]
+    },
+    "cpu_affinity_count": 4,
+    "cpu_count": 4,
+    "memory": {
+      "available_bytes": 3216867328,
+      "total_bytes": 4107141120
+    }
+  },
+  "runtime_qualification": "unverified",
+  "schema_version": 1,
+  "session_indicators_present": {
+    "DBUS_SESSION_BUS_ADDRESS": false,
+    "DISPLAY": false,
+    "WAYLAND_DISPLAY": false,
+    "XDG_RUNTIME_DIR": false
+  }
+}

@@ -181,7 +181,7 @@ def test_platform_and_ax_block_without_driver_or_permission_request(prerequisite
             "screen_recording": "unsupported",
         },
     )
-    assert setup.doctor()["blockers"] == ["platform_unsupported"]
+    assert setup.doctor()["blockers"] == ["accessibility_not_checked"]
     monkeypatch.setattr(setup.sys, "platform", "darwin")
     monkeypatch.setattr(
         setup,

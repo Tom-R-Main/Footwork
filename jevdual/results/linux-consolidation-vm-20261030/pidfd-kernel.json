@@ -1,0 +1,12 @@
+{
+  "kernel": "6.18.57",
+  "python": "3.12.14",
+  "pidfd_open": true,
+  "pidfd_send_signal": true,
+  "numeric_delivery_fallback": false,
+  "target_exit": -15,
+  "exited_fd_errno": 3,
+  "sentinel_alive": true,
+  "passed": true,
+  "test_fixture_children_joined": true
+}

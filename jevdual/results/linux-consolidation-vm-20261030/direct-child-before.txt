@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_new_direct_child_custody_is_not_lost_to_inventory_truncation _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f571eca33e0>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-24/test_new_direct_child_custody_0')
+
+    def test_new_direct_child_custody_is_not_lost_to_inventory_truncation(monkeypatch, tmp_path):
+        target = session.Session(tmp_path / 'direct-child')
+        target.state.mkdir()
+        def partial():
+            value = process.ProcessInventory()
+            value.incomplete('entry_limit')
+            return value
+        row = {'start': 'owned-A', 'uid': os.getuid(), 'parent': os.getpid(),
+               'group': 42, 'session': 42, 'state': 'S'}
+        monkeypatch.setattr(session, 'process_table', partial)
+        monkeypatch.setattr(session, 'read_process', lambda pid: row)
+        monkeypatch.setattr(session.subprocess, 'Popen', lambda *_, **__: SimpleNamespace(pid=42))
+        try:
+            target.spawn('owned', ['fixture'])
+>           assert target.root_identities[42] == 'owned-A'
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 42
+
+tests/test_linux_process.py:187: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_linux_process.py::test_new_direct_child_custody_is_not_lost_to_inventory_truncation
+1 failed in 0.22s

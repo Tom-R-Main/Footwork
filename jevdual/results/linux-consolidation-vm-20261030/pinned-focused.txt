@@ -1,0 +1,19 @@
+.............................................F...........                [100%]
+=================================== FAILURES ===================================
+__________ test_failed_window_helper_does_not_kill_persistent_browser __________
+
+recovery = namespace(driver=<tests.test_browser_launch.recovery.<locals>.Driver object at 0x7fdff55ce630>, helper=<tests.test_bro...=127.0.0.1', '--no-first-run', '--no-default-browser-check', '--window-size=1200,900', '--new-window', 'about:blank']])
+
+    
+    @pytest.mark.asyncio
+    async def test_failed_window_helper_does_not_kill_persistent_browser(recovery):
+>       recovery.helper.status = 7
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'helper exited'
+E         Actual message: "footwork's Chrome has no on-screen window after bounded recovery"
+
+tests/test_browser_launch.py:173: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_browser_launch.py::test_failed_window_helper_does_not_kill_persistent_browser
+1 failed, 56 passed in 29.03s

@@ -20,8 +20,8 @@ def snapshot():
 
 
 @pytest.fixture
-def stub_sdk(monkeypatch):
-    return td.stub_sdk.__wrapped__(monkeypatch)
+def stub_sdk(monkeypatch, mac_native_contract):
+    return td.stub_sdk.__wrapped__(monkeypatch, mac_native_contract)
 
 
 class S2:

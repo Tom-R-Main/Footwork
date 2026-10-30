@@ -59,7 +59,11 @@ class FakeBridge:
 
 
 @pytest.fixture
-def setup(tmp_path):
+def setup(tmp_path, monkeypatch):
+    from jevdual.capability import backend as backend_module
+
+    # The fake below models TextEdit, independently of the test runner's host.
+    monkeypatch.setattr(backend_module, "sys", SimpleNamespace(platform="darwin"))
     scope = {
         "task": "fixture",
         "source": {"pid": 1, "window_id": 2, "url": "http://127.0.0.1:8000/"},

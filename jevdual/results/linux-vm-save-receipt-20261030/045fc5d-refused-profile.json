@@ -1,0 +1,37 @@
+{
+  "implementation_commit": "045fc5d",
+  "state": "/workspace/scratch/footwork-save-045fc5d-refused-profile",
+  "runtime": "/workspace/scratch/footwork-save-045fc5d-refused-profile-runtime",
+  "working_desktop": false,
+  "identity_checks": "unchanged",
+  "qualification_exit_code": 1,
+  "save_effect": {
+    "operation": "hotkey",
+    "target": -1,
+    "label": "ctrl+s",
+    "effect": "unverifiable",
+    "route": null,
+    "evidence": [
+      "save_readback: Linux automatic saved-document discovery is unavailable; use check-file or check-artifact with the explicitly selected path for persistence proof"
+    ],
+    "summary": "foreground_unavailable: window 0x400003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x400003 (Mousepad, pid 12757 mousepad)); no input was sent. No window is active at all: the window manager has not set _NET_ACTIVE_WINDOW (it may be restarting, or showing a modal surface of its own that no window list includes); save unverifiable: Linux automatic saved-document discovery is unavailable; use check-file or check-artifact with the explicitly selected path for persistence proof",
+    "error_code": "foreground_unavailable",
+    "delivery": "foreground",
+    "driver_delivery": null,
+    "dispatched": true,
+    "foreground": null,
+    "readback": {
+      "ok": null,
+      "detail": "Linux automatic saved-document discovery is unavailable; use check-file or check-artifact with the explicitly selected path for persistence proof"
+    },
+    "delivered_count": null,
+    "delivery_basis": "unknown",
+    "field_readback": null,
+    "native_readback": null
+  },
+  "before_disk_sha256": "ee3c25ed6b6ef760263f31cd35723419d996c0b2e0ba3d23347fdce023d60dc7",
+  "after_disk_sha256": "ee3c25ed6b6ef760263f31cd35723419d996c0b2e0ba3d23347fdce023d60dc7",
+  "disk_unchanged": true,
+  "passed": false,
+  "error": "AssertionError: "
+}

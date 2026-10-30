@@ -1,0 +1,12 @@
+{
+  "result": {
+    "pid": 33027,
+    "signal": 15,
+    "status": "sent",
+    "delivery": "pidfd"
+  },
+  "target_exit": -15,
+  "sentinel_alive": true,
+  "signal_primitive": "installed jevdual.linux_process.pin_signal",
+  "passed": true
+}

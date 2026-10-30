@@ -1,0 +1,20 @@
+{
+  "text": "foreground_unavailable: window 0x400003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x400003 (Mousepad, pid 14780 mousepad)); no input was sent. No window is active at all: the window manager has not set _NET_ACTIVE_WINDOW (it may be restarting, or showing a modal surface of its own that no window list includes)",
+  "structured_json": "{\"code\":\"foreground_unavailable\",\"detail\":\"foreground_unavailable: window 0x400003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x400003 (Mousepad, pid 14780 mousepad)); no input was sent. No window is active at all: the window manager has not set _NET_ACTIVE_WINDOW (it may be restarting, or showing a modal surface of its own that no window list includes)\",\"effect\":\"none\",\"hint\":\"The window could not be brought forward, so nothing was sent. List the app's windows, check the window still exists, then retry or act by element instead.\",\"next_call\":{\"arguments\":{\"pid\":14780},\"tool\":\"list_windows\"},\"suggestion\":\"Call bring_to_front on the window (or its modal dialog), confirm with get_window_state, then retry.\"}",
+  "is_error": true,
+  "error_code": "foreground_unavailable",
+  "degraded": false,
+  "raw_json": "{\"content\":[{\"text\":\"foreground_unavailable: window 0x400003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x400003 (Mousepad, pid 14780 mousepad)); no input was sent. No window is active at all: the window manager has not set _NET_ACTIVE_WINDOW (it may be restarting, or showing a modal surface of its own that no window list includes)\",\"type\":\"text\"}],\"isError\":true,\"structuredContent\":{\"code\":\"foreground_unavailable\",\"detail\":\"foreground_unavailable: window 0x400003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x400003 (Mousepad, pid 14780 mousepad)); no input was sent. No window is active at all: the window manager has not set _NET_ACTIVE_WINDOW (it may be restarting, or showing a modal surface of its own that no window list includes)\",\"effect\":\"none\",\"hint\":\"The window could not be brought forward, so nothing was sent. List the app's windows, check the window still exists, then retry or act by element instead.\",\"next_call\":{\"arguments\":{\"pid\":14780},\"tool\":\"list_windows\"},\"suggestion\":\"Call bring_to_front on the window (or its modal dialog), confirm with get_window_state, then retry.\"}}",
+  "action": "None",
+  "recognizer_result": true,
+  "arguments": {
+    "keys": [
+      "ctrl",
+      "s"
+    ],
+    "pid": 14780,
+    "window_id": 4194307,
+    "delivery_mode": "foreground",
+    "session": "footwork-native-e4a83c08093a44a281306f1f4181af11"
+  }
+}

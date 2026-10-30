@@ -1,0 +1,64 @@
+# Linux VM acceptance of the available checkout
+
+## LINUXVM1 · prediction · 2026-10-30 15:50
+Hypothesis: the prepared Debian 13 x86-64 environment can run the available checkout's offline regression suite and headless browser contracts, but cannot qualify the unpublished Linux implementation described in the supplied handoff.
+Test: record checkout identity and VM prerequisites; run the no-provider Python suite, browser-marked tests and installed CLI diagnostics. Inspect the public browser launcher and native desktop prerequisites without replacing platform code or weakening identity checks.
+Predicts: installed Python, Rust core and pinned CUA imports succeed, offline tests pass, and the headless browser route works; the public dedicated-browser/native desktop workflow remains blocked by macOS assumptions or missing graphical services in this checkout.
+Against: imports or the available offline/browser tests fail, or the unchanged public CLI completes a Linux browser-to-editor journey with independently verified saved bytes.
+Refs: results/linux-vm-acceptance-20261030/; supplied handoff identifies unpublished commits 818d586 and 653ee74, neither present in this checkout or advertised remote branches.
+
+## LINUXVMU1 · update · 2026-10-30 15:52
+Observed: the initial notebook identifier V1 duplicated an older package identifier. Notebook validation failed; the in-flight regression suite also reached that notebook failure. The heading is renamed to LINUXVM1 with its prediction text unchanged; its original committed form remains in 90c9fc4. Both imports, CUA app enumeration and all thirteen browser-marked tests passed. The public browser start exited 7 on the hardcoded macOS executable, and doctor reported platform_unsupported.
+Next: retain the first regression result, repeat notebook checks after identifier repair, and probe an owned isolated X11 desktop directly through pinned CUA while the unpublished Linux branch remains unavailable.
+Refs: results/linux-vm-acceptance-20261030/browser.txt; results/linux-vm-acceptance-20261030/browser-start.json; results/linux-vm-acceptance-20261030/doctor.json
+
+## LINUXVM2 · prediction · 2026-10-30 15:52
+Hypothesis: the VM's installed dummy Xorg driver, Mousepad and accessibility services can support isolated native Linux observation through pinned CUA even though the available Footwork application layer is macOS-specific.
+Test: start an owned dummy Xorg server and session D-Bus, launch Mousepad on a disposable text file, and request the exact process window and accessibility snapshot through pinned CUA. Shut down owned processes afterwards.
+Predicts: the server and editor start without privileged setup, CUA identifies the owned window, and its accessibility tree contains the fixture text.
+Against: Xorg cannot start as this user, the window is absent, or the bounded accessibility snapshot cannot observe the known fixture text.
+Refs: results/linux-vm-acceptance-20261030/native/; this is a driver/environment probe, not acceptance of the missing Footwork Linux implementation.
+
+## LINUXVMU2 · update · 2026-10-30 15:54
+Resolves: LINUXVM1 = failed
+Observed: baseline f849e16 completed with 2253 passes, 28 skips and one failure caused by this package's duplicate notebook ID, subsequently corrected. All thirteen browser tests passed. The user then pushed and explicitly requested codex/linux-support at 0b1e82c; that exact commit was fetched and checked out, with only this package's notebook commits added locally.
+Next: evaluate the requested Linux implementation from its installed wheel, with exact identity checks retained.
+Refs: results/linux-vm-acceptance-20261030/pytest.txt; results/linux-vm-acceptance-20261030/browser.txt; commit 0b1e82c
+
+## LINUXVMU3 · update · 2026-10-30 15:54
+Resolves: LINUXVM2 = inconclusive
+Observed: rootless dummy Xorg, session D-Bus, accessibility bus and owned Mousepad all started. CUA returned one owned window and a snapshot. The probe incorrectly examined opaque SDK repr strings rather than snapshot fields, so its fixture-text assertion failed without establishing a driver failure. All directly owned editor, window manager and Xorg processes were stopped.
+Next: use the requested branch's existing qualification harness instead of extending the exploratory probe. Xvfb and Openbox are missing from the base image; obtain Debian binary packages in the existing user-owned sysroot.
+Refs: results/linux-vm-acceptance-20261030/native/driver.json; results/linux-vm-acceptance-20261030/native-probe.txt
+
+## LINUXVM3 · prediction · 2026-10-30 15:54
+Hypothesis: the exact 0b1e82c product wheel and existing pinned native x86-64 CUA wheel can complete the documented installed CLI/MCP, replay/restart and saved-file qualification on Debian 13 after adding the missing isolated-desktop prerequisites.
+Test: build the portable bundle with the cached CUA binary wheel, install into a fresh consumer venv with binary dependencies, verify installed package bytes, and run scripts/linux/qualify.py on the documented Xvfb/D-Bus/Openbox/Mousepad fixture. Run optional OCR/camera-refusal qualification and the branch's offline/browser tests; retain failures and prerequisite diagnostics.
+Predicts: installed public CLI/MCP exact appends, duplicate prevention, restart agreement and independent saved bytes pass; synthetic OCR/review/replay and missing-camera refusal pass without physical-device claims.
+Against: binary install or library loading fails on Debian, any strict process/window/document identity check refuses the fixture, or any required text/replay/save assertion fails.
+Refs: docs/linux-support.md; scripts/linux/desktop-session.sh; scripts/linux/qualify.py; scripts/linux/qualify_optional.py; results/linux-vm-acceptance-20261030/
+
+## LINUXVMU4 · update · 2026-10-30 15:56
+Resolves: LINUXVM3 = failed
+Observed: the fresh binary consumer installation succeeded and all 191 package files matched the product wheel. Direct/mirrored synthetic OCR, reviewed acceptance, replay, saved-artifact checks and missing-camera refusal passed. Native append, browser read, MCP append, duplicate prevention and restart agreement passed. Final saved bytes failed: rootless Openbox could not locate its config/theme and exited, so CUA returned foreground_unavailable with no active window and no input sent. The bridge's save result nevertheless reports dispatched=true; independent file readback prevented a false success.
+Next: retain this failed run, expose the extracted desktop package's config/data locations in the isolated fixture environment, and repeat with fresh state and output. Do not change driver or product identity/focus checks.
+Refs: results/linux-vm-acceptance-20261030/qualification.txt; /workspace/scratch/footwork-debian-qualified/driver-save.json; /workspace/scratch/footwork-debian-desktop/openbox.log
+
+## LINUXVM4 · prediction · 2026-10-30 15:56
+Hypothesis: missing rootless Openbox theme/config search paths explain the failed native save, while installed product identity and text paths already work on Debian.
+Test: repeat the unchanged installed-wheel qualification with fresh fixture state/output and XDG_DATA_DIRS/XDG_CONFIG_DIRS including the extracted Debian sysroot. Keep exact process, window, document and foreground predicates unchanged.
+Predicts: Openbox remains running, CUA can activate the exact owned editor window, and Control-S plus independent byte comparison complete the journey.
+Against: Openbox still exits, foreground identity refuses with a functioning manager, or saved bytes fail after a qualified delivery.
+Refs: scripts/linux/qualify.py; results/linux-vm-acceptance-20261030/; original package bytes retained in installed-identity.json
+
+## LINUXVMU5 · update · 2026-10-30 15:59
+Resolves: LINUXVM4 = held
+Observed: exposing the rootless Debian sysroot's XDG data/config paths kept Openbox running. The unchanged installed product completed CLI/browser/MCP append, replay, restart agreement, scoped native save and independent artifact checking: 109 codepoints / 117 UTF-8 bytes with the handoff's expected SHA256. Linux-branch offline tests passed 2434 with 28 skips, and all thirteen browser tests passed. Synthetic OCR/review/replay, missing-camera refusal and installed simulator initialization/status passed. Ruff and 103 packaged resource comparisons passed. All directly owned temporary desktop/browser/fixture processes stopped.
+Next: retain successful and failed evidence together; report required rootless prerequisites and the refused-save dispatched flag inconsistency without weakening predicates.
+Refs: results/linux-vm-acceptance-20261030/report.md; results/linux-vm-acceptance-20261030/runtime/receipt.json; results/linux-vm-acceptance-20261030/linux-pytest.txt; results/linux-vm-acceptance-20261030/linux-browser.txt
+
+## LINUXVMS · summary · 2026-10-30 15:59
+Established: the exact 0b1e82c product wheel works for the documented deterministic X11/AT-SPI CLI/MCP and explicit artifact journey in this Debian 13 x86-64 VM with the cached pinned native CUA wheel. All 191 installed product files match. Missing Xvfb/Openbox and rootless desktop library/data/config setup were supplied. The initial failed save remains visible alongside the clean repeat and independent saved-byte proof.
+Uncertain: the bridge reports dispatched=true on the earlier foreground refusal despite a no-input driver summary; this was not repaired. Wayland, shared foreground coexistence, real devices, provider-backed planning, hosted CI and the smaller Muse hardware profile remain unqualified. The separately built cached CUA wheel is not the original handoff CUA artifact, and dependency resolution is recorded separately from the development lockfile.
+Decision: retain the consumer installation, bundle, exact artifact hashes, failures and acceptance evidence locally on codex/linux-support. Product code and identity checks stay unchanged; no publication or merge.
+Refs: results/linux-vm-acceptance-20261030/report.md; results/linux-vm-acceptance-20261030/installed-identity.json; commit 0b1e82c

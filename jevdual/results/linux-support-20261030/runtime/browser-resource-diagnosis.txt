@@ -1,0 +1,50 @@
+Fri Oct 30 05:42:31 AM UTC 2026
+PID1
+Name:	sleep
+Umask:	0022
+State:	S (sleeping)
+Tgid:	1
+Ngid:	0
+Pid:	1
+PPid:	0
+TracerPid:	0
+PID limits and events
+439
+512
+max 423
+Memory
+1577418752
+3221225472
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0
+Process states
+    200 Z          1 chrome
+     72 Z          1 chrome_crashpad
+     68 Z          1 cat
+     43 Zs         1 git
+      3 Z          1 python
+      2 Sl     10927 sort
+      1 Z          1 xdg-document-po
+      1 Z          1 gvfsd
+      1 Ssl        0 python
+      1 Ss         0 sleep
+      1 Ss         0 sh
+      1 Ss         0 dbus-run-sessio
+      1 Sl       144 openbox
+      1 Sl       144 mousepad
+      1 Sl         1 xdg-permission-
+      1 Sl         1 xdg-desktop-por
+      1 Sl         1 gvfsd-metadata
+      1 Sl         1 gvfsd
+      1 Sl         1 dconf-service
+      1 Sl         1 at-spi2-registr
+      1 Sl         1 at-spi-bus-laun
+      1 STAT    PPID COMMAND
+      1 S      10927 uniq
+      1 S      10927 head
+      1 S        169 dbus-daemon

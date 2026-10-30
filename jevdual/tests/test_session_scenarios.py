@@ -24,6 +24,18 @@ from jevdual.policy import Decision
 from tests.fixtures.native_world import World
 
 
+def _mac_selectors(monkeypatch):
+    """Select the simulated Mac routes without changing the interpreter's platform."""
+    import sys
+
+    from jevdual import native
+    from jevdual.capability import backend, recovery
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(backend, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(recovery, "sys", SimpleNamespace(platform="darwin", executable=sys.executable))
+
+
 @pytest.fixture
 def text_capability(tmp_path, monkeypatch):
     """Public MCP calls over the actual service/backend/native append route."""
@@ -34,6 +46,7 @@ def text_capability(tmp_path, monkeypatch):
 
     from tests.fixtures.native_world import TextWorld
 
+    _mac_selectors(monkeypatch)
     world = TextWorld(tmp_path / "invoice.txt")
     world.install(monkeypatch)
     backend = ScopedBackend(
@@ -540,6 +553,7 @@ class _Policy:
 
 @pytest.fixture
 def world(monkeypatch):
+    _mac_selectors(monkeypatch)
     w = World()
     import jevdual.keys
     import jevdual.policy
@@ -569,6 +583,52 @@ def fw(tmp_path, capsys):
     return run
 
 
+def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, monkeypatch):
+    from jevdual import browser_driver as browser
+
+    opened, running = [], [False]
+    monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
+    monkeypatch.setattr(browser, 'launch_chrome', lambda *_: 42)
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
+    monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
+    monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0, raising=False)
+    monkeypatch.setattr(browser, '_recovery_flags', lambda pid, incarnation: [])
+
+    class Driver:
+        async def list_windows(self, _):
+            window = SimpleNamespace(pid=42, window_id=7, bounds=SimpleNamespace(width=100, height=100))
+            return SimpleNamespace(windows=[window] if running[0] else [])
+
+        async def shutdown(self):
+            pass
+
+    def spawn(args, **_):
+        opened.append(args)
+        running[0] = True
+        return SimpleNamespace(pid=99, poll=lambda: 0, wait=lambda **_: 0)
+
+    async def attach(self):
+        self.target_id, self.tab_id = 'target', 'tab'
+        return {}
+
+    async def observe(self, **_):
+        return browser.menu_from_semantic({'snapshot': {'id': 'fixture', 'complete': True},
+                                           'content_refs': [{'role': 'paragraph', 'name': 'Recovered page'}]})
+
+    monkeypatch.setattr(browser, 'configured_driver', lambda pid: Driver())
+    monkeypatch.setattr(browser.subprocess, 'run', spawn)
+    monkeypatch.setattr(browser.subprocess, 'Popen', spawn)
+    monkeypatch.setattr(browser.BrowserBridge, 'attach', attach)
+    monkeypatch.setattr(browser.BrowserBridge, 'observe', observe)
+    code, out, err = fw('start', 'Recover the owned browser', '--browser')
+    assert code == 0, err
+    assert 'Recovered page' in out
+    assert opened and opened[0][0] == '/qualified/chromium'
+    assert '--new-window' in opened[0]
+    assert f'--user-data-dir={browser.PROFILE_DIR}' in opened[0]
+
+
 def _state(fw) -> dict:
     return json.loads((fw.session / "session.json").read_text())
 
@@ -579,6 +639,34 @@ def _id(out: str, label: str) -> int:
         if s.startswith("[") and f"'{label}'" in s:
             return int(s[1 : s.index("]")])
     raise AssertionError(f"{label!r} not in the observation")
+
+
+@pytest.mark.parametrize("observed_pid,observed_name,expected", [
+    (77, "Org.xfce.mousepad", 0),
+    (78, "Org.xfce.mousepad", 2),
+    (77, "UnrelatedApplication", 2),
+])
+def test_linux_start_matches_observed_alias_only_to_requested_process(
+    world, fw, monkeypatch, observed_pid, observed_name, expected
+):
+    from jevdual import native
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+    world.base.update(app_name=observed_name, pid=observed_pid, elements=[], tree_markdown="")
+
+    async def apps(inp):
+        return SimpleNamespace(apps=[SimpleNamespace(
+            name="Mousepad", bundle_id="org.xfce.mousepad", pid=77, running=True
+        )])
+
+    monkeypatch.setattr(world, "list_apps", apps)
+    code, out, err = fw("start", "Inspect the owned editor", "--app", "Mousepad", "--pid", "77")
+    assert code == expected, (out, err)
+    if expected == 0:
+        assert "Mousepad:" in out
+        assert _state(fw)["app"] == "Mousepad"
+    else:
+        assert "does not match the requested app and PID" in err
 
 
 def test_a_calculator_job_from_start_to_a_verified_done(world, fw):
@@ -647,6 +735,45 @@ def test_background_only_sends_no_hotkey(world, fw):
     code, out, _ = fw("do", "hotkey", "cmd", "s", "--authorize", "Delete")
     assert code == 0 and "not sent" in out and "requires_foreground" in out
     assert world.tool_calls == [] and world.presses == []
+
+
+@pytest.mark.parametrize("captured", [False, True])
+def test_linux_refused_save_records_no_dispatch(world, fw, monkeypatch, captured):
+    from jevdual import native
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+    attempts = []
+
+    async def refused(name, args_json):
+        attempts.append((name, json.loads(args_json)))
+        if captured:
+            from pathlib import Path
+
+            path = Path(__file__).parents[1] / "results/linux-vm-save-receipt-20261030/045fc5d-refused-profile-sdk.json"
+            record = json.loads(path.read_text())
+            return cd.ToolResult(
+                text=record["text"], images=[], structured_json=record["structured_json"],
+                is_error=record["is_error"], error_code=record["error_code"], action=None,
+                verification=None, degraded=record["degraded"], raw_json=record["raw_json"],
+            )
+        return SimpleNamespace(
+            action=None, is_error=True, error_code="foreground_unavailable",
+            text="window did not become active; no input was sent",
+            structured_json=json.dumps({
+                "code": "foreground_unavailable", "effect": "none",
+                "detail": "window did not become active; no input was sent",
+                "suggestion": "Confirm the exact window before retrying",
+            }),
+        )
+
+    monkeypatch.setattr(world, "call_tool", refused)
+    assert fw("start", "Save", "--app", "Calculator", "--mode", "exclusive_desktop")[0] == 0
+    code, out, err = fw("do", "hotkey", "ctrl", "s", "--no-judge", "--authorize", "Delete")
+    assert code == 0, err
+    assert len(attempts) == 1 and attempts[0][0] == "hotkey"
+    assert world.tool_calls == world.presses == []
+    assert "not sent" in out and "foreground_unavailable" in out
+    assert _state(fw)["memory"][-1].endswith("hotkey(ctrl+s) -> refused")
 
 
 def test_an_opaque_driver_error_does_not_claim_no_delivery(world, fw):

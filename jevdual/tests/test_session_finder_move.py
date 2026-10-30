@@ -12,6 +12,8 @@ from jevdual.app_oracles import check_finder
 
 from tests import test_session_file_targets as file_tests
 
+pytestmark = pytest.mark.usefixtures("mac_native_contract")
+
 
 class MoveCLIWorld(file_tests.FinderWorld):
     def __init__(self, manifest):

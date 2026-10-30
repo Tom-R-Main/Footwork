@@ -66,7 +66,7 @@ def catalog() -> list[dict]:
     for family, (directory, script, commands) in _FAMILIES.items():
         rows.append({
             "name": family, "commands": list(commands), "status": "available" if (root / directory / script).is_file() else "not_packaged",
-            "prerequisites": ["macOS and ffmpeg for live capture"] if family == "camera" else ["explicit reviewed input; macOS Swift/Vision for OCR"] if family == "inbox" else [],
+            "prerequisites": ["ffmpeg; explicit Linux V4L2 device or macOS AVFoundation camera; live device qualification required"] if family == "camera" else ["explicit reviewed input; Linux Tesseract with English data or macOS Swift/Vision; ffmpeg for Linux mirror correction"] if family == "inbox" else [],
             "missing": [] if (root / directory / script).is_file() else ["packaged runtime resources"],
             "output_root": str(output_root() / directory),
         })

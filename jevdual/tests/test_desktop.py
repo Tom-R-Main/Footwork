@@ -126,7 +126,7 @@ class FakeDriver:
 
 
 @pytest.fixture
-def stub_sdk(monkeypatch):
+def stub_sdk(monkeypatch, mac_native_contract):
     stub = SimpleNamespace(
         GetWindowStateInput=lambda **kw: kw,
         ClickInput=lambda **kw: kw,

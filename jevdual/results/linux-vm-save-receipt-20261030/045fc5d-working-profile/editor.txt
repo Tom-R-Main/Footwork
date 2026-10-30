@@ -1,0 +1,4 @@
+
+(mousepad:13323): dconf-WARNING **: 16:11:05.198: failed to commit changes to dconf: The connection is closed
+
+(mousepad:13323): dconf-WARNING **: 16:11:05.198: failed to commit changes to dconf: The connection is closed

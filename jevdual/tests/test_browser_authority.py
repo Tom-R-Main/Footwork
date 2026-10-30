@@ -478,7 +478,9 @@ def test_missing_explicit_pid_window_does_not_fall_back(tmp_path, monkeypatch, c
 
 
 @pytest.mark.parametrize("changed", [False, True])
-def test_native_key_foreground_fallback_rechecks_scope_after_background_refusal(changed, monkeypatch):
+def test_native_key_foreground_fallback_rechecks_scope_after_background_refusal(
+    changed, monkeypatch, mac_native_contract
+):
     from jevdual.native import AMBIGUITY
 
     third = _snapshot("http://127.0.0.1:9999/" if changed else SCOPE["url"], sid="s3")

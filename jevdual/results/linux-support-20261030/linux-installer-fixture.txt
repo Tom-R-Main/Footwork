@@ -1,0 +1,7 @@
+Looking in links: /fixture
+Processing /fixture/jevdual-0.0.1-py3-none-any.whl
+Processing /fixture/cua_driver-0.38.0-py3-none-linux_x86_64.whl
+Installing collected packages: jevdual, cua-driver
+Successfully installed cua-driver-0.38.0 jevdual-0.0.1
+fixture tools available
+{"installed": true, "executable": "/tmp/footwork-fixture/bin/footwork", "environment": "/tmp/footwork-fixture"}

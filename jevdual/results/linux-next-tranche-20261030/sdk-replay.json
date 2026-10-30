@@ -1,0 +1,14 @@
+{
+  "actual_sdk_class": "ToolResult",
+  "captured_fields": [
+    "code",
+    "detail",
+    "effect",
+    "hint",
+    "next_call",
+    "suggestion"
+  ],
+  "recognized": true,
+  "driver_started": false,
+  "input_sent": false
+}

@@ -1,0 +1,20 @@
+{
+  "target_revision": "bd6f185c24327f5cf292067b7f84ed50bd118a31",
+  "models_command": "JEVDUAL_PURE_PY=1 PYTHONPATH=/Users/thomasmain/projects/footwork/.worktrees/linux-support/jevdual/python /Users/thomasmain/projects/footwork/jevdual/.venv/bin/python /Users/thomasmain/projects/footwork/output/repo-learning/linux-consolidation/models.py",
+  "model_source": "/Users/thomasmain/projects/footwork/output/repo-learning/linux-consolidation/models.py",
+  "model_result": "/Users/thomasmain/projects/footwork/output/repo-learning/linux-consolidation/models.json",
+  "linux_probe_source": "/Users/thomasmain/projects/footwork/output/repo-learning/linux-consolidation/pidfd_check.py",
+  "linux_probe_result": "/Users/thomasmain/projects/footwork/output/repo-learning/linux-consolidation/pidfd-learning.json",
+  "sha256": {
+    "models.py": "7a130be3cddaed855ae1d5cac0cd904f3ebe71819c9b12cdbaaa65a46c5b40e1",
+    "pidfd_check.py": "2c66752b6b99d2edf67df958a0f990ae37ddb409a526b00d6737274ea31bc4ee"
+  },
+  "current_patterns": [
+    "linux-signal-identity-and-scope-v2",
+    "linux-ready-is-owned-live-observation-v1",
+    "owned-browser-helper-is-not-another-root-v2",
+    "linux-bounded-inventory-preserves-unknown-v1",
+    "verify-final-public-envelope-not-only-producer-v1"
+  ],
+  "retrieval_note": "v1 cards remain historical; choose the explicit superseding v2 for the two model-backed patterns."
+}

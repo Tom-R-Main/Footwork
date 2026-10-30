@@ -1,19 +1,24 @@
-# jevdual
+# jevdual · the package behind Footwork
 
-The package behind [Footwork](../README.md): a guard (done verification against observed state, a
-destructive gate, a receipt for every action) in front of whoever drives, with
-[TypeSafe Jev](https://docs.typesafe.ai) as an optional System 1 that picks an operation and a target from a
-code-owned menu. Two surfaces share the menu, arbiter, verifier and receipt types: the browser, through
-[browser-use](https://github.com/browser-use/browser-use) 0.13.14 (pinned, not forked) or the Cua Driver's
-DevTools route, and native macOS apps through the [Cua Driver](https://github.com/trycua/cua)'s
-accessibility tree (`cua-driver` 0.38.0+footwork.d5373879, pinned to reference source). The operator surface is the `footwork` CLI
-(`python/jevdual/cli.py`, `session.py`); see the [top-level README](../README.md#drive-it). Measured hot
-paths in the DOM pipeline run in Rust through PyO3, each with a pure-Python twin and equality tests.
+[Footwork](../README.md) gives people and agents one CLI for browser and desktop work: observe a
+fresh menu, choose an action, read its receipt, and check the resulting state. `jevdual` supplies the
+shared menus, gates, verification, durable operation history and optional Jev System 1.
 
-For the standalone agent capability wheel, see [installation and per-job configuration](docs/capability-packaging.md). It includes a journal-validated completion adapter for the scoped browser-to-TextEdit flow; it does not require Rust or a model provider account.
+[**Install and get a first checked result →**](docs/quickstart.md) · [Why Footwork?](docs/why-footwork.md)
 
-The browser tables below are the Q6 to Q9 measurements; native and coexistence results (Q10, Q15) are in
-the top-level README and `docs/experiments/`.
+- **Use it:** [CLI and bundled tools](docs/unified-cli.md), [Linux X11 requirements](docs/linux-support.md).
+- **Connect an agent:** [scoped MCP setup](docs/capability-packaging.md), [agent-host recipe](docs/installed-agent-host.md).
+- **Work on it:** [contributing](../CONTRIBUTING.md), [source setup](#run-it), [architecture](#how-it-works).
+
+Browser routes use [browser-use](https://github.com/browser-use/browser-use) 0.13.14 or the CUA
+DevTools route. Native apps use the pinned [CUA driver](docs/upstream/cua-driver-build.md), with macOS
+accessibility and preview Linux X11/AT-SPI paths. Repeated Linux desktop sessions still expose
+native teardown aborts and target-readiness timeouts; the Linux guide carries the current limits.
+The portable consumer wheel uses Python for Footwork's optional Rust hot paths; desktop control
+still needs the compatible native CUA wheel.
+
+The tables below preserve the dated research record. Every number belongs to its cited run artifact;
+platform and model results do not automatically transfer to another environment.
 
 ## Results
 
@@ -109,7 +114,8 @@ uv run python -m evals.runner --split dev --arm stock --arm dual --llm meta
 ```
 
 Keys are files under `~/.config/jevdual` (`TYPESAFE_API_KEY`, `META_MODEL_API_KEY`), materialized
-from the Sift vault; `jevdual/keys.py` exports them. Requires Rust 1.95 and Python 3.11+.
+from the Sift vault; `jevdual/keys.py` exports them. Source builds require Python 3.11+ and the pinned CUA Rust 1.97.1 toolchain plus platform development
+libraries. Consumers can use a compatible prebuilt bundle without a Rust compiler.
 
 ## Credits
 

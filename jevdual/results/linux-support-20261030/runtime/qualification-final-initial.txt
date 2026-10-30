@@ -1,0 +1,26 @@
+Using Python 3.14.4 environment at: footwork
+Resolved 1 package in 6ms
+Prepared 1 package in 16ms
+Uninstalled 1 package in 4ms
+Installed 1 package in 4ms
+ - jevdual==0.0.1 (from file:///artifacts/final-runtime/bundle/jevdual-0.0.1-py3-none-any.whl)
+ + jevdual==0.0.1 (from file:///artifacts/final-runtime/bundle-final/jevdual-0.0.1-py3-none-any.whl)
+Traceback (most recent call last):
+  File "/source/jevdual/scripts/linux/qualify.py", line 244, in <module>
+    main()
+    ~~~~^^
+  File "/source/jevdual/scripts/linux/qualify.py", line 200, in main
+    assert asyncio.run(exact_text(pid, wid)) == expected
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/source/jevdual/scripts/linux/qualify.py", line 98, in exact_text
+    raise RuntimeError("expected one qualified fixture text field")
+RuntimeError: expected one qualified fixture text field

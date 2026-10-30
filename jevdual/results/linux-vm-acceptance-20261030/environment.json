@@ -1,0 +1,36 @@
+{
+  "source_commit": "90c9fc4add43e64e483b44d01d189f361eaa15ea",
+  "baseline_commit": "f849e163190d5217695847644406edaae0a32dce",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "imports": {
+    "jevdual._core": true,
+    "cua_driver": true
+  },
+  "versions": {
+    "jevdual": "0.0.1",
+    "cua-driver": "0.38.0+footwork.d5373879",
+    "browser-use": "0.13.14",
+    "pytest": "9.1.1"
+  },
+  "commands": {
+    "chromium": "/usr/bin/chromium",
+    "Xvfb": null,
+    "mousepad": "/usr/bin/mousepad",
+    "dbus-run-session": "/usr/bin/dbus-run-session",
+    "tesseract": "/usr/bin/tesseract",
+    "ffmpeg": "/usr/bin/ffmpeg"
+  },
+  "graphical_session": {
+    "DISPLAY": null,
+    "WAYLAND_DISPLAY": null,
+    "DBUS_SESSION_BUS_ADDRESS": null
+  },
+  "limits": {
+    "memory.max": "17179869184",
+    "pids.max": "max",
+    "cpu.max": "400000 100000"
+  },
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.6\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+  "display_devices": []
+}

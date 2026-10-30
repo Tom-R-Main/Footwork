@@ -1,0 +1,79 @@
+{
+  "architecture": "aarch64",
+  "distribution": {
+    "ID": "ubuntu",
+    "PRETTY_NAME": "Ubuntu 26.04.1 LTS",
+    "VERSION_ID": "26.04"
+  },
+  "effect_verification": "not_asserted",
+  "executables_present": {
+    "Xvfb": true,
+    "cargo": true,
+    "cc": true,
+    "chromium": false,
+    "chromium-browser": false,
+    "clang": true,
+    "dbus-run-session": true,
+    "dbus-send": true,
+    "ffmpeg": true,
+    "gdbus": true,
+    "google-chrome": true,
+    "google-chrome-stable": true,
+    "node": true,
+    "pip": true,
+    "pip3": true,
+    "pkg-config": true,
+    "rustc": true,
+    "rustup": true,
+    "tesseract": true,
+    "uv": true
+  },
+  "kernel": "7.0.14-linuxkit",
+  "libc": "glibc 2.43",
+  "limitations": [
+    "Executable and environment presence do not establish connection, permissions, or driver support.",
+    "No browser, desktop, accessibility service, native CUA library, or provider was started or queried.",
+    "Resource values are a transient upper bound, not a reservation or build-capacity guarantee.",
+    "Prebuilt installation avoids compilers; Python fallback does not replace native CUA desktop control."
+  ],
+  "platform": "linux",
+  "prerequisite_candidates": {
+    "browser_executable": true,
+    "graphical_session_indicator": false,
+    "session_bus_indicator": false
+  },
+  "python": {
+    "ensurepip_module": true,
+    "pip_module": false,
+    "venv_module": true,
+    "version": "3.14.4"
+  },
+  "resources": {
+    "available_memory_upper_bound_bytes": 1340547072,
+    "cgroup": {
+      "cpu_quota_cores": 2.0,
+      "membership_readable": true,
+      "memory_limit_bytes": 3221225472,
+      "memory_remaining_bytes": 1340547072,
+      "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+      "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+      "versions": [
+        2
+      ]
+    },
+    "cpu_affinity_count": 4,
+    "cpu_count": 4,
+    "memory": {
+      "available_bytes": 2463526912,
+      "total_bytes": 4107141120
+    }
+  },
+  "runtime_qualification": "unverified",
+  "schema_version": 1,
+  "session_indicators_present": {
+    "DBUS_SESSION_BUS_ADDRESS": false,
+    "DISPLAY": false,
+    "WAYLAND_DISPLAY": false,
+    "XDG_RUNTIME_DIR": true
+  }
+}

@@ -9,7 +9,39 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.parametrize("host,native_modules", [
+    ("darwin", {"ApplicationServices", "Quartz", "Foundation"}),
+    ("linux", {"jeepney"}),
+])
+def test_origin_probe_checks_only_host_native_dependencies(host, native_modules, monkeypatch, capsys):
+    from types import SimpleNamespace
+
+    # Load the side-effect-free worker module before modeling another host's platform.
+    import jevdual.capability.execution_worker  # noqa: F401
+
+    spec = importlib.util.spec_from_file_location("install", ROOT / "scripts/capability_clean_install.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    seen = []
+    allowed = {"cua_driver", "psutil", "mcp", "packaging"} | native_modules
+
+    def import_dependency(name):
+        assert name in allowed, f"unexpected native dependency on {host}: {name}"
+        seen.append(name)
+        return SimpleNamespace(__file__=str(Path("/owned/venv/site-packages") / name / "__init__.py"))
+
+    monkeypatch.setattr(sys, "platform", host)
+    monkeypatch.setattr(importlib, "import_module", import_dependency)
+    exec(module.ORIGIN_PROBE, {})  # noqa: S102 - execute the repository-owned subprocess probe verbatim
+    report = json.loads(capsys.readouterr().out)
+    assert set(seen) == allowed
+    assert set(report["module_origins"]) == allowed
+    assert all(path.startswith("/owned/venv/site-packages/") for path in report["module_origins"].values())
 
 
 def test_optimized_installer_refuses_system_site_inheritance(tmp_path):

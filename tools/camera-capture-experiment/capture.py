@@ -21,6 +21,7 @@ OUTPUT = (Path(os.environ["FOOTWORK_TOOL_OUTPUT_ROOT"]) / BASE.name
           if os.environ.get("FOOTWORK_TOOL_OUTPUT_ROOT") else BASE / "output")
 TOKEN = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}\Z")
 AV_DEVICE = re.compile(r"\[AVFoundation indev @ [^]]+\] \[(\d+)\] (.+)$")
+LINUX_DEVICE = re.compile(r"/dev/video(?:0|[1-9][0-9]*)\Z")
 
 
 class Refusal(Exception):
@@ -182,8 +183,50 @@ def permission(root, programs):
     return status
 
 
+def backend_name():
+    if sys.platform == "linux":
+        return "v4l2"
+    if sys.platform == "darwin":
+        return "avfoundation"
+    raise Refusal("native camera capture is supported only on macOS and Linux")
+
+
+def linux_device_identity(camera):
+    """Inspect one exact node without opening it or claiming camera permission.
+
+    A V4L2 node may be virtual or expose metadata rather than video. Only the
+    explicit capture can establish that FFmpeg acquired a decodable frame.
+    """
+    if not isinstance(camera, str) or not LINUX_DEVICE.fullmatch(camera):
+        raise Refusal("Linux camera must be an explicit /dev/videoN path")
+    try:
+        info = Path(camera).lstat()
+    except OSError as exc:
+        raise Refusal("selected Linux video node is unavailable") from exc
+    if not stat.S_ISCHR(info.st_mode) or os.major(info.st_rdev) != 81:
+        raise Refusal("selected Linux video node must be a V4L2 character device, without symlinks")
+    return {"path": camera, "device": info.st_dev, "inode": info.st_ino,
+            "rdev": info.st_rdev}
+
+
+def linux_inventory(programs):
+    devices = []
+    for path in sorted(Path("/dev").glob("video*")):
+        try:
+            devices.append(linux_device_identity(str(path)))
+        except Refusal:
+            continue
+    return {"backend": "v4l2", "video_devices": devices,
+            "eligible_cameras": [device["path"] for device in devices],
+            "permission_status": "not_checked",
+            "permission_query": "device metadata only; no device opened or permission established",
+            "device_kind": "unqualified; may be virtual or non-capture nodes", "programs": programs}
+
+
 def doctor(root):
     programs = binaries()
+    if backend_name() == "v4l2":
+        return linux_inventory(programs)
     if not programs["system_profiler"]:
         raise Refusal("macOS system_profiler is required")
     rc, stdout, _ = run_process([programs["system_profiler"], "SPCameraDataType", "-json"], 15)
@@ -200,13 +243,20 @@ def doctor(root):
     if not video:
         raise Refusal("FFmpeg AVFoundation video inventory was unavailable")
     physical_unique = [name for name in physical if physical.count(name) == 1 and video.count(name) == 1]
-    return {"physical_cameras": physical, "avfoundation_video_devices": video,
+    return {"backend": "avfoundation", "physical_cameras": physical, "avfoundation_video_devices": video,
             "eligible_cameras": physical_unique, "permission_status": permission(root, programs),
             "permission_query": "Swift AVFoundation authorizationStatus(.video); no request",
             "programs": programs}
 
 
 def select_camera(camera, inventory, allow_permission_prompt=False):
+    if backend_name() == "v4l2":
+        if allow_permission_prompt:
+            raise Refusal("--allow-permission-prompt applies only to macOS")
+        current = linux_device_identity(camera)
+        if inventory.get("backend") != "v4l2" or current not in inventory.get("video_devices", []):
+            raise Refusal("selected Linux video node changed or was not in the observed inventory")
+        return current
     if not camera or ":" in camera or camera.startswith("-"):
         raise Refusal("camera name is invalid")
     if camera not in inventory["eligible_cameras"]:
@@ -284,10 +334,17 @@ def status(root, token):
 def capture(root, camera, token, timeout, allow_permission_prompt=False):
     ledger, artifact, staging = paths(root, token)
     diagnostic = ledger.with_suffix(".ffmpeg.stderr.log")
+    backend = backend_name()
     request = {"camera": camera, "format": "png", "framerate_fps": 30, "timeout_seconds": timeout,
                "allow_permission_prompt": allow_permission_prompt}
+    if backend == "v4l2":
+        request["backend"] = backend
     if ledger.exists() or ledger.is_symlink():
         record = read_json(ledger)
+        # Replays inspect the original operation, even after its device vanishes.
+        # Retaining the original node identity never authorizes a new capture.
+        if backend == "v4l2":
+            request["device_identity"] = record["request"].get("device_identity")
         if record.get("request") != request:
             raise Refusal("token already belongs to different capture arguments")
         return status(root, token)
@@ -301,15 +358,20 @@ def capture(root, camera, token, timeout, allow_permission_prompt=False):
     if any(path.exists() or path.is_symlink() for path in (artifact, staging, diagnostic)):
         raise Refusal("an unreceipted artifact already exists; it will not be overwritten")
     inventory = doctor(root)
-    select_camera(camera, inventory, allow_permission_prompt)
+    device_identity = select_camera(camera, inventory, allow_permission_prompt)
+    if backend == "v4l2":
+        request["device_identity"] = device_identity
     programs = inventory["programs"]
     record = {"version": 1, "token": token, "request": request, "state": "pending",
               "intent_time_unix": time.time(), "artifact_name": artifact.name}
     persist(ledger, record)
     try:
+        if backend == "v4l2" and linux_device_identity(camera) != device_identity:
+            raise Refusal("selected Linux video node changed before capture")
+        source = camera if backend == "v4l2" else f"{camera}:none"
         rc, _, stderr = run_process([programs["ffmpeg"], "-hide_banner", "-loglevel", "error",
-                               "-nostdin", "-n", "-f", "avfoundation", "-framerate", "30",
-                               "-i", f"{camera}:none",
+                               "-nostdin", "-n", "-f", backend, "-framerate", "30",
+                               "-i", source,
                                "-an", "-frames:v", "1", "-c:v", "png", str(staging)], timeout)
         private_diagnostic(diagnostic, stderr)
         record["diagnostic_name"] = diagnostic.name

@@ -1,0 +1,146 @@
+{
+  "kind": "bus",
+  "implementation_commit": "f16cc54",
+  "session": {
+    "ready": false,
+    "phase": "failed",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 9002.623417016
+      },
+      {
+        "phase": "x11",
+        "monotonic": 9002.665319217
+      },
+      {
+        "phase": "session_bus",
+        "monotonic": 9002.759466551
+      },
+      {
+        "phase": "wm",
+        "monotonic": 9002.854084755
+      },
+      {
+        "phase": "accessibility",
+        "monotonic": 9002.948064747
+      },
+      {
+        "phase": "target",
+        "monotonic": 9003.128779386
+      },
+      {
+        "phase": "ready",
+        "monotonic": 9004.513488018,
+        "target": {
+          "ready": true,
+          "pid": 21,
+          "window_id": 4194307,
+          "document": "/work/critical-bus/document.txt",
+          "exact_fixture_text": true
+        }
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 9004.615795442,
+        "reason": "component_exited:bus"
+      },
+      {
+        "phase": "failed",
+        "monotonic": 9004.652143859,
+        "reason": "component_exited:bus"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 17695608832
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3195379712,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 509,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 3,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3195379712,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "pid": 8,
+      "signal": 0,
+      "status": "sent",
+      "delivery": "pidfd"
+    },
+    "display": ":0",
+    "wm_identity": {
+      "ready": true,
+      "wm_window": 2097439,
+      "selection_owner": 2097439
+    },
+    "target": {
+      "ready": true,
+      "pid": 21,
+      "window_id": 4194307,
+      "document": "/work/critical-bus/document.txt",
+      "exact_fixture_text": true
+    },
+    "reason": "component_exited:bus"
+  },
+  "passed": true,
+  "counters": {
+    "pids.current": "2",
+    "pids.events": "max 0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+  }
+}

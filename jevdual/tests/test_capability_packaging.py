@@ -9,6 +9,7 @@ import subprocess
 import sys
 import zipfile
 from pathlib import Path
+from types import ModuleType, SimpleNamespace
 
 import pytest
 from jevdual.capability.contracts import CapabilityError
@@ -146,7 +147,7 @@ def test_doctor_never_requests_permissions_or_creates_resources(tmp_path, monkey
 
     calls = []
 
-    class PermissionAPI:
+    class PermissionAPI(ModuleType):
         def AXIsProcessTrusted(self):
             calls.append("AX-status")
             return True
@@ -158,9 +159,11 @@ def test_doctor_never_requests_permissions_or_creates_resources(tmp_path, monkey
         def __getattr__(self, name):
             pytest.fail(f"Unexpected permission method: {name}")
 
-    monkeypatch.setattr(setup.sys, "platform", "darwin")
-    monkeypatch.setitem(sys.modules, "ApplicationServices", PermissionAPI())
-    monkeypatch.setitem(sys.modules, "Quartz", PermissionAPI())
+    monkeypatch.setattr(
+        setup, "sys", SimpleNamespace(platform="darwin", executable=sys.executable, modules=sys.modules),
+    )
+    monkeypatch.setitem(sys.modules, "ApplicationServices", PermissionAPI("ApplicationServices"))
+    monkeypatch.setitem(sys.modules, "Quartz", PermissionAPI("Quartz"))
     before = list(tmp_path.iterdir())
     result = doctor(journal_path=tmp_path / "missing.sqlite")
     assert calls == ["AX-status", "screen-status"]

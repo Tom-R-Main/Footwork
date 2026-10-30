@@ -155,6 +155,7 @@ def test_doctor_includes_optional_families_and_preserves_strict_code(monkeypatch
     assert result["data"]["acceleration"]["available"] is False
     assert result["data"]["acceleration"]["component"] == "jevdual._core"
     assert "CUA" in result["data"]["acceleration"]["scope"]
+    assert result["data"]["host_prerequisites"]["runtime_qualification"] == "unverified"
     assert result["output"] == ""
 
 

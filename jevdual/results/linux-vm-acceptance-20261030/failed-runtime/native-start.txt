@@ -1,0 +1,25 @@
+bound Mousepad window 4194307 '/workspace/scratch/footwork-debian-desktop/document.txt - Mo' (background_only)
+Mousepad: '/workspace/scratch/footwork-debian-desktop/document.txt - Mousepad'
+16 elements:
+  [   0] menu       'File'
+  [   1] menu       'Edit'
+  [   2] menu       'Search'
+  [   3] menu       'View'
+  [   4] menu       'Document'
+  [   5] menu       'Help'
+  [  16] textbox    'text area' = 'Footwork Linux fixture\nkeep trailing spaces'
+  [   6] button     'New'
+  [   7] button     'Open...'
+  [   8] button     'Save As...'
+  [   9] button     'Reload'
+  [  10] button     'Close Tab'
+  [  11] button     'Find'
+  [  12] button     'Find and Replace...'
+  [  13] button     'Go to...'
+  [  14] button     'Fullscreen'
+page text (47 chars):
+Footwork Linux fixture
+	keep trailing spaces  
+
+
+session: /workspace/scratch/footwork-debian-qualified/native-session  (export FOOTWORK_SESSION=/workspace/scratch/footwork-debian-qualified/native-session to omit --session)

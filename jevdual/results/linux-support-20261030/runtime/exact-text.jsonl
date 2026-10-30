@@ -1,0 +1,5 @@
+{"stage": "before", "characters": 47, "exact_file_match": true, "writable": true}
+{"stage": "append", "before_match": true, "exact_append": true, "characters": 69}
+{"stage": "stale", "reason": "precondition_changed", "unchanged": true}
+{"stage": "long", "characters": 5014, "exact": true}
+{"stage": "restore", "exact": true}

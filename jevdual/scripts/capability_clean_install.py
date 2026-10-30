@@ -18,6 +18,20 @@ from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[2]
 
+ORIGIN_PROBE = """
+import sys,json,importlib.metadata,importlib
+from pathlib import Path
+import jevdual,jevdual.capability.execution_worker as worker
+from jevdual._native import BACKEND
+names=("cua_driver","psutil","mcp","packaging")
+if sys.platform == "darwin":
+    names += ("ApplicationServices","Quartz","Foundation")
+elif sys.platform == "linux":
+    names += ("jeepney",)
+modules={n:str(importlib.import_module(n).__file__) for n in names}
+print(json.dumps({"version":sys.version,"prefix":sys.prefix,"base_prefix":sys.base_prefix,"python":sys.executable,"package":jevdual.__file__,"worker":worker.__file__,"backend":BACKEND,"module_origins":modules,"sys_path":sys.path}))
+"""
+
 
 def source_commit(project: Path) -> str:
     """Packet provenance never calls Git or the macOS developer-tools shim."""
@@ -115,7 +129,7 @@ def main() -> int:
         } if wheelhouse else {},
         "commands": [],
         "passed": False,
-        "limits": "Fresh dependencies on existing host OS/interpreter, not a fresh machine or TCC permission database.",
+        "limits": "Fresh dependencies on existing host OS/interpreter, not a fresh machine or qualified desktop session/permission state.",
     }
 
     def run(name, command, timeout=300):
@@ -191,16 +205,7 @@ def main() -> int:
         return 1
     if not run("inventory", common + ["pip", "list", "--python", python, "--format", "json"]):
         return 1
-    probe = """
-import sys,json,importlib.metadata,importlib
-from pathlib import Path
-import jevdual,jevdual.capability.execution_worker as worker
-from jevdual._native import BACKEND
-names=("cua_driver","psutil","mcp","ApplicationServices","Quartz","Foundation","packaging")
-modules={n:str(importlib.import_module(n).__file__) for n in names}
-print(json.dumps({"version":sys.version,"prefix":sys.prefix,"base_prefix":sys.base_prefix,"python":sys.executable,"package":jevdual.__file__,"worker":worker.__file__,"backend":BACKEND,"module_origins":modules,"sys_path":sys.path}))
-"""
-    if not run("origins", [python, "-I", "-c", probe], timeout=30):
+    if not run("origins", [python, "-I", "-c", ORIGIN_PROBE], timeout=30):
         return 1
     origins = json.loads((root / "origins.stdout.log").read_text())
     if not all(

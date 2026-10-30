@@ -1,0 +1,8 @@
+...........................                                              [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/_pytest/cacheprovider.py:469
+  /workspace/Footwork/jevdual/.venv/lib/python3.12/site-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: cache could not write path /workspace/Footwork/jevdual/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/workspace/Footwork/jevdual/.pytest_cache/v/cache/nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+27 passed, 1 warning in 10.55s

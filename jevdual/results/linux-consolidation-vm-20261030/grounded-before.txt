@@ -1,0 +1,235 @@
+FF.F                                                                     [100%]
+=================================== FAILURES ===================================
+___ test_cleanup_never_addresses_a_replacement_after_its_inventory_snapshot ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fab9d14b6e0>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-18/test_cleanup_never_addresses_a0')
+
+    def test_cleanup_never_addresses_a_replacement_after_its_inventory_snapshot(monkeypatch, tmp_path):
+        target = FixtureSession(tmp_path / 'stale-signal')
+        target.processes = {'root': SimpleNamespace(pid=42)}
+        live = {42: {'start': 'root-A', 'session': 42, 'state': 'S'},
+                43: {'start': 'member-A', 'session': 42, 'state': 'S'}}
+        snapshot = {pid: dict(row) for pid, row in live.items()}
+        monkeypatch.setattr(target, 'capture', lambda: snapshot)
+        delivered = []
+    
+        def group(*_):
+            live[43]['start'] = 'replacement-B'
+    
+        def numeric(pid, _):
+            delivered.append(live[pid]['start'])
+    
+        def pinned(pid, row, _):
+            # A retained handle addresses the referent acquired before replacement.
+            live[43]['start'] = 'replacement-B'
+            delivered.append(row['start'])
+            return {'pid': pid, 'status': 'sent', 'delivery': 'pidfd'}
+    
+        monkeypatch.setattr(session.os, 'killpg', group)
+        monkeypatch.setattr(session.os, 'kill', numeric)
+        monkeypatch.setattr(session, 'pin_signal', pinned, raising=False)
+        target.signal_owned(['root'], signal.SIGTERM)
+>       assert 'replacement-B' not in delivered
+E       AssertionError: assert 'replacement-B' not in ['root-A', 'replacement-B']
+
+tests/test_linux_session.py:187: AssertionError
+_ test_recovery_sequences_helper_custody_before_actual_unique_root_discovery[delayed-helper] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fab9d148aa0>
+case = 'delayed-helper'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize('case', ['delayed-helper', 'unrelated-root', 'replaced-root'])
+    async def test_recovery_sequences_helper_custody_before_actual_unique_root_discovery(monkeypatch, case):
+        import psutil
+    
+        spawned, closed = [], []
+        helper = SimpleNamespace(pid=99, status=None, polls=0)
+        root_args = ['/qualified/chromium', f'--user-data-dir={browser.PROFILE_DIR}',
+                     f'--remote-debugging-port={browser.PORT}']
+    
+        def process(pid, args):
+            return SimpleNamespace(info={'pid': pid, 'cmdline': args, 'exe': '/qualified/chromium',
+                                         'uids': SimpleNamespace(real=42)})
+    
+        def inventory(_):
+            rows = [process(42, root_args)]
+            if spawned and helper.status is None:
+                rows.append(process(99, spawned[0]))
+            if case == 'unrelated-root':
+                rows.append(process(77, root_args))
+            return iter(rows)
+    
+        def poll():
+            helper.polls += 1
+            if helper.polls >= 4:
+                helper.status = 0
+            return helper.status
+    
+        helper.poll, helper.wait = poll, lambda **_: helper.status
+    
+        class Driver:
+            calls = 0
+    
+            async def list_windows(self, _):
+                self.calls += 1
+                window = SimpleNamespace(pid=42, window_id=7, bounds=SimpleNamespace(width=100, height=100))
+                return SimpleNamespace(windows=[] if self.calls == 1 else [window])
+    
+            async def shutdown(self):
+                closed.append(True)
+    
+        class Bridge:
+            def __init__(self, *_, **__):
+                pass
+    
+            async def attach(self):
+                pass
+    
+        def spawn(args, **_):
+            spawned.append(args)
+            return helper
+    
+        monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
+        monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+        monkeypatch.setattr(browser, '_incarnation', lambda pid: 2.0 if case == 'replaced-root' and helper.status == 0 else 1.0)
+        monkeypatch.setattr(browser, '_recovery_flags', lambda *_: [])
+        monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
+        monkeypatch.setattr(browser.os, 'getuid', lambda: 42)
+        monkeypatch.setattr(browser.os, 'killpg', lambda *_: None)
+        monkeypatch.setattr(psutil, 'process_iter', inventory)
+        monkeypatch.setattr(browser.subprocess, 'Popen', spawn)
+        monkeypatch.setattr(browser, 'configured_driver', lambda _: Driver())
+        monkeypatch.setattr(browser, 'BrowserBridge', Bridge)
+        if case == 'unrelated-root':
+            with pytest.raises(RuntimeError, match='multiple browser processes'):
+                await browser.bind_footwork_chrome()
+            assert not spawned
+        elif case == 'replaced-root':
+            with pytest.raises(RuntimeError, match='identity changed'):
+                await browser.bind_footwork_chrome()
+            assert closed == [True]
+        else:
+>           await browser.bind_footwork_chrome()
+
+tests/test_browser_launch.py:325: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+python/jevdual/browser_driver.py:630: in bind_footwork_chrome
+    if not identity():
+           ^^^^^^^^^^
+python/jevdual/browser_driver.py:620: in identity
+    return chrome_pid() == pid and _incarnation(pid) == incarnation
+           ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def chrome_pid() -> int | None:
+        """Find the one owned browser root, never a regex match or a renderer process."""
+        import psutil
+    
+        executable = chrome_executable()
+        required = {f"--user-data-dir={PROFILE_DIR}", f"--remote-debugging-port={PORT}"}
+        pids = []
+        for process in psutil.process_iter(["pid", "cmdline", "exe", "uids"]):
+            info = process.info
+            args = info.get("cmdline") or []
+            owner = info.get("uids")
+            if (
+                required.issubset(args)
+                and not any(arg.startswith("--type=") for arg in args)
+                and info.get("exe")
+                and str(Path(info["exe"]).resolve()) == executable
+                and owner is not None
+                and owner.real == os.getuid()
+            ):
+                pids.append(info["pid"])
+        if len(pids) > 1:
+>           raise RuntimeError("multiple browser processes match the owned profile; refusing ambiguous attachment")
+E           RuntimeError: multiple browser processes match the owned profile; refusing ambiguous attachment
+
+python/jevdual/browser_driver.py:125: RuntimeError
+_ test_recovery_sequences_helper_custody_before_actual_unique_root_discovery[replaced-root] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fab9cc75ca0>
+case = 'replaced-root'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize('case', ['delayed-helper', 'unrelated-root', 'replaced-root'])
+    async def test_recovery_sequences_helper_custody_before_actual_unique_root_discovery(monkeypatch, case):
+        import psutil
+    
+        spawned, closed = [], []
+        helper = SimpleNamespace(pid=99, status=None, polls=0)
+        root_args = ['/qualified/chromium', f'--user-data-dir={browser.PROFILE_DIR}',
+                     f'--remote-debugging-port={browser.PORT}']
+    
+        def process(pid, args):
+            return SimpleNamespace(info={'pid': pid, 'cmdline': args, 'exe': '/qualified/chromium',
+                                         'uids': SimpleNamespace(real=42)})
+    
+        def inventory(_):
+            rows = [process(42, root_args)]
+            if spawned and helper.status is None:
+                rows.append(process(99, spawned[0]))
+            if case == 'unrelated-root':
+                rows.append(process(77, root_args))
+            return iter(rows)
+    
+        def poll():
+            helper.polls += 1
+            if helper.polls >= 4:
+                helper.status = 0
+            return helper.status
+    
+        helper.poll, helper.wait = poll, lambda **_: helper.status
+    
+        class Driver:
+            calls = 0
+    
+            async def list_windows(self, _):
+                self.calls += 1
+                window = SimpleNamespace(pid=42, window_id=7, bounds=SimpleNamespace(width=100, height=100))
+                return SimpleNamespace(windows=[] if self.calls == 1 else [window])
+    
+            async def shutdown(self):
+                closed.append(True)
+    
+        class Bridge:
+            def __init__(self, *_, **__):
+                pass
+    
+            async def attach(self):
+                pass
+    
+        def spawn(args, **_):
+            spawned.append(args)
+            return helper
+    
+        monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
+        monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+        monkeypatch.setattr(browser, '_incarnation', lambda pid: 2.0 if case == 'replaced-root' and helper.status == 0 else 1.0)
+        monkeypatch.setattr(browser, '_recovery_flags', lambda *_: [])
+        monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
+        monkeypatch.setattr(browser.os, 'getuid', lambda: 42)
+        monkeypatch.setattr(browser.os, 'killpg', lambda *_: None)
+        monkeypatch.setattr(psutil, 'process_iter', inventory)
+        monkeypatch.setattr(browser.subprocess, 'Popen', spawn)
+        monkeypatch.setattr(browser, 'configured_driver', lambda _: Driver())
+        monkeypatch.setattr(browser, 'BrowserBridge', Bridge)
+        if case == 'unrelated-root':
+            with pytest.raises(RuntimeError, match='multiple browser processes'):
+                await browser.bind_footwork_chrome()
+            assert not spawned
+        elif case == 'replaced-root':
+>           with pytest.raises(RuntimeError, match='identity changed'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'identity changed'
+E             Actual message: 'multiple browser processes match the owned profile; refusing ambiguous attachment'
+
+tests/test_browser_launch.py:321: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_linux_session.py::test_cleanup_never_addresses_a_replacement_after_its_inventory_snapshot
+FAILED tests/test_browser_launch.py::test_recovery_sequences_helper_custody_before_actual_unique_root_discovery[delayed-helper]
+FAILED tests/test_browser_launch.py::test_recovery_sequences_helper_custody_before_actual_unique_root_discovery[replaced-root]
+3 failed, 1 passed in 0.57s

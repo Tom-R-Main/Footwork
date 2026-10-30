@@ -1,0 +1,127 @@
+Using CPython 3.12.14 interpreter at: /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3
+Creating virtual environment at: /workspace/scratch/footwork-debian-consumer-045fc5d
+Activate with: source /workspace/scratch/footwork-debian-consumer-045fc5d/bin/activate
+Using Python 3.12.14 environment at: /workspace/scratch/footwork-debian-consumer-045fc5d
+Resolved 118 packages in 1.00s
+Prepared 2 packages in 122ms
+Installed 118 packages in 73ms
+ + absl-py==2.5.1
+ + aiofiles==25.1.0
+ + aiohappyeyeballs==2.7.1
+ + aiohttp==3.14.5
+ + aiosignal==1.4.0
+ + annotated-types==0.8.0
+ + anthropic==1.17.0
+ + anyio==4.12.1
+ + attrs==26.1.0
+ + backoff==2.2.1
+ + beautifulsoup4==4.15.0
+ + browser-harness==0.1.13
+ + browser-use==0.13.14
+ + browser-use-sdk==3.12.1
+ + bubus==1.5.6
+ + cdp-use==1.4.5
+ + certifi==2026.10.23
+ + cffi==2.1.1
+ + charset-normalizer==3.5.2
+ + click==8.3.3
+ + cloudpickle==3.1.2
+ + cryptography==50.0.2
+ + cua-driver==0.38.0+footwork.d5373879 (from file:///workspace/scratch/footwork-debian-bundle-045fc5d/cua_driver-0.38.0+footwork.d5373879-py3-none-linux_x86_64.whl)
+ + distro==1.9.0
+ + docstring-parser==0.18.0
+ + etils==1.14.0
+ + fetch-use==0.4.0
+ + frozenlist==1.8.0
+ + fsspec==2026.9.0
+ + glfw==2.11.0
+ + google-api-core==2.29.0
+ + google-api-python-client==2.188.0
+ + google-auth==2.48.0
+ + google-auth-httplib2==0.4.4
+ + google-auth-oauthlib==1.2.4
+ + google-genai==1.65.0
+ + googleapis-common-protos==1.76.0
+ + groq==1.0.0
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpcore2==2.16.0
+ + httplib2==0.32.1
+ + httpx==0.28.1
+ + httpx2==2.16.0
+ + idna==3.20
+ + inquirerpy==0.3.4
+ + jeepney==0.9.0
+ + jevdual==0.0.1 (from file:///workspace/scratch/footwork-debian-bundle-045fc5d/jevdual-0.0.1-py3-none-any.whl)
+ + jiter==0.18.0
+ + jsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+ + lxml==6.1.3
+ + markdown-it-py==4.2.0
+ + markdownify==1.2.2
+ + mcp==2.1.1
+ + mcp-types==2.1.1
+ + mdurl==0.1.2
+ + mujoco==3.15.0
+ + multidict==7.2.1
+ + numpy==2.5.4
+ + oauthlib==4.0.0
+ + ollama==0.6.1
+ + openai==3.41.0
+ + opentelemetry-api==1.45.2
+ + orjson==3.13.0
+ + packaging==26.3
+ + pfzy==0.3.4
+ + pillow==12.3.0
+ + portalocker==4.4.2
+ + posthog==7.7.0
+ + prompt-toolkit==3.0.53
+ + propcache==0.5.4
+ + proto-plus==1.29.0
+ + protobuf==6.33.6
+ + psutil==7.2.2
+ + pyasn1==0.6.5
+ + pyasn1-modules==0.4.2
+ + pycparser==3.12
+ + pydantic==2.13.5
+ + pydantic-core==2.46.5
+ + pydantic-settings==2.15.0
+ + pygments==2.21.0
+ + pyjwt==2.15.1
+ + pyopengl==3.1.10
+ + pyotp==2.9.0
+ + pyparsing==3.3.3
+ + pypdf==6.16.2
+ + python-dateutil==3.0.0
+ + python-docx==1.2.0
+ + python-dotenv==1.2.2
+ + python-multipart==0.0.32
+ + referencing==0.37.0
+ + reportlab==4.4.9
+ + requests==2.33.0
+ + requests-oauthlib==2.0.0
+ + rich==14.3.3
+ + rpds-py==2026.9.1
+ + rsa==4.9.1
+ + screeninfo==0.8.1
+ + six==1.17.0
+ + sniffio==1.3.1
+ + soupsieve==3.0.4
+ + sse-starlette==3.6.0
+ + starlette==1.10.0
+ + tenacity==9.1.4
+ + truststore==0.10.5
+ + typesafe-sdk==0.7.5
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.4
+ + tzdata==2026.6
+ + uritemplate==4.2.0
+ + urllib3==2.8.0
+ + uuid7==0.1.0
+ + uvicorn==0.54.0
+ + wcwidth==0.9.4
+ + websockets==15.0.1
+ + yarl==1.25.1
+ + zipp==4.1.2
+{"schema_version": "1", "entrypoint": "footwork", "global_options": {"--json": "Prefix before the command; preserves exit status and does not certify effects"}, "commands": ["run", "menu", "apps", "start", "look", "inspect-target", "visual-check", "do", "s1", "done", "read", "check-file", "check-artifact", "grant", "snapshot-file", "status"], "agent_commands": ["tools", "catalog", "schema", "doctor", "invoke", "capability", "mcp", "tool"], "surfaces": {"browser": {"commands": ["start", "check-file", "do", "done", "grant", "inspect-target", "look", "read", "s1", "snapshot-file", "status", "visual-check"], "route": "dedicated Chrome / CUA DevTools"}, "desktop": {"commands": ["run", "menu", "apps", "start", "look", "inspect-target", "visual-check", "do", "s1", "done", "read", "check-file", "check-artifact", "grant", "snapshot-file", "status"], "route": "native Linux X11/AT-SPI; live target binding required"}}, "capability": {"commands": ["doctor", "config", "server", "report"], "scope": "one configured browser-to-Mousepad job on X11/AT-SPI; Wayland and shared foreground unqualified"}, "tools": [{"name": "camera", "commands": ["doctor", "capture", "status"], "status": "available", "prerequisites": ["ffmpeg; explicit Linux V4L2 device or macOS AVFoundation camera; live device qualification required"], "missing": [], "output_root": "/workspace/Footwork/jevdual/.footwork/tools/camera-capture-experiment"}, {"name": "inbox", "commands": ["prepare", "accept", "status"], "status": "available", "prerequisites": ["explicit reviewed input; Linux Tesseract with English data or macOS Swift/Vision; ffmpeg for Linux mirror correction"], "missing": [], "output_root": "/workspace/Footwork/jevdual/.footwork/tools/desk-inbox-experiment"}, {"name": "workbench", "commands": ["link", "status", "list"], "status": "available", "prerequisites": [], "missing": [], "output_root": "/workspace/Footwork/jevdual/.footwork/tools/workbench-notes"}, {"name": "workcell", "commands": ["agent-bench", "app-handoff", "bench", "bench-operator", "bench-runner", "body", "body-network", "controller", "episode", "image-guided", "measurement", "network-bench-operator", "order-app", "qualify-bench", "qualify-network-body", "qualify-network-workbench", "qualify-order-handoff", "qualify-workbench-crashes", "qualify-workbench-health", "qualify-workbench-recovery", "qualify-workbench-restarts", "record-network-workbench", "score-agent-bench", "score-network-body", "score-network-workbench", "score-operator", "score-workbench-crashes", "score-workbench-health", "score-workbench-recovery", "score-workbench-restarts"], "status": "available", "prerequisites": ["mujoco==3.15.0", "numpy", "headless rendering libraries for image operations", "qualification commands require owned fixture inputs"], "missing": [], "output_root": "/workspace/Footwork/jevdual/.footwork/tools/physical-workcell", "command_prerequisites": {"record-network-workbench": ["matching source checkout for Git-frozen research qualification"], "qualify-bench": ["matching source checkout for Git-frozen research qualification"], "qualify-network-body": ["matching source checkout for Git-frozen research qualification"], "qualify-network-workbench": ["matching source checkout for Git-frozen research qualification"], "qualify-order-handoff": ["matching source checkout for Git-frozen research qualification"], "qualify-workbench-crashes": ["matching source checkout for Git-frozen research qualification"], "qualify-workbench-health": ["matching source checkout for Git-frozen research qualification"], "qualify-workbench-recovery": ["matching source checkout for Git-frozen research qualification"], "qualify-workbench-restarts": ["matching source checkout for Git-frozen research qualification"], "score-agent-bench": ["matching source checkout for Git-frozen research qualification"], "score-network-body": ["matching source checkout for Git-frozen research qualification"], "score-network-workbench": ["matching source checkout for Git-frozen research qualification"], "score-operator": ["matching source checkout for Git-frozen research qualification"], "score-workbench-crashes": ["matching source checkout for Git-frozen research qualification"], "score-workbench-health": ["matching source checkout for Git-frozen research qualification"], "score-workbench-recovery": ["matching source checkout for Git-frozen research qualification"], "score-workbench-restarts": ["matching source checkout for Git-frozen research qualification"]}}, {"name": "browser-inspection", "commands": ["summarize", "export"], "status": "available", "prerequisites": ["Node.js for executable analyses", "caller-supplied permitted tab/CDP adapter for capture libraries"], "missing": [], "capture": "adapter_required"}, {"name": "inspection-experiments", "commands": ["compare", "coverage", "publication-gate", "export"], "status": "available", "prerequisites": ["Node.js for executable analyses", "caller-supplied permitted tab/CDP adapter for capture libraries"], "missing": [], "capture": "adapter_required"}, {"name": "inspection-transport", "commands": ["export"], "status": "available", "prerequisites": ["Node.js for executable analyses", "caller-supplied permitted tab/CDP adapter for capture libraries"], "missing": [], "capture": "adapter_required"}], "effect_semantics": "Read action receipts and resource-bound readback; exit 0 alone is not completion proof"}
+{"installed": true, "executable": "/workspace/scratch/footwork-debian-consumer-045fc5d/bin/footwork", "environment": "/workspace/scratch/footwork-debian-consumer-045fc5d"}

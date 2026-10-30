@@ -1,0 +1,6 @@
+{
+  "status": "harness_error",
+  "error": "fake subprocess omitted DEVNULL",
+  "counted_as_negative_control": false,
+  "correction": "supply DEVNULL constant; no source change"
+}

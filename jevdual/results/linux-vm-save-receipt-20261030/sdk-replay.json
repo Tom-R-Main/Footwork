@@ -1,0 +1,13 @@
+{
+  "real_structured_fields": [
+    "code",
+    "detail",
+    "effect",
+    "hint",
+    "next_call",
+    "suggestion"
+  ],
+  "real_envelope_recognized": false,
+  "four_field_control_recognized": true,
+  "input_dispatched_by_replay": false
+}

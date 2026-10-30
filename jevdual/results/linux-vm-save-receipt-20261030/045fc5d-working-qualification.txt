@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 244, in <module>
+    main()
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 147, in main
+    cli(out, "native-append", "do", "append", "text area", appended, "--session", session)
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 28, in cli
+    raise RuntimeError(f"{name} exited {result.returncode}; see its retained output")
+RuntimeError: native-append exited 4; see its retained output

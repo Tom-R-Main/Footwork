@@ -1,0 +1,9 @@
+bound footwork's Chrome (pid 11797) window 2097154, tab tab-8d517b09-8e67-4bbf-9fc1-39f37ec7ae6a
+navigate http://127.0.0.1:8765/: unverifiable navigated tab-8d517b09-8e67-4bbf-9fc1-39f37ec7ae6a to http://127.0.0.1:8765/
+Google Chrome (footwork): 'Linux qualification'
+0 elements:
+page text (34 chars):
+Owned fixture
+Linux source: café 🧪
+
+session: /workspace/scratch/footwork-save-045fc5d-refused-runtime/browser-session  (export FOOTWORK_SESSION=/workspace/scratch/footwork-save-045fc5d-refused-runtime/browser-session to omit --session)

@@ -8,6 +8,7 @@ is exposed by this adapter.
 from __future__ import annotations
 
 import asyncio
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -106,6 +107,14 @@ class ScopedBackend:
         return await self.observe(resource)
 
     async def _document_identity(self, bridge: Any, snapshot: Any) -> None:
+        if sys.platform == "linux":
+            if snapshot.app_name != "Mousepad":
+                raise CapabilityError("outside_scope", "Linux destination must be the scoped Mousepad document")
+            try:
+                await asyncio.to_thread(bridge.document_path, self.scope["destination"]["document"])
+            except bridge.ax.AXError as exc:
+                raise CapabilityError(exc.reason, str(exc)) from exc
+            return
         if snapshot.app_name != "TextEdit":
             raise CapabilityError("outside_scope", "Destination must be the selected TextEdit document")
         got = await asyncio.to_thread(bridge.ax.document_path, bridge.pid, bridge.window_id)
@@ -335,11 +344,18 @@ class ScopedBackend:
             identity = await asyncio.to_thread(native_identity, self.scope)
             if not same_native_identity(identity, recovery["identity"]):
                 return {"agreement": "unverifiable", "reason": "identity_changed"}
-            from jevdual import ax
+            if sys.platform == "linux":
+                from jevdual import linux_ax as ax
+            else:
+                from jevdual import ax
 
             def read() -> str:
                 spec = self.scope["destination"]
-                if ax.document_path(spec["pid"], spec["window_id"]) != identity["document"]:
+                if sys.platform == "linux":
+                    from jevdual.linux_documents import bind
+
+                    bind(spec["pid"], spec["window_id"], identity["document"])
+                elif ax.document_path(spec["pid"], spec["window_id"]) != identity["document"]:
                     raise ValueError("document changed")
                 field = recovery["field"]
                 expected_frame = ax.Frame(*field["frame"])

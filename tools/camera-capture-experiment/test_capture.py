@@ -6,6 +6,7 @@ import importlib.util
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -13,6 +14,7 @@ import time
 import unittest
 from pathlib import Path
 from string import Template
+from types import SimpleNamespace
 from unittest.mock import patch
 
 BASE = Path(__file__).resolve().parent
@@ -32,8 +34,21 @@ LISTING = """[AVFoundation indev @ 0x123] AVFoundation video devices:
 """
 
 
+def mac_cli():
+    """Fresh-process Mac fixture, without a production platform override."""
+    bootstrap = (
+        "import runpy,sys,types; module=runpy.run_path(sys.argv.pop(1)); "
+        "module['main'].__globals__['sys']=types.SimpleNamespace(platform='darwin'); "
+        "raise SystemExit(module['main']())"
+    )
+    return [sys.executable, "-c", bootstrap, str(BASE / "capture.py")]
+
+
 class CaptureTests(unittest.TestCase):
     def setUp(self):
+        platform = patch.object(capture, "sys", SimpleNamespace(platform="darwin"))
+        platform.start()
+        self.addCleanup(platform.stop)
         capture.OUTPUT.mkdir(mode=0o700, exist_ok=True)
         self.tmp = tempfile.TemporaryDirectory(prefix="conformance-", dir=capture.OUTPUT)
         self.addCleanup(self.tmp.cleanup)
@@ -146,6 +161,25 @@ class CaptureTests(unittest.TestCase):
                 capture.capture(self.root, CAMERA, "first", 15)
         self.assertEqual(len(dispatched), 1)
 
+    def test_original_mac_version_one_receipt_replays_without_opening_device(self):
+        with self.working_device() as dispatched:
+            capture.capture(self.root, CAMERA, "first", 15)
+            ledger, _, _ = capture.paths(self.root, "first")
+            record = capture.read_json(ledger)
+            record["version"] = 1
+            record["request"] = {
+                "camera": CAMERA, "format": "png", "framerate_fps": 30,
+                "timeout_seconds": 15, "allow_permission_prompt": False,
+            }
+            capture.persist(ledger, record)
+            with patch.object(capture, "doctor", side_effect=AssertionError("device reopened")):
+                self.assertEqual(capture.status(self.root, "first")["state"], "acquired")
+                repeat = capture.capture(self.root, CAMERA, "first", 15)
+            self.assertEqual(repeat["state"], "acquired")
+            self.assertEqual(repeat["request"], record["request"])
+            self.assertEqual(repeat["artifact"], record["artifact"])
+            self.assertEqual(len(dispatched), 1)
+
     def test_unknown_and_valid_unreceipted_artifact_never_replay(self):
         ledger, artifact, _ = capture.paths(self.root, "first")
         request = {"camera": CAMERA, "format": "png", "framerate_fps": 30, "timeout_seconds": 15,
@@ -254,7 +288,7 @@ elif name=='ffprobe':
             program.write_text(fixture)
             program.chmod(0o700)
         env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ["PATH"])
-        args = [sys.executable, str(BASE / "capture.py"), "capture", "--run-dir", str(self.root / "run"),
+        args = [*mac_cli(), "capture", "--run-dir", str(self.root / "run"),
                 "--camera", CAMERA, "--token", "fresh-process"]
         for _ in range(2):
             result = subprocess.run(args, env=env, capture_output=True, text=True, timeout=10, check=False)
@@ -292,7 +326,7 @@ elif name=='ffmpeg':
                     program.chmod(0o700)
                 env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ["PATH"])
                 run_dir = self.root / (mode + "-run")
-                args = [sys.executable, str(BASE / "capture.py"), "capture", "--run-dir", str(run_dir),
+                args = [*mac_cli(), "capture", "--run-dir", str(run_dir),
                         "--camera", CAMERA, "--token", "failed-operation", "--timeout", "1"]
                 result = subprocess.run(args, env=env, capture_output=True, text=True, timeout=10, check=False)
                 self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
@@ -312,6 +346,148 @@ elif name=='ffmpeg':
             capture.capture(self.root, CAMERA, "first", 15)
         dispatch.assert_not_called()
         self.assertFalse(capture.paths(self.root, "first")[0].exists())
+
+
+class LinuxCaptureTests(unittest.TestCase):
+    def setUp(self):
+        platform = patch.object(capture, "sys", SimpleNamespace(platform="linux"))
+        platform.start()
+        self.addCleanup(platform.stop)
+        capture.OUTPUT.mkdir(mode=0o700, exist_ok=True)
+        self.tmp = tempfile.TemporaryDirectory(prefix="linux-conformance-", dir=capture.OUTPUT)
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.device = {"path": "/dev/video7", "device": 5, "inode": 9, "rdev": os.makedev(81, 7)}
+        self.inventory = {"backend": "v4l2", "video_devices": [self.device],
+                          "programs": {"ffmpeg": "fixture-ffmpeg", "ffprobe": "fixture-ffprobe"}}
+
+    def test_exact_character_node_identity_without_opening_device(self):
+        info = SimpleNamespace(st_mode=stat.S_IFCHR | 0o660, st_dev=5, st_ino=9,
+                               st_rdev=os.makedev(81, 7))
+        with patch.object(Path, "lstat", return_value=info) as inspect, \
+                patch.object(capture.os, "open") as opened:
+            self.assertEqual(capture.linux_device_identity("/dev/video7"), self.device)
+            inspect.assert_called_once_with()
+            opened.assert_not_called()
+
+    def test_implicit_noncanonical_paths_refused_before_metadata(self):
+        with patch.object(Path, "lstat") as inspect:
+            for path in ("0", "auto", "", "/dev/video01", "/dev/video7/../video0", "/dev/video7:none",
+                         "/dev/v4l/by-id/camera", "/tmp/video7", "-i", None):
+                with self.subTest(path=path), self.assertRaises(capture.Refusal):
+                    capture.linux_device_identity(path)
+            inspect.assert_not_called()
+
+    def test_missing_symlink_regular_and_other_character_nodes_refused(self):
+        for mode, major in ((stat.S_IFLNK, 81), (stat.S_IFREG, 81), (stat.S_IFCHR, 1)):
+            info = SimpleNamespace(st_mode=mode | 0o600, st_rdev=os.makedev(major, 7))
+            with self.subTest(mode=mode, major=major), patch.object(Path, "lstat", return_value=info), \
+                    self.assertRaises(capture.Refusal):
+                capture.linux_device_identity("/dev/video7")
+        with patch.object(Path, "lstat", side_effect=FileNotFoundError), self.assertRaises(capture.Refusal):
+            capture.linux_device_identity("/dev/video7")
+
+    def test_doctor_inventory_does_not_open_or_claim_physical_devices_or_permission(self):
+        with patch.object(capture, "binaries", return_value=self.inventory["programs"]), \
+                patch.object(Path, "glob", return_value=[Path("/dev/video7")]), \
+                patch.object(capture, "linux_device_identity", return_value=self.device), \
+                patch.object(capture, "run_process") as process:
+            result = capture.doctor(self.root)
+        self.assertEqual(result["eligible_cameras"], ["/dev/video7"])
+        self.assertEqual(result["permission_status"], "not_checked")
+        self.assertNotIn("physical_cameras", result)
+        process.assert_not_called()
+
+    def test_unobserved_replaced_device_and_permission_prompt_refused(self):
+        for identity, prompt in ((dict(self.device, inode=10), False), (self.device, True)):
+            with patch.object(capture, "linux_device_identity", return_value=identity), \
+                    self.assertRaises(capture.Refusal):
+                capture.select_camera("/dev/video7", self.inventory, prompt)
+
+    def test_unavailable_node_refuses_before_intent_and_missing_tools_do_not_install(self):
+        with patch.object(capture, "doctor", return_value=self.inventory), \
+                patch.object(capture, "linux_device_identity", side_effect=capture.Refusal("unavailable")), \
+                patch.object(capture, "run_process") as process, self.assertRaises(capture.Refusal):
+            capture.capture(self.root, "/dev/video7", "frame", 15)
+        self.assertFalse(capture.paths(self.root, "frame")[0].exists())
+        process.assert_not_called()
+        with patch.object(capture.shutil, "which", return_value=None), self.assertRaises(capture.Refusal):
+            capture.binaries()
+
+    @contextlib.contextmanager
+    def working_device(self):
+        dispatched = []
+
+        def run(argv, timeout):
+            if argv[0] == "fixture-ffmpeg":
+                retained = capture.read_json(capture.paths(self.root, "frame")[0])
+                self.assertEqual(retained["state"], "pending")
+                self.assertEqual(retained["request"]["device_identity"], self.device)
+                dispatched.append(argv)
+                Path(argv[-1]).write_bytes(PNG)
+                return 0, "", ""
+            return 0, json.dumps({"streams": [{"codec_name": "png", "width": 1, "height": 1,
+                                               "nb_read_frames": "1"}]}), ""
+
+        with patch.object(capture, "doctor", return_value=self.inventory), \
+                patch.object(capture, "linux_device_identity", return_value=self.device), \
+                patch.object(capture, "binaries", return_value=self.inventory["programs"]), \
+                patch.object(capture, "run_process", side_effect=run):
+            yield dispatched
+
+    def test_capture_binds_v4l2_device_and_never_reopens_for_repeat(self):
+        with self.working_device() as dispatched:
+            result = capture.capture(self.root, "/dev/video7", "frame", 15)
+            with patch.object(capture, "linux_device_identity", side_effect=AssertionError("device reopened")), \
+                    patch.object(capture, "doctor", side_effect=AssertionError("inventory repeated")):
+                repeat = capture.capture(self.root, "/dev/video7", "frame", 15)
+            self.assertEqual(result["state"], "acquired")
+            self.assertEqual(repeat["artifact"], result["artifact"])
+            self.assertEqual(result["request"]["backend"], "v4l2")
+            self.assertEqual(len(dispatched), 1)
+            argv = dispatched[0]
+            self.assertEqual(argv[argv.index("-i") + 1], "/dev/video7")
+            self.assertEqual(argv[argv.index("-f") + 1], "v4l2")
+            self.assertIn("-an", argv)
+            self.assertIn("-n", argv)
+            self.assertEqual(argv[argv.index("-frames:v") + 1], "1")
+            with self.assertRaises(capture.Refusal):
+                capture.capture(self.root, "/dev/video8", "frame", 15)
+
+    def test_replacement_after_intent_retains_unknown_without_dispatch_or_replay(self):
+        with patch.object(capture, "doctor", return_value=self.inventory), \
+                patch.object(capture, "linux_device_identity", side_effect=[self.device, dict(self.device, inode=10)]), \
+                patch.object(capture, "run_process") as process:
+            result = capture.capture(self.root, "/dev/video7", "frame", 15)
+            repeat = capture.capture(self.root, "/dev/video7", "frame", 15)
+        self.assertEqual(result["state"], "unknown")
+        self.assertEqual(repeat["state"], "unknown")
+        process.assert_not_called()
+
+    def test_lost_receipt_never_promotes_frame_or_retries(self):
+        persist = capture.persist
+
+        def fail_receipt(path, record):
+            if record["state"] != "pending":
+                raise OSError("receipt lost")
+            persist(path, record)
+
+        with self.working_device() as dispatched, patch.object(capture, "persist", side_effect=fail_receipt):
+            result = capture.capture(self.root, "/dev/video7", "frame", 15)
+            repeat = capture.capture(self.root, "/dev/video7", "frame", 15)
+        self.assertEqual(result["state"], "unknown")
+        self.assertEqual(repeat["state"], "unknown")
+        self.assertEqual(len(dispatched), 1)
+
+    def test_timeout_is_unknown_and_does_not_retry_a_different_mode(self):
+        with patch.object(capture, "doctor", return_value=self.inventory), \
+                patch.object(capture, "linux_device_identity", return_value=self.device), \
+                patch.object(capture, "run_process", side_effect=capture.Refusal("timeout")) as process:
+            result = capture.capture(self.root, "/dev/video7", "frame", 1)
+            repeat = capture.capture(self.root, "/dev/video7", "frame", 1)
+        self.assertEqual(result["state"], "unknown")
+        self.assertEqual(repeat["state"], "unknown")
+        self.assertEqual(process.call_count, 1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,15 @@
+{
+  "context": "fresh subagent, no parent history",
+  "model": "GPT-6.1 Sol, same model family as primary",
+  "queries": [
+    "orphan worker survives terminal exit recycled process identifier safe cancellation descendant cleanup",
+    "timed out payment repeated charge uncertain remote mutation retry duplicate effect"
+  ],
+  "selected": "linux-signal-identity-and-scope-v1",
+  "supporting": "linux-bounded-inventory-preserves-unknown-v1",
+  "rejected": [
+    "uncertain remote payment retry",
+    "leader pidfd as complete descendant cleanup"
+  ],
+  "limitations": "Second query had lexical OR matches, not payment support. Bare artifact references and missing full revision in v1 were repaired in explicit superseding v2 cards. v1 history remains stored."
+}

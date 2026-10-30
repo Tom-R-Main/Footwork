@@ -10,6 +10,8 @@ from jevdual.posture import ExecutionPolicy
 
 from tests.test_posture import Activity, FakeAX, FakeDriver, _ok, _refused, doc_snapshot
 
+pytestmark = pytest.mark.usefixtures("mac_native_contract")
+
 
 class GuardedActivity(Activity):
     def __init__(self):

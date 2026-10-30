@@ -1,0 +1,33 @@
+{
+  "source_revision": "40ae59f",
+  "platform": "linux",
+  "wheel_sha256": "c7392c1cc0eaf25bad74f6ba73258007c4f0b988b2363bab707e87151163d6f7",
+  "installed_package_files": 193,
+  "checks": [
+    {
+      "command": "tools",
+      "exit": 0,
+      "ok": null
+    },
+    {
+      "command": "doctor",
+      "exit": 0,
+      "ok": null
+    },
+    {
+      "command": "schema",
+      "exit": 0,
+      "ok": null
+    },
+    {
+      "command": "matching",
+      "exit": 0,
+      "ok": true
+    },
+    {
+      "command": "changed",
+      "exit": 6,
+      "ok": false
+    }
+  ]
+}

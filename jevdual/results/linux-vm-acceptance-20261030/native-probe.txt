@@ -1,0 +1,23 @@
+dbus-daemon[4217]: [session uid=1000 pid=4217 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=4222 comm="xfwm4 --compositor=off" label="kernel")
+dbus-daemon[4217]: [session uid=1000 pid=4217 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[4236]: Activating service name='org.a11y.atspi.Registry' requested by ':1.1' (uid=1000 pid=4222 comm="xfwm4 --compositor=off" label="kernel")
+dbus-daemon[4236]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[4217]: [session uid=1000 pid=4217 pidfd=5] Activating service name='org.xfce.Xfconf' requested by ':1.4' (uid=1000 pid=4222 comm="xfwm4 --compositor=off" label="kernel")
+dbus-daemon[4217]: [session uid=1000 pid=4217 pidfd=5] Successfully activated service 'org.xfce.Xfconf'
+dbus-daemon[4217]: [session uid=1000 pid=4217 pidfd=5] Activating service name='ca.desrt.dconf' requested by ':1.0' (uid=1000 pid=4223 comm="mousepad --disable-server /workspace/scratch/footw" label="kernel")
+dbus-daemon[4217]: [session uid=1000 pid=4217 pidfd=5] Successfully activated service 'ca.desrt.dconf'
+{
+  "scope": "Pinned CUA driver and isolated VM desktop only; unpublished Footwork Linux support is not present.",
+  "editor_pid": 4223,
+  "editor_running": true,
+  "windows": "ListWindowsOutput()",
+  "owned_windows": 1,
+  "snapshots": [
+    "WindowStateOutput()"
+  ],
+  "fixture_observed": false,
+  "passed": false
+}
+
+(xfconfd:4246): xfconfd-WARNING **: 15:52:44.966: Name org.xfce.Xfconf lost on the message dbus, exiting.

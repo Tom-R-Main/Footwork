@@ -1,0 +1,6 @@
+{
+  "jevdual/python/jevdual/native.py": "d0ccab9a682dab4669995f232eb06f905216bd12c65418e62576f58a4b9176f9",
+  "jevdual/tests/test_linux_native.py": "6d51bc1347e18046909d270d193a7cb93e3d3301bbae43aa704926bd2ebd78f2",
+  "jevdual/tests/test_session_scenarios.py": "87bdfc53074c8d0273aca813f53f02c29f9ad9d82b2ccc228df3e48aeed7b069",
+  "jevdual/docs/linux-next-tranche.md": "565292f6985ed0b556379105fa0ab324337fe58b35163c3d8dd708b911157d43"
+}

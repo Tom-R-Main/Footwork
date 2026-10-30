@@ -1,0 +1,12 @@
+{
+  "jevdual/python/jevdual/linux_documents.py": "3b6ea48a2b8bb2a27b9f20380379eded1c8bec8525a697614c84905d6efc1593",
+  "jevdual/python/jevdual/linux_ax.py": "ee6d25eb4a36970868094f5e5ac21b33e3adf3e8698abf28dcb6c3f1a34d4c1d",
+  "jevdual/python/jevdual/linux_x11.py": "99befcca8f088659765df4cfb81860c0996252deb171139f3e672884dfe4e2dc",
+  "jevdual/python/jevdual/linux_static_text.py": "e61001af22d667fc4c0ca21f17d8a8a79af92e1d49b24ab7a1da32fd5c5c3d3d",
+  "jevdual/python/jevdual/linux_projection.py": "2ed24172c552f636c114116531e6d035abae77031a3e86e681d7d4b4e1f975ce",
+  "jevdual/python/jevdual/platform_identity.py": "fffee94aedf240fec643c5fbfcdf163e388eb00f833f86c2fc1aece745da58a5",
+  "jevdual/scripts/linux/desktop-session.sh": "548ca6f21fc246ff7bbebc98ab3bbe54fe39e6626df9b005744f46727b66b914",
+  "jevdual/scripts/linux/Dockerfile": "5e4e7e35e5de73e3d5724a5c2f471df61222cf305ba645a03289249c1cd8408f",
+  "jevdual/scripts/linux/qualify_optional.py": "c3032c93aa295c49655381aa5a1e931405800f37677176cd00998ce2ca60e939",
+  "jevdual/scripts/linux/qualify.py": "387b0c918b2b58afef780dd7631821d60937f0d1e28bd79097eb16219963c3b8"
+}

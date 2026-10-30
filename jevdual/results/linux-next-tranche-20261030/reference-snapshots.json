@@ -1,0 +1,167 @@
+{
+  "root": "/Volumes/External SSD/referencerepos",
+  "runtime_executed": false,
+  "kernel_checkout_present": false,
+  "repositories": {
+    "coder": {
+      "head": "b15958555d9e7904055b0c2a76c511e53f044a3d",
+      "files": {
+        "agent/reaper/reaper_unix.go": {
+          "sha256": "1faeb96a4473f52a1b278ed3be5c89bb8adca403847111c94ca81cb75355ff08",
+          "matches_HEAD": true
+        },
+        "agent/reaper/reaper_test.go": {
+          "sha256": "4bec4bb4ce2cb4677aebb8f6372bb9ef733935c79521eeaf2cf41d00aff6afac",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "systemd": {
+      "head": "8cd79c27cf58ae24fa21378ddbe11962d0294db8",
+      "files": {
+        "man/systemd.service.xml": {
+          "sha256": "97646bea7b1452f89c8e70d85cc4e1e2c857d430e9200808d78e91a45dd4ff0b",
+          "matches_HEAD": true
+        },
+        "man/systemd.kill.xml": {
+          "sha256": "448322830dbbd02c64cca99941ba92705afe9648241fc917db7a8d6ae7910e72",
+          "matches_HEAD": true
+        },
+        "man/systemd.resource-control.xml": {
+          "sha256": "3a1ceeb24069b3307156d70759b74df89744b27e9e5c1cf40733c7fb4c38b4b2",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "selkies": {
+      "head": "58b6c350cd29ee4f4a2423ea1cbf9f927979064f",
+      "files": {
+        "addons/base/services/xvfb/run": {
+          "sha256": "c3614b705bad4f3c7ca95b1892a6a448c6ebbe9c6db4d6fabb9aea41e7e1392a",
+          "matches_HEAD": true
+        },
+        "addons/desktop/services/lxqt/run": {
+          "sha256": "0047e78c110da8422381adc93add2a68c73680922e654f2dcfc9c5f410174aaf",
+          "matches_HEAD": true
+        },
+        "addons/base/container-entrypoint.sh": {
+          "sha256": "bd208f96dd18a33152e40921288b4eb98b6f4b45535eaa14397d5cd0e6cedd1d",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "Hyprland": {
+      "head": "27bdfef92d25c73b51a1cc0c3defded09e0a0344",
+      "files": {
+        "src/managers/eventLoop/EventLoopManager.cpp": {
+          "sha256": "934797a68b888aabb77457bc8f23c772dd34ea09f58bc20dc76ce4060bbdacd7",
+          "matches_HEAD": true
+        },
+        "src/protocols/SessionLock.cpp": {
+          "sha256": "cb363db67d0ed7ee6dc236639912ef4fb03d459fe908614fe35e13a7a03afd37",
+          "matches_HEAD": true
+        },
+        "src/protocols/IdleNotify.cpp": {
+          "sha256": "97c2eb8a2bf8b8d1fdc8fe5b6cf3e82a55b2431c454eae2f098c93899b4f91f9",
+          "matches_HEAD": true
+        },
+        "src/protocols/XDGActivation.cpp": {
+          "sha256": "2c5ab78a6f2249d59315eb2e6c078e54c0e72bf75d8798e5526b7d5c4cbb9f08",
+          "matches_HEAD": true
+        },
+        "src/protocols/ForeignToplevel.cpp": {
+          "sha256": "e48a7ed2cff9e2e12f906952cc027082e87daac1548fdaa58aeb7c434a5e2876",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "river": {
+      "head": "65a908430dddc6728a5f71c89974b786e48302fb",
+      "files": {
+        "protocol/river-window-management-v1.xml": {
+          "sha256": "2e53b284c06b710e980eeed9d4ad77fbd1eb9ffdebb23ef5b8394933037d7739",
+          "matches_HEAD": true
+        },
+        "river/LockManager.zig": {
+          "sha256": "0681d5d2bccef0674aae9f92028c1ebdd5ef8a710ad4345edcaa657a5c27ffa0",
+          "matches_HEAD": true
+        },
+        "ARCHITECTURE.md": {
+          "sha256": "a029db1895f43a0d5db0aaa4b70061903f6e9d79eef9f396d60f5ab860860b5a",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "xpra": {
+      "head": "5f4bcc672d4267ce59e6dbe75f94cb6783d3d518",
+      "files": {
+        "xpra/x11/models/core.py": {
+          "sha256": "1c319e51e8358ff9cf12e7c75187c591f9e14c2c769642fef696709ba4ac4d67",
+          "matches_HEAD": true
+        },
+        "xpra/x11/bindings/res.pyx": {
+          "sha256": "687c0938241a098676b0810d44a59eb4f9062b67eb839e57258fba9d5679b23e",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "libreoffice": {
+      "head": "6a31b3dc8666ac89c50582f11897764f83ab4227",
+      "files": {
+        "vcl/unx/gtk3/a11y/atktext.cxx": {
+          "sha256": "34e3be5c7a04a7b0e87f89186753f038d12efcce09d46a93bae48e65daeb2b52",
+          "matches_HEAD": true
+        },
+        "vcl/unx/gtk3/a11y/atkeditabletext.cxx": {
+          "sha256": "0ddb8707e4d62cf194895d0a40ab706b14ab4ef5082351f3de8f33ac459131c4",
+          "matches_HEAD": true
+        },
+        "vcl/unx/gtk3/a11y/atkwrapper.cxx": {
+          "sha256": "efc7a1eca93d3c7dc542a251c046e270a08ccb8c2ba0780d849785477caf0b33",
+          "matches_HEAD": true
+        },
+        "sfx2/source/doc/sfxbasemodel.cxx": {
+          "sha256": "2514a8d929c5e4110c6d5a5e7424cede379338213e1f6c794372df34e7b4623d",
+          "matches_HEAD": true
+        },
+        "sfx2/source/doc/docfile.cxx": {
+          "sha256": "7566add8f03a32344ea6f76e924e99b4ac858c05e698830a83db14215ac14cfa",
+          "matches_HEAD": true
+        },
+        "sfx2/source/doc/objstor.cxx": {
+          "sha256": "6b2871b23dee3e38eaf9f363a817c94ebbb49e5fa993fc53d054095439df18c6",
+          "matches_HEAD": true
+        }
+      }
+    },
+    "cua": {
+      "head": "2d974f1843c7343a70affba9d21e7362979edec3",
+      "files": {
+        "libs/cua-driver/rust/crates/cua-driver-core/src/recovery_hint.rs": {
+          "sha256": "3b84e47d9d87170c374b1ca3847bfa8ad1630292663357a867df6d8982068248",
+          "matches_HEAD": true
+        },
+        "libs/cua-driver/rust/crates/platform-linux/src/wayland/hyprland.rs": {
+          "sha256": "73d614b6ddef642fd8c682e89e91fe1876189f947253ef4c58d6eed83af6e420",
+          "matches_HEAD": true
+        },
+        "libs/cua-driver/rust/crates/platform-linux/src/wayland/hyprland_input.rs": {
+          "sha256": "847d302a382f27030e6f39c86881b39afa02efbc90b395d5a80d499a15e4e986",
+          "matches_HEAD": true
+        },
+        "libs/cua-driver/rust/crates/platform-linux/src/x11_client_pid.rs": {
+          "sha256": "9af4e64b32c04e65215d2ad1d08987a9ec2d93e89361adb8c8b7441546560ef4",
+          "matches_HEAD": true
+        },
+        "libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs": {
+          "sha256": "e15a9da1a1b7b696a79ded21f9df7c61545b531a481bf87e24eefc43ad007eea",
+          "matches_HEAD": true
+        },
+        "libs/cua-driver/rust/crates/platform-linux/src/atspi/mod.rs": {
+          "sha256": "b401adfe675e4ee2c040c462a5d11e0601642c8cbff820d59904966e98851cdc",
+          "matches_HEAD": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "ready": false,
+  "phase": "stopped",
+  "transitions": [
+    {
+      "phase": "reserving_display",
+      "monotonic": 8331.094906521
+    },
+    {
+      "phase": "x11",
+      "monotonic": 8331.142697522
+    },
+    {
+      "phase": "session_bus",
+      "monotonic": 8331.237323342
+    },
+    {
+      "phase": "wm",
+      "monotonic": 8331.331770964
+    },
+    {
+      "phase": "accessibility",
+      "monotonic": 8331.457148719
+    },
+    {
+      "phase": "target",
+      "monotonic": 8331.775261165
+    },
+    {
+      "phase": "ready",
+      "monotonic": 8333.304802546,
+      "target": {
+        "ready": true,
+        "pid": 24,
+        "window_id": 4194307,
+        "document": "/work/session/document.txt",
+        "exact_fixture_text": true
+      }
+    },
+    {
+      "phase": "stopping",
+      "monotonic": 8360.981802858,
+      "reason": "cancelled"
+    },
+    {
+      "phase": "stopped",
+      "monotonic": 8361.082113071,
+      "reason": "cancelled"
+    }
+  ],
+  "cleanup": {
+    "forced_pids": [],
+    "survivors": [],
+    "zombies": [],
+    "inventory_complete": true,
+    "inventory_reasons": [],
+    "unknown_identities": [],
+    "signal_failures": [],
+    "uncertain": false,
+    "signal_policy": "individual pidfd only; no numeric fallback",
+    "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+  },
+  "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+  "resource_snapshot": {
+    "memory": {
+      "total_bytes": 18882662400,
+      "available_bytes": 17202155520
+    },
+    "cgroup": {
+      "versions": [
+        2
+      ],
+      "membership_readable": true,
+      "memory_limit_bytes": 3221225472,
+      "memory_remaining_bytes": 3154341888,
+      "cpu_quota_cores": 2.0,
+      "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+      "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+      "pids_limit": 512,
+      "pids_remaining_upper_bound": 508,
+      "swap_limit_bytes": 0,
+      "memory_and_swap_limit_bytes": null,
+      "task_swap_event_snapshots": [
+        {
+          "path": ".",
+          "pids_limit": 512,
+          "pids_current": 4,
+          "pids_events": {
+            "max": 0
+          },
+          "swap_limit_bytes": 0,
+          "swap_current_bytes": 0,
+          "swap_events": {
+            "high": 0,
+            "max": 0,
+            "fail": 0
+          },
+          "memory_events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "memory_failcnt": null,
+          "memory_and_swap_failcnt": null
+        }
+      ],
+      "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+    },
+    "available_memory_upper_bound_bytes": 3154341888,
+    "cpu_count": 5,
+    "cpu_affinity_count": 5
+  },
+  "signal_capability": {
+    "pid": 9,
+    "signal": 0,
+    "status": "sent",
+    "delivery": "pidfd"
+  },
+  "display": ":1",
+  "wm_identity": {
+    "ready": true,
+    "wm_window": 2097439,
+    "selection_owner": 2097439
+  },
+  "target": {
+    "ready": true,
+    "pid": 24,
+    "window_id": 4194307,
+    "document": "/work/session/document.txt",
+    "exact_fixture_text": true
+  },
+  "reason": "cancelled"
+}

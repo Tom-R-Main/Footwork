@@ -1,0 +1,79 @@
+{
+  "platform": "linux",
+  "python": "3.12.14",
+  "public_cli_append": true,
+  "public_browser_read": true,
+  "public_mcp_append": true,
+  "duplicate_not_repeated": true,
+  "restart_not_repeated": true,
+  "saved_file_exact": true,
+  "save_route": "direct NativeBridge exclusive desktop; no public model guard bypass",
+  "characters": 109,
+  "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c",
+  "operation": {
+    "schema_version": "1",
+    "operation_id": "op_b6678191e4eb",
+    "disposition": "applied",
+    "state": "final",
+    "phase": "sent",
+    "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+    "repeat": false,
+    "evidence": {
+      "execution_receipt": {
+        "disposition": "applied",
+        "error": null,
+        "evidence": {
+          "after": {
+            "length": 109,
+            "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c"
+          },
+          "before": {
+            "length": 88,
+            "sha256": "d0f5c00085f940a391d7ff405bb2b4019d57ef59363e1355e79da839d5ed47d3"
+          },
+          "driver_effect": "confirmed",
+          "identity": {
+            "boot": "10210bc9-431f-4156-97e3-3ddbd9410605",
+            "device": 27,
+            "document": "/work/session/document.txt",
+            "inode": 1972505,
+            "pid": 24,
+            "start": "0x1.ab9373c5ccccdp+30"
+          },
+          "identity_after": {
+            "boot": "10210bc9-431f-4156-97e3-3ddbd9410605",
+            "device": 27,
+            "document": "/work/session/document.txt",
+            "inode": 1972505,
+            "pid": 24,
+            "start": "0x1.ab9373c5ccccdp+30"
+          },
+          "readback": {
+            "kind": "exact_field_readback",
+            "passed": true,
+            "persistence": "not_checked"
+          }
+        },
+        "nonce": "b9b4d2b839e740899a4e07917844fd57",
+        "operation_id": "op_b6678191e4eb",
+        "packet_digest": "51550bce75621fdc9ccc947fc8a260af6da952b95f8844e76121e9d40ff0b1bb",
+        "phase": "sent",
+        "request_digest": "4b9b8ac0aba825647dd9bfc3652da28a1c6b6ec6ff1de6c67557b5affb65b1cd",
+        "version": 1
+      },
+      "readback": {
+        "kind": "exact_field_readback",
+        "passed": true,
+        "persistence": "not_checked",
+        "outcome": "applied",
+        "historical": true
+      }
+    },
+    "reporting": {
+      "historical_effect": "applied",
+      "disk_persistence": "not_checked",
+      "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+    },
+    "client_token": "linux-once"
+  }
+}

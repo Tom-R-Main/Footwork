@@ -1,0 +1,16 @@
+{
+  "command": [
+    "footwork",
+    "--json",
+    "browser",
+    "start",
+    "Observe the local Linux acceptance fixture",
+    "--url",
+    "http://127.0.0.1:8765",
+    "--session",
+    "/workspace/scratch/footwork-vm-acceptance-browser"
+  ],
+  "exit_code": 7,
+  "stdout": "{\"schema_version\": \"1\", \"exit_code\": 7, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"stopped: FileNotFoundError: [Errno 2] No such file or directory: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'\\n\", \"data\": null}\n",
+  "stderr": ""
+}
