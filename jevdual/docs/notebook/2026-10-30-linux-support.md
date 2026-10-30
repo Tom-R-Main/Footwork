@@ -61,3 +61,10 @@ Test: extend the cached native arm64 desktop image with the same approved isolat
 Predicts: /proc process identity agrees with the actual browser/editor binaries and the public CLI/MCP paths can bind and operate while stale or mismatched resources refuse.
 Against: native process identity still disagrees, the CUA arm64 build/load fails, or public operations require a weaker identity predicate.
 Refs: python/jevdual/linux_documents.py; python/jevdual/browser_driver.py; docs/linux-support.md
+
+## L6 · prediction · 2026-10-30 01:18
+Hypothesis: Linux-specific camera input and OCR engines can reuse the existing literal-request, artifact, review and replay boundaries without changing their meaning.
+Test: add explicit V4L2 device selection and Tesseract TSV OCR adapters; exercise missing/malformed prerequisites, device mismatch, no-audio capture arguments, unchanged source bytes, synthetic text images, explicit review acceptance and installed artifact readback. No physical camera exists in this task's container, so device acquisition cannot be established here.
+Predicts: Linux OCR produces reviewable artifacts with engine-specific provenance; camera requests either bind a selected real character device or refuse before capture. Existing macOS conformance remains green.
+Against: adapter selection silently guesses a device, source pixels are modified, synthetic success is reported as physical capture, or the original review/replay boundary is bypassed.
+Refs: tools/camera-capture-experiment/capture.py; tools/desk-inbox-experiment/inbox.py; scripts/sync_tool_resources.py
