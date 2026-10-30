@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/record-footwork-sdk.py", line 31, in <module>
+    runpy.run_path(harness, run_name='__main__')
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 244, in <module>
+    main()
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 217, in main
+    assert document.read_text() == expected
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

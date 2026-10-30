@@ -1,0 +1,3 @@
+Openbox-Message: Unable to find a valid config file, using some simple defaults
+ObRender-Message: Unable to load the theme 'Clearlooks'
+Openbox-Message: Unable to load a theme.

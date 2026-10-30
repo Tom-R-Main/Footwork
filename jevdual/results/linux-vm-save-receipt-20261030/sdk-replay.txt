@@ -1,0 +1,6 @@
+{"real_structured_fields": ["code", "detail", "effect", "hint", "next_call", "suggestion"], "real_envelope_recognized": false, "four_field_control_recognized": true, "input_dispatched_by_replay": false}
+Traceback (most recent call last):
+  File "/workspace/scratch/replay-footwork-sdk-refusal.py", line 24, in <module>
+    assert result['real_envelope_recognized'], 'Actual pinned SDK foreground refusal rejected by 045fc5d recognizer'
+           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Actual pinned SDK foreground refusal rejected by 045fc5d recognizer

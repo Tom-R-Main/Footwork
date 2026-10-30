@@ -1,0 +1,24 @@
+{
+  "operation": "hotkey",
+  "target": -1,
+  "label": "ctrl+s",
+  "effect": "unverifiable",
+  "route": "global_input",
+  "evidence": [
+    "save_readback: Linux automatic saved-document discovery is unavailable; use check-file or check-artifact with the explicitly selected path for persistence proof"
+  ],
+  "summary": "Pressed ctrl+s on pid 13323 as a real key event (delivery_mode=foreground, focus_after=target); not verified \u2014 confirm with a screenshot.; save unverifiable: Linux automatic saved-document discovery is unavailable; use check-file or check-artifact with the explicitly selected path for persistence proof",
+  "error_code": null,
+  "delivery": "foreground",
+  "driver_delivery": "foreground",
+  "dispatched": true,
+  "foreground": null,
+  "readback": {
+    "ok": null,
+    "detail": "Linux automatic saved-document discovery is unavailable; use check-file or check-artifact with the explicitly selected path for persistence proof"
+  },
+  "delivered_count": null,
+  "delivery_basis": "unknown",
+  "field_readback": null,
+  "native_readback": null
+}

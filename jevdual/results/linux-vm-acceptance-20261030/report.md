@@ -48,3 +48,7 @@ The documented `desktop-session.sh` ran under a new `dbus-run-session`, using Xv
 The test runs used the branch's existing tests and identity checks. Browser tests disabled optional extensions and used the prepared container mode; extension behavior was not qualified. The consumer environment remains at `/workspace/scratch/footwork-debian-consumer`, and its bundle at `/workspace/scratch/footwork-debian-bundle`. All directly owned temporary desktop/browser/fixture processes were stopped.
 
 Wayland, shared foreground coexistence, physical cameras/robots, provider-backed planning and hosted CI remain untested. Local commits contain only this session's notebook and acceptance evidence; no implementation changes, push, PR or merge were performed.
+
+## Follow-up: save-refusal correction retest
+
+The subsequent [045fc5d VM retest](../linux-vm-save-receipt-20261030/report.md) retains the full real SDK refusal envelope and an offline failing replay. The correction still rejects the enriched reply; the ordinary working-desktop save journey passes. Original acceptance receipts and hashes above are unchanged.

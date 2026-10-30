@@ -1,0 +1,10 @@
+bound Mousepad window 4194307 'Mousepad' (background_only)
+Mousepad: 'Mousepad'
+2 elements:
+  [   0] button     'No'
+  [   1] button     'Yes'
+page text (135 chars):
+It seems that the previous session did not end normally. Do you want to restore the available data?
+If not, all this data will be lost.
+
+session: /workspace/scratch/footwork-save-045fc5d-working-runtime/native-session  (export FOOTWORK_SESSION=/workspace/scratch/footwork-save-045fc5d-working-runtime/native-session to omit --session)
