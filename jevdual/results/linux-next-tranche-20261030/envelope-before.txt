@@ -1,0 +1,103 @@
+.F.F.........                                                            [100%]
+=================================== FAILURES ===================================
+______________ test_linux_refused_save_records_no_dispatch[True] _______________
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x107d4a520>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1111f7b60>
+captured = True
+
+    @pytest.mark.parametrize("captured", [False, True])
+    def test_linux_refused_save_records_no_dispatch(world, fw, monkeypatch, captured):
+        from jevdual import native
+    
+        monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+        attempts = []
+    
+        async def refused(name, args_json):
+            attempts.append((name, json.loads(args_json)))
+            if captured:
+                from pathlib import Path
+    
+                path = Path(__file__).parents[1] / "results/linux-vm-save-receipt-20261030/045fc5d-refused-profile-sdk.json"
+                record = json.loads(path.read_text())
+                return cd.ToolResult(
+                    text=record["text"], images=[], structured_json=record["structured_json"],
+                    is_error=record["is_error"], error_code=record["error_code"], action=None,
+                    verification=None, degraded=record["degraded"], raw_json=record["raw_json"],
+                )
+            return SimpleNamespace(
+                action=None, is_error=True, error_code="foreground_unavailable",
+                text="window did not become active; no input was sent",
+                structured_json=json.dumps({
+                    "code": "foreground_unavailable", "effect": "none",
+                    "detail": "window did not become active; no input was sent",
+                    "suggestion": "Confirm the exact window before retrying",
+                }),
+            )
+    
+        monkeypatch.setattr(world, "call_tool", refused)
+        assert fw("start", "Save", "--app", "Calculator", "--mode", "exclusive_desktop")[0] == 0
+        code, out, err = fw("do", "hotkey", "ctrl", "s", "--no-judge", "--authorize", "Delete")
+        assert code == 0, err
+        assert len(attempts) == 1 and attempts[0][0] == "hotkey"
+        assert world.tool_calls == world.presses == []
+>       assert "not sent" in out and "foreground_unavailable" in out
+E       assert ('not sent' in "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment\ndispatched hotkey(ctrl+s): driv... 20] button     'Equals'\n  [  22] button     'Show Sidebar'\n  [  23] button     'Mode'\npage text (3 chars):\n0\n0\n")
+
+tests/test_session_scenarios.py:729: AssertionError
+_ test_linux_save_structured_preinput_refusal_preserves_uncertainty[change1-True] _
+
+change = {'structured_json': '{"code": "foreground_unavailable", "effect": "none", "detail": "blocked", "suggestion": "confirm", "hint": "advisory", "next_call": {"tool": "never_execute"}}'}
+refused = True
+
+    @pytest.mark.parametrize("change,refused", [
+        ({}, True),
+        ({"structured_json": json.dumps({
+            "code": "foreground_unavailable", "effect": "none", "detail": "blocked",
+            "suggestion": "confirm", "hint": "advisory", "next_call": {"tool": "never_execute"},
+        })}, True),
+        ({"structured_json": json.dumps({
+            "code": "foreground_unavailable", "effect": "none", "detail": "blocked",
+            "suggestion": "confirm", "delivered_count": 1,
+        })}, False),
+        ({"is_error": False}, False),
+        ({"error_code": "transport_lost"}, False),
+        ({"structured_json": None}, False),
+        ({"structured_json": "{"}, False),
+        ({"structured_json": "[]"}, False),
+        ({"structured_json": '{"code":"foreground_unavailable","effect":"unverifiable"}'}, False),
+        ({"structured_json": '{"code":"foreground_timeout","effect":"none"}'}, False),
+        ({"action": outcome().action}, False),
+    ])
+    def test_linux_save_structured_preinput_refusal_preserves_uncertainty(change, refused):
+        target = bridge(mode="exclusive_desktop")
+        calls = []
+        result = SimpleNamespace(
+            action=None, is_error=True, error_code="foreground_unavailable",
+            text="activation failed; no input was sent",
+            structured_json=json.dumps({
+                "code": "foreground_unavailable", "effect": "none",
+                "detail": "activation failed; no input was sent",
+                "suggestion": "Confirm the bound window",
+            }),
+        )
+        for key, value in change.items():
+            setattr(result, key, value)
+    
+        async def reply(name, args):
+            calls.append((name, json.loads(args)))
+            return result
+    
+        target.driver.call_tool = reply
+        effect = asyncio.run(target.hotkey(bound_text(target), ["ctrl", "s"]))
+        assert len(calls) == 1
+>       assert effect.dispatched is not refused
+E       AssertionError: assert True is not True
+E        +  where True = NativeEffect(operation='hotkey', target=-1, label='ctrl+s', effect='unverifiable', route=None, evidence=('save_readbac...ath for persistence proof'}, delivered_count=None, delivery_basis='unknown', field_readback=None, native_readback=None).dispatched
+
+tests/test_linux_native.py:179: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_linux_refused_save_records_no_dispatch[True]
+FAILED tests/test_linux_native.py::test_linux_save_structured_preinput_refusal_preserves_uncertainty[change1-True]
+2 failed, 11 passed, 131 deselected in 0.44s
