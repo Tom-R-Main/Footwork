@@ -33,3 +33,9 @@ Test: inspect the pinned UniFFI dependency and live native thread stacks. Compar
 Predicts: explicit shutdown/result can precede continuation return, and GDB can identify a Python-finalization forced unwind through native Rust/FFI frames in the controlled case.
 Against: the FFI free/complete path synchronously joins all callbacks before shutdown resumes, or the native failure stack identifies a different path.
 Refs: vendor/cua-driver/src/cua_driver/_native.py:2246; pinned uniffi_core 0.31.0; results/linux-native-reliability-20261030/
+
+## LRU2 · update · 2026-10-30 20:00
+Resolves: LR4 = failed
+Observed: all 40 unchanged minimal processes completed three create/list/observe/shutdown cycles and normal exit. Three baseline and three delayed-continuation shutdown processes exited normally under GDB. The pinned UniFFI scheduler holds its mutex across the continuation, and RustFuture.free reacquires that mutex, so the proposed missing continuation join is contradicted by the actual caller/dependency path. A public recovery exploration stopped at target admission (window_not_unique) before any recovery attempt. A later inspection of an initial-batch editor returned one native window; no cause for that discrepancy is yet established.
+Next: retain the negative mechanism result and avoid speculative callback/runtime patches. Add numeric window count and typed AX refusal classification, then compare live native and independent X11 views during a failed attempt. The LRU1 heading estimated 19:57 before the shell clock read 19:56; subsequent headings are generated directly from the actual clock.
+Refs: /workspace/scratch/fw-reliability-minimal/; /workspace/scratch/fw-reliability-callback/; /workspace/scratch/fw-reliability-recovery/; pinned uniffi_core 0.31.0 ffi/rustfuture/future.rs and scheduler.rs
