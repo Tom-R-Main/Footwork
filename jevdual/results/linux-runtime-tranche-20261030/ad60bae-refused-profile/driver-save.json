@@ -1,0 +1,19 @@
+{
+  "operation": "hotkey",
+  "target": -1,
+  "label": "ctrl+s",
+  "effect": "refused",
+  "route": null,
+  "evidence": [],
+  "summary": "foreground_unavailable: window 0x400003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x400003 (Mousepad, pid 14780 mousepad)); no input was",
+  "error_code": "foreground_unavailable",
+  "delivery": "foreground",
+  "driver_delivery": null,
+  "dispatched": false,
+  "foreground": null,
+  "readback": null,
+  "delivered_count": 0,
+  "delivery_basis": "qualified_gate",
+  "field_readback": null,
+  "native_readback": null
+}

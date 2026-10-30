@@ -20,3 +20,9 @@ Test: reproduce the macOS-open fallback in a scenario before changing it; add la
 Predicts: Linux recovery never invokes macOS open; failed/cancelled attachment reaps only newly owned helpers and closes its driver, preserving persistent browsers and strict ownership/ambiguity refusals.
 Against: recovery weakens executable/UID/profile/port/incarnation checks, kills a reused browser, binds unrelated windows, or cannot recover on the native VM.
 Refs: python/jevdual/browser_driver.py; tests/test_session_scenarios.py; docs/linux-next-tranche.md
+
+## LXRTU1 · update · 2026-10-30 16:35
+Resolves: LXRT1 = held
+Observed: the fresh ad60bae consumer matched all 191 installed package files. The real recovery-enriched refusal now reports refused/dispatched=false/zero delivered inputs/no readback, with unchanged independent disk bytes. The fresh-profile working control passes the full public CLI/MCP/replay/restart and independently checked saved-byte journey. Actual SDK envelopes and both receipts are retained.
+Next: implement units 2 and 3 independently, preserving the corrected receipt and all identity predicates.
+Refs: results/linux-runtime-tranche-20261030/receipt-installed-identity.json; results/linux-runtime-tranche-20261030/ad60bae-refused-profile.json; results/linux-runtime-tranche-20261030/ad60bae-working-profile.json

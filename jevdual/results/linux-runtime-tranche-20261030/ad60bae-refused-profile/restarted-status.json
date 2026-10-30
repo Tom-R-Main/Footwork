@@ -1,0 +1,75 @@
+{
+  "schema_version": "1",
+  "operation_id": "op_1deb02cdf7e3",
+  "disposition": "applied",
+  "state": "final",
+  "phase": "sent",
+  "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+  "repeat": false,
+  "evidence": {
+    "execution_receipt": {
+      "disposition": "applied",
+      "error": null,
+      "evidence": {
+        "after": {
+          "length": 109,
+          "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c"
+        },
+        "before": {
+          "length": 88,
+          "sha256": "d0f5c00085f940a391d7ff405bb2b4019d57ef59363e1355e79da839d5ed47d3"
+        },
+        "driver_effect": "confirmed",
+        "identity": {
+          "boot": "10210bc9-431f-4156-97e3-3ddbd9410605",
+          "device": 27,
+          "document": "/workspace/scratch/footwork-save-ad60bae-refused-profile/document.txt",
+          "inode": 1862989,
+          "pid": 14780,
+          "start": "0x1.ab931c1351eb8p+30"
+        },
+        "identity_after": {
+          "boot": "10210bc9-431f-4156-97e3-3ddbd9410605",
+          "device": 27,
+          "document": "/workspace/scratch/footwork-save-ad60bae-refused-profile/document.txt",
+          "inode": 1862989,
+          "pid": 14780,
+          "start": "0x1.ab931c1351eb8p+30"
+        },
+        "readback": {
+          "kind": "exact_field_readback",
+          "passed": true,
+          "persistence": "not_checked"
+        }
+      },
+      "nonce": "b67d01a7a40d47b781a5c4171218d3cd",
+      "operation_id": "op_1deb02cdf7e3",
+      "packet_digest": "f8147d13ae46ae4004bbc1bf09e57d266085a8d24758e5d23b505978f39ba8f6",
+      "phase": "sent",
+      "request_digest": "a4e24134f86f672b8c18447fc9c620c97e33410be0a1829505ac76c4ca158a76",
+      "version": 1
+    },
+    "readback": {
+      "kind": "exact_field_readback",
+      "passed": true,
+      "persistence": "not_checked",
+      "outcome": "applied",
+      "historical": true
+    }
+  },
+  "reporting": {
+    "historical_effect": "applied",
+    "disk_persistence": "not_checked",
+    "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+  },
+  "client_token": "linux-once",
+  "current": {
+    "agreement": "yes",
+    "value": {
+      "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c",
+      "length": 109
+    },
+    "disk_identity_changed": false,
+    "persistence": "not_checked"
+  }
+}

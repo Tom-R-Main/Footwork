@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/record-footwork-sdk-ad60bae.py", line 31, in <module>
+    runpy.run_path(harness, run_name='__main__')
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 244, in <module>
+    main()
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 213, in main
+    asyncio.run(save(pid, wid, out))
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/Footwork/jevdual/scripts/linux/qualify.py", line 117, in save
+    raise RuntimeError("scoped driver save was not sent")
+RuntimeError: scoped driver save was not sent
