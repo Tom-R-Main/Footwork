@@ -127,6 +127,7 @@ def recovery(monkeypatch):
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
     monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
     monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0)
+    monkeypatch.setattr(browser, '_recovery_flags', lambda pid, incarnation: [])
     monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
     monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
     monkeypatch.setattr(browser, 'configured_driver', lambda pid: driver)
@@ -232,3 +233,18 @@ def test_early_browser_exit_has_no_discovered_process_cleanup_authority(monkeypa
     with pytest.raises(RuntimeError, match='exited'):
         browser.launch_chrome(settle_s=0)
     assert recovery.killed == []
+
+
+@pytest.mark.parametrize('flags,expected', [([], []), (['--disable-gpu'], []),
+                                         (['--no-sandbox', '--other-untrusted-flag'], ['--no-sandbox'])])
+def test_recovery_only_preserves_the_exact_roots_explicit_sandbox_mode(monkeypatch, flags, expected):
+    from contextlib import nullcontext
+
+    import psutil
+
+    monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
+    monkeypatch.setattr(psutil, 'Process', lambda pid: SimpleNamespace(
+        oneshot=nullcontext, create_time=lambda: 1.0, cmdline=lambda: flags))
+    assert browser._recovery_flags(42, 1.0) == expected
+    with pytest.raises(RuntimeError, match='identity changed'):
+        browser._recovery_flags(42, 2.0)

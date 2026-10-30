@@ -143,6 +143,23 @@ def _chrome_args(url: str | None = None, *, new_window: bool = False) -> list[st
     return args
 
 
+def _recovery_flags(pid: int, incarnation: float) -> list[str]:
+    """Preserve only the existing root's explicitly chosen sandbox mode.
+
+    Chromium checks sandbox prerequisites even in a secondary singleton helper.
+    Normal launches never add this flag, and arbitrary root arguments are not
+    copied into a new command. The pinned root must still own the exact profile.
+    """
+    import psutil
+
+    process = psutil.Process(pid)
+    with process.oneshot():
+        if chrome_pid() != pid or process.create_time() != incarnation:
+            raise RuntimeError('owned Chrome identity changed before recovery launch')
+        args = process.cmdline()
+    return ['--no-sandbox'] if '--no-sandbox' in args else []
+
+
 def _begin_chrome(url: str | None) -> tuple[int, subprocess.Popen | None]:
     for pid, handle in list(_CHROME_LAUNCHES.items()):
         if handle.poll() is not None:
@@ -624,6 +641,7 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
             if helper is None:
                 if sys.platform == 'linux':
                     args = _chrome_args(url or 'about:blank', new_window=True)
+                    args.extend(_recovery_flags(pid, incarnation))
                 elif sys.platform == 'darwin':
                     args = ['open', '-na', 'Google Chrome', '--args', f'--user-data-dir={PROFILE_DIR}',
                             '--new-window', url or 'about:blank']

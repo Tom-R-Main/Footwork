@@ -593,6 +593,7 @@ def test_linux_browser_start_recovers_window_in_exact_owned_profile(world, fw, m
     monkeypatch.setattr(browser, 'chrome_pid', lambda: 42)
     monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
     monkeypatch.setattr(browser, '_incarnation', lambda pid: 1.0, raising=False)
+    monkeypatch.setattr(browser, '_recovery_flags', lambda pid, incarnation: [])
 
     class Driver:
         async def list_windows(self, _):
