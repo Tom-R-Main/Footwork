@@ -4,7 +4,7 @@
 fresh menu, choose an action, read its receipt, and check the resulting state. `jevdual` supplies the
 shared menus, gates, verification, durable operation history and optional Jev System 1.
 
-[**Install and get a first checked result →**](docs/quickstart.md)
+[**Install and get a first checked result →**](docs/quickstart.md) · [Why Footwork?](docs/why-footwork.md)
 
 - **Use it:** [CLI and bundled tools](docs/unified-cli.md), [Linux X11 requirements](docs/linux-support.md).
 - **Connect an agent:** [scoped MCP setup](docs/capability-packaging.md), [agent-host recipe](docs/installed-agent-host.md).

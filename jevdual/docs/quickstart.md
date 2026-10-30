@@ -1,6 +1,7 @@
 # Your first steps with Footwork
 
 Get a checked result first. Then give Footwork a browser or a native app to work in.
+For the reasons to add it to an existing agent setup, see [why Footwork](why-footwork.md).
 The steps below use the installed CLI; discovery, exact file checks and browser observation do not
 call a model provider.
 

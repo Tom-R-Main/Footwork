@@ -14,6 +14,28 @@ Use the `footwork` CLI one step at a time, connect a scoped job through MCP, or 
 loop with [TypeSafe Jev](https://docs.typesafe.ai) as an optional fast System 1. The Python package is
 `jevdual`; Footwork is the product.
 
+## Why use Footwork?
+
+Keep the agent you already use. Footwork adds checks and a durable record around supported computer
+actions, so a lost response or a confident completion message does not have to become guesswork.
+
+| When the work gets tricky | What Footwork adds |
+| --- | --- |
+| The agent says “saved,” but you need the file | Exact saved-byte checks, separate from input delivery and model judgment |
+| Someone edits the field between observation and action | Fresh native target and value checks that can refuse the stale action |
+| An action may have landed before the process stopped | Opt-in durable native operations that retain uncertainty and block new mutations in the same authority domain |
+| A job crosses a browser and a document | Scoped MCP operations with source binding, append receipts and duplicate/restart status |
+| The agent shares your Mac | Background-only input by default, with explicit foreground permissions and activity checks |
+
+Use it for document updates, cross-app handoffs and agent workflows where an incorrect success
+report or a second mutation matters. A safe stop has a cost; Footwork makes that stop inspectable.
+For a read-only lookup, a straightforward browser test or an API with its own authoritative results,
+your existing tools may already cover the job.
+
+Durability is route-specific: native CLI sessions opt in with `--authority`; the scoped MCP service
+has its own journal. The dedicated browser CLI does not inherit native durable replay. See
+[**why Footwork, and where it fits**](jevdual/docs/why-footwork.md) for examples and exact boundaries.
+
 ## Start here
 
 [**Install and get your first checked result →**](jevdual/docs/quickstart.md)
