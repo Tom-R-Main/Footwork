@@ -514,7 +514,7 @@ async def _target_probe(pid: int, document: Path, phase=lambda _: None) -> dict:
         phase('list_windows')
         windows = (await driver.list_windows(cd.ListWindowsInput(pid=pid, on_screen_only=True))).windows
         if len(windows) != 1:
-            return {'ready': False, 'reason': 'window_not_unique'}
+            return {'ready': False, 'reason': 'window_not_unique', 'window_count': len(windows)}
         phase('observe')
         snapshot = await NativeBridge(driver, pid, windows[0].window_id).observe()
         phase('fixture_check')
@@ -574,6 +574,13 @@ def main() -> int:
             value = probe(args.probe, args.pid, args.document, phase)
         except Exception as exc:  # noqa: BLE001 - isolated child preserves typed failure; no input
             value = {'ready': False, 'reason': type(exc).__name__}
+            from jevdual.ax import AXError
+            if isinstance(exc, AXError):
+                # AXError.reason is a fixed adapter code, never its message,
+                # which can contain target text. Bound even this diagnostic.
+                code = exc.reason
+                if isinstance(code, str) and len(code) <= 64 and code.replace('_', '').isascii() and code.replace('_', '').isalpha():
+                    value['error_code'] = code
         phase('probe_returned')
         print(json.dumps(value), flush=True)
         phase('result_emitted')
