@@ -1,0 +1,33 @@
+[
+  {
+    "name": "/footwork-linux-reaped-20261030",
+    "memory": 3221225472,
+    "memory_swap": 6442450944,
+    "cpu": 2000000000,
+    "pids": 512,
+    "shm": 536870912,
+    "init": true,
+    "cap_drop": [
+      "ALL"
+    ],
+    "security": [
+      "no-new-privileges"
+    ]
+  },
+  {
+    "name": "/footwork-linux-tranche-20261030",
+    "memory": 3221225472,
+    "memory_swap": 3221225472,
+    "cpu": 2000000000,
+    "pids": 512,
+    "shm": 536870912,
+    "init": true,
+    "cap_drop": [
+      "ALL"
+    ],
+    "security": [
+      "no-new-privileges",
+      "seccomp=unconfined"
+    ]
+  }
+]

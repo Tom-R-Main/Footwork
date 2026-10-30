@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "state": "ready",
+  "stages": [
+    {
+      "stage": "x11",
+      "proof": {
+        "x11_connected": true
+      }
+    },
+    {
+      "stage": "wm",
+      "proof": {
+        "wm_ready": true
+      }
+    },
+    {
+      "stage": "bus",
+      "proof": {
+        "bus_accessible": true
+      }
+    },
+    {
+      "stage": "editor",
+      "proof": {
+        "editor_exact_target_ready": true,
+        "window_id": 4194308
+      }
+    }
+  ],
+  "cleanup": null,
+  "environment": {
+    "XDG_RUNTIME_DIR": "/workspace/tranche-desktop/runtime",
+    "XDG_CONFIG_HOME": "/workspace/tranche-desktop/config",
+    "XDG_CACHE_HOME": "/workspace/tranche-desktop/cache",
+    "XDG_DATA_HOME": "/workspace/tranche-desktop/data",
+    "XDG_STATE_HOME": "/workspace/tranche-desktop/state",
+    "XDG_DATA_DIRS": "/usr/local/share:/usr/share",
+    "XDG_CONFIG_DIRS": "/etc/xdg"
+  },
+  "display": ":0",
+  "pending_stage": null
+}

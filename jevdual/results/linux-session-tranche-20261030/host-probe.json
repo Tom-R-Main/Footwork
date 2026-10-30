@@ -1,0 +1,114 @@
+{
+  "architecture": "aarch64",
+  "distribution": {
+    "ID": "ubuntu",
+    "PRETTY_NAME": "Ubuntu 26.04.1 LTS",
+    "VERSION_ID": "26.04"
+  },
+  "effect_verification": "not_asserted",
+  "executables_present": {
+    "Xvfb": true,
+    "cargo": true,
+    "cc": true,
+    "chromium": false,
+    "chromium-browser": false,
+    "clang": true,
+    "dbus-run-session": true,
+    "dbus-send": true,
+    "ffmpeg": true,
+    "gdbus": true,
+    "google-chrome": true,
+    "google-chrome-stable": true,
+    "node": true,
+    "pip": true,
+    "pip3": true,
+    "pkg-config": true,
+    "rustc": true,
+    "rustup": true,
+    "tesseract": true,
+    "uv": true
+  },
+  "kernel": "7.0.14-linuxkit",
+  "libc": "glibc 2.43",
+  "limitations": [
+    "Executable and environment presence do not establish connection, permissions, or driver support.",
+    "No browser, desktop, accessibility service, native CUA library, or provider was started or queried.",
+    "Resource values are a transient upper bound, not a reservation or build-capacity guarantee.",
+    "Prebuilt installation avoids compilers; Python fallback does not replace native CUA desktop control."
+  ],
+  "pid1": {
+    "comm": "docker-init",
+    "parent_pid": 0,
+    "reaping": "not_checked",
+    "scope": "PID 1 visible in this proc mount; identity alone does not establish init or subreaper behavior",
+    "state": "S",
+    "threads": 1
+  },
+  "platform": "linux",
+  "prerequisite_candidates": {
+    "browser_executable": true,
+    "graphical_session_indicator": false,
+    "session_bus_indicator": false
+  },
+  "python": {
+    "ensurepip_module": true,
+    "pip_module": false,
+    "venv_module": true,
+    "version": "3.14.4"
+  },
+  "resources": {
+    "available_memory_upper_bound_bytes": 1442152448,
+    "cgroup": {
+      "controller_observations": [
+        {
+          "level": 0,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "pids_current": 50,
+          "pids_events": {
+            "max": 0
+          },
+          "pids_max": 512,
+          "scope": "root",
+          "swap_current_bytes": 0,
+          "swap_max_bytes": 0,
+          "version": 2
+        }
+      ],
+      "cpu_quota_cores": 2.0,
+      "events_scope": "per visible hierarchy level, never summed; ancestor events may include descendants",
+      "membership_readable": true,
+      "memory_limit_bytes": 3221225472,
+      "memory_remaining_bytes": 1442152448,
+      "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+      "observations_truncated": false,
+      "pids_limit": 512,
+      "pids_remaining": 462,
+      "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+      "versions": [
+        2
+      ]
+    },
+    "cpu_affinity_count": 4,
+    "cpu_count": 4,
+    "memory": {
+      "available_bytes": 3010596864,
+      "total_bytes": 4107141120
+    }
+  },
+  "runtime_qualification": "unverified",
+  "schema_version": 1,
+  "session_indicators_present": {
+    "DBUS_SESSION_BUS_ADDRESS": false,
+    "DISPLAY": false,
+    "WAYLAND_DISPLAY": false,
+    "XDG_RUNTIME_DIR": true
+  }
+}

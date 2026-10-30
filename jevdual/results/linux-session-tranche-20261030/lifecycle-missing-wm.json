@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "state": "stopped",
+  "stages": [
+    {
+      "stage": "x11",
+      "proof": {
+        "x11_connected": true
+      }
+    }
+  ],
+  "cleanup": {
+    "forced": [],
+    "unresolved": [
+      "openbox_leader_identity_lost"
+    ],
+    "orphan_reaping": "container init required; not established by leader exit"
+  },
+  "supervisor": {
+    "pid": 1998,
+    "start": "31398010"
+  },
+  "processes": [
+    {
+      "name": "xvfb",
+      "pid": 1999,
+      "start": "31398012"
+    },
+    {
+      "name": "openbox",
+      "pid": 2005,
+      "start": "31398018"
+    }
+  ],
+  "environment": {
+    "XDG_RUNTIME_DIR": "/artifacts/lifecycle/missing-wm-state/runtime",
+    "XDG_CONFIG_HOME": "/artifacts/lifecycle/missing-wm-state/config",
+    "XDG_CACHE_HOME": "/artifacts/lifecycle/missing-wm-state/cache",
+    "XDG_DATA_HOME": "/artifacts/lifecycle/missing-wm-state/data",
+    "XDG_STATE_HOME": "/artifacts/lifecycle/missing-wm-state/state",
+    "XDG_DATA_DIRS": "/usr/local/share:/usr/share",
+    "XDG_CONFIG_DIRS": "/etc/xdg"
+  },
+  "display": ":1",
+  "pending_stage": "wm",
+  "stop_reason": "critical component exited: openbox (2)"
+}

@@ -1,0 +1,8 @@
+bound footwork's Chrome (pid 219) window 6291458, tab tab-00e97b4f-af8b-4311-b867-947284b3edf6
+navigate http://127.0.0.1:45945/: unverifiable navigated tab-00e97b4f-af8b-4311-b867-947284b3edf6 to http://127.0.0.1:45945/
+Google Chrome (footwork): 'Recovery fixture'
+0 elements:
+page text (26 chars):
+Owned zero-window recovery
+
+session: /artifacts/browser-recovery-sandbox/session  (export FOOTWORK_SESSION=/artifacts/browser-recovery-sandbox/session to omit --session)

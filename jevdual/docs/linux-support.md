@@ -69,3 +69,18 @@ For optional tools, run `scripts/linux/qualify_optional.py` with the installed P
 For a lightweight prerequisite inventory, `python3 -I -S jevdual/python/jevdual/host_probe.py` needs only Python. It reads selected host/cgroup facts without opening a desktop or network connection.
 
 Wayland, shared-desktop foreground coexistence, physical devices, the actual Meta sandbox and provider-backed planning were not exercised. The local branch is not a published release; hosted CI and merge are separate actions.
+
+## Session lifecycle and browser recovery tranche
+
+The fixture runner reserves an unused X display and creates private XDG config, cache, data, state and runtime directories. It publishes `started` only after bounded X11, EWMH window-manager, accessibility-bus and exact editor-field probes. `session.json` records the selected display and staged readiness; the qualification script consumes it. Critical component death or cancellation triggers bounded owned-process cleanup, with forced or unresolved cleanup recorded explicitly. Container init remains responsible for orphan reaping.
+
+Use the installed interpreter so readiness can load the real CUA package:
+
+```sh
+FOOTWORK_PYTHON=/path/to/venv/bin/python dbus-run-session -- \
+  bash jevdual/scripts/linux/desktop-session.sh /fresh/private/state --timeout 45
+```
+
+For rootless extracted packages, `FOOTWORK_DESKTOP_SYSROOT` supplies explicit `usr/share` and `etc/xdg` prefixes. Supply any required dynamic-library search path to that isolated process; the runner does not modify system or user configuration. A recovery modal fails exact-target readiness and is never dismissed automatically.
+
+Linux Chrome recovery now reopens the exact owned profile when its root has no visible windows, retaining executable, UID, port and process incarnation checks. Chrome must have working sandbox prerequisites in its actual environment. The [tranche evidence](../results/linux-session-tranche-20261030/report.md) records both the rejected container and a successful sandbox-enabled recovery, plus lifecycle failure/cleanup tests. The older bundle hashes remain historical artifacts; rebuild the branch for these changes.

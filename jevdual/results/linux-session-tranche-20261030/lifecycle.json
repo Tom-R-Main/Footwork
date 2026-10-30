@@ -1,0 +1,40 @@
+[
+  {
+    "case": "first",
+    "exit_code": 0,
+    "ready_stages": 4,
+    "stop_reason": "cancelled",
+    "cleanup": {
+      "forced": [],
+      "unresolved": [],
+      "orphan_reaping": "container init required; not established by leader exit"
+    },
+    "live_owned_components": []
+  },
+  {
+    "case": "repeat",
+    "exit_code": 0,
+    "ready_stages": 4,
+    "stop_reason": "cancelled",
+    "cleanup": {
+      "forced": [],
+      "unresolved": [],
+      "orphan_reaping": "container init required; not established by leader exit"
+    },
+    "live_owned_components": []
+  },
+  {
+    "case": "missing-wm",
+    "exit_code": 2,
+    "ready_stages": 1,
+    "stop_reason": "critical component exited: openbox (2)",
+    "cleanup": {
+      "forced": [],
+      "unresolved": [
+        "openbox_leader_identity_lost"
+      ],
+      "orphan_reaping": "container init required; not established by leader exit"
+    },
+    "live_owned_components": []
+  }
+]

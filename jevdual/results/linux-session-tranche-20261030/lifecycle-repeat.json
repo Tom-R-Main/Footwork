@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "state": "stopped",
+  "stages": [
+    {
+      "stage": "x11",
+      "proof": {
+        "x11_connected": true
+      }
+    },
+    {
+      "stage": "wm",
+      "proof": {
+        "wm_ready": true
+      }
+    },
+    {
+      "stage": "bus",
+      "proof": {
+        "bus_accessible": true
+      }
+    },
+    {
+      "stage": "editor",
+      "proof": {
+        "editor_exact_target_ready": true,
+        "window_id": 4194308
+      }
+    }
+  ],
+  "cleanup": {
+    "forced": [],
+    "unresolved": [],
+    "orphan_reaping": "container init required; not established by leader exit"
+  },
+  "supervisor": {
+    "pid": 1875,
+    "start": "31397907"
+  },
+  "processes": [
+    {
+      "name": "xvfb",
+      "pid": 1876,
+      "start": "31397910"
+    },
+    {
+      "name": "openbox",
+      "pid": 1882,
+      "start": "31397916"
+    },
+    {
+      "name": "editor",
+      "pid": 1897,
+      "start": "31397924"
+    }
+  ],
+  "environment": {
+    "XDG_RUNTIME_DIR": "/artifacts/lifecycle/repeat-state/runtime",
+    "XDG_CONFIG_HOME": "/artifacts/lifecycle/repeat-state/config",
+    "XDG_CACHE_HOME": "/artifacts/lifecycle/repeat-state/cache",
+    "XDG_DATA_HOME": "/artifacts/lifecycle/repeat-state/data",
+    "XDG_STATE_HOME": "/artifacts/lifecycle/repeat-state/state",
+    "XDG_DATA_DIRS": "/usr/local/share:/usr/share",
+    "XDG_CONFIG_DIRS": "/etc/xdg"
+  },
+  "display": ":1",
+  "pending_stage": null,
+  "stop_reason": "cancelled"
+}

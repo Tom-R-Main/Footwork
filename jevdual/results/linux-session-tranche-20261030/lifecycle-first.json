@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "state": "stopped",
+  "stages": [
+    {
+      "stage": "x11",
+      "proof": {
+        "x11_connected": true
+      }
+    },
+    {
+      "stage": "wm",
+      "proof": {
+        "wm_ready": true
+      }
+    },
+    {
+      "stage": "bus",
+      "proof": {
+        "bus_accessible": true
+      }
+    },
+    {
+      "stage": "editor",
+      "proof": {
+        "editor_exact_target_ready": true,
+        "window_id": 4194308
+      }
+    }
+  ],
+  "cleanup": {
+    "forced": [],
+    "unresolved": [],
+    "orphan_reaping": "container init required; not established by leader exit"
+  },
+  "supervisor": {
+    "pid": 1729,
+    "start": "31397735"
+  },
+  "processes": [
+    {
+      "name": "xvfb",
+      "pid": 1730,
+      "start": "31397738"
+    },
+    {
+      "name": "openbox",
+      "pid": 1736,
+      "start": "31397755"
+    },
+    {
+      "name": "editor",
+      "pid": 1752,
+      "start": "31397785"
+    }
+  ],
+  "environment": {
+    "XDG_RUNTIME_DIR": "/artifacts/lifecycle/first-state/runtime",
+    "XDG_CONFIG_HOME": "/artifacts/lifecycle/first-state/config",
+    "XDG_CACHE_HOME": "/artifacts/lifecycle/first-state/cache",
+    "XDG_DATA_HOME": "/artifacts/lifecycle/first-state/data",
+    "XDG_STATE_HOME": "/artifacts/lifecycle/first-state/state",
+    "XDG_DATA_DIRS": "/usr/local/share:/usr/share",
+    "XDG_CONFIG_DIRS": "/etc/xdg"
+  },
+  "display": ":1",
+  "pending_stage": null,
+  "stop_reason": "cancelled"
+}
