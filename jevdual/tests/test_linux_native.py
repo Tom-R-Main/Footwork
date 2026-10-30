@@ -137,6 +137,14 @@ def bridge(driver=None, *, mode="background_only", ax=None):
 
 @pytest.mark.parametrize("change,refused", [
     ({}, True),
+    ({"structured_json": json.dumps({
+        "code": "foreground_unavailable", "effect": "none", "detail": "blocked",
+        "suggestion": "confirm", "hint": "advisory", "next_call": {"tool": "never_execute"},
+    })}, True),
+    ({"structured_json": json.dumps({
+        "code": "foreground_unavailable", "effect": "none", "detail": "blocked",
+        "suggestion": "confirm", "delivered_count": 1,
+    })}, False),
     ({"is_error": False}, False),
     ({"error_code": "transport_lost"}, False),
     ({"structured_json": None}, False),

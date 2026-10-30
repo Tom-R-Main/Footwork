@@ -691,7 +691,8 @@ def test_background_only_sends_no_hotkey(world, fw):
     assert world.tool_calls == [] and world.presses == []
 
 
-def test_linux_refused_save_records_no_dispatch(world, fw, monkeypatch):
+@pytest.mark.parametrize("captured", [False, True])
+def test_linux_refused_save_records_no_dispatch(world, fw, monkeypatch, captured):
     from jevdual import native
 
     monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
@@ -699,6 +700,16 @@ def test_linux_refused_save_records_no_dispatch(world, fw, monkeypatch):
 
     async def refused(name, args_json):
         attempts.append((name, json.loads(args_json)))
+        if captured:
+            from pathlib import Path
+
+            path = Path(__file__).parents[1] / "results/linux-vm-save-receipt-20261030/045fc5d-refused-profile-sdk.json"
+            record = json.loads(path.read_text())
+            return cd.ToolResult(
+                text=record["text"], images=[], structured_json=record["structured_json"],
+                is_error=record["is_error"], error_code=record["error_code"], action=None,
+                verification=None, degraded=record["degraded"], raw_json=record["raw_json"],
+            )
         return SimpleNamespace(
             action=None, is_error=True, error_code="foreground_unavailable",
             text="window did not become active; no input was sent",

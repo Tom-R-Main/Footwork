@@ -30,3 +30,9 @@ Test: reconstruct the actual public SDK ToolResult from cloud capture in a publi
 Predicts: both captured and minimal envelopes refuse with zero input; arbitrary advisory content is never executed; unknown semantics and contradictory delivery remain uncertain.
 Against: capture remains unrecognized, advisory content triggers an operation, or unrelated error/delivery shapes become no-input claims.
 Refs: python/jevdual/native.py; vendor/cua-driver/native-source.tar.gz; tests/test_session_scenarios.py
+
+## SRU3 · update · 2026-10-30 12:21
+Resolves: SR2 = held
+Observed: the real captured public ToolResult and advisory-metadata case fail against the previous bridge and pass with only hint/next_call permitted as optional metadata. The public CLI scenario reconstructs the captured SDK class; an input-free replay recognizes it. All 252 focused regressions pass, including contradictory action and unknown semantic-field cases. No advisory call is executed.
+Next: push the correction for installed-cloud broken-WM and fresh-profile working controls; local replay is not a replacement for that live repeat.
+Refs: results/linux-next-tranche-20261030/sdk-replay.json; results/linux-next-tranche-20261030/envelope-before.txt; results/linux-next-tranche-20261030/envelope-focused.txt

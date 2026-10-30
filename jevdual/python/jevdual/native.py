@@ -727,7 +727,9 @@ def _linux_foreground_no_send(outcome: Any) -> bool:
     """Recognize the pinned X11 activation gate, never an opaque error message.
 
     platform-linux input/foreground.rs returns CODE_UNAVAILABLE before its
-    input body; tools/impl_.rs input_error_result publishes this exact shape.
+    input body; tools/impl_.rs input_error_result publishes the core fields.
+    recovery_hint.rs then adds optional advisory hint/next_call metadata;
+    neither field is interpreted or executed here.
     Timeout and post-dispatch failures retain uncertain delivery semantics.
     """
     if (getattr(outcome, "action", None) is not None
@@ -742,7 +744,8 @@ def _linux_foreground_no_send(outcome: Any) -> bool:
     except ValueError:
         return False
     return (isinstance(record, dict)
-            and set(record) == {"code", "detail", "effect", "suggestion"}
+            and {"code", "detail", "effect", "suggestion"} <= set(record)
+            <= {"code", "detail", "effect", "suggestion", "hint", "next_call"}
             and record["code"] == "foreground_unavailable" and record["effect"] == "none"
             and isinstance(record["detail"], str) and isinstance(record["suggestion"], str))
 
