@@ -48,3 +48,16 @@ Test: implement at the existing injected native accessibility seam; bind process
 Predicts: exact before/after strings survive the snapshot cap, append inserts only at the measured end, and lost identity or incomplete reads refuse before input. Uncertain write replies remain uncertain rather than retried.
 Against: the editor cannot expose a unique stable window/element binding, reads remain lossy, a replacement object is silently accepted, or the backend duplicates a mutation after a failed acknowledgement.
 Refs: python/jevdual/native.py; vendor/cua-driver/native-source.tar.gz; https://jeepney.readthedocs.io/en/latest/api/blocking.html
+
+## LU4 · update · 2026-10-30 01:08
+Observed: the approved amd64 image and pinned CUA wheel built; the real generated bundle installed all binary dependencies. The public native CLI observed Mousepad and appended Unicode with exact whitespace readback. Hardened direct AT-SPI reads preserved 5014 characters and refused a stale expected value. Browser ownership and Mousepad document binding correctly refused because Rosetta exposes /run/rosetta/rosetta as the process executable.
+Inferred: these executable refusals are an emulation boundary, not proof that native Linux process qualification fails. Do not weaken executable checks to accept command-line claims.
+Next: qualify native arm64 apps in a task-owned image on the same local Linux VM, retaining the amd64 build and failed binding evidence separately. L3/L4 remain open pending end-to-end qualification.
+Refs: scripts/linux/Dockerfile; python/jevdual/browser_driver.py; python/jevdual/linux_documents.py
+
+## L5 · prediction · 2026-10-30 01:08
+Hypothesis: native arm64 Linux execution supplies real executable identities and permits the existing exact process/window/document binding checks without an emulation exception.
+Test: extend the cached native arm64 desktop image with the same approved isolated build prerequisites; build the pinned CUA wheel, install the real product, and exercise browser read, scoped editor append/replay/restart and independent saved-file readback on its owned display. Never infer hardware support from this VM.
+Predicts: /proc process identity agrees with the actual browser/editor binaries and the public CLI/MCP paths can bind and operate while stale or mismatched resources refuse.
+Against: native process identity still disagrees, the CUA arm64 build/load fails, or public operations require a weaker identity predicate.
+Refs: python/jevdual/linux_documents.py; python/jevdual/browser_driver.py; docs/linux-support.md
