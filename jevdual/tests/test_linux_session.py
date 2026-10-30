@@ -21,6 +21,9 @@ class FixtureSession(session.Session):
     reason = None
 
     def __init__(self, state, **kw):
+        kw.setdefault('display', next(n for n in range(30000, 31000)
+                                     if not Path(f'/tmp/.X{n}-lock').exists()
+                                     and not Path(f'/tmp/.footwork-X{n}.lock').exists()))
         super().__init__(state, startup=1.5, probe_timeout=.15, grace=.15,
                          commands={n: SLEEP for n in ['xvfb', 'bus', 'wm', 'editor']}, **kw)
 
@@ -159,6 +162,35 @@ def test_reused_root_pid_does_not_grant_descendant_cleanup_authority(monkeypatch
     assert target.capture() == {}
 
 
+def test_cleanup_never_addresses_a_replacement_after_its_inventory_snapshot(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'stale-signal')
+    target.processes = {'root': SimpleNamespace(pid=42)}
+    live = {42: {'start': 'root-A', 'session': 42, 'state': 'S'},
+            43: {'start': 'member-A', 'session': 42, 'state': 'S'}}
+    snapshot = {pid: dict(row) for pid, row in live.items()}
+    monkeypatch.setattr(target, 'capture', lambda: snapshot)
+    delivered = []
+
+    def group(*_):
+        live[43]['start'] = 'replacement-B'
+
+    def numeric(pid, _):
+        delivered.append(live[pid]['start'])
+
+    def pinned(pid, row, _):
+        # A retained handle addresses the referent acquired before replacement.
+        live[43]['start'] = 'replacement-B'
+        delivered.append(row['start'])
+        return {'pid': pid, 'status': 'sent', 'delivery': 'pidfd'}
+
+    monkeypatch.setattr(session.os, 'killpg', group)
+    monkeypatch.setattr(session.os, 'kill', numeric)
+    monkeypatch.setattr(session, 'pin_signal', pinned, raising=False)
+    target.signal_owned(['root'], signal.SIGTERM)
+    assert 'replacement-B' not in delivered
+    assert 'root-A' in delivered
+
+
 def test_recovery_modal_is_a_readiness_refusal_not_an_action(monkeypatch, tmp_path):
     import cua_driver as cd
     from jevdual import native
@@ -228,3 +260,55 @@ def test_root_only_accessibility_snapshot_cannot_publish_readiness(monkeypatch, 
     monkeypatch.setattr(native, 'NativeBridge', Bridge)
     assert asyncio.run(session._target_probe(2, tmp_path / 'document')) == {
         'ready': False, 'reason': 'exact_text_target_unavailable'}
+
+
+def test_wm_selection_without_ewmh_cannot_publish_readiness(monkeypatch):
+    class Function:
+        def __init__(self, fn):
+            self.fn = fn
+
+        def __call__(self, *args):
+            return self.fn(*args)
+
+    lib = SimpleNamespace(
+        XOpenDisplay=Function(lambda _: 1), XCloseDisplay=Function(lambda _: 0),
+        XInternAtom=Function(lambda _, name, __: 11 if name == b'WM_S0' else 0),
+        XGetSelectionOwner=Function(lambda *_: 99),
+        XDefaultRootWindow=Function(lambda _: 1),
+        XGetWindowProperty=Function(lambda *_: 0), XFree=Function(lambda _: 0))
+    monkeypatch.setattr(session.ctypes, 'CDLL', lambda _: lib)
+    assert session._x_probe(True)['ready'] is False
+
+
+def test_stalled_native_display_allocation_is_bounded(tmp_path):
+    target = session.Session(tmp_path / 'display-stall', startup=.3, grace=.1,
+                             commands={'xvfb': SLEEP})
+    before = time.monotonic()
+    assert target.run() == 1
+    assert time.monotonic() - before < 3
+    assert target.report['reason'] == 'display_allocation_timeout'
+    assert not (target.state / 'started').exists()
+    assert not target.report['cleanup']['survivors']
+
+
+def test_invalid_native_display_reply_does_not_publish_ready(tmp_path):
+    class CorruptDisplay(session.Session):
+        def spawn(self, name, command, **kwargs):
+            if name == 'xvfb':
+                self.commands[name] = [sys.executable, '-c',
+                    'import os,sys,time;os.write(int(sys.argv[1]),bytes([255,10]));time.sleep(60)', command[2]]
+            return super().spawn(name, command, **kwargs)
+
+    target = CorruptDisplay(tmp_path / 'display-corrupt', startup=1, grace=.1)
+    assert target.run() == 1
+    assert target.report['reason'] == 'display_allocation_invalid'
+    assert not target.report['cleanup']['survivors']
+
+
+def test_unavailable_pinned_signalling_refuses_before_starting_components(monkeypatch, tmp_path):
+    target = session.Session(tmp_path / 'unsupported')
+    monkeypatch.setattr(session, 'pin_signal', lambda *_: {'status': 'unsupported', 'delivery': None})
+    assert target.run() == 1
+    assert not target.processes
+    assert target.report['reason'] == 'pinned_signalling_unavailable:unsupported'
+    assert not (target.state / 'started').exists()

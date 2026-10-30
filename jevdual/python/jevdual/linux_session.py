@@ -8,36 +8,23 @@ from __future__ import annotations
 import argparse
 import asyncio
 import ctypes
+import errno
 import json
 import os
+import select
 import signal
 import subprocess
 import sys
 import time
 from pathlib import Path
 
+from jevdual.linux_process import pin_signal, process_table, read_process
+
 FIXTURE = "Footwork Linux fixture\n\tkeep trailing spaces  \n"
 
 
 class SessionError(RuntimeError):
     pass
-
-
-def process_table() -> dict[int, dict]:
-    """Bounded selected /proc facts, without command lines or environments."""
-    result = {}
-    for index, entry in enumerate(Path('/proc').iterdir()):
-        if index >= 16384:
-            break
-        if not entry.name.isdigit():
-            continue
-        try:
-            fields = (entry / 'stat').read_text().rsplit(')', 1)[1].split()
-            result[int(entry.name)] = {'state': fields[0], 'parent': int(fields[1]),
-                                      'group': int(fields[2]), 'session': int(fields[3]), 'start': fields[19]}
-        except (OSError, ValueError, IndexError):
-            continue
-    return result
 
 
 def _json(path: Path, value: dict) -> None:
@@ -59,6 +46,9 @@ class Session:
         self.logs: dict = {}
         self.identities: dict[int, str] = {}
         self.root_identities: dict[int, str] = {}
+        self.inventory_reasons: set[str] = set()
+        self.unknown_identities: set[int] = set()
+        self.signal_failures: dict[tuple, dict] = {}
         self.cancelled = False
         self.created = False
         self.reservation: tuple[Path, int] | None = None
@@ -66,6 +56,8 @@ class Session:
         self.env = os.environ.copy()
 
     def transition(self, phase: str, **details) -> None:
+        if phase != 'ready':
+            (self.state / 'started').unlink(missing_ok=True)
         self.report.update(phase=phase, ready=phase == 'ready', **details)
         self.report['transitions'].append({'phase': phase, 'monotonic': time.monotonic(), **details})
         _json(self.state / 'session.json', self.report)
@@ -91,7 +83,8 @@ class Session:
         self.report['rootless_prefix'] = str(self.prefix) if self.prefix else None
         self.report['resource_snapshot'] = __import__('jevdual.host_probe', fromlist=['probe']).probe()['resources']
         self.transition('reserving_display')
-        candidates = [self.display_number] if self.display_number is not None else range(90, 190)
+        self.env.pop('DISPLAY', None)
+        candidates = [self.display_number] if self.display_number is not None else []
         for number in candidates:
             path = Path(f'/tmp/.footwork-X{number}.lock')
             try:
@@ -110,21 +103,72 @@ class Session:
             self.report['display'] = f':{number}'
             break
         else:
-            raise SessionError('display_occupied')
+            if self.display_number is not None:
+                raise SessionError('display_occupied')
         address = 'unix:path=' + str(self.state / 'runtime/bus')
         self.env['DBUS_SESSION_BUS_ADDRESS'] = address
         (self.state / 'session-bus').write_text(address)
         (self.state / 'document.txt').write_text(FIXTURE)
 
+    def allocate_display(self, deadline: float) -> None:
+        if self.display_number is not None:
+            self.spawn('xvfb', ['Xvfb', self.env['DISPLAY'], '-screen', '0', '1280x900x24', '-nolisten', 'tcp'])
+            return
+        read_fd, write_fd = os.pipe2(os.O_CLOEXEC)
+        try:
+            self.spawn('xvfb', ['Xvfb', '-displayfd', str(write_fd), '-screen', '0', '1280x900x24',
+                                '-nolisten', 'tcp'], pass_fds=(write_fd,))
+            os.close(write_fd)
+            write_fd = None
+            data = b''
+            while b'\n' not in data:
+                self.check()
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise SessionError('display_allocation_timeout')
+                if not select.select([read_fd], [], [], min(.05, remaining))[0]:
+                    continue
+                chunk = os.read(read_fd, 32)
+                if not chunk or len(data) + len(chunk) > 16:
+                    raise SessionError('display_allocation_invalid')
+                data += chunk
+            try:
+                text = data.decode('ascii').strip()
+            except UnicodeError as exc:
+                raise SessionError('display_allocation_invalid') from exc
+            if not text.isdecimal() or not 0 <= int(text) <= 65535:
+                raise SessionError('display_allocation_invalid')
+            self.env['DISPLAY'] = ':' + str(int(text))
+            (self.state / 'display').write_text(self.env['DISPLAY'] + '\n')
+            self.report['display'] = self.env['DISPLAY']
+        finally:
+            os.close(read_fd)
+            if write_fd is not None:
+                os.close(write_fd)
+
     def capture(self) -> dict[int, dict]:
         table = process_table()
+        if not getattr(table, 'complete', True):
+            self.inventory_reasons.update(getattr(table, 'reasons', {'inventory_incomplete'}))
+        # A bounded inventory may omit a still-owned process. Re-read known
+        # identities individually; never retire them merely because of omission.
+        self.unknown_identities.clear()
+        for pid in self.identities:
+            if pid not in table:
+                try:
+                    table[pid] = read_process(pid)
+                except OSError as exc:
+                    if exc.errno not in (errno.ENOENT, errno.ESRCH):
+                        self.unknown_identities.add(pid)
+                except (ValueError, IndexError):
+                    self.unknown_identities.add(pid)
         self.identities = {pid: start for pid, start in self.identities.items()
-                           if pid in table and table[pid]['start'] == start}
+                           if pid in self.unknown_identities or (pid in table and table[pid]['start'] == start)}
         roots = {pid for pid, start in self.root_identities.items()
                  if pid in table and table[pid]['start'] == start}
-        owned = roots | set(self.identities)
+        owned = roots | (set(self.identities) & table.keys())
         sessions = roots | {table[pid]['session'] for pid in self.identities
-                            if table[pid]['session'] in self.root_identities
+                            if pid in table and table[pid]['session'] in self.root_identities
                             and (table[pid]['session'] not in table
                                  or table[table[pid]['session']]['start']
                                  == self.root_identities[table[pid]['session']])}
@@ -143,13 +187,13 @@ class Session:
         return {pid: table[pid] for pid, start in self.identities.items()
                 if pid in table and table[pid]['start'] == start}
 
-    def spawn(self, name: str, command: list[str]) -> subprocess.Popen:
+    def spawn(self, name: str, command: list[str], *, pass_fds: tuple = ()) -> subprocess.Popen:
         if name in self.logs:
             self.logs[name].close()
         log = (self.state / (name + '.log')).open('w')
         self.logs[name] = log
         process = subprocess.Popen(self.commands.get(name, command), env=self.env, stdout=log,
-                                   stderr=subprocess.STDOUT, start_new_session=True)
+                                   stderr=subprocess.STDOUT, start_new_session=True, pass_fds=pass_fds)
         self.processes[name] = process
         row = process_table().get(process.pid)
         if row is not None:
@@ -161,6 +205,8 @@ class Session:
         self.capture()
         if self.cancelled:
             raise SessionError('cancelled')
+        if self.inventory_reasons or self.unknown_identities:
+            raise SessionError('process_inventory_incomplete')
         for name, process in self.processes.items():
             if not name.startswith('probe-') and process.poll() is not None:
                 raise SessionError('component_exited:' + name)
@@ -172,21 +218,24 @@ class Session:
 
     def signal_owned(self, names: list[str], sig: int) -> None:
         observed = self.capture()
-        for name in names:
-            process = self.processes[name]
-            # A session ID remains reserved by the kernel while its members live.
-            if any(r['session'] == process.pid for r in observed.values()):
-                try:
-                    os.killpg(process.pid, sig)
-                except ProcessLookupError:
-                    pass
-        # Also cover observed descendants which established a new process group.
+        selected = {self.processes[name].pid for name in names}
+        recipients = set(observed) if names == list(self.processes) else {
+            pid for pid, row in observed.items() if pid in selected or row['session'] in selected}
+        # Group/ancestry observations establish scope; descriptors deliver to
+        # individual members. No leader pidfd or numeric kill claims tree scope.
+        for _ in range(32):
+            children = {pid for pid, row in observed.items() if row.get('parent') in recipients}
+            if children.issubset(recipients):
+                break
+            recipients |= children
         for pid, record in observed.items():
-            if names == list(self.processes) and record['state'] != 'Z':
-                try:
-                    os.kill(pid, sig)
-                except ProcessLookupError:
-                    pass
+            if pid in recipients and record['state'] != 'Z':
+                outcome = pin_signal(pid, record, sig)
+                key = (pid, record['start'])
+                if outcome['status'] in ('sent', 'exited', 'identity_changed'):
+                    self.signal_failures.pop(key, None)
+                else:
+                    self.signal_failures[key] = outcome
 
     def await_probe(self, stage: str, deadline: float) -> dict:
         last = 'not_ready'
@@ -239,6 +288,8 @@ class Session:
                 break
             time.sleep(.03)
         remaining = self.capture()
+        failures = [r for (pid, start), r in self.signal_failures.items()
+                    if pid in self.unknown_identities or (pid in remaining and remaining[pid]['start'] == start)]
         for log in self.logs.values():
             log.close()
         if self.reservation:
@@ -249,14 +300,23 @@ class Session:
         return {'forced_pids': forced,
                 'survivors': [pid for pid, r in remaining.items() if r['state'] != 'Z'],
                 'zombies': [pid for pid, r in remaining.items() if r['state'] == 'Z'],
-                'scope': 'owned process groups and observed incarnation-bound descendants; container init reaps orphans'}
+                'inventory_complete': not self.inventory_reasons and not self.unknown_identities,
+                'inventory_reasons': sorted(self.inventory_reasons),
+                'unknown_identities': sorted(self.unknown_identities), 'signal_failures': failures,
+                'uncertain': bool(self.inventory_reasons or self.unknown_identities or failures),
+                'signal_policy': 'individual pidfd only; no numeric fallback',
+                'scope': 'group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans'}
 
     def run(self) -> int:
         failure = None
         try:
             deadline = time.monotonic() + self.startup
             self.prepare()
-            self.spawn('xvfb', ['Xvfb', self.env['DISPLAY'], '-screen', '0', '1280x900x24', '-nolisten', 'tcp'])
+            capability = pin_signal(os.getpid(), read_process(os.getpid()), 0)
+            self.report['signal_capability'] = capability
+            if capability['status'] != 'sent':
+                raise SessionError('pinned_signalling_unavailable:' + capability['status'])
+            self.allocate_display(deadline)
             self.transition('x11')
             self.await_probe('x11', deadline)
             self.spawn('bus', ['dbus-daemon', '--session', '--nofork', '--address=' + self.env['DBUS_SESSION_BUS_ADDRESS']])
@@ -264,7 +324,8 @@ class Session:
             self.await_probe('bus', deadline)
             self.spawn('wm', ['openbox'])
             self.transition('wm')
-            self.await_probe('wm', deadline)
+            wm = self.await_probe('wm', deadline)
+            self.report['wm_identity'] = wm
             editor = self.spawn('editor', ['mousepad', '--disable-server', str(self.state / 'document.txt')])
             (self.state / 'editor.pid').write_text(str(editor.pid))
             self.transition('accessibility')
@@ -280,7 +341,10 @@ class Session:
                     health = self.await_probe('atspi', time.monotonic() + self.probe_timeout)
                     if health.get('bus_identity') != accessibility.get('bus_identity'):
                         raise SessionError('accessibility_bus_changed')
-                    self.await_probe('wm', time.monotonic() + self.probe_timeout)
+                    current_wm = self.await_probe('wm', time.monotonic() + self.probe_timeout)
+                    if (current_wm.get('wm_window'), current_wm.get('selection_owner')) != (
+                            wm.get('wm_window'), wm.get('selection_owner')):
+                        raise SessionError('window_manager_changed')
                     health_at = time.monotonic() + 2
                 time.sleep(.1)
         except (SessionError, OSError, subprocess.SubprocessError) as exc:
@@ -289,9 +353,11 @@ class Session:
             if self.created:
                 self.transition('stopping', reason=failure or 'cancelled')
                 self.report['cleanup'] = self.cleanup()
-                failed = failure not in (None, 'cancelled') or bool(self.report['cleanup']['survivors'])
+                failed = (failure not in (None, 'cancelled') or bool(self.report['cleanup']['survivors'])
+                          or self.report['cleanup']['uncertain'])
                 self.transition('failed' if failed else 'stopped', reason=failure or 'cancelled')
-        return 1 if failure not in (None, 'cancelled') or (self.report.get('cleanup') or {}).get('survivors') else 0
+        cleanup = self.report.get('cleanup') or {}
+        return 1 if failure not in (None, 'cancelled') or cleanup.get('survivors') or cleanup.get('uncertain') else 0
 
 
 def _x_probe(wm: bool) -> dict:
@@ -308,8 +374,36 @@ def _x_probe(wm: bool) -> dict:
             lib.XGetSelectionOwner.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
             lib.XGetSelectionOwner.restype = ctypes.c_ulong
             atom = lib.XInternAtom(display, b'WM_S0', 0)
-            if not lib.XGetSelectionOwner(display, atom):
+            owner = lib.XGetSelectionOwner(display, atom)
+            if not owner:
                 return {'ready': False, 'reason': 'wm_unavailable'}
+            ptr, ulong, integer = ctypes.c_void_p, ctypes.c_ulong, ctypes.c_int
+            lib.XDefaultRootWindow.argtypes, lib.XDefaultRootWindow.restype = [ptr], ulong
+            lib.XGetWindowProperty.argtypes = [ptr, ulong, ulong, ctypes.c_long, ctypes.c_long,
+                                              integer, ulong, ctypes.POINTER(ulong), ctypes.POINTER(integer),
+                                              ctypes.POINTER(ulong), ctypes.POINTER(ulong), ctypes.POINTER(ptr)]
+            lib.XFree.argtypes = [ptr]
+            check_atom = lib.XInternAtom(display, b'_NET_SUPPORTING_WM_CHECK', 1)
+            if not check_atom:
+                return {'ready': False, 'reason': 'wm_ewmh_unavailable'}
+
+            def supporting(window):
+                actual, kind, count, remaining, data = ulong(), integer(), ulong(), ulong(), ptr()
+                result = lib.XGetWindowProperty(display, window, check_atom, 0, 1, 0, 33,
+                                                ctypes.byref(actual), ctypes.byref(kind), ctypes.byref(count),
+                                                ctypes.byref(remaining), ctypes.byref(data))
+                try:
+                    if result or actual.value != 33 or kind.value != 32 or count.value != 1 or remaining.value or not data:
+                        return None
+                    return ctypes.cast(data, ctypes.POINTER(ulong))[0]
+                finally:
+                    if data:
+                        lib.XFree(data)
+
+            child = supporting(lib.XDefaultRootWindow(display))
+            if not child or supporting(child) != child:
+                return {'ready': False, 'reason': 'wm_ewmh_unavailable'}
+            return {'ready': True, 'wm_window': child, 'selection_owner': owner}
         return {'ready': True}
     finally:
         lib.XCloseDisplay(display)
