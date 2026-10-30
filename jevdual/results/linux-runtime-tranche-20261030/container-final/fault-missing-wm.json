@@ -1,0 +1,93 @@
+{
+  "ready": false,
+  "phase": "failed",
+  "transitions": [
+    {
+      "phase": "reserving_display",
+      "monotonic": 4078.022657453
+    },
+    {
+      "phase": "x11",
+      "monotonic": 4078.023849059
+    },
+    {
+      "phase": "session_bus",
+      "monotonic": 4078.117923724
+    },
+    {
+      "phase": "wm",
+      "monotonic": 4078.21410422
+    },
+    {
+      "phase": "stopping",
+      "monotonic": 4078.214907261,
+      "reason": "component_exited:wm"
+    },
+    {
+      "phase": "failed",
+      "monotonic": 4078.247029071,
+      "reason": "component_exited:wm"
+    }
+  ],
+  "cleanup": {
+    "forced_pids": [],
+    "survivors": [],
+    "zombies": [],
+    "scope": "owned process groups and observed incarnation-bound descendants; container init reaps orphans"
+  },
+  "rootless_prefix": null,
+  "resource_snapshot": {
+    "memory": {
+      "total_bytes": 18882662400,
+      "available_bytes": 17214365696
+    },
+    "cgroup": {
+      "versions": [
+        2
+      ],
+      "membership_readable": true,
+      "memory_limit_bytes": 3221225472,
+      "memory_remaining_bytes": 3195240448,
+      "cpu_quota_cores": 2.0,
+      "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+      "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+      "pids_limit": 512,
+      "pids_remaining_upper_bound": 509,
+      "swap_limit_bytes": 0,
+      "memory_and_swap_limit_bytes": null,
+      "task_swap_event_snapshots": [
+        {
+          "path": ".",
+          "pids_limit": 512,
+          "pids_current": 3,
+          "pids_events": {
+            "max": 0
+          },
+          "swap_limit_bytes": 0,
+          "swap_current_bytes": 0,
+          "swap_events": {
+            "high": 0,
+            "max": 0,
+            "fail": 0
+          },
+          "memory_events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "memory_failcnt": null,
+          "memory_and_swap_failcnt": null
+        }
+      ],
+      "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+    },
+    "available_memory_upper_bound_bytes": 3195240448,
+    "cpu_count": 5,
+    "cpu_affinity_count": 5
+  },
+  "display": ":90",
+  "reason": "component_exited:wm"
+}

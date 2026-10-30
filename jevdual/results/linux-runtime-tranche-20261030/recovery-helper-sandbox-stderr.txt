@@ -1,0 +1,8 @@
+The setuid sandbox is not running as root. Common causes:
+  * An unprivileged process using ptrace on it, like a debugger.
+  * A parent process set prctl(PR_SET_NO_NEW_PRIVS, ...)
+Failed to move to new namespace: PID namespaces supported, Network namespace supported, but failed: errno = Operation not permitted
+[188:188:1030/165311.900088:FATAL:content/browser/zygote_host/zygote_host_impl_linux.cc:213] Zygote process exited prematurely with exit code 1
+[1030/165311.903865:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+[1030/165311.903935:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+[195:195:0100/000000.934427:ERROR:content/zygote/zygote_linux.cc:662] write: Broken pipe (32)

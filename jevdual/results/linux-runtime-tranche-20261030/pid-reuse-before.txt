@@ -1,0 +1,25 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_reused_root_pid_does_not_grant_descendant_cleanup_authority _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f16f2196ba0>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-12/test_reused_root_pid_does_not_0')
+
+    def test_reused_root_pid_does_not_grant_descendant_cleanup_authority(monkeypatch, tmp_path):
+        target = FixtureSession(tmp_path / 'reuse')
+        target.processes['wm'] = SimpleNamespace(pid=42)
+        target.identities = {42: 'old'}
+        target.root_identities = {42: 'old'}
+        foreign = {'state': 'S', 'parent': 1, 'group': 42, 'session': 42, 'start': 'new'}
+        monkeypatch.setattr(session, 'process_table', lambda: {42: foreign})
+>       assert target.capture() == {}
+E       AssertionError: assert {42: {'state'...on': 42, ...}} == {}
+E         
+E         Left contains 1 more item:
+E         {42: {'group': 42, 'parent': 1, 'session': 42, 'start': 'new', 'state': 'S'}}
+E         Use -v to get more diff
+
+tests/test_linux_session.py:159: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_linux_session.py::test_reused_root_pid_does_not_grant_descendant_cleanup_authority
+1 failed in 0.20s

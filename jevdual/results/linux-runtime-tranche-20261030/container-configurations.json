@@ -1,0 +1,452 @@
+[
+  {
+    "name": "footwork-tranche-512",
+    "image": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+    "state": "exited",
+    "exit_code": 1,
+    "user": "1000:1000",
+    "Init": true,
+    "PidsLimit": 512,
+    "NanoCpus": 2000000000,
+    "Memory": 3221225472,
+    "MemorySwap": 3221225472,
+    "ShmSize": 536870912,
+    "NetworkMode": "none",
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "mounts": [
+      {
+        "source": "/usr/bin",
+        "destination": "/usr/bin",
+        "writable": false
+      },
+      {
+        "source": "/usr/lib",
+        "destination": "/usr/lib",
+        "writable": false
+      },
+      {
+        "source": "/usr/libexec",
+        "destination": "/usr/libexec",
+        "writable": false
+      },
+      {
+        "source": "/etc/alternatives",
+        "destination": "/etc/alternatives",
+        "writable": false
+      },
+      {
+        "source": "/etc/dbus-1",
+        "destination": "/etc/dbus-1",
+        "writable": false
+      },
+      {
+        "source": "/workspace/Footwork",
+        "destination": "/workspace/Footwork",
+        "writable": false
+      },
+      {
+        "source": "/workspace/.footwork-setup/sysroot",
+        "destination": "/workspace/.footwork-setup/sysroot",
+        "writable": false
+      },
+      {
+        "source": "/usr/share",
+        "destination": "/usr/share",
+        "writable": false
+      },
+      {
+        "source": "/etc/fonts",
+        "destination": "/etc/fonts",
+        "writable": false
+      },
+      {
+        "source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "destination": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/footwork-runtime-tranche-consumer",
+        "destination": "/workspace/scratch/footwork-runtime-tranche-consumer",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche",
+        "destination": "/work",
+        "writable": true
+      }
+    ]
+  },
+  {
+    "name": "footwork-tranche-512-ready",
+    "image": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+    "state": "exited",
+    "exit_code": 1,
+    "user": "1000:1000",
+    "Init": true,
+    "PidsLimit": 512,
+    "NanoCpus": 2000000000,
+    "Memory": 3221225472,
+    "MemorySwap": 3221225472,
+    "ShmSize": 536870912,
+    "NetworkMode": "none",
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "mounts": [
+      {
+        "source": "/etc/alternatives",
+        "destination": "/etc/alternatives",
+        "writable": false
+      },
+      {
+        "source": "/etc/dbus-1",
+        "destination": "/etc/dbus-1",
+        "writable": false
+      },
+      {
+        "source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "destination": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "writable": false
+      },
+      {
+        "source": "/workspace/.footwork-setup/sysroot",
+        "destination": "/workspace/.footwork-setup/sysroot",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/footwork-runtime-tranche-consumer",
+        "destination": "/workspace/scratch/footwork-runtime-tranche-consumer",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-ready/passwd",
+        "destination": "/etc/passwd",
+        "writable": false
+      },
+      {
+        "source": "/usr/bin",
+        "destination": "/usr/bin",
+        "writable": false
+      },
+      {
+        "source": "/usr/lib",
+        "destination": "/usr/lib",
+        "writable": false
+      },
+      {
+        "source": "/etc/fonts",
+        "destination": "/etc/fonts",
+        "writable": false
+      },
+      {
+        "source": "/workspace/Footwork",
+        "destination": "/workspace/Footwork",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-ready/group",
+        "destination": "/etc/group",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-ready",
+        "destination": "/work",
+        "writable": true
+      },
+      {
+        "source": "/usr/libexec",
+        "destination": "/usr/libexec",
+        "writable": false
+      },
+      {
+        "source": "/usr/share",
+        "destination": "/usr/share",
+        "writable": false
+      }
+    ]
+  },
+  {
+    "name": "footwork-tranche-512-final",
+    "image": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+    "state": "exited",
+    "exit_code": 0,
+    "user": "1000:1000",
+    "Init": true,
+    "PidsLimit": 512,
+    "NanoCpus": 2000000000,
+    "Memory": 3221225472,
+    "MemorySwap": 3221225472,
+    "ShmSize": 536870912,
+    "NetworkMode": "none",
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "mounts": [
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final",
+        "destination": "/work",
+        "writable": true
+      },
+      {
+        "source": "/usr/bin",
+        "destination": "/usr/bin",
+        "writable": false
+      },
+      {
+        "source": "/usr/lib",
+        "destination": "/usr/lib",
+        "writable": false
+      },
+      {
+        "source": "/etc/alternatives",
+        "destination": "/etc/alternatives",
+        "writable": false
+      },
+      {
+        "source": "/etc/fonts",
+        "destination": "/etc/fonts",
+        "writable": false
+      },
+      {
+        "source": "/etc/dbus-1",
+        "destination": "/etc/dbus-1",
+        "writable": false
+      },
+      {
+        "source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "destination": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "writable": false
+      },
+      {
+        "source": "/usr/libexec",
+        "destination": "/usr/libexec",
+        "writable": false
+      },
+      {
+        "source": "/usr/share",
+        "destination": "/usr/share",
+        "writable": false
+      },
+      {
+        "source": "/workspace/Footwork",
+        "destination": "/workspace/Footwork",
+        "writable": false
+      },
+      {
+        "source": "/workspace/.footwork-setup/sysroot",
+        "destination": "/workspace/.footwork-setup/sysroot",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/footwork-runtime-final-consumer",
+        "destination": "/workspace/scratch/footwork-runtime-final-consumer",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final/passwd",
+        "destination": "/etc/passwd",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final/group",
+        "destination": "/etc/group",
+        "writable": false
+      }
+    ]
+  },
+  {
+    "name": "footwork-tranche-512-faults",
+    "image": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+    "state": "exited",
+    "exit_code": 1,
+    "user": "1000:1000",
+    "Init": true,
+    "PidsLimit": 512,
+    "NanoCpus": 2000000000,
+    "Memory": 3221225472,
+    "MemorySwap": 3221225472,
+    "ShmSize": 536870912,
+    "NetworkMode": "none",
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "mounts": [
+      {
+        "source": "/etc/fonts",
+        "destination": "/etc/fonts",
+        "writable": false
+      },
+      {
+        "source": "/etc/dbus-1",
+        "destination": "/etc/dbus-1",
+        "writable": false
+      },
+      {
+        "source": "/workspace/Footwork",
+        "destination": "/workspace/Footwork",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final/group",
+        "destination": "/etc/group",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final",
+        "destination": "/work",
+        "writable": true
+      },
+      {
+        "source": "/usr/lib",
+        "destination": "/usr/lib",
+        "writable": false
+      },
+      {
+        "source": "/usr/share",
+        "destination": "/usr/share",
+        "writable": false
+      },
+      {
+        "source": "/etc/alternatives",
+        "destination": "/etc/alternatives",
+        "writable": false
+      },
+      {
+        "source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "destination": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "writable": false
+      },
+      {
+        "source": "/workspace/.footwork-setup/sysroot",
+        "destination": "/workspace/.footwork-setup/sysroot",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/footwork-runtime-final-consumer",
+        "destination": "/workspace/scratch/footwork-runtime-final-consumer",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final/passwd",
+        "destination": "/etc/passwd",
+        "writable": false
+      },
+      {
+        "source": "/usr/bin",
+        "destination": "/usr/bin",
+        "writable": false
+      },
+      {
+        "source": "/usr/libexec",
+        "destination": "/usr/libexec",
+        "writable": false
+      }
+    ]
+  },
+  {
+    "name": "footwork-tranche-512-accessibility",
+    "image": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+    "state": "exited",
+    "exit_code": 0,
+    "user": "1000:1000",
+    "Init": true,
+    "PidsLimit": 512,
+    "NanoCpus": 2000000000,
+    "Memory": 3221225472,
+    "MemorySwap": 3221225472,
+    "ShmSize": 536870912,
+    "NetworkMode": "none",
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "mounts": [
+      {
+        "source": "/etc/alternatives",
+        "destination": "/etc/alternatives",
+        "writable": false
+      },
+      {
+        "source": "/etc/fonts",
+        "destination": "/etc/fonts",
+        "writable": false
+      },
+      {
+        "source": "/etc/dbus-1",
+        "destination": "/etc/dbus-1",
+        "writable": false
+      },
+      {
+        "source": "/workspace/.footwork-setup/sysroot",
+        "destination": "/workspace/.footwork-setup/sysroot",
+        "writable": false
+      },
+      {
+        "source": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "destination": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+        "writable": false
+      },
+      {
+        "source": "/workspace/Footwork",
+        "destination": "/workspace/Footwork",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/footwork-runtime-final-consumer",
+        "destination": "/workspace/scratch/footwork-runtime-final-consumer",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final/passwd",
+        "destination": "/etc/passwd",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final/group",
+        "destination": "/etc/group",
+        "writable": false
+      },
+      {
+        "source": "/workspace/scratch/fw-container-tranche-final",
+        "destination": "/work",
+        "writable": true
+      },
+      {
+        "source": "/usr/bin",
+        "destination": "/usr/bin",
+        "writable": false
+      },
+      {
+        "source": "/usr/lib",
+        "destination": "/usr/lib",
+        "writable": false
+      },
+      {
+        "source": "/usr/libexec",
+        "destination": "/usr/libexec",
+        "writable": false
+      },
+      {
+        "source": "/usr/share",
+        "destination": "/usr/share",
+        "writable": false
+      }
+    ]
+  }
+]

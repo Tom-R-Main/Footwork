@@ -34,6 +34,8 @@ Use the label or ID returned by the current observation. The default posture kee
 
 For Chrome installed outside the standard paths, set `FOOTWORK_CHROME_EXECUTABLE` to its actual binary. Footwork binds the owned profile, process incarnation and executable. It does not accept a process merely because its command line resembles Chrome. Rosetta-emulated Linux binaries report the emulator as their executable and fail this check; use native execution for that qualification.
 
+If the qualified Linux browser remains running after its last window closes, the public startup route opens one through that executable and exact profile. Window discovery and attachment share a monotonic deadline and recheck the process incarnation. Failed or cancelled binding shuts down its driver and any newly launched helper; it does not terminate a reused browser. Recovery copies only an explicitly present `--no-sandbox` setting from that same qualified root, because Chromium also checks sandbox prerequisites in secondary helpers. Normal launches omit it, and arbitrary arguments are never copied. Qualification fixtures explicitly select this mode only in their isolated containers.
+
 ## Exact text and document scope
 
 Linux text operations use a bounded AT-SPI adapter with process incarnation, X11 window geometry, accessibility-bus identity, unique owner/object path and ancestry checks. Complete values up to 65,536 codepoints are read independently of CUA's 4,096-character preview. Read-only text does not gain write operations from its role or token. Append checks the exact prior value and inserts once at its measured end; a lost acknowledgement is never retried automatically.
@@ -62,10 +64,23 @@ docker build --pull=false --platform linux/amd64 \
 
 The amd64 wheel was built and installed in that ExecuFunction-derived image. Full desktop identity qualification used native arm64 execution in the same local Linux VM, extending the cached Ubuntu 26.04 desktop image with `BASE_IMAGE` and `BUILD_USER=ubuntu`. That arm64 wheel is not a claim of compatibility with older glibc distributions.
 
-Run containers with `--init` to reap exited browser processes, explicit CPU/memory limits, an isolated display/session bus, no host desktop sockets, no credentials and no privileged mode. The recorded runs used two cores and 3 GiB. Start `scripts/linux/desktop-session.sh` under `dbus-run-session`, then run `scripts/linux/qualify.py` with the installed Python, the fixture state directory, a fresh output directory and the installed Chrome binary. Its container-only Chrome flag disables Chrome's sandbox inside this isolated test environment; the product launcher does not add that flag.
+Run containers with `--init` to reap exited browser processes, explicit CPU/memory/PID/swap limits, no host desktop sockets, no credentials and no privileged mode. The desktop user must have a passwd entry so D-Bus can authenticate it. Start the owned supervisor with the installed interpreter:
+
+```sh
+FOOTWORK_DESKTOP_PYTHON=/path/to/installed/bin/python \
+  scripts/linux/desktop-session.sh /fresh/session-state
+# For user-owned extracted desktop packages, add:
+# --rootless-prefix /path/to/sysroot
+```
+
+The supervisor reserves an unused display and owns its Xvfb, D-Bus, Openbox and Mousepad processes. It creates private config/cache/data/state/runtime directories; ambient profiles are never cleared or reused. `session.json` records transitions and resource diagnostics. The `started` marker appears only after bounded X handshake, WM selection, accessibility-bus and exact fixture document/text checks. A recovery dialog refuses readiness. The chosen display is in `display`, not assumed to be `:99`.
+
+Wait for `started`, then run `scripts/linux/qualify.py` with the installed Python, state directory, fresh output directory and actual installed Chrome ELF binary. Signal the supervisor with TERM/INT to stop it. A component exit or changed accessibility bus also starts bounded cleanup; recorded `forced_pids`, live `survivors` and orphan `zombies` remain distinct. The runner owns its direct child waits and observed incarnation-bound descendants, without installing a global reaper. A container init remains required for adopted orphans; escaping before observation is outside that descendant snapshot guarantee.
+
+The fixture Chrome command explicitly disables the sandbox only inside this isolated test environment. The ordinary product launcher keeps its default sandbox behavior. See the [Debian runtime tranche evidence](../results/linux-runtime-tranche-20261030/report.md) for the source/wheel identities, 512-PID/two-core/3-GiB/zero-swap run and retained failures.
 
 For optional tools, run `scripts/linux/qualify_optional.py` with the installed Python, a fresh `--output` directory and an installed TrueType `--font`. It creates synthetic direct/mirrored images, checks the exact fixture candidate before accepting it, and tests camera inventory and missing-device refusal. It never opens a video device.
 
-For a lightweight prerequisite inventory, `python3 -I -S jevdual/python/jevdual/host_probe.py` needs only Python. It reads selected host/cgroup facts without opening a desktop or network connection.
+For a lightweight prerequisite inventory, `python3 -I -S jevdual/python/jevdual/host_probe.py` needs only Python. It reads selected host/cgroup facts without opening a desktop or network connection. PID limits/current/events, memory/swap counters and selected PID1 facts are diagnostic snapshots; inaccessible, hidden or delegated limits and actual orphan-reaping behavior remain unknown. Finite observed limits are not capacity reservations.
 
 Wayland, shared-desktop foreground coexistence, physical devices, the actual Meta sandbox and provider-backed planning were not exercised. The local branch is not a published release; hosted CI and merge are separate actions.

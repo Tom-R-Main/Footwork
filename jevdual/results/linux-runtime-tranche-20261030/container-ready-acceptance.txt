@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/work/accept.py", line 65, in <module>
+    assert q.returncode==0,q.stdout+q.stderr
+           ^^^^^^^^^^^^^^^
+AssertionError: {"schema_version": "1", "exit_code": 7, "command_completed": false, "effect_verification": "not_asserted", "output": "", "diagnostics": "stopped: RuntimeError: owned browser new-window helper exited unsuccessfully\n", "data": null}
+

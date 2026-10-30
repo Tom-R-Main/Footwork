@@ -1,0 +1,1 @@
+{"schema_version": "1", "exit_code": 7, "command_completed": false, "effect_verification": "not_asserted", "output": "", "diagnostics": "stopped: RuntimeError: owned browser new-window helper exited unsuccessfully\n", "data": null}

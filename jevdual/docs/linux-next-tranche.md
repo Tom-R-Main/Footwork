@@ -96,3 +96,7 @@ Later acceptance: observe/exact-read first, then append/replay/restart, then exp
 Implement units 1–3 independently, with notebook predictions committed before their resolving tests. Record the wheel/source identity, public SDK envelope, chosen session/backend, resource limits, readiness transitions and cleanup outcome for each acceptance run. Keep ambiguous mutations terminal until reconciled; no generic retries. Existing provider guards remain in force.
 
 Units 4–6 are source-grounded designs awaiting experiments and authority-specific qualification. Reference checkout behavior, a passing mock and a nested compositor each support different claims. No new compositor, system service, kernel, physical device, cloud environment or shared desktop was activated in this study.
+
+## Implementation follow-up
+
+Units 1–3 were implemented and tested in the [Debian VM runtime tranche](../results/linux-runtime-tranche-20261030/report.md). It retains the final installed-wheel checks, staged readiness and cleanup faults, real SDK refusal, native zero-window browser recovery and the earlier failed runs. The scope and later gates above remain distinct.

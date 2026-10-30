@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/work/faults.py", line 52, in <module>
+    assert len(candidates)==1,[c.pid for c in candidates]
+           ^^^^^^^^^^^^^^^^^^
+AssertionError: []

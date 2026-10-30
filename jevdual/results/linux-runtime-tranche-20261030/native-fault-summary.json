@@ -1,0 +1,46 @@
+{
+  "fault-cancel-start": {
+    "phase": "stopped",
+    "reason": "cancelled",
+    "ready_ever": false,
+    "cleanup": {
+      "forced_pids": [],
+      "survivors": [],
+      "zombies": [],
+      "scope": "owned process groups and observed incarnation-bound descendants; container init reaps orphans"
+    }
+  },
+  "fault-missing-wm": {
+    "phase": "failed",
+    "reason": "component_exited:wm",
+    "ready_ever": false,
+    "cleanup": {
+      "forced_pids": [],
+      "survivors": [],
+      "zombies": [],
+      "scope": "owned process groups and observed incarnation-bound descendants; container init reaps orphans"
+    }
+  },
+  "fault-occupied": {
+    "phase": "failed",
+    "reason": "display_occupied",
+    "ready_ever": false,
+    "cleanup": {
+      "forced_pids": [],
+      "survivors": [],
+      "zombies": [],
+      "scope": "owned process groups and observed incarnation-bound descendants; container init reaps orphans"
+    }
+  },
+  "fault-accessibility-qualified": {
+    "phase": "failed",
+    "reason": "accessibility_bus_changed",
+    "ready_ever": true,
+    "cleanup": {
+      "forced_pids": [],
+      "survivors": [],
+      "zombies": [],
+      "scope": "owned process groups and observed incarnation-bound descendants; container init reaps orphans"
+    }
+  }
+}
