@@ -44,6 +44,8 @@ class Session:
         self.commands = commands or {}
         self.processes: dict[str, subprocess.Popen] = {}
         self.logs: dict = {}
+        self.probe_counts: dict[str, int] = {}
+        self.probe_events: Path | None = None
         self.identities: dict[int, str] = {}
         self.root_identities: dict[int, str] = {}
         self.inventory_reasons: set[str] = set()
@@ -202,10 +204,14 @@ class Session:
     def spawn(self, name: str, command: list[str], *, pass_fds: tuple = ()) -> subprocess.Popen:
         if name in self.logs:
             self.logs[name].close()
-        log = (self.state / (name + '.log')).open('w')
+        log = (self.state / (name + '.log')).open('x')
         self.logs[name] = log
+        stderr = subprocess.STDOUT
+        if name.startswith('probe-'):
+            stderr = (self.state / (name + '.stderr.log')).open('x')
+            self.logs[name + '-stderr'] = stderr
         process = subprocess.Popen(self.commands.get(name, command), env=self.env, stdout=log,
-                                   stderr=subprocess.STDOUT, start_new_session=True, pass_fds=pass_fds)
+                                   stderr=stderr, start_new_session=True, pass_fds=pass_fds)
         self.processes[name] = process
         try:
             row = read_process(process.pid)
@@ -229,7 +235,8 @@ class Session:
     def probe_command(self, stage: str) -> list[str]:
         return [sys.executable, '-I', '-m', 'jevdual.linux_session', '--probe', stage,
                 '--pid', str(self.processes.get('editor').pid if 'editor' in self.processes else 0),
-                '--document', str(self.state / 'document.txt')]
+                '--document', str(self.state / 'document.txt'),
+                '--probe-events', str(self.probe_events)]
 
     def signal_owned(self, names: list[str], sig: int) -> None:
         observed = self.capture()
@@ -256,8 +263,14 @@ class Session:
         last = 'not_ready'
         while time.monotonic() < deadline:
             self.check()
-            name = 'probe-' + stage
+            attempt = self.probe_counts.get(stage, 0) + 1
+            self.probe_counts[stage] = attempt
+            name = f'probe-{stage}-{attempt:04d}'
+            self.probe_events = self.state / (name + '.events.jsonl')
+            record = {'stage': stage, 'attempt': attempt, 'started': time.monotonic(),
+                      'timeout': False, 'termination': [], 'result': None}
             process = self.spawn(name, self.probe_command(stage))
+            record['pid'] = process.pid
             end = min(deadline, time.monotonic() + self.probe_timeout)
             try:
                 while process.poll() is None and time.monotonic() < end:
@@ -265,20 +278,56 @@ class Session:
                     time.sleep(.03)
                 if process.poll() is None:
                     last = 'probe_timeout'
+                    record['timeout'] = True
                 else:
-                    text = (self.state / (name + '.log')).read_bytes()[:8192]
+                    with (self.state / (name + '.log')).open('rb') as stream:
+                        text = stream.read(8193)
                     try:
+                        if len(text) > 8192:
+                            raise ValueError('oversized reply')
                         value = json.loads(text)
-                    except (ValueError, UnicodeError):
+                        if not isinstance(value, dict):
+                            raise TypeError('invalid reply')
+                    except (ValueError, TypeError, UnicodeError):
                         value = {'ready': False, 'reason': 'invalid_probe_reply'}
+                    record['result'] = value
                     if process.returncode == 0 and value.get('ready') is True:
+                        last = 'ready'
                         return value
-                    last = value.get('reason', 'not_ready')
+                    last = ('probe_abnormal_exit' if process.returncode != 0 and value.get('ready') is True
+                            else value.get('reason', 'not_ready'))
                     if last == 'recovery_modal':
                         raise SessionError('recovery_modal')
             finally:
-                self.signal_owned([name], signal.SIGKILL)
-                process.wait(timeout=1)
+                try:
+                    if process.poll() is None:
+                        record['termination'].append({'signal': signal.SIGTERM.value,
+                                                      'monotonic': time.monotonic()})
+                        self.signal_owned([name], signal.SIGTERM)
+                        try:
+                            process.wait(timeout=min(.2, self.grace))
+                        except subprocess.TimeoutExpired:
+                            record['termination'].append({'signal': signal.SIGKILL.value,
+                                                          'monotonic': time.monotonic()})
+                            self.signal_owned([name], signal.SIGKILL)
+                    code = process.wait(timeout=1)
+                    record.update(returncode=code, exit_code=code if code >= 0 else None,
+                                  signal=-code if code < 0 else None, wait_complete=True)
+                except subprocess.TimeoutExpired:
+                    record.update(returncode=None, wait_complete=False)
+                    raise
+                finally:
+                    record['finished'] = time.monotonic()
+                    record['events'] = _read_events(self.probe_events)
+                    record['last_phase'] = (record['events'][-1]['phase'] if record['events'] else None)
+                    record['reason'] = last
+                    _json(self.state / (name + '.json'), record)
+                    # Retain evidence on disk, but not open handles for every
+                    # health probe over an arbitrarily long session.
+                    for key in (name, name + '-stderr'):
+                        self.logs.pop(key).close()
+                    if process.returncode is not None:
+                        self.processes.pop(name)
             time.sleep(min(.1, max(0, deadline - time.monotonic())))
         raise SessionError(stage + ':' + str(last))
 
@@ -424,31 +473,67 @@ def _x_probe(wm: bool) -> dict:
         lib.XCloseDisplay(display)
 
 
-async def _target_probe(pid: int, document: Path) -> dict:
+def _read_events(path: Path) -> list[dict]:
+    try:
+        with path.open('rb') as stream:
+            data = stream.read(16385)
+        if len(data) > 16384:
+            return []
+        events = [json.loads(line) for line in data.splitlines()]
+        if len(events) > 64 or any(set(e) != {'phase', 'monotonic'}
+                                   or not isinstance(e['phase'], str) or len(e['phase']) > 64
+                                   or not isinstance(e['monotonic'], (int, float)) for e in events):
+            return []
+        return events
+    except (OSError, ValueError, TypeError):
+        return []
+
+
+class ProbeEvents:
+    """Fixed, text-free phases on a separate bounded diagnostic channel."""
+    def __init__(self, path: Path | None):
+        self.path, self.count = path, 0
+
+    def __call__(self, phase: str) -> None:
+        if self.path is not None and self.count < 64:
+            with self.path.open('a') as stream:
+                stream.write(json.dumps({'phase': phase, 'monotonic': time.monotonic()}) + '\n')
+            self.count += 1
+
+
+async def _target_probe(pid: int, document: Path, phase=lambda _: None) -> dict:
+    phase('import')
     import cua_driver as cd
 
     from jevdual.linux_documents import bind
     from jevdual.native import NativeBridge
 
+    phase('create')
     driver = cd.CuaDriver.create(embedded=True)
     try:
+        phase('list_windows')
         windows = (await driver.list_windows(cd.ListWindowsInput(pid=pid, on_screen_only=True))).windows
         if len(windows) != 1:
             return {'ready': False, 'reason': 'window_not_unique'}
+        phase('observe')
         snapshot = await NativeBridge(driver, pid, windows[0].window_id).observe()
+        phase('fixture_check')
         if 'previous session did not end normally' in snapshot.menu.page_text.casefold():
             return {'ready': False, 'reason': 'recovery_modal'}
         fields = [c for c in snapshot.menu.candidates if 'append' in c.operations]
         if len(fields) != 1 or snapshot.values.get(fields[0].id) != FIXTURE:
             return {'ready': False, 'reason': 'exact_text_target_unavailable'}
+        phase('document_bind')
         bind(pid, windows[0].window_id, document)
         return {'ready': True, 'pid': pid, 'window_id': windows[0].window_id,
                 'document': str(document), 'exact_fixture_text': True}
     finally:
+        phase('shutdown')
         await driver.shutdown()
+        phase('shutdown_returned')
 
 
-def probe(stage: str, pid: int, document: Path) -> dict:
+def probe(stage: str, pid: int, document: Path, phase=lambda _: None) -> dict:
     if stage in ('x11', 'wm'):
         return _x_probe(stage == 'wm')
     if stage == 'bus':
@@ -466,7 +551,7 @@ def probe(stage: str, pid: int, document: Path) -> dict:
         from jevdual.linux_ax import _Bus
         with _Bus() as bus:
             return {'ready': bool(bus.identity), 'bus_identity': bus.identity}
-    return asyncio.run(_target_probe(pid, document))
+    return asyncio.run(_target_probe(pid, document, phase))
 
 
 def main() -> int:
@@ -480,13 +565,18 @@ def main() -> int:
     parser.add_argument('--probe', choices=['x11', 'bus', 'wm', 'atspi', 'target'])
     parser.add_argument('--pid', type=int, default=0)
     parser.add_argument('--document', type=Path, default=Path('/nonexistent'))
+    parser.add_argument('--probe-events', type=Path)
     args = parser.parse_args()
     if args.probe:
+        phase = ProbeEvents(args.probe_events)
+        phase('probe_enter')
         try:
-            value = probe(args.probe, args.pid, args.document)
+            value = probe(args.probe, args.pid, args.document, phase)
         except Exception as exc:  # noqa: BLE001 - isolated child preserves typed failure; no input
             value = {'ready': False, 'reason': type(exc).__name__}
-        print(json.dumps(value))
+        phase('probe_returned')
+        print(json.dumps(value), flush=True)
+        phase('result_emitted')
         return 0 if value.get('ready') else 1
     if (sys.platform != 'linux' or args.state is None or args.state.exists()
             or any(not 0 < n <= 120 for n in [args.startup_timeout, args.probe_timeout, args.cleanup_grace])

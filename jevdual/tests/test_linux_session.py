@@ -312,3 +312,49 @@ def test_unavailable_pinned_signalling_refuses_before_starting_components(monkey
     assert not target.processes
     assert target.report['reason'] == 'pinned_signalling_unavailable:unsupported'
     assert not (target.state / 'started').exists()
+
+
+def test_probe_attempts_preserve_results_stderr_phases_and_signal_exit(tmp_path):
+    target = FixtureSession(tmp_path / 'attempts')
+    target.prepare()
+    def command(stage):
+        path = str(target.probe_events)
+        return [sys.executable, '-c',
+                ('import os,signal,time,json; from pathlib import Path; '
+                 f'Path({path!r}).write_text(json.dumps({{"phase":"shutdown_returned","monotonic":time.monotonic()}})+"\\n"); '
+                 'print("diagnostic",file=__import__("sys").stderr,flush=True); '
+                 'print(\'{"ready":true}\',flush=True); os.kill(os.getpid(),signal.SIGABRT)')]
+    target.probe_command = command
+    with pytest.raises(session.SessionError, match='probe_abnormal_exit'):
+        target.await_probe('target', time.monotonic() + .3)
+    records = sorted(target.state.glob('probe-target-*.json'))
+    assert records
+    for path in records:
+        row = json.loads(path.read_text())
+        assert row['signal'] == signal.SIGABRT and row['returncode'] == -signal.SIGABRT
+        assert row['wait_complete'] and row['last_phase'] == 'shutdown_returned'
+        assert row['result']['ready'] is True
+        assert path.with_suffix('.stderr.log').read_text().strip() == 'diagnostic'
+        assert json.loads(path.with_suffix('.log').read_text()) == {'ready': True}
+    target.cleanup()
+
+
+def test_probe_timeout_retains_phase_escalation_and_final_wait(tmp_path):
+    target = FixtureSession(tmp_path / 'phase-timeout')
+    target.prepare()
+    def command(stage):
+        return [sys.executable, '-c',
+                ('import signal,time,json; from pathlib import Path; '
+                 'signal.signal(signal.SIGTERM,signal.SIG_IGN); '
+                 f'Path({str(target.probe_events)!r}).write_text(json.dumps({{"phase":"shutdown","monotonic":time.monotonic()}})+"\\n"); '
+                 'time.sleep(60)')]
+    target.probe_command = command
+    with pytest.raises(session.SessionError, match='probe_timeout'):
+        target.await_probe('target', time.monotonic() + .25)
+    rows = [json.loads(p.read_text()) for p in target.state.glob('probe-target-*.json')]
+    assert rows
+    for row in rows:
+        assert row['timeout'] and row['last_phase'] == 'shutdown'
+        assert [r['signal'] for r in row['termination']] == [signal.SIGTERM, signal.SIGKILL]
+        assert row['signal'] == signal.SIGKILL and row['wait_complete']
+    target.cleanup()
