@@ -12,3 +12,9 @@ Established: independent source review found the repeated native teardown abort 
 Uncertain: this documentation change does not repair repeated native sessions, qualify Wayland/shared foreground, or publish portable binaries for all Linux distributions.
 Decision: ship bounded Linux preview functionality and evidence with honest operating limits; retain the native reliability findings for follow-up rather than suppress exits or widen identity predicates.
 Refs: docs/quickstart.md; docs/linux-support.md; docs/linux-consolidation-learning.md; results/linux-consolidation-vm-20261030/report.md
+
+## LPU1 · update · 2026-10-30 14:43
+Resolves: LP1 = held
+Observed: source 40ae59f passes 2464 host tests with 94 platform/dependency skips and 13 browser deselections; all 97 JavaScript tests, lint, resource and notebook checks pass. The fresh Linux bundle matches all 193 installed package files and its public artifact checker distinguishes matching bytes from changed bytes with exit 0/6. The installed browser/CLI/MCP/save/replay/restart journey passes with process exit 0. The initial harness invocation used an unavailable Chrome path; its failure remains retained. Cleanup recorded one editor zombie, absent in a subsequent proc check.
+Next: publish the reviewable preview PR and require hosted checks before merge. Preserve the earlier native teardown and repeated-session timeouts as unresolved; this first-result test is not a reliability repair.
+Refs: results/linux-product-release-20261030/report.md; results/linux-consolidation-vm-20261030/report.md
