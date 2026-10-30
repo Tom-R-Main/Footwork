@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_wm_selection_without_ewmh_cannot_publish_readiness ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6307b72900>
+
+    def test_wm_selection_without_ewmh_cannot_publish_readiness(monkeypatch):
+        class Function:
+            def __init__(self, fn):
+                self.fn = fn
+    
+            def __call__(self, *args):
+                return self.fn(*args)
+    
+        lib = SimpleNamespace(
+            XOpenDisplay=Function(lambda _: 1), XCloseDisplay=Function(lambda _: 0),
+            XInternAtom=Function(lambda _, name, __: 11 if name == b'WM_S0' else 0),
+            XGetSelectionOwner=Function(lambda *_: 99),
+            XDefaultRootWindow=Function(lambda _: 1),
+            XGetWindowProperty=Function(lambda *_: 0), XFree=Function(lambda _: 0))
+        monkeypatch.setattr(session.ctypes, 'CDLL', lambda _: lib)
+>       assert session._x_probe(True)['ready'] is False
+E       assert True is False
+
+tests/test_linux_session.py:280: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_linux_session.py::test_wm_selection_without_ewmh_cannot_publish_readiness
+1 failed in 0.20s

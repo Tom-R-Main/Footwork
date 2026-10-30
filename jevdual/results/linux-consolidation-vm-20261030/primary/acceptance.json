@@ -1,0 +1,370 @@
+{
+  "source_commit": "f16cc54",
+  "pid1": "docker-init",
+  "limits": {
+    "pids.max": "512",
+    "memory.max": "3221225472",
+    "memory.swap.max": "0",
+    "cpu.max": "200000 100000"
+  },
+  "native_display_reservation": {
+    "occupied_display": ":0",
+    "selected_display": ":1",
+    "unrelated_server_alive": true
+  },
+  "readiness": {
+    "ready": true,
+    "phase": "ready",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 8916.226762713
+      },
+      {
+        "phase": "x11",
+        "monotonic": 8916.273305586
+      },
+      {
+        "phase": "session_bus",
+        "monotonic": 8916.36782772
+      },
+      {
+        "phase": "wm",
+        "monotonic": 8916.493175039
+      },
+      {
+        "phase": "accessibility",
+        "monotonic": 8916.587493812
+      },
+      {
+        "phase": "target",
+        "monotonic": 8916.74339114
+      },
+      {
+        "phase": "ready",
+        "monotonic": 8918.194114986,
+        "target": {
+          "ready": true,
+          "pid": 24,
+          "window_id": 4194307,
+          "document": "/work/session/document.txt",
+          "exact_fixture_text": true
+        }
+      }
+    ],
+    "cleanup": null,
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 17680068608
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3154780160,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3154780160,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "pid": 9,
+      "signal": 0,
+      "status": "sent",
+      "delivery": "pidfd"
+    },
+    "display": ":1",
+    "wm_identity": {
+      "ready": true,
+      "wm_window": 2097439,
+      "selection_owner": 2097439
+    },
+    "target": {
+      "ready": true,
+      "pid": 24,
+      "window_id": 4194307,
+      "document": "/work/session/document.txt",
+      "exact_fixture_text": true
+    }
+  },
+  "installed": {
+    "platform": "linux",
+    "python": "3.12.14",
+    "public_cli_append": true,
+    "public_browser_read": true,
+    "public_mcp_append": true,
+    "duplicate_not_repeated": true,
+    "restart_not_repeated": true,
+    "saved_file_exact": true,
+    "save_route": "direct NativeBridge exclusive desktop; no public model guard bypass",
+    "characters": 109,
+    "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c",
+    "operation": {
+      "schema_version": "1",
+      "operation_id": "op_977f1cbff76c",
+      "disposition": "applied",
+      "state": "final",
+      "phase": "sent",
+      "summary": "Historical append confirmed by retained execution evidence; current agreement is separate.",
+      "repeat": false,
+      "evidence": {
+        "execution_receipt": {
+          "disposition": "applied",
+          "error": null,
+          "evidence": {
+            "after": {
+              "length": 109,
+              "sha256": "4c833c0e33e3cc5bde92d43db38d935f65dce6918d78e0ee88f4eec72edb7d3c"
+            },
+            "before": {
+              "length": 88,
+              "sha256": "d0f5c00085f940a391d7ff405bb2b4019d57ef59363e1355e79da839d5ed47d3"
+            },
+            "driver_effect": "confirmed",
+            "identity": {
+              "boot": "10210bc9-431f-4156-97e3-3ddbd9410605",
+              "device": 27,
+              "document": "/work/session/document.txt",
+              "inode": 1871170,
+              "pid": 24,
+              "start": "0x1.ab937cea51eb8p+30"
+            },
+            "identity_after": {
+              "boot": "10210bc9-431f-4156-97e3-3ddbd9410605",
+              "device": 27,
+              "document": "/work/session/document.txt",
+              "inode": 1871170,
+              "pid": 24,
+              "start": "0x1.ab937cea51eb8p+30"
+            },
+            "readback": {
+              "kind": "exact_field_readback",
+              "passed": true,
+              "persistence": "not_checked"
+            }
+          },
+          "nonce": "f5292f31a32749be8a1e3155ed6e100a",
+          "operation_id": "op_977f1cbff76c",
+          "packet_digest": "55016ec0385f1054fd5a21ca830cef94fcf4f584841da8638a48df76cf307b8f",
+          "phase": "sent",
+          "request_digest": "4d475d50a13641e9893b6c65dd0e9b7e80b46d75aceb8f2bbd35fbf321c4eb6e",
+          "version": 1
+        },
+        "readback": {
+          "kind": "exact_field_readback",
+          "passed": true,
+          "persistence": "not_checked",
+          "outcome": "applied",
+          "historical": true
+        }
+      },
+      "reporting": {
+        "historical_effect": "applied",
+        "disk_persistence": "not_checked",
+        "guidance": "Disk persistence was not checked. Do not claim the file is saved or unsaved. Report the retained execution result separately from current document agreement."
+      },
+      "client_token": "linux-once"
+    }
+  },
+  "delayed_owned_helper": {
+    "pid": 614,
+    "incarnation": 1793384277.7,
+    "matches_root_predicate": true,
+    "raw_unique_discovery_while_helper_alive": "ambiguous"
+  },
+  "recovery_process_exit_code": 0,
+  "browser_recovery": {
+    "before": {
+      "pid": 485,
+      "incarnation": 1793384276.83,
+      "visible_windows": [],
+      "profile": "/work/recovery-profile"
+    },
+    "after_window_ids": [
+      8388621
+    ],
+    "same_pid_and_incarnation": true,
+    "public_cli_exit_code": 0
+  },
+  "cleanup": {
+    "ready": false,
+    "phase": "stopped",
+    "transitions": [
+      {
+        "phase": "reserving_display",
+        "monotonic": 8916.226762713
+      },
+      {
+        "phase": "x11",
+        "monotonic": 8916.273305586
+      },
+      {
+        "phase": "session_bus",
+        "monotonic": 8916.36782772
+      },
+      {
+        "phase": "wm",
+        "monotonic": 8916.493175039
+      },
+      {
+        "phase": "accessibility",
+        "monotonic": 8916.587493812
+      },
+      {
+        "phase": "target",
+        "monotonic": 8916.74339114
+      },
+      {
+        "phase": "ready",
+        "monotonic": 8918.194114986,
+        "target": {
+          "ready": true,
+          "pid": 24,
+          "window_id": 4194307,
+          "document": "/work/session/document.txt",
+          "exact_fixture_text": true
+        }
+      },
+      {
+        "phase": "stopping",
+        "monotonic": 8944.324350979,
+        "reason": "cancelled"
+      },
+      {
+        "phase": "stopped",
+        "monotonic": 8944.419798435,
+        "reason": "cancelled"
+      }
+    ],
+    "cleanup": {
+      "forced_pids": [],
+      "survivors": [],
+      "zombies": [],
+      "inventory_complete": true,
+      "inventory_reasons": [],
+      "unknown_identities": [],
+      "signal_failures": [],
+      "uncertain": false,
+      "signal_policy": "individual pidfd only; no numeric fallback",
+      "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+    },
+    "rootless_prefix": "/workspace/.footwork-setup/sysroot",
+    "resource_snapshot": {
+      "memory": {
+        "total_bytes": 18882662400,
+        "available_bytes": 17680068608
+      },
+      "cgroup": {
+        "versions": [
+          2
+        ],
+        "membership_readable": true,
+        "memory_limit_bytes": 3221225472,
+        "memory_remaining_bytes": 3154780160,
+        "cpu_quota_cores": 2.0,
+        "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+        "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        "pids_limit": 512,
+        "pids_remaining_upper_bound": 508,
+        "swap_limit_bytes": 0,
+        "memory_and_swap_limit_bytes": null,
+        "task_swap_event_snapshots": [
+          {
+            "path": ".",
+            "pids_limit": 512,
+            "pids_current": 4,
+            "pids_events": {
+              "max": 0
+            },
+            "swap_limit_bytes": 0,
+            "swap_current_bytes": 0,
+            "swap_events": {
+              "high": 0,
+              "max": 0,
+              "fail": 0
+            },
+            "memory_events": {
+              "low": 0,
+              "high": 0,
+              "max": 0,
+              "oom": 0,
+              "oom_kill": 0,
+              "oom_group_kill": 0
+            },
+            "memory_failcnt": null,
+            "memory_and_swap_failcnt": null
+          }
+        ],
+        "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+      },
+      "available_memory_upper_bound_bytes": 3154780160,
+      "cpu_count": 5,
+      "cpu_affinity_count": 5
+    },
+    "signal_capability": {
+      "pid": 9,
+      "signal": 0,
+      "status": "sent",
+      "delivery": "pidfd"
+    },
+    "display": ":1",
+    "wm_identity": {
+      "ready": true,
+      "wm_window": 2097439,
+      "selection_owner": 2097439
+    },
+    "target": {
+      "ready": true,
+      "pid": 24,
+      "window_id": 4194307,
+      "document": "/work/session/document.txt",
+      "exact_fixture_text": true
+    },
+    "reason": "cancelled"
+  },
+  "lifecycle_tests_passed": true,
+  "final_counters": {
+    "pids.current": "7",
+    "pids.events": "max 0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+  }
+}

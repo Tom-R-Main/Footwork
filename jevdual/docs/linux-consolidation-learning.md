@@ -53,3 +53,7 @@ Cheapest next gates:
 4. Build one consolidated wheel, verify its bytes, and repeat both installed CLI/MCP/save controls and constrained lifecycle/browser tests at that same revision. Earlier green branches do not qualify that new artifact.
 
 Retrieve and verify before reuse with `repo_learn.py --store <the task library> query ...` and `verify`; the helper path is `/Users/thomasmain/.codex/skills/repo-learn/scripts/repo_learn.py`. Exact commands, script hashes and absolute validation artifact paths are in the current v2 cards and reproduction manifest. No speed gain, complete source coverage, kernel portability or consolidated implementation success is claimed by the library schema checks.
+
+## VM implementation follow-up
+
+The [cloud-base consolidation report](../results/linux-consolidation-vm-20261030/report.md) identifies combined product revision `f16cc54`, its byte-checked wheel, real pidfd/helper/SDK controls and isolated lifecycle acceptance. It also retains one native teardown failure and intermittent repeated-batch target timeouts. This later implementation evidence is distinct from the learning models and earlier branch acceptance above.

@@ -1,0 +1,26 @@
+dispatched append(text area) text='Refused save remains unsaved 🧪  ': driver says confirmed in 1.1s
+receipt: Receipt for append(text area) text='Refused save remains unsaved 🧪  ': confirmed ('text area' now holds 'Footwork Linux fixture\nkeep trailing spaces\nRefused save remains unsaved 🧪').
+Mousepad: '*/work/negative-no-wm/document.txt - Mousepad'
+18 elements:
+  [   0] menu       'File'
+  [   1] menu       'Edit'
+  [   2] menu       'Search'
+  [   3] menu       'View'
+  [   4] menu       'Document'
+  [   5] menu       'Help'
+  [  18] textbox    'text area' = 'Footwork Linux fixture\nkeep trailing spaces\nRefused save remains unsaved 🧪'
+  [   6] button     'New'
+  [   7] button     'Open...'
+  [   8] button     'Save'
+  [   9] button     'Save As...'
+  [  10] button     'Revert'
+  [  11] button     'Close Tab'
+  [  12] button     'Undo'
+  [  13] button     'Find'
+  [  14] button     'Find and Replace...'
+  [  15] button     'Go to...'
+  [  16] button     'Fullscreen'
+page text (79 chars):
+Footwork Linux fixture
+	keep trailing spaces  
+Refused save remains unsaved 🧪  

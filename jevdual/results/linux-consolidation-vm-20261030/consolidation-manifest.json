@@ -1,0 +1,19 @@
+{
+  "cloud_base": "bd6f185c24327f5cf292067b7f84ed50bd118a31",
+  "grounding_handoff": "0634a06dcf5c0d4c9d143796f5273a2851ba59e3",
+  "combined_implementation": "f16cc547883bd6b36bb95a81424cb63f5c02dfe2",
+  "files": {
+    "python/jevdual/linux_process.py": "0ccb822dfab3d4be23e5dae2ec0807e0d6ed398a38da4c37f356958c43391b07",
+    "python/jevdual/linux_session.py": "6ed796fb933d824817c32f398cc1976bb78ca7b5f30eb638b9ab987b1fc1697f",
+    "python/jevdual/browser_driver.py": "d52f73332cb7c11ef57b36a6523bb17767215fe855428bc2e1eefb42066ff1b9",
+    "python/jevdual/native.py": "d0ccab9a682dab4669995f232eb06f905216bd12c65418e62576f58a4b9176f9",
+    "tests/test_linux_process.py": "66c2d39c78fffb0a406ec450b42bde37165a240798d48ac385c29e62c7b92c28",
+    "tests/test_linux_session.py": "7ce2413a5c42415fe5858ab4d2d97b7dc390a466420bf61aebde48694b9dcfc9",
+    "tests/test_browser_launch.py": "fbd4302051d24e01c3e8749c9e0552bba94d491496c96f21c13d0ace1ce1633c",
+    "pyproject.toml": "700d356547acdd1978defbf26631677667065dec3c2a50702614b0e5609ba062",
+    "uv.lock": "74eb2b4197534b3da19cdd4ef98f030ac6a8a1cf4f683614da7b6aa5a5f9017a"
+  },
+  "retained": "cloud supervisor, owned bus, health, fresh profiles, SDK receipts, exact input identity and one child wait owner",
+  "adopted": "validated individual pidfds; explicit partial coverage; native displayfd; EWMH self-reference; owned helper completion before rediscovery",
+  "not_imported": "competing desktop_session.py/desktop_probe.py implementation, numeric fallback, arbitrary root exclusions, leader-only pidfd tree claims"
+}
