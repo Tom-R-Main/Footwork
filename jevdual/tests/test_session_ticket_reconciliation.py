@@ -36,7 +36,7 @@ SESSION = "synthetic-chrome-session"
 URL = "http://127.0.0.1:8765"
 
 
-def package(root, *, store=None, url=URL, artifact=None):
+def package(root, *, store=None, url=URL, artifact=None, completion_policy="response"):
     root.mkdir(exist_ok=True)
     if artifact is None:
         artifact = root / "renamed.png"
@@ -49,7 +49,9 @@ def package(root, *, store=None, url=URL, artifact=None):
         "orientation": "clockwise90",
         "digest": hashlib.sha256(artifact.read_bytes()).hexdigest(),
     }
-    scope = ticket_evidence.bind(store.path, url, expected, artifact, root)
+    scope = ticket_evidence.bind(
+        store.path, url, expected, artifact, root, completion_policy=completion_policy
+    )
     native_scope = {"url": url, "title": "Footwork owned ticket fixture"}
     prepared = ticket_evidence.prepare(scope)
     request = {
@@ -674,3 +676,36 @@ def test_independent_service_receipt_completes_three_stage_simulated_handoff(tmp
     assert [
         row["stage"] for row in HandoffRun(root, authority, "simulated-service-chain").snapshot()["completed"]
     ] == ["finder", "preview", "chrome"]
+
+
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_preadmitted_sealed_source_reconciles_only_after_real_closure(tmp_path, duplicate):
+    root = tmp_path / "owned"
+    root.mkdir()
+    with SessionOperations(root / "authority.sqlite") as operations:
+        with TicketFixture(
+            root / "service", lose_reply_once=True, completion_policy="sealed_fixture"
+        ) as fixture:
+            item = package(root, store=fixture.store, url=fixture.url, completion_policy="sealed_fixture")
+            issue(operations, item)
+            op, capsule = unknown(operations, item, admit(operations, item))
+            request = Request(
+                fixture.url + "/tickets", data=ticket_evidence.form_body(item["expected"]), method="POST"
+            )
+            with pytest.raises((OSError, http.client.HTTPException)):
+                urlopen(request, timeout=3)
+            if duplicate:
+                with urlopen(request, timeout=3) as response:
+                    response.read()
+            assert operations.reconcile(op.id).state == "unknown"
+            assert operations._retained_service(operations.get(op.id)) is None
+        done = operations.reconcile(op.id)
+        if duplicate:
+            assert done.state == "unknown"
+            assert operations._retained_service(done) is None
+        else:
+            assert (done.state, done.disposition) == ("final", "applied")
+            assert operations.qualified_receipt(done)["schema_version"] == 3
+            assert operations._retained_execution(done) == capsule
+            assert operations.reconcile(op.id).history == done.history
+            assert admit(operations, item).id == op.id
