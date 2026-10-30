@@ -63,3 +63,10 @@ Test: ten corrected-home admissions yielded eight ready and two persistent windo
 Predicts: failed clients lack completed WM admission even though WM selection/EWMH exist. A serviced sentinel before launching the editor prevents this race without increasing deadlines or changing target binding.
 Against: failed editor is already managed/mapped in the verified WM list, or the same failure recurs after the serviced sentinel succeeds.
 Refs: /workspace/scratch/fw-reliability-admissions/; /workspace/scratch/fw-reliability-windows10/case-03/x11-view.txt; /workspace/scratch/fw-reliability-windows10/case-03/session/probe-target-0001.json
+
+## LR8 · prediction · 2026-10-30 20:18
+Hypothesis: cleanup can poll a still-running direct child, then observe its new zombie state and stop the wait loop without a final direct-child reap. This explains a transient editor zombie snapshot without establishing a persistent leak or changing historical snapshots.
+Test: a deterministic poll/capture interleaving leaves a direct child as a zombie after the last loop poll. Add a final nonblocking poll of each solely owned Popen child, keep the pre-reap zombie snapshot and numeric direct wait statuses, then take the final process snapshot. Check actual finite acceptance snapshots and follow-up proc identity observations; do not reap non-child processes or install a global reaper.
+Predicts: the owned-child race resolves through its existing Popen wait owner, while before/after snapshot truth remains available. Any orphan zombie remains explicitly reported until init reaps it.
+Against: the final snapshot still has a reapable owned child, earlier snapshots are erased, or the change calls waitpid for unowned processes.
+Refs: results/linux-product-release-20261030/report.md; python/jevdual/linux_session.py:cleanup
