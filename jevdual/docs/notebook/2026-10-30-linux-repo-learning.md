@@ -13,3 +13,10 @@ Test: execute the exact cloud browser discovery/bind functions with synthetic pr
 Predicts: exited-helper control binds, live-helper case reaches the multiple-root refusal, and unrelated-root case remains refused. The transfer must distinguish invocation-owned transient helpers without relaxing unrelated-root exclusion.
 Against: helper command arguments cannot satisfy the predicate, bind waits for helper completion before rediscovery, or the unrelated-root control attaches.
 Refs: cloud bd6f185 python/jevdual/browser_driver.py:104-126,619-654; local65996ad browser helper completion handling
+
+## RL3 · prediction · 2026-10-30 13:30
+Hypothesis: the existing local Linux test VM permits pinned single-process signal delivery via Python pidfd APIs, with an exited process remaining distinct from a separate live sentinel.
+Test: in the already-owned Linux container, open a pidfd for an owned sleeping child, terminate through that fd and wait through its Popen owner; signal the retained fd after exit and require ESRCH while a separate sentinel remains alive. Close every fd and join owned children. Record kernel/runtime and unsupported or denied states without numeric fallback.
+Predicts: supported path terminates only the referenced child, retained fd cannot signal a replacement and the sentinel survives; unsupported APIs remain unavailable rather than silently downgraded.
+Against: the wrong child exits, the post-exit fd signal succeeds unexpectedly, a descriptor/child leaks, or unsupported state is reported as a qualified pinned path.
+Refs: systemd src/basic/pidref.c:94-123,346-360,406-429; repo-learning Linux consolidation pattern study
