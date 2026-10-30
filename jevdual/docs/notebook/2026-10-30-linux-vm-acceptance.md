@@ -37,3 +37,16 @@ Test: build the portable bundle with the cached CUA binary wheel, install into a
 Predicts: installed public CLI/MCP exact appends, duplicate prevention, restart agreement and independent saved bytes pass; synthetic OCR/review/replay and missing-camera refusal pass without physical-device claims.
 Against: binary install or library loading fails on Debian, any strict process/window/document identity check refuses the fixture, or any required text/replay/save assertion fails.
 Refs: docs/linux-support.md; scripts/linux/desktop-session.sh; scripts/linux/qualify.py; scripts/linux/qualify_optional.py; results/linux-vm-acceptance-20261030/
+
+## LINUXVMU4 · update · 2026-10-30 15:56
+Resolves: LINUXVM3 = failed
+Observed: the fresh binary consumer installation succeeded and all 191 package files matched the product wheel. Direct/mirrored synthetic OCR, reviewed acceptance, replay, saved-artifact checks and missing-camera refusal passed. Native append, browser read, MCP append, duplicate prevention and restart agreement passed. Final saved bytes failed: rootless Openbox could not locate its config/theme and exited, so CUA returned foreground_unavailable with no active window and no input sent. The bridge's save result nevertheless reports dispatched=true; independent file readback prevented a false success.
+Next: retain this failed run, expose the extracted desktop package's config/data locations in the isolated fixture environment, and repeat with fresh state and output. Do not change driver or product identity/focus checks.
+Refs: results/linux-vm-acceptance-20261030/qualification.txt; /workspace/scratch/footwork-debian-qualified/driver-save.json; /workspace/scratch/footwork-debian-desktop/openbox.log
+
+## LINUXVM4 · prediction · 2026-10-30 15:56
+Hypothesis: missing rootless Openbox theme/config search paths explain the failed native save, while installed product identity and text paths already work on Debian.
+Test: repeat the unchanged installed-wheel qualification with fresh fixture state/output and XDG_DATA_DIRS/XDG_CONFIG_DIRS including the extracted Debian sysroot. Keep exact process, window, document and foreground predicates unchanged.
+Predicts: Openbox remains running, CUA can activate the exact owned editor window, and Control-S plus independent byte comparison complete the journey.
+Against: Openbox still exits, foreground identity refuses with a functioning manager, or saved bytes fail after a qualified delivery.
+Refs: scripts/linux/qualify.py; results/linux-vm-acceptance-20261030/; original package bytes retained in installed-identity.json
