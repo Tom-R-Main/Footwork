@@ -1,0 +1,30 @@
+# Final-head CI failure at b2ee42beba9fa5125459221603893840d333a4de
+# https://github.com/Tom-R-Main/Footwork/actions/runs/41128824135
+=================================== FAILURES ===================================
+______ test_probe_attempts_preserve_results_stderr_phases_and_signal_exit ______
+
+tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_probe_attempts_preserve_r0')
+
+    def test_probe_attempts_preserve_results_stderr_phases_and_signal_exit(tmp_path):
+        target = FixtureSession(tmp_path / 'attempts')
+        target.prepare()
+        def command(stage):
+            path = str(target.probe_events)
+            return [sys.executable, '-c',
+                    ('import os,signal,time,json; from pathlib import Path; '
+                     f'Path({path!r}).write_text(json.dumps({{"phase":"shutdown_returned","monotonic":time.monotonic()}})+"\\n"); '
+                     'print("diagnostic",file=__import__("sys").stderr,flush=True); '
+                     'print(\'{"ready":true}\',flush=True); os.kill(os.getpid(),signal.SIGABRT)')]
+        target.probe_command = command
+>       with pytest.raises(session.SessionError, match='probe_abnormal_exit'):
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'probe_abnormal_exit'
+E         Actual message: 'target:probe_timeout'
+
+tests/test_linux_session.py:328: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_linux_session.py::test_probe_attempts_preserve_results_stderr_phases_and_signal_exit - AssertionError: Regex pattern did not match.
+  Expected regex: 'probe_abnormal_exit'
+  Actual message: 'target:probe_timeout'
+1 failed, 2536 passed, 28 skipped, 13 deselected in 227.47s (0:03:47)
+##[error]Process completed with exit code 1.

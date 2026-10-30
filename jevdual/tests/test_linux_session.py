@@ -316,21 +316,34 @@ def test_unavailable_pinned_signalling_refuses_before_starting_components(monkey
 
 def test_probe_attempts_preserve_results_stderr_phases_and_signal_exit(tmp_path):
     target = FixtureSession(tmp_path / 'attempts')
+    target.probe_timeout = 2
     target.prepare()
+    original_check = target.check
+
+    def check():
+        original_check()
+        if len(list(target.state.glob('probe-target-*.json'))) == 2:
+            raise session.SessionError('fixture_attempts_complete')
+
+    target.check = check
+
     def command(stage):
         path = str(target.probe_events)
         return [sys.executable, '-c',
-                ('import os,signal,time,json; from pathlib import Path; '
+                ('import ctypes,os,signal,time,json; from pathlib import Path; '
+                 # Keep SIGABRT's numeric exit without invoking host core handlers.
+                 'assert ctypes.CDLL(None).prctl(4,0,0,0,0) == 0; '
                  f'Path({path!r}).write_text(json.dumps({{"phase":"shutdown_returned","monotonic":time.monotonic()}})+"\\n"); '
                  'print("diagnostic",file=__import__("sys").stderr,flush=True); '
                  'print(\'{"ready":true}\',flush=True); os.kill(os.getpid(),signal.SIGABRT)')]
     target.probe_command = command
-    with pytest.raises(session.SessionError, match='probe_abnormal_exit'):
-        target.await_probe('target', time.monotonic() + .3)
+    with pytest.raises(session.SessionError, match='fixture_attempts_complete'):
+        target.await_probe('target', time.monotonic() + 10)
     records = sorted(target.state.glob('probe-target-*.json'))
-    assert records
+    assert len(records) == 2
     for path in records:
         row = json.loads(path.read_text())
+        assert row['reason'] == 'probe_abnormal_exit' and not row['timeout']
         assert row['signal'] == signal.SIGABRT and row['returncode'] == -signal.SIGABRT
         assert row['wait_complete'] and row['last_phase'] == 'shutdown_returned'
         assert row['result']['ready'] is True
