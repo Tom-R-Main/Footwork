@@ -467,3 +467,90 @@ def test_reply_loss_cli_refuses_invalid_configuration_without_startup(tmp_path, 
         check=False,
     )
     assert result.returncode == 2 and not root.exists()
+
+
+@pytest.mark.parametrize("route", ["unknown", None, False])
+def test_invalid_submission_route_refuses_before_fixture_creation(tmp_path, route):
+    with pytest.raises(ValueError):
+        TicketFixture(tmp_path / "service", submission_route=route)
+    assert not (tmp_path / "service").exists()
+
+
+def test_navigation_submission_remains_the_default_plain_form(tmp_path):
+    with TicketFixture(tmp_path / "service") as fixture, urlopen(fixture.url, timeout=3) as response:
+        document = response.read().decode()
+    assert '<form method="post" action="/tickets">' in document
+    assert "<script>" not in document
+
+
+@pytest.mark.parametrize("fails", [False, True])
+def test_fetch_document_submits_encoded_fields_once_and_retains_result(tmp_path, fails):
+    import shutil
+
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to execute the fixture submission handler")
+    with (
+        TicketFixture(tmp_path / "service", submission_route="fetch") as fixture,
+        urlopen(fixture.url, timeout=3) as response,
+    ):
+        document = response.read().decode()
+    assert "<title>Footwork owned ticket fixture</title>" in document
+    script = document.split("<script>", 1)[1].split("</script>", 1)[0]
+    harness = r"""
+const vm = require('node:vm');
+const input = JSON.parse(require('node:fs').readFileSync(0, 'utf8'));
+let handler, calls = [], prevented = 0;
+const button = {disabled: false}, status = {textContent: ''};
+const form = {action: 'http://127.0.0.1:8765/tickets',
+ addEventListener: (event, fn) => {if (event !== 'submit' || handler) throw Error('bad handler'); handler = fn;},
+ querySelector: () => button};
+const document = {querySelector: () => form, getElementById: () => status};
+class FormData {constructor() {return [['request_id', 'nonce'], ['artifact', 'a & b.png'], ['orientation', 'clockwise90'], ['digest', 'abc']];}}
+vm.runInNewContext(input.script, {document, FormData, URLSearchParams,
+ fetch: async (url, options) => {calls.push({url, method: options.method, body: options.body.toString()});
+ if (input.fails) throw Error('network response lost'); return {text: async () => '{"recorded":true}'};}});
+(async () => {await handler({preventDefault: () => prevented++});
+ await handler({preventDefault: () => prevented++});
+ console.log(JSON.stringify({calls, prevented, disabled: button.disabled, result: status.textContent}));})().catch(e => {console.error(e);process.exit(1);});
+"""
+    result = subprocess.run(
+        [node, "-e", harness],
+        input=json.dumps({"script": script, "fails": fails}),
+        capture_output=True,
+        text=True,
+        timeout=5,
+        check=True,
+    )
+    observed = json.loads(result.stdout)
+    assert observed["calls"] == [
+        {
+            "url": "http://127.0.0.1:8765/tickets",
+            "method": "POST",
+            "body": "request_id=nonce&artifact=a+%26+b.png&orientation=clockwise90&digest=abc",
+        }
+    ]
+    assert observed["prevented"] == 2 and observed["disabled"] is True
+    assert observed["result"] == (
+        "Submission result unavailable; reconcile before another attempt." if fails else '{"recorded":true}'
+    )
+
+
+def test_submission_route_cli_refuses_invalid_configuration_without_startup(tmp_path):
+    root = tmp_path / "service"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "jevdual.app_qualification",
+            "--root",
+            str(root),
+            "--submission-route",
+            "unknown",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        check=False,
+    )
+    assert result.returncode == 2 and not root.exists()

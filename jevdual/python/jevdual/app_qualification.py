@@ -309,11 +309,15 @@ class TicketFixture:
         lose_reply_once: bool = False,
         port: int = 0,
         reply_loss: str = "disconnect",
+        submission_route: str = "navigation",
     ):
         if not isinstance(reply_loss, str) or reply_loss not in {"disconnect", "truncated"}:
             raise QualificationError("unsupported reply-loss mode")
         if reply_loss != "disconnect" and not lose_reply_once:
             raise QualificationError("truncated reply loss requires lose_reply_once")
+        if not isinstance(submission_route, str) or submission_route not in {"navigation", "fetch"}:
+            raise QualificationError("unsupported submission route")
+        self.submission_route = submission_route
         self.root = Path(root).resolve()
         self.store = TicketStore(self.root / "tickets.sqlite")
         self.lose_reply_once = lose_reply_once
@@ -330,9 +334,30 @@ class TicketFixture:
                     f'<label>{html.escape(key)}<input name="{key}" aria-label="{key}" required></label>'
                     for key in FIELDS
                 )
+                submission = ""
+                if fixture.submission_route == "fetch":
+                    submission = """<p id="submission-result" role="status"></p><script>
+const form = document.querySelector('form');
+const result = document.getElementById('submission-result');
+let attempted = false;
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (attempted) return;
+  attempted = true;
+  form.querySelector('button').disabled = true;
+  const body = new URLSearchParams(new FormData(form));
+  try {
+    const response = await fetch(form.action, {method: 'POST', body});
+    result.textContent = await response.text();
+  } catch {
+    result.textContent = 'Submission result unavailable; reconcile before another attempt.';
+  }
+});
+</script>"""
                 data = (
                     f"<!doctype html><title>Footwork owned ticket fixture</title><h1>Register asset</h1>"
                     f'<form method="post" action="/tickets">{inputs}<button type="submit">Register asset</button></form>'
+                    + submission
                 ).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -681,6 +706,7 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--lose-reply-once", action="store_true")
     parser.add_argument("--reply-loss", choices=("disconnect", "truncated"))
+    parser.add_argument("--submission-route", choices=("navigation", "fetch"), default="navigation")
     args = parser.parse_args()
     if args.reply_loss is not None and not args.lose_reply_once:
         parser.error("--reply-loss requires --lose-reply-once")
@@ -695,6 +721,7 @@ def main() -> None:
             port=args.port,
             lose_reply_once=args.lose_reply_once,
             reply_loss=args.reply_loss or "disconnect",
+            submission_route=args.submission_route,
         ) as fixture:
             print(
                 _json(
@@ -704,6 +731,7 @@ def main() -> None:
                         "database": str(fixture.store.path),
                         "lose_reply_once": fixture.lose_reply_once,
                         "reply_loss": fixture.reply_loss,
+                        "submission_route": fixture.submission_route,
                     }
                 ),
                 flush=True,
