@@ -1,12 +1,31 @@
-# Linux installation and qualification
+# Footwork on Linux · X11 preview
 
-Footwork's installed browser and native X11 paths were exercised on Linux on 2026-10-30. The public CLI read an owned Chrome page and appended exact text in Mousepad. The public MCP server appended once, returned the same result for a repeated token, and retained that result after restart. An independent file check confirmed the saved bytes. See [runtime evidence](../results/linux-support-20261030/runtime/report.md) for artifact hashes, commands and limits.
+Bring an agent to an owned Chrome window or an explicit Mousepad document. Observe the target,
+append approved text, and check the saved bytes through the same CLI and MCP interfaces used on macOS.
+Start with the [quickstart](quickstart.md) for installation and a model-free first result.
+
+Linux desktop support is a **preview**. The installed browser-to-document journey, duplicate-token
+handling, restart recovery and independent file checks passed on the recorded Linux artifacts.
+Repeated desktop sessions still encounter intermittent target-readiness timeouts, and one recovery
+command printed success before its native process aborted. Treat the receipt, process exit and saved
+state as separate checks; a success payload alone is insufficient. The
+[combined-build report](../results/linux-consolidation-vm-20261030/report.md) retains both passing
+runs and these unresolved failures.
+
+| Route | Current scope |
+| --- | --- |
+| Browser | Footwork-owned Chrome/Chromium profile, strict process identity and window recovery |
+| Native desktop | X11/AT-SPI, explicit Mousepad document and exact-text operations |
+| Agent integration | Scoped MCP append, duplicate prevention and retained restart results |
+| Optional tools | Synthetic OCR checks and simulator initialization; physical devices need qualification |
+| Other Linux desktops | Wayland and shared foreground control are unqualified |
 
 The portable product wheel uses Python for its optional Rust acceleration. Desktop control still needs the pinned native CUA wheel for the consumer's architecture and compatible Linux libraries. Consumer installation uses binary packages; it does not compile CUA or the optional Rust core. A source build belongs on the builder.
 
 ## Install and start
 
-Use the generated bundle for your architecture and Linux distribution:
+Build a bundle using the [quickstart](quickstart.md#install-a-bundle), or use a compatible bundle
+provided by your builder. Choose your architecture and Linux distribution:
 
 ```sh
 python3 /path/to/bundle/install.py --venv "$HOME/.local/share/footwork/venv"
@@ -89,4 +108,4 @@ For optional tools, run `scripts/linux/qualify_optional.py` with the installed P
 
 For a lightweight prerequisite inventory, `python3 -I -S jevdual/python/jevdual/host_probe.py` needs only Python. It reads selected host/cgroup facts without opening a desktop or network connection. PID limits/current/events, memory/swap counters and selected PID1 facts are diagnostic snapshots; inaccessible, hidden or delegated limits and actual orphan-reaping behavior remain unknown. Finite observed limits are not capacity reservations.
 
-Wayland, shared-desktop foreground coexistence, physical devices, the actual Meta sandbox and provider-backed planning were not exercised. The local branch is not a published release; hosted CI and merge are separate actions.
+Wayland, shared-desktop foreground coexistence, physical devices, the actual Meta sandbox and provider-backed planning were not exercised. The reports identify tested artifacts; they do not establish compatibility with every Linux distribution or a published binary release.

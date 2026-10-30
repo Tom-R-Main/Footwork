@@ -1,34 +1,94 @@
 # Footwork
 
 [![ci](https://github.com/Tom-R-Main/Footwork/actions/workflows/ci.yml/badge.svg)](https://github.com/Tom-R-Main/Footwork/actions/workflows/ci.yml)
-![python](https://img.shields.io/badge/python-3.11%2B-blue) ![rust](https://img.shields.io/badge/rust-1.95-orange) ![license](https://img.shields.io/badge/license-MIT-green)
+![python](https://img.shields.io/badge/python-3.11%2B-blue) ![rust](https://img.shields.io/badge/native_builder-Rust_1.97.1-orange) ![license](https://img.shields.io/badge/license-MIT-green)
 
-**A verified computer-use agent, for the browser and for native macOS apps.** Footwork puts a cheap,
-calibrated guard from [TypeSafe Jev](https://docs.typesafe.ai) in front of whoever drives: every claimed
-completion is checked against observed state and the trajectory before it counts, every irreversible action
-passes a gate, and every action comes back with a receipt saying what visibly changed. On top of that guard,
-Jev can also take the fast, mechanical steps itself (System 1) while the driver (System 2) keeps the
-reading, comparing and deciding. The driver can be an LLM loop (browser-use 0.13.14 as a library, not a
-fork) or the operator at the keyboard: a person, or an agent such as a Claude Code session, one command at a
-time. Native apps are driven in the background through the [Cua Driver](https://github.com/trycua/cua)'s
-accessibility tree, beside a person still using the same Mac.
+**Give your agent a computer—and a receipt.**
 
-The [Linux X11 port](jevdual/docs/linux-support.md) also supports the installed browser/desktop CLI,
-scoped Mousepad MCP append and recovery, and Linux OCR. Its isolated runtime evidence is separate
-from the macOS benchmarks below. Wayland, shared foreground control and physical cameras remain unqualified.
+Footwork lets a person or an agent observe a browser or desktop app, choose an explicit action, and
+check what happened. Fresh target IDs, action gates and retained receipts keep the next step tied to
+the state that was actually observed. Completion checks compare claims with evidence from the session.
+Less “I clicked it, so it must be done.” More checking the result.
 
-The Python package is `jevdual` (in [`jevdual/`](jevdual/)); Footwork is the project. Every number below is
-from a run directory under [`jevdual/results/`](jevdual/results/), and every experiment was pre-registered in
-[`jevdual/docs/experiments/`](jevdual/docs/experiments/) before it ran.
+Use the `footwork` CLI one step at a time, connect a scoped job through MCP, or run a model-driven
+loop with [TypeSafe Jev](https://docs.typesafe.ai) as an optional fast System 1. The Python package is
+`jevdual`; Footwork is the product.
 
-For an agent integration, start with [capability installation](jevdual/docs/capability-packaging.md)
-and the [agent-host recipe](jevdual/docs/installed-agent-host.md).
-CUA is built from the [pinned Python and Rust reference source](jevdual/docs/upstream/cua-driver-build.md); building its dependency wheel requires Rust 1.97.1 and native development tools. The wheel supplies five MCP tools
-for one scoped browser-to-TextEdit job on macOS, with durable operation results and validated completion
-reports. The Linux destination is Mousepad; see the platform guide for its narrower document contract.
-It needs existing Python, Chrome and applicable host permissions. The bundle installer can use uv or pip.
-The current candidate
-does not discover arbitrary apps; its disposable fixture helpers derive the identifiers for that test job.
+## Start here
+
+[**Install and get your first checked result →**](jevdual/docs/quickstart.md)
+
+The quickstart builds or installs a host-specific bundle, checks saved bytes without a model, then
+opens an owned browser session. Once installed:
+
+```sh
+footwork tools                         # discover the installed tools
+footwork schema browser start          # inspect an exact command's inputs
+footwork doctor                        # see this machine's prerequisites
+```
+
+| What you want to do | Start with |
+| --- | --- |
+| Read pages and operate a dedicated browser | [CLI quickstart](jevdual/docs/quickstart.md#open-a-browser-session) |
+| Work in a native app | [macOS operator example](#drive-it) or [Linux X11 guide](jevdual/docs/linux-support.md) |
+| Give an agent one scoped browser-to-document job | [MCP installation](jevdual/docs/capability-packaging.md) and [agent-host recipe](jevdual/docs/installed-agent-host.md) |
+| Review OCR, inspect a target or explore the simulator | [Bundled tool families](jevdual/docs/unified-cli.md#auxiliary-families) |
+
+macOS has the broader native-app qualification record. Linux desktop support is a preview covering the qualified X11/AT-SPI and
+Mousepad paths documented in the [Linux guide](jevdual/docs/linux-support.md). Repeated Linux desktop
+sessions still have known native teardown aborts and target-readiness timeouts; Wayland, shared Linux
+foreground control and physical cameras remain unqualified. The dated evidence below records what
+was measured on each artifact.
+
+## Drive it
+
+After [installation](jevdual/docs/quickstart.md), try the macOS Calculator route with a configured
+TypeSafe key and Accessibility permission for the process running Footwork:
+
+```sh
+footwork start "Compute 48 times 13" --app Calculator --require "The display shows 624"
+footwork look                    # the menu of what can be done now, with ids, and the last receipt
+footwork s1 --act                # System 1's proposal on this observation (one Jev call), dispatched
+footwork do click 12             # through the gate; settle, reobserve, print the receipt
+footwork done "624"              # the verifier judges the claim against the window and the trail
+```
+
+Also `do type | append | key | hotkey | menu | scroll | enter`, `status`, and `footwork run` for the whole
+loop: by default the measured **guarded** arm (an LLM decides every step behind the guard), or `--arm dual`
+for Jev as System 1 with the LLM on escalation. Nothing dispatches on an id from an older
+observation; text comes from the task or from named secrets (`{NAME}` read from `$FOOTWORK_SECRET_NAME`,
+never printed); `--authorize "<label>"` names the one change the operator approved. Sessions default to
+`background_only`: the person's front app, pointer and keyboard are left alone (`--mode` grants more).
+`start --browser` drives footwork's own Chrome profile through the Driver's DevTools route instead of the
+accessibility tree. Observation and literal reads need no model key. The `s1`, guarded action and completion examples
+use a configured TypeSafe key; model-driven runs also need their selected provider credentials.
+
+For private visual inspection, use a numeric ID from the current native observation:
+
+```sh
+footwork inspect-target 12 --operation click --postcondition "The selected editor enters crop mode"
+```
+
+This records a fresh window PNG, target-bound manifest and static HTML preview under the session's
+`inspection/` directory. The preview outlines the offered target over the unchanged original image
+and displays the operation and required postcondition. It makes no model calls, executes no action
+and does not verify the stated effect.
+Sessions that have handled secrets withhold screenshots before capture. Missing or unqualified
+capture geometry, truncated observations and changed target identities refuse inspection.
+Native AX projections may be partial: the manifest records that limit, and label-based inspection
+requires a complete observation. Browser inspection through this command is not yet qualified.
+
+`footwork visual-check --request request.json --session SESSION` prepares one native advisory
+document/reference or crop/subject check. It records the original capture and a structured receipt.
+Explicit `--provider decisions --disclose` enables one bounded provider request using an existing
+key; the default contacts no provider. Visual answers grant no action or completion authority.
+See [visual check inputs, limits and escalation](jevdual/docs/visual-checks.md).
+
+Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
+Calculator 48 × 13 in 30 s (System 1 proposed every step at p ≥ 0.94, verifier accept 0.98); TextEdit
+append-and-save in 9 s, the save confirmed by the window title losing its edited mark.
+
+## More tools
 
 Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
 timestamped evidence through an existing tab/CDP adapter. They are dependency-free ESM helpers,
@@ -58,55 +118,11 @@ conservative receipt-based restart recovery.
 [SIM4 results](jevdual/results/independent-controller-20261010/report.md) record disconnect,
 cancellation and crash trials, retained failures and the boundary of supported recovery.
 
-## One installed interface for agents
-
-Use the [unified CLI installation guide](jevdual/docs/unified-cli.md) to build one host-specific bundle and install it into an isolated environment. `footwork tools` discovers commands, `footwork schema` describes their inputs, and `footwork --json …` returns a machine-readable result envelope. Browser and desktop groups share the existing session operations; camera, inbox, workbench, workcell and inspection utilities are carried in the wheel. Optional hardware, OS grants and browser-tab adapters remain explicit prerequisites.
-
-## Drive it
-
-```sh
-footwork start "Compute 48 times 13" --app Calculator --require "The display shows 624"
-footwork look                    # the menu of what can be done now, with ids, and the last receipt
-footwork s1 --act                # System 1's proposal on this observation (one Jev call), dispatched
-footwork do click 12             # through the gate; settle, reobserve, print the receipt
-footwork done "624"              # the verifier judges the claim against the window and the trail
-```
-
-Also `do type | append | key | hotkey | menu | scroll | enter`, `status`, and `footwork run` for the whole
-loop: by default the measured **guarded** arm (an LLM decides every step behind the guard), or `--arm dual`
-for Jev as System 1 with the LLM on escalation. Nothing dispatches on an id from an older
-observation; text comes from the task or from named secrets (`{NAME}` read from `$FOOTWORK_SECRET_NAME`,
-never printed); `--authorize "<label>"` names the one change the operator approved. Sessions default to
-`background_only`: the person's front app, pointer and keyboard are left alone (`--mode` grants more).
-`start --browser` drives footwork's own Chrome profile through the Driver's DevTools route instead of the
-accessibility tree. Needs macOS with Accessibility granted to the process that runs it, and a TypeSafe key.
-
-For private visual inspection, use a numeric ID from the current native observation:
-
-```sh
-footwork inspect-target 12 --operation click --postcondition "The selected editor enters crop mode"
-```
-
-This records a fresh window PNG, target-bound manifest and static HTML preview under the session's
-`inspection/` directory. The preview outlines the offered target over the unchanged original image
-and displays the operation and required postcondition. It makes no model calls, executes no action
-and does not verify the stated effect.
-Sessions that have handled secrets withhold screenshots before capture. Missing or unqualified
-capture geometry, truncated observations and changed target identities refuse inspection.
-Native AX projections may be partial: the manifest records that limit, and label-based inspection
-requires a complete observation. Browser inspection through this command is not yet qualified.
-
-`footwork visual-check --request request.json --session SESSION` prepares one native advisory
-document/reference or crop/subject check. It records the original capture and a structured receipt.
-Explicit `--provider decisions --disclose` enables one bounded provider request using an existing
-key; the default contacts no provider. Visual answers grant no action or completion authority.
-See [visual check inputs, limits and escalation](jevdual/docs/visual-checks.md).
-
-Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
-Calculator 48 × 13 in 30 s (System 1 proposed every step at p ≥ 0.94, verifier accept 0.98); TextEdit
-append-and-save in 9 s, the save confirmed by the window title losing its edited mark.
-
 ## What it does, measured
+
+Every number below comes from a run directory under [`jevdual/results/`](jevdual/results/), with
+experiment definitions in [`jevdual/docs/experiments/`](jevdual/docs/experiments/). These are dated
+research results, not promises about a new app, platform or model.
 
 ### The browser
 
