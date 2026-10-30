@@ -1,0 +1,14 @@
+{
+  "level": "isolated_linux_mechanism",
+  "kernel": "7.0.14-linuxkit",
+  "python": "3.14.4",
+  "architecture": "aarch64",
+  "product_revision": "bd6f185 not modified or exercised",
+  "numeric_signal_fallback": false,
+  "after_exit_errno": "ESRCH",
+  "status": "passed",
+  "child_terminated_through_fd": true,
+  "sentinel_survived": true,
+  "owned_children_joined": true,
+  "pidfd_closed": true
+}
