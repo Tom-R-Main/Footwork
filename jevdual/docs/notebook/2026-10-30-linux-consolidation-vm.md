@@ -20,3 +20,13 @@ Test: preserve the cloud state machine and packaged supervisor; transfer only co
 Predicts: each failed or uncertain stage invalidates readiness, cleanup outcomes carry coverage/signalling uncertainty, and the combined installed artifact passes the existing exact-target and independent saved-byte journey.
 Against: readiness relies on liveness/selection alone, failed startup retains started, imported competing runners diverge, or earlier green wheels are substituted for combined-build evidence.
 Refs: docs/linux-consolidation-learning.md; docs/linux-support.md; results/linux-consolidation-vm-20261030/
+
+## LCONU1 · update · 2026-10-30 18:13
+Observed: the actual Debian kernel and installed pin_signal primitive passed owned-child/sentinel checks. Grounded source tests reproduced stale numeric delivery and live-helper ambiguity; corrected focused tests pass. A further partial-inventory regression exposed direct-child identity lookup through the bounded census; f16cc54 records direct-child custody independently and preserves unknown coverage. The f16cc54 source suite passes 2511 tests with 28 skips. Installed no-WM save correctly refuses with no dispatch, zero delivery, no readback and unchanged bytes; pinned cleanup reports complete inventory and no survivors/zombies.
+Next: diagnose remaining native acceptance failures without changing the source or treating CLI JSON success as process success. The first constrained run completed installed save/replay and observed the live ambiguous helper, then its public CLI process exited nonzero with a native exception-not-rethrown message after printing success. A fresh repeat failed bounded target readiness before any ready marker; cleanup was complete. Repeat with explicit probe/exit diagnostics and preserve both failures.
+Refs: results/linux-consolidation-vm-20261030/final-full-tests.txt; results/linux-consolidation-vm-20261030/container-acceptance.txt; results/linux-consolidation-vm-20261030/container-repeat.txt; results/linux-consolidation-vm-20261030/container-refusal.txt
+
+## LCON4 · exploratory · 2026-10-30 18:13
+Question: is the repeat's native target timeout a probe-budget issue or a persistent CUA observation failure, and does the post-success CLI native abort recur with exit diagnostics?
+Test: unchanged f16cc54 installed wheel and fixed container limits, fresh private state; explicitly allow ten-second probe subprocesses under the same thirty-second startup deadline and enable Python fatal-signal diagnostics via an interpreter flag. Preserve typed SDK, process exit, readiness and cleanup evidence; do not retry a mutation or alter identity/receipt predicates.
+Refs: results/linux-consolidation-vm-20261030/; CUA remains pinned
