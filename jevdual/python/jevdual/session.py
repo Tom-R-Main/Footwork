@@ -1044,7 +1044,10 @@ async def cmd_start(args: Any) -> int:
         from jevdual.ticket_evidence import normalize_origin
 
         spec = json.loads(Path(args.ticket_manifest).read_text())
-        if set(spec) != {"database", "url", "expected", "artifact", "root"}:
+        if set(spec) not in (
+            {"database", "url", "expected", "artifact", "root"},
+            {"database", "url", "expected", "artifact", "root", "completion_policy"},
+        ):
             raise NativeBridgeError("ticket_scope_invalid", "ticket manifest has unsupported fields")
         ticket_scope = bind_ticket(**spec)
         if normalize_origin(native_scope["url"]) != ticket_scope["url"]:
