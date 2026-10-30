@@ -180,3 +180,51 @@ def test_recovery_modal_is_a_readiness_refusal_not_an_action(monkeypatch, tmp_pa
     monkeypatch.setattr(cd.CuaDriver, 'create', lambda **_: Driver())
     monkeypatch.setattr(native, 'NativeBridge', Bridge)
     assert asyncio.run(session._target_probe(2, tmp_path / 'document')) == {'ready': False, 'reason': 'recovery_modal'}
+
+
+def test_actual_xlib_handshake_on_a_stalled_socket_is_killably_bounded(tmp_path):
+    class StalledX(FixtureSession):
+        def probe_command(self, stage):
+            if stage == 'x11':
+                return [sys.executable, '-I', '-m', 'jevdual.linux_session', '--probe', 'x11']
+            return super().probe_command(stage)
+
+    target = StalledX(tmp_path / 'stalled-x')
+    target.commands['xvfb'] = [sys.executable, '-c',
+        ('import socket,os,time; s=socket.socket(socket.AF_UNIX); '
+         's.bind("/tmp/.X11-unix/X"+os.environ["DISPLAY"][1:]); '
+         's.listen(10); c=s.accept()[0]; time.sleep(60)')]
+    before = time.monotonic()
+    try:
+        assert target.run() == 1
+        assert time.monotonic() - before < 4
+        assert target.report['reason'] == 'x11:probe_timeout'
+        assert not target.report['cleanup']['survivors']
+        assert not any(t['phase'] == 'ready' for t in target.report['transitions'])
+    finally:
+        # The test's fake server cannot run Xvfb's normal socket cleanup.
+        Path('/tmp/.X11-unix/X' + target.report['display'][1:]).unlink(missing_ok=True)
+
+
+def test_root_only_accessibility_snapshot_cannot_publish_readiness(monkeypatch, tmp_path):
+    import cua_driver as cd
+    from jevdual import native
+
+    class Driver:
+        async def list_windows(self, _):
+            return SimpleNamespace(windows=[SimpleNamespace(window_id=3)])
+
+        async def shutdown(self):
+            pass
+
+    class Bridge:
+        def __init__(self, *_):
+            pass
+
+        async def observe(self):
+            return SimpleNamespace(menu=SimpleNamespace(page_text='', candidates=[]), values={})
+
+    monkeypatch.setattr(cd.CuaDriver, 'create', lambda **_: Driver())
+    monkeypatch.setattr(native, 'NativeBridge', Bridge)
+    assert asyncio.run(session._target_probe(2, tmp_path / 'document')) == {
+        'ready': False, 'reason': 'exact_text_target_unavailable'}
