@@ -20,3 +20,9 @@ Refs: results/linux-native-reliability-20261030/
 ## LRU0 · update · 2026-10-30 19:53
 Observed: the shell clock immediately after prediction commit 2f98dc0 reads 19:53:22 UTC. The initial headings incorrectly estimated 19:56; git ordering establishes that the committed predictions precede probes. This correction preserves the original text.
 Next: take all subsequent entry times directly from the clock. The requested tometo-mode, linux, pstack-investigate, repo-learn and pstack-verify skills were searched in the available cloud/executor catalogs and local skill paths; none is available here. Proceed under the explicit task authorization and repository discipline.
+
+## LRU1 · update · 2026-10-30 19:57
+Resolves: LR2 = held
+Observed: 26 diagnostic/lifecycle tests pass at 5324f6f, including success JSON followed by actual SIGABRT and a TERM-ignoring shutdown stall. The first native harness used fixture HOME=/work; Mousepad abbreviated its exact document title to ~/session-N/document.txt. Phases show completed observe/shutdown and typed AXError at document_bind, not a native stall. An inspection initially omitted the required on_screen_only field; corrected inspection identifies lost_identity from the strict title check. These setup failures remain counted in the ten-attempt batch and do not reproduce the earlier native timeout. The prior harness used /home/agent, outside /work. Pinned runtime.rs and native.rs hashes exactly match the supplied reference hashes.
+Next: finish the unchanged initial batch; use the historical /home/agent fixture identity in a distinct native batch. Preserve title guards. GDB 16.3 and libc debug symbols were extracted into the task sysroot; no host service or dependency pin changed.
+Refs: results/linux-native-reliability-20261030/diagnostic-tests.txt; /workspace/scratch/fw-reliability-initial/; vendor/cua-driver/native-source.tar.gz
