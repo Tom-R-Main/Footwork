@@ -13,3 +13,10 @@ Test: two fresh owned Chrome fetch controls with unchanged TicketFixture disconn
 Predicts: each fetch control produces one ingress and retains the failed application response.
 Against: fetch also restarts the transaction, duplicates ingress or requires weakening the fault/ledger.
 Refs: output/preheader-20261030/controls-initial
+
+## PH3 · prediction · 2026-10-30 00:20
+Hypothesis: a fixture-owned fetch submit handler preserves one real native form activation and prevents the navigation retry observed after zero-header loss, without manufacturing v2 response evidence.
+Test: add opt-in fetch submission route with unchanged default navigation route, encoded fields and original disconnect fault; regression for generated handler/route validation, then two fresh native disconnect trials. Test v2 still refuses disconnect mode even with one ingress.
+Predicts: fetch native trials each have one ingress, preserved unknown custody and no extra ingress on token replay; navigation challenge still duplicates.
+Against: native fetch duplicates, the fault is weakened, or evidence falsely finalizes.
+Refs: output/preheader-20261030/controls-fetch/results.json
