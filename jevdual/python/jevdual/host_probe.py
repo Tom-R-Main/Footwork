@@ -129,7 +129,75 @@ def _cgroups(proc: Path, root: Path) -> dict:
         "cpu_quota_cores": min(cpu_limits, default=None),
         "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
         "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+        **_task_and_swap_counters(records, root),
     }
+
+
+def _events(path: Path, names: set[str]) -> dict | None:
+    text = _read(path, 4096)
+    if text is None:
+        return None
+    values = {}
+    for line in text.splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0] in names:
+            number = _number(parts[1])
+            if number is not None:
+                values[parts[0]] = number
+    return values or None
+
+
+def _task_and_swap_counters(records: list, root: Path) -> dict:
+    pids, remaining, swap, combined, snapshots = [], [], [], [], []
+    visited = set()
+    for _, controllers, member in records:
+        names = set(controllers.split(','))
+        mounts = [root] if not controllers else [root / c for c in ('pids', 'memory') if c in names]
+        for mount in mounts:
+            for directory in _hierarchy(mount, member)[:128]:
+                if directory in visited or len(visited) >= 256:
+                    continue
+                visited.add(directory)
+                limit, current = _number(_read(directory / 'pids.max')), _number(_read(directory / 'pids.current'))
+                swap_limit = _number(_read(directory / 'memory.swap.max'))
+                combined_limit = _number(_read(directory / 'memory.memsw.limit_in_bytes'))
+                if limit is not None:
+                    pids.append(limit)
+                    if current is not None:
+                        remaining.append(max(0, limit - current))
+                if swap_limit is not None:
+                    swap.append(swap_limit)
+                if combined_limit is not None and combined_limit < 2**60:
+                    combined.append(combined_limit)
+                snapshot = {
+                    'path': str(directory.relative_to(root)),
+                    'pids_limit': limit, 'pids_current': current,
+                    'pids_events': _events(directory / 'pids.events', {'max'}),
+                    'swap_limit_bytes': swap_limit,
+                    'swap_current_bytes': _number(_read(directory / 'memory.swap.current')),
+                    'swap_events': _events(directory / 'memory.swap.events', {'high', 'max', 'fail'}),
+                    'memory_events': _events(directory / 'memory.events', {'low', 'high', 'max', 'oom', 'oom_kill', 'oom_group_kill'}),
+                    'memory_failcnt': _number(_read(directory / 'memory.failcnt')),
+                    'memory_and_swap_failcnt': _number(_read(directory / 'memory.memsw.failcnt')),
+                }
+                if any(v is not None for k, v in snapshot.items() if k != 'path'):
+                    snapshots.append(snapshot)
+    return {'pids_limit': min(pids, default=None), 'pids_remaining_upper_bound': min(remaining, default=None),
+            'swap_limit_bytes': min(swap, default=None),
+            'memory_and_swap_limit_bytes': min(combined, default=None),
+            'task_swap_event_snapshots': snapshots,
+            'counter_scope': 'bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown'}
+
+
+def _supervision(proc: Path) -> dict:
+    comm = _read(proc / '1/comm', 256)
+    parent = None
+    for line in (_read(proc / 'self/status') or '').splitlines():
+        if line.startswith('PPid:'):
+            parent = _number(line.partition(':')[2].strip())
+    return {'pid1_comm': comm.strip() if comm else None, 'self_parent_pid': parent,
+            'pid1_is_self': os.getpid() == 1,
+            'orphan_reaping': 'not_checked', 'wait_ownership': 'not_checked'}
 
 
 def _module_present(name: str) -> bool:
@@ -170,6 +238,7 @@ def probe(*, proc: Path = Path("/proc"), cgroup: Path = Path("/sys/fs/cgroup"),
         "resources": {"memory": memory, "cgroup": limits,
                       "available_memory_upper_bound_bytes": min(available, default=None),
                       "cpu_count": os.cpu_count(), "cpu_affinity_count": affinity},
+        "process_supervision": _supervision(proc) if linux else None,
         "executables_present": tools,
         "session_indicators_present": session,
         "prerequisite_candidates": {

@@ -101,3 +101,39 @@ def test_standalone_without_site_packages_or_checkout(tmp_path):
     assert not any(report["executables_present"].values())
     assert "secret-value" not in result.stdout
     assert len(result.stdout) < 10000
+
+
+def test_task_swap_and_event_counters_include_ancestors_without_inventing_missing_limits(tmp_path):
+    proc, cg = tmp_path / 'proc', tmp_path / 'cg'
+    put(proc, 'self/cgroup', '0::/parent/child\n')
+    put(cg, 'pids.max', 'max\n')
+    put(cg, 'parent/pids.max', '512\n')
+    put(cg, 'parent/pids.current', '510\n')
+    put(cg, 'parent/pids.events', 'max 7\nunknown 100\n')
+    put(cg, 'parent/memory.events', 'oom 0\noom_kill 0\nhigh 2\n')
+    put(cg, 'parent/memory.swap.max', '0\n')
+    put(cg, 'parent/child/pids.max', '1024\n')
+    put(cg, 'parent/child/pids.current', '10\n')
+    r = host_probe._cgroups(proc, cg)
+    assert r['pids_limit'] == 512 and r['pids_remaining_upper_bound'] == 2
+    assert r['swap_limit_bytes'] == 0
+    parent = next(p for p in r['task_swap_event_snapshots'] if p['path'] == 'parent')
+    assert parent['pids_events'] == {'max': 7} and parent['memory_events']['oom'] == 0
+    assert parent['swap_current_bytes'] is None
+
+
+def test_missing_pid_swap_and_supervision_facts_are_unknown(tmp_path):
+    r = host_probe._cgroups(tmp_path, tmp_path)
+    assert r['pids_limit'] is None and r['swap_limit_bytes'] is None
+    assert r['task_swap_event_snapshots'] == []
+    assert host_probe._supervision(tmp_path)['pid1_comm'] is None
+
+
+def test_pid1_facts_do_not_read_process_arguments(tmp_path):
+    put(tmp_path, '1/comm', 'tini\n')
+    put(tmp_path, '1/cmdline', 'SECRET-SENTINEL')
+    put(tmp_path, 'self/status', 'Name: python\nPPid:\t123\n')
+    r = host_probe._supervision(tmp_path)
+    assert r['pid1_comm'] == 'tini' and r['self_parent_pid'] == 123
+    assert r['orphan_reaping'] == 'not_checked'
+    assert 'SECRET' not in json.dumps(r)

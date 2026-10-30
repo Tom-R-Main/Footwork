@@ -128,7 +128,9 @@ def main():
     out = args.output.resolve()
     out.mkdir(mode=0o700)  # fresh evidence only
     state = args.state.resolve()
-    os.environ["DISPLAY"] = ":99"
+    display = state / "display"
+    os.environ["DISPLAY"] = display.read_text().strip() if display.exists() else ":99"
+    os.environ["XDG_RUNTIME_DIR"] = str(state / "runtime")
     os.environ["DBUS_SESSION_BUS_ADDRESS"] = (state / "session-bus").read_text()
     os.environ["ANONYMIZED_TELEMETRY"] = "false"
     os.environ["BROWSER_USE_CLOUD_SYNC"] = "false"
