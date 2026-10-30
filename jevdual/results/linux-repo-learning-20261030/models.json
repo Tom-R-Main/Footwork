@@ -1,0 +1,71 @@
+{
+  "target": "bd6f185c24327f5cf292067b7f84ed50bd118a31",
+  "level": "model",
+  "signal_snapshot": [
+    {
+      "replace_after_group": false,
+      "test_only_revalidation_control": false,
+      "delivered": [
+        {
+          "pid": 42,
+          "incarnation": "root-A"
+        },
+        {
+          "pid": 43,
+          "incarnation": "member-A"
+        }
+      ],
+      "replacement_addressed": false,
+      "real_signals_sent": false
+    },
+    {
+      "replace_after_group": true,
+      "test_only_revalidation_control": false,
+      "delivered": [
+        {
+          "pid": 42,
+          "incarnation": "root-A"
+        },
+        {
+          "pid": 43,
+          "incarnation": "replacement-B"
+        }
+      ],
+      "replacement_addressed": true,
+      "real_signals_sent": false
+    },
+    {
+      "replace_after_group": true,
+      "test_only_revalidation_control": true,
+      "delivered": [
+        {
+          "pid": 42,
+          "incarnation": "root-A"
+        }
+      ],
+      "replacement_addressed": false,
+      "real_signals_sent": false
+    }
+  ],
+  "browser_discovery": [
+    {
+      "case": "exited-helper",
+      "outcome": "bound",
+      "helper_started": true,
+      "real_processes_started": false
+    },
+    {
+      "case": "live-helper",
+      "outcome": "multiple browser processes match the owned profile; refusing ambiguous attachment",
+      "helper_started": true,
+      "real_processes_started": false
+    },
+    {
+      "case": "unrelated-root",
+      "outcome": "multiple browser processes match the owned profile; refusing ambiguous attachment",
+      "helper_started": false,
+      "real_processes_started": false
+    }
+  ],
+  "limits": "Synthetic tables and sinks; does not execute Linux kernel or browser. Immediate revalidation still has a check-to-kill gap."
+}

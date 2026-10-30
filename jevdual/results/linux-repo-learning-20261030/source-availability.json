@@ -1,0 +1,10 @@
+{
+  "kernel_checkout": {
+    "path": "/Volumes/External SSD/referencerepos/linux",
+    "available": false,
+    "meaning": "unavailable, not contradicted"
+  },
+  "seed_library": "/Users/thomasmain/Documents/Codex/2026-10-30/ti/outputs/repo-learning/library",
+  "seed_read_only": true,
+  "store": "/Users/thomasmain/projects/footwork/output/repo-learning/linux-consolidation/library"
+}
