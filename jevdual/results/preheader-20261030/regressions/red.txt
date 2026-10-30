@@ -1,0 +1,79 @@
+FFF.FF.                                                                  [100%]
+=================================== FAILURES ===================================
+____ test_invalid_submission_route_refuses_before_fixture_creation[unknown] ____
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-278/test_invalid_submission_route_0')
+route = 'unknown'
+
+    @pytest.mark.parametrize("route", ["unknown", None, False])
+    def test_invalid_submission_route_refuses_before_fixture_creation(tmp_path, route):
+        with pytest.raises(ValueError):
+>           TicketFixture(tmp_path / "service", submission_route=route)
+E           TypeError: TicketFixture.__init__() got an unexpected keyword argument 'submission_route'
+
+jevdual/tests/test_ticket_evidence.py:475: TypeError
+_____ test_invalid_submission_route_refuses_before_fixture_creation[None] ______
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-278/test_invalid_submission_route_1')
+route = None
+
+    @pytest.mark.parametrize("route", ["unknown", None, False])
+    def test_invalid_submission_route_refuses_before_fixture_creation(tmp_path, route):
+        with pytest.raises(ValueError):
+>           TicketFixture(tmp_path / "service", submission_route=route)
+E           TypeError: TicketFixture.__init__() got an unexpected keyword argument 'submission_route'
+
+jevdual/tests/test_ticket_evidence.py:475: TypeError
+_____ test_invalid_submission_route_refuses_before_fixture_creation[False] _____
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-278/test_invalid_submission_route_2')
+route = False
+
+    @pytest.mark.parametrize("route", ["unknown", None, False])
+    def test_invalid_submission_route_refuses_before_fixture_creation(tmp_path, route):
+        with pytest.raises(ValueError):
+>           TicketFixture(tmp_path / "service", submission_route=route)
+E           TypeError: TicketFixture.__init__() got an unexpected keyword argument 'submission_route'
+
+jevdual/tests/test_ticket_evidence.py:475: TypeError
+__ test_fetch_document_submits_encoded_fields_once_and_retains_result[False] ___
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-278/test_fetch_document_submits_en0')
+fails = False
+
+    @pytest.mark.parametrize("fails", [False, True])
+    def test_fetch_document_submits_encoded_fields_once_and_retains_result(tmp_path, fails):
+        import shutil
+
+        node = shutil.which("node")
+        if node is None:
+            pytest.skip("Node.js is required to execute the fixture submission handler")
+>       with TicketFixture(tmp_path / "service", submission_route="fetch") as fixture:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TicketFixture.__init__() got an unexpected keyword argument 'submission_route'
+
+jevdual/tests/test_ticket_evidence.py:494: TypeError
+___ test_fetch_document_submits_encoded_fields_once_and_retains_result[True] ___
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-278/test_fetch_document_submits_en1')
+fails = True
+
+    @pytest.mark.parametrize("fails", [False, True])
+    def test_fetch_document_submits_encoded_fields_once_and_retains_result(tmp_path, fails):
+        import shutil
+
+        node = shutil.which("node")
+        if node is None:
+            pytest.skip("Node.js is required to execute the fixture submission handler")
+>       with TicketFixture(tmp_path / "service", submission_route="fetch") as fixture:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TicketFixture.__init__() got an unexpected keyword argument 'submission_route'
+
+jevdual/tests/test_ticket_evidence.py:494: TypeError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_ticket_evidence.py::test_invalid_submission_route_refuses_before_fixture_creation[unknown]
+FAILED jevdual/tests/test_ticket_evidence.py::test_invalid_submission_route_refuses_before_fixture_creation[None]
+FAILED jevdual/tests/test_ticket_evidence.py::test_invalid_submission_route_refuses_before_fixture_creation[False]
+FAILED jevdual/tests/test_ticket_evidence.py::test_fetch_document_submits_encoded_fields_once_and_retains_result[False]
+FAILED jevdual/tests/test_ticket_evidence.py::test_fetch_document_submits_encoded_fields_once_and_retains_result[True]
+5 failed, 2 passed, 55 deselected in 1.60s

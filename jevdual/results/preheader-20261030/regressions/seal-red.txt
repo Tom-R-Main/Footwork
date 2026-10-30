@@ -1,0 +1,26 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__________ test_sealed_fixture_rejects_unknown_policy_before_creation __________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-284/test_sealed_fixture_rejects_un0')
+
+    def test_sealed_fixture_rejects_unknown_policy_before_creation(tmp_path):
+        with pytest.raises(ValueError):
+>           TicketFixture(tmp_path / 'service', completion_policy='unknown')
+E           TypeError: TicketFixture.__init__() got an unexpected keyword argument 'completion_policy'
+
+jevdual/tests/test_ticket_evidence.py:561: TypeError
+______________ test_sealed_fixture_is_terminal_and_retains_digest ______________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-284/test_sealed_fixture_is_termina0')
+
+    def test_sealed_fixture_is_terminal_and_retains_digest(tmp_path):
+>       with TicketFixture(tmp_path / 'service', completion_policy='sealed_fixture') as fixture:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TicketFixture.__init__() got an unexpected keyword argument 'completion_policy'
+
+jevdual/tests/test_ticket_evidence.py:566: TypeError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_ticket_evidence.py::test_sealed_fixture_rejects_unknown_policy_before_creation
+FAILED jevdual/tests/test_ticket_evidence.py::test_sealed_fixture_is_terminal_and_retains_digest
+2 failed, 62 deselected in 0.21s

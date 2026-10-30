@@ -467,3 +467,219 @@ def test_reply_loss_cli_refuses_invalid_configuration_without_startup(tmp_path, 
         check=False,
     )
     assert result.returncode == 2 and not root.exists()
+
+
+@pytest.mark.parametrize("route", ["unknown", None, False])
+def test_invalid_submission_route_refuses_before_fixture_creation(tmp_path, route):
+    with pytest.raises(ValueError):
+        TicketFixture(tmp_path / "service", submission_route=route)
+    assert not (tmp_path / "service").exists()
+
+
+def test_navigation_submission_remains_the_default_plain_form(tmp_path):
+    with TicketFixture(tmp_path / "service") as fixture, urlopen(fixture.url, timeout=3) as response:
+        document = response.read().decode()
+    assert '<form method="post" action="/tickets">' in document
+    assert "<script>" not in document
+
+
+@pytest.mark.parametrize("fails", [False, True])
+def test_fetch_document_submits_encoded_fields_once_and_retains_result(tmp_path, fails):
+    import shutil
+
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to execute the fixture submission handler")
+    with (
+        TicketFixture(tmp_path / "service", submission_route="fetch") as fixture,
+        urlopen(fixture.url, timeout=3) as response,
+    ):
+        document = response.read().decode()
+    assert "<title>Footwork owned ticket fixture</title>" in document
+    script = document.split("<script>", 1)[1].split("</script>", 1)[0]
+    harness = r"""
+const vm = require('node:vm');
+const input = JSON.parse(require('node:fs').readFileSync(0, 'utf8'));
+let handler, calls = [], prevented = 0;
+const button = {disabled: false}, status = {textContent: ''};
+const form = {action: 'http://127.0.0.1:8765/tickets',
+ addEventListener: (event, fn) => {if (event !== 'submit' || handler) throw Error('bad handler'); handler = fn;},
+ querySelector: () => button};
+const document = {querySelector: () => form, getElementById: () => status};
+class FormData {constructor() {return [['request_id', 'nonce'], ['artifact', 'a & b.png'], ['orientation', 'clockwise90'], ['digest', 'abc']];}}
+vm.runInNewContext(input.script, {document, FormData, URLSearchParams,
+ fetch: async (url, options) => {calls.push({url, method: options.method, body: options.body.toString()});
+ if (input.fails) throw Error('network response lost'); return {text: async () => '{"recorded":true}'};}});
+(async () => {await handler({preventDefault: () => prevented++});
+ await handler({preventDefault: () => prevented++});
+ console.log(JSON.stringify({calls, prevented, disabled: button.disabled, result: status.textContent}));})().catch(e => {console.error(e);process.exit(1);});
+"""
+    result = subprocess.run(
+        [node, "-e", harness],
+        input=json.dumps({"script": script, "fails": fails}),
+        capture_output=True,
+        text=True,
+        timeout=5,
+        check=True,
+    )
+    observed = json.loads(result.stdout)
+    assert observed["calls"] == [
+        {
+            "url": "http://127.0.0.1:8765/tickets",
+            "method": "POST",
+            "body": "request_id=nonce&artifact=a+%26+b.png&orientation=clockwise90&digest=abc",
+        }
+    ]
+    assert observed["prevented"] == 2 and observed["disabled"] is True
+    assert observed["result"] == (
+        "Submission result unavailable; reconcile before another attempt." if fails else '{"recorded":true}'
+    )
+
+
+def test_submission_route_cli_refuses_invalid_configuration_without_startup(tmp_path):
+    root = tmp_path / "service"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "jevdual.app_qualification",
+            "--root",
+            str(root),
+            "--submission-route",
+            "unknown",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        check=False,
+    )
+    assert result.returncode == 2 and not root.exists()
+
+
+def test_sealed_fixture_rejects_unknown_policy_before_creation(tmp_path):
+    with pytest.raises(ValueError):
+        TicketFixture(tmp_path / "service", completion_policy="unknown")
+    assert not (tmp_path / "service").exists()
+
+
+def test_sealed_fixture_is_terminal_and_retains_digest(tmp_path):
+    with TicketFixture(tmp_path / "service", completion_policy="sealed_fixture") as fixture:
+        store = fixture.store
+        source, before = te._snapshot(store.path, tmp_path)
+        assert source["completion_policy"] == "sealed_fixture" and before["seal"] is None
+    source_after, after = te._snapshot(store.path, tmp_path)
+    assert source_after == source and after["seal"]["snapshot_sha256"] == te.digest(
+        {k: v for k, v in after.items() if k != "seal"}
+    )
+    with pytest.raises(ValueError):
+        store.record(b"bad")
+    with pytest.raises(ValueError):
+        TicketFixture(tmp_path / "service", completion_policy="sealed_fixture")
+
+
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_sealed_disconnect_qualifies_only_after_closure_and_unique_ingress(tmp_path, duplicate):
+    _, artifact, _, expected, _, _, op = setup(tmp_path)
+    with TicketFixture(
+        tmp_path / "service",
+        lose_reply_once=True,
+        completion_policy="sealed_fixture",
+        submission_route="fetch",
+    ) as fixture:
+        scope = te.bind(
+            fixture.store.path, fixture.url, expected, artifact, tmp_path, completion_policy="sealed_fixture"
+        )
+        prepared = te.prepare(scope)
+        op.args["ticket_scope"] = scope
+        op.args["native_scope"]["url"] = fixture.url
+        op.created = time.time()
+        request = Request(fixture.url + "/tickets", data=te.form_body(expected), method="POST")
+        with pytest.raises((URLError, OSError)):
+            urlopen(request, timeout=3)
+        assert te.qualify(op, prepared, BINDING) is None
+        if duplicate:
+            with urlopen(request, timeout=3) as response:
+                response.read()
+    receipt = te.qualify(op, prepared, BINDING)
+    assert (receipt is None) == duplicate
+    if not duplicate:
+        assert receipt["schema_version"] == 3 and receipt["predicate"] == te.PREDICATE
+        assert te.check_bound(scope, began=op.created)["ok"]
+        assert te.validate_receipt(receipt, op, prepared, BINDING) == receipt
+        changed = copy.deepcopy(receipt)
+        changed["capture"]["snapshot"]["ingress"][0]["fields"]["artifact"] = "wrong.png"
+        with pytest.raises(te.TicketEvidenceError):
+            te.validate_receipt(changed, op, prepared, BINDING)
+        for row in [None, "malformed", [], {"received": True}, {"received": float("inf")}]:
+            changed = copy.deepcopy(receipt)
+            changed["capture"]["snapshot"]["ingress"] = [row]
+            with pytest.raises(te.TicketEvidenceError):
+                te.validate_receipt(changed, op, prepared, BINDING)
+        for mode in ["normal", "invalid"]:
+            changed = copy.deepcopy(receipt)
+            changed["capture"]["snapshot"]["ingress"][0]["response_mode"] = mode
+            snapshot = changed["capture"]["snapshot"]
+            snapshot["seal"]["snapshot_sha256"] = te.digest(
+                {k: v for k, v in snapshot.items() if k != "seal"}
+            )
+            with pytest.raises(te.TicketEvidenceError):
+                te.validate_receipt(changed, op, prepared, BINDING)
+
+
+def test_v2_cannot_retroactively_use_a_sealed_fixture(tmp_path):
+    _, artifact, _, expected, _, _, _ = setup(tmp_path)
+    with (
+        TicketFixture(tmp_path / "service", completion_policy="sealed_fixture") as fixture,
+        pytest.raises(te.TicketEvidenceError),
+    ):
+        te.bind(fixture.store.path, fixture.url, expected, artifact, tmp_path)
+    with pytest.raises(te.TicketEvidenceError):
+        te.bind(
+            fixture.store.path, fixture.url, expected, artifact, tmp_path, completion_policy="sealed_fixture"
+        )
+
+
+def test_sealed_fixture_waits_for_accepted_idle_handler_before_seal(tmp_path):
+    import socket
+    import threading
+
+    fixture = TicketFixture(tmp_path / "service", completion_policy="sealed_fixture")
+    fixture.__enter__()
+    connection = socket.create_connection(fixture.server.server_address)
+    connection.sendall(b"POST /tickets HTTP/1.1\r\n")
+    # A partial header is an accepted request worker, not a completed ticket ingress.
+    for _ in range(100):
+        if getattr(fixture.server._threads, "__iter__", None) and list(fixture.server._threads):
+            break
+        time.sleep(0.01)
+    assert list(fixture.server._threads)
+    finished = threading.Event()
+    closer = threading.Thread(target=lambda: (fixture.__exit__(None, None, None), finished.set()))
+    closer.start()
+    assert not finished.wait(0.1)
+    assert te._snapshot(fixture.store.path, tmp_path)[1]["seal"] is None
+    connection.close()
+    closer.join(timeout=5)
+    assert finished.is_set()
+    assert te._snapshot(fixture.store.path, tmp_path)[1]["seal"] is not None
+
+
+def test_sealed_fixture_disallows_parallel_reopen_and_all_mutation_routes(tmp_path):
+    with TicketFixture(tmp_path / "service", completion_policy="sealed_fixture") as fixture:
+        store = fixture.store
+        for policy in ["response", "sealed_fixture"]:
+            with pytest.raises(ValueError):
+                TicketFixture(tmp_path / "service", completion_policy=policy)
+    for mutate in [
+        lambda: store.bind_origin(URL),
+        lambda: store.bind_response_mode("normal"),
+        lambda: store.record_response(1, "headers_flushed"),
+        lambda: store.reject(b"x", "invalid"),
+    ]:
+        with pytest.raises(ValueError):
+            mutate()
+    with sqlite3.connect(store.path) as db:
+        with pytest.raises(sqlite3.IntegrityError):
+            db.execute("UPDATE fixture_state SET value='open' WHERE key='lifecycle'")
+        with pytest.raises(sqlite3.IntegrityError):
+            db.execute("DELETE FROM fixture_seal")

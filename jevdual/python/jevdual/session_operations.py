@@ -511,7 +511,7 @@ class SessionOperations(Journal):
         return service if service is not None else self._retained_execution(op)
 
     def _reconcile_ticket(self, op: Operation) -> Operation:
-        from jevdual.ticket_evidence import VERSION, TicketEvidenceError, canonical, qualify
+        from jevdual.ticket_evidence import SEALED_VERSION, VERSION, TicketEvidenceError, canonical, qualify
 
         prepared = self._ticket_preparation(op)
         if prepared is None or op.state != "unknown" or op.execution_stage != "started":
@@ -522,9 +522,9 @@ class SessionOperations(Journal):
                 record = qualify(op, prepared, self._execution_binding(op.id))
         except (TicketEvidenceError, ValueError, TypeError, KeyError):
             return op
-        if record is None or record.get("schema_version") != VERSION:
+        if record is None or record.get("schema_version") not in (VERSION, SEALED_VERSION):
             # Historical receipts remain readable, but may not release unknown
-            # custody without the current independent response-boundary contract.
+            # custody without a qualified response boundary or preadmitted sealed source.
             return op
         body = canonical(record)
         digest = hashlib.sha256(body.encode()).hexdigest()

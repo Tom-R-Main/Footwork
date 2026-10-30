@@ -1,0 +1,74 @@
+[
+  {
+    "id": "live-fetch-interrupted",
+    "status": "passed declared chain",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/live-fetch-interrupted/summary.json"
+  },
+  {
+    "id": "live-fetch-nominal",
+    "status": "passed declared chain",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/live-fetch-nominal/summary.json"
+  },
+  {
+    "id": "live-nominal",
+    "status": "passed declared chain",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/live-nominal/summary.json"
+  },
+  {
+    "id": "live-sealed-interrupted",
+    "status": "passed after read-only oracle repair",
+    "runtime": "6c0f8a0",
+    "retained": "jevdual/results/preheader-20261030/trials/live-sealed-interrupted/summary.json"
+  },
+  {
+    "id": "live-sealed-nominal",
+    "status": "passed declared chain",
+    "runtime": "6c0f8a0",
+    "retained": "jevdual/results/preheader-20261030/trials/live-sealed-nominal/summary.json"
+  },
+  {
+    "id": "native-disconnect-1",
+    "status": "incomplete/setup failure",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/native-disconnect-1/summary.json"
+  },
+  {
+    "id": "native-disconnect-2",
+    "status": "observed",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/native-disconnect-2/summary.json"
+  },
+  {
+    "id": "native-disconnect-3",
+    "status": "observed",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/native-disconnect-3/summary.json"
+  },
+  {
+    "id": "native-fetch-1",
+    "status": "observed",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/native-fetch-1/summary.json"
+  },
+  {
+    "id": "native-fetch-2",
+    "status": "observed",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/native-fetch-2/summary.json"
+  },
+  {
+    "id": "native-sealed-interrupted",
+    "status": "incomplete/setup failure",
+    "runtime": "see trial command/artifact; earlier runtime or setup-only",
+    "retained": "jevdual/results/preheader-20261030/trials/native-sealed-interrupted/summary.json"
+  },
+  {
+    "id": "native-sealed-qualified",
+    "status": "observed",
+    "runtime": "6c0f8a0",
+    "retained": "jevdual/results/preheader-20261030/trials/native-sealed-qualified/summary.json"
+  }
+]
