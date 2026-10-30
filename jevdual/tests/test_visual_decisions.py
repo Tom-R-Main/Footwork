@@ -173,9 +173,16 @@ async def test_network_error_is_safe_and_reserved(tmp_path):
     assert result.status == "error" and result.reason == "network" and len(seen) == 1
 
 
-async def test_timeout_retains_unknown_cost_and_no_retry(tmp_path):
+async def test_timeout_retains_unknown_cost_and_no_retry(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
     req = request()
-    req = replace(req, deadline_monotonic=time.monotonic() + .015)
+    now = time.monotonic()
+    # The contract under test is an in-flight timeout. Filesystem scheduling
+    # before dispatch must not turn it into the separate pre-dispatch expiry case.
+    # Freeze only the producer's clock; asyncio's real timeout still runs.
+    monkeypatch.setattr("jevdual.visual_decisions.time", SimpleNamespace(monotonic=lambda: now))
+    req = replace(req, deadline_monotonic=now + .015)
     async def handler(message):
         await asyncio.sleep(.05)
         return httpx.Response(200, json=response())

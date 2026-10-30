@@ -22,11 +22,18 @@ import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from jevdual.platform_identity import boot_identity
+
 if TYPE_CHECKING:
     from .journal import Operation
 
 VERSION = 1
 ROUTE = "textedit-ax-append-v1"
+LINUX_ROUTE = "mousepad-atspi-append-v1"
+_ROUTE_FIELDS = {
+    ROUTE: ("darwin", "AXTextArea"),
+    LINUX_ROUTE: ("linux", "text"),
+}
 MAX_RECORD_BYTES = 131072
 PARENT_WAIT_S = 35.0
 WORKER_DEADLINE_S = 25.0
@@ -72,7 +79,8 @@ def validate_recovery(value: Any) -> dict[str, Any]:
         or set(value) != fields
         or type(value["version"]) is not int
         or value["version"] != VERSION
-        or value["route"] != ROUTE
+        or not isinstance(value["route"], str)
+        or value["route"] not in _ROUTE_FIELDS
     ):
         raise RecoveryError("unsupported recovery envelope")
     if not isinstance(value["nonce"], str) or re.fullmatch(r"[0-9a-f]{32}", value["nonce"]) is None:
@@ -89,7 +97,7 @@ def validate_recovery(value: Any) -> dict[str, Any]:
     if (
         not isinstance(field, dict)
         or set(field) != {"role", "frame"}
-        or field["role"] != "AXTextArea"
+        or field["role"] != _ROUTE_FIELDS[value["route"]][1]
         or not isinstance(field["frame"], list)
         or len(field["frame"]) != 4
         or any(type(x) not in (int, float) or not math.isfinite(x) for x in field["frame"])
@@ -120,10 +128,15 @@ def validate_recovery(value: Any) -> dict[str, Any]:
 
 
 def make_recovery(scope: dict, identity: dict, role: str, frame: Any, before: str, expected: str) -> dict:
+    # Generation attests the currently qualified platform/field route. Validation
+    # remains host-independent so historical packets can still be inspected.
+    route = next((name for name, pair in _ROUTE_FIELDS.items() if pair == (sys.platform, role)), None)
+    if route is None:
+        raise RecoveryError("unsupported recovery platform or field role")
     return validate_recovery(
         {
             "version": VERSION,
-            "route": ROUTE,
+            "route": route,
             "nonce": uuid.uuid4().hex,
             "scope": scope,
             "scope_digest": digest(scope),
@@ -143,10 +156,11 @@ def process_identity(pid: int) -> dict[str, Any]:
 
 
 def native_identity(scope: dict) -> dict[str, Any]:
-    if sys.platform != "darwin":
-        raise RecoveryError("native restart identity requires macOS")
+    try:
+        boot = boot_identity()
+    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+        raise RecoveryError("native restart boot identity unavailable") from exc
     spec = scope["destination"]
-    boot = subprocess.check_output(["sysctl", "-n", "kern.bootsessionuuid"], text=True, timeout=2).strip()
     document = Path(spec["document"]).resolve(strict=True)
     info = document.stat()
     return {

@@ -3,8 +3,22 @@
 from __future__ import annotations
 
 import os
+from types import SimpleNamespace
 
 import pytest
+
+
+@pytest.fixture
+def mac_native_contract(monkeypatch):
+    """Opt into synthetic Cocoa/AX behavior without changing the runner's OS.
+
+    Apply only to fixtures or tests that explicitly model a Mac. Real Linux
+    route tests and unrelated process/filesystem code keep their host platform.
+    """
+    from jevdual import native, posture
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(posture, "sys", SimpleNamespace(platform="darwin"))
 
 
 @pytest.fixture(autouse=True)

@@ -16,12 +16,15 @@ jobs:
         include:
           - os: ubuntu-latest
             python: "3.12"
+            timeout: 60
           - os: macos-15
             python: "3.12"
+            timeout: 45
           - os: macos-15
             python: "3.14"
+            timeout: 45
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: ${{ matrix.timeout }}
     defaults:
       run:
         working-directory: jevdual
@@ -35,18 +38,24 @@ jobs:
           enable-cache: false
           version: "0.12.5"
       - uses: dtolnay/rust-toolchain@stable
-        if: runner.os == 'macOS'
         with:
           toolchain: 1.97.1
+      - name: Install Linux native build and headless simulator prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            clang cmake pkg-config libdbus-1-dev libx11-dev libxi-dev libxtst-dev \
+            libxext-dev libwayland-dev libxkbcommon-dev libssl-dev \
+            libegl1 libgl1-mesa-dri
+          echo "MUJOCO_GL=egl" >> "$GITHUB_ENV"
       - name: Rebuild and check dependency-free installed CLI
         run: python scripts/capability_package_check.py --run-dir "$GITHUB_WORKSPACE/output/ci-package"
       - name: Verify installed unified agent discovery outside checkout
         run: python scripts/unified_cli_check.py --python "$GITHUB_WORKSPACE/output/ci-package/venv/bin/python"
       - name: Build CUA dependency wheel from pinned native source
-        if: runner.os == 'macOS'
         run: uv build vendor/cua-driver --wheel --out-dir "$GITHUB_WORKSPACE/output/ci-cua"
-      - name: Fresh binary dependency installation on macOS
-        if: runner.os == 'macOS'
+      - name: Fresh binary dependency installation
         run: |
           python scripts/capability_clean_install.py \
             --python "$(command -v python)" \
@@ -54,7 +63,6 @@ jobs:
             --find-links "$GITHUB_WORKSPACE/output/ci-cua" \
             --run-dir "$GITHUB_WORKSPACE/output/ci-dependencies"
       - name: Verify install-once bundle and installed simulator
-        if: runner.os == 'macOS'
         run: |
           python scripts/build_agent_bundle.py --cua-wheel "$GITHUB_WORKSPACE"/output/ci-cua/*.whl --output "$GITHUB_WORKSPACE/output/ci-agent-bundle"
           python "$GITHUB_WORKSPACE/output/ci-agent-bundle/install.py" --python "$(command -v python)" --venv "$GITHUB_WORKSPACE/output/ci-agent-installed"

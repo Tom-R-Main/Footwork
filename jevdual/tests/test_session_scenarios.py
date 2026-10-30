@@ -24,6 +24,18 @@ from jevdual.policy import Decision
 from tests.fixtures.native_world import World
 
 
+def _mac_selectors(monkeypatch):
+    """Select the simulated Mac routes without changing the interpreter's platform."""
+    import sys
+
+    from jevdual import native
+    from jevdual.capability import backend, recovery
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(backend, "sys", SimpleNamespace(platform="darwin"))
+    monkeypatch.setattr(recovery, "sys", SimpleNamespace(platform="darwin", executable=sys.executable))
+
+
 @pytest.fixture
 def text_capability(tmp_path, monkeypatch):
     """Public MCP calls over the actual service/backend/native append route."""
@@ -34,6 +46,7 @@ def text_capability(tmp_path, monkeypatch):
 
     from tests.fixtures.native_world import TextWorld
 
+    _mac_selectors(monkeypatch)
     world = TextWorld(tmp_path / "invoice.txt")
     world.install(monkeypatch)
     backend = ScopedBackend(
@@ -540,6 +553,7 @@ class _Policy:
 
 @pytest.fixture
 def world(monkeypatch):
+    _mac_selectors(monkeypatch)
     w = World()
     import jevdual.keys
     import jevdual.policy
@@ -579,6 +593,34 @@ def _id(out: str, label: str) -> int:
         if s.startswith("[") and f"'{label}'" in s:
             return int(s[1 : s.index("]")])
     raise AssertionError(f"{label!r} not in the observation")
+
+
+@pytest.mark.parametrize("observed_pid,observed_name,expected", [
+    (77, "Org.xfce.mousepad", 0),
+    (78, "Org.xfce.mousepad", 2),
+    (77, "UnrelatedApplication", 2),
+])
+def test_linux_start_matches_observed_alias_only_to_requested_process(
+    world, fw, monkeypatch, observed_pid, observed_name, expected
+):
+    from jevdual import native
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+    world.base.update(app_name=observed_name, pid=observed_pid, elements=[], tree_markdown="")
+
+    async def apps(inp):
+        return SimpleNamespace(apps=[SimpleNamespace(
+            name="Mousepad", bundle_id="org.xfce.mousepad", pid=77, running=True
+        )])
+
+    monkeypatch.setattr(world, "list_apps", apps)
+    code, out, err = fw("start", "Inspect the owned editor", "--app", "Mousepad", "--pid", "77")
+    assert code == expected, (out, err)
+    if expected == 0:
+        assert "Mousepad:" in out
+        assert _state(fw)["app"] == "Mousepad"
+    else:
+        assert "does not match the requested app and PID" in err
 
 
 def test_a_calculator_job_from_start_to_a_verified_done(world, fw):

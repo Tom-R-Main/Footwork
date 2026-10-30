@@ -21,6 +21,8 @@ from jevdual.posture import ExecutionPolicy
 
 from tests.fixtures.native_world import World
 
+pytestmark = pytest.mark.usefixtures("mac_native_contract")
+
 
 class FinderWorld(World):
     def __init__(self, manifest):

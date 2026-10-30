@@ -20,6 +20,18 @@ from .contracts import CapabilityError
 LIMITATION = "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding."
 
 
+def scope_limitation() -> str:
+    if sys.platform == "linux":
+        return (
+            "Linux X11/AT-SPI only: one loopback HTTP browser fixture and one identified Mousepad document. "
+            "Session access, window identity and exact text are checked when binding. "
+            "Wayland and shared foreground input are not qualified."
+        )
+    if sys.platform == "darwin":
+        return LIMITATION
+    return "Native capability is unsupported on this platform."
+
+
 def make_config(
     run_dir: Path,
     *,
@@ -85,7 +97,7 @@ def make_config(
         "scope": str(run_dir / "scope.json"),
         "report_schema": str(run_dir / "report-schema.json"),
         "report_adapter": adapter,
-        "limitation": LIMITATION,
+        "limitation": scope_limitation(),
         "publication": "Validate the structured final report through report_adapter and publish only trusted_summary. Never fall back to raw host prose.",
         "lifecycle": "Reuse this task only for reconnect/restart of this job. Generate a new run directory for each new job.",
     }
@@ -107,6 +119,22 @@ def make_config(
 
 
 def permission_status() -> dict:
+    if sys.platform == "linux":
+        return {
+            "accessibility": "not_checked",
+            "screen_recording": "not_checked",
+            "session": {
+                "x11_display_present": bool(os.environ.get("DISPLAY")),
+                "dbus_session_present": bool(os.environ.get("DBUS_SESSION_BUS_ADDRESS")),
+                "wayland_display_present": bool(os.environ.get("WAYLAND_DISPLAY")),
+                "connection": "not_checked",
+            },
+            "requirements": [
+                "An accessible X11 display and D-Bus desktop session.",
+                "AT-SPI accessibility access to the explicitly bound process and window.",
+                "Live observation and exact text readback before input; environment presence grants no access.",
+            ],
+        }
     if sys.platform != "darwin":
         return {"accessibility": "unsupported", "screen_recording": "unsupported"}
     result = {}
@@ -237,9 +265,23 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
         warnings.append(
             "Installed distribution metadata or requirement parser unavailable; compatibility is unverified."
         )
+    dependency_status = "blocked" if blockers else "met"
     permissions = permission_status()
-    if sys.platform != "darwin":
+    if sys.platform not in ("darwin", "linux"):
         block("platform_unsupported")
+    elif sys.platform == "linux":
+        # No Linux permission bit certifies a desktop connection or the bound target.
+        # Offline doctor never starts the CUA driver or probes the accessibility bus.
+        block("accessibility_not_checked")
+        session = permissions.get("session", {})
+        if session.get("x11_display_present") is False:
+            block("x11_display_not_configured")
+        if session.get("dbus_session_present") is False:
+            block("session_bus_not_configured")
+        warnings.append(
+            "Linux X11/AT-SPI access is checked by a live target bind, not this prerequisite report. "
+            "Wayland and shared foreground input are not qualified."
+        )
     elif permissions.get("accessibility") != "granted":
         block(
             "accessibility_not_granted"
@@ -256,7 +298,7 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
             loaded_modules[name] = str(Path(location).absolute())
     result = {
         "platform": sys.platform,
-        "supported": sys.platform == "darwin",
+        "supported": sys.platform in ("darwin", "linux"),
         "runtime": {
             "python_version": platform.python_version(),
             "python_requirement": python_requirement,
@@ -268,12 +310,14 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
             "loaded_modules": loaded_modules,
         },
         "dependencies": dependencies,
+        "dependency_status": dependency_status,
         "permissions": permissions,
         "scope": "not_checked",
         "journal": "not_checked",
         "warnings": warnings,
         "dependency_metadata": "installed distribution",
-        "limitation": LIMITATION,
+        "limitation": scope_limitation(),
+        "runtime_qualification": "not_checked",
         "provider_account_required": False,
         "rust_toolchain_required": False,
     }

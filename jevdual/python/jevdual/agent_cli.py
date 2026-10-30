@@ -50,6 +50,14 @@ class RoutingError(ValueError):
 def catalog() -> dict:
     from .tool_catalog import catalog as auxiliary
 
+    desktop_route = {
+        "darwin": "native macOS accessibility",
+        "linux": "native Linux X11/AT-SPI; live target binding required",
+    }.get(sys.platform, "native desktop unsupported on this platform")
+    capability_scope = {
+        "darwin": "one configured browser-to-TextEdit job",
+        "linux": "one configured browser-to-Mousepad job on X11/AT-SPI; Wayland and shared foreground unqualified",
+    }.get(sys.platform, "native capability unsupported on this platform")
     return {
         "schema_version": "1",
         "entrypoint": "footwork",
@@ -60,11 +68,11 @@ def catalog() -> dict:
         "agent_commands": ["tools", "catalog", "schema", "doctor", "invoke", "capability", "mcp", "tool"],
         "surfaces": {
             "browser": {"commands": ["start", *sorted(SESSION)], "route": "dedicated Chrome / CUA DevTools"},
-            "desktop": {"commands": list(LEGACY), "route": "native macOS accessibility"},
+            "desktop": {"commands": list(LEGACY), "route": desktop_route},
         },
         "capability": {
             "commands": ["doctor", "config", "server", "report"],
-            "scope": "one configured browser-to-TextEdit job",
+            "scope": capability_scope,
         },
         "tools": auxiliary(),
         "effect_semantics": "Read action receipts and resource-bound readback; exit 0 alone is not completion proof",

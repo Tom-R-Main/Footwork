@@ -10,8 +10,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
-import sys
 import time
 import uuid
 from dataclasses import asdict, replace
@@ -20,6 +18,7 @@ from typing import Any, Self
 
 from jevdual import grants
 from jevdual.capability.journal import Busy, Journal, JournalError, Operation, TokenConflict
+from jevdual.platform_identity import boot_identity
 
 PROTOCOL = 1
 _SCHEMA = """
@@ -67,9 +66,9 @@ def native_identity(pid: int, window_id: int) -> dict[str, Any]:
     from jevdual.capability.recovery import process_identity
 
     try:
-        if sys.platform != "darwin" or pid <= 0 or window_id <= 0:
-            raise ValueError("qualified native identity requires a live macOS process/window")
-        boot = subprocess.check_output(["sysctl", "-n", "kern.bootsessionuuid"], text=True, timeout=2).strip()
+        if pid <= 0 or window_id <= 0:
+            raise ValueError("qualified native identity requires a live process/window")
+        boot = boot_identity()
         identity = {**process_identity(pid), "boot": boot, "window_id": window_id}
         if not boot or not identity.get("start"):
             raise ValueError("missing process incarnation")

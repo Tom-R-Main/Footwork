@@ -31,6 +31,7 @@ import json
 import logging
 import math
 import re
+import sys
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -384,6 +385,7 @@ def menu_from_snapshot(
     *,
     budget: MenuBudget | None = None,
     include_menu_bar: bool = False,
+    linux_text: dict[int, dict[str, Any]] | None = None,
 ) -> NativeMenu:
     """Build the System 1 menu from a Driver ``get_window_state`` result (SDK object or dict)."""
     b = budget or MenuBudget()
@@ -408,6 +410,7 @@ def menu_from_snapshot(
         if not token or idx is None:
             continue
         ax_role = str(_get(el, "role") or "")
+        linux_role = linux_text is not None and not ax_role.startswith("AX")
         if ax_role == "AXWindow":
             continue
         if not include_menu_bar and _in_menu_bar(el, by_index):
@@ -415,6 +418,18 @@ def menu_from_snapshot(
             continue
         actions = {str(a) for a in (_get(el, "actions") or ())}
         mapped = ROLE_MAP.get(ax_role)
+        text_proof = (linux_text or {}).get(int(idx), {})
+        if linux_role:
+            from jevdual.linux_projection import project_element
+
+            mapped = project_element(
+                ax_role, actions,
+                editable=text_proof.get("writable") is True,
+                multiline=text_proof.get("multiline") is True,
+            )
+            if mapped is None:
+                omitted["unmapped_role"] = omitted.get("unmapped_role", 0) + 1
+                continue
         if mapped is None and ax_role == "AXImage" and "AXOpen" in actions:
             # a Finder icon-view item: an image that opens (P0 breadth, 2026-09-25); clicking selects it
             mapped = ("file", ("click",))
@@ -424,13 +439,13 @@ def menu_from_snapshot(
                 continue
             mapped = (ax_role.removeprefix("AX").lower() or "element", ("click",))
         role, ops = mapped
-        if role == "menuitem" and "AXPress" not in actions and "AXPick" not in actions:
+        if not linux_role and role == "menuitem" and "AXPress" not in actions and "AXPick" not in actions:
             omitted["inert_menu_item"] = omitted.get("inert_menu_item", 0) + 1
             continue
         if _get(el, "enabled") is False:
             omitted["disabled"] = omitted.get("disabled", 0) + 1
             continue
-        raw_value = _get(el, "value")
+        raw_value = text_proof.get("value") if linux_role else _get(el, "value")
         label = _clean(_get(el, "label"), _LABEL_CAP)
         if not label:
             label = _clean(_get(el, "value_description"), _LABEL_CAP)
@@ -440,8 +455,8 @@ def menu_from_snapshot(
             label = _clean(raw_value, _LABEL_CAP)
         if not label:
             label = role
-        sensitive = ax_role == "AXSecureTextField"
-        multiline = ax_role == "AXTextArea"
+        sensitive = ax_role == "AXSecureTextField" or (linux_role and ax_role.casefold() == "password text")
+        multiline = ax_role == "AXTextArea" or (linux_role and text_proof.get("multiline") is True)
         if role in _TEXT_ROLES and raw_value not in (None, "") and label == _clean(raw_value, _LABEL_CAP):
             label = "text area" if multiline else role  # the Driver echoed the content as the label
         value: str | None = None
@@ -450,6 +465,8 @@ def menu_from_snapshot(
                 _clean_multiline(raw_value, _VALUE_CAP * 4) if multiline else _clean(raw_value, _VALUE_CAP)
             )
         checked = _checked(raw_value) if role in ("checkbox", "radio", "switch") else None
+        if linux_role and role in ("checkbox", "radio"):
+            checked = _get(el, "selected")
         frame = _get(el, "frame")
         cand = Candidate(
             id=int(idx),
@@ -489,6 +506,23 @@ def menu_from_snapshot(
     app_name = str(_get(snapshot, "app_name") or "")
     title = _clean(_get(snapshot, "window_title"), 120)
     page_text = _page_text(_get(snapshot, "tree_markdown"), elements, b.max_page_text_chars)
+    if linux_text is not None and any(not str(_get(e, "role") or "").startswith("AX") for e in elements):
+        from jevdual.linux_static_text import project_static_text
+
+        # Passive display text is an explicitly marked preview. Editable values
+        # come from independent complete reads, never CUA's 4096-char preview.
+        static = project_static_text(_get(snapshot, "tree_markdown"), max_chars=b.max_page_text_chars)
+        parts = [*static.lines, *(str(p["value"]) for p in linux_text.values() if p.get("value"))]
+        page_text = "\n".join(parts)
+        if static.lines:
+            omitted["static_text_preview"] = 1
+        if static.ambiguous_records:
+            omitted["static_text_ambiguous"] = static.ambiguous_records
+        if static.input_truncated or static.output_truncated:
+            omitted["text_truncated"] = 1
+        if len(page_text) > b.max_page_text_chars:
+            omitted["text_truncated"] = 1
+            page_text = page_text[:b.max_page_text_chars]
     if not _get(snapshot, "elements_complete", True):
         omitted["elements_incomplete"] = 1
     if _get(snapshot, "truncated"):
@@ -548,6 +582,10 @@ def accessibility_status() -> str:
 
 def require_accessibility() -> None:
     status = accessibility_status()
+    if sys.platform == "linux" and status == "not_checked":
+        # Linux has no macOS permission API. Actual scoped CUA/AT-SPI reads
+        # qualify availability; environment presence never grants it.
+        return
     if status not in ("granted", "unsupported"):
         raise NativeBridgeError(
             "accessibility_not_granted" if status == "not_granted" else "accessibility_unavailable",
@@ -825,7 +863,10 @@ class NativeBridge:
     @property
     def ax(self) -> Any:
         if self._ax is None:
-            from jevdual import ax as _ax
+            if sys.platform == "linux":
+                from jevdual import linux_ax as _ax
+            else:
+                from jevdual import ax as _ax
 
             self._ax = _ax
         return self._ax
@@ -866,7 +907,62 @@ class NativeBridge:
             )
         )
         self.last = None
-        observed = menu_from_snapshot(snap, budget=budget, include_menu_bar=include_menu_bar)
+        linux_text = None
+        if sys.platform == "linux":
+            from jevdual.linux_projection import PASSWORD_ROLES, TEXT_ROLES, normalize_role
+
+            linux_text = {}
+            deadline = asyncio.get_running_loop().time() + 12.0
+            attempts = 0
+            for element in _get(snap, "elements") or []:
+                role = str(_get(element, "role") or "")
+                index = _get(element, "element_index")
+                frame = _get(element, "frame")
+                if (normalize_role(role) not in TEXT_ROLES or normalize_role(role) in PASSWORD_ROLES
+                        or index is None or frame is None or not _get(element, "element_token")):
+                    continue
+                if attempts >= 32 or asyncio.get_running_loop().time() >= deadline:
+                    linux_text[int(index)] = {}
+                    continue
+                attempts += 1
+
+                def qualify(element_role: str = role, element_frame: Any = frame) -> dict[str, Any]:
+                    coordinates = [_get(element_frame, k) for k in ("x", "y", "w", "h")]
+                    if any(value is None for value in coordinates):
+                        return {}
+                    target = self.ax.resolve(self.pid, self.window_id, element_role, self.ax.Frame(*coordinates))
+                    proof = self.ax.text_capabilities(target)
+                    if proof["readable"]:
+                        proof["value"] = self.ax.value(target)
+                    return proof
+
+                try:
+                    linux_text[int(index)] = await asyncio.to_thread(qualify)
+                except self.ax.AXError:
+                    linux_text[int(index)] = {}
+        observed = menu_from_snapshot(
+            snap, budget=budget, include_menu_bar=include_menu_bar, linux_text=linux_text
+        )
+        if linux_text is not None:
+            # Linux window managers may report the desktop ID as the app name.
+            # Resolve its display name only through a unique same-process row;
+            # an unrelated name or different PID must still fail caller scope.
+            if (observed.pid == self.pid and "." in observed.app_name
+                    and callable(getattr(self.driver, "list_apps", None))):
+                from cua_driver import ListAppsInput
+
+                apps = (await self.driver.list_apps(ListAppsInput())).apps
+                matches = [app for app in apps if app.pid == self.pid and observed.app_name.casefold() in {
+                    str(app.name or "").casefold(), str(getattr(app, "bundle_id", None) or "").casefold()
+                }]
+                if len(matches) == 1 and matches[0].name:
+                    observed = dataclasses.replace(
+                        observed, app_name=matches[0].name,
+                        menu=dataclasses.replace(observed.menu, url=f"app://{matches[0].name}"),
+                    )
+            unavailable = sum("value" not in proof for proof in linux_text.values())
+            if unavailable:
+                observed.menu.omitted["exact_text_unqualified"] = unavailable
         if self.observation_guard is not None and observed.app_name in {"Chrome", "Google Chrome"}:
             from jevdual.chrome_scope import capture
 
@@ -1011,6 +1107,17 @@ class NativeBridge:
         refusal = self.policy.permits("foreground", why=why)
         if refusal is not None:
             return self._not_sent(operation, target, label, refusal.code, refusal.reason, "foreground")
+        if sys.platform == "linux":
+            # CUA verifies the exact X11 active window and core focus itself.
+            # An exclusive desktop has no shared-user restoration contract.
+            if self.policy.mode != "exclusive_desktop":
+                return self._not_sent(operation, target, label, "platform_posture_unavailable",
+                                      "Linux foreground input requires exclusive_desktop", "foreground")
+            try:
+                outcome = await call()
+            except Exception as exc:  # noqa: BLE001 - never retry uncertain input
+                outcome = exc
+            return self._effect(operation, target, label, outcome, "foreground")
         before = self.policy.before_foreground()
         prior_inputs = self._foreground_inputs
         try:
@@ -1134,7 +1241,8 @@ class NativeBridge:
             changed = (
                 exact != precondition.value
                 if precondition is not None
-                else _norm_tail(exact) != _norm_tail(nm.values.get(id, ""))
+                else (exact != nm.values.get(id) if sys.platform == "linux"
+                      else _norm_tail(exact) != _norm_tail(nm.values.get(id, "")))
             )
             if changed:
                 return self._not_sent(
@@ -1157,7 +1265,7 @@ class NativeBridge:
                         "the original resource changed; nothing written",
                         "background",
                     )
-                document = ax.document_path(self.pid, self.window_id)
+                document = self.document_path(precondition.document)
                 if precondition.document is not None and (
                     not document or Path(document).resolve() != Path(precondition.document).resolve()
                 ):
@@ -1254,6 +1362,50 @@ class NativeBridge:
             field_readback=readback,
         )
 
+    def document_path(self, expected: str | None = None) -> str | None:
+        """Linux document authority requires an explicitly scoped app contract."""
+        if sys.platform != "linux":
+            return self.ax.document_path(self.pid, self.window_id)
+        from jevdual import linux_documents
+
+        binding = getattr(self, "_linux_document", None)
+        if binding is None:
+            if expected is None:
+                return None
+            binding = linux_documents.bind(self.pid, self.window_id, expected)
+            self._linux_document = binding
+        if expected is not None and binding.path != expected:
+            raise self.ax.AXError("lost_identity", "the scoped document changed")
+        linux_documents.revalidate(binding)
+        return binding.path
+
+    def _type_linux(self, nm: NativeMenu, id: int, cand: Candidate, text: str) -> NativeEffect:
+        """Replace through the qualified object once, then compare complete exact text."""
+        started = False
+        try:
+            frame = nm.frames.get(id)
+            if frame is None or id not in nm.values:
+                return self._not_sent("type", id, cand.label, "value_unavailable",
+                                      "exact observed text and geometry are required", "background")
+            target = self.ax.resolve(self.pid, self.window_id, nm.ax_roles[id], self.ax.Frame(*frame))
+            if self.ax.value(target) != nm.values[id] or not self.ax.can_set_value(target):
+                return self._not_sent("type", id, cand.label, "precondition_changed",
+                                      "the original editable value changed", "background")
+            started = True
+            self.ax.set_value_ack(target, text)
+            after = self.ax.value(target)
+            return NativeEffect(
+                "type", id, cand.label, "confirmed" if after == text else "partial", "accessibility",
+                ("exact value readback matches" if after == text else "exact value readback differs",),
+                "replaced text" if after == text else "text replacement differs",
+                delivery="background", driver_delivery="background", delivered_count=1,
+                delivery_basis="ax_set_value_ack",
+            )
+        except self.ax.AXError as exc:
+            if not started:
+                return self._not_sent("type", id, cand.label, exc.reason, str(exc), "background")
+            return self._effect("type", id, cand.label, exc, "background")
+
     async def _type_web(
         self, nm: NativeMenu, id: int, cand: Candidate, token: str, text: str
     ) -> NativeEffect:
@@ -1265,7 +1417,7 @@ class NativeBridge:
         label = cand.label
         selected = False
         if nm.values.get(id, "").strip():
-            sel = await self._key_route("type", id, label, "a", ["cmd"], token)
+            sel = await self._key_route("type", id, label, "a", ["ctrl" if sys.platform == "linux" else "cmd"], token)
             if not sel.dispatched or sel.effect != "confirmed" or sel.error_code:
                 return dataclasses.replace(sel, summary=f"select-all before typing: {sel.summary}"[:200])
             selected = True
@@ -1954,6 +2106,8 @@ class NativeBridge:
         try:
             if operation == "click":
                 outcome: Any = await self._click_token(token)
+            elif operation == "type" and sys.platform == "linux":
+                return await asyncio.to_thread(self._type_linux, nm, id, cand, text or "")
             elif operation == "type" and id in nm.web:
                 return await self._type_web(nm, id, cand, token, text or "")
             elif operation == "type":
@@ -2120,7 +2274,8 @@ class NativeBridge:
             args["session"] = self.session
 
         async def call() -> Any:
-            await self._front_and_key()
+            if sys.platform != "linux":
+                await self._front_and_key()
             if self.observation_guard is not None:
                 await self.observe()
             return await self.driver.call_tool("hotkey", json.dumps(args))
@@ -2131,6 +2286,12 @@ class NativeBridge:
     async def _after_save(self, eff: NativeEffect, *, keys: Any = (), path: Any = ()) -> NativeEffect:
         if not is_save(keys, path) or not eff.dispatched or eff.effect == "refused":
             return eff
+        if sys.platform == "linux":
+            return with_save_readback(eff, {
+                "ok": None,
+                "detail": "Linux automatic saved-document discovery is unavailable; use check-file or "
+                          "check-artifact with the explicitly selected path for persistence proof",
+            })
         # the app writes the file after the menu action returns; in G5 four of six first Command-S
         # readbacks at 0.5 s read "differs" and the File > Save right after read "saved", so the disk is
         # polled for up to 3 s before a save is called partial
@@ -2156,6 +2317,19 @@ class NativeBridge:
         self.last = None
         self.dispatches += 1
         label = " > ".join(path)
+        if sys.platform == "linux":
+            from cua_driver import InvokeMenuInput
+
+            refusal = self.policy.permits("background", why=f"menu {label}")
+            if refusal is not None:
+                return self._not_sent("menu", -1, label, refusal.code, refusal.reason, "background")
+            try:
+                outcome = await self.driver.invoke_menu(InvokeMenuInput(
+                    pid=self.pid, window_id=self.window_id, path=list(path), session=self.session
+                ))
+            except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
+                outcome = exc
+            return await self._after_save(self._effect("menu", -1, label, outcome, "background"), path=path)
         ax = self.ax
         preview_path = nm.app_name == "Preview" and path in (
             ["Tools", "Rotate Left"],
@@ -2253,7 +2427,8 @@ class NativeBridge:
 def is_save(keys: list[str] | tuple[str, ...] = (), path: list[str] | tuple[str, ...] = ()) -> bool:
     """Command-S, or a menu path ending in Save."""
     if keys:
-        return {k.casefold() for k in keys} in ({"cmd", "s"}, {"command", "s"})
+        choices = ({"ctrl", "s"}, {"control", "s"}) if sys.platform == "linux" else ({"cmd", "s"}, {"command", "s"})
+        return {k.casefold() for k in keys} in choices
     return bool(path) and path[-1].strip().casefold() == "save"
 
 

@@ -19,6 +19,9 @@ from jevdual.native import (
 FIXTURE = Path(__file__).parent / "fixtures" / "native" / "calculator.json"
 
 
+pytestmark = pytest.mark.usefixtures("mac_native_contract")
+
+
 @pytest.fixture(scope="module")
 def snapshot() -> dict:
     return json.loads(FIXTURE.read_text())

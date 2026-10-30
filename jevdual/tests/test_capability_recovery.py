@@ -13,6 +13,7 @@ import sqlite3
 import subprocess
 import sys
 import textwrap
+from types import SimpleNamespace
 
 import pytest
 from jevdual.capability.journal import Journal
@@ -26,7 +27,7 @@ from jevdual.capability.recovery import (
 
 
 @pytest.fixture
-def prepared(tmp_path):
+def prepared(tmp_path, monkeypatch):
     document = tmp_path / "invoice.txt"
     scope = {
         "task": "recovery-fixture",
@@ -41,9 +42,16 @@ def prepared(tmp_path):
         "device": 1,
         "inode": 2,
     }
-    envelope = make_recovery(
-        scope, identity, "AXTextArea", (0, 0, 100, 100), "Invoice\n", "Invoice\n17.25 USD"
-    )
+    # This is a synthetic Mac envelope even when the journal tests run on Linux.
+    # Override only this producer's platform view; real process/filesystem probes
+    # and Python's import machinery retain the actual host platform throughout.
+    from jevdual.capability import recovery
+
+    with monkeypatch.context() as platform_fixture:
+        platform_fixture.setattr(recovery, "sys", SimpleNamespace(platform="darwin", executable=sys.executable))
+        envelope = make_recovery(
+            scope, identity, "AXTextArea", (0, 0, 100, 100), "Invoice\n", "Invoice\n17.25 USD"
+        )
     journal = Journal(tmp_path / "operations.sqlite")
     op, created = journal.begin(
         task=scope["task"],
@@ -283,6 +291,8 @@ def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
         from pathlib import Path
         from types import SimpleNamespace
         import pytest
+        from jevdual import native,posture
+        from jevdual.capability import backend as capability_backend
         from jevdual.capability import execution_worker,recovery
         from tests.fixtures.native_world import TextWorld
         packet_path,effect,hang=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
@@ -291,6 +301,10 @@ def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
         scope=packet['recovery']['scope']
         world=TextWorld(Path(scope['destination']['document']),content='Invoice\\n',window_id=4,frame=(0,0,100,100))
         patch=pytest.MonkeyPatch()
+        # This child exercises a simulated Mac, while its process and import
+        # machinery must retain the real Linux host when run in Linux CI.
+        for module in (native,posture,capability_backend,recovery):
+            patch.setattr(module,'sys',SimpleNamespace(platform='darwin',executable=sys.executable))
         world.install(patch)
         patch.setattr(recovery,'native_identity',lambda scope:packet['recovery']['identity'])
         patch.setattr(execution_worker,'native_identity',lambda scope:packet['recovery']['identity'])

@@ -10,8 +10,9 @@ Every dispatch declares its delivery before anything is sent:
 * ``background``: addressed to one window or element (an AX press, an AX value write, an AX insertion, a
   key posted to a process that owns exactly one eligible window). The front app, the key window and the
   person's pointer are untouched.
-* ``foreground``: the target window is brought to the front for the action and the previous front app
-  restored afterwards (the Driver's foreground ladder rung, ``invoke_menu``, ``bring_to_front``).
+* ``foreground``: the target window is brought to the front for the action. On a shared Mac the
+  person's chosen app is restored afterwards. Linux currently supports this only on an explicitly
+  exclusive desktop; its scoped driver transaction may leave the target active.
 * ``desktop``: acts on whatever the desktop routes to: the real pointer, the frontmost app, a screen point.
 
 The session's mode decides which deliveries it may use:
@@ -32,6 +33,7 @@ the coexistence suite (``docs/experiments/Q15.md``) measures it.
 from __future__ import annotations
 
 import subprocess
+import sys
 from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
@@ -116,10 +118,47 @@ class MacActivity:
         return screen_locked()
 
 
+class PlatformPostureUnavailable(RuntimeError):
+    """The host cannot observe or preserve shared-desktop foreground ownership."""
+
+    code = "platform_posture_unavailable"
+
+
+class LinuxActivity:
+    """Conservative admission until Linux shared-desktop coexistence is qualified.
+
+    The lock state is unknown, matching the existing unknown-lock admission policy.
+    Exclusive desktop dispatch uses the driver's exact-window transaction, without
+    claiming an idle reading, observed foreground ownership, or focus restoration.
+    """
+
+    foreground_tracking_available = False
+    lock_detection_available = False
+
+    def idle_seconds(self) -> float:
+        raise PlatformPostureUnavailable("Linux human-input idle observation is not qualified")
+
+    def frontmost_pid(self) -> int | None:
+        return None
+
+    def activate(self, pid: int) -> bool:
+        raise PlatformPostureUnavailable("Linux shared-desktop focus restoration is not qualified")
+
+    def watch(self) -> FrontWatch:
+        raise PlatformPostureUnavailable("Linux shared-desktop foreground tracking is not qualified")
+
+    def screen_locked(self) -> bool:
+        return screen_locked()
+
+
 def screen_locked() -> bool:
     """True while the login session's screen is locked. Accessibility cannot reach windows then: the
     G4 run kept deciding and pressing keys for 25 steps against a locked screen, every step answered
     "no AX window" (2026-09-26)."""
+    if sys.platform.startswith("linux"):
+        # No qualified session-lock observer yet. False is the existing admission
+        # convention for unknown, not evidence that a Linux session is unlocked.
+        return False
     try:
         import Quartz
 
@@ -164,7 +203,8 @@ def frontmost_pid() -> int | None:
 @dataclass(frozen=True)
 class Refusal:
     """A step the posture will not take. ``code`` is ``requires_foreground``, ``requires_desktop``,
-    ``human_active`` or ``screen_locked``; nothing was sent to any target."""
+    ``human_active``, ``screen_locked`` or ``platform_posture_unavailable``;
+    nothing was sent to any target."""
 
     code: str
     reason: str
@@ -184,8 +224,16 @@ class ExecutionPolicy:
 
     def _activity(self) -> Activity:
         if self.activity is None:
-            self.activity = MacActivity()
+            self.activity = LinuxActivity() if sys.platform.startswith("linux") else MacActivity()
         return self.activity
+
+    def foreground_tracking_available(self) -> bool:
+        """Whether this activity can observe and restore a shared foreground step.
+
+        Injected providers retain their existing contract unless they explicitly
+        declare the capability unavailable.
+        """
+        return bool(getattr(self._activity(), "foreground_tracking_available", True))
 
     def permits(self, delivery: Delivery, *, why: str = "") -> Refusal | None:
         """None when this session may deliver this way now; otherwise the typed refusal."""
@@ -197,6 +245,12 @@ class ExecutionPolicy:
                 code, f"{why or 'this step'} needs {delivery} delivery; the session is {self.mode}"
             )
         if delivery == "foreground" and self.mode == "foreground_permitted":
+            if not self.foreground_tracking_available():
+                return Refusal(
+                    "platform_posture_unavailable",
+                    f"{why or 'this step'} needs qualified shared-desktop idle and focus observation; "
+                    "this host supports foreground delivery only with explicit exclusive_desktop mode",
+                )
             idle = self._activity().idle_seconds()
             if idle < self.idle_s:
                 return Refusal(
@@ -214,6 +268,8 @@ class ExecutionPolicy:
     def before_foreground(self) -> dict[str, object]:
         """What the receipt records about a foreground step, read just before it; the front app is sampled
         from here until ``after_foreground``."""
+        if not self.foreground_tracking_available():
+            raise PlatformPostureUnavailable("Shared-desktop foreground tracking is unavailable")
         act = self._activity()
         self._watch = act.watch()
         return {"front_before": act.frontmost_pid(), "idle_before": round(act.idle_seconds(), 3)}
@@ -233,6 +289,8 @@ class ExecutionPolicy:
         """Front app after the step and whether the person gave input during it (idle shorter than the
         time since ``before`` was read cannot be told apart from our own events, so it is reported, never
         counted as success)."""
+        if not self.foreground_tracking_available():
+            raise PlatformPostureUnavailable("Shared-desktop foreground tracking is unavailable")
         act = self._activity()
         watch = getattr(self, "_watch", None)
         if watch is not None:
