@@ -120,8 +120,9 @@ def recovery(monkeypatch):
             return self.status
 
         def wait(self, **_):
-            self.status = 0
-            return 0
+            if self.status is None:
+                self.status = 0
+            return self.status
 
     driver, helper = Driver(), Process()
     monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
@@ -218,6 +219,14 @@ async def test_cancelled_recovery_helper_is_reaped_but_persistent_root_survives(
         return SimpleNamespace(windows=[])
 
     monkeypatch.setattr(recovery.driver, 'list_windows', windows)
+    original_spawn = browser.subprocess.Popen
+
+    def spawned(*args, **kwargs):
+        value = original_spawn(*args, **kwargs)
+        second.set()
+        return value
+
+    monkeypatch.setattr(browser.subprocess, 'Popen', spawned)
     task = asyncio.create_task(browser.bind_footwork_chrome())
     await second.wait()
     task.cancel()
@@ -248,3 +257,82 @@ def test_recovery_only_preserves_the_exact_roots_explicit_sandbox_mode(monkeypat
     assert browser._recovery_flags(42, 1.0) == expected
     with pytest.raises(RuntimeError, match='identity changed'):
         browser._recovery_flags(42, 2.0)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('case', ['delayed-helper', 'unrelated-root', 'late-unrelated-root', 'replaced-root'])
+async def test_recovery_sequences_helper_custody_before_actual_unique_root_discovery(monkeypatch, case):
+    import psutil
+
+    spawned, closed = [], []
+    helper = SimpleNamespace(pid=99, status=None, polls=0)
+    root_args = ['/qualified/chromium', f'--user-data-dir={browser.PROFILE_DIR}',
+                 f'--remote-debugging-port={browser.PORT}']
+
+    def process(pid, args):
+        return SimpleNamespace(info={'pid': pid, 'cmdline': args, 'exe': '/qualified/chromium',
+                                     'uids': SimpleNamespace(real=42)})
+
+    def inventory(_):
+        rows = [process(42, root_args)]
+        if spawned and helper.status is None:
+            rows.append(process(99, spawned[0]))
+        if case == 'unrelated-root' or (case == 'late-unrelated-root' and spawned and helper.status == 0):
+            rows.append(process(77, root_args))
+        return iter(rows)
+
+    def poll():
+        helper.polls += 1
+        if helper.polls >= 4:
+            helper.status = 0
+        return helper.status
+
+    helper.poll, helper.wait = poll, lambda **_: helper.status
+
+    class Driver:
+        calls = 0
+
+        async def list_windows(self, _):
+            self.calls += 1
+            window = SimpleNamespace(pid=42, window_id=7, bounds=SimpleNamespace(width=100, height=100))
+            return SimpleNamespace(windows=[] if self.calls == 1 else [window])
+
+        async def shutdown(self):
+            closed.append(True)
+
+    class Bridge:
+        def __init__(self, *_, **__):
+            pass
+
+        async def attach(self):
+            pass
+
+    def spawn(args, **_):
+        spawned.append(args)
+        return helper
+
+    monkeypatch.setattr(browser, 'sys', SimpleNamespace(platform='linux'))
+    monkeypatch.setattr(browser, '_begin_chrome', lambda *_: (42, None))
+    monkeypatch.setattr(browser, '_incarnation', lambda pid: 2.0 if case == 'replaced-root' and helper.status == 0 else 1.0)
+    monkeypatch.setattr(browser, '_recovery_flags', lambda *_: [])
+    monkeypatch.setattr(browser, 'chrome_executable', lambda: '/qualified/chromium')
+    monkeypatch.setattr(browser.os, 'getuid', lambda: 42)
+    monkeypatch.setattr(browser.os, 'killpg', lambda *_: None)
+    monkeypatch.setattr(psutil, 'process_iter', inventory)
+    monkeypatch.setattr(browser.subprocess, 'Popen', spawn)
+    monkeypatch.setattr(browser, 'configured_driver', lambda _: Driver())
+    monkeypatch.setattr(browser, 'BrowserBridge', Bridge)
+    if case in ('unrelated-root', 'late-unrelated-root'):
+        with pytest.raises(RuntimeError, match='multiple browser processes'):
+            await browser.bind_footwork_chrome()
+        if case == 'unrelated-root':
+            assert not spawned
+        else:
+            assert spawned and helper.status == 0 and closed == [True]
+    elif case == 'replaced-root':
+        with pytest.raises(RuntimeError, match='identity changed'):
+            await browser.bind_footwork_chrome()
+        assert closed == [True]
+    else:
+        await browser.bind_footwork_chrome()
+        assert helper.status == 0 and not closed

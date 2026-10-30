@@ -649,7 +649,14 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
                     raise RuntimeError('browser window recovery is unavailable on this platform')
                 helper = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,  # noqa: ASYNC220 - retain ownership before yielding
                                           start_new_session=True)
-            if helper.poll() not in (None, 0):
+            # An invocation-owned singleton helper temporarily satisfies the
+            # same root predicate. Complete/reap it before rediscovering roots;
+            # never exclude an arbitrary matching PID from that predicate.
+            while helper.poll() is None:
+                if time.monotonic() >= deadline:
+                    raise RuntimeError('owned browser new-window helper timed out')
+                await asyncio.sleep(.1)
+            if helper.wait(timeout=0) != 0:
                 raise RuntimeError('owned browser new-window helper exited unsuccessfully')
             await asyncio.sleep(.1)
         w = max(wins.windows, key=lambda w: w.bounds.width * w.bounds.height)
