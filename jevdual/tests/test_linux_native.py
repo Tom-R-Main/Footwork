@@ -135,6 +135,48 @@ def bridge(driver=None, *, mode="background_only", ax=None):
     )
 
 
+@pytest.mark.parametrize("change,refused", [
+    ({}, True),
+    ({"is_error": False}, False),
+    ({"error_code": "transport_lost"}, False),
+    ({"structured_json": None}, False),
+    ({"structured_json": "{"}, False),
+    ({"structured_json": "[]"}, False),
+    ({"structured_json": '{"code":"foreground_unavailable","effect":"unverifiable"}'}, False),
+    ({"structured_json": '{"code":"foreground_timeout","effect":"none"}'}, False),
+    ({"action": outcome().action}, False),
+])
+def test_linux_save_structured_preinput_refusal_preserves_uncertainty(change, refused):
+    target = bridge(mode="exclusive_desktop")
+    calls = []
+    result = SimpleNamespace(
+        action=None, is_error=True, error_code="foreground_unavailable",
+        text="activation failed; no input was sent",
+        structured_json=json.dumps({
+            "code": "foreground_unavailable", "effect": "none",
+            "detail": "activation failed; no input was sent",
+            "suggestion": "Confirm the bound window",
+        }),
+    )
+    for key, value in change.items():
+        setattr(result, key, value)
+
+    async def reply(name, args):
+        calls.append((name, json.loads(args)))
+        return result
+
+    target.driver.call_tool = reply
+    effect = asyncio.run(target.hotkey(bound_text(target), ["ctrl", "s"]))
+    assert len(calls) == 1
+    assert effect.dispatched is not refused
+    if refused:
+        assert effect.effect == "refused" and effect.delivered_count == 0
+        assert effect.delivery_basis == "qualified_gate" and effect.readback is None
+    else:
+        assert effect.effect == "unverifiable"
+        assert effect.delivered_count == (1 if "action" in change else None)
+
+
 def bound_text(target, *, value="old", supplied_proof=True):
     menu = native.menu_from_snapshot(
         snapshot(element(value="UPSTREAM PREVIEW")),

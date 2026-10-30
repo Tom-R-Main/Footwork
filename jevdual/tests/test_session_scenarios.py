@@ -691,6 +691,34 @@ def test_background_only_sends_no_hotkey(world, fw):
     assert world.tool_calls == [] and world.presses == []
 
 
+def test_linux_refused_save_records_no_dispatch(world, fw, monkeypatch):
+    from jevdual import native
+
+    monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+    attempts = []
+
+    async def refused(name, args_json):
+        attempts.append((name, json.loads(args_json)))
+        return SimpleNamespace(
+            action=None, is_error=True, error_code="foreground_unavailable",
+            text="window did not become active; no input was sent",
+            structured_json=json.dumps({
+                "code": "foreground_unavailable", "effect": "none",
+                "detail": "window did not become active; no input was sent",
+                "suggestion": "Confirm the exact window before retrying",
+            }),
+        )
+
+    monkeypatch.setattr(world, "call_tool", refused)
+    assert fw("start", "Save", "--app", "Calculator", "--mode", "exclusive_desktop")[0] == 0
+    code, out, err = fw("do", "hotkey", "ctrl", "s", "--no-judge", "--authorize", "Delete")
+    assert code == 0, err
+    assert len(attempts) == 1 and attempts[0][0] == "hotkey"
+    assert world.tool_calls == world.presses == []
+    assert "not sent" in out and "foreground_unavailable" in out
+    assert _state(fw)["memory"][-1].endswith("hotkey(ctrl+s) -> refused")
+
+
 def test_an_opaque_driver_error_does_not_claim_no_delivery(world, fw):
     fw("start", "Compute 8", "--app", "Calculator")
     _, out, _ = fw("look")
