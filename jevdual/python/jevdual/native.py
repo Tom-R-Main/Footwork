@@ -723,6 +723,30 @@ AMBIGUITY = "same_pid_keyboard_ambiguity"
 _TEXT_EDIT_ROLES = frozenset({"AXTextArea", "AXTextField", "AXComboBox", "AXSearchField"})
 
 
+def _linux_foreground_no_send(outcome: Any) -> bool:
+    """Recognize the pinned X11 activation gate, never an opaque error message.
+
+    platform-linux input/foreground.rs returns CODE_UNAVAILABLE before its
+    input body; tools/impl_.rs input_error_result publishes this exact shape.
+    Timeout and post-dispatch failures retain uncertain delivery semantics.
+    """
+    if (getattr(outcome, "action", None) is not None
+            or getattr(outcome, "is_error", None) is not True
+            or getattr(outcome, "error_code", None) != "foreground_unavailable"):
+        return False
+    structured = getattr(outcome, "structured_json", None)
+    if not isinstance(structured, str):
+        return False
+    try:
+        record = json.loads(structured)
+    except ValueError:
+        return False
+    return (isinstance(record, dict)
+            and set(record) == {"code", "detail", "effect", "suggestion"}
+            and record["code"] == "foreground_unavailable" and record["effect"] == "none"
+            and isinstance(record["detail"], str) and isinstance(record["suggestion"], str))
+
+
 def _keyboard_ambiguity_no_send(outcome: Any, effect: NativeEffect, pid: int, window_id: int) -> bool:
     if isinstance(outcome, BaseException) or effect.error_code != AMBIGUITY:
         return False
@@ -1117,6 +1141,9 @@ class NativeBridge:
                 outcome = await call()
             except Exception as exc:  # noqa: BLE001 - never retry uncertain input
                 outcome = exc
+            if _linux_foreground_no_send(outcome):
+                return self._not_sent(operation, target, label, "foreground_unavailable",
+                                      str(outcome.text), "foreground")
             return self._effect(operation, target, label, outcome, "foreground")
         before = self.policy.before_foreground()
         prior_inputs = self._foreground_inputs
