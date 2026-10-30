@@ -6,12 +6,15 @@ import hashlib
 import html
 import importlib.util
 import json
+import math
 import os
 import re
 import shutil
 import stat
+import struct
 import sys
 import time
+import zlib
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
@@ -25,6 +28,8 @@ SPEC.loader.exec_module(camera)
 Refusal = camera.Refusal
 MAX_IMAGE_BYTES = 32 * 1024 * 1024
 MAX_NOTE_BYTES = 128 * 1024
+MAX_TSV_BYTES = 4 * 1024 * 1024
+MAX_OCR_PIXELS = 50_000_000
 STATES = {"preparing", "needs_text", "needs_review", "accepting", "saved", "unknown"}
 DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 
@@ -116,7 +121,142 @@ def source_request(capture_run=None, capture_token=None, fixture_image=None, mir
     return request, data
 
 
+def png_dimensions(data):
+    if (len(data) < 33 or data[:8] != b"\x89PNG\r\n\x1a\n" or data[8:16] != b"\x00\x00\x00\rIHDR"
+            or zlib.crc32(data[12:29]) != struct.unpack(">I", data[29:33])[0]):
+        raise Refusal("OCR input has an invalid PNG header")
+    width, height = struct.unpack(">II", data[16:24])
+    if not width or not height or width * height > MAX_OCR_PIXELS:
+        raise Refusal("OCR image dimensions exceed the declared pixel bound")
+    return width, height
+
+
+def parse_tesseract_tsv(data, width, height):
+    """Bounded TSV words become review lines; no claim of original spacing or calibrated confidence."""
+    if len(data) > MAX_TSV_BYTES:
+        raise Refusal("Tesseract evidence exceeds the declared size limit")
+    try:
+        text = data.decode("utf-8")
+        rows = text.splitlines()
+        header = ["level", "page_num", "block_num", "par_num", "line_num", "word_num", "left", "top",
+                  "width", "height", "conf", "text"]
+        if not rows or rows[0].split("\t") != header or len(rows) > 20000 or "\x00" in text:
+            raise ValueError("TSV structure")
+        groups, order = {}, []
+        page_seen = False
+        text_bytes = 0
+        for row in rows[1:]:
+            fields = row.split("\t", 11)
+            if len(fields) != 12:
+                raise ValueError("TSV columns")
+            level, page, block, paragraph, line, word, left, top, w, h = map(int, fields[:10])
+            confidence = float(fields[10])
+            if (not 1 <= level <= 5 or page != 1 or min(block, paragraph, line, word, left, top, w, h) < 0
+                    or left + w > width or top + h > height or not math.isfinite(confidence)):
+                raise ValueError("TSV bounds")
+            if level == 1:
+                if page_seen or (left, top, w, h) != (0, 0, width, height):
+                    raise ValueError("TSV page")
+                page_seen = True
+            if level != 5 or not fields[11].strip():
+                continue
+            if not page_seen or not 0 <= confidence <= 100 or not all((block, paragraph, line, word, w, h)):
+                raise ValueError("TSV word")
+            key = (page, block, paragraph, line)
+            if key not in groups:
+                if len(groups) >= 4096:
+                    raise ValueError("line bound")
+                groups[key] = []
+                order.append(key)
+            if key != order[-1] or (groups[key] and word <= groups[key][-1][0]):
+                raise ValueError("repeated or reordered words")
+            text_bytes += len(fields[11].encode("utf-8")) + 1
+            if text_bytes > MAX_NOTE_BYTES:
+                raise ValueError("text bound")
+            groups[key].append((word, fields[11], confidence, left, top, w, h))
+        if not page_seen:
+            raise ValueError("missing page")
+        lines = []
+        for key in order:
+            words = groups[key]
+            left, top = min(w[3] for w in words), min(w[4] for w in words)
+            right, bottom = max(w[3] + w[5] for w in words), max(w[4] + w[6] for w in words)
+            lines.append({"text": " ".join(w[1] for w in words),
+                          "confidence": sum(w[2] for w in words) / (100 * len(words)),
+                          "bounds": {"x": left / width, "y": (height - bottom) / height,
+                                     "width": (right - left) / width, "height": (bottom - top) / height}})
+        return lines
+    except (UnicodeError, ValueError, OverflowError) as exc:
+        raise Refusal("Tesseract returned invalid or incomplete TSV evidence") from exc
+
+
+def recognize_linux(root, mirror_input):
+    tesseract = shutil.which("tesseract")
+    if not tesseract:
+        raise Refusal("installed Tesseract with English language data is required; nothing will be installed")
+    ffmpeg = shutil.which("ffmpeg") if mirror_input else None
+    if mirror_input and not ffmpeg:
+        raise Refusal("installed ffmpeg is required for explicit horizontal mirror correction")
+    original = read_regular(root / "source.png", MAX_IMAGE_BYTES)
+    width, height = png_dimensions(original)
+    source_sha = digest(original)
+    image = root / "source.png"
+    preprocessing = {"horizontal_mirror": bool(mirror_input), "derived_image": None,
+                     "source_sha256": source_sha}
+    if mirror_input:
+        image = root / "ocr-mirrored.png"
+        if image.exists() or image.is_symlink():
+            raise Refusal("a prior mirrored image indicates interrupted preparation; inspect the run")
+        rc, _, stderr = camera.run_process([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-n",
+                                            "-i", str(root / "source.png"), "-vf", "hflip", "-frames:v", "1",
+                                            "-threads", "1", str(image)], 30)
+        create_file(root / "mirror.stderr.log", stderr.encode(errors="replace")[:65536])
+        if rc:
+            raise Refusal("explicit horizontal mirror correction failed; private diagnostics retained")
+        derived = read_regular(image, MAX_IMAGE_BYTES)
+        info = image.lstat()
+        if info.st_uid != os.getuid() or info.st_mode & 0o077 or png_dimensions(derived) != (width, height):
+            raise Refusal("derived OCR image is not private or does not preserve image dimensions")
+        preprocessing.update(derived_image=image.name, derived_sha256=digest(derived), tool="ffmpeg",
+                             filter="hflip", executable=ffmpeg)
+    if digest(read_regular(root / "source.png", MAX_IMAGE_BYTES)) != source_sha:
+        raise Refusal("retained source changed before recognition")
+    rc, version, _ = camera.run_process([tesseract, "--version"], 5)
+    version = version.splitlines()[0][:256] if version.splitlines() else ""
+    if rc or not version.startswith("tesseract "):
+        raise Refusal("installed Tesseract version could not be identified")
+    evidence = root / "tesseract.tsv"
+    if evidence.exists() or evidence.is_symlink():
+        raise Refusal("prior Tesseract evidence indicates interrupted preparation; inspect the run")
+    args = [tesseract, str(image), str(root / "tesseract"), "-l", "eng", "--oem", "1", "--psm", "3",
+            "-c", "load_system_dawg=0", "-c", "load_freq_dawg=0", "tsv"]
+    rc, _, stderr = camera.run_process(args, 45)
+    create_file(root / "tesseract.stderr.log", stderr.encode(errors="replace")[:65536])
+    if rc:
+        raise Refusal("local Tesseract recognition failed; verify English data and inspect private diagnostics")
+    data = read_regular(evidence, MAX_TSV_BYTES)
+    info = evidence.lstat()
+    if info.st_uid != os.getuid() or info.st_mode & 0o077:
+        raise Refusal("Tesseract evidence must be private and owned")
+    lines = parse_tesseract_tsv(data, width, height)
+    if digest(read_regular(root / "source.png", MAX_IMAGE_BYTES)) != source_sha:
+        raise Refusal("retained source changed during recognition")
+    return {"engine": "Tesseract", "engine_version": version, "engine_executable": tesseract,
+            "recognition_level": "LSTM automatic page segmentation", "languages": ["eng"],
+            "language_correction": None, "config": {"oem": 1, "psm": 3, "load_system_dawg": False,
+                                                     "load_freq_dawg": False},
+            "confidence_semantics": "mean word score divided by 100; not a calibrated probability or Vision equivalent",
+            "line_construction": "TSV hierarchy; words joined with one space, original spacing not recovered",
+            "bounds_coordinate_system": "normalized_bottom_left",
+            "orientation": "up_mirrored" if mirror_input else "up", "preprocessing": preprocessing,
+            "tsv_sha256": digest(data), "lines": lines}
+
+
 def recognize(root, mirror_input):
+    if sys.platform == "linux":
+        return recognize_linux(root, mirror_input)
+    if sys.platform != "darwin":
+        raise Refusal("local OCR is supported on macOS and Linux only")
     swift = shutil.which("swift")
     if not swift:
         raise Refusal("installed Swift and Apple Vision are required; nothing will be installed")
@@ -232,8 +372,9 @@ def prepare(root, capture_run=None, capture_token=None, fixture_image=None, mirr
         if record["request"] != request:
             raise Refusal("run already belongs to different source bytes or orientation")
         return status(root)
+    helper = "inbox.py" if sys.platform == "linux" else "recognize.swift"
     record = {"version": 1, "state": "preparing", "request": request, "prepare_time_unix": time.time(),
-              "ocr_helper_sha256": digest((BASE / "recognize.swift").read_bytes())}
+              "ocr_helper": helper, "ocr_helper_sha256": digest((BASE / helper).read_bytes())}
     persist(root, record)
     try:
         create_file(root / "source.png", image)
@@ -246,7 +387,7 @@ def prepare(root, capture_run=None, capture_token=None, fixture_image=None, mirr
         text = "\n".join(line["text"] for line in ocr["lines"] if line["text"].strip())
         if not text.strip():
             record["state"] = "needs_text"
-            record["reason"] = "Vision found no text; no candidate or note was saved"
+            record["reason"] = "OCR found no text; no candidate or note was saved"
         else:
             candidate = (text + "\n").encode("utf-8")
             note_text(candidate)
@@ -255,8 +396,9 @@ def prepare(root, capture_run=None, capture_token=None, fixture_image=None, mirr
                           candidate_bytes=len(candidate), preview_name="review.html")
             preview(root, record, text)
         persist(root, record)
-    except (Exception, KeyboardInterrupt):  # noqa: BLE001 - never replay interrupted preparation
-        record.update(state="unknown", reason="preparation did not complete; inspect private artifacts")
+    except (Exception, KeyboardInterrupt) as exc:  # noqa: BLE001 - never replay interrupted preparation
+        record.update(state="unknown", reason=str(exc) if isinstance(exc, Refusal)
+                      else "preparation did not complete; inspect private artifacts")
         with contextlib.suppress(OSError):
             persist(root, record)
     return status(root)

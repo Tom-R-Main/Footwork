@@ -22,6 +22,12 @@ OCR = {"engine": "fixture", "orientation": "up", "lines": [
     {"text": "First note", "confidence": .8, "bounds": {"x": .1, "y": .8, "width": .5, "height": .1}},
     {"text": "Second note", "confidence": .7, "bounds": {"x": .1, "y": .6, "width": .5, "height": .1}},
 ]}
+TSV_HEADER = "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n"
+
+
+def tsv(width=100, height=100, words=None):
+    page = f"1\t1\t0\t0\t0\t0\t0\t0\t{width}\t{height}\t-1\t\n"
+    return (TSV_HEADER + page + (words or "")).encode()
 
 
 class InboxTests(unittest.TestCase):
@@ -86,7 +92,9 @@ class InboxTests(unittest.TestCase):
 
     def test_real_helper_invocation_sets_orientation_without_rewriting_image(self):
         inbox.create_file(self.root / "source.png", PNG)
-        with patch.object(inbox.camera, "run_process", return_value=(0, json.dumps(OCR), "")) as process:
+        with patch.object(inbox.sys, "platform", "darwin"), \
+                patch.object(inbox.shutil, "which", return_value="/fixture/swift"), \
+                patch.object(inbox.camera, "run_process", return_value=(0, json.dumps(OCR), "")) as process:
             result = inbox.recognize(self.root, True)
         argv = process.call_args.args[0]
         self.assertEqual(argv[-1], "up_mirrored")
@@ -242,6 +250,13 @@ class InboxTests(unittest.TestCase):
         fixture = ("#!/usr/bin/env python3\nimport json,pathlib\n"
                    f"with open({str(marker)!r},'a') as f: f.write('OCR\\n')\n"
                    f"print({json.dumps(OCR)!r})\n")
+        if sys.platform == "linux":
+            program = bin_dir / "tesseract"
+            evidence = tsv(1, 1, "5\t1\t1\t1\t1\t1\t0\t0\t1\t1\t80\tFirst note\n")
+            fixture = ("#!/usr/bin/env python3\nimport pathlib,sys\n"
+                       "if '--version' in sys.argv:\n print('tesseract 5.fixture'); sys.exit(0)\n"
+                       f"with open({str(marker)!r},'a') as f: f.write('OCR\\n')\n"
+                       f"pathlib.Path(sys.argv[2]+'.tsv').write_bytes({evidence!r})\n")
         program.write_text(fixture)
         program.chmod(0o700)
         env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ["PATH"])
@@ -266,6 +281,124 @@ class InboxTests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout)["state"], "saved")
         self.assertEqual(marker.read_text(), "OCR\n")
         self.assertEqual(len(list((self.root / "inbox").iterdir())), 1)
+
+    def test_linux_tsv_groups_words_and_preserves_unicode_with_honest_bounds(self):
+        data = tsv(words="5\t1\t1\t1\t1\t1\t10\t20\t20\t10\t80\tcafé\n"
+                   "5\t1\t1\t1\t1\t2\t35\t20\t20\t10\t60\t世界\n"
+                   "5\t1\t1\t1\t2\t1\t10\t40\t20\t10\t90\tnext\n")
+        lines = inbox.parse_tesseract_tsv(data, 100, 100)
+        self.assertEqual([line["text"] for line in lines], ["café 世界", "next"])
+        self.assertEqual(lines[0]["confidence"], .7)
+        self.assertEqual(lines[0]["bounds"], {"x": .1, "y": .7, "width": .45, "height": .1})
+        self.assertEqual(inbox.parse_tesseract_tsv(tsv(), 100, 100), [])
+
+    def test_linux_tsv_refuses_malformed_incomplete_or_unbounded_evidence(self):
+        word = "5\t1\t1\t1\t1\t1\t10\t20\t20\t10\t80\tword\n"
+        cases = [b"", TSV_HEADER.encode(), tsv(words=word.replace("80", "nan")),
+                 tsv(words=word.replace("80", "101")), tsv(words=word.replace("20\t20", "99\t20")),
+                 tsv(words=word + word), tsv(words=word.replace("5\t1", "5\t2", 1)),
+                 tsv(words=word.replace("word", "x" * (inbox.MAX_NOTE_BYTES + 1))),
+                 b"x" * (inbox.MAX_TSV_BYTES + 1), tsv() + b"\xff"]
+        for data in cases:
+            with self.subTest(data=data[:80]), self.assertRaises(inbox.Refusal):
+                inbox.parse_tesseract_tsv(data, 100, 100)
+
+    def test_linux_missing_tools_are_typed_refusals_without_dispatch(self):
+        for mirror, tools in [(False, {}), (True, {"tesseract": "/fixture/tesseract"})]:
+            with patch.object(inbox.shutil, "which", side_effect=tools.get), \
+                    patch.object(inbox.camera, "run_process") as process, self.assertRaises(inbox.Refusal):
+                inbox.recognize_linux(self.root, mirror)
+            process.assert_not_called()
+
+    def test_linux_mirror_is_private_derived_copy_with_provenance(self):
+        inbox.create_file(self.root / "source.png", PNG)
+        evidence = tsv(1, 1, "5\t1\t1\t1\t1\t1\t0\t0\t1\t1\t80\tnote\n")
+        derived = PNG + b"fixture-derived"
+
+        def run(argv, timeout):
+            if "hflip" in argv:
+                self.assertIn("-n", argv)
+                inbox.create_file(Path(argv[-1]), derived)
+            elif "--version" in argv:
+                return 0, "tesseract 5.fixture\n", ""
+            else:
+                self.assertEqual(Path(argv[1]).name, "ocr-mirrored.png")
+                self.assertEqual(argv[-5:], ["-c", "load_system_dawg=0", "-c", "load_freq_dawg=0", "tsv"])
+                inbox.create_file(Path(argv[2] + ".tsv"), evidence)
+            return 0, "", ""
+
+        with patch.object(inbox.shutil, "which", side_effect=lambda name: "/fixture/" + name), \
+                patch.object(inbox.camera, "run_process", side_effect=run) as process:
+            result = inbox.recognize_linux(self.root, True)
+        self.assertEqual(process.call_count, 3)
+        self.assertEqual((self.root / "source.png").read_bytes(), PNG)
+        self.assertEqual((self.root / "ocr-mirrored.png").stat().st_mode & 0o777, 0o600)
+        self.assertEqual(result["preprocessing"]["source_sha256"], inbox.digest(PNG))
+        self.assertEqual(result["preprocessing"]["derived_sha256"], inbox.digest(derived))
+        self.assertEqual(result["tsv_sha256"], inbox.digest(evidence))
+        self.assertIn("not a calibrated probability", result["confidence_semantics"])
+        self.assertIsNone(result["language_correction"])
+
+    def test_linux_failure_is_retained_without_retry_or_false_candidate(self):
+        with patch.object(inbox.sys, "platform", "linux"), \
+                patch.object(inbox.shutil, "which", return_value=None):
+            result = inbox.prepare(self.root, fixture_image=str(self.image))
+        self.assertEqual(result["state"], "unknown")
+        self.assertIn("Tesseract", result["reason"])
+        with patch.object(inbox, "recognize") as recognize:
+            again = inbox.prepare(self.root, fixture_image=str(self.image))
+        recognize.assert_not_called()
+        self.assertEqual(again["state"], "unknown")
+        self.assertFalse((self.root / "candidate.txt").exists())
+
+    def test_linux_unmirrored_dispatch_and_source_change_refusal(self):
+        inbox.create_file(self.root / "source.png", PNG)
+        evidence = tsv(1, 1, "5\t1\t1\t1\t1\t1\t0\t0\t1\t1\t80\tnote\n")
+
+        def run(argv, timeout):
+            if "--version" in argv:
+                return 0, "tesseract 5.fixture", ""
+            self.assertEqual(Path(argv[1]).name, "source.png")
+            inbox.create_file(Path(argv[2] + ".tsv"), evidence)
+            (self.root / "source.png").write_bytes(PNG + b"changed")
+            return 0, "", ""
+
+        with patch.object(inbox.shutil, "which", return_value="/fixture/tesseract") as which, \
+                patch.object(inbox.camera, "run_process", side_effect=run), \
+                self.assertRaisesRegex(inbox.Refusal, "changed during"):
+            inbox.recognize_linux(self.root, False)
+        which.assert_called_once_with("tesseract")
+        self.assertFalse((self.root / "ocr-mirrored.png").exists())
+
+    def test_linux_malformed_ocr_and_failure_never_make_candidate(self):
+        for fail in (False, True):
+            with self.subTest(process_failure=fail):
+                run_root = inbox.private_directory(self.work / f"failure-{fail}")
+
+                def run(argv, timeout, fail=fail):
+                    if "--version" in argv:
+                        return 0, "tesseract 5.fixture", ""
+                    if fail:
+                        return 1, "", "fixture language data unavailable"
+                    inbox.create_file(Path(argv[2] + ".tsv"), TSV_HEADER.encode())
+                    return 0, "", ""
+
+                with patch.object(inbox.sys, "platform", "linux"), \
+                        patch.object(inbox.shutil, "which", return_value="/fixture/tesseract"), \
+                        patch.object(inbox.camera, "run_process", side_effect=run):
+                    result = inbox.prepare(run_root, fixture_image=str(self.image))
+                self.assertEqual(result["state"], "unknown")
+                self.assertFalse((run_root / "candidate.txt").exists())
+                self.assertFalse((run_root / "inbox").exists())
+
+    def test_linux_png_header_rejects_invalid_crc_or_pixel_bomb(self):
+        self.assertEqual(inbox.png_dimensions(PNG), (1, 1))
+        with self.assertRaises(inbox.Refusal):
+            inbox.png_dimensions(PNG[:25] + b"wrong" + PNG[30:])
+        header = PNG[:16] + inbox.struct.pack(">II", 100000, 100000) + PNG[24:29]
+        bomb = header + inbox.struct.pack(">I", inbox.zlib.crc32(header[12:29])) + PNG[33:]
+        with self.assertRaises(inbox.Refusal):
+            inbox.png_dimensions(bomb)
 
 
 if __name__ == "__main__":
