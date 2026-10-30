@@ -47,6 +47,11 @@ def network_summary(log):
                     "phase": row.get("phase"),
                     "time": row.get("time"),
                     "source": row.get("source"),
+                    **(
+                        {"request_line": "POST /tickets HTTP/1.1"}
+                        if params.get("line") == "POST /tickets HTTP/1.1\r\n"
+                        else {}
+                    ),
                     "params": {
                         k: v
                         for k, v in params.items()
