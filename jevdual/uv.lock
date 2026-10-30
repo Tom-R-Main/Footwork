@@ -731,7 +731,7 @@ wheels = [
 
 [[package]]
 name = "cua-driver"
-version = "0.38.0+footwork.d5373879"
+version = "0.38.0+footwork.d5373879.cleanup1"
 source = { directory = "vendor/cua-driver" }
 
 [[package]]

@@ -1,0 +1,24 @@
+{
+  "upstream_commit": "d5373879e9e0baf5a63999ac4d26902340c0ce20",
+  "upstream_archive_sha256": "606d8c8696aa54afcff32f285f8f6730a8eef1b6c2b4730372f5ce2b0fe426b1",
+  "patched_archive_sha256": "6dcea172cf5b71d0e24030647474cef19df755e6d14518340d1f66e726c81a77",
+  "patch_sha256": "d5bc330a7cc12b50b37ec46500b25f2a697cbd2c576b5a57038ac8ad195b269e",
+  "files": {
+    "libs/cua-driver/rust/crates/cua-driver-core/src/browser/engine.rs": {
+      "before": "a449e99763a7585bac80eaafc0d9743f1ad6c048d40716e61e45521a6b66d438",
+      "after": "d30f5a678d1bf5a8aad090f48605165be75782a2e27b72b82c36cf4ab74bc389"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/consent.rs": {
+      "before": "fbaf3a714c97c670571270804c8519f3a5cbea7ab59260bd64489ac3e27f96f1",
+      "after": "115ec8c415cb3eb7c2b101c899501e262c8624f1b882b5fb8a24748b0617f4a0"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs": {
+      "before": "2cc56b7b7b9c59fc1f804557e613d2d9559f5cdb9840f3969744ff3dd72a4418",
+      "after": "fd7b425b6554bf8847925756e0e321d5dc2ca604ca9d7764a22a689b95517408"
+    },
+    "libs/cua-driver/rust/crates/cua-driver-sdk/src/runtime.rs": {
+      "before": "681b1a2e58b441be176a4ea46e22a664ccf2d4eb8e60c53818e67a55eeeef14e",
+      "after": "047f257522697ace546e8afe22485f3ac50391b48dab7a8bfd226103e414bacf"
+    }
+  }
+}

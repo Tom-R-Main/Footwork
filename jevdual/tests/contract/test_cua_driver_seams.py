@@ -17,7 +17,7 @@ import pytest
 
 cd = pytest.importorskip("cua_driver")
 
-PINNED_VERSION = "0.38.0+footwork.d5373879"
+PINNED_VERSION = "0.38.0+footwork.d5373879.cleanup1"
 
 
 def _params(cls) -> set[str]:
