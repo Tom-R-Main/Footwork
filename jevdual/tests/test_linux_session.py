@@ -358,3 +358,13 @@ def test_probe_timeout_retains_phase_escalation_and_final_wait(tmp_path):
         assert [r['signal'] for r in row['termination']] == [signal.SIGTERM, signal.SIGKILL]
         assert row['signal'] == signal.SIGKILL and row['wait_complete']
     target.cleanup()
+
+
+def test_editor_waits_for_window_manager_mapping_acknowledgement(tmp_path):
+    target = FixtureSession(tmp_path / 'not-servicing')
+    target.blocked, target.reason = 'wm_ready', 'wm_not_servicing'
+    assert target.run() == 1
+    assert 'editor' not in target.processes
+    assert not (target.state / 'started').exists()
+    assert target.report['reason'] == 'wm_ready:wm_not_servicing'
+    assert not target.report['cleanup']['survivors']

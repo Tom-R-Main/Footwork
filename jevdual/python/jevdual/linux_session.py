@@ -390,6 +390,7 @@ class Session:
             self.transition('wm')
             wm = self.await_probe('wm', deadline)
             self.report['wm_identity'] = wm
+            self.await_probe('wm_ready', deadline)
             editor = self.spawn('editor', ['mousepad', '--disable-server', str(self.state / 'document.txt')])
             (self.state / 'editor.pid').write_text(str(editor.pid))
             self.transition('accessibility')
@@ -424,7 +425,7 @@ class Session:
         return 1 if failure not in (None, 'cancelled') or cleanup.get('survivors') or cleanup.get('uncertain') else 0
 
 
-def _x_probe(wm: bool) -> dict:
+def _x_probe(wm: bool, *, service: bool = False, phase=lambda _: None) -> dict:
     lib = ctypes.CDLL('libX11.so.6')
     lib.XOpenDisplay.argtypes, lib.XOpenDisplay.restype = [ctypes.c_char_p], ctypes.c_void_p
     lib.XCloseDisplay.argtypes = [ctypes.c_void_p]
@@ -467,10 +468,64 @@ def _x_probe(wm: bool) -> dict:
             child = supporting(lib.XDefaultRootWindow(display))
             if not child or supporting(child) != child:
                 return {'ready': False, 'reason': 'wm_ewmh_unavailable'}
+            if service:
+                # Selection/EWMH publication can precede the event loop. An
+                # initial admission also needs an acknowledged MapRequest.
+                # Health checks use the pure identity probe, never this window.
+                phase('wm_map')
+                if not _wm_servicing(lib, display):
+                    return {'ready': False, 'reason': 'wm_not_servicing'}
+                if lib.XGetSelectionOwner(display, atom) != owner or supporting(child) != child:
+                    return {'ready': False, 'reason': 'wm_identity_changed'}
+                phase('wm_map_acknowledged')
             return {'ready': True, 'wm_window': child, 'selection_owner': owner}
         return {'ready': True}
     finally:
         lib.XCloseDisplay(display)
+
+
+def _wm_servicing(lib, display) -> bool:
+    """One disposable client, before the editor exists; no user input."""
+    ptr, ulong, integer = ctypes.c_void_p, ctypes.c_ulong, ctypes.c_int
+    root = lib.XDefaultRootWindow(display)
+    lib.XCreateSimpleWindow.argtypes = [ptr, ulong, integer, integer, ctypes.c_uint,
+                                        ctypes.c_uint, ctypes.c_uint, ulong, ulong]
+    lib.XCreateSimpleWindow.restype = ulong
+    lib.XMapWindow.argtypes = lib.XDestroyWindow.argtypes = [ptr, ulong]
+    lib.XStoreName.argtypes = [ptr, ulong, ctypes.c_char_p]
+    lib.XSync.argtypes = [ptr, integer]
+    window = lib.XCreateSimpleWindow(display, root, 0, 0, 32, 32, 0, 0, 0)
+    if not window:
+        return False
+
+    def values(target, atom, expected):
+        actual, kind, count, remaining, data = ulong(), integer(), ulong(), ulong(), ptr()
+        status = lib.XGetWindowProperty(display, target, atom, 0, 1024, 0, expected,
+                                        ctypes.byref(actual), ctypes.byref(kind), ctypes.byref(count),
+                                        ctypes.byref(remaining), ctypes.byref(data))
+        try:
+            if status or actual.value != expected or kind.value != 32 or remaining.value or not data:
+                return []
+            return list(ctypes.cast(data, ctypes.POINTER(ulong))[:count.value])
+        finally:
+            if data:
+                lib.XFree(data)
+
+    try:
+        state = lib.XInternAtom(display, b'WM_STATE', 0)
+        clients = lib.XInternAtom(display, b'_NET_CLIENT_LIST', 0)
+        lib.XStoreName(display, window, b'Footwork readiness probe')
+        lib.XMapWindow(display, window)
+        lib.XSync(display, 0)
+        deadline = time.monotonic() + 1
+        while time.monotonic() < deadline:
+            if values(window, state, state)[:1] == [1] and window in values(root, clients, 33):
+                return True
+            time.sleep(.02)
+        return False
+    finally:
+        lib.XDestroyWindow(display, window)
+        lib.XSync(display, 0)
 
 
 def _read_events(path: Path) -> list[dict]:
@@ -534,8 +589,8 @@ async def _target_probe(pid: int, document: Path, phase=lambda _: None) -> dict:
 
 
 def probe(stage: str, pid: int, document: Path, phase=lambda _: None) -> dict:
-    if stage in ('x11', 'wm'):
-        return _x_probe(stage == 'wm')
+    if stage in ('x11', 'wm', 'wm_ready'):
+        return _x_probe(stage != 'x11', service=stage == 'wm_ready', phase=phase)
     if stage == 'bus':
         from jeepney import DBusAddress, new_method_call
         from jeepney.io.blocking import open_dbus_connection
@@ -562,7 +617,7 @@ def main() -> int:
     parser.add_argument('--startup-timeout', type=float, default=30)
     parser.add_argument('--probe-timeout', type=float, default=3)
     parser.add_argument('--cleanup-grace', type=float, default=2)
-    parser.add_argument('--probe', choices=['x11', 'bus', 'wm', 'atspi', 'target'])
+    parser.add_argument('--probe', choices=['x11', 'bus', 'wm', 'wm_ready', 'atspi', 'target'])
     parser.add_argument('--pid', type=int, default=0)
     parser.add_argument('--document', type=Path, default=Path('/nonexistent'))
     parser.add_argument('--probe-events', type=Path)
