@@ -58,6 +58,7 @@ class Session:
         self.processes: dict[str, subprocess.Popen] = {}
         self.logs: dict = {}
         self.identities: dict[int, str] = {}
+        self.root_identities: dict[int, str] = {}
         self.cancelled = False
         self.created = False
         self.reservation: tuple[Path, int] | None = None
@@ -119,18 +120,26 @@ class Session:
         table = process_table()
         self.identities = {pid: start for pid, start in self.identities.items()
                            if pid in table and table[pid]['start'] == start}
-        roots = {p.pid for p in self.processes.values()}
-        owned = roots | {pid for pid, start in self.identities.items()
-                         if pid in table and table[pid]['start'] == start}
+        roots = {pid for pid, start in self.root_identities.items()
+                 if pid in table and table[pid]['start'] == start}
+        owned = roots | set(self.identities)
+        sessions = roots | {table[pid]['session'] for pid in self.identities
+                            if table[pid]['session'] in self.root_identities
+                            and (table[pid]['session'] not in table
+                                 or table[table[pid]['session']]['start']
+                                 == self.root_identities[table[pid]['session']])}
         for _ in range(32):
             children = {pid for pid, r in table.items()
-                        if r['parent'] in owned or r['session'] in roots}
+                        if r['parent'] in owned or r['session'] in sessions}
             if children.issubset(owned):
                 break
             owned |= children
         for pid in owned:
             if pid in table:
                 self.identities.setdefault(pid, table[pid]['start'])
+        current_roots = {p.pid for p in self.processes.values()}
+        self.root_identities = {pid: start for pid, start in self.root_identities.items()
+                                if pid in current_roots or pid in sessions}
         return {pid: table[pid] for pid, start in self.identities.items()
                 if pid in table and table[pid]['start'] == start}
 
@@ -142,6 +151,9 @@ class Session:
         process = subprocess.Popen(self.commands.get(name, command), env=self.env, stdout=log,
                                    stderr=subprocess.STDOUT, start_new_session=True)
         self.processes[name] = process
+        row = process_table().get(process.pid)
+        if row is not None:
+            self.root_identities[process.pid] = row['start']
         self.capture()
         return process
 

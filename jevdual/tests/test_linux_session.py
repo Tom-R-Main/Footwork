@@ -149,6 +149,16 @@ def test_existing_profile_is_never_modified(tmp_path):
     assert not (path / 'session.json').exists()
 
 
+def test_reused_root_pid_does_not_grant_descendant_cleanup_authority(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'reuse')
+    target.processes['wm'] = SimpleNamespace(pid=42)
+    target.identities = {42: 'old'}
+    target.root_identities = {42: 'old'}
+    foreign = {'state': 'S', 'parent': 1, 'group': 42, 'session': 42, 'start': 'new'}
+    monkeypatch.setattr(session, 'process_table', lambda: {42: foreign})
+    assert target.capture() == {}
+
+
 def test_recovery_modal_is_a_readiness_refusal_not_an_action(monkeypatch, tmp_path):
     import cua_driver as cd
     from jevdual import native
