@@ -1,0 +1,47 @@
+{
+  "commit": "6c0f8a02be61baeda3360f2ab4b8ef6883698c07",
+  "python": "/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python",
+  "os": "macOS-26.5.1-arm64-arm-64bit",
+  "sdk": "0.38.0+footwork.d5373879",
+  "modules": {
+    "session": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/session.py",
+      "sha256": "c74c21f831d908c0e14675d355928648bd5342bda62f8ee4f2d467d263a1ead7"
+    },
+    "session_operations": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/session_operations.py",
+      "sha256": "1d578d4be20d7f0a2de228598002da0ac98c4b4d46d0233c56f1393ad4f0cb49"
+    },
+    "operator_evidence": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/operator_evidence.py",
+      "sha256": "c9018c67d353e5b5b59626950e9b7fb319cebf1905736300fb0c7e92248de6d7"
+    },
+    "native": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/native.py",
+      "sha256": "8c3edba03d5afc2ce1aa5e43c6c32a17b9bae353998875f239eaa782a7646ee3"
+    },
+    "ax": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/ax.py",
+      "sha256": "70effc2741a0e782f451e43b9c0ea39386349b99e120b9b3d594bb1a231982da"
+    },
+    "finder_targets": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/finder_targets.py",
+      "sha256": "89d874abb1052b63cb2e560a48fd0dae05c6ceb2e14bd7e9c532d8f8ec362838"
+    },
+    "ticket_evidence": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/ticket_evidence.py",
+      "sha256": "14d8d60a16b57ad6e8d11e33b23d88ac75b0ca28e27b8a34515c7d53a0a0a738"
+    },
+    "app_qualification": {
+      "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/candidate-6c0f8a0/site/jevdual/app_qualification.py",
+      "sha256": "6e20b298e4f9f62263ec6d02b452609bb6ca71896bf78f9a84e75713f4b5d19d"
+    }
+  },
+  "Finder": "26.4",
+  "Preview": "11.0",
+  "Chrome": "156.0.8078.79",
+  "harness": {
+    "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/live_driver_sealed.py",
+    "sha256": "500fb0a8c257ee4c9b4936f2ece1775fd3e58c3b79e27e8391fb4cbf597e36bb"
+  }
+}

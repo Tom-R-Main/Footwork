@@ -1,0 +1,249 @@
+{
+  "native_qualification": false,
+  "total_slots": 26,
+  "setup_failures": 0,
+  "groups": [
+    "controls-initial (12 original diagnostic slots)",
+    "controls-final (12 probe reruns after async lifecycle/lint repair)",
+    "controls-fetch (2 PH2 route-alternative slots)"
+  ],
+  "scope": "fresh isolated headless Chrome + direct HTTP against owned numeric loopback TicketFixture; two-second observation is not terminal evidence",
+  "fixture_source_sha256": "0fcaeaf4635b961fbe8e1eab25f6d8e88d37d7719cda1f0997a588c6028fb161",
+  "script_sha256_at_export": "e8493b2db2c650a0c5799bfe565bab02cefc66ebe833d17d87a5ec7313e06570",
+  "commands": [
+    ".venv/bin/python scripts/preheader_controls.py --run-dir /Users/thomasmain/projects/footwork/output/preheader-20261030/controls-initial",
+    ".venv/bin/python scripts/preheader_controls.py --run-dir /Users/thomasmain/projects/footwork/output/preheader-20261030/controls-final",
+    ".venv/bin/python scripts/preheader_controls.py --fetch-only --run-dir /Users/thomasmain/projects/footwork/output/preheader-20261030/controls-fetch"
+  ],
+  "observations": {
+    "http-normal": {
+      "slots": 4,
+      "ingresses": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "handler_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "submit_events": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "logical_post_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "retry_net_errors": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "http-truncated": {
+      "slots": 4,
+      "ingresses": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "handler_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "submit_events": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "logical_post_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "retry_net_errors": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "http-disconnect": {
+      "slots": 4,
+      "ingresses": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "handler_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "submit_events": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "logical_post_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "retry_net_errors": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "chrome-normal": {
+      "slots": 4,
+      "ingresses": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "handler_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "submit_events": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "logical_post_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "retry_net_errors": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "chrome-truncated": {
+      "slots": 4,
+      "ingresses": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "handler_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "submit_events": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "logical_post_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "retry_net_errors": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "chrome-disconnect": {
+      "slots": 4,
+      "ingresses": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "handler_counts": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "submit_events": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "logical_post_counts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "retry_net_errors": [
+        [
+          -324
+        ],
+        [
+          -324
+        ],
+        [
+          -324
+        ],
+        [
+          -324
+        ]
+      ]
+    },
+    "chrome-fetch-disconnect": {
+      "slots": 2,
+      "ingresses": [
+        1,
+        1
+      ],
+      "handler_counts": [
+        1,
+        1
+      ],
+      "submit_events": [
+        0,
+        0
+      ],
+      "logical_post_counts": [
+        1,
+        1
+      ],
+      "retry_net_errors": [
+        [],
+        []
+      ]
+    }
+  }
+}

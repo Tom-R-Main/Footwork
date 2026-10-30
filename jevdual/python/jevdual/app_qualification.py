@@ -93,6 +93,14 @@ class TicketStore:
         if self.path.is_symlink():
             raise QualificationError("ticket database symlink")
         with self._db() as db:
+            present = db.execute("SELECT 1 FROM sqlite_master WHERE name='fixture_state'").fetchone()
+            if (
+                present
+                and db.execute(
+                    "SELECT 1 FROM fixture_state WHERE key='completion_policy' AND value='sealed_fixture'"
+                ).fetchone()
+            ):
+                raise QualificationError("single-use fixture source cannot reopen")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS ingress (
                     id INTEGER PRIMARY KEY, received REAL NOT NULL, body_sha TEXT NOT NULL,
@@ -118,12 +126,79 @@ class TicketStore:
                 db.execute("INSERT OR IGNORE INTO fixture_state VALUES ('response_mode','normal')")
         self.path.chmod(0o600)
 
+    def configure_sealed(self) -> None:
+        """Create a single-use producer epoch before a listener or admission exists."""
+        with self._db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            if (
+                db.execute("SELECT 1 FROM fixture_state WHERE key='completion_policy'").fetchone()
+                or db.execute("SELECT 1 FROM ingress LIMIT 1").fetchone()
+            ):
+                raise QualificationError("sealed fixture requires a fresh source epoch")
+            db.executemany(
+                "INSERT INTO fixture_state VALUES (?,?)",
+                [("completion_policy", "sealed_fixture"), ("epoch", uuid.uuid4().hex), ("lifecycle", "open")],
+            )
+            db.execute("CREATE TABLE fixture_seal (id INTEGER PRIMARY KEY CHECK(id=1), body TEXT NOT NULL)")
+            for table in ("ingress", "tickets", "responses", "fixture_state", "fixture_seal"):
+                for action in ("INSERT", "UPDATE", "DELETE"):
+                    db.execute(
+                        f"CREATE TRIGGER sealed_{table}_{action} BEFORE {action} ON {table} WHEN EXISTS (SELECT 1 FROM fixture_state WHERE key='lifecycle' AND value='sealed') BEGIN SELECT RAISE(ABORT,'sealed fixture is immutable'); END"
+                    )
+
+    @staticmethod
+    def _require_open(db) -> None:
+        if db.execute("SELECT 1 FROM fixture_state WHERE key='lifecycle' AND value='sealed'").fetchone():
+            raise QualificationError("sealed fixture is immutable")
+
+    def seal_closed(self, *, _closure) -> None:
+        """Only the exact fixture's successful listener/handler join can seal."""
+        from jevdual.ticket_evidence import digest
+
+        if _closure is not getattr(self, "_closure", None) or _closure is None:
+            raise QualificationError("positive fixture closure is required")
+        with self._db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            self._require_open(db)
+            state = dict(db.execute("SELECT key,value FROM fixture_state"))
+            if state.get("completion_policy") != "sealed_fixture":
+                raise QualificationError("fixture did not prebind sealed completion")
+            snapshot = self._snapshot_db(db)
+            seal = {
+                "epoch": state["epoch"],
+                "fixture_id": state["fixture_id"],
+                "origin": state["origin"],
+                "closed_at": time.time(),
+                "boundary": "listener_closed_handlers_drained",
+                "snapshot_sha256": digest(snapshot),
+            }
+            db.execute("INSERT INTO fixture_seal VALUES (1,?)", (_json(seal),))
+            db.execute("UPDATE fixture_state SET value='sealed' WHERE key='lifecycle'")
+
+    @staticmethod
+    def _snapshot_db(db) -> dict:
+        return {
+            "ingress": [
+                {**dict(row), "fields": json.loads(row["fields"])}
+                for row in db.execute("SELECT * FROM ingress ORDER BY id")
+            ],
+            "tickets": [
+                json.loads(row[0]) for row in db.execute("SELECT fields FROM tickets ORDER BY request_id")
+            ],
+            "responses": [dict(row) for row in db.execute("SELECT * FROM responses ORDER BY ingress_id")],
+            "counts": {
+                table: db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                for table in ("ingress", "tickets", "responses")
+            },
+        }
+
     def bind_origin(self, origin: str) -> None:
         """Register this fixture server's current origin without replacing its durable identity."""
         from jevdual.ticket_evidence import normalize_origin
 
         origin = normalize_origin(origin)
         with self._db() as db:
+            self._require_open(db)
             db.execute("INSERT OR REPLACE INTO fixture_state VALUES ('origin',?)", (origin,))
 
     def bind_response_mode(self, mode: str) -> None:
@@ -131,6 +206,7 @@ class TicketStore:
         if mode not in ("normal", "truncated", "disconnect"):
             raise QualificationError("unsupported response mode")
         with self._db() as db:
+            self._require_open(db)
             previous = db.execute("SELECT value FROM fixture_state WHERE key='response_mode'").fetchone()
             if previous is not None and previous[0] == mode:
                 return
@@ -177,6 +253,7 @@ class TicketStore:
             error = "invalid_fields"
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
+            self._require_open(db)
             mode = db.execute("SELECT value FROM fixture_state WHERE key='response_mode'").fetchone()
             mode = mode[0] if mode is not None else None
             cursor = db.execute(
@@ -206,6 +283,7 @@ class TicketStore:
         Ingress alone, and every pre-header disconnect, remain insufficient.
         """
         with self._db() as db:
+            self._require_open(db)
             row = db.execute("SELECT response_mode,error FROM ingress WHERE id=?", (ingress_id,)).fetchone()
             if (
                 type(ingress_id) is not int
@@ -244,6 +322,7 @@ class TicketStore:
 
     def reject(self, body: bytes, error: str) -> None:
         with self._db() as db:
+            self._require_open(db)
             db.execute(
                 "INSERT INTO ingress(received,body_sha,fields,error) VALUES (?,?,?,?)",
                 (time.time(), hashlib.sha256(body).hexdigest(), "{}", error),
@@ -309,13 +388,23 @@ class TicketFixture:
         lose_reply_once: bool = False,
         port: int = 0,
         reply_loss: str = "disconnect",
+        submission_route: str = "navigation",
+        completion_policy: str = "response",
     ):
         if not isinstance(reply_loss, str) or reply_loss not in {"disconnect", "truncated"}:
             raise QualificationError("unsupported reply-loss mode")
         if reply_loss != "disconnect" and not lose_reply_once:
             raise QualificationError("truncated reply loss requires lose_reply_once")
+        if not isinstance(submission_route, str) or submission_route not in {"navigation", "fetch"}:
+            raise QualificationError("unsupported submission route")
+        if completion_policy not in ("response", "sealed_fixture"):
+            raise QualificationError("unsupported completion policy")
+        self.completion_policy = completion_policy
+        self.submission_route = submission_route
         self.root = Path(root).resolve()
         self.store = TicketStore(self.root / "tickets.sqlite")
+        if completion_policy == "sealed_fixture":
+            self.store.configure_sealed()
         self.lose_reply_once = lose_reply_once
         self.reply_loss = reply_loss
         self.store.bind_response_mode(reply_loss if lose_reply_once else "normal")
@@ -330,9 +419,30 @@ class TicketFixture:
                     f'<label>{html.escape(key)}<input name="{key}" aria-label="{key}" required></label>'
                     for key in FIELDS
                 )
+                submission = ""
+                if fixture.submission_route == "fetch":
+                    submission = """<p id="submission-result" role="status"></p><script>
+const form = document.querySelector('form');
+const result = document.getElementById('submission-result');
+let attempted = false;
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (attempted) return;
+  attempted = true;
+  form.querySelector('button').disabled = true;
+  const body = new URLSearchParams(new FormData(form));
+  try {
+    const response = await fetch(form.action, {method: 'POST', body});
+    result.textContent = await response.text();
+  } catch {
+    result.textContent = 'Submission result unavailable; reconcile before another attempt.';
+  }
+});
+</script>"""
                 data = (
                     f"<!doctype html><title>Footwork owned ticket fixture</title><h1>Register asset</h1>"
                     f'<form method="post" action="/tickets">{inputs}<button type="submit">Register asset</button></form>'
+                    + submission
                 ).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -390,8 +500,17 @@ class TicketFixture:
             def log_message(self, *_):
                 pass
 
-        self.server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-        self.server.daemon_threads = True
+        class OwnedServer(ThreadingHTTPServer):
+            daemon_threads = False
+            block_on_close = True
+
+            def get_request(self):
+                connection, address = super().get_request()
+                connection.settimeout(3)
+                return connection, address
+
+        self.server = OwnedServer(("127.0.0.1", port), Handler)
+        self.server.daemon_threads = completion_policy != "sealed_fixture"
         self.url = f"http://127.0.0.1:{self.server.server_port}"
         self.store.bind_origin(self.url)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
@@ -404,6 +523,12 @@ class TicketFixture:
         self.server.shutdown()
         self.server.server_close()
         self.thread.join(timeout=5)
+        if self.thread.is_alive():
+            raise QualificationError("fixture accept loop did not drain")
+        if self.completion_policy == "sealed_fixture":
+            closure = object()
+            self.store._closure = closure
+            self.store.seal_closed(_closure=closure)
 
 
 class HandoffRun:
@@ -582,9 +707,12 @@ class HandoffRun:
                         len(operation_ids) != 1
                         or retained.get("kind") != "ticket_submission"
                         or type(retained.get("schema_version")) is not int
-                        or retained["schema_version"] != ticket_evidence.VERSION
+                        or retained["schema_version"]
+                        not in (ticket_evidence.VERSION, ticket_evidence.SEALED_VERSION)
                     ):
-                        raise QualificationError("Chrome requires its admitted v2 ticket service receipt")
+                        raise QualificationError(
+                            "Chrome requires its admitted v2 or v3 ticket service receipt"
+                        )
                     ticket_scope = retained["projection"]["ticket_submission"]["scope"]
                 receipts.append(operations.receipt(op))
             before = artifact_identity(self.root, artifact)
@@ -604,7 +732,7 @@ class HandoffRun:
                 if (
                     not isinstance(check, dict)
                     or type(check.get("schema_version")) is not int
-                    or check["schema_version"] not in (1, 2)
+                    or check["schema_version"] not in (1, 2, 3)
                     or check.get("kind") != "ticket_oracle"
                 ):
                     raise QualificationError("Chrome requires a bound independent ticket oracle")
@@ -681,6 +809,8 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--lose-reply-once", action="store_true")
     parser.add_argument("--reply-loss", choices=("disconnect", "truncated"))
+    parser.add_argument("--submission-route", choices=("navigation", "fetch"), default="navigation")
+    parser.add_argument("--completion-policy", choices=("response", "sealed_fixture"), default="response")
     args = parser.parse_args()
     if args.reply_loss is not None and not args.lose_reply_once:
         parser.error("--reply-loss requires --lose-reply-once")
@@ -695,6 +825,8 @@ def main() -> None:
             port=args.port,
             lose_reply_once=args.lose_reply_once,
             reply_loss=args.reply_loss or "disconnect",
+            submission_route=args.submission_route,
+            completion_policy=args.completion_policy,
         ) as fixture:
             print(
                 _json(
@@ -704,6 +836,8 @@ def main() -> None:
                         "database": str(fixture.store.path),
                         "lose_reply_once": fixture.lose_reply_once,
                         "reply_loss": fixture.reply_loss,
+                        "submission_route": fixture.submission_route,
+                        "completion_policy": fixture.completion_policy,
                     }
                 ),
                 flush=True,

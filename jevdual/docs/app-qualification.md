@@ -1,6 +1,6 @@
 # Diversified app qualification
 
-The October 28 harness covers Finder file organization, Preview image transformation, Chrome ticket submission and interrupted handoffs. The [latest installed run](../results/move-submit-20261028/report.md) passed the owned nominal chain and an interrupted chain with truncated HTTP response loss. **The full portfolio gate remains open for disconnects before HTTP response headers**, which produced duplicate ingress and correctly remained unknown. Earlier runs remain linked below as historical evidence.
+The October 28 harness covers Finder file organization, Preview image transformation, Chrome ticket submission and interrupted handoffs. The [October 28 installed run](../results/move-submit-20261028/report.md) passed the owned nominal chain and an interrupted chain with truncated HTTP response loss. The original navigation/pre-header fault produced duplicate ingress and correctly remained unknown. The [October 30 v3 qualification](../results/preheader-20261030/report.md) adds a narrow fetch route with preadmitted terminal fixture closure for nominal and interrupted pre-header recovery. Earlier runs remain linked below as historical evidence.
 
 ## Fixture and independent checks
 
@@ -12,7 +12,7 @@ Start the owned local form with:
 python -m jevdual.app_qualification --root /absolute/run/ticket-fixture --lose-reply-once
 ```
 
-It prints an owned PID, loopback URL and database. POST ingress and deduplicated rows are recorded separately in SQLite, so one row cannot hide duplicate requests. `TicketStore.check(expected)` checks exact request ID, filename, orientation and digest. Lost responses and fixture restart retain both ledgers.
+It prints an owned PID, loopback URL and database. POST ingress and deduplicated rows are recorded separately in SQLite, so one row cannot hide duplicate requests. `TicketStore.check(expected)` checks exact request ID, filename, orientation and digest. With the default response policy, lost responses and fixture restart retain both ledgers. The opt-in sealed policy below prohibits reopening its source.
 
 `HandoffRun(root, authority, epoch)` dispatches no app actions. Call `begin(stage, session_id=...)` before each stage, then `complete(stage, operation_ids, verify, artifact)` after UI execution. It requires settled retained receipts from the bound session/app and an independent check bound to the same artifact identity. Preview preserves its input path and verifies clockwise rotation; Chrome preserves the entire input identity and rechecks the bound ticket database read-only. Stale/tampered input, unknown custody and unbound success dictionaries refuse advancement. Stage checkpoints survive process death; an interrupted active input cannot authorize blind redispatch.
 
@@ -48,9 +48,9 @@ The [repair rerun](../results/app-repair-20261028/report.md), on frozen commit `
 
 ## Pre-admitted Chrome submission evidence
 
-For the fresh owned ticket fixture, additionally pass `--ticket-manifest /absolute/run/ticket-manifest.json` at native Chrome startup. Its exact keys are `database`, `url`, `expected`, `artifact`, and `root`; `expected` contains the fresh UUID4-hex request ID, artifact basename, `clockwise90` orientation and SHA-256 of the saved artifact. Bind the empty ledger, its persistent fixture ID, response mode and exact numeric-loopback origin before form input. The registered artifact must retain its path, bytes and identity through submission.
+For the fresh owned ticket fixture, additionally pass `--ticket-manifest /absolute/run/ticket-manifest.json` at native Chrome startup. Its required keys are `database`, `url`, `expected`, `artifact`, and `root`; the optional `completion_policy` defaults to `response` (v2). `expected` contains the fresh UUID4-hex request ID, artifact basename, `clockwise90` orientation and SHA-256 of the saved artifact. Bind the empty ledger, its persistent fixture ID, response mode and exact numeric-loopback origin before form input. The registered artifact must retain its path, bytes and identity through submission.
 
-Only the exact `click button:Register asset` with all four expected observed form values can carry that preparation into admission. `status --reconcile` may resolve an unknown started attempt from one new matching ingress, one durable row and the v2 producer's supported response-boundary event, with the exact request body, origin, source and artifact bindings. The handler records that event only after flushing headers for a normal or truncated response. Pre-header-disconnect mode never qualifies, including before a retry reaches the ledger. Duplicate ingress, missing records, changed sources, reused nonce or mismatched fields leave it unknown. Historical operations cannot enroll after execution. The independently retained `ticket_submission` receipt survives controller death before finalization; it does not invent a native delivery count or replace the original uncertainty capsule. Token replay and reconciliation send no input.
+Only the exact `click button:Register asset` with all four expected observed form values can carry that preparation into admission. `status --reconcile` may resolve an unknown started attempt from one new matching ingress, one durable row and the v2 producer's supported response-boundary event, with the exact request body, origin, source and artifact bindings. The handler records that event only after flushing headers for a normal or truncated response. Pre-header-disconnect mode never qualifies under v2, including before a retry reaches the ledger. Duplicate ingress, missing records, changed sources, reused nonce or mismatched fields leave it unknown. Historical operations cannot enroll after execution. The independently retained `ticket_submission` receipt survives controller death before finalization; it does not invent a native delivery count or replace the original uncertainty capsule. Token replay and reconciliation send no input.
 
 The response-loss fixture has distinct modes: default `--lose-reply-once` disconnects before response headers; `--lose-reply-once --reply-loss truncated` sends headers and loses the body. Qualification reports each mode separately. A deduplicated server row alone never proves one submission.
 
@@ -65,3 +65,44 @@ The pre-header-disconnect trial again produced two ingress events and one row. I
 ## October 29 review corrections
 
 Qualification now requires v2 service-response provenance and an exact correlation between the admitted submission receipt and the Chrome oracle's ledger, origin, nonce, fields and artifact. Generic Chrome click receipts and unrelated matching databases cannot advance the handoff. Historical v1 records remain readable; new qualification cannot enroll old unknowns. The review also adds deterministic unresolved-custody checks to `done`, repairs interrupted projection logs without discarding their bytes, and requires qualified no-send before a second key input. These changes do not fix or qualify duplicate ingress after pre-header disconnects.
+
+
+## October 30 transport diagnosis and terminal fixture policy
+
+The [diagnostic controls](../results/preheader-20261030/controls/summary.json) separate native input from browser transport. In the observed Chrome form-navigation disconnect controls, one submit event and one logical CDP POST led to two handler invocations on separate connections with identical request bodies. Chromium NetLog records `HTTP_TRANSACTION_RESTART_AFTER_ERROR` with error `-324` between two `POST /tickets HTTP/1.1` sends on the same transaction. Direct HTTP controls produced one ingress. Both explicit Chrome fetch controls produced one ingress without that restart. These are finite diagnostic observations, not native UI qualification or a universal transport guarantee.
+
+The fixture retains `--submission-route navigation` as its default and duplicate-ingress challenge. Opt-in `--submission-route fetch` intercepts the form submission, encodes the same fields, makes one guarded fetch call, and disables further submission in that document. It displays returned text through `textContent`; an unavailable response instructs the operator to reconcile. This changes the observed submission route while preserving the original pre-header disconnect fault.
+
+A separate opt-in v3 `sealed_fixture` policy can qualify the final history of an owned producer epoch. Start a fresh fixture with:
+
+```sh
+python -m jevdual.app_qualification --root /absolute/run/ticket-fixture \
+  --submission-route fetch --completion-policy sealed_fixture \
+  --lose-reply-once --reply-loss disconnect
+```
+
+Record the printed PID, URL and database. Before native input, enroll the empty source using the usual ticket manifest plus the exact field `"completion_policy": "sealed_fixture"`. For example:
+
+```json
+{
+  "database": "/absolute/run/ticket-fixture/tickets.sqlite",
+  "url": "http://127.0.0.1:ACTUAL_PORT",
+  "expected": {
+    "request_id": "FRESH_UUID4_HEX",
+    "artifact": "renamed.png",
+    "orientation": "clockwise90",
+    "digest": "ACTUAL_SAVED_ARTIFACT_SHA256"
+  },
+  "artifact": "/absolute/run/fixture/organized/renamed.png",
+  "root": "/absolute/run",
+  "completion_policy": "sealed_fixture"
+}
+```
+
+Replace placeholders with the exact printed origin, fresh nonce and independently checked artifact digest. Pass this file through `footwork desktop start ... --ticket-manifest /absolute/run/ticket-manifest.json` together with the native Chrome PID, window, URL/title scope and shared authority shown above. The fixture and manifest must select the same completion policy before admission; existing unknowns cannot enroll afterward.
+
+An open v3 source remains unknown even when it contains one matching ingress. For the owned qualification workflow, retire the exact owned browser after its submission attempt, then send cooperative SIGTERM to the recorded fixture PID and wait for its exit. The CLI exits through its context manager: it stops accepts, closes the listener, joins all accepted non-daemon handlers, and atomically seals the final ledger snapshot. SQL guards/triggers reject later writes; a v3 source cannot reopen, whether still open or sealed. SIGKILL, a missing seal, an active handler, a quiet interval or process absence alone supplies no closure proof.
+
+Only then may read-only reconciliation validate the pre-admitted epoch, origin, identity, exact body/artifact, unique ingress/row and seal digest. Duplicate, changed or incomplete evidence preserves unknown custody. The retained v3 service receipt supplies no native input count. Chrome handoff validates it and independently recaptures the same sealed source.
+
+The terminal boundary is the cooperative fixture source epoch. It does not certify browser/network termination, prevent every later wire attempt, authenticate hostile SQLite files or establish universal exactly-once behavior. Default v2 response-boundary qualification and historical v1 reads remain separate; old unknowns are not upgraded. Installed runtime 6c0f8a0 passed nominal and interrupted pre-header qualification under this policy; the [phase report](../results/preheader-20261030/report.md) records exact artifacts, the retained read-only oracle repair, complete trial accounting and limits.

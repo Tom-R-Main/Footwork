@@ -1,0 +1,335 @@
+{
+  "unknowns": [
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/authority.sqlite",
+      "operation": "op_529c08217759",
+      "row_sha256": "8bdd5cb9c4c3e60e91cda5002878474d976c281fb5d5f45895c096f68ff9c8f4"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-1/authority.sqlite",
+      "operation": "op_1666f6a22761",
+      "row_sha256": "217730361372d3c58f677f9ac4b21f77cc98fbe8fc30810175e3b45bec3d4a12"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-3/authority.sqlite",
+      "operation": "op_b22ac7434218",
+      "row_sha256": "92ee76de0f60cbd9631d1f806b60b17748c9cb32deca5a452b74fa34d1573784"
+    },
+    {
+      "authority": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-disconnect-2/authority.sqlite",
+      "operation": "op_e4029f9cfa61",
+      "row_sha256": "436b0b46573a628df07b9313c9053f9b8825083604ca180c60149b611ad1d83c"
+    }
+  ],
+  "ports": [
+    {
+      "trial": "live-sealed-nominal",
+      "accepting": false
+    },
+    {
+      "trial": "live-fetch-nominal",
+      "accepting": false
+    },
+    {
+      "trial": "native-fetch-2",
+      "accepting": false
+    },
+    {
+      "trial": "live-fetch-interrupted",
+      "accepting": false
+    },
+    {
+      "trial": "live-sealed-interrupted",
+      "accepting": false
+    },
+    {
+      "trial": "native-sealed-interrupted",
+      "accepting": false
+    },
+    {
+      "trial": "native-disconnect-1",
+      "accepting": false
+    },
+    {
+      "trial": "native-fetch-1",
+      "accepting": false
+    },
+    {
+      "trial": "native-disconnect-3",
+      "accepting": false
+    },
+    {
+      "trial": "native-sealed-qualified",
+      "accepting": false
+    },
+    {
+      "trial": "native-disconnect-2",
+      "accepting": false
+    },
+    {
+      "trial": "live-nominal",
+      "accepting": false
+    }
+  ],
+  "saved_images": {
+    "live-sealed-nominal": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/preheader-20261030/live-sealed-nominal/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/live-sealed-nominal/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 391796513,
+        "size": 548,
+        "mtime_ns": 1793334771057371190,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793334967.724531,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    },
+    "live-sealed-interrupted": {
+      "ok": true,
+      "detail": "decoded saved pixels and dimensions equal the prescribed rotation",
+      "claims": [
+        "current_rotated_pixels",
+        "current_image_dimensions",
+        "preserved_fixture_siblings",
+        "rotation_clockwise90"
+      ],
+      "artifact": "/Users/thomasmain/projects/footwork/output/preheader-20261030/live-sealed-interrupted/fixture/organized/renamed.png",
+      "identity": {
+        "path": "/Users/thomasmain/projects/footwork/output/preheader-20261030/live-sealed-interrupted/fixture/organized/renamed.png",
+        "device": 16777234,
+        "inode": 391813088,
+        "size": 548,
+        "mtime_ns": 1793334829013023664,
+        "sha256": "121167d0cf0b722836a6d876f6cedae10d234aaec85576eeecdda1b39f046aff",
+        "width": 3,
+        "height": 5,
+        "rgb_sha256": "d87f28a227c9c75cacc3878c877e5527455b8338bb61a0eefa12ac26dc86e231"
+      },
+      "checked_at": 1793334967.726249,
+      "limits": [
+        "current pixels do not establish historical UI rotation/save",
+        "finite RGB fixture only"
+      ]
+    }
+  },
+  "owned_helper_retirement": [
+    {
+      "run": "native-disconnect-1",
+      "pid": 16435,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "native-disconnect-1",
+      "pid": 16427,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "native-disconnect-2",
+      "pid": 17828,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "native-disconnect-2",
+      "pid": 17826,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "native-disconnect-3",
+      "pid": 20880,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "native-disconnect-3",
+      "pid": 20877,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "native-fetch-1",
+      "pid": 48598,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "native-fetch-1",
+      "pid": 48590,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "native-fetch-2",
+      "pid": 51479,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "native-fetch-2",
+      "pid": 51476,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-nominal",
+      "pid": 38903,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "live-nominal",
+      "pid": 38803,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-nominal",
+      "pid": 36973,
+      "kind": "owned Preview",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-fetch-nominal",
+      "pid": 58967,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "live-fetch-nominal",
+      "pid": 58956,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-fetch-nominal",
+      "pid": 57397,
+      "kind": "owned Preview",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-fetch-interrupted",
+      "pid": 64597,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "live-fetch-interrupted",
+      "pid": 64595,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-fetch-interrupted",
+      "pid": 63235,
+      "kind": "owned Preview",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "native-sealed-interrupted",
+      "pid": 76154,
+      "kind": "Chrome",
+      "stopped": true,
+      "children": 6
+    },
+    {
+      "run": "native-sealed-interrupted",
+      "pid": 76148,
+      "kind": "server",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "native-sealed-qualified",
+      "pid": 77856,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "native-sealed-qualified",
+      "pid": 77849,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "live-sealed-nominal",
+      "pid": 82622,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "live-sealed-nominal",
+      "pid": 82609,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "live-sealed-nominal",
+      "pid": 81343,
+      "kind": "owned Preview",
+      "stopped": true,
+      "children": 0
+    },
+    {
+      "run": "live-sealed-interrupted",
+      "pid": 86647,
+      "kind": "Chrome",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "live-sealed-interrupted",
+      "pid": 86643,
+      "kind": "server",
+      "stopped": true,
+      "already_exited": true
+    },
+    {
+      "run": "live-sealed-interrupted",
+      "pid": 85985,
+      "kind": "owned Preview",
+      "stopped": true,
+      "children": 0
+    }
+  ]
+}

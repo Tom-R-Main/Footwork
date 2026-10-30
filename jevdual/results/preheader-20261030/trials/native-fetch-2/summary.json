@@ -1,0 +1,215 @@
+{
+  "root": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2",
+  "submission_route": "fetch",
+  "posture": "exclusive_desktop",
+  "loss": "disconnect",
+  "interrupt": false,
+  "events": [
+    {
+      "label": "chrome-start",
+      "words": [
+        "start",
+        "Owned full native qualification",
+        "--app",
+        "Google Chrome",
+        "--window",
+        "Footwork owned ticket fixture",
+        "--authority",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/authority.sqlite",
+        "--mode",
+        "exclusive_desktop",
+        "--pid",
+        "51479",
+        "--native-url",
+        "http://127.0.0.1:58126",
+        "--native-title",
+        "Footwork owned ticket fixture",
+        "--ticket-manifest",
+        "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/ticket-manifest.json"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "type-request_id",
+      "words": [
+        "do",
+        "type",
+        "textbox:request_id",
+        "32288bffd538425997d33fbf811e8ce6",
+        "--no-judge",
+        "--token",
+        "type-request_id"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(request_id) text='32288bffd538425997d33fbf811e8ce6': driver says confirmed in 2.2s"
+      ]
+    },
+    {
+      "label": "type-artifact",
+      "words": [
+        "do",
+        "type",
+        "textbox:artifact",
+        "asset.png",
+        "--no-judge",
+        "--token",
+        "type-artifact"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(artifact) text='asset.png': driver says confirmed in 1.2s"
+      ]
+    },
+    {
+      "label": "type-orientation",
+      "words": [
+        "do",
+        "type",
+        "textbox:orientation",
+        "clockwise90",
+        "--no-judge",
+        "--token",
+        "type-orientation"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(orientation) text='clockwise90': driver says confirmed in 1.3s"
+      ]
+    },
+    {
+      "label": "type-digest",
+      "words": [
+        "do",
+        "type",
+        "textbox:digest",
+        "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+        "--no-judge",
+        "--token",
+        "type-digest"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched type(digest) text='f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa9': driver says confirmed in 3.5s"
+      ]
+    },
+    {
+      "label": "submit",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 0,
+      "summary": [
+        "dispatched click(Register asset): driver says unverifiable (operation outcome unknown; inspect status, do not repeat input) in 0.5s"
+      ]
+    },
+    {
+      "label": "reconcile",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "submit-replay",
+      "words": [
+        "do",
+        "click",
+        "button:Register asset",
+        "--no-judge",
+        "--token",
+        "submit"
+      ],
+      "exit": 0,
+      "summary": []
+    },
+    {
+      "label": "reconcile-repeat",
+      "words": [
+        "status",
+        "--reconcile"
+      ],
+      "exit": 0,
+      "summary": []
+    }
+  ],
+  "kills": [],
+  "limits": [
+    "reserved desktop; no active-human coexistence claim"
+  ],
+  "component_only": "native Chrome diagnostic; no cross-app qualification claimed",
+  "expected": {
+    "request_id": "32288bffd538425997d33fbf811e8ce6",
+    "artifact": "asset.png",
+    "orientation": "clockwise90",
+    "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+  },
+  "chrome_readiness": 18340,
+  "submission_before_reconcile": {
+    "operation_id": "op_529c08217759",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "error": null
+  },
+  "submission_after_reconcile": {
+    "operation_id": "op_529c08217759",
+    "client_token": "submit",
+    "state": "unknown",
+    "disposition": "unknown",
+    "phase": "ambiguous",
+    "reservation": null,
+    "error": null
+  },
+  "ticket_oracle": {
+    "schema_version": 1,
+    "kind": "ticket_oracle",
+    "database": "/Users/thomasmain/projects/footwork/output/preheader-20261030/native-fetch-2/ticket-fixture/tickets.sqlite",
+    "expected": {
+      "request_id": "32288bffd538425997d33fbf811e8ce6",
+      "artifact": "asset.png",
+      "orientation": "clockwise90",
+      "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14"
+    },
+    "checked_at": 1793334228.087738,
+    "ok": false,
+    "detail": "ticket fields, row or independent ingress count differ",
+    "ingress": [
+      {
+        "id": 1,
+        "received": 1793334226.44742,
+        "body_sha": "29ed19322eb07a9c22466c145ec1d1cae0bd0c2a5f986ce17bae1932f1f8c1fc",
+        "fields": {
+          "artifact": "asset.png",
+          "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+          "orientation": "clockwise90",
+          "request_id": "32288bffd538425997d33fbf811e8ce6"
+        },
+        "error": null,
+        "origin": "http://127.0.0.1:58126",
+        "response_mode": "disconnect"
+      }
+    ],
+    "tickets": [
+      {
+        "artifact": "asset.png",
+        "digest": "f97d23410b3a55491c2f140e6d540dcf2ffa5b16f53930356ecf232a1fa96c14",
+        "orientation": "clockwise90",
+        "request_id": "32288bffd538425997d33fbf811e8ce6"
+      }
+    ],
+    "responses": []
+  },
+  "replay_no_additional_ingress": true,
+  "status": "observed"
+}

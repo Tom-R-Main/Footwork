@@ -25,6 +25,7 @@ from urllib.parse import quote, urlsplit
 from jevdual.app_qualification import FIELDS, artifact_identity
 
 VERSION = 2
+SEALED_VERSION = 3
 PRODUCER = "footwork.ticket_ledger/v2"
 PREDICATE = "unique_admitted_ticket_ingress"
 MAX_JSON = 1_048_576
@@ -138,7 +139,7 @@ def _snapshot(database: Path, root: Path) -> tuple[dict[str, Any], dict[str, Any
         connection.execute("BEGIN")
         fixture = dict(
             connection.execute(
-                "SELECT key,value FROM fixture_state WHERE key IN ('fixture_id','origin','response_mode')"
+                "SELECT key,value FROM fixture_state WHERE key IN ('fixture_id','origin','response_mode','completion_policy','epoch','lifecycle')"
             )
         )
         if not re.fullmatch(r"[0-9a-f]{32}", fixture.get("fixture_id", "")):
@@ -178,6 +179,14 @@ def _snapshot(database: Path, root: Path) -> tuple[dict[str, Any], dict[str, Any
             "origin": origin,
             "response_mode": fixture["response_mode"],
         }
+        if fixture.get("completion_policy") == "sealed_fixture":
+            if fixture.get("lifecycle") not in ("open", "sealed"):
+                raise TicketEvidenceError("invalid sealed fixture lifecycle")
+            source.update(completion_policy="sealed_fixture", epoch=fixture.get("epoch"))
+            seal_row = connection.execute("SELECT body FROM fixture_seal WHERE id=1").fetchone()
+            snapshot["seal"] = json.loads(seal_row[0]) if seal_row is not None else None
+            if (snapshot["seal"] is not None) != (fixture.get("lifecycle") == "sealed"):
+                raise TicketEvidenceError("sealed lifecycle disagrees with its event")
         canonical(snapshot)
         if before != _chain(database, file=True) or root_chain != _chain(root, file=False):
             raise TicketEvidenceError("ledger identity changed during capture")
@@ -233,18 +242,33 @@ def _artifact(root: Path, path: Path) -> dict[str, Any]:
         raise TicketEvidenceError("bound artifact changed or became unavailable") from error
 
 
-def bind(database: Path, url: str, expected: dict[str, str], artifact: Path, root: Path) -> dict[str, Any]:
+def bind(
+    database: Path,
+    url: str,
+    expected: dict[str, str],
+    artifact: Path,
+    root: Path,
+    *,
+    completion_policy: str = "response",
+) -> dict[str, Any]:
     """Enroll a fresh owned service source and input before any submission."""
     database, artifact, root = _path(database), _path(artifact), _path(root)
+    if completion_policy not in ("response", "sealed_fixture"):
+        raise TicketEvidenceError("unsupported ticket completion policy")
+    version = SEALED_VERSION if completion_policy == "sealed_fixture" else VERSION
     origin, expected = normalize_origin(url), _expected(expected)
     source, snapshot = _snapshot(database, root)
     identity = _artifact(root, artifact)
+    if (source.get("completion_policy") == "sealed_fixture") != (version == SEALED_VERSION) or snapshot.get(
+        "seal"
+    ) is not None:
+        raise TicketEvidenceError("ticket source completion policy differs from admission")
     if source["origin"] != origin or snapshot["counts"] != {"ingress": 0, "tickets": 0, "responses": 0}:
         raise TicketEvidenceError("ticket source must match the origin and be empty before enrollment")
     if expected["artifact"] != artifact.name or expected["digest"] != identity["sha256"]:
         raise TicketEvidenceError("ticket intent differs from its exact input artifact")
     scope = {
-        "schema_version": VERSION,
+        "schema_version": version,
         "kind": "ticket_scope",
         "root": str(root),
         "url": origin,
@@ -277,10 +301,18 @@ def _validate_scope(scope: Any, *, version: int = VERSION) -> None:
     root = _path(scope["root"])
     source = scope["source"]
     source_keys = {"database", "identity", "ancestors", "root", "fixture_id", "origin"}
-    if version == 2:
+    if version >= 2:
         source_keys.add("response_mode")
         if source.get("response_mode") not in {"normal", "truncated", "disconnect"}:
             raise TicketEvidenceError("unsupported ticket response mode")
+    if version == SEALED_VERSION:
+        source_keys.update(("completion_policy", "epoch"))
+        if (
+            source.get("completion_policy") != "sealed_fixture"
+            or not isinstance(source.get("epoch"), str)
+            or not re.fullmatch(r"[0-9a-f]{32}", source["epoch"])
+        ):
+            raise TicketEvidenceError("invalid sealed fixture epoch")
     if set(source) != source_keys:
         raise TicketEvidenceError("unsupported ticket source identity")
     database = _path(source["database"])
@@ -323,8 +355,15 @@ def _time(value: Any) -> None:
         raise TicketEvidenceError("ticket capture time is invalid")
 
 
+def _new_version(scope: Any) -> int:
+    version = scope.get("schema_version") if isinstance(scope, dict) else None
+    if type(version) is not int or version not in (VERSION, SEALED_VERSION):
+        raise TicketEvidenceError("unsupported new ticket scope version")
+    return version
+
+
 def _capture(scope: dict[str, Any]) -> dict[str, Any]:
-    _validate_scope(scope)
+    _validate_scope(scope, version=_new_version(scope))
     root = Path(scope["root"])
     source, snapshot = _snapshot(Path(scope["source"]["database"]), root)
     if source != scope["source"] or _artifact(root, Path(scope["artifact"]["path"])) != scope["artifact"]:
@@ -335,10 +374,13 @@ def _capture(scope: dict[str, Any]) -> dict[str, Any]:
 def prepare(scope: dict[str, Any]) -> dict[str, Any]:
     """Capture a fresh baseline immediately before admission, without input."""
     capture = _capture(scope)
-    if capture["snapshot"]["counts"] != {"ingress": 0, "tickets": 0, "responses": 0}:
+    if (
+        capture["snapshot"]["counts"] != {"ingress": 0, "tickets": 0, "responses": 0}
+        or capture["snapshot"].get("seal") is not None
+    ):
         raise TicketEvidenceError("ticket baseline is no longer empty")
     return {
-        "schema_version": VERSION,
+        "schema_version": _new_version(scope),
         "kind": "ticket_preparation",
         "scope": json.loads(canonical(scope)),
         "baseline": capture["snapshot"],
@@ -355,9 +397,11 @@ def _admission(
     try:
         validate_binding(binding)
         baseline = {"ingress": [], "tickets": [], "counts": {"ingress": 0, "tickets": 0}}
-        if version == 2:
+        if version >= 2:
             baseline["responses"] = []
             baseline["counts"]["responses"] = 0
+        if version == SEALED_VERSION:
+            baseline["seal"] = None
         if (
             not isinstance(prepared, dict)
             or set(prepared)
@@ -397,7 +441,7 @@ def _admission(
 
 def validate_preparation(op: Any, prepared: dict[str, Any], binding: dict[str, Any]) -> dict[str, Any]:
     """Validate the original preparation inside admission's transaction, before input starts."""
-    _admission(op, prepared, binding, allow_prepared=True)
+    _admission(op, prepared, binding, allow_prepared=True, version=_new_version(prepared))
     return prepared
 
 
@@ -430,6 +474,41 @@ def response_matches(snapshot: Any, *, ended: float, mode: str | None = None) ->
     )
 
 
+def sealed_matches(snapshot: Any, source: Any, *, began: float, ended: float) -> bool:
+    """Cooperative source-epoch closure, never browser delivery/termination proof."""
+    if not isinstance(snapshot, dict) or not isinstance(source, dict):
+        return False
+    rows = snapshot.get("ingress")
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        return False
+    seal = snapshot.get("seal")
+    if not isinstance(seal, dict) or set(seal) != {
+        "epoch",
+        "fixture_id",
+        "origin",
+        "closed_at",
+        "boundary",
+        "snapshot_sha256",
+    }:
+        return False
+    return (
+        source.get("completion_policy") == "sealed_fixture"
+        and all(seal.get(key) == source.get(key) for key in ("epoch", "fixture_id", "origin"))
+        and seal.get("boundary") == "listener_closed_handlers_drained"
+        and type(seal.get("closed_at")) in (int, float)
+        and math.isfinite(seal["closed_at"])
+        and began <= seal["closed_at"] <= ended
+        and seal.get("snapshot_sha256")
+        == digest({key: value for key, value in snapshot.items() if key != "seal"})
+        and all(
+            type(row.get("received")) in (int, float)
+            and math.isfinite(row["received"])
+            and row["received"] <= seal["closed_at"]
+            for row in snapshot.get("ingress", [])
+        )
+    )
+
+
 def _matches(
     snapshot: Any,
     expected: dict[str, str],
@@ -439,12 +518,23 @@ def _matches(
     ended: float,
     version: int = VERSION,
     response_mode: str | None = None,
+    source: dict[str, Any] | None = None,
 ) -> bool:
     keys = {"counts", "ingress", "tickets"}
     counts = {"ingress": 1, "tickets": 1}
-    if version == 2:
+    if version >= 2:
         keys.add("responses")
         counts["responses"] = 1
+    if version == SEALED_VERSION:
+        keys.add("seal")
+        responses = snapshot.get("responses") if isinstance(snapshot, dict) else None
+        if (
+            not isinstance(responses, list)
+            or len(responses) > 1
+            or not sealed_matches(snapshot, source, began=began, ended=ended)
+        ):
+            return False
+        counts["responses"] = len(responses)
     if (
         not isinstance(snapshot, dict)
         or set(snapshot) != keys
@@ -458,12 +548,20 @@ def _matches(
         return False
     if version == 2 and not response_matches(snapshot, ended=ended, mode=response_mode):
         return False
+    if version == SEALED_VERSION:
+        if (
+            not isinstance(snapshot["ingress"][0], dict)
+            or snapshot["ingress"][0].get("response_mode") != response_mode
+        ):
+            return False
+        if snapshot["responses"] and not response_matches(snapshot, ended=ended, mode=response_mode):
+            return False
     row = snapshot["ingress"][0]
     return (
         isinstance(row, dict)
         and set(row)
         == {"id", "received", "body_sha", "fields", "error", "origin"}
-        | ({"response_mode"} if version == 2 else set())
+        | ({"response_mode"} if version >= 2 else set())
         and type(row.get("id")) is int
         and row["id"] > 0
         and type(row.get("received")) in (int, float)
@@ -478,7 +576,8 @@ def _matches(
 
 def qualify(op: Any, prepared: dict[str, Any], binding: dict[str, Any]) -> dict[str, Any] | None:
     """Observe the independent service ledger; never resend or manufacture native delivery."""
-    _admission(op, prepared, binding)
+    version = _new_version(prepared)
+    _admission(op, prepared, binding, version=version)
     if getattr(op, "state", None) != "unknown" or getattr(op, "phase", None) == "not_sent":
         raise TicketEvidenceError("ticket qualification requires unresolved started custody")
     scope = prepared["scope"]
@@ -490,12 +589,14 @@ def qualify(op: Any, prepared: dict[str, Any], binding: dict[str, Any]) -> dict[
         began=op.created,
         ended=capture["checked_at"],
         response_mode=scope["source"]["response_mode"],
+        version=version,
+        source=scope["source"],
     ):
         return None
     receipt = {
-        "schema_version": VERSION,
+        "schema_version": version,
         "kind": "ticket_submission",
-        "producer": PRODUCER,
+        "producer": f"footwork.ticket_ledger/v{version}",
         "predicate": PREDICATE,
         "operation_id": op.id,
         "session_id": op.task,
@@ -553,9 +654,9 @@ def validate_receipt(
     if not isinstance(record, dict) or set(record) != keys:
         raise TicketEvidenceError("unsupported ticket receipt")
     version = record["schema_version"]
-    if type(version) is not int or version not in (1, VERSION):
+    if type(version) is not int or version not in (1, VERSION, SEALED_VERSION):
         raise TicketEvidenceError("unsupported ticket receipt version")
-    # Historical v1 validation remains I/O-free. Only v2 can enroll or qualify now.
+    # Historical v1 validation remains I/O-free; only preadmitted v2/v3 can qualify now.
     _admission(op, prepared, binding, version=version)
     from jevdual.operator_evidence import validate_binding
 
@@ -610,6 +711,7 @@ def validate_receipt(
             ended=capture["checked_at"],
             version=version,
             response_mode=record["source"].get("response_mode"),
+            source=record["source"],
         )
     ):
         raise TicketEvidenceError("ticket capture does not establish the admitted service effect")
@@ -619,6 +721,7 @@ def validate_receipt(
 def check_bound(scope: dict[str, Any], *, began: float) -> dict[str, Any]:
     """Recheck the actual pre-admitted source for a new handoff, never legacy state."""
     capture = _capture(scope)
+    version = _new_version(scope)
     passed = _matches(
         capture["snapshot"],
         scope["expected"],
@@ -626,9 +729,11 @@ def check_bound(scope: dict[str, Any], *, began: float) -> dict[str, Any]:
         began=began,
         ended=capture["checked_at"],
         response_mode=scope["source"]["response_mode"],
+        version=version,
+        source=scope["source"],
     )
     return {
-        "schema_version": VERSION,
+        "schema_version": version,
         "kind": "ticket_oracle",
         "ok": passed,
         "database": scope["source"]["database"],
