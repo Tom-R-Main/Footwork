@@ -12,11 +12,25 @@
                                      // driver is turning remote debugging back off.
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/consent.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/consent.rs
-@@ -102,11 +102,16 @@
+@@ -102,11 +102,30 @@
      BoundedResource(String),
  }
  
 +type CleanupTask = Arc<tokio::sync::Mutex<Option<tokio::task::JoinHandle<()>>>>;
++
++struct CleanupCompletion {
++    failed: Arc<std::sync::atomic::AtomicBool>,
++    succeeded: bool,
++}
++
++impl Drop for CleanupCompletion {
++    fn drop(&mut self) {
++        if !self.succeeded {
++            self.failed.store(true, Ordering::Release);
++        }
++    }
++}
++
 +
  #[derive(Clone)]
  pub struct ApprovalBroker {
@@ -29,7 +43,7 @@
  }
  
  impl ApprovalBroker {
-@@ -119,7 +124,47 @@
+@@ -119,7 +138,61 @@
              daemon_instance: Arc::from(Uuid::new_v4().to_string()),
              next_generation: Arc::new(AtomicU64::new(1)),
              provider,
@@ -47,8 +61,20 @@
 +        runtime: &tokio::runtime::Handle,
 +        work: impl std::future::Future<Output = ()> + Send + 'static,
 +    ) {
-+        let task = Arc::new(tokio::sync::Mutex::new(Some(runtime.spawn(work))));
-+        self.cleanup_tasks.lock().unwrap().push(task);
++        // The guard is captured before the first poll, so even an unpolled
++        // cancellation records failure before a completed handle is pruned.
++        let completion = CleanupCompletion { failed: self.cleanup_failed.clone(), succeeded: false };
++        let handle = runtime.spawn(async move {
++            let mut completion = completion;
++            work.await;
++            completion.succeeded = true;
++        });
++        let task = Arc::new(tokio::sync::Mutex::new(Some(handle)));
++        let mut tasks = self.cleanup_tasks.lock().unwrap();
++        tasks.retain(|task| task.try_lock().map_or(true, |slot| {
++            slot.as_ref().is_some_and(|handle| !handle.is_finished())
++        }));
++        tasks.push(task);
 +    }
 +
 +    /// Admission must be closed and synchronous end hooks finished first.
@@ -68,8 +94,10 @@
 +                    slot.take();
 +                }
 +            }
++            // Linear pass over empty joined slots; new and pending tasks
++            // remain owned, including when a drain is cancelled mid-await.
 +            self.cleanup_tasks.lock().unwrap().retain(|task| {
-+                !tasks.iter().any(|completed| Arc::ptr_eq(task, completed))
++                task.try_lock().map_or(true, |slot| slot.is_some())
 +            });
 +        }
 +        if self.cleanup_failed.load(Ordering::Acquire) {
@@ -78,7 +106,7 @@
      }
  
      pub fn provider_id(&self) -> Option<&'static str> {
-@@ -888,3 +933,34 @@
+@@ -888,3 +961,58 @@
          );
      }
  }
@@ -112,6 +140,30 @@
 +        broker.spawn_cleanup(&tokio::runtime::Handle::current(), async { panic!("fixture cleanup failure") });
 +        assert!(broker.drain_cleanup().await.is_err()); assert!(broker.drain_cleanup().await.is_err());
 +    }
++    #[tokio::test]
++    async fn completed_history_is_reaped_without_hiding_failed_tasks() {
++        let broker = ApprovalBroker::unavailable();
++        for _ in 0..1000 {
++            broker.spawn_cleanup(&tokio::runtime::Handle::current(), async {});
++            assert!(broker.cleanup_tasks.lock().unwrap().len() <= 1,
++                    "completed cleanup history grew with ended sessions");
++            loop {
++                let task = broker.cleanup_tasks.lock().unwrap().last().unwrap().clone();
++                if task.lock().await.as_ref().unwrap().is_finished() { break; }
++                tokio::task::yield_now().await;
++            }
++        }
++        broker.spawn_cleanup(&tokio::runtime::Handle::current(), async { panic!("fixture cleanup failure") });
++        loop {
++            let task = broker.cleanup_tasks.lock().unwrap().last().unwrap().clone();
++            if task.lock().await.as_ref().unwrap().is_finished() { break; }
++            tokio::task::yield_now().await;
++        }
++        broker.spawn_cleanup(&tokio::runtime::Handle::current(), async {});
++        assert!(broker.cleanup_tasks.lock().unwrap().len() <= 1);
++        assert!(broker.drain_cleanup().await.is_err(), "ordinary pruning hid task failure");
++    }
++
 +}
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
