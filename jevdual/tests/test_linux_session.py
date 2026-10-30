@@ -428,7 +428,7 @@ def test_pending_direct_wait_prevents_complete_cleanup_claim(monkeypatch, tmp_pa
             raise session.subprocess.TimeoutExpired('fixture child', timeout)
     target.processes['editor'] = Child()
     monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
-    monkeypatch.setattr(target, 'capture', lambda: {})
+    monkeypatch.setattr(target, 'capture', dict)
     receipt = target.cleanup()
     assert receipt['pending_direct_waits'] == ['editor']
     assert receipt['uncertain'] and not receipt['survivors']
