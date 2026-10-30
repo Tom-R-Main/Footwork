@@ -70,3 +70,8 @@ Test: a deterministic poll/capture interleaving leaves a direct child as a zombi
 Predicts: the owned-child race resolves through its existing Popen wait owner, while before/after snapshot truth remains available. Any orphan zombie remains explicitly reported until init reaps it.
 Against: the final snapshot still has a reapable owned child, earlier snapshots are erased, or the change calls waitpid for unowned processes.
 Refs: results/linux-product-release-20261030/report.md; python/jevdual/linux_session.py:cleanup
+
+## LR9 · exploratory · 2026-10-30 20:20
+Question: does every final installed journey actually complete its CLI and MCP processes normally, independently of its semantic receipts?
+Test: extend the existing installed qualification harness to preserve numeric CLI and MCP exit/wait records, including CLI timeout termination/escalation. Reject abnormal MCP close and retain logs even during cleanup. Use the same public commands, exact bytes, refusal, duplicate and restart assertions; add no mutation retry. This harness change precedes the frozen 30-cycle/10-journey measurement.
+Refs: scripts/linux/qualify.py; results/linux-native-reliability-20261030/
