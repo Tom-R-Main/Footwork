@@ -368,3 +368,26 @@ def test_editor_waits_for_window_manager_mapping_acknowledgement(tmp_path):
     assert not (target.state / 'started').exists()
     assert target.report['reason'] == 'wm_ready:wm_not_servicing'
     assert not target.report['cleanup']['survivors']
+
+
+def test_cleanup_reaps_child_that_exits_between_poll_and_capture(monkeypatch, tmp_path):
+    target = FixtureSession(tmp_path / 'reap-race')
+    target.state.mkdir()
+    class Child:
+        pid = 424242
+        returncode = None
+        calls = 0
+        def poll(self):
+            self.calls += 1
+            if self.calls >= 3:
+                self.returncode = -signal.SIGTERM
+            return self.returncode
+    child = Child()
+    target.processes['editor'] = child
+    monkeypatch.setattr(target, 'signal_owned', lambda *_: None)
+    monkeypatch.setattr(target, 'capture', lambda: {} if child.returncode is not None else {
+        child.pid: {'state': 'Z', 'start': 'original'}})
+    receipt = target.cleanup()
+    assert receipt['zombies'] == []
+    assert receipt['pre_reap_zombies'] == [child.pid]
+    assert receipt['direct_waits']['editor']['signal'] == signal.SIGTERM

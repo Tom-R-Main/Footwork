@@ -135,3 +135,19 @@ def test_untracked_build_script_in_source_cache_is_refused(tmp_path):
     (destination / "build.rs").write_text("fn main() {}")
     with pytest.raises(RuntimeError, match="Unexpected native source cache member"):
         BUILD.extract_source(archive, destination)
+
+
+def test_local_native_patch_has_inspectable_hash_bound_provenance():
+    import json
+
+    vendor = ROOT / 'vendor/cua-driver'
+    manifest = json.loads((vendor / 'patches/session-cleanup-join.json').read_text())
+    assert manifest['upstream_commit'] == BUILD.SOURCE_COMMIT
+    assert manifest['patched_archive_sha256'] == BUILD.SOURCE_SHA256
+    patch = (vendor / 'patches/session-cleanup-join.patch').read_bytes()
+    assert hashlib.sha256(patch).hexdigest() == manifest['patch_sha256']
+    assert len(manifest['files']) == 4
+    with tarfile.open(vendor / 'native-source.tar.gz') as source:
+        for name, hashes in manifest['files'].items():
+            assert hashlib.sha256(source.extractfile(name).read()).hexdigest() == hashes['after']
+            assert hashes['before'] != hashes['after']

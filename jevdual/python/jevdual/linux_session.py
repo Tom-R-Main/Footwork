@@ -351,6 +351,13 @@ class Session:
             if not any(r['state'] != 'Z' for r in self.capture().values()):
                 break
             time.sleep(.03)
+        before_reap = self.capture()
+        direct_waits = {}
+        for name, process in self.processes.items():
+            code = process.poll()  # final nonblocking reap, sole direct-child owner
+            direct_waits[name] = {'returncode': code, 'wait_complete': code is not None,
+                                  'exit_code': code if code is not None and code >= 0 else None,
+                                  'signal': -code if code is not None and code < 0 else None}
         remaining = self.capture()
         failures = [r for (pid, start), r in self.signal_failures.items()
                     if pid in self.unknown_identities or (pid in remaining and remaining[pid]['start'] == start)]
@@ -362,6 +369,8 @@ class Session:
                 path.unlink()
         (self.state / 'started').unlink(missing_ok=True)
         return {'forced_pids': forced,
+                'pre_reap_zombies': [pid for pid, r in before_reap.items() if r['state'] == 'Z'],
+                'direct_waits': direct_waits,
                 'survivors': [pid for pid, r in remaining.items() if r['state'] != 'Z'],
                 'zombies': [pid for pid, r in remaining.items() if r['state'] == 'Z'],
                 'inventory_complete': not self.inventory_reasons and not self.unknown_identities,
