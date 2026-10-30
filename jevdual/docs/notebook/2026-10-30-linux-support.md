@@ -34,3 +34,10 @@ Established: consumer installer can use uv, external pip or bundled ensurepip wi
 Uncertain: full real Linux dependency installation, CUA observation/actions, native exact-value and restart adapters, shared-desktop guarantees, Wayland, camera/OCR and the actual Meta sandbox remain unqualified. The Docker recipe is prepared, not built.
 Decision: retain the reviewed local work on codex/linux-support, keep native scope gates intact, and resume at the approved isolated dependency build. No PR, publication, merge or cloud change was performed.
 Refs: docs/linux-support.md; results/linux-support-20261030/report.md
+
+## L3 · prediction · 2026-10-30 00:42
+Hypothesis: the pinned CUA Linux source can supply an X11/AT-SPI observation and action route in the approved ExecuFunction-derived image; the remaining incompatibilities are in Footwork's platform helpers rather than an absent upstream Linux driver.
+Test: build the prepared image and exact source wheel, install a fresh real dependency bundle, then observe and change an owned editor/browser in an isolated Xvfb/D-Bus session. Record build failures and native refusals before changing adapters.
+Predicts: the library loads and provides window/tree observations and at least one target-bound input with independent readback; Footwork's macOS-specific seams can be isolated from those working primitives.
+Against: the pinned source cannot build or load on this host, the driver cannot bind a Linux app, or delivered input lacks reliable target identity/readback.
+Refs: scripts/linux/Dockerfile; vendor/cua-driver/PROVENANCE.md; docs/linux-support.md
