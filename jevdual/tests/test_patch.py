@@ -153,6 +153,10 @@ def test_lazy_uuid_subclass_keeps_upstream_repr_and_hash():
     from browser_use.dom import service, views
 
     patch.uninstall()
+    if os.environ.get("JEVDUAL_PURE_PY") == "1":
+        assert patch.install_lazy_uuid() is False
+        assert service.EnhancedDOMTreeNode is views.EnhancedDOMTreeNode
+        return
     assert patch.install_lazy_uuid() is True
     try:
         sub = service.EnhancedDOMTreeNode

@@ -1,0 +1,7 @@
+{
+  "jevdual/python/jevdual/agent_cli.py": "df8b6c6c13663abbf0c95a33f646c47627d4ba25917e45d8f3e46dab5d5fa50a",
+  "jevdual/python/jevdual/browser_driver.py": "0a88dddd5570f30b6f7aa11a6470d4aadc11f456f616719281ea7b9a6610eeaf",
+  "jevdual/python/jevdual/host_probe.py": "efece62338b7357a614df7b54023b4780a584fcb10d2bab324a413b15ad8efa1",
+  "jevdual/scripts/build_agent_bundle.py": "848299054abc59936326ca83ef1964526c2865c83d9d44dda605b0af41ece5f1",
+  "jevdual/tests/test_patch.py": "49d0c08c078a5192b386563912ed734547cbcc7067cd6e9c1e88c87ec95c8d9f"
+}

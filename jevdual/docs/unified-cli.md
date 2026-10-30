@@ -29,7 +29,9 @@ python /absolute/owned/footwork-bundle/install.py --venv /absolute/owned/footwor
 /absolute/owned/footwork-env/bin/footwork tools
 ```
 
-Use that absolute executable from the agent host or add its `bin` directory to the host's PATH. On Windows the executable is under `Scripts`. Existing environments are refused rather than overwritten. Installation fetches normal dependencies through uv and includes the pinned MuJoCo tool extra by default; `--core-only` omits simulator dependencies. `--offline` requires those dependencies already available in the configured uv cache. Node, Swift, ffmpeg, native development tools, cameras and macOS permission grants are host prerequisites, not downloaded system packages.
+Use that absolute executable from the agent host or add its `bin` directory to the host's PATH. On Windows the executable is under `Scripts`. Existing environments are refused rather than overwritten. The installer uses an existing Python and either uv or its venv module. Without uv, it uses the interpreter's pip >=22.3 or seeds pip into the new environment from Python's bundled ensurepip. It never downloads Python or compiles dependencies: missing compatible binary wheels stop installation. The CUA wheel must match the selected interpreter's OS and architecture before an environment is created; Linux wheels also require compatible system libraries.
+
+Installation includes the pinned MuJoCo tool extra by default; `--core-only` omits simulator dependencies. With uv, `--offline` uses locally available wheels and cache; with pip it disables package-index lookup and uses the bundle's local wheelhouse. The bundle initially contains the product and CUA wheels, so its transitive dependencies must also be supplied for an offline installation. Node, ffmpeg, cameras, platform libraries and applicable OS grants remain separate prerequisites. Swift/Vision OCR remains macOS-specific.
 
 ## Browser and computer operations
 
@@ -40,6 +42,10 @@ The original top-level verbs remain compatible. `footwork capability` exposes th
 `--json` wraps command output and the underlying exit code for agents. JSON stdout appears once in `data`, with an empty `output`; ordinary text stays in `output` and stderr stays in `diagnostics`. Read the underlying action receipt to determine effects: an exit code or successful transport alone does not prove that an action applied or a task completed. For a long-lived capability server, retain its MCP stdio protocol rather than wrapping the stream.
 
 `doctor` reports optional Jev Rust acceleration separately from the native CUA driver. The portable wheel uses the pure Python backend; that does not prevent desktop control. Native observations require Accessibility permission for the process hosting Footwork and report a permission blocker directly. Permission status describes prerequisites; it does not qualify a live capture or action. If startup fails, the session is not initialized; correct the reported cause and complete `start` before using `look` or `do`.
+
+`doctor` also includes `host_prerequisites`: OS, architecture, Python, available memory, visible Linux cgroup limits, executable presence and session indicators. The same probe runs before installation with `python3 python/jevdual/host_probe.py` from `jevdual/`, or after installation with `python -m jevdual.host_probe`. It does not launch programs, contact providers, or expose environment-variable values. A present executable or display variable does not qualify a working browser or desktop. Linux native workflows remain unqualified; see [Linux qualification](linux-support.md).
+
+The dedicated browser launcher recognizes installed Linux Chrome/Chromium binaries. Set `FOOTWORK_CHROME_EXECUTABLE` to the actual browser executable for a nonstandard installation such as Chrome for Testing. The process must match that executable, the exact owned profile and debugging port, and the current user. A shell wrapper with a different process executable does not qualify. These launch checks do not supply missing desktop permissions or durable browser admission.
 
 ## Auxiliary families
 
@@ -65,4 +71,4 @@ printf '%s' '{"command":"schema","args":["browser","start"]}' | footwork invoke 
 
 Discovery and observation do not contact a model provider. Commands that request Jev judgment or model-driven execution retain their existing credential and admission requirements. Doctor reports runtime prerequisites; it does not validate model credentials or certify a completed GUI effect.
 
-The macOS CI artifacts include `ci-agent-bundle/install.py`, its manifest and both wheels. Download the artifact for the desired Python profile, then run its installer against a new environment as above. This path needs uv and compatible Python; the consumer does not need a checkout or Rust compiler. Browser/desktop GUI control remains scoped to the existing macOS drivers and permissions.
+The macOS CI artifacts include `ci-agent-bundle/install.py`, its manifest and both wheels. Download the artifact for the desired Python profile, then run its installer against a new environment as above. This path needs compatible Python and either uv or venv with pip/ensurepip; the consumer does not need a checkout or Rust compiler. Browser/desktop GUI control remains scoped to the qualified macOS drivers and permissions.

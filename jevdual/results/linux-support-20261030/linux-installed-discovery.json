@@ -1,0 +1,326 @@
+{
+  "installed_product_without_dependencies": true,
+  "catalog_commands": [
+    "tools",
+    "catalog",
+    "schema",
+    "doctor",
+    "invoke",
+    "capability",
+    "mcp",
+    "tool"
+  ],
+  "doctor": {
+    "platform": "linux",
+    "supported": false,
+    "runtime": {
+      "python_version": "3.12.3",
+      "python_requirement": ">=3.11,<4.0",
+      "python_compatible": "unparsed",
+      "interpreter": "/tmp/footwork-consumer/bin/python",
+      "architecture": "x86_64",
+      "distribution": {
+        "version": "0.0.1",
+        "location": "/tmp/footwork-consumer/lib/python3.12/site-packages"
+      },
+      "loaded_modules": {
+        "jevdual": "/tmp/footwork-consumer/lib/python3.12/site-packages/jevdual/__init__.py",
+        "jevdual.capability.setup": "/tmp/footwork-consumer/lib/python3.12/site-packages/jevdual/capability/setup.py"
+      }
+    },
+    "dependencies": {},
+    "permissions": {
+      "accessibility": "unsupported",
+      "screen_recording": "unsupported"
+    },
+    "scope": "not_checked",
+    "journal": "not_checked",
+    "warnings": [
+      "Installed distribution metadata or requirement parser unavailable; compatibility is unverified."
+    ],
+    "dependency_metadata": "installed distribution",
+    "limitation": "macOS only: one loopback HTTP browser fixture and one identified TextEdit document. Window identity is checked when binding.",
+    "provider_account_required": false,
+    "rust_toolchain_required": false,
+    "blockers": [
+      "python_requirement_unparsed",
+      "dependency_metadata_unavailable",
+      "platform_unsupported"
+    ],
+    "prerequisite_status": "blocked",
+    "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks.",
+    "acceleration": {
+      "component": "jevdual._core",
+      "available": false,
+      "status": "not_installed",
+      "backend": "pure-python",
+      "scope": "Optional Jev Rust hot paths; independent of the CUA native driver"
+    },
+    "host_prerequisites": {
+      "schema_version": 1,
+      "platform": "linux",
+      "architecture": "x86_64",
+      "kernel": "7.0.14-linuxkit",
+      "libc": "glibc 2.39",
+      "distribution": {
+        "PRETTY_NAME": "Ubuntu 24.04.4 LTS",
+        "VERSION_ID": "24.04",
+        "ID": "ubuntu"
+      },
+      "python": {
+        "version": "3.12.3",
+        "pip_module": true,
+        "venv_module": true,
+        "ensurepip_module": true
+      },
+      "resources": {
+        "memory": {
+          "total_bytes": 4107141120,
+          "available_bytes": 3146395648
+        },
+        "cgroup": {
+          "versions": [
+            2
+          ],
+          "membership_readable": true,
+          "memory_limit_bytes": 2147483648,
+          "memory_remaining_bytes": 2076094464,
+          "cpu_quota_cores": 2.0,
+          "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+          "null_limit_meaning": "no finite limit observed, not proof of unlimited resources"
+        },
+        "available_memory_upper_bound_bytes": 2076094464,
+        "cpu_count": 4,
+        "cpu_affinity_count": 4
+      },
+      "executables_present": {
+        "uv": false,
+        "pip": false,
+        "pip3": false,
+        "rustc": false,
+        "cargo": false,
+        "rustup": false,
+        "cc": true,
+        "clang": false,
+        "pkg-config": false,
+        "google-chrome": false,
+        "google-chrome-stable": false,
+        "chromium": false,
+        "chromium-browser": false,
+        "dbus-run-session": false,
+        "dbus-send": false,
+        "gdbus": false,
+        "Xvfb": true,
+        "node": true,
+        "ffmpeg": false,
+        "tesseract": false
+      },
+      "session_indicators_present": {
+        "DISPLAY": false,
+        "WAYLAND_DISPLAY": false,
+        "DBUS_SESSION_BUS_ADDRESS": false,
+        "XDG_RUNTIME_DIR": false
+      },
+      "prerequisite_candidates": {
+        "browser_executable": false,
+        "graphical_session_indicator": false,
+        "session_bus_indicator": false
+      },
+      "runtime_qualification": "unverified",
+      "effect_verification": "not_asserted",
+      "limitations": [
+        "Executable and environment presence do not establish connection, permissions, or driver support.",
+        "No browser, desktop, accessibility service, native CUA library, or provider was started or queried.",
+        "Resource values are a transient upper bound, not a reservation or build-capacity guarantee.",
+        "Prebuilt installation avoids compilers; Python fallback does not replace native CUA desktop control."
+      ]
+    },
+    "tool_families": [
+      {
+        "name": "camera",
+        "commands": [
+          "doctor",
+          "capture",
+          "status"
+        ],
+        "status": "available",
+        "prerequisites": [
+          "macOS and ffmpeg for live capture"
+        ],
+        "missing": [],
+        "output_root": "/tmp/.footwork/tools/camera-capture-experiment"
+      },
+      {
+        "name": "inbox",
+        "commands": [
+          "prepare",
+          "accept",
+          "status"
+        ],
+        "status": "available",
+        "prerequisites": [
+          "explicit reviewed input; macOS Swift/Vision for OCR"
+        ],
+        "missing": [],
+        "output_root": "/tmp/.footwork/tools/desk-inbox-experiment"
+      },
+      {
+        "name": "workbench",
+        "commands": [
+          "link",
+          "status",
+          "list"
+        ],
+        "status": "available",
+        "prerequisites": [],
+        "missing": [],
+        "output_root": "/tmp/.footwork/tools/workbench-notes"
+      },
+      {
+        "name": "workcell",
+        "commands": [
+          "agent-bench",
+          "app-handoff",
+          "bench",
+          "bench-operator",
+          "bench-runner",
+          "body",
+          "body-network",
+          "controller",
+          "episode",
+          "image-guided",
+          "measurement",
+          "network-bench-operator",
+          "order-app",
+          "qualify-bench",
+          "qualify-network-body",
+          "qualify-network-workbench",
+          "qualify-order-handoff",
+          "qualify-workbench-crashes",
+          "qualify-workbench-health",
+          "qualify-workbench-recovery",
+          "qualify-workbench-restarts",
+          "record-network-workbench",
+          "score-agent-bench",
+          "score-network-body",
+          "score-network-workbench",
+          "score-operator",
+          "score-workbench-crashes",
+          "score-workbench-health",
+          "score-workbench-recovery",
+          "score-workbench-restarts"
+        ],
+        "status": "optional_dependencies_missing",
+        "prerequisites": [
+          "mujoco==3.15.0",
+          "numpy",
+          "headless rendering libraries for image operations",
+          "qualification commands require owned fixture inputs"
+        ],
+        "missing": [
+          "mujoco",
+          "numpy"
+        ],
+        "output_root": "/tmp/.footwork/tools/physical-workcell",
+        "command_prerequisites": {
+          "record-network-workbench": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-bench": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-network-body": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-network-workbench": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-order-handoff": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-workbench-crashes": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-workbench-health": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-workbench-recovery": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "qualify-workbench-restarts": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-agent-bench": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-network-body": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-network-workbench": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-operator": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-workbench-crashes": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-workbench-health": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-workbench-recovery": [
+            "matching source checkout for Git-frozen research qualification"
+          ],
+          "score-workbench-restarts": [
+            "matching source checkout for Git-frozen research qualification"
+          ]
+        }
+      },
+      {
+        "name": "browser-inspection",
+        "commands": [
+          "summarize",
+          "export"
+        ],
+        "status": "available",
+        "prerequisites": [
+          "Node.js for executable analyses",
+          "caller-supplied permitted tab/CDP adapter for capture libraries"
+        ],
+        "missing": [],
+        "capture": "adapter_required"
+      },
+      {
+        "name": "inspection-experiments",
+        "commands": [
+          "compare",
+          "coverage",
+          "publication-gate",
+          "export"
+        ],
+        "status": "available",
+        "prerequisites": [
+          "Node.js for executable analyses",
+          "caller-supplied permitted tab/CDP adapter for capture libraries"
+        ],
+        "missing": [],
+        "capture": "adapter_required"
+      },
+      {
+        "name": "inspection-transport",
+        "commands": [
+          "export"
+        ],
+        "status": "available",
+        "prerequisites": [
+          "Node.js for executable analyses",
+          "caller-supplied permitted tab/CDP adapter for capture libraries"
+        ],
+        "missing": [],
+        "capture": "adapter_required"
+      }
+    ],
+    "effect_verification": "not_asserted"
+  },
+  "native_qualification": false
+}

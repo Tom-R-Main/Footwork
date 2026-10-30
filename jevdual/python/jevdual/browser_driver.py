@@ -22,7 +22,9 @@ import dataclasses
 import json
 import logging
 import os
+import shutil
 import subprocess
+import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -38,6 +40,33 @@ PROFILE_DIR = Path(
 )
 PORT = int(os.environ.get("FOOTWORK_CHROME_PORT", "9333"))
 SESSION_LABEL = "footwork"
+
+
+def _browser_candidates() -> list[str]:
+    if sys.platform == "darwin":
+        return [CHROME]
+    if sys.platform == "linux":
+        # Prefer real binaries: shell launchers do not share the browser's executable identity.
+        return [
+            "/opt/google/chrome/chrome",
+            "/usr/lib/chromium/chromium",
+            "/usr/lib/chromium-browser/chromium-browser",
+            *filter(None, (shutil.which(name) for name in ("google-chrome", "chromium", "chromium-browser"))),
+        ]
+    return []
+
+
+def chrome_executable() -> str:
+    """Resolve an existing browser; never download one or ignore a broken explicit override."""
+    override = os.environ.get("FOOTWORK_CHROME_EXECUTABLE")
+    candidates = [override] if override is not None else _browser_candidates()
+    for candidate in candidates:
+        path = Path(candidate).expanduser()
+        if path.is_file() and os.access(path, os.X_OK):
+            return str(path.resolve())
+    raise RuntimeError(
+        "Chrome executable unavailable; set FOOTWORK_CHROME_EXECUTABLE to the installed browser binary"
+    )
 
 
 def durable_authority_refusal() -> dict[str, Any]:
@@ -71,12 +100,28 @@ def _page_key(url: str) -> str:
 
 
 def chrome_pid() -> int | None:
-    """The pid of the Chrome footwork launched (by its profile directory), or None."""
-    out = subprocess.run(
-        ["pgrep", "-f", f"user-data-dir={PROFILE_DIR}"], capture_output=True, text=True, check=False
-    )
-    pids = [int(p) for p in out.stdout.split() if p.strip().isdigit()]
-    return min(pids) if pids else None
+    """Find the one owned browser root, never a regex match or a renderer process."""
+    import psutil
+
+    executable = chrome_executable()
+    required = {f"--user-data-dir={PROFILE_DIR}", f"--remote-debugging-port={PORT}"}
+    pids = []
+    for process in psutil.process_iter(["pid", "cmdline", "exe", "uids"]):
+        info = process.info
+        args = info.get("cmdline") or []
+        owner = info.get("uids")
+        if (
+            required.issubset(args)
+            and not any(arg.startswith("--type=") for arg in args)
+            and info.get("exe")
+            and str(Path(info["exe"]).resolve()) == executable
+            and owner is not None
+            and owner.real == os.getuid()
+        ):
+            pids.append(info["pid"])
+    if len(pids) > 1:
+        raise RuntimeError("multiple browser processes match the owned profile; refusing ambiguous attachment")
+    return pids[0] if pids else None
 
 
 def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
@@ -86,9 +131,10 @@ def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
         return pid
     PROFILE_DIR.mkdir(parents=True, exist_ok=True)
     args = [
-        CHROME,
+        chrome_executable(),
         f"--user-data-dir={PROFILE_DIR}",
         f"--remote-debugging-port={PORT}",
+        "--remote-debugging-address=127.0.0.1",
         "--no-first-run",
         "--no-default-browser-check",
         "--window-size=1200,900",
@@ -108,6 +154,12 @@ def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
 
 def _host_class(pid: int) -> Any:
     import cua_driver as cd
+    import psutil
+
+    executable = chrome_executable()
+    if chrome_pid() != pid:
+        raise RuntimeError("browser process does not match the owned profile")
+    incarnation = psutil.Process(pid).create_time()
 
     class FootworkAuthorizationHost(cd.DriverAuthorizationHost):
         """Allow attaching to footwork's own Chrome and nothing else."""
@@ -117,11 +169,20 @@ def _host_class(pid: int) -> Any:
                 res = json.loads(request.resource_json or "{}")
             except json.JSONDecodeError:
                 res = {}
+            if not isinstance(res, dict):
+                res = {}
             fp = res.get("process_fingerprint") or {}
+            if not isinstance(fp, dict):
+                fp = {}
+            try:
+                same_process = chrome_pid() == pid and psutil.Process(pid).create_time() == incarnation
+            except (psutil.Error, RuntimeError, OSError):
+                same_process = False
             ok = (
-                res.get("pid") == pid
+                same_process
+                and res.get("pid") == pid
                 and res.get("endpoint_owner_pid") in (None, pid)
-                and str(fp.get("executable", CHROME)) == CHROME
+                and fp.get("executable") == executable
             )
             log.info(
                 "driver authorization %s: %s", "allowed" if ok else "denied", request.human_summary[:160]

@@ -246,6 +246,7 @@ def _schema(args: list[str]) -> dict:
 def _doctor(args: list[str]) -> int:
     from ._native import acceleration_status
     from .capability.cli import main as capability
+    from .host_probe import probe
     from .tool_catalog import catalog as auxiliary
 
     captured = io.StringIO()
@@ -261,6 +262,7 @@ def _doctor(args: list[str]) -> int:
         print(captured.getvalue(), end="")
     else:
         result["acceleration"] = acceleration_status()
+        result["host_prerequisites"] = probe()
         result["tool_families"] = auxiliary()
         result["effect_verification"] = "not_asserted"
         _emit(result)

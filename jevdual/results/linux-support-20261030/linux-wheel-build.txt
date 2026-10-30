@@ -1,0 +1,1 @@
+{'wheel': '/tmp/tmpdvxtuxhp/jevdual-0.0.1-py3-none-any.whl', 'files': 190, 'sha256': '7d24e3c5ddcf849107da31d0f29fc91c2ec35f4a7253c1cec998df226dbf9adc', 'verified': True}
