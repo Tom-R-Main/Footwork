@@ -1,0 +1,88 @@
+{
+  "source": "cad7508f8f4375735c0651c5e0aa5929f3b57700",
+  "wheel_sha256": "e466146e5ba77e68470eea7cca86d7beb84d42c3dfe3a7ac7e15ca06a6530660",
+  "total": 190,
+  "passed": 187,
+  "failed": 3,
+  "skipped": 0,
+  "by_module": {
+    "test_browser_cdp_cli": 3,
+    "test_browser_durable_authority": 49,
+    "test_browser_guard": 6,
+    "test_browser_holder": 18,
+    "test_browser_restart_cli": 3,
+    "test_cdp_click": 30,
+    "test_cdp_click_contract": 33,
+    "test_cdp_effector": 17,
+    "test_cdp_launch_custody": 10,
+    "test_cdp_transport_deadline": 21
+  },
+  "failure_cases": [
+    "test_cli_recovers_abrupt_holder_death_without_redispatch[prepared]",
+    "test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+    "test_cli_recovers_abrupt_holder_death_without_redispatch[retained]"
+  ],
+  "assessment": "not a clean qualification: test-only collector Path(Popen) errors bypassed fixture cleanup",
+  "cells": {
+    "client-lost-ack": {
+      "fixture_records": [
+        [
+          "intended"
+        ]
+      ],
+      "markers": [],
+      "helper_receipts": 9
+    },
+    "missing-guard": {
+      "fixture_records": [
+        []
+      ],
+      "markers": [],
+      "helper_receipts": 5
+    },
+    "prepared": {
+      "fixture_records": [
+        []
+      ],
+      "markers": [
+        {
+          "boundary": "prepared",
+          "operation_id": "op_da3d2908bf86",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "helper_receipts": 7
+    },
+    "started": {
+      "fixture_records": [
+        []
+      ],
+      "markers": [
+        {
+          "boundary": "started",
+          "operation_id": "op_20043ef2b6d0",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "helper_receipts": 7
+    },
+    "retained": {
+      "fixture_records": [
+        [
+          "intended"
+        ]
+      ],
+      "markers": [
+        {
+          "boundary": "retained",
+          "operation_id": "op_89933f38bf72",
+          "ingress_before_exit": 1,
+          "heavy_imports": []
+        }
+      ],
+      "helper_receipts": 7
+    }
+  }
+}
