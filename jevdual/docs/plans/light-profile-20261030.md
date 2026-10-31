@@ -212,6 +212,13 @@ Do not implement WebSocket framing as part of an effector port.
   then `Input.insertText` and exact post-value readback. Refuse unsupported contenteditable, readonly
   and sensitive fields. Preserve the existing empty-or-append rule and posture gate on replace. Navigate:
   `Page.navigate`, then a bounded wait on `Page.lifecycleEvent`. The route used goes in the receipt.
+  Qualification must include focus handlers and page timers that redirect focus to a sentinel field
+  between validation and insertion. A focus check followed by `Input.insertText` is not an atomic
+  target-local write; post-readback can detect a wrong-field effect only after it happens. Keep typing
+  refused until the delivery mechanism passes that negative control. If a synchronous targeted DOM
+  value route is chosen instead, name and qualify its different input/event semantics explicitly;
+  never silently substitute it or fall back after an uncertain send. DOM-event clicking may qualify
+  separately while typing, trusted input and navigation remain refused.
 - **Readback.** Value, checked state and URL are read in the isolated world to avoid page-patched
   reader functions. This is DOM-state evidence, not independent proof of submission or persistence.
   Fixture ingress counts, stored rows and saved bytes establish those separate postconditions.
