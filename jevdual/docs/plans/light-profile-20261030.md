@@ -330,3 +330,14 @@ delivery there has not been traced. Neither is in scope here.
 ## exf
 
 One task per package, with its exit criterion as acceptance criteria:
+
+| Package | exf |
+|---|---|
+| L0 | af8088e8 |
+| L1 | 20f9e0dd |
+| L3a | 519ce2ed |
+| L2 | ce4f81e7 |
+| L4 | 9ff3b7d5 |
+| L3b | 4ec9260c |
+| L5 | f9f68af7 |
+| L6 | 5ee944c4 |
