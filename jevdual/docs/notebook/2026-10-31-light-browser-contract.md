@@ -8,3 +8,16 @@ Test: characterization tests that record each bridge operation's tool name and d
 Predicts: identical requests, effect words, summaries, error codes and dispatched flags before and after; the session still maps a dispatched refusal to unverifiable rather than not sent; the new fields are carried data only, never an agent-callable surface; the binding reports context, document generation and persistent target identity as unavailable.
 Against: any request argument or effect field differs; a delivery-unknown refusal becomes not sent or dispatched=False; hint or next_call is rendered as a callable tool; or the binding claims persistent identity.
 Refs: docs/plans/light-profile-20261030.md (L1a / L1b); python/jevdual/browser_driver.py; python/jevdual/effectors/cua.py; vendor/cua-driver/native-source.tar.gz at d5373879 (cua-driver-core/src/browser/refusal.rs, tools.rs, recovery_hint.rs)
+
+## LBCU1 · update · 2026-10-31 11:12
+Resolves: LBC1 = held
+Observed: the nine characterization tests from dbd14d4 pass on base 701fd32 and on 390fda1: identical tool names, decoded arguments, effect words, summaries, error codes and dispatched flags; the CLI test still reports the delivery-unknown refusal as unverifiable, never not sent. Nine added tests fail on base and pass after: delivery/retryable/hint/next_call carried on BrowserEffect, payload kept read-only with extension fields, unreadable replies without status, BrowserBinding with connection-scoped tabs and no context, document generation or persistent identity, no call_tool or dispatch tool name left in browser_driver.py, and a non-CUA operations object accepted. Full suite 2512 passed against 2503 on base, with the same single environmental failure (cua-driver version pin vs the borrowed venv's pre-cleanup2 wheel).
+Inferred: the bridge no longer depends on CUA's wire, so L3a can supply a second BrowserOperations without touching the bridge's authority, posture or effect logic. Edge difference, deliberate: an empty refusal message now falls back to the reply text in attach/observe errors, as act() already did.
+Next: hosted CI on the PR. Live CUA browser tests, an installed wheel and Linux were not run here. The CLI renders none of the new fields yet; whether a delivery=unknown refusal should be worded differently in receipts is a separate, predicted change.
+Refs: results/light-browser-contract-20261031/report.md; tests/test_browser_contract.py; source 390fda1
+
+## LBCS · summary · 2026-10-31 11:12
+Established: BrowserBridge acts only through the Footwork-owned BrowserOperations protocol; the CUA adapter sends unchanged requests and translates replies without dropping fields. The effector's unknown-delivery and recovery advice are now retained as data, and the binding states which identity it lacks.
+Uncertain: live CUA browser behavior on this branch; whether other CUA browser replies carry fields the bridge should read. Native records remain SDK records behind L1a by design.
+Decision: ship L1b as its own PR after hosted CI. Next is L3a, a direct-CDP BrowserOperations, opt-in and nondurable. CUA stays in base metadata until L3a and L3c qualify.
+Refs: docs/plans/light-profile-20261030.md; results/light-browser-contract-20261031/report.md
