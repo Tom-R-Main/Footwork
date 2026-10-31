@@ -1,0 +1,269 @@
+{
+  "source": "e4df2c6b04644c332c8a636c556ae2fee0822d28",
+  "wheel_sha256": "ae780174a9f0dcfc0583dd9ed9c814f9f940fbfa54b6f64fdf50aad38233b059",
+  "total": 201,
+  "passed": 201,
+  "failed": 0,
+  "skipped": 0,
+  "by_module": {
+    "test_browser_cdp_cli": 3,
+    "test_browser_durable_authority": 49,
+    "test_browser_guard": 6,
+    "test_browser_holder": 20,
+    "test_browser_restart_cli": 3,
+    "test_browser_startup_cli": 3,
+    "test_browser_startup_lifecycle": 6,
+    "test_cdp_click": 30,
+    "test_cdp_click_contract": 33,
+    "test_cdp_effector": 17,
+    "test_cdp_launch_custody": 10,
+    "test_cdp_transport_deadline": 21
+  },
+  "retention_sensitivity_cases": [
+    {
+      "classname": "test_browser_holder",
+      "name": "test_post_admission_retention_failure_never_certifies_no_send[False]",
+      "time": "0.010"
+    },
+    {
+      "classname": "test_browser_holder",
+      "name": "test_post_admission_retention_failure_never_certifies_no_send[True]",
+      "time": "0.010"
+    }
+  ],
+  "cells": {
+    "client-lost-ack": {
+      "fixture_records": [
+        [
+          "intended"
+        ]
+      ],
+      "markers": [],
+      "helper_receipts": 9,
+      "startup_reports": []
+    },
+    "missing-guard": {
+      "fixture_records": [
+        []
+      ],
+      "markers": [],
+      "helper_receipts": 5,
+      "startup_reports": []
+    },
+    "prepared": {
+      "fixture_records": [
+        []
+      ],
+      "markers": [
+        {
+          "boundary": "prepared",
+          "operation_id": "op_ec51ec70ca99",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "helper_receipts": 7,
+      "startup_reports": []
+    },
+    "started": {
+      "fixture_records": [
+        []
+      ],
+      "markers": [
+        {
+          "boundary": "started",
+          "operation_id": "op_970398a7ad7a",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "helper_receipts": 8,
+      "startup_reports": []
+    },
+    "retained": {
+      "fixture_records": [
+        [
+          "intended"
+        ]
+      ],
+      "markers": [
+        {
+          "boundary": "retained",
+          "operation_id": "op_bcb57171c8b6",
+          "ingress_before_exit": 1,
+          "heavy_imports": []
+        }
+      ],
+      "helper_receipts": 8,
+      "startup_reports": []
+    },
+    "startup-launch-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "launch",
+          "pid": 18255,
+          "start": 1793473844.36,
+          "captured": {
+            "18255": 1793473844.36,
+            "18262": 1793473844.4,
+            "18264": 1793473844.4,
+            "18294": 1793473844.45,
+            "18266": 1793473844.43,
+            "18302": 1793473844.49,
+            "18286": 1793473844.45
+          }
+        }
+      ],
+      "helper_receipts": 0,
+      "startup_reports": [
+        {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 18255,
+          "captured_count": 10,
+          "zombies_before_test_reap": [
+            18257,
+            18261,
+            18262,
+            18294,
+            18286
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "startup-launch-2": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "launch",
+          "pid": 18368,
+          "start": 1793473846.21,
+          "captured": {
+            "18368": 1793473846.21,
+            "18375": 1793473846.26,
+            "18377": 1793473846.26,
+            "18403": 1793473846.32,
+            "18379": 1793473846.3,
+            "18426": 1793473846.37,
+            "18401": 1793473846.32
+          }
+        }
+      ],
+      "helper_receipts": 0,
+      "startup_reports": [
+        {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 18368,
+          "captured_count": 11,
+          "zombies_before_test_reap": [
+            18370,
+            18374,
+            18375,
+            18377,
+            18403,
+            18401
+          ],
+          "test_reaped": 6,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "startup-connect-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "connect",
+          "pid": 18479,
+          "start": 1793473848.1,
+          "captured": {
+            "18479": 1793473848.1,
+            "18487": 1793473848.13,
+            "18488": 1793473848.14,
+            "18512": 1793473848.2,
+            "18490": 1793473848.18,
+            "18536": 1793473848.24,
+            "18549": 1793473848.3,
+            "18558": 1793473848.32,
+            "18559": 1793473848.32,
+            "18510": 1793473848.19
+          }
+        }
+      ],
+      "helper_receipts": 0,
+      "startup_reports": [
+        {
+          "phase": "connect",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 18479,
+          "captured_count": 13,
+          "zombies_before_test_reap": [
+            18481,
+            18485,
+            18487,
+            18512,
+            18510
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "startup-navigate-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "navigate",
+          "pid": 18584,
+          "start": 1793473848.57,
+          "captured": {
+            "18584": 1793473848.57,
+            "18591": 1793473848.61,
+            "18592": 1793473848.61,
+            "18619": 1793473848.67,
+            "18595": 1793473848.64,
+            "18642": 1793473848.71,
+            "18660": 1793473848.76,
+            "18669": 1793473848.78,
+            "18670": 1793473848.78,
+            "18617": 1793473848.66
+          }
+        }
+      ],
+      "helper_receipts": 0,
+      "startup_reports": [
+        {
+          "phase": "navigate",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 18584,
+          "captured_count": 14,
+          "zombies_before_test_reap": [
+            18586,
+            18590,
+            18591,
+            18592,
+            18619,
+            18617
+          ],
+          "test_reaped": 6,
+          "live_after_test_cleanup": []
+        }
+      ]
+    }
+  }
+}

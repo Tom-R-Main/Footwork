@@ -1,0 +1,9 @@
+{
+  "main_runner_source_commit": "bb6851a",
+  "helper_source_commit": "eaba616",
+  "helpers": {
+    "receipt_plugin.py": "beece1b7042b449af48b533c6a984fe2e899c7017825d830f2d84a445391e9df",
+    "pytest_main.py": "c23cefeb8fb2cf19f48946a23cd1cb66606953798057a99d3e5ba34d20ac5c27"
+  },
+  "main_runner_sha256": "d39c117441f3b2a174606c2f716dffaad64291c064b1ad216937b35d38d0d492"
+}
