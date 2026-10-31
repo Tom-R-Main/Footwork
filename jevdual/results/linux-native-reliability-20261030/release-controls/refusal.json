@@ -1,0 +1,64 @@
+{
+  "implementation_commit": "51ee6e2f57c3959ce30e19f168baa864d9d38a6b",
+  "fixture": "intentional no-WM gate challenge; no readiness marker or authority claim",
+  "save_effect": {
+    "operation": "hotkey",
+    "target": -1,
+    "label": "ctrl+s",
+    "effect": "refused",
+    "route": null,
+    "evidence": [],
+    "summary": "foreground_unavailable: window 0x200003 did not become the active, focused window within 1.5s (active=0x0, focus_within_target=true, input focus: 0x200003 (Mousepad, pid 17 mousepad)); no input was se",
+    "error_code": "foreground_unavailable",
+    "delivery": "foreground",
+    "driver_delivery": null,
+    "dispatched": false,
+    "foreground": null,
+    "readback": null,
+    "delivered_count": 0,
+    "delivery_basis": "qualified_gate",
+    "field_readback": null,
+    "native_readback": null
+  },
+  "disk_unchanged": true,
+  "passed": true,
+  "cleanup": {
+    "forced_pids": [],
+    "pre_reap_zombies": [
+      17
+    ],
+    "direct_waits": {
+      "xvfb": {
+        "pid": 9,
+        "returncode": 0,
+        "wait_complete": true,
+        "exit_code": 0,
+        "signal": null
+      },
+      "bus": {
+        "pid": 15,
+        "returncode": 0,
+        "wait_complete": true,
+        "exit_code": 0,
+        "signal": null
+      },
+      "editor": {
+        "pid": 17,
+        "returncode": 1,
+        "wait_complete": true,
+        "exit_code": 1,
+        "signal": null
+      }
+    },
+    "pending_direct_waits": [],
+    "survivors": [],
+    "zombies": [],
+    "inventory_complete": true,
+    "inventory_reasons": [],
+    "unknown_identities": [],
+    "signal_failures": [],
+    "uncertain": false,
+    "signal_policy": "individual pidfd only; no numeric fallback",
+    "scope": "group/ancestry discovery and observed identities; pinned individual delivery; container init reaps orphans"
+  }
+}

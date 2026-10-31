@@ -1,0 +1,32 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (target/debug/deps/_core-a414fbc82e45c63c)
+
+running 19 tests
+test evidence::tests::empty_and_punctuation_only_claims_are_none ... ok
+test evidence::tests::exact_offsets_are_code_points ... ok
+test evidence::tests::python_isspace_includes_c0_separators ... ok
+test evidence::tests::whitespace_case_and_quotes_fold ... ok
+test hashes::tests::matches_python_int_of_hex_prefix ... ok
+test hashes::tests::batch_preserves_order_and_length ... ok
+test paint_order::tests::checks_within_a_group_precede_adds ... ok
+test paint_order::tests::higher_paint_order_occludes_lower_in_same_context_only ... ok
+test paint_order::tests::rect_relations_match_upstream_edge_rules ... ok
+test evidence::tests::sharp_s_casefolds_to_ss ... ok
+test paint_order::tests::split_diff_pieces_in_upstream_order ... ok
+test paint_order::tests::union_covers_by_composition ... ok
+test snapshot::tests::sensitive_filter_matches_upstream_rules ... ok
+test snapshot::tests::last_backend_index_wins_and_first_layout_index_wins ... ok
+test snapshot::tests::styles_take_ten_and_cursor_is_slot_six ... ok
+test tests::ping_overflows_to_none ... ok
+test tests::version_matches_cargo ... ok
+test paint_order::tests::union_contains_matches_brute_force ... ok
+test paint_order::tests::union_cap_refuses_new_rects ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+
+   Doc-tests _core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,10 @@
+{'attempt': 0, 'returncode': 0, 'signal': None, 'helper': 176, 'same_root': True}
+{'attempt': 1, 'returncode': 0, 'signal': None, 'helper': 234, 'same_root': True}
+{'attempt': 2, 'returncode': 0, 'signal': None, 'helper': 288, 'same_root': True}
+{'attempt': 3, 'returncode': 0, 'signal': None, 'helper': 341, 'same_root': True}
+{'attempt': 4, 'returncode': 0, 'signal': None, 'helper': 398, 'same_root': True}
+{'attempt': 5, 'returncode': 0, 'signal': None, 'helper': 452, 'same_root': True}
+{'attempt': 6, 'returncode': 0, 'signal': None, 'helper': 508, 'same_root': True}
+{'attempt': 7, 'returncode': 0, 'signal': None, 'helper': 564, 'same_root': True}
+{'attempt': 8, 'returncode': 0, 'signal': None, 'helper': 619, 'same_root': True}
+{'attempt': 9, 'returncode': 0, 'signal': None, 'helper': 674, 'same_root': True}

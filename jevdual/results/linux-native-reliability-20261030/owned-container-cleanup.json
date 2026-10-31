@@ -1,0 +1,446 @@
+{
+  "containers": [
+    {
+      "id": "857e9fe02c856c2590c4e2435b4a66822759ce4c87c61d034c9af7fc8328337c",
+      "name": "footwork-reliability-release-controls",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:58:31.976687046Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:57:32.945689658Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "2880725cb25a243fa78ed4063b4bfe2b171c7ecad8e259a19a19d7cddca277cc",
+      "name": "footwork-reliability-release",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T21:00:33.678167706Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:52:55.32951136Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "dc1fd140b70be05c03556ea6a7176b3f802576c9400112b99bcc7386a581cefe",
+      "name": "footwork-reliability-qualified-controls2",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:41:38.286694672Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:40:38.166229126Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "ced1acc04ea766118ca9973c45f0dee596fea940052f60300ae3a161de025f24",
+      "name": "footwork-reliability-qualified-controls",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 1,
+        "FinishedAt": "2026-10-30T20:36:32.626342243Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:35:52.097283517Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "548bef83eb73517833c99af35dfb444a22d21b470999dad588852243ea8677c7",
+      "name": "footwork-reliability-qualified",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:38:45.342979806Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:30:56.025192229Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "6ff4d9e308cac4888eeccba908fa7a5d18d624addd8d4e9f620fd627a94a93ce",
+      "name": "footwork-reliability-controls",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 1,
+        "FinishedAt": "2026-10-30T20:27:35.753668996Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:27:20.788394038Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "10b0bdbea74354e2ea2cd2912cee14cc0732aad2245f2191aa7140e55ecb281a",
+      "name": "footwork-reliability-final",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 1,
+        "FinishedAt": "2026-10-30T20:32:33.666117767Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:24:54.474137571Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "7837f78ea317fcbf82c4515dd5c7d8df0912788b34f7804e19d293a0a678b81d",
+      "name": "footwork-reliability-wm-ack10",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:17:14.14341562Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:16:38.365982679Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "d47b34e313517353ecded71eef20e692022a351dd4662b028de6b42cbbccbabf",
+      "name": "footwork-reliability-editor10",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:13:27.52096494Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:11:40.008362479Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "f3ca9336323ab666482d341a69b3a484bf8ab4adc67663a1ae6f0fa25952dfb8",
+      "name": "footwork-reliability-wm10",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:11:45.551586637Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:10:52.808388136Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "33d9f67627e2a69098cf12d2e17f0d26625e9578d1cfb721f4b942e3031ed088",
+      "name": "footwork-reliability-windowattrs10",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:11:10.739606796Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:09:52.661266462Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "5b342633313f8f19a6cb5e07a392ea580db7014cf0cf5a4cffdc098e82b34918",
+      "name": "footwork-reliability-windows10",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:07:33.313679923Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:06:44.542062093Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "59f0935fabda11c4870758b56f56974084cc568719e83fa6c3f93096a5076304",
+      "name": "footwork-reliability-recovery-capture",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:05:03.435572335Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:04:51.333084328Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "bc79a6c828197e3e782ceb012d854b39cb892fa4030008bb33d4690632a33665",
+      "name": "footwork-reliability-recovery-gdb20",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:04:03.470086534Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:03:37.779985819Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "eaf4b52e9ebe8fd1f2b05caab880f27e691548a52c5ed5ffd5911f932ec10f6c",
+      "name": "footwork-reliability-admissions",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:03:37.871358044Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:02:20.703195234Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "fc3f0efd9db0945357986d94e796a57bc49edb3196511f7fee03abbef09e7666",
+      "name": "footwork-reliability-recovery-gdb",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:02:14.623315239Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:01:59.680763319Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "2aebd4de74b68b683c69e620c0996f9fb5d2ebb3dbacb4f7de9e026fd9889ca9",
+      "name": "footwork-reliability-windows",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:01:39.337105017Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:01:36.678037015Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "ccde38b810f376f6fc571732e52956990ca4ce64c9eff1b6b9437637e33328c7",
+      "name": "footwork-reliability-recovery-isolated",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:01:35.908184252Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T20:01:25.453756554Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "3669633978d5b52c45384a70ecd99b58c28eba335145b5d073833082fde141b3",
+      "name": "footwork-reliability-callback",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T19:59:56.217802122Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T19:59:51.990118253Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "8499a99a718a463fcb1815e809e182c0f8fcf19aa2c8837a666ff52fd764bcc4",
+      "name": "footwork-reliability-recovery",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 1,
+        "FinishedAt": "2026-10-30T19:58:10.412242254Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T19:57:39.70920046Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "b763e311f1f0ea2fefcdc33828b2898760080a06ef945e2d4c35db96b49a5ee6",
+      "name": "footwork-reliability-minimal",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T19:58:23.263499913Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T19:56:59.910161364Z",
+        "Status": "exited"
+      },
+      "removed": true
+    },
+    {
+      "id": "036e63152e06760aa0194f39f14e05071d77b62667ded96993f32ee5260cbb74",
+      "name": "footwork-reliability-initial",
+      "image_id": "sha256:394ffa2d2ac8f5c9f45148f22bad3587429bceb19c93b88e8595f1e3f7892853",
+      "image_tag": "debian:13-slim",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-30T20:00:41.852089849Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-30T19:55:40.104185065Z",
+        "Status": "exited"
+      },
+      "removed": true
+    }
+  ],
+  "removed_count": 22,
+  "remaining_owned_containers": []
+}

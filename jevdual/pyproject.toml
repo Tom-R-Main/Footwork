@@ -20,7 +20,7 @@ dependencies = [
     "psutil==7.2.2",  # kernel process-start identity; already pinned in uv.lock
     "mcp==2.1.1",  # capability transport is direct, not an incidental browser dependency
     "packaging>=25,<27",  # required by installed dependency diagnostics
-    "cua-driver==0.38.0+footwork.d5373879",  # pinned like browser-use: tests/contract/test_cua_driver_seams.py
+    "cua-driver==0.38.0+footwork.d5373879.cleanup2",  # pinned like browser-use: tests/contract/test_cua_driver_seams.py
     "jeepney==0.9.0 ; sys_platform == 'linux'",  # bounded AT-SPI exact-text access
     "pyobjc-framework-applicationservices>=12 ; sys_platform == 'darwin'",
     "pyobjc-framework-quartz>=12 ; sys_platform == 'darwin'",

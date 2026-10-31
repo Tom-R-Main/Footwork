@@ -1,0 +1,22 @@
+   Compiling cua-driver-core v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.92s
+     Running unittests src/lib.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cua_driver_core-b502810164e709f4)
+
+running 1 test
+test consent::cleanup_lifecycle_tests::completed_history_is_reaped_without_hiding_failed_tasks ... FAILED
+
+failures:
+
+---- consent::cleanup_lifecycle_tests::completed_history_is_reaped_without_hiding_failed_tasks stdout ----
+
+thread 'consent::cleanup_lifecycle_tests::completed_history_is_reaped_without_hiding_failed_tasks' (112093) panicked at crates/cua-driver-core/src/consent.rs:971:13:
+completed cleanup history grew with ended sessions
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    consent::cleanup_lifecycle_tests::completed_history_is_reaped_without_hiding_failed_tasks
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1095 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p cua-driver-core --lib`

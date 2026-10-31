@@ -4,7 +4,7 @@ Footwork uses the exact October 27 CUA reference snapshot
 `d5373879e9e0baf5a63999ac4d26902340c0ce20`, including its native implementation.
 Although its upstream version field is 0.38.0, the reference has native changes
 after the 0.38.0 release. Footwork identifies the complete build as
-`cua-driver==0.38.0+footwork.d5373879` so the released native binary cannot
+`cua-driver==0.38.0+footwork.d5373879.cleanup2` so the released native binary cannot
 silently satisfy this dependency.
 
 `vendor/cua-driver/src/cua_driver` contains the six unchanged upstream Python

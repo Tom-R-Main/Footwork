@@ -1,0 +1,12 @@
+[
+  {
+    "case": "existing_output",
+    "returncode": 1,
+    "unchanged": true
+  },
+  {
+    "case": "wrong_upstream",
+    "returncode": 1,
+    "output_absent": true
+  }
+]

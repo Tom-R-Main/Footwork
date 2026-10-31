@@ -1,0 +1,4 @@
+Hit:1 https://deb.debian.org/debian trixie InRelease
+Get:2 https://deb.debian.org/debian trixie/main Sources [10.5 MB]
+Fetched 10.5 MB in 2s (6579 kB/s)
+Reading package lists...

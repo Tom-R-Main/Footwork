@@ -161,13 +161,16 @@ def test_unreadable_omitted_identity_is_not_retired(monkeypatch, tmp_path):
 
 def test_denied_signal_is_an_explicit_unresolved_cleanup(monkeypatch, tmp_path):
     target = session.Session(tmp_path / 'denied', grace=.01)
-    target.processes = {'root': SimpleNamespace(pid=42, poll=lambda: None)}
+    def wait(timeout):
+        raise session.subprocess.TimeoutExpired('denied fixture child', timeout)
+    target.processes = {'root': SimpleNamespace(pid=42, poll=lambda: None, wait=wait)}
     observed = {42: {'state': 'S', 'start': 'owned-A', 'session': 42, 'parent': 1}}
     monkeypatch.setattr(target, 'capture', lambda: observed)
     monkeypatch.setattr(session, 'pin_signal', lambda *_: {'pid': 42, 'status': 'denied', 'delivery': None})
     r = target.cleanup()
     assert r['survivors'] == [42] and r['uncertain']
     assert r['signal_failures'] == [{'pid': 42, 'status': 'denied', 'delivery': None}]
+    assert r['pending_direct_waits'] == ['root']
 
 
 def test_new_direct_child_custody_is_not_lost_to_inventory_truncation(monkeypatch, tmp_path):

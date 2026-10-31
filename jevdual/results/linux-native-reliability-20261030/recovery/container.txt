@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/work/run.py", line 16, in <module>
+    if p.poll() is not None:raise RuntimeError('session startup failed')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: session startup failed

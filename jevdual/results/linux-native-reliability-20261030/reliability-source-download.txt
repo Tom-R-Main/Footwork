@@ -1,0 +1,56 @@
+Reading package lists...
+NOTICE: 'mousepad' packaging is maintained in the 'Git' version control system at:
+https://salsa.debian.org/xfce-team/apps/mousepad.git
+Please use:
+git clone https://salsa.debian.org/xfce-team/apps/mousepad.git
+to retrieve the latest (possibly unreleased) updates to the package.
+NOTICE: 'openbox' packaging is maintained in the 'Git' version control system at:
+https://github.com/mati75/openbox-debian.git
+Please use:
+git clone https://github.com/mati75/openbox-debian.git
+to retrieve the latest (possibly unreleased) updates to the package.
+Need to get 2465 kB of source archives.
+Get:1 https://deb.debian.org/debian trixie/main mousepad 0.6.3-1 (dsc) [2212 B]
+Get:2 https://deb.debian.org/debian trixie/main mousepad 0.6.3-1 (tar) [1429 kB]
+Get:3 https://deb.debian.org/debian trixie/main mousepad 0.6.3-1 (diff) [9048 B]
+Get:4 https://deb.debian.org/debian trixie/main openbox 3.6.1-12 (dsc) [2301 B]
+Get:5 https://deb.debian.org/debian trixie/main openbox 3.6.1-12 (tar) [963 kB]
+Get:6 https://deb.debian.org/debian trixie/main openbox 3.6.1-12 (diff) [60.2 kB]
+dpkg-source: info: extracting mousepad in mousepad-0.6.3
+dpkg-source: info: unpacking mousepad_0.6.3.orig.tar.bz2
+dpkg-source: info: unpacking mousepad_0.6.3-1.debian.tar.xz
+dpkg-source: info: extracting openbox in openbox-3.6.1
+dpkg-source: info: unpacking openbox_3.6.1.orig.tar.gz
+dpkg-source: info: unpacking openbox_3.6.1-12.debian.tar.xz
+dpkg-source: info: using patch list from debian/patches/series
+dpkg-source: info: applying 01_rc.xml.patch
+dpkg-source: info: applying 02_fix_freedesktop_compliance.patch
+dpkg-source: info: applying 04_fix_xml_load_file.patch
+dpkg-source: info: applying 05_openbox-3.5.0-title-matching.patch
+dpkg-source: info: applying 06_openbox-3.5.0-which-2.20.patch
+dpkg-source: info: applying 07_update_desktop.patch
+dpkg-source: info: applying 08_autostart-fix.patch
+dpkg-source: info: applying 704724_fix_refers-to-autostart.sh.patch
+dpkg-source: info: applying 719620_fix_show_startup_notification.patch
+dpkg-source: info: applying 754207_use-scrot.patch
+dpkg-source: info: applying 808138_Replace-getgrent-with-getgroups.patch
+dpkg-source: info: applying d9a405e9.patch
+dpkg-source: info: applying fix-spelling-error-in-binary.patch
+dpkg-source: info: applying rpi/8911f9baac4e7d05412314575c3283d03f1b0358.patch
+dpkg-source: info: applying rpi/79b77e78cf141cc8a7111c9e4e26842bad092d17.patch
+dpkg-source: info: applying rpi/de67618ea9e3e22e7623d56530934d3a3fc272e0.patch
+dpkg-source: info: applying adapt-to-gsd-324.patch
+dpkg-source: info: applying 843231.patch
+dpkg-source: info: applying 873480_fix_restore-horz-vert.patch
+dpkg-source: info: applying 09-disable-check-gnome-version.patch
+dpkg-source: info: applying 887908.patch
+dpkg-source: info: applying 917204_undecorated_maximized_no_border.patch
+dpkg-source: info: applying python3.patch
+dpkg-source: info: applying Allow-256x256-window-icon-size-for-HiDPI-displays.patch
+dpkg-source: info: applying Add-class-hint-to-focus-cycle-popup.patch
+dpkg-source: info: applying Fix-collision-between-iterator-and-throw-away-argume.patch
+dpkg-source: info: applying 974180.patch
+dpkg-source: info: applying 1007147-openbox-imlib-free-image-NULL.patch
+dpkg-source: info: applying de.po.patch
+dpkg-source: info: applying 1033385_Fix_list_traversal_issue_in_client_calc_layer.patch
+Fetched 2465 kB in 1s (2124 kB/s)

@@ -1,0 +1,24 @@
+   Compiling cua-driver-sdk v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-sdk)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.98s
+warning: the following packages contain code that will be rejected by a future version of Rust: nom v1.2.4
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cua_driver_sdk-472851e1d4734820)
+
+running 1 test
+test runtime::tests::shutdown_waits_for_owned_session_cleanup_after_cancelled_drain ... FAILED
+
+failures:
+
+---- runtime::tests::shutdown_waits_for_owned_session_cleanup_after_cancelled_drain stdout ----
+
+thread 'runtime::tests::shutdown_waits_for_owned_session_cleanup_after_cancelled_drain' (79799) panicked at crates/cua-driver-sdk/src/runtime.rs:1023:9:
+shutdown returned before the owned cleanup task completed
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    runtime::tests::shutdown_waits_for_owned_session_cleanup_after_cancelled_drain
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 104 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p cua-driver-sdk --lib`

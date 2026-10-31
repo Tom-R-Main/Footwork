@@ -1,0 +1,442 @@
+ Downloading crates ...
+  Downloaded md-5 v0.10.6
+  Downloaded pbkdf2 v0.12.2
+  Downloaded oo7 v0.6.0
+  Downloaded async-fs v2.2.0
+  Downloaded libm v0.2.16
+  Downloaded num-bigint-dig v0.9.1
+    Blocking waiting for file lock on build directory
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling libc v0.2.186
+   Compiling syn v2.0.117
+   Compiling memchr v2.8.0
+   Compiling winnow v1.0.3
+   Compiling smallvec v1.15.1
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling serde_derive v1.0.228
+   Compiling serde v1.0.228
+   Compiling toml_parser v1.1.2+spec-1.1.0
+   Compiling futures-core v0.3.32
+   Compiling futures-io v0.3.32
+   Compiling crossbeam-utils v0.8.21
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling getrandom v0.4.2
+   Compiling toml_edit v0.25.12+spec-1.1.0
+   Compiling parking_lot_core v0.9.12
+   Compiling jobserver v0.1.35
+   Compiling enumflags2_derive v0.7.12
+   Compiling zeroize_derive v1.5.0
+   Compiling parking v2.2.1
+   Compiling cc v1.2.62
+   Compiling zeroize v1.8.2
+   Compiling proc-macro-crate v3.5.0
+   Compiling parking_lot v0.12.5
+   Compiling concurrent-queue v2.5.0
+   Compiling crypto-common v0.2.2
+   Compiling zvariant_utils v3.4.0
+   Compiling errno v0.3.14
+   Compiling signal-hook-registry v1.4.8
+   Compiling zvariant_derive v5.12.0
+   Compiling synstructure v0.13.2
+   Compiling endi v1.1.1
+   Compiling pkg-config v0.3.33
+   Compiling zerofrom-derive v0.1.7
+   Compiling tokio-macros v2.7.0
+   Compiling mio v1.2.0
+   Compiling socket2 v0.6.3
+   Compiling slab v0.4.12
+   Compiling tokio v1.52.1
+   Compiling zerofrom v0.1.8
+   Compiling cipher v0.5.2
+   Compiling yoke-derive v0.8.2
+   Compiling event-listener v5.4.1
+   Compiling event-listener-strategy v0.5.4
+   Compiling yoke v0.8.2
+   Compiling chacha20 v0.10.1
+   Compiling futures-lite v2.6.1
+   Compiling enumflags2 v0.7.12
+   Compiling zerocopy-derive v0.8.48
+   Compiling zerocopy v0.8.48
+   Compiling zvariant v5.12.0
+   Compiling zerovec-derive v0.11.3
+   Compiling subtle v2.6.1
+   Compiling digest v0.10.7
+   Compiling zbus_names v4.3.2
+   Compiling zerovec v0.11.6
+   Compiling rand v0.10.2
+   Compiling displaydoc v0.2.5
+   Compiling async-io v2.6.0
+   Compiling serde_bytes v0.11.19
+   Compiling async-task v4.7.1
+   Compiling uuid v1.23.1
+   Compiling async-channel v2.5.0
+   Compiling getrandom v0.3.4
+   Compiling quick-xml v0.39.4
+   Compiling polling v3.11.0
+   Compiling tracing-attributes v0.1.31
+   Compiling atomic-waker v1.1.2
+   Compiling piper v0.2.5
+   Compiling tracing v0.1.44
+   Compiling async-lock v3.4.2
+   Compiling async-trait v0.1.89
+   Compiling thiserror-impl v2.0.18
+   Compiling serde_json v1.0.149
+   Compiling thiserror v2.0.18
+   Compiling async-signal v0.2.14
+   Compiling blocking v1.6.2
+   Compiling tinystr v0.8.3
+   Compiling uniffi_internal_macros v0.31.0
+   Compiling icu_locale_core v2.2.0
+   Compiling async-process v2.5.0
+   Compiling async-executor v1.14.0
+   Compiling zerotrie v0.2.4
+   Compiling potential_utf v0.1.5
+   Compiling zbus_macros v5.16.0
+   Compiling async-broadcast v0.7.2
+   Compiling ordered-stream v0.2.0
+   Compiling async-recursion v1.1.1
+   Compiling serde_repr v0.1.20
+   Compiling getrandom v0.2.17
+   Compiling winnow v0.7.15
+   Compiling hex v0.4.3
+   Compiling zbus v5.16.0
+   Compiling icu_collections v2.2.0
+   Compiling num v0.4.3
+   Compiling icu_provider v2.2.0
+   Compiling ref-cast-impl v1.0.25
+   Compiling futures-macro v0.3.32
+   Compiling futures-util v0.3.32
+   Compiling ref-cast v1.0.25
+   Compiling tempfile v3.27.0
+   Compiling hmac v0.12.1
+   Compiling wayland-sys v0.31.11
+   Compiling block-padding v0.3.3
+   Compiling aho-corasick v1.1.4
+   Compiling semver v1.0.28
+   Compiling minimal-lexical v0.2.1
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling nom v7.1.3
+   Compiling rustc_version v0.4.1
+   Compiling regex-automata v0.4.14
+   Compiling fs-err v2.11.0
+   Compiling inout v0.1.4
+   Compiling uniffi_pipeline v0.31.0
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling askama_parser v0.14.0
+   Compiling wayland-backend v0.3.15
+   Compiling basic-toml v0.1.10
+   Compiling scroll_derive v0.12.1
+   Compiling smawk v0.3.3
+   Compiling rustc-hash v2.1.3
+   Compiling textwrap v0.16.2
+   Compiling scroll v0.12.0
+   Compiling idna_adapter v1.2.2
+   Compiling uniffi_meta v0.31.0
+   Compiling askama_derive v0.14.0
+   Compiling cipher v0.4.4
+   Compiling heapless v0.7.17
+   Compiling weedle2 v5.0.0
+   Compiling hkdf v0.12.4
+   Compiling rand_core v0.6.4
+   Compiling sha2 v0.10.9
+   Compiling zbus_xml v5.1.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling rquickjs-sys v0.14.0
+   Compiling cargo-platform v0.1.9
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_spanned v1.1.1
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling plain v0.2.3
+   Compiling bytemuck v1.25.0
+   Compiling downcast-rs v1.2.1
+   Compiling wayland-client v0.31.14
+   Compiling goblin v0.8.2
+   Compiling toml v0.9.12+spec-1.1.0
+   Compiling fluent-uri v0.4.1
+   Compiling thiserror v1.0.69
+   Compiling cargo_metadata v0.19.2
+   Compiling rand_chacha v0.3.1
+   Compiling uniffi_udl v0.31.0
+   Compiling zbus-lockstep v0.5.2
+   Compiling askama v0.14.0
+   Compiling idna v1.1.0
+   Compiling ahash v0.8.12
+   Compiling hash32 v0.2.1
+   Compiling wayland-scanner v0.31.10
+   Compiling half v2.7.1
+   Compiling async-compat v0.2.5
+   Compiling spin v0.9.9
+   Compiling serde_derive_internals v0.29.1
+   Compiling glob v0.3.3
+   Compiling foldhash v0.1.5
+   Compiling ciborium-ll v0.2.2
+   Compiling hashbrown v0.15.5
+   Compiling referencing v0.46.10
+   Compiling schemars_derive v1.2.1
+   Compiling fraction v0.15.4
+   Compiling uniffi_bindgen v0.31.0
+   Compiling uniffi_core v0.31.0
+   Compiling uniffi_macros v0.31.0
+   Compiling zbus-lockstep-macros v0.5.2
+   Compiling rand v0.8.6
+   Compiling fancy-regex v0.18.0
+   Compiling universal-hash v0.6.1
+   Compiling cbc v0.1.2
+   Compiling aes v0.8.4
+   Compiling regex v1.12.3
+   Compiling sha1 v0.10.6
+   Compiling cobs v0.3.0
+   Compiling email_address v0.2.9
+   Compiling memoffset v0.6.5
+   Compiling bstr v1.13.0
+   Compiling fixedbitset v0.5.7
+   Compiling zstd-safe v7.2.4
+   Compiling radium v0.7.0
+   Compiling image v0.25.10
+   Compiling schemars v1.2.1
+   Compiling tungstenite v0.24.0
+   Compiling jsonschema v0.46.10
+   Compiling petgraph v0.8.3
+   Compiling globset v0.4.19
+   Compiling postcard v1.1.3
+   Compiling url v2.5.8
+   Compiling poly1305 v0.9.1
+   Compiling atspi-common v0.14.0
+   Compiling rquickjs-core v0.14.0
+   Compiling wayland-protocols v0.32.12
+   Compiling ciborium v0.2.2
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling aead v0.6.1
+   Compiling nom v8.0.0
+   Compiling tap v1.0.1
+   Compiling strict-num v0.1.1
+   Compiling arrayref v0.3.9
+   Compiling regorus v0.10.1
+   Compiling uniffi v0.31.0
+   Compiling cua-driver-contract v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling tiny-skia-path v0.11.4
+   Compiling wyz v0.5.1
+   Compiling tree_magic_mini v3.2.2
+   Compiling chacha20poly1305 v0.11.0
+   Compiling coset v0.4.2
+   Compiling wayland-protocols-wlr v0.3.12
+   Compiling rquickjs v0.14.0
+   Compiling atspi-proxies v0.14.0
+   Compiling tokio-tungstenite v0.24.0
+   Compiling secret-service v5.1.0
+   Compiling serde_yaml_ng v0.10.0
+   Compiling keyring-core v1.0.0
+   Compiling x11 v2.21.0
+   Compiling gethostname v1.1.0
+   Compiling fs2 v0.4.3
+   Compiling os_pipe v1.2.3
+   Compiling option-ext v0.2.0
+   Compiling funty v2.0.0
+   Compiling ttf-parser v0.21.1
+   Compiling arrayvec v0.7.6
+   Compiling bitflags v1.3.2
+   Compiling libm v0.2.16
+   Compiling x11rb-protocol v0.13.2
+   Compiling nix v0.23.2
+   Compiling tiny-skia v0.11.4
+   Compiling cua-driver-core v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-core)
+   Compiling x11rb v0.13.2
+   Compiling fontdue v0.9.3
+   Compiling bitvec v1.0.1
+   Compiling dirs-sys v0.4.1
+   Compiling wl-clipboard-rs v0.9.3
+   Compiling zbus-secret-service-keyring-store v1.0.0
+   Compiling zstd v0.13.3
+   Compiling ashpd v0.13.11
+   Compiling cua-cursor-motion v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-cursor-motion)
+   Compiling nom v1.2.4
+   Compiling rand_core v0.9.5
+   Compiling fnv v1.0.7
+   Compiling num-bigint-dig v0.9.1
+   Compiling meval v0.2.0
+   Compiling rand v0.9.5
+   Compiling cursor-overlay v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cursor-overlay)
+   Compiling keyring v4.1.6
+   Compiling clipboard-rs v0.3.5
+   Compiling dirs v5.0.1
+   Compiling evdev v0.12.2
+   Compiling atspi-connection v0.14.0
+   Compiling atspi v0.30.0
+   Compiling pip-preview v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/pip-preview)
+   Compiling crossbeam-channel v0.5.15
+   Compiling memmap2 v0.9.10
+   Compiling cua-driver-sdk v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/cua-driver-sdk)
+   Compiling platform-linux v0.38.0 (/workspace/scratch/cua-reliability-source/libs/cua-driver/rust/crates/platform-linux)
+   Compiling pbkdf2 v0.12.2
+   Compiling async-fs v2.2.0
+   Compiling md-5 v0.10.6
+   Compiling oo7 v0.6.0
+error: linking with `cc` failed: exit status: 1
+  |
+  = note:  "cc" "-Wl,--version-script=/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/rustcFRtWiL/list" "-Wl,--no-undefined-version" "-m64" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/rustcFRtWiL/symbols.o" "<257 object files omitted>" "-Wl,--as-needed" "-Wl,-Bstatic" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/{libplatform_linux-e32b418d27145a1e,libmemmap2-abfc455555efead2,libmeval-152ccb9c7654907d,libfnv-ab13bc89a5ae4a58,libnom-5b996214a25eb481,libx11-cdc01974ddf38444,libashpd-239ddc4e1fc9aea3,libcrossbeam_channel-01043076890ca837,libatspi_connection-fddadc20c1bf32ec,libclipboard_rs-983eef1c8668a595,libwl_clipboard_rs-b177592bd94f65fd,libtree_magic_mini-0e33ecd2bf3869b7,libnom-f32e6b01b743c7a2,libpetgraph-b3f54dd6831bc6cd,libhashbrown-251c17f6e8de2398,libfoldhash-41b4c51199bfed89,libfixedbitset-45c29b1cdd20dce1,libos_pipe-a78462bf0b65474f,libwayland_protocols_wlr-5eb1b301a9d30468,libwayland_protocols-44620b819a813c71,libwayland_client-649bff90df7c65a8,libwayland_backend-dc69370efae24329,libdowncast_rs-ea62de6db2e84d9d,libwayland_sys-3335295e0162cee4,libkeyring-08198227c42de07b,libzbus_secret_service_keyring_store-92d19a308b729792,libsecret_service-e9781bffe8c12399,libcbc-1e20005c1ddd14fa,libaes-9673fc48165a6782,libcipher-82b7113c59a6bc7c,libinout-93ff43a5a561d78a,libblock_padding-8dff9a34f0946aa5,libkeyring_core-fb7f6a47b968b6f0,libevdev-3ceb6de4c9e87969,libnix-14ea1c2766b3772c,libbitflags-c9d1f73edd93c8ea,libmemoffset-be5d9f83a3b5f2e5,libbitvec-7c4a16c2e149e852,libwyz-3a0b625176c27fbc,libtap-d3b062867b36d431,libradium-fbf593f11b772e22,libfunty-9bc8d5c0415c3927,libpip_preview-63bd500bceae4fd1,libx11rb-6e51b1684ac5706e,libgethostname-1fc2316e220b1bcf,libx11rb_protocol-43565fce95d40abd,libatspi-5467a248902427a8,libatspi_proxies-ac6b516ea75d160a,libatspi_common-a98695cf11880738,libzbus-8b8409974470635e,libasync_io-a3d9477cb483e81e,libpolling-34c7cbb5b96e3d0e,libblocking-e9810e93ae478b35,libpiper-d651256d86853719,libatomic_waker-e5e89b778c05eae9,libasync_task-dd7267e1d80a03b2,libasync_channel-b1f767da85e7d218,libconcurrent_queue-5f30c493e0f493b1,libcrossbeam_utils-66c183633f60e45a,libhex-507f14d4361566c7,libfutures_lite-5822edf3c5d18217,libordered_stream-049b955f6ee4327b,libasync_broadcast-aa5bbfacedb98394,libevent_listener_strategy-12a5a0de8b7cc504,libevent_listener-2fe03a2271b36bd1,libparking-d5d69e26a07affbb,libzbus_names-af20aebbcb6cb68c,libzvariant-77d33c9c46d492a9,libserde_bytes-41fcaf3b0ecf6a87,libenumflags2-24cd93f987c0412b,libendi-38fd879fc02c3dd5,libzvariant_utils-bceb5784c8d9a7a8,libsyn-dd3d9e380face481,libquote-e37cd35172a23c41,libproc_macro2-964251ddbdd563c1,libunicode_ident-ba7c52976ea22d0b}.rlib" "<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/lib/{libproc_macro-*,librustc_literal_escaper-*}.rlib" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/{libcursor_overlay-9ca2a3aa71178f1a,libzstd-fd2277924fac0d7d,libzstd_safe-a1c793f7beaa90de,libzstd_sys-4b8eca9e6762cd11,libfontdue-a05e90ddc7b081ba,libttf_parser-53da0513a7a950fa,libtiny_skia-44f7bc0108cba43a,libarrayvec-63df91483ea06f9d,libtiny_skia_path-98f2142ef1f07677,libstrict_num-6912e69a7702f3d6,libarrayref-9202971aa5f4c9ee,libcua_cursor_motion-c351a8e7d15e2381,libcua_driver_core-ffb8bede6cfbf5aa,libregorus-d61849207bc10b18,liblru-358b8f272b0e3bee,libserde_yaml-14250187af52b1f7,libspin-1b847ad23a7383ff,libpostcard-905efa71ae588344,libheapless-6100e7026e4b101d,libspin-8d0eeab9707bdd35,libhash32-2705dfe7dcf8defd,libcobs-6659a6450ff99f2f,libchrono_tz-8833d549e1c7c645,libphf-797b5a79211db58b,libphf_shared-c495cc801c7f3acf,libchrono-81160b00ec5b8e6d,libiana_time_zone-a0af26953165116d,libipnet-f5d22e85930da949,libglobset-e8bd594bf3d15da1,libbstr-b0321c9e7b24a8be,libfs2-0c7100682cf36b57,liburl-ad213fb90cad2da8,libform_urlencoded-570c83c59641c979,libjsonschema-a713e898c4ead79c,libbytecount-2b0ba44f6f349691,libjsonschema_regex-d108429e3848a203,libregex-23d94f229e59571d,libfancy_regex-795e7d123990a982,libbit_set-3545e084ff607971,libbit_vec-57ec29c2d6ac6813,libregex_automata-5823f2c099ffe1c9,libaho_corasick-b7bcfefe7cc80b31,libregex_syntax-47700d81ca7599fc,libidna-4868f28883e17551,libidna_adapter-ca3fa2b8fba32b30,libicu_properties-f8e80a35ed816315,libicu_properties_data-c71b48c693516581,libicu_normalizer-e1f2a8f46d1ee531,libicu_normalizer_data-1aea5b4f158113d5,libicu_collections-286696bfd0c404cf,libutf8_iter-9648d233b120e42e,libpotential_utf-ff169c9f8228914b,libicu_provider-6cd0bfd4107686ee,libicu_locale_core-213cfb26e736c0e5,libtinystr-6ff932e7d6bb8600,liblitemap-6ed1ec2642e5b009,libwriteable-27025c48a507b4df,libzerovec-204b1e0f5c729705,libzerotrie-a6c8babaf594a093,libyoke-db5e745a7c2e9e8f,libstable_deref_trait-eb81eec56f31d4b1,libzerofrom-ed325f108cef2c2f,libuuid_simd-ad22e0742e2d8655,liboutref-1e5b2d346e18116a,libvsimd-d2729d0dd5d6c02b,libunicode_general_category-8ea721b0ac430dd0,libemail_address-7bc0ddab8dac1206,libfraction-418908f139f45915,liblazy_static-003d0f6c880a6a99,libnum-29864ecd4e210d32,libnum_iter-6ca5927c7ba3a70f,libnum_rational-19d8e44b99e820f5,libnum_complex-64ca2da91a6a3b9a,libnum_bigint-bbd2938f5848c423,libnum_integer-f71e8ed3179e14e4,libnum_cmp-0d293a91043d705b,libreferencing-f214aa3b9732da2a,libmicromap-5988458c1d2db72a,libpercent_encoding-04b199d204ef816e,libhashbrown-6f7ee305968e3603,libfluent_uri-691ea5ed7fef5c78,libborrow_or_share-ee6c88fae2c8911c,libahash-f86bcf6e9a20f93a,libserde_yaml_ng-7770c0b4eef348d7,libryu-165e4d83438b694e,libunsafe_libyaml-985f13d72e289a3c,librquickjs-6bd92ffdbcb040ec,librquickjs_core-f13e1e066b943641,librquickjs_sys-a5cd4c7cb1219da6,libtracing-e40447a6b8b603af,libtracing_core-d743b9980c68eb90,libtime-a9a401b46b4c41b1,libtime_core-d65d541e5f28e6f2,libnum_conv-b2d8cd0695c9ba94,libderanged-35029510f864b1ea,libpowerfmt-77505c93031bcea1,libhkdf-c4effb5595bc3b70,libhmac-207f70ffcc1d891b,libcoset-f252402c8f644d87,libciborium-46cd01fa9b711355,libciborium_ll-2d033a965fe6eb04,libhalf-25e5459f1c24cefb,libciborium_io-30437c18b2484286,libchacha20poly1305-9ca62a2afc67d3e8,libpoly1305-a4a44bb055e2f619,libuniversal_hash-7b9758d3eaa6d680,libctutils-c38c81d081c754ca,libcmov-5439428be9711e34,libaead-3e519767836bc5e8,libimage-41e679a72e5d4855,libbytemuck-4a1338bfe2184c04,libbyteorder_lite-ccf39e239709efad,libmoxcms-4ecbe823cbbcb7fc,libpxfm-d9aa9d3b8abba7b2,libpng-bfec28694c0bb6ad,libflate2-a7f948f1d3e3215b,libminiz_oxide-eee17343923793d7,libfdeflate-581ed2d10479624f,libsimd_adler32-37abd29b2a28fecf,libcrc32fast-acb2aa9803982d6b,libzune_jpeg-cb4f9022d035265f,libzune_core-570eeef71f7b60b4,libnum_traits-337cb6c24bb1853e,libuuid-4ffd29a4811a6364,librand-f3bebfef19a9ed11,libchacha20-b9ce3892fcdd1fde,libcpufeatures-30d269c1720dd747,libzeroize-2ecf2ddf7e92b44f,libcipher-9609835cb34c7061,libblock_buffer-ff11c82e9c25b601,libinout-bbae771cd9fcb156,libcrypto_common-e639dfb256d7fcf2,libhybrid_array-2f6a4fc3f92e7f83,libgetrandom-f49a07f91ed3f322,librand_core-b5fb47911cba15b8,libbase64-ef7c71042959ea5a,libtokio_tungstenite-87023d7977ccf2ec,libtungstenite-b1569f268de8d078,libdata_encoding-45774b72e7d13c76,librand-63ef5d125f31b224,librand_chacha-2d09b8a6c8ad8643,libppv_lite86-588c00e59e4a5ef9,libzerocopy-effbf1efad7a7df2,librand_core-fcd4d116cefd0f28,libgetrandom-7f8ac74b06d71cd0,libutf8-3146f0ef07dbcc1a,libbyteorder-c16a13154be8bb2f,libsha1-6f3db7ffcd03a095,libhttparse-fdd448910e772fde,libthiserror-e66594c20b6911aa,libhttp-ca0e0e5c70187387,libfutures_util-716fb969dd881140,libslab-5a82f5ac5267aef8,libfutures_sink-2643877ec8997040,libfutures_task-8419d029d91f5d2b,libsha2-2fd993683f47a540,libcpufeatures-6b91b8401a45c157,libdigest-33622d297f48a776,libsubtle-3141b7508162e803,libblock_buffer-4d78771a056a704b,libcrypto_common-13e419a85632a563,libgeneric_array-3cb880087a88f96c,libtypenum-83db8b5dd9320b78,libcua_driver_contract-43289b6afbbafe95,libuniffi-b4af54b86d37cb4c,libuniffi_bindgen-9f9ce832d330cc8e,libuniffi_udl-a3a7e8a5485d83ec,libweedle-c36c0b27857ce593,libnom-baae3d2ea97e2223,libtextwrap-aff5c197f6805864,libsmawk-b1acd7b10d273354,libcargo_metadata-76f75f1d523da08f,libthiserror-e057260b4139371a,libcargo_platform-a830b2cac2ba31d2,libsemver-a49e63be0149e9a6,libgoblin-ed7d1c982480c724,libplain-5f53fe9abd3e21f0,liblog-17f15a9e282ff35c,libscroll-b28daa7cc6e6a238,libtoml-323e36815cb8358a,libtoml_writer-8af4301251c6713f,libwinnow-5724f8681b1b3b9b,libtoml_parser-35d005f31c58128b,libwinnow-eecd7db5f5911093,libserde_spanned-5cb05d3489a6d199,libtoml_datetime-712766ddaa8c7f7f,libuniffi_meta-fed5f87c4fdbaefb,libsiphasher-a46cf7beb67863f9,libuniffi_pipeline-f22df510d962b905,libtempfile-18f7b7dcddb5fb84,libgetrandom-ad8ea76a1ae8a893,libfastrand-8263b083d840af16,librustix-7a20fde24e949a30,libbitflags-4a5b8356b5aaf308,liblinux_raw_sys-8c12711c6e2d2a18,libindexmap-6f1a5ecd892cd849,libhashbrown-3f50b1e7ac65f638,libequivalent-01e821a4d110282a,libfoldhash-b5820346252db416,liballocator_api2-61967c744f8f94a4,libheck-5fbeb2f8be6ba9e8,libaskama-261c0242c9333120,libfs_err-69ea39c2a5084f5a,libcamino-37c58bfa1a2c5801,libuniffi_core-9ad695e035a010f9,libstatic_assertions-f44adfad20a31692,libasync_compat-3d793f1731ec4781,libfutures_io-3447ee006092f336,libtokio-c8e8556ce749ea6e,libsignal_hook_registry-4ab52d65a8e087ab,liberrno-9f8f00bf24cea5a5,libsocket2-8f86e3bc042a4c7b,libmio-d1ca837df342025b,libparking_lot-72e189c2a6381c05,libparking_lot_core-a40865ed18eba1e6,liblibc-e2b768b31179ae2c,libcfg_if-72a7719c5a503f05,libsmallvec-480897080d0871b0,liblock_api-8c2d92eaab852e67,libscopeguard-9c2379402a25548e,libpin_project_lite-9a718c0716770040,libonce_cell-7f4756946a1dc156,libfutures_core-2dfd98c20553aa3f,libbytes-af05a672ad1a20c2,libanyhow-fa734b4ca1c7ad5e,libschemars-a0602218352d21cd,libdyn_clone-a6ccd63206243859,libserde-a36e20a8854ca52a,libref_cast-5c808d039c755d7f,libserde_json-7fd02a788db2fe71,libmemchr-b9f2c82d0663d7da,libitoa-e1cf0ba11d02098b,libzmij-4d745de276d88ab7,libserde_core-c661853c2f95a6f2}.rlib" "<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/lib/{libstd-*,libpanic_unwind-*,libobject-*,libmemchr-*,libaddr2line-*,libgimli-*,libcfg_if-*,librustc_demangle-*,libstd_detect-*,libhashbrown-*,librustc_std_workspace_alloc-*,libminiz_oxide-*,libadler2-*,libunwind-*,liblibc-*,librustc_std_workspace_core-*,liballoc-*,libcore-*,libcompiler_builtins-*}.rlib" "-Wl,-Bdynamic" "-lX11" "-lXi" "-lXtst" "-lgcc_s" "-lutil" "-lrt" "-lpthread" "-lm" "-ldl" "-lc" "-L" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/rustcFRtWiL/raw-dylibs" "-B<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld" "-fuse-ld=lld" "-Wl,--eh-frame-hdr" "-Wl,-z,noexecstack" "-L" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/build/rquickjs-sys-8164e5de064bed3c/out" "-L" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/build/zstd-sys-43ce4c2854a4840f/out" "-L" "/workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu" "-L" "<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/lib" "-o" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libcua_driver_sdk.so" "-Wl,--gc-sections" "-shared" "-Wl,-z,relro,-z,now" "-nodefaultlibs"
+  = note: some arguments are omitted. use `--verbose` to show all linker arguments
+  = note: rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by Font.o:(_XF86BigfontQueryFont) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by Font.o:(_XF86BigfontQueryFont) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XSetLastRequestRead) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XDefaultIOError) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XDefaultIOError) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XDefaultIOError) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XDefaultError) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XError) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XGetRequest) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by XlibInt.o:(_XGetRequest) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by InitExt.o:(XESetWireToEvent) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by InitExt.o:(XESetWireToEventCookie) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by InitExt.o:(XESetCopyEventCookie) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by InitExt.o:(XESetEventToWire) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by InitExt.o:(XESetWireToError) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by xcb_io.o:(poll_for_event) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by xcb_io.o:(poll_for_event) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by xcb_io.o:(poll_for_event) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by xcb_io.o:(dequeue_pending_request) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: relocation R_X86_64_PC32 cannot be used against symbol 'stderr'; recompile with -fPIC
+          >>> defined in /lib/x86_64-linux-gnu/libc.so.6
+          >>> referenced by xcb_io.o:(dequeue_pending_request) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+          collect2: error: ld returned 1 exit status
+          
+
+error: could not compile `cua-driver-sdk` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: linking with `cc` failed: exit status: 1
+  |
+  = note:  "cc" "-m64" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/rustcomKZ5V/symbols.o" "<257 object files omitted>" "-Wl,--as-needed" "-Wl,-Bstatic" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/{libplatform_linux-e32b418d27145a1e,libmemmap2-abfc455555efead2,libmeval-152ccb9c7654907d,libfnv-ab13bc89a5ae4a58,libnom-5b996214a25eb481,libx11-cdc01974ddf38444,libashpd-239ddc4e1fc9aea3,libcrossbeam_channel-01043076890ca837,libatspi_connection-fddadc20c1bf32ec,libclipboard_rs-983eef1c8668a595,libwl_clipboard_rs-b177592bd94f65fd,libtree_magic_mini-0e33ecd2bf3869b7,libnom-f32e6b01b743c7a2,libpetgraph-b3f54dd6831bc6cd,libhashbrown-251c17f6e8de2398,libfoldhash-41b4c51199bfed89,libfixedbitset-45c29b1cdd20dce1,libos_pipe-a78462bf0b65474f,libwayland_protocols_wlr-5eb1b301a9d30468,libwayland_protocols-44620b819a813c71,libwayland_client-649bff90df7c65a8,libwayland_backend-dc69370efae24329,libdowncast_rs-ea62de6db2e84d9d,libwayland_sys-3335295e0162cee4,libkeyring-08198227c42de07b,libzbus_secret_service_keyring_store-92d19a308b729792,libsecret_service-e9781bffe8c12399,libcbc-1e20005c1ddd14fa,libaes-9673fc48165a6782,libcipher-82b7113c59a6bc7c,libinout-93ff43a5a561d78a,libblock_padding-8dff9a34f0946aa5,libkeyring_core-fb7f6a47b968b6f0,libevdev-3ceb6de4c9e87969,libnix-14ea1c2766b3772c,libbitflags-c9d1f73edd93c8ea,libmemoffset-be5d9f83a3b5f2e5,libbitvec-7c4a16c2e149e852,libwyz-3a0b625176c27fbc,libtap-d3b062867b36d431,libradium-fbf593f11b772e22,libfunty-9bc8d5c0415c3927,libpip_preview-63bd500bceae4fd1,libx11rb-6e51b1684ac5706e,libgethostname-1fc2316e220b1bcf,libx11rb_protocol-43565fce95d40abd,libatspi-5467a248902427a8,libatspi_proxies-ac6b516ea75d160a,libatspi_common-a98695cf11880738,libzbus-8b8409974470635e,libasync_io-a3d9477cb483e81e,libpolling-34c7cbb5b96e3d0e,libblocking-e9810e93ae478b35,libpiper-d651256d86853719,libatomic_waker-e5e89b778c05eae9,libasync_task-dd7267e1d80a03b2,libasync_channel-b1f767da85e7d218,libconcurrent_queue-5f30c493e0f493b1,libcrossbeam_utils-66c183633f60e45a,libhex-507f14d4361566c7,libfutures_lite-5822edf3c5d18217,libordered_stream-049b955f6ee4327b,libasync_broadcast-aa5bbfacedb98394,libevent_listener_strategy-12a5a0de8b7cc504,libevent_listener-2fe03a2271b36bd1,libparking-d5d69e26a07affbb,libzbus_names-af20aebbcb6cb68c,libzvariant-77d33c9c46d492a9,libserde_bytes-41fcaf3b0ecf6a87,libenumflags2-24cd93f987c0412b,libendi-38fd879fc02c3dd5,libzvariant_utils-bceb5784c8d9a7a8,libsyn-dd3d9e380face481,libquote-e37cd35172a23c41,libproc_macro2-964251ddbdd563c1,libunicode_ident-ba7c52976ea22d0b}.rlib" "<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/lib/{libproc_macro-*,librustc_literal_escaper-*,libtest-*,libgetopts-*,librustc_std_workspace_std-*}.rlib" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/{libcursor_overlay-9ca2a3aa71178f1a,libzstd-fd2277924fac0d7d,libzstd_safe-a1c793f7beaa90de,libzstd_sys-4b8eca9e6762cd11,libfontdue-a05e90ddc7b081ba,libttf_parser-53da0513a7a950fa,libtiny_skia-44f7bc0108cba43a,libarrayvec-63df91483ea06f9d,libtiny_skia_path-98f2142ef1f07677,libstrict_num-6912e69a7702f3d6,libarrayref-9202971aa5f4c9ee,libcua_cursor_motion-c351a8e7d15e2381,libcua_driver_core-ffb8bede6cfbf5aa,libregorus-d61849207bc10b18,liblru-358b8f272b0e3bee,libserde_yaml-14250187af52b1f7,libspin-1b847ad23a7383ff,libpostcard-905efa71ae588344,libheapless-6100e7026e4b101d,libspin-8d0eeab9707bdd35,libhash32-2705dfe7dcf8defd,libcobs-6659a6450ff99f2f,libchrono_tz-8833d549e1c7c645,libphf-797b5a79211db58b,libphf_shared-c495cc801c7f3acf,libchrono-81160b00ec5b8e6d,libiana_time_zone-a0af26953165116d,libipnet-f5d22e85930da949,libglobset-e8bd594bf3d15da1,libbstr-b0321c9e7b24a8be,libfs2-0c7100682cf36b57,liburl-ad213fb90cad2da8,libform_urlencoded-570c83c59641c979,libjsonschema-a713e898c4ead79c,libbytecount-2b0ba44f6f349691,libjsonschema_regex-d108429e3848a203,libregex-23d94f229e59571d,libfancy_regex-795e7d123990a982,libbit_set-3545e084ff607971,libbit_vec-57ec29c2d6ac6813,libregex_automata-5823f2c099ffe1c9,libaho_corasick-b7bcfefe7cc80b31,libregex_syntax-47700d81ca7599fc,libidna-4868f28883e17551,libidna_adapter-ca3fa2b8fba32b30,libicu_properties-f8e80a35ed816315,libicu_properties_data-c71b48c693516581,libicu_normalizer-e1f2a8f46d1ee531,libicu_normalizer_data-1aea5b4f158113d5,libicu_collections-286696bfd0c404cf,libutf8_iter-9648d233b120e42e,libpotential_utf-ff169c9f8228914b,libicu_provider-6cd0bfd4107686ee,libicu_locale_core-213cfb26e736c0e5,libtinystr-6ff932e7d6bb8600,liblitemap-6ed1ec2642e5b009,libwriteable-27025c48a507b4df,libzerovec-204b1e0f5c729705,libzerotrie-a6c8babaf594a093,libyoke-db5e745a7c2e9e8f,libstable_deref_trait-eb81eec56f31d4b1,libzerofrom-ed325f108cef2c2f,libuuid_simd-ad22e0742e2d8655,liboutref-1e5b2d346e18116a,libvsimd-d2729d0dd5d6c02b,libunicode_general_category-8ea721b0ac430dd0,libemail_address-7bc0ddab8dac1206,libfraction-418908f139f45915,liblazy_static-003d0f6c880a6a99,libnum-29864ecd4e210d32,libnum_iter-6ca5927c7ba3a70f,libnum_rational-19d8e44b99e820f5,libnum_complex-64ca2da91a6a3b9a,libnum_bigint-bbd2938f5848c423,libnum_integer-f71e8ed3179e14e4,libnum_cmp-0d293a91043d705b,libreferencing-f214aa3b9732da2a,libmicromap-5988458c1d2db72a,libpercent_encoding-04b199d204ef816e,libhashbrown-6f7ee305968e3603,libfluent_uri-691ea5ed7fef5c78,libborrow_or_share-ee6c88fae2c8911c,libahash-f86bcf6e9a20f93a,libserde_yaml_ng-7770c0b4eef348d7,libryu-165e4d83438b694e,libunsafe_libyaml-985f13d72e289a3c,librquickjs-6bd92ffdbcb040ec,librquickjs_core-f13e1e066b943641,librquickjs_sys-a5cd4c7cb1219da6,libtracing-e40447a6b8b603af,libtracing_core-d743b9980c68eb90,libtime-a9a401b46b4c41b1,libtime_core-d65d541e5f28e6f2,libnum_conv-b2d8cd0695c9ba94,libderanged-35029510f864b1ea,libpowerfmt-77505c93031bcea1,libhkdf-c4effb5595bc3b70,libhmac-207f70ffcc1d891b,libcoset-f252402c8f644d87,libciborium-46cd01fa9b711355,libciborium_ll-2d033a965fe6eb04,libhalf-25e5459f1c24cefb,libciborium_io-30437c18b2484286,libchacha20poly1305-9ca62a2afc67d3e8,libpoly1305-a4a44bb055e2f619,libuniversal_hash-7b9758d3eaa6d680,libctutils-c38c81d081c754ca,libcmov-5439428be9711e34,libaead-3e519767836bc5e8,libimage-41e679a72e5d4855,libbytemuck-4a1338bfe2184c04,libbyteorder_lite-ccf39e239709efad,libmoxcms-4ecbe823cbbcb7fc,libpxfm-d9aa9d3b8abba7b2,libpng-bfec28694c0bb6ad,libflate2-a7f948f1d3e3215b,libminiz_oxide-eee17343923793d7,libfdeflate-581ed2d10479624f,libsimd_adler32-37abd29b2a28fecf,libcrc32fast-acb2aa9803982d6b,libzune_jpeg-cb4f9022d035265f,libzune_core-570eeef71f7b60b4,libnum_traits-337cb6c24bb1853e,libuuid-4ffd29a4811a6364,librand-f3bebfef19a9ed11,libchacha20-b9ce3892fcdd1fde,libcpufeatures-30d269c1720dd747,libzeroize-2ecf2ddf7e92b44f,libcipher-9609835cb34c7061,libblock_buffer-ff11c82e9c25b601,libinout-bbae771cd9fcb156,libcrypto_common-e639dfb256d7fcf2,libhybrid_array-2f6a4fc3f92e7f83,libgetrandom-f49a07f91ed3f322,librand_core-b5fb47911cba15b8,libbase64-ef7c71042959ea5a,libtokio_tungstenite-87023d7977ccf2ec,libtungstenite-b1569f268de8d078,libdata_encoding-45774b72e7d13c76,librand-63ef5d125f31b224,librand_chacha-2d09b8a6c8ad8643,libppv_lite86-588c00e59e4a5ef9,libzerocopy-effbf1efad7a7df2,librand_core-fcd4d116cefd0f28,libgetrandom-7f8ac74b06d71cd0,libutf8-3146f0ef07dbcc1a,libbyteorder-c16a13154be8bb2f,libsha1-6f3db7ffcd03a095,libhttparse-fdd448910e772fde,libthiserror-e66594c20b6911aa,libhttp-ca0e0e5c70187387,libfutures_util-716fb969dd881140,libslab-5a82f5ac5267aef8,libfutures_sink-2643877ec8997040,libfutures_task-8419d029d91f5d2b,libsha2-2fd993683f47a540,libcpufeatures-6b91b8401a45c157,libdigest-33622d297f48a776,libsubtle-3141b7508162e803,libblock_buffer-4d78771a056a704b,libcrypto_common-13e419a85632a563,libgeneric_array-3cb880087a88f96c,libtypenum-83db8b5dd9320b78,libcua_driver_contract-43289b6afbbafe95,libuniffi-b4af54b86d37cb4c,libuniffi_bindgen-9f9ce832d330cc8e,libuniffi_udl-a3a7e8a5485d83ec,libweedle-c36c0b27857ce593,libnom-baae3d2ea97e2223,libtextwrap-aff5c197f6805864,libsmawk-b1acd7b10d273354,libcargo_metadata-76f75f1d523da08f,libthiserror-e057260b4139371a,libcargo_platform-a830b2cac2ba31d2,libsemver-a49e63be0149e9a6,libgoblin-ed7d1c982480c724,libplain-5f53fe9abd3e21f0,liblog-17f15a9e282ff35c,libscroll-b28daa7cc6e6a238,libtoml-323e36815cb8358a,libtoml_writer-8af4301251c6713f,libwinnow-5724f8681b1b3b9b,libtoml_parser-35d005f31c58128b,libwinnow-eecd7db5f5911093,libserde_spanned-5cb05d3489a6d199,libtoml_datetime-712766ddaa8c7f7f,libuniffi_meta-fed5f87c4fdbaefb,libsiphasher-a46cf7beb67863f9,libuniffi_pipeline-f22df510d962b905,libtempfile-18f7b7dcddb5fb84,libgetrandom-ad8ea76a1ae8a893,libfastrand-8263b083d840af16,librustix-7a20fde24e949a30,libbitflags-4a5b8356b5aaf308,liblinux_raw_sys-8c12711c6e2d2a18,libindexmap-6f1a5ecd892cd849,libhashbrown-3f50b1e7ac65f638,libequivalent-01e821a4d110282a,libfoldhash-b5820346252db416,liballocator_api2-61967c744f8f94a4,libheck-5fbeb2f8be6ba9e8,libaskama-261c0242c9333120,libfs_err-69ea39c2a5084f5a,libcamino-37c58bfa1a2c5801,libuniffi_core-9ad695e035a010f9,libstatic_assertions-f44adfad20a31692,libasync_compat-3d793f1731ec4781,libfutures_io-3447ee006092f336,libtokio-c8e8556ce749ea6e,libsignal_hook_registry-4ab52d65a8e087ab,liberrno-9f8f00bf24cea5a5,libsocket2-8f86e3bc042a4c7b,libmio-d1ca837df342025b,libparking_lot-72e189c2a6381c05,libparking_lot_core-a40865ed18eba1e6,liblibc-e2b768b31179ae2c,libcfg_if-72a7719c5a503f05,libsmallvec-480897080d0871b0,liblock_api-8c2d92eaab852e67,libscopeguard-9c2379402a25548e,libpin_project_lite-9a718c0716770040,libonce_cell-7f4756946a1dc156,libfutures_core-2dfd98c20553aa3f,libbytes-af05a672ad1a20c2,libanyhow-fa734b4ca1c7ad5e,libschemars-a0602218352d21cd,libdyn_clone-a6ccd63206243859,libserde-a36e20a8854ca52a,libref_cast-5c808d039c755d7f,libserde_json-7fd02a788db2fe71,libmemchr-b9f2c82d0663d7da,libitoa-e1cf0ba11d02098b,libzmij-4d745de276d88ab7,libserde_core-c661853c2f95a6f2}.rlib" "<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/lib/{libstd-*,libpanic_unwind-*,libobject-*,libmemchr-*,libaddr2line-*,libgimli-*,libcfg_if-*,librustc_demangle-*,libstd_detect-*,libhashbrown-*,librustc_std_workspace_alloc-*,libminiz_oxide-*,libadler2-*,libunwind-*,liblibc-*,librustc_std_workspace_core-*,liballoc-*,libcore-*,libcompiler_builtins-*}.rlib" "-Wl,-Bdynamic" "-lX11" "-lXi" "-lXtst" "-lgcc_s" "-lutil" "-lrt" "-lpthread" "-lm" "-ldl" "-lc" "-L" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/rustcomKZ5V/raw-dylibs" "-B<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld" "-fuse-ld=lld" "-Wl,--eh-frame-hdr" "-Wl,-z,noexecstack" "-L" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/build/rquickjs-sys-8164e5de064bed3c/out" "-L" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/build/zstd-sys-43ce4c2854a4840f/out" "-L" "/workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu" "-L" "<sysroot>/lib/rustlib/x86_64-unknown-linux-gnu/lib" "-o" "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/cua_driver_sdk-472851e1d4734820" "-Wl,--gc-sections" "-pie" "-Wl,-z,relro,-z,now" "-nodefaultlibs"
+  = note: some arguments are omitted. use `--verbose` to show all linker arguments
+  = note: rust-lld: error: undefined symbol: XextFindDisplay
+          >>> referenced by XExtInt.o:(XInput_find_display) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libXi.a
+          
+          rust-lld: error: undefined symbol: XextCreateExtension
+          >>> referenced by XExtInt.o:(XInput_find_display) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libXi.a
+          
+          rust-lld: error: undefined symbol: XextAddDisplay
+          >>> referenced by XExtInt.o:(XInput_find_display) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libXi.a
+          
+          rust-lld: error: undefined symbol: XextRemoveDisplay
+          >>> referenced by XExtInt.o:(XInputClose) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libXi.a
+          
+          rust-lld: error: undefined symbol: XextDestroyExtension
+          >>> referenced by XExtInt.o:(XInputClose) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libXi.a
+          
+          rust-lld: error: undefined symbol: XMissingExtension
+          >>> referenced by XExtInt.o:(_XiCheckExtInit) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libXi.a
+          
+          rust-lld: error: undefined symbol: xcb_take_socket
+          >>> referenced by xcb_io.o:(poll_for_event) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          >>> referenced by xcb_io.o:(_XFlush) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          >>> referenced by xcb_io.o:(_XNextRequest) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_poll_for_event
+          >>> referenced by xcb_io.o:(poll_for_event) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_poll_for_queued_event
+          >>> referenced by xcb_io.o:(poll_for_event) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_parse_display
+          >>> referenced by xcb_disp.o:(_XConnectXCB) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_poll_for_reply64
+          >>> referenced by xcb_io.o:(poll_for_response) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_connect_to_display_with_auth_info
+          >>> referenced by xcb_disp.o:(_XConnectXCB) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_get_file_descriptor
+          >>> referenced by xcb_disp.o:(_XConnectXCB) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_generate_id
+          >>> referenced by xcb_disp.o:(_XConnectXCB) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          >>> referenced by xcb_io.o:(_XAllocIDs) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_connection_has_error
+          >>> referenced by xcb_disp.o:(_XConnectXCB) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          >>> referenced by xcb_io.o:(_XEventsQueued) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          >>> referenced by xcb_io.o:(_XReadEvents) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_connect
+          >>> referenced by xcb_disp.o:(_XConnectXCB) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_writev
+          >>> referenced by xcb_io.o:(_XSend) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_wait_for_event
+          >>> referenced by xcb_io.o:(_XReadEvents) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_wait_for_reply64
+          >>> referenced by xcb_io.o:(_XReply) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: undefined symbol: xcb_get_setup
+          >>> referenced by OpenDis.o:(XOpenDisplay) in archive /workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu/libX11.a
+          
+          rust-lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+          collect2: error: ld returned 1 exit status
+          
+
+error: could not compile `cua-driver-sdk` (lib test) due to 1 previous error
