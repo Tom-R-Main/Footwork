@@ -1,0 +1,7 @@
+{
+  "before_test_reap": [],
+  "adopted_waits": [],
+  "final_owned_descendants": [],
+  "binary_sha256_after_commands": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+  "qualification": "metadata preparation only; no candidate/read route/socket/target tested"
+}

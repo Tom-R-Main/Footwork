@@ -1,0 +1,13 @@
+usage: lightpanda-x86_64-linux <command> [arguments]
+
+The commands are:
+  agent       starts an interactive AI agent that can browse the web
+  completion  prints a shell completion script (bash, fish, zsh)
+  fetch       fetches the specified URL
+  help        displays this message
+  mcp         starts an MCP (Model Context Protocol) server (stdio or HTTP)
+  run         runs a saved script (no LLM), then exits
+  serve       starts a WebSocket CDP server
+  version     displays the version of lightpanda-x86_64-linux
+
+Use "lightpanda-x86_64-linux help <command>" for more information about a command.

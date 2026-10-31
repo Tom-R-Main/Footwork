@@ -1,0 +1,30 @@
+[
+  {
+    "command": [
+      "/workspace/scratch/footwork-lightpanda-preparation-20261031/lightpanda-x86_64-linux",
+      "--version"
+    ],
+    "pid": 23133,
+    "returncode": 1,
+    "signal": null,
+    "timeout": false,
+    "wait_complete": true,
+    "elapsed_seconds": 0.0028162750004412374,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15e0add57d00e200006296b81465186799730e03de39c93995e5e08b952b068f"
+  },
+  {
+    "command": [
+      "/workspace/scratch/footwork-lightpanda-preparation-20261031/lightpanda-x86_64-linux",
+      "--help"
+    ],
+    "pid": 23134,
+    "returncode": 0,
+    "signal": null,
+    "timeout": false,
+    "wait_complete": true,
+    "elapsed_seconds": 0.0025331140004709596,
+    "stdout_sha256": "37278fa667420f5f39c044a69ce4e9aedff7722dc23c2910f7ad75200fc9b21c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

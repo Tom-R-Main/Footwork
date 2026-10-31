@@ -1,0 +1,13 @@
+{
+  "repository": "lightpanda-io/browser",
+  "asset_id": 694146173,
+  "name": "lightpanda-x86_64-linux",
+  "size": 77129032,
+  "api_digest": "sha256:19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+  "api_url": "https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173",
+  "browser_download_url": "https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-x86_64-linux",
+  "created_at": "2026-10-31T02:40:44Z",
+  "updated_at": "2026-10-31T02:40:49Z",
+  "metadata_recorded_utc": "2026-10-31T20:08:50.909912+00:00",
+  "source_identity_policy": "digest and binary self-reported git version; do not infer source from nightly tag target"
+}

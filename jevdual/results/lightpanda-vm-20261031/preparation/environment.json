@@ -1,0 +1,53 @@
+{
+  "utc_observed": "2026-10-31T20:05:57.717842+00:00",
+  "python": "3.12.14",
+  "psutil": "7.2.2",
+  "kernel": "6.18.57",
+  "architecture": "x86_64",
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.6\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"",
+  "uid": 1000,
+  "pid1": "tail",
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "logical_cpu_count": 5,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected_cpu_flags": [
+    "sse4_2",
+    "avx",
+    "avx2",
+    "bmi1",
+    "bmi2",
+    "avx512f"
+  ],
+  "cgroup_membership": "0::/",
+  "cgroup": {
+    "cpu.max": "400000 100000",
+    "cpuset.cpus.effective": "0-4",
+    "memory.max": "17179869184",
+    "memory.current": "1697697792",
+    "memory.swap.max": "max",
+    "pids.max": "max",
+    "pids.current": "62",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "pids.events": "max 0"
+  },
+  "swap": [
+    "SwapTotal:             0 kB",
+    "SwapFree:              0 kB"
+  ],
+  "metadata_child_rlimit_core": [
+    0,
+    0
+  ],
+  "test_only_subreaper": true,
+  "child_environment_overrides": {
+    "LIGHTPANDA_DISABLE_TELEMETRY": "true",
+    "LIGHTPANDA_DISABLE_CORE_DUMP": "1"
+  },
+  "tag_provenance": "nightly tag target is not asserted as source; record actual binary version and digest"
+}

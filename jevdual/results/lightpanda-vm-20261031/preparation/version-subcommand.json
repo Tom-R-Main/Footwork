@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/workspace/scratch/footwork-lightpanda-preparation-20261031/lightpanda-x86_64-linux",
+    "version"
+  ],
+  "pid": 23219,
+  "returncode": 0,
+  "signal": null,
+  "timeout": false,
+  "wait_complete": true,
+  "elapsed_seconds": 0.0025594630005798535,
+  "stdout_sha256": "9efe1c4debb85375ea7e249e1bd38bc1f0c5a78392510108041ec723a174e0e5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "binary_sha256_after": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+  "owned_descendants_after": [],
+  "metadata_only": true
+}
