@@ -14,10 +14,10 @@ from pathlib import Path
 ROOT = Path('/workspace/scratch/footwork-cdp-click-c1496ca')
 OUT = ROOT / 'real-reuse'
 sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
-from test_cdp_click import Fixture, ingress  # noqa: E402
-from jevdual.effectors.cdp import launch  # noqa: E402
-from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
-from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+from jevdual.effectors.cdp import launch
+from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT
+from jevdual.effectors.cdp.snapshot import STYLES
+from test_cdp_click import Fixture, ingress
 
 spec = importlib.util.spec_from_file_location('custody', Path(__file__).with_name('candidate.py'))
 custody = importlib.util.module_from_spec(spec)
@@ -207,7 +207,7 @@ def main():
                     row['before_module_stop'] = custody.descendants()
                     launch.stop(chrome)
                 row['saved_ingress'] = records()
-        except Exception as error:
+        except Exception as error:  # noqa: BLE001 - record failures and finish the fixed batch
             row['status'] = 'failed'
             row['error'] = {'type': type(error).__name__, 'message': str(error)}
         finally:

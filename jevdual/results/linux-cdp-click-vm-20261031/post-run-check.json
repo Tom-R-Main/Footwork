@@ -1,0 +1,10 @@
+{
+  "utc_checked": "2026-10-31T17:44:59.859904+00:00",
+  "remaining_observed_identities": [],
+  "cgroup_events": {
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "pids.events": "max 0"
+  },
+  "swap_total_kib": 0,
+  "measured_harness_hashes_verified": true
+}

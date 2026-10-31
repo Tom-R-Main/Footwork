@@ -1,0 +1,214 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse.py:17:1
+   |
+15 |   OUT = ROOT / 'real-reuse'
+16 |   sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+17 | / from test_cdp_click import Fixture, ingress  # noqa: E402
+18 | | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+20 | | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   | |_________________________________________________^
+21 |
+22 |   spec = importlib.util.spec_from_file_location('custody', Path(__file__).with_name('candidate.py'))
+   |
+help: Organize imports
+   |
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+   - from test_cdp_click import Fixture, ingress  # noqa: E402
+17 | from jevdual.effectors.cdp import launch  # noqa: E402
+18 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+19 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+20 + from test_cdp_click import Fixture, ingress  # noqa: E402
+21 |
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse.py:17:46
+   |
+15 | OUT = ROOT / 'real-reuse'
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+   |                                              ^^^^^^^^^^^^
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   |
+help: Remove unused `noqa` directive
+   |
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+   - from test_cdp_click import Fixture, ingress  # noqa: E402
+17 + from test_cdp_click import Fixture, ingress
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse.py:18:43
+   |
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+   |                                           ^^^^^^^^^^^^
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |
+help: Remove unused `noqa` directive
+   |
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+   - from jevdual.effectors.cdp import launch  # noqa: E402
+18 + from jevdual.effectors.cdp import launch
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse.py:19:66
+   |
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   |                                                                  ^^^^^^^^^^^^
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |
+help: Remove unused `noqa` directive
+   |
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+   - from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+19 + from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse.py:20:52
+   |
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |                                                    ^^^^^^^^^^^^
+21 |
+22 | spec = importlib.util.spec_from_file_location('custody', Path(__file__).with_name('candidate.py'))
+   |
+help: Remove unused `noqa` directive
+   |
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   - from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+20 + from jevdual.effectors.cdp.snapshot import STYLES
+21 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+   --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse.py:210:16
+    |
+208 |                     launch.stop(chrome)
+209 |                 row['saved_ingress'] = records()
+210 |         except Exception as error:
+    |                ^^^^^^^^^
+211 |             row['status'] = 'failed'
+212 |             row['error'] = {'type': type(error).__name__, 'message': str(error)}
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse_script_allocation.py:17:1
+   |
+15 |   OUT = ROOT / 'real-reuse-script-allocation'
+16 |   sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+17 | / from test_cdp_click import Fixture, ingress  # noqa: E402
+18 | | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+20 | | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   | |_________________________________________________^
+21 |
+22 |   spec = importlib.util.spec_from_file_location('custody', Path(__file__).with_name('candidate.py'))
+   |
+help: Organize imports
+   |
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+   - from test_cdp_click import Fixture, ingress  # noqa: E402
+17 | from jevdual.effectors.cdp import launch  # noqa: E402
+18 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+19 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+20 + from test_cdp_click import Fixture, ingress  # noqa: E402
+21 |
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse_script_allocation.py:17:46
+   |
+15 | OUT = ROOT / 'real-reuse-script-allocation'
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+   |                                              ^^^^^^^^^^^^
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   |
+help: Remove unused `noqa` directive
+   |
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+   - from test_cdp_click import Fixture, ingress  # noqa: E402
+17 + from test_cdp_click import Fixture, ingress
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse_script_allocation.py:18:43
+   |
+16 | sys.path.insert(0, str(ROOT / 'tests'))  # unchanged test fixture, outside either checkout
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+   |                                           ^^^^^^^^^^^^
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |
+help: Remove unused `noqa` directive
+   |
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+   - from jevdual.effectors.cdp import launch  # noqa: E402
+18 + from jevdual.effectors.cdp import launch
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse_script_allocation.py:19:66
+   |
+17 | from test_cdp_click import Fixture, ingress  # noqa: E402
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   |                                                                  ^^^^^^^^^^^^
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |
+help: Remove unused `noqa` directive
+   |
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+   - from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+19 + from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |
+
+RUF100 [*] Unused `noqa` directive (non-enabled: `E402`)
+  --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse_script_allocation.py:20:52
+   |
+18 | from jevdual.effectors.cdp import launch  # noqa: E402
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+20 | from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+   |                                                    ^^^^^^^^^^^^
+21 |
+22 | spec = importlib.util.spec_from_file_location('custody', Path(__file__).with_name('candidate.py'))
+   |
+help: Remove unused `noqa` directive
+   |
+19 | from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT  # noqa: E402
+   - from jevdual.effectors.cdp.snapshot import STYLES  # noqa: E402
+20 + from jevdual.effectors.cdp.snapshot import STYLES
+21 |
+   |
+
+BLE001 Do not catch blind exception: `Exception`
+   --> jevdual/results/linux-cdp-click-vm-20261031/harness/real_reuse_script_allocation.py:218:16
+    |
+216 |                     launch.stop(chrome)
+217 |                 row['saved_ingress'] = records()
+218 |         except Exception as error:
+    |                ^^^^^^^^^
+219 |             row['status'] = 'failed'
+220 |             row['error'] = {'type': type(error).__name__, 'message': str(error)}
+    |
+
+Found 12 errors.
+[*] 10 fixable with the `--fix` option.
