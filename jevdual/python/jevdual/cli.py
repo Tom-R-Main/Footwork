@@ -105,13 +105,15 @@ def _step_line(o: Any) -> str:
 
 
 async def cmd_run(args: argparse.Namespace) -> int:
+    from jevdual.effectors import desktop_effector, require_available
+
+    require_available("desktop")
     from typesafe_sdk import AsyncTypeSafeClient
 
     from jevdual.arbiter import Arbiter, ArbiterPolicy
     from jevdual.authorize import Authorizer
     from jevdual.desktop import NativeAgent
     from jevdual.desktop_s2 import NativeS2, meta_chat_from_env
-    from jevdual.effectors import desktop_effector
     from jevdual.keys import load_keys
     from jevdual.native import NativeBridge, find_window
     from jevdual.policy import JevPolicy

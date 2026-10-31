@@ -576,7 +576,9 @@ class ProbeEvents:
 
 async def _target_probe(pid: int, document: Path, phase=lambda _: None) -> dict:
     phase('import')
-    from jevdual.effectors import desktop_effector
+    from jevdual.effectors import desktop_effector, require_available
+
+    require_available("desktop")
     from jevdual.effectors.cua import list_windows_input
     from jevdual.linux_documents import bind
     from jevdual.native import NativeBridge

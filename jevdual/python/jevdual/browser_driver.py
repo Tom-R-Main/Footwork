@@ -213,6 +213,9 @@ def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
 
 
 def _host_class(pid: int) -> Any:
+    from jevdual.effectors import require_available
+
+    require_available("browser")
     from jevdual.effectors.cua import authorization_host
 
     return authorization_host(pid, executable=chrome_executable(), owned_pid=lambda: chrome_pid())
@@ -557,6 +560,9 @@ class BrowserBridge:
 
 async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) -> tuple[Any, BrowserBridge]:
     """Launch or find footwork's Chrome, build the configured Driver, bind its largest window."""
+    from jevdual.effectors import require_available
+
+    require_available("browser")
     from jevdual.effectors.cua import list_windows_input
 
     pid, launch = _begin_chrome(url)

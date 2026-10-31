@@ -299,3 +299,46 @@ def test_availability_preflight_does_not_construct_a_driver(kind, monkeypatch):
         _native=SimpleNamespace(uniffi_set_event_loop=forbidden),
     ))
     require_available(kind)
+
+
+@pytest.mark.parametrize("entry", [
+    "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+    "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+])
+def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+    from jevdual import browser_driver, cli, coexist, keys, linux_session
+
+    original_import = builtins.__import__
+
+    def missing(name, *args, **kwargs):
+        if name == "cua_driver":
+            raise ModuleNotFoundError("missing optional SDK", name=name)
+        return original_import(name, *args, **kwargs)
+
+    def forbidden(*args, **kwargs):
+        pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+
+    monkeypatch.setattr(builtins, "__import__", missing)
+    phases = []
+    if entry == "browser_launch":
+        monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+        action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+    elif entry == "browser_authorization_host":
+        monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+        action = lambda: browser_driver._host_class(1)
+    elif entry in ("run_keys", "run_output"):
+        monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+        monkeypatch.setattr(cli, "_out_dir", forbidden)
+        args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+        action = lambda: asyncio.run(cli.cmd_run(args))
+    elif entry in ("coexist_idle", "coexist_temporary_directory"):
+        monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+        monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+        action = lambda: asyncio.run(coexist.run_case("C1"))
+    else:
+        action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+    with pytest.raises(EffectorUnavailable):
+        action()
+    assert not (tmp_path / "must-not-create").exists()
+    if entry == "linux_probe_phase":
+        assert phases == ["import"]

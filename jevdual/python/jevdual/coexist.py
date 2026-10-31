@@ -776,8 +776,9 @@ CASES = {
 
 
 async def run_case(key: str, work: Path | None = None) -> CaseResult:
-    from jevdual.effectors import desktop_effector
+    from jevdual.effectors import desktop_effector, require_available
 
+    require_available("desktop")
     require_idle(BETWEEN_S if work is not None else GUARD_IDLE_S)
     work = work or Path(tempfile.mkdtemp(prefix="q15-"))
     driver = desktop_effector()
