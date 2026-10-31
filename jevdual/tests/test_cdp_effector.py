@@ -276,6 +276,8 @@ def fixture_url():
     thread.start()
     yield f"http://127.0.0.1:{server.server_address[1]}/ticket"
     server.shutdown()
+    server.server_close()
+    thread.join(timeout=2)
 
 
 @pytest.fixture
@@ -319,6 +321,7 @@ def test_the_owned_browser_is_observed_as_the_fixture_declares(chrome, fixture_u
             return ops, bridge, nm
         finally:
             await setup.close()
+            await ops.close()
 
     ops, bridge, nm = asyncio.run(run())
     got = [(c.label, c.role, c.operations, c.value, c.checked, c.offscreen) for c in nm.menu.candidates]
@@ -364,6 +367,7 @@ def test_actions_refuse_before_dispatch_and_a_reload_invalidates_refs(chrome, fi
             return ops, effects, after
         finally:
             await setup.close()
+            await ops.close()
 
     ops, effects, after = asyncio.run(run())
     assert [(e.effect, e.error_code, e.dispatched, e.delivery) for e in effects] == [
