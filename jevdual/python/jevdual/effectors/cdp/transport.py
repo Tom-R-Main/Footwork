@@ -13,6 +13,7 @@ import contextlib
 import itertools
 import json
 from typing import Any
+from urllib.parse import urlsplit
 
 #: largest accepted message; a full accessibility tree of a large page fits well inside this
 MAX_MESSAGE_BYTES = 64 * 1024 * 1024
@@ -52,16 +53,29 @@ class CdpConnection:
         self._pending: dict[int, tuple[str, asyncio.Future]] = {}
         self._listeners: list[tuple[str, str | None, asyncio.Queue]] = []
         self._closed: str | None = None
+        self._closing: asyncio.Task | None = None
         #: every method sent, in order, for the record and for tests; never parameters
         self.sent: list[str] = []
         self._reader = asyncio.create_task(self._read())
 
     @classmethod
     async def open(cls, url: str, *, timeout: float = 5.0) -> CdpConnection:
+        try:
+            endpoint = urlsplit(url)
+            valid = (
+                endpoint.scheme == "ws" and endpoint.hostname == "127.0.0.1"
+                and endpoint.username is None and endpoint.password is None
+                and endpoint.port is not None and 0 < endpoint.port < 65536
+                and endpoint.path.startswith("/devtools/browser/")
+                and len(endpoint.path) > len("/devtools/browser/")
+                and not endpoint.query and not endpoint.fragment
+            )
+        except ValueError:
+            valid = False
+        if not valid:
+            raise CdpClosed("refusing a non-loopback DevTools endpoint or invalid browser endpoint")
         from websockets.asyncio.client import connect
 
-        if not url.startswith("ws://127.0.0.1:"):
-            raise CdpClosed(f"refusing a non-loopback DevTools endpoint: {url[:80]}")
         ws = await connect(
             url, open_timeout=timeout, proxy=None, compression=None, max_size=MAX_MESSAGE_BYTES,
             ping_interval=None,
@@ -79,22 +93,57 @@ class CdpConnection:
         if self._closed is not None:
             raise CdpClosed(f"{method} not sent: connection closed ({self._closed})")
         id = next(self._ids)
-        future: asyncio.Future = asyncio.get_running_loop().create_future()
-        self._pending[id] = (method, future)
         message: dict[str, Any] = {"id": id, "method": method, "params": params or {}}
         if session_id is not None:
             message["sessionId"] = session_id
+        # Encode before admission: a serialization failure did not reach the socket.
+        raw = json.dumps(message)
+        future: asyncio.Future = asyncio.get_running_loop().create_future()
+        self._pending[id] = (method, future)
         self.sent.append(method)
+        sent = False
         try:
-            await self._ws.send(json.dumps(message))
-        except Exception as exc:
-            self._pending.pop(id, None)
-            raise CdpUnknownOutcome(method, f"send failed ({type(exc).__name__})") from exc
-        try:
-            return await asyncio.wait_for(asyncio.shield(future), timeout)
+            # One total command budget covers socket backpressure and waiting for Chrome.
+            async with asyncio.timeout(timeout):
+                await self._ws.send(raw)
+                sent = True
+                return await asyncio.shield(future)
         except TimeoutError:
-            self._pending.pop(id, None)
+            if not sent:
+                self._retire("command deadline interrupted a send")
             raise CdpUnknownOutcome(method, f"no reply within {timeout:g}s") from None
+        except asyncio.CancelledError:
+            if not sent:
+                self._retire("cancellation interrupted a send")
+            raise
+        except (CdpError, CdpUnknownOutcome):
+            raise
+        except Exception as exc:
+            if sent:
+                raise
+            self._retire(f"send failed ({type(exc).__name__})")
+            raise CdpUnknownOutcome(method, f"send failed ({type(exc).__name__})") from exc
+        finally:
+            self._pending.pop(id, None)
+            if not future.done():
+                future.cancel()
+            elif not future.cancelled():
+                future.exception()  # a reply may have arrived while send was interrupted
+
+    def _fail_pending(self, reason: str) -> None:
+        for method, future in self._pending.values():
+            if not future.done():
+                future.set_exception(CdpUnknownOutcome(method, f"{reason} before a reply"))
+                future.exception()  # retrieved here; the waiter re-raises it
+        self._pending.clear()
+
+    def _retire(self, reason: str) -> None:
+        # WebSocket send cancellation can interrupt a fragmented message. Never reuse that socket.
+        self._closed = reason
+        self._fail_pending(reason)
+        self._reader.cancel()
+        if self._closing is None:
+            self._closing = asyncio.create_task(self._close_transport())
 
     def listen(self, method: str, *, session_id: str | None = None) -> asyncio.Queue:
         queue: asyncio.Queue = asyncio.Queue()
@@ -132,19 +181,26 @@ class CdpConnection:
         except Exception as exc:  # noqa: BLE001 - any loss leaves in-flight commands unknown, never failed
             reason = f"connection lost ({type(exc).__name__})"
         finally:
-            self._closed = reason
-            for method, future in self._pending.values():
-                if not future.done():
-                    future.set_exception(CdpUnknownOutcome(method, f"{reason} before a reply"))
-                    future.exception()  # retrieved here; the waiter re-raises it
-            self._pending.clear()
+            self._closed = self._closed or reason
+            self._fail_pending(self._closed)
 
-    async def close(self) -> None:
-        if self._closed is None:
-            self._closed = "closed by Footwork"
+    async def _close_transport(self) -> None:
         try:
-            await self._ws.close()
+            # Cleanup has its own bound and cannot extend a command's deadline. This task is kept
+            # by the connection and joined by close(), even when its initiating caller is cancelled.
+            async with asyncio.timeout(1.0):
+                await self._ws.close()
+        except Exception:  # noqa: BLE001 - retire regardless of handshake failure
+            transport = getattr(self._ws, "transport", None)
+            if transport is not None:
+                with contextlib.suppress(Exception):
+                    transport.abort()
         finally:
             self._reader.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await self._reader
+
+    async def close(self) -> None:
+        if self._closing is None:
+            self._retire(self._closed or "closed by Footwork")
+        await asyncio.shield(self._closing)

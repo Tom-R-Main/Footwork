@@ -15,3 +15,23 @@ Test: a no-network connect sentinel checks loopback-looking userinfo URLs, missi
 Predicts: only the valid credential-free loopback browser URL reaches connect; every invalid URL raises CdpClosed before the sentinel.
 Against: any invalid URL reaches connect or the valid loopback endpoint is refused.
 Refs: python/jevdual/effectors/cdp/transport.py CdpConnection.open; https://github.com/Tom-R-Main/Footwork/pull/16
+
+## CTDU1 · update · 2026-10-31 12:03
+Resolves: CTD1 = held
+Observed: on ee5d010, the blocked-send and shared-budget tests ended at their external watchdog instead of the command deadline; cancellation during either sending or reply waiting retained a pending future. The revised transport passes those checks and existing CDP effector checks, including the real headless Chrome cases. A completed send can receive a late reply after its deadline without another send. An interrupted send retires the connection immediately, marks other pending commands unknown and sends no further commands. Connection-owned cleanup is bounded separately and joined by close; cancelling a close waiter leaves that cleanup owned. Serialization failures create neither pending entries nor a send.
+Changes: one asyncio timeout covers send and reply, pending entries are released in finally, and interrupted sends retire the socket rather than reusing uncertain framing. The first revised test expected the socket-close coroutine to have finished at the command deadline; it now checks the immediate retired gate, then explicitly joins cleanup before checking socket closure. This preserves the command budget instead of making cleanup extend it.
+Next: parent review and retained PR verification report, then hosted CI on the final head.
+Refs: tests/test_cdp_transport_deadline.py; tests/test_cdp_effector.py; https://github.com/Tom-R-Main/Footwork/pull/16
+
+## CTDU2 · update · 2026-10-31 12:03
+Resolves: CTD2 = held
+Observed: the connect sentinel is reached only by the valid credential-free loopback browser URL. Userinfo, remote host, missing or invalid port, wrong scheme/path, query and fragment cases refuse before connect. Error text does not echo the supplied endpoint.
+Changes: endpoint validation parses authority components before importing the WebSocket client. The prior CTD1 discussion anchor was not verified; the canonical review source is PR 16. CTD1 and CTD2 heading times were inadvertently one minute ahead of the observed clock; their committed ordering remains authoritative (680e296 and bbe3965, both before their respective tests).
+Next: preserve the absence of raw URL credentials in diagnostics and rerun final-head hosted checks.
+Refs: tests/test_cdp_transport_deadline.py; https://github.com/Tom-R-Main/Footwork/pull/16
+
+## CTDS · summary · 2026-10-31 12:03
+Established: command backpressure and reply waiting share one deadline; cancellation releases pending custody; an interrupted send is unknown and retires the connection without retry. Endpoint validation uses the parsed authority and supports only the owned loopback browser endpoint shape.
+Uncertain: real Chrome tests ran on macOS; Linux and full hosted qualification remain with the parent PR acceptance. These changes do not enable mutations or durable browser authority.
+Decision: hand the bounded transport repair to the parent for final-head integration and merge review.
+Refs: tests/test_cdp_transport_deadline.py; tests/test_cdp_effector.py
