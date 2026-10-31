@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/workspace/footwork-lightpanda-vm-evidence/jevdual/results/lightpanda-vm-20261031/harness/run_2b5325e.py", line 228, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/footwork-lightpanda-vm-evidence/jevdual/results/lightpanda-vm-20261031/harness/run_2b5325e.py", line 175, in main
+    for row in descendants():
+               ^^^^^^^^^^^^^
+  File "/workspace/footwork-lightpanda-vm-evidence/jevdual/results/lightpanda-vm-20261031/harness/run_2b5325e.py", line 56, in descendants
+    rows.append(identity(process))
+                ^^^^^^^^^^^^^^^^^
+  File "/workspace/footwork-lightpanda-vm-evidence/jevdual/results/lightpanda-vm-20261031/harness/run_2b5325e.py", line 49, in identity
+    'session': os.getsid(process.pid), 'group': os.getpgid(process.pid)}
+               ^^^^^^^^^^^^^^^^^^^^^^
+ProcessLookupError: [Errno 3] No such process

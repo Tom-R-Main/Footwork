@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-2b5325e/lightpanda-x86_64-linux",
+    "version"
+  ],
+  "returncode": 0,
+  "stdout": "1.1.0-nightly.11423+56980afde\n",
+  "stderr": "",
+  "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+}

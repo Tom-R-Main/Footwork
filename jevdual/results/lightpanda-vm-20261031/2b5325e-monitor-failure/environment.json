@@ -1,0 +1,139 @@
+{
+  "utc_started": "2026-10-31T20:41:27.959094+00:00",
+  "baseline_source": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "measurement_commit": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "evidence_commit": "d0c1798cb69c5b3c75ec414e650cda7da9d265b8",
+  "receipt_helpers_sha256": {
+    "receipt_plugin.py": "981fc86376be508aae5ae685aa16a03038747f018616cc28926d8d24b46467af",
+    "pytest_main.py": "c23cefeb8fb2cf19f48946a23cd1cb66606953798057a99d3e5ba34d20ac5c27"
+  },
+  "harness_sha256": "7a52ed55d47cf64ac439fedaa6da296f5fc28ec034dfcdb7703cbc6d4f798c13",
+  "wheel": {
+    "name": "jevdual-0.0.1-py3-none-any.whl",
+    "sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb"
+  },
+  "test_sha256": {
+    "test_cdp_effector.py": "d3d4a2f689c8f0dae42a8a74656b24457f45acd0305f2614868cdd2716ba39b2",
+    "test_cdp_transport_deadline.py": "c4d10e3605598345b9cdee54ecdd3b4b749c0aefdeb05f675c1bab2f40f68594",
+    "test_cdp_launch_custody.py": "266544670851452c2c034443bec4abd8fff5815f0b4a2da87342ae7eb3546777",
+    "test_cdp_click.py": "0c004967776609b3151bc7321f2c0ed96c6e437f12e5ea8311996298c454b7e7",
+    "test_cdp_click_contract.py": "34c07ad6dbd0eb5764b212d5ca072f81ebd3561bd5844569a3d1b98f02d0e0a1",
+    "test_browser_durable_authority.py": "9f2323333ecda0585431f16932afb331b42d3de827a396cceaf94a7a843e9b1a",
+    "test_browser_holder.py": "026370f851f6d6349f68dec3f8ffc47436dbd76b359bc71d4ce4defe33290254",
+    "test_browser_guard.py": "464a1180f1953495813fb7230a0849026d901125eb8054275c72f039191aff6d",
+    "test_browser_cdp_cli.py": "6818b7807c65ae64c067a94522558e2bbb4788b91b6c76e957725778a2d11b54",
+    "test_browser_restart_cli.py": "08368a52eadf7aa3645641a5bbf616eef53b4f71bfe5acd4da70bbb194ac1995",
+    "test_browser_startup_cli.py": "5010f823a9710ea69bc89e3c53fe61a9ea4ee1f28420c7551b948ac6768b7e84",
+    "test_browser_startup_lifecycle.py": "330232c60a1e56ae657744dc82ab3e7d2efadf6e3771981052c2018fcf4b97bf",
+    "test_lightpanda_launch.py": "dd930893e706c3ad129b89d726831014e2bd174117464c99446d84d462efbcc3",
+    "test_lightpanda_observation.py": "0daea2152d9ef6995e5d09ba0ae85bc2cf47963ced827f852c171dfebf094854",
+    "test_lightpanda_cli.py": "9a48c05f643617feabf6b7df10770bfe0fec243f4cdce9ec950f1d790e57672e"
+  },
+  "verified_installed_package_files": 211,
+  "origins": {
+    "jevdual": "/workspace/scratch/footwork-lightpanda-2b5325e/consumer/lib/python3.12/site-packages/jevdual/__init__.py",
+    "operations": "/workspace/scratch/footwork-lightpanda-2b5325e/consumer/lib/python3.12/site-packages/jevdual/effectors/cdp/operations.py",
+    "python": "/workspace/scratch/footwork-lightpanda-2b5325e/consumer/bin/python",
+    "prefix": "/workspace/scratch/footwork-lightpanda-2b5325e/consumer",
+    "sys_path": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload",
+      "/workspace/scratch/footwork-lightpanda-2b5325e/consumer/lib/python3.12/site-packages"
+    ]
+  },
+  "packages": {
+    "Pygments": "2.21.0",
+    "jevdual": "0.0.1",
+    "psutil": "7.2.2",
+    "pytest": "8.4.2",
+    "pluggy": "1.7.0",
+    "websockets": "15.0.1",
+    "packaging": "26.3",
+    "iniconfig": "2.3.1"
+  },
+  "optional_backends": {
+    "cua_driver": false,
+    "browser_use": false
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.6\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"",
+  "kernel": {
+    "system": "Linux",
+    "release": "6.18.57",
+    "machine": "x86_64"
+  },
+  "chrome": {
+    "executable": "/usr/lib/chromium/chromium",
+    "sha256": "4dc9f9f9b20e9bd95bf201f43d2d643f48938f36a70ddcb6fce3dd611a178180",
+    "version": "Chromium 154.0.8037.57",
+    "sandbox_override": false
+  },
+  "cgroup_membership": "0::/",
+  "cgroup": {
+    "cpu.max": "400000 100000",
+    "cpuset.cpus.effective": "0-4",
+    "memory.max": "17179869184",
+    "memory.swap.max": "max",
+    "pids.max": "max",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "pids.events": "max 0"
+  },
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "uid": 1000,
+  "rlimits": {
+    "RLIMIT_CORE": [
+      0,
+      0
+    ],
+    "RLIMIT_NPROC": [
+      71955,
+      71955
+    ],
+    "RLIMIT_NOFILE": [
+      16384,
+      16384
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ]
+  },
+  "kernel_policy": {
+    "/proc/sys/kernel/unprivileged_userns_clone": {
+      "unavailable": "FileNotFoundError"
+    },
+    "/proc/sys/user/max_user_namespaces": "71955",
+    "/proc/sys/kernel/core_pattern": {
+      "unavailable": "FileNotFoundError"
+    }
+  },
+  "pid1": "tail",
+  "test_wrapper_subreaper": true,
+  "watchdog_seconds": 600,
+  "cleanup_grace_seconds": 3,
+  "scope": "one-shot Lightpanda DOM-only read plus unchanged prior CDP gates; no Lightpanda input/raw-script/reconnect authority",
+  "engine": {
+    "path": "/workspace/scratch/footwork-lightpanda-2b5325e/lightpanda-x86_64-linux",
+    "bytes": 77129032,
+    "argv": [
+      "/workspace/scratch/footwork-lightpanda-2b5325e/lightpanda-x86_64-linux",
+      "version"
+    ],
+    "returncode": 0,
+    "stdout": "1.1.0-nightly.11423+56980afde\n",
+    "stderr": "",
+    "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+    "source_policy": "binary digest/reported git version, not nightly tag anchor"
+  },
+  "pytest_rlimit_core": [
+    0,
+    0
+  ]
+}

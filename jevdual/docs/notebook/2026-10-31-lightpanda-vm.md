@@ -61,3 +61,17 @@ Test: fresh isolated216-entry wheel expectedSHA373a43fcccb905ae70fef7f63cb53a478
 Predicts: all308 pass without skips/collector faults; real base link keeps text and omits destination, frame DOM/private content is omitted, no POST/input/reconnect appears; cleanup is truthful. HTTPS is attempted once and retained, including any environment failure.
 Against: failed/skipped tests, guessed base destinations, private iframe content leakage, widened main URL/action authority, live residue, wrong digest/source or promoting zero actual child metadata into real child-frame qualification.
 Refs: source2b5325edfbab95e095343d0c36ad5544db92d114; results/lightpanda-vm-20261031/2b5325e/; parent review limits; test_lightpanda_cli.py new base/frames cases
+
+## LPLINUXU2 · update · 2026-10-31 16:45
+Resolves: LPLINUX2 = inconclusive
+Observed: updated2b5325e matched216-entry wheel373a43fc. Its test subprocess eventually passed308/308 with no skips/failures, but my outer sampling harness died after223 passed cases when a child exited between psutil sampling and os.getsid, raising ProcessLookupError. The outer helper exited1 and lost direct wait/subreaping custody, so no final cleanup receipt exists and the308 result is not a clean process gate. The actual test process finished and is no longer found by its private command path. Existing CLI/fixture/JUnit/error receipts remain; orphan-zombie attribution/reaping is unverified, not hidden. No HTTPS read on this artifact was executed yet.
+Next: preserve the entire monitor-failed attempt and make exactly one fresh-consumer repeat after a test-only sampler correction. Candidate/test source and artifact stay unchanged; no implementation patch or new fault/website retry.
+Refs: results/lightpanda-vm-20261031/2b5325e-monitor-failure/runner.stderr.txt; results/lightpanda-vm-20261031/2b5325e-monitor-failure/failure-assessment.json; frozen monitor d0c1798
+
+## LPLINUX3 · prediction · 2026-10-31 16:45
+Revises: LPLINUX2
+Hypothesis: treating ProcessLookupError from session/group reads as an ordinary exited-child sampling race, and retaining the actual pytest Popen lifetime when any unexpected diagnostic sample fails, prevents loss of test-only wait custody without changing product behavior.
+Test: exactly one repeat of the same2b5325e/373a43fc308-module-case gate in a fresh minimal consumer, identical source-copied15 tests and engine. New versioned monitor catches only expected psutil/OS exited-process exceptions per child; any other monitor error is retained and blocks qualification but does not escape the owning wait loop. Preserve the prior monitor-failed308 receipt and ambient orphan uncertainty. Same600-second bound/resources/core policy/collector. Then perform the still-unexecuted single HTTPS read; no new product/fault/source change or automatic website retry.
+Predicts:308 pass with numeric wrapper/test exits0, no diagnostic error, complete pre/final scoped cleanup records and explicit test-only reaping. Real frame claim remains DOM omission with childFrames0; modeled child URL coverage is not promoted.
+Against: runtime test failure, another sampler/collector exception, owner exits without recording final custody, changed test assertion/source, or falsely claiming global orphan cleanup from the repeat's owned set.
+Refs: results/lightpanda-vm-20261031/harness/run_2b5325e_monitored.py; results/lightpanda-vm-20261031/2b5325e-monitored/
