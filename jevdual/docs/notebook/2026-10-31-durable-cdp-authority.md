@@ -16,3 +16,9 @@ Against: a cold agent is directed to CUA/X11 for the CDP route, an unavailable l
 ## DCAU1 · update · 2026-10-31 14:49
 Observed: the first real CLI lost-client-ack test delivered exactly one fixture ingress and retained unknown, but recover failed because the CLI caught OSError/ValueError while the holder identity checker raises RuntimeError. The catch boundary was corrected; the three focused discovery/lost-client/missing-guard CLI checks then passed. Four existing unrelated-cwd discovery checks initially failed because the source test used a relative PYTHONPATH; rerunning with the absolute candidate source root passed all 47 focused guard/discovery/authorization checks. These are harness/integration failures, not evidence of browser completion.
 Next: finish exact installed-wheel tests, independent review and VM qualification before resolving DCA1/DCA2. General completion readers, pipe custody and the light metadata split remain open.
+
+## DCA3 · prediction · 2026-10-31 14:56
+Hypothesis: a readiness RPC exception after spawning the owned holder bypasses the CLI startup timeout cleanup and leaves the new helper running.
+Test: a bounded process-handle test raises from the first readiness RPC after the holder descriptor appears; assert termination and wait of the actual newly created child handle. Also check the CDP schema returns its full executable command path.
+Predicts: current startup raises without closing the handle; wrapping all failed startup exits in owned-handle cleanup closes it without inspecting or signaling any metadata PID. The schema can include its browser prefix without changing legacy routing.
+Against: cleanup already runs on the exceptional exit, or the fix stops a successfully established holder or a foreign process.
