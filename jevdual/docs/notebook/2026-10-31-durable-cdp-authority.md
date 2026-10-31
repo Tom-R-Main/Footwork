@@ -22,3 +22,13 @@ Hypothesis: a readiness RPC exception after spawning the owned holder bypasses t
 Test: a bounded process-handle test raises from the first readiness RPC after the holder descriptor appears; assert termination and wait of the actual newly created child handle. Also check the CDP schema returns its full executable command path.
 Predicts: current startup raises without closing the handle; wrapping all failed startup exits in owned-handle cleanup closes it without inspecting or signaling any metadata PID. The schema can include its browser prefix without changing legacy routing.
 Against: cleanup already runs on the exceptional exit, or the fix stops a successfully established holder or a foreign process.
+
+## DCAU2 · update · 2026-10-31 14:54
+Observed: DCA3's first probe hit the Unix socket path guard before spawning because pytest's temporary path was too long; that cell did not test cleanup. The schema cell independently reproduced the missing browser command prefix. DCA3's heading time was a transcription error: the clock returned 14:53 when it was committed; Git ordering remains authoritative.
+Next: shorten the test path and rerun the cleanup probe before its fix. Include the reviewer's related pre-readiness signal boundary below.
+
+## DCA4 · prediction · 2026-10-31 14:54
+Hypothesis: holder startup installs signal handlers too late, so terminating it while the Chrome launch thread is returning can bypass owned-handle cleanup even if the CLI waits for the holder.
+Test: real subprocess startup shim delays return of the actual launched Chrome handle; send SIGTERM after independent identity capture but before holder readiness. Also exercise configured startup cancellation after the handle is acquired.
+Predicts: installing a stop latch before launch and retaining acquisition of the launch-thread result allows the holder to stop the original Chrome handle and exit; a forced-kill fallback remains explicitly cleanup-unverified.
+Against: graceful startup termination leaves live captured Chrome processes, loses the returned handle, or signals a process based only on metadata.
