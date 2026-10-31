@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import secrets
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any
@@ -223,7 +224,10 @@ class CdpBrowserOperations:
             f"{operation} through Footwork's own browser effector is not qualified yet; nothing was sent",
         )
 
-    async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply:
+    async def click(
+        self, *, target_id: str, tab_id: str | None, ref: str, input_route: str,
+        admission: Callable[[RefBinding], Awaitable[None]] | None = None,
+    ) -> BrowserReply:
         async with self._ownership:
             if self._click_unknown:
                 return _refused("browser_delivery_unknown", "an earlier activation is unresolved; no further click was sent")
@@ -246,6 +250,20 @@ class CdpBrowserOperations:
                     return _refused("stale_ref", "the exact observed node could not be resolved")
             except (CdpError, CdpClosed, CdpUnknownOutcome):
                 return _refused("browser_validation_unavailable", "read-only target validation failed; no activation was sent")
+
+            # A durable owner may authorize and commit admission after read-only resolution, but
+            # before ref consumption or any possible activation. A refusal must release only the
+            # read handle; it never enters the activation path.
+            if admission is not None:
+                try:
+                    await admission(binding)
+                except BaseException:
+                    try:
+                        await self.conn.send("Runtime.releaseObject", {"objectId": obj},
+                                             session_id=binding.session_id, timeout=0.2)
+                    except BaseException as exc:  # noqa: BLE001 - preserve the original refusal/cancellation
+                        log.debug("CDP refused-read handle release unavailable (%s)", type(exc).__name__)
+                    raise
 
             # Admission is connection-local. No fresh observation can reset ambiguity, and the
             # current observation is consumed before anything that might activate a control.

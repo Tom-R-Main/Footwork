@@ -1,0 +1,7 @@
+# Durable CDP Linux VM evidence
+
+Final exact candidate **e4df2c6b04644c332c8a636c556ae2fee0822d28** /211-entry wheel **ae780174a9f0dcfc0583dd9ed9c814f9f940fbfa54b6f64fdf50aad38233b059** passed **201/201**, zero skips/errors/failures, exit0. [Final report](e4df2c6/report.md) retains real public CLI/holder/token/recovery/guard receipts, independent0/0/1 ingress, four startup supervisors' actual stdout/stderr/exits and pre-cleanup live assertions, discovery output, installed isolation and separate reaper accounting. Two new retention/cancellation sensitivity controls passed; these are injected failures, not a reproduced disk-full incident.
+
+Previous exact **3484b03b2c6c639f4d896317fc765d2267a6fe98** /8042e0f9 wheel remains **199/199** ([report](3484b03/report.md)). Initial **cad7508f8f4375735c0651c5e0aa5929f3b57700** /e466146e wheel remains **187 passed /3 collector-caused failures**, not a clean qualification ([original report](cad7508-first/report.md)). No earlier run is erased or relabelled.
+
+Parent owns runtime implementation, review, PR18 and merge. All changes on codex/durable-cdp-vm-evidence are notebook/results only. Actual VM remains4CPU/16GiB; test-only subreaping is separate from product cleanup. Typing stays disabled, acknowledgement/completion remains unknown/unverified, full package metadata persists, and no generic completion oracle or light metadata split is claimed.

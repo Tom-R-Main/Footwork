@@ -65,7 +65,8 @@ agent also needs the supported GUI execution and evidence boundaries described h
 | --- | --- |
 | Native CLI with `--authority` | Experimental durable admission, immutable request tokens, retained execution receipts and conservative recovery within one shared authority database |
 | Scoped MCP service | Its own journal for the qualified bind/observe/append/status/report workflow, including duplicate and restart handling |
-| Dedicated browser CLI | Owned Chrome observation and supported actions; native durable authority is not available on this route |
+| Legacy dedicated browser CLI | Owned Chrome observation and supported actions; native durable authority is not available on this route |
+| Explicit headless CDP preview | Guarded native-button activation with durable admission and restart retention; acknowledgement remains unverified, typing disabled ([guide](owned-cdp.md)) |
 | Model-driven loop | Action gating and completion assessment; it does not inherit the durable native CLI protocol |
 | Saved-artifact checker | Exact bytes at an explicit path against the supplied expected file/digest; no judgment of whether the approved content itself is correct |
 

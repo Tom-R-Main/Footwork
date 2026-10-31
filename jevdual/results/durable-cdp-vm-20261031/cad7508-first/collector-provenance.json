@@ -1,0 +1,10 @@
+{
+  "receipt_plugin.py": {
+    "sha256": "c81107688c79eccfdf7e4e5f0a26e3ccec1d1afb1ab493052c10b89a02d57b5a",
+    "source_commit": "605d257"
+  },
+  "pytest_main.py": {
+    "sha256": "c23cefeb8fb2cf19f48946a23cd1cb66606953798057a99d3e5ba34d20ac5c27",
+    "source_commit": "605d257"
+  }
+}

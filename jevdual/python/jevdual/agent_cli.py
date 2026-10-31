@@ -48,6 +48,7 @@ class RoutingError(ValueError):
 
 
 def catalog() -> dict:
+    from .browser_cli import discovery
     from .tool_catalog import catalog as auxiliary
 
     desktop_route = {
@@ -67,7 +68,11 @@ def catalog() -> dict:
         "commands": list(LEGACY),
         "agent_commands": ["tools", "catalog", "schema", "doctor", "invoke", "capability", "mcp", "tool"],
         "surfaces": {
-            "browser": {"commands": ["start", *sorted(SESSION)], "route": "dedicated Chrome / CUA DevTools"},
+            "browser": {
+                "commands": ["start", *sorted(SESSION), "cdp"],
+                "route": "dedicated Chrome / CUA DevTools (legacy); owned headless CDP (explicit cdp)",
+                "cdp": discovery(),
+            },
             "desktop": {"commands": list(LEGACY), "route": desktop_route},
         },
         "capability": {
@@ -89,6 +94,7 @@ def _help() -> None:
         "Agent discovery: tools (or catalog), schema [COMMAND ...], doctor\n"
         "JSON input: invoke --input FILE (or - for stdin), request {command,args}\n"
         "Browser: browser start TASK --url URL --session DIR; browser look/do/read/done/status ...\n"
+        "Owned headless browser: browser cdp {start,look,click,status,recover,stop,guide}; typing disabled\n"
         "Desktop: desktop start TASK --app APP --session DIR; desktop look/do/read/done/status ...\n"
         "Scoped MCP: capability {config,server,report,doctor}; mcp --scope FILE --journal FILE\n"
         "Auxiliary tools: tool FAMILY COMMAND ... (or FAMILY COMMAND ...)\n"
@@ -189,6 +195,9 @@ def _schema(args: list[str]) -> dict:
                 "data": "decoded JSON output when available",
             },
         }
+    cdp_schema = len(args) >= 2 and args[:2] == ["browser", "cdp"]
+    if cdp_schema:
+        args = args[1:]
     if args[0] in ("browser", "desktop"):
         if len(args) == 1:
             return catalog()["surfaces"][args[0]]
@@ -210,7 +219,11 @@ def _schema(args: list[str]) -> dict:
             result = command_schema(family_args[0], family_args[1])
             return {"command": family_args, "invocation": ["footwork", *family_args], **result}
         return family
-    if args and args[0] in ("doctor", "capability", "mcp"):
+    if cdp_schema:
+        from .browser_cli import build_parser
+
+        selected = args[1:]
+    elif args and args[0] in ("doctor", "capability", "mcp"):
         from .capability.cli import build_parser
 
         selected = (
@@ -245,7 +258,7 @@ def _schema(args: list[str]) -> dict:
         )
     children = [a for a in parser._actions if isinstance(a, argparse._SubParsersAction)]
     return {
-        "command": args,
+        "command": ["browser", *args] if cdp_schema else args,
         "arguments": options,
         "subcommands": sorted(children[0].choices) if children else [],
     }
@@ -272,6 +285,30 @@ def _doctor(args: list[str]) -> int:
         result["acceleration"] = acceleration_status()
         result["host_prerequisites"] = probe()
         result["tool_families"] = auxiliary()
+        import importlib.util
+        import os
+
+        from .browser_cli import discovery
+        from .browser_driver import chrome_executable
+
+        cdp = discovery()
+        try:
+            chrome_executable()
+            chrome_present = True
+        except RuntimeError:
+            chrome_present = False
+        cdp["prerequisite_presence"] = {
+            "chrome": chrome_present,
+            "psutil": importlib.util.find_spec("psutil") is not None,
+            "websockets": importlib.util.find_spec("websockets") is not None,
+            "jev_environment_configured": bool(os.environ.get("TYPESAFE_API_KEY")),
+            "judgment_adapter": "explicit per-session configuration; not checked by offline doctor",
+        }
+        cdp["runtime_qualification"] = "not_checked"
+        result["browser_profiles"] = {"cdp": cdp, "legacy": {
+            "profile": "full-desktop", "requires": ["CUA", "X11/AT-SPI on Linux"],
+        }}
+        result["profile_note"] = "Native desktop blockers do not apply to headless CDP; runtime qualification must be checked separately."
         result["effect_verification"] = "not_asserted"
         _emit(result)
     return code
@@ -300,6 +337,10 @@ def _dispatch(args: list[str], legacy: Callable[[list[str]], int], json_mode: bo
         if json_mode and routed and routed[0] == "server":
             raise RoutingError("MCP server owns stdout; run without --json to preserve its protocol")
         return capability(routed)
+    if command == "browser" and rest and rest[0] == "cdp":
+        from .browser_cli import main as cdp
+
+        return cdp(rest[1:])
     if command in ("browser", "desktop"):
         routed = _surface_args(command, rest)
         return legacy(routed) if routed else 0

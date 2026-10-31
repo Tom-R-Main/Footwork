@@ -1,0 +1,9 @@
+{
+  "utc_checked": "2026-10-31T19:02:14.755195+00:00",
+  "remaining_observed_identities": [],
+  "cgroup_events": {
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "pids.events": "max 0"
+  },
+  "original_measured_runner_hash_verified": true
+}

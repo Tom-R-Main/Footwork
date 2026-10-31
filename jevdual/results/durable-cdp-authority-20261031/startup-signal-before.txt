@@ -1,0 +1,31 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_real_chrome_startup_signal_releases_owned_live_processes[launch-15] ___
+
+phase = 'launch', selected_signal = <Signals.SIGTERM: 15>
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("phase,selected_signal", [
+        ("launch", signal.SIGTERM), ("launch", signal.SIGINT),
+        ("connect", signal.SIGTERM), ("navigate", signal.SIGTERM),
+    ])
+    def test_real_chrome_startup_signal_releases_owned_live_processes(phase, selected_signal):
+        with tempfile.TemporaryDirectory(prefix="fw-start-", dir="/tmp") as raw:
+            root = Path(raw)
+            _configuration(root)
+            (root / "child.py").write_text(_SHIM)
+            supervisor = subprocess.Popen([sys.executable, "-c", _SUPERVISOR, str(root), phase, str(int(selected_signal))],
+                                          cwd=root, env=_environment(), stdin=subprocess.DEVNULL,
+                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                output, error = supervisor.communicate(timeout=65)
+>               assert supervisor.returncode == 0, (output, error)
+E               AssertionError: ('{"phase": "launch", "test_subreaper": false, "holder_exit": -15, "error": "(\'\', \'\')", "test_reaped": 0, "live_after_test_cleanup": []}
+E                 ', '')
+E               assert 1 == 0
+E                +  where 1 = <Popen: returncode: 1 args: ['/Users/thomasmain/projects/footwork/.worktrees...>.returncode
+
+test_browser_startup_lifecycle.py:211: AssertionError
+=========================== short test summary info ============================
+FAILED test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[launch-15]
+1 failed, 5 deselected in 0.91s

@@ -1,0 +1,5 @@
+........................................................................ [ 35%]
+........................................................................ [ 71%]
+.........................................................                [100%]
+- generated xml file: /Users/thomasmain/projects/footwork/.worktrees/durable-cdp-authority/output/durable-cdp/release-installed.xml -
+201 passed in 43.28s

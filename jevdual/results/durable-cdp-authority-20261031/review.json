@@ -1,0 +1,33 @@
+{
+  "reviewed_source": "e4df2c6b04644c332c8a636c556ae2fee0822d28",
+  "scope": "Changed browser authority, guard, holder, CLI, startup, schema, discovery and tests against a6a5859",
+  "independence": "Separate inherited-model agent context; no model-family diversity claim",
+  "initial_focused_checks_passed": 73,
+  "remediation_checks_passed": 27,
+  "findings": [
+    {
+      "issue": "Failed CLI readiness did not stop the newly created holder",
+      "resolution": "Owned direct-child cleanup wraps every unsuccessful startup exit; successful holder remains live"
+    },
+    {
+      "issue": "Pre-readiness SIGTERM/SIGINT could lose the launch-thread Chrome handle",
+      "resolution": "Early stop latch, shielded launch result and owned cleanup before authority release"
+    },
+    {
+      "issue": "CDP schema omitted browser command prefix",
+      "resolution": "Full browser/cdp command returned"
+    },
+    {
+      "issue": "A second retention failure after activation could escape to the no-send handler",
+      "resolution": "Narrow uncertainty envelope does not claim persistence; cancellation and blocked custody preserved",
+      "evidence_limit": "Injected sensitivity control, not a reproduced disk-full incident"
+    }
+  ],
+  "final_verdict": "No actionable findings within reviewed scope",
+  "source_sha256": {
+    "browser_cli.py": "e83eec7e80821d521495db419c9fba7b9cab3d3d2f606a104640f62e9e84c0e9",
+    "browser_holder.py": "7e2c9dced504dfa52921c6cc3fcd4e2e9201da5cd2d17e223a99477b4baabfa7",
+    "agent_cli.py": "98da9a5301887659b5ac21fb5ab42659e5d04b709546fc52c21e0ecb9fddad33"
+  },
+  "retention_sensitivity_controls_passed": 2
+}

@@ -465,3 +465,21 @@ The L1a implementation review traced `browser_driver.WebMenu/BrowserEffect`, `se
 browser contract and identified three prerequisites now explicit above: target-only headless readiness,
 exact text distinct from presentation clipping, and qualified cross-command reference continuity.
 Browser durable receipts need their own versioned producer; native receipt validation stays strict.
+
+
+## Implementation checkpoint (2026-10-31)
+
+PR18 qualifies an explicit `footwork browser cdp` admission/restart subset on runtime source
+`e4df2c6`: one owned holder, exact document refs, mandatory configured judgment, shared durable
+admission, stable-token retrieval and read-only restart recovery. Browser execution has a distinct
+versioned producer; native identity/evidence allowlists and the legacy durable-browser refusal stay
+unchanged. The exact wheel passed 201 installed checks on both macOS and Linux; see
+[the report](../../results/durable-cdp-authority-20261031/report.md) and
+[VM receipts](../../results/durable-cdp-vm-20261031/e4df2c6/report.md).
+
+This is not closure of all L3c gates. An acknowledged activation remains unknown and completion
+unverified; no generic or service-specific browser completion reader is implemented. L3b pipe
+custody, L2 binary-only light package metadata and L0 small-host resource measurement remain open.
+The deterministic discovery portion of L4 now exposes the explicit route, actual requirements and
+limits through tools, doctor, schema and the installed `browser cdp guide`; the paid cold-agent trial
+remains unrun. Typing stays disabled until its focus race is resolved and separately qualified.
