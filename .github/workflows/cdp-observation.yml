@@ -1,4 +1,4 @@
-name: cdp-observation
+name: cdp-browser
 
 on:
   push:
@@ -19,25 +19,25 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - name: Build source-matched pure Python wheel
         run: python jevdual/scripts/build_capability_wheel.py --output "$RUNNER_TEMP/cdp-wheel"
-      - name: Install only the observation test dependencies
+      - name: Install only the browser qualification dependencies
         run: |
           uv venv --python 3.12 "$RUNNER_TEMP/cdp-env"
           uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --only-binary=:all: pytest==8.4.2 psutil==7.2.2 websockets==15.0.1
           uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --no-deps "$RUNNER_TEMP"/cdp-wheel/*.whl
-      - name: Observe real Chrome outside the checkout without CUA or browser-use
+      - name: Qualify real Chrome outside the checkout without CUA or browser-use
         run: |
           test -x "$FOOTWORK_CHROME_EXECUTABLE"
           "$FOOTWORK_CHROME_EXECUTABLE" --version
           mkdir "$RUNNER_TEMP/cdp-tests"
-          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py "$RUNNER_TEMP/cdp-tests/"
+          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py "$RUNNER_TEMP/cdp-tests/"
           cd "$RUNNER_TEMP/cdp-tests"
           unset PYTHONPATH
           "$RUNNER_TEMP/cdp-env/bin/python" -c "import importlib.util; assert importlib.util.find_spec('cua_driver') is None; assert importlib.util.find_spec('browser_use') is None"
-          "$RUNNER_TEMP/cdp-env/bin/python" -m pytest -q --junitxml="$RUNNER_TEMP/cdp-junit.xml" .
+          "$RUNNER_TEMP/cdp-env/bin/python" -m pytest -q -o 'markers=browser: launches a real owned browser' --junitxml="$RUNNER_TEMP/cdp-junit.xml" .
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: installed-linux-cdp-observation
+          name: installed-linux-cdp-browser
           path: |
             ${{ runner.temp }}/cdp-wheel/*.whl
             ${{ runner.temp }}/cdp-junit.xml

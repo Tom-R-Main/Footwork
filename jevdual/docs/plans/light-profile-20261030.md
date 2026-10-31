@@ -219,6 +219,17 @@ Do not implement WebSocket framing as part of an effector port.
   value route is chosen instead, name and qualify its different input/event semantics explicitly;
   never silently substitute it or fall back after an uncertain send. DOM-event clicking may qualify
   separately while typing, trusted input and navigation remain refused.
+  The first bounded native-button route is `dom_event_native_button`: intrinsic HTML activation in
+  the observation's pinned isolated context, qualified only for directly named main-document
+  `button[type=button]` controls with complete labels within the offered 120-character limit. It
+  excludes forms, child elements, external label dependencies, role overrides and unsupported
+  activation targets. Its attribute/text/ancestor fingerprint and live eligibility are checked in
+  the same synchronous invocation as activation. CUA's `dom_event` instead emits a pointer/mouse
+  sequence; the routes do not claim parity. A pointerdown-only application may receive no business
+  effect from native activation, and the result remains unverifiable. One successful/attempted
+  activation consumes the observation; uncertain delivery blocks further clicks on that connection,
+  including after reobservation. This is a low-level qualification seam, with no new CLI selection or
+  agent-facing mutation tool. It does not settle the durable admission and restart work in L3c.
 - **Readback.** Value, checked state and URL are read in the isolated world to avoid page-patched
   reader functions. This is DOM-state evidence, not independent proof of submission or persistence.
   Fixture ingress counts, stored rows and saved bytes establish those separate postconditions.
