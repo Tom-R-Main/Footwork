@@ -29,7 +29,7 @@ jobs:
           test -x "$FOOTWORK_CHROME_EXECUTABLE"
           "$FOOTWORK_CHROME_EXECUTABLE" --version
           mkdir "$RUNNER_TEMP/cdp-tests"
-          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py jevdual/tests/test_browser_durable_authority.py jevdual/tests/test_browser_holder.py jevdual/tests/test_browser_guard.py jevdual/tests/test_browser_cdp_cli.py jevdual/tests/test_browser_restart_cli.py "$RUNNER_TEMP/cdp-tests/"
+          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py jevdual/tests/test_browser_durable_authority.py jevdual/tests/test_browser_holder.py jevdual/tests/test_browser_guard.py jevdual/tests/test_browser_cdp_cli.py jevdual/tests/test_browser_restart_cli.py jevdual/tests/test_browser_startup_cli.py jevdual/tests/test_browser_startup_lifecycle.py "$RUNNER_TEMP/cdp-tests/"
           cd "$RUNNER_TEMP/cdp-tests"
           unset PYTHONPATH
           "$RUNNER_TEMP/cdp-env/bin/python" -c "import importlib.util; assert importlib.util.find_spec('cua_driver') is None; assert importlib.util.find_spec('browser_use') is None"

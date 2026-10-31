@@ -13,6 +13,10 @@ import uuid
 from pathlib import Path
 
 
+class StartupCleanupUnverified(RuntimeError):
+    code = "browser_cleanup_unverified"
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="footwork browser cdp", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -125,22 +129,32 @@ def _start(args) -> dict:
     process = subprocess.Popen([sys.executable, "-m", "jevdual.browser_holder", "--session", str(args.session)],
                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                                start_new_session=True)
-    deadline = time.monotonic() + 40
-    while time.monotonic() < deadline:
-        if process.poll() is not None:
-            raise ValueError("holder failed before readiness; no browser authority was established")
-        if (args.session / HOLDER_FILE).exists():
-            result = asyncio.run(_remote(args.session, "status"))
-            if result.get("ok"):
-                return {"ok": True, "session_id": config["session_id"], "profile": discovery(), "holder": result}
-        time.sleep(0.05)
-    process.terminate()  # direct child, never a PID read from metadata
+    ready = False
     try:
-        process.wait(timeout=10)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait(timeout=3)
-    raise ValueError("holder readiness timed out; inspect retained authority before another start")
+        deadline = time.monotonic() + 40
+        while time.monotonic() < deadline:
+            if process.poll() is not None:
+                raise ValueError("holder failed before readiness; no browser authority was established")
+            if (args.session / HOLDER_FILE).exists():
+                result = asyncio.run(_remote(args.session, "status"))
+                if result.get("ok"):
+                    ready = True
+                    return {"ok": True, "session_id": config["session_id"], "profile": discovery(), "holder": result}
+            time.sleep(0.05)
+        raise ValueError("holder readiness timed out; inspect retained authority before another start")
+    finally:
+        if not ready and process.poll() is None:
+            # Only the direct child created above grants this shutdown authority. Its startup
+            # signal latch must retain the launch-thread handle before cleaning up Chrome.
+            process.terminate()
+            try:
+                process.wait(timeout=30)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=3)
+                # Forced termination cannot attest Chrome descendant cleanup.
+                raise StartupCleanupUnverified("holder forced to exit; browser cleanup unverified") from None
+
 
 
 async def _remote(session: Path, method: str, **fields) -> dict:

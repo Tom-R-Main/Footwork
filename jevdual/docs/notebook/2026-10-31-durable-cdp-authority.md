@@ -32,3 +32,10 @@ Hypothesis: holder startup installs signal handlers too late, so terminating it 
 Test: real subprocess startup shim delays return of the actual launched Chrome handle; send SIGTERM after independent identity capture but before holder readiness. Also exercise configured startup cancellation after the handle is acquired.
 Predicts: installing a stop latch before launch and retaining acquisition of the launch-thread result allows the holder to stop the original Chrome handle and exit; a forced-kill fallback remains explicitly cleanup-unverified.
 Against: graceful startup termination leaves live captured Chrome processes, loses the returned handle, or signals a process based only on metadata.
+
+## DCAU3 · update · 2026-10-31 15:01
+Resolves: DCA3 = held; DCA4 = held
+Observed: after shortening the probe path, both the exceptional-startup handle test and schema-prefix test failed on the old implementation. The fixed CLI also preserves a successfully established holder. The old exact installed wheel e466146e failed the real launch/SIGTERM cell with holder_exit=-15 and needed test-only cleanup; the new source passed four real Chrome cells (TERM during launch/connect/navigation, INT during launch) plus launch-task cancellation/cleanup checks. Captured live-process absence is asserted before test cleanup; Linux orphan reaping remains test-supervisor behavior, not product evidence.
+Changes: CLI failure exits close the actual direct child; holder handlers latch stop before launch, shield the launch-thread result, cancel only readiness tasks after retaining the Chrome handle, and never publish readiness after stop. Forced CLI termination carries browser_cleanup_unverified; startup cleanup exceptions propagate.
+Next: rebuild the exact candidate, rerun installed checks and the VM fault cells, then resolve DCA1/DCA2 and close review.
+Refs: tests/test_browser_startup_cli.py; tests/test_browser_startup_lifecycle.py; results/durable-cdp-authority-20261031/startup-signal-before.txt

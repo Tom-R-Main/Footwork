@@ -19,6 +19,7 @@ import signal
 import socket
 import stat
 import struct
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
@@ -365,24 +366,87 @@ async def request(directory: Path, method: str, **fields: Any) -> dict[str, Any]
             await writer.wait_closed()
 
 
+class _StartupStopped(Exception):
+    """The stop latch interrupted readiness, before a holder was published."""
+
+
+async def _retain_launch(task: asyncio.Task, stopping: asyncio.Event):
+    """A launch thread cannot be cancelled. Retain its eventual handle before propagating cancel.
+
+    ``launch`` has its own bounded readiness and failed-launch cleanup. Cancelling ``to_thread``
+    would discard the only returned cleanup authority while Chrome continues running in the thread.
+    """
+    cancelled = False
+    while not task.done():
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError:
+            cancelled = True
+            stopping.set()
+    return task.result(), cancelled
+
+
+async def _during_startup(stopping: asyncio.Event, action: Callable[[], Awaitable[Any]]) -> Any:
+    """Interrupt only readiness work after the browser handle is already retained by ``run``."""
+    if stopping.is_set():
+        raise _StartupStopped
+    work = asyncio.create_task(action())
+    stopped = asyncio.create_task(stopping.wait())
+    try:
+        await asyncio.wait((work, stopped), return_when=asyncio.FIRST_COMPLETED)
+        if stopping.is_set():
+            raise _StartupStopped
+        return work.result()
+    finally:
+        for task in (work, stopped):
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(work, stopped, return_exceptions=True)
+
+
 async def run(directory: Path) -> None:
     from .browser_authority import BrowserAuthority
     from .browser_guard import authorize
 
-    directory = Path(directory).absolute()
-    config = _config(directory)
-    if (directory / HOLDER_FILE).exists() or (directory / SOCKET_FILE).exists():
-        raise HolderRefused("browser_holder_exists", "a holder record already exists; no implicit restart is allowed")
-    fd = os.open(directory / "holder.lock", os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-    chrome = holder = operations = None
+    stopping = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    previous_handlers = {}
+    fd = chrome = holder = operations = server = authority = None
     try:
+        # Signals latch shutdown from the beginning, including while the launch thread owns a
+        # browser handle which has not yet returned to this coroutine. They never cancel that thread.
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            previous_handlers[sig] = signal.getsignal(sig)
+            loop.add_signal_handler(sig, stopping.set)
+        await asyncio.sleep(0)
+        if stopping.is_set():
+            return
+        directory = Path(directory).absolute()
+        config = _config(directory)
+        if (directory / HOLDER_FILE).exists() or (directory / SOCKET_FILE).exists():
+            raise HolderRefused("browser_holder_exists", "a holder record already exists; no implicit restart is allowed")
+        fd = os.open(directory / "holder.lock", os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW, 0o600)
         fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        with BrowserAuthority(Path(config["authority"])) as authority:
-            # Acquiring the sole journal owner must precede launching a second custodial process.
-            authority.assert_available()
-            chrome = await asyncio.to_thread(launch.launch, config["chrome"],
-                                             directory / f"profile-{secrets.token_hex(8)}")
+        # The sole journal owner must be acquired before creating a custodial process.
+        authority = BrowserAuthority(Path(config["authority"]))
+        authority.assert_available()
+        await asyncio.sleep(0)
+        if stopping.is_set():
+            return
+        acquisition = asyncio.create_task(asyncio.to_thread(launch.launch, config["chrome"],
+                                                            directory / f"profile-{secrets.token_hex(8)}"))
+        chrome, cancelled = await _retain_launch(acquisition, stopping)
+        if cancelled:
+            raise asyncio.CancelledError
+        if stopping.is_set():
+            return
+
+        async def connect_owned() -> None:
+            nonlocal operations
+            # Retain the acquired connection before returning from a cancellable readiness task.
             operations = await CdpBrowserOperations.connect(chrome)
+
+        async def initialize() -> str:
             bound = await operations.bind(pid=chrome.pid, window_id=0)
             if bound.refused:
                 raise HolderRefused("browser_binding_unavailable", "the owned browser could not be bound")
@@ -398,34 +462,53 @@ async def run(directory: Path) -> None:
                 await asyncio.wait_for(loaded.get(), 15.0)
             finally:
                 operations.conn.unlisten(loaded)
+            return tab
+
+        try:
+            await _during_startup(stopping, connect_owned)
+            tab = await _during_startup(stopping, initialize)
             holder = BrowserHolder(config, authority, chrome, operations, tab, authorize)
+            holder.stopping = stopping
             server = await asyncio.start_unix_server(holder.serve, path=str(directory / SOCKET_FILE),
                                                      limit=MAX_REQUEST)
             os.chmod(directory / SOCKET_FILE, 0o600)
+            # Let an already-delivered stop callback run before publishing readiness. No await is
+            # allowed between this latch check and writing the descriptor.
+            await asyncio.sleep(0)
+            if stopping.is_set():
+                return
             descriptor = {"version": 1, **process_identity(os.getpid()), "nonce": holder.nonce,
                           "session_id": config["session_id"], "socket": str(directory / SOCKET_FILE)}
             _write_private(directory / HOLDER_FILE, descriptor)
-            loop = asyncio.get_running_loop()
-            for sig in (signal.SIGTERM, signal.SIGINT):
-                loop.add_signal_handler(sig, holder.stopping.set)
-            try:
-                async with server:
-                    await holder.stopping.wait()
-            finally:
+            async with server:
+                await stopping.wait()
+        except _StartupStopped:
+            pass
+    finally:
+        try:
+            if server is not None:
                 server.close()
                 await server.wait_closed()
+            if holder is not None:
                 # Serialize shutdown with a pending admission/activation. Signals never create a
                 # second cleanup path racing the original operation.
                 async with holder.lock:
                     await holder.close()
-    finally:
-        if holder is None:
-            if operations is not None:
-                await operations.close()
-            if chrome is not None:
-                with contextlib.suppress(Exception):
-                    await asyncio.to_thread(launch.stop, chrome)
-        os.close(fd)
+            else:
+                try:
+                    if operations is not None:
+                        await operations.close()
+                finally:
+                    if chrome is not None:
+                        await asyncio.to_thread(launch.stop, chrome)
+        finally:
+            if authority is not None:
+                authority.close()
+            if fd is not None:
+                os.close(fd)
+            for sig, previous in previous_handlers.items():
+                loop.remove_signal_handler(sig)
+                signal.signal(sig, previous)
 
 
 def main(argv: list[str] | None = None) -> int:

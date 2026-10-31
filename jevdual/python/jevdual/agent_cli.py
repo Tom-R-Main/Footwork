@@ -258,7 +258,7 @@ def _schema(args: list[str]) -> dict:
         )
     children = [a for a in parser._actions if isinstance(a, argparse._SubParsersAction)]
     return {
-        "command": args,
+        "command": ["browser", *args] if cdp_schema else args,
         "arguments": options,
         "subcommands": sorted(children[0].choices) if children else [],
     }
