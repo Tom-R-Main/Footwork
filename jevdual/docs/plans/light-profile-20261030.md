@@ -186,9 +186,9 @@ Do not implement WebSocket framing as part of an effector port.
   state, operation eligibility and relevant semantics before dispatch. Unknown generation invalidates
   refs. Never recover a missing node by matching a replacement label. Initial qualification may omit
   child-frame controls with explicit partial coverage; otherwise iframe navigation/OOPIF session changes
-  require their own tuple. A main-frame loader check alone is insufficient. `targetId` survives reconnection while the browser lives, which
-  makes the "page is the identity between commands" workaround in `session.py` a fallback, not the
-  primary key.
+  require their own tuple. A main-frame loader check alone is insufficient. CDP persists the exact context and target
+  identity across commands and refuses loss of either. URL rebinding remains only the explicitly
+  legacy CUA compatibility behavior; it never recovers a lost CDP pin.
 - **Snapshot.** `Accessibility.getFullAXTree` joined to `DOM.describeNode` by `backendDOMNodeId`,
   emitted in the shape `menu_from_semantic` already consumes (`page`, `snapshot`, `refs` with
   `ref`/`role`/`name`/`states`/`actions`/`value`), so `WebMenu`, candidate ids and receipts stay
