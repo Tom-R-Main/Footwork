@@ -1278,6 +1278,7 @@ dependencies = [
     { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
     { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'" },
     { name = "typesafe-sdk" },
+    { name = "websockets" },
 ]
 
 [package.optional-dependencies]
@@ -1312,6 +1313,7 @@ requires-dist = [
     { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=12" },
     { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'", specifier = ">=12" },
     { name = "typesafe-sdk", specifier = ">=0.7,<1" },
+    { name = "websockets", specifier = "==15.0.1" },
 ]
 provides-extras = ["tools"]
 

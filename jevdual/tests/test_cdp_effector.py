@@ -212,6 +212,27 @@ def test_child_frames_make_the_snapshot_incomplete():
     assert snap["complete"] is False and snap["omitted"]["child_frames"] == 2
 
 
+@pytest.mark.parametrize("autocomplete", [
+    "section-billing billing cc-number", "shipping one-time-code", "section-X CC-CSC",
+])
+def test_compound_sensitive_autocomplete_never_exposes_the_field_value(autocomplete):
+    secret = "9876543210123456"
+    composed = compose(
+        snapshot_id="s", url="u", child_frames=0, metrics=METRICS,
+        ax={"nodes": [_ax("1", "textbox", "Protected field", backend=10, value=secret)]},
+        document=_dom((10, "INPUT", {"autocomplete": autocomplete})),
+        dom_snapshot=_layout([(10, [0, 0, 10, 10])]),
+    )
+    assert secret not in json.dumps(composed.semantic)
+
+
+def test_omitted_custom_controls_prevent_a_complete_observation_claim():
+    composed = compose(snapshot_id="s", url="u", ax={"nodes": []}, document=_dom(), dom_snapshot={},
+                       metrics=METRICS, child_frames=0)
+    assert composed.semantic["snapshot"]["omitted"]["custom_controls_unobserved"]
+    assert composed.semantic["snapshot"]["complete"] is False
+
+
 # ---- a real headless Chrome
 
 

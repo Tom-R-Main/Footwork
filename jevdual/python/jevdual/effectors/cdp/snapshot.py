@@ -202,9 +202,12 @@ def _actions(role: str, dom: DomMeta | None, states: dict[str, Any]) -> list[str
 def _sensitive(dom: DomMeta | None) -> bool:
     if dom is None or dom.tag != "input":
         return False
-    return dom.attrs.get("type", "").lower() in SENSITIVE_INPUT_TYPES or dom.attrs.get(
-        "autocomplete", ""
-    ).lower().startswith(SENSITIVE_AUTOCOMPLETE_PREFIXES)
+    # HTML autocomplete is a whitespace-separated token list. Section and address-mode tokens may
+    # precede the field token; checking only the prefix exposes valid billing/shipping fields.
+    tokens = dom.attrs.get("autocomplete", "").lower().split()
+    return dom.attrs.get("type", "").lower() in SENSITIVE_INPUT_TYPES or any(
+        token.startswith(SENSITIVE_AUTOCOMPLETE_PREFIXES) for token in tokens
+    )
 
 
 @dataclass(frozen=True)
@@ -286,7 +289,7 @@ def compose(
         {
             "status": "ok",
             "page": {"url": url, "title": title or ""},
-            "snapshot": {"id": snapshot_id, "complete": child_frames == 0 and not omitted["budget"],
+            "snapshot": {"id": snapshot_id, "complete": False,
                          "omitted": omitted},
             "refs": refs,
             "content_refs": content,
