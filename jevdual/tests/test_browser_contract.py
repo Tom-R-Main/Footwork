@@ -262,3 +262,110 @@ def test_the_session_reports_an_unknown_delivery_refusal_as_unverifiable(tmp_pat
     assert len(clicks) == 1, (out, err)
     assert "driver says unverifiable" in out and "input outcome unknown" in out
     assert "not sent" not in out
+
+
+# ---- L1b: what the owned contract adds (LBC1)
+
+
+def test_the_effect_carries_the_effectors_delivery_word_and_advice_without_acting_on_them():
+    async def run():
+        b = _bridge(Wire({"browser_click": UNKNOWN_DELIVERY}))
+        await b.attach()
+        nm = await b.observe()
+        return await b.act(nm, "click", 1, route="trusted")
+
+    eff = asyncio.run(run())
+    assert (eff.delivery, eff.retryable) == ("unknown", False)
+    assert eff.hint == UNKNOWN_DELIVERY["hint"] and eff.next_call == UNKNOWN_DELIVERY["next_call"]
+    # still a dispatched refusal: the command layer reads it as an unknown outcome
+    assert eff.effect == "refused" and eff.dispatched is True
+
+
+def test_a_reply_keeps_every_structured_field_and_reads_detail_next_call_as_a_fallback():
+    from jevdual.effectors.cua import browser_reply
+
+    detail_call = {"tool": "browser_prepare", "arguments": {"pid": 42}}
+    reply = browser_reply(SimpleNamespace(
+        structured_json=json.dumps({
+            "status": "refused",
+            "refusal": {"code": "browser_requires_setup", "message": "not attached",
+                        "detail": {"next_call": detail_call, "candidates": [1, 2]}},
+            "extension": {"kept": True},
+        }),
+        text="refused (browser_requires_setup): not attached",
+        is_error=False,
+    ))
+    assert reply.refused and reply.status == "refused"
+    assert reply.payload["extension"] == {"kept": True}
+    assert reply.refusal.code == "browser_requires_setup" and reply.refusal.detail["candidates"] == [1, 2]
+    assert reply.refusal.delivery is None and reply.refusal.retryable is None
+    assert reply.next_call == detail_call and reply.hint is None
+    with pytest.raises(TypeError):
+        reply.payload["status"] = "ok"  # type: ignore[index]
+
+
+@pytest.mark.parametrize("raw", ["not json", "[1, 2]", "", None])
+def test_an_unreadable_reply_has_no_status(raw):
+    from jevdual.effectors.cua import browser_reply
+
+    reply = browser_reply(SimpleNamespace(structured_json=raw, text="t", is_error=False))
+    assert reply.status is None and dict(reply.payload) == {} and reply.refusal is None and not reply.refused
+
+
+def test_the_binding_states_the_identity_it_cannot_supply():
+    async def run():
+        b = _bridge(Wire())
+        await b.attach()
+        return b.binding
+
+    binding = asyncio.run(run())
+    assert binding.target_id == "target-1" and binding.tabs[0]["tab_id"] == "tab-1"
+    assert binding.tab_scope == "connection" and binding.persistent_target_identity is False
+    assert binding.context_id is None and binding.document_generation is None
+
+
+def test_the_bridge_reaches_the_browser_only_through_bounded_operations():
+    import ast
+    from pathlib import Path
+
+    tree = ast.parse(Path(browser_driver.__file__).read_text())
+    attributes = {n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
+    strings = {n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+    assert "call_tool" not in attributes
+    wire_tools = {"browser_prepare", "get_browser_state", "browser_click", "browser_type", "browser_navigate"}
+    # "browser_prepare" survives only inside an error message; no tool is named for dispatch
+    assert not (wire_tools - {"browser_prepare"}) & strings
+
+
+def test_a_bridge_accepts_another_effectors_operations():
+    calls = []
+
+    class Operations:
+        async def prepare(self, **kw):
+            calls.append(("prepare", kw))
+            return BrowserReply("ok", "", False, {})
+
+        async def bind(self, **kw):
+            calls.append(("bind", kw))
+            return BrowserReply("ok", "", False, dict(BOUND))
+
+        async def snapshot(self, **kw):
+            calls.append(("snapshot", kw))
+            return BrowserReply("ok", "", False, dict(SNAPSHOT))
+
+        async def click(self, **kw):
+            calls.append(("click", kw))
+            return BrowserReply("ok", "clicked", False, {"status": "ok"})
+
+    from jevdual.effectors import BrowserReply
+
+    async def run():
+        b = BrowserBridge(None, 42, 7, operations=Operations())
+        await b.attach()
+        nm = await b.observe()
+        return await b.act(nm, "click", 1)
+
+    eff = asyncio.run(run())
+    assert eff.effect == "unverifiable" and eff.summary == "clicked"
+    assert calls[-1] == ("click", {"target_id": "target-1", "tab_id": "tab-1", "ref": "snap-1:1",
+                                   "input_route": "dom_event"})
