@@ -8,3 +8,17 @@ Test: real headless Chrome 156 against a loopback fixture with a button, a text 
 Predicts: candidates equal the declared controls; disabled controls carry no operation; the offscreen link is marked offscreen; every negative control refuses before any mutating CDP method; nothing outside effectors/cdp imports websockets.
 Against: any declared control is missing or mislabeled, a password value is exposed, a stale or foreign endpoint is accepted, a mutating method is sent, or a reload leaves old refs usable.
 Refs: docs/plans/light-profile-20261030.md (L3a); python/jevdual/effectors/base.py BrowserOperations; vendor/cua-driver/native-source.tar.gz at d5373879 (cua-driver-core/src/browser/semantic.rs)
+
+## LCDU1 · update · 2026-10-31 11:50
+Resolves: LCD1 = failed
+Observed: the first real headless Chrome 156 run gave five extra candidates beyond the fixture's declared controls: each input's inner editor (generic, editable) and inner text from its user-agent shadow tree, including the password field's text as a label of one bullet per character. The composer kept AX nodes whose DOM node lies outside the observed DOM, as CUA's compose_accessibility_tree does. Everything else predicted held on that run: identity checks, disabled and offscreen controls, the iframe reported as omitted, refusals before dispatch, the reload invalidating refs, no mutating method sent.
+Inferred: a control's user-agent internals are part of the host control. Skipping AX nodes whose backend id is outside the main-frame DOM index removes them without losing a declared control. The password-only assertion on page text would have missed the leak; the test now checks labels, values and the value map.
+Changes: snapshot.py skips nodes outside the DOM index; tests assert neither the password nor its length appears anywhere in the observation.
+Next: with the fix, the same unchanged predictions pass (13 tests, three on real Chrome; full suite 2535 passed). This rerun was not preceded by a separately committed prediction; it tests LCD1's original Predicts against revised code. Then L3a-2: mutations within one connection (DOM-event and trusted click, insertText with exact pre/post value readback), with its own prediction, before any CLI selection.
+Refs: results/light-cdp-read-20261031/report.md; tests/test_cdp_effector.py; source 211f666
+
+## LCDS · summary · 2026-10-31 11:50
+Established: Footwork can launch, verify and observe its own headless Chrome with no CUA or browser-use. Its snapshot feeds the unchanged bridge and menu, and every ref is bound to the exact browser, context, target, session, frame, document generation and node. Mutations refuse before sending and say so.
+Uncertain: parity with CUA's snapshot on the same pages (occlusion, custom click targets and ranking are not ported and are reported as omitted); Linux and headed behavior; websockets is still present only transitively through browser-use's cdp-use and must become a direct dependency in L2.
+Decision: ship L3a-1 stacked on L1b. Selection (FOOTWORK_BROWSER_EFFECTOR, session state) and mutations follow in later slices, each with its own prediction.
+Refs: docs/plans/light-profile-20261030.md; results/light-cdp-read-20261031/report.md
