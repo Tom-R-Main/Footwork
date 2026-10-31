@@ -1,0 +1,42 @@
+{
+  "utc_finished": "2026-10-31T20:47:06.459144+00:00",
+  "returncode": 0,
+  "signal": null,
+  "timeout": false,
+  "attempts": 1,
+  "retry_performed": false,
+  "signals": [],
+  "adopted_waits": [],
+  "final_owned_descendants": [],
+  "work_parent_mode": "0o700",
+  "capture_completed": true,
+  "cleanup": {
+    "status": "bounded_owned_processes_stopped",
+    "complete_tree_inventory": false
+  },
+  "input": {
+    "supported": false,
+    "dispatched": false
+  },
+  "completion": "not_asserted",
+  "network_effects": "not_asserted",
+  "page_url": "https://example.org/",
+  "content_records": 7,
+  "protocol_methods": [
+    "Target.createTarget",
+    "Target.getTargets",
+    "Target.attachToTarget",
+    "Page.enable",
+    "Page.navigate",
+    "Target.getTargets",
+    "Page.getFrameTree",
+    "Target.getTargets",
+    "Page.getFrameTree",
+    "DOM.getDocument",
+    "DOM.getDocument",
+    "Page.getFrameTree",
+    "Target.getTargets"
+  ],
+  "page_content_retained": false,
+  "full_receipt_origin": "2438c65d2d12d0a7d57b0d93a75dfad2c4da48af"
+}

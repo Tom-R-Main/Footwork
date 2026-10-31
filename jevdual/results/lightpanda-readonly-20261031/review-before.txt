@@ -1,0 +1,69 @@
+.FFF                                                                     [100%]
+=================================== FAILURES ===================================
+____ test_child_frames_are_reported_unavailable_not_captured[about:srcdoc] _____
+jevdual/tests/test_lightpanda_observation.py:410: in test_child_frames_are_reported_unavailable_not_captured
+    result = observe(connection)
+             ^^^^^^^^^^^^^^^^^^^
+jevdual/tests/test_lightpanda_observation.py:141: in observe
+    return asyncio.run(run())
+           ^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/tests/test_lightpanda_observation.py:138: in run
+    await observer.open(URL)
+jevdual/python/jevdual/effectors/lightpanda/observation.py:384: in open
+    current, _ = await self._frame()
+                 ^^^^^^^^^^^^^^^^^^^
+jevdual/python/jevdual/effectors/lightpanda/observation.py:339: in _frame
+    _url(frame.get("url"))
+jevdual/python/jevdual/effectors/lightpanda/observation.py:73: in _url
+    _refuse("lightpanda_url_invalid", "a bounded HTTP(S) URL without userinfo is required")
+jevdual/python/jevdual/effectors/lightpanda/observation.py:54: in _refuse
+    raise ObservationRefused(code, message)
+E   jevdual.effectors.lightpanda.observation.ObservationRefused: a bounded HTTP(S) URL without userinfo is required
+_ test_child_frames_are_reported_unavailable_not_captured[data:text/html,private-child] _
+jevdual/tests/test_lightpanda_observation.py:410: in test_child_frames_are_reported_unavailable_not_captured
+    result = observe(connection)
+             ^^^^^^^^^^^^^^^^^^^
+jevdual/tests/test_lightpanda_observation.py:141: in observe
+    return asyncio.run(run())
+           ^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/tests/test_lightpanda_observation.py:138: in run
+    await observer.open(URL)
+jevdual/python/jevdual/effectors/lightpanda/observation.py:384: in open
+    current, _ = await self._frame()
+                 ^^^^^^^^^^^^^^^^^^^
+jevdual/python/jevdual/effectors/lightpanda/observation.py:339: in _frame
+    _url(frame.get("url"))
+jevdual/python/jevdual/effectors/lightpanda/observation.py:73: in _url
+    _refuse("lightpanda_url_invalid", "a bounded HTTP(S) URL without userinfo is required")
+jevdual/python/jevdual/effectors/lightpanda/observation.py:54: in _refuse
+    raise ObservationRefused(code, message)
+E   jevdual.effectors.lightpanda.observation.ObservationRefused: a bounded HTTP(S) URL without userinfo is required
+_ test_base_href_withholds_destinations_instead_of_guessing_document_relative_urls _
+jevdual/tests/test_lightpanda_observation.py:420: in test_base_href_withholds_destinations_instead_of_guessing_document_relative_urls
+    assert link["text"] == "Read report" and "destination" not in link
+E   AssertionError: assert ('Read report' == 'Read report'
+E     
+E       Read report and 'destination' not in {'record_id': 1, 'kind': 'link', 'text': 'Read report', 'destination': {'url': 'http://127.0.0.1:8000/report', 'url_sha256': '56395b44af857614b38a587679b8e2acc83a7b09f258639a40ba79829d512c6f', 'query_or_fragment_withheld': False}})
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_lightpanda_observation.py::test_child_frames_are_reported_unavailable_not_captured[about:srcdoc]
+FAILED jevdual/tests/test_lightpanda_observation.py::test_child_frames_are_reported_unavailable_not_captured[data:text/html,private-child]
+FAILED jevdual/tests/test_lightpanda_observation.py::test_base_href_withholds_destinations_instead_of_guessing_document_relative_urls
+3 failed, 1 passed, 41 deselected in 0.18s

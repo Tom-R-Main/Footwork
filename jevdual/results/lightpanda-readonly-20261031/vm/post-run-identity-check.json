@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-31T20:49:50.169427+00:00",
+  "known_identity_count": 600,
+  "known_identities_still_present": [],
+  "access_denied": [],
+  "cgroup": {
+    "cpu.max": "400000 100000",
+    "cpuset.cpus.effective": "0-4",
+    "memory.max": "17179869184",
+    "memory.swap.max": "max",
+    "pids.max": "max",
+    "pids.current": "278",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+    "pids.events": "max 0"
+  },
+  "swap_total": [
+    "SwapTotal:             0 kB"
+  ],
+  "candidate_head": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "candidate_status": "",
+  "wheel_sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb",
+  "https_work_dir": {
+    "path": "/tmp/lp-https-ihlk0btc/engine",
+    "exists": true,
+    "parent_mode": "0o700",
+    "entries": []
+  },
+  "ambient_limit": "The first 2b monitor lost wait/subreaper custody; its orphan attribution/reaping is unknown. This identity check covers only captured clean-repeat/HTTPS identities, not global cleanup. PID1 is tail."
+}

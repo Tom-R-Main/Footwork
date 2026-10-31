@@ -12,6 +12,11 @@ import asyncio
 import contextlib
 import itertools
 import json
+import math
+import os
+import socket
+import struct
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -81,6 +86,57 @@ class CdpConnection:
             ping_interval=None,
         )
         return cls(ws)
+
+    @classmethod
+    async def open_unix(
+        cls, path: Path, *, expected_pid: int, expected_uid: int, timeout: float = 5.0,
+        max_message_bytes: int = MAX_MESSAGE_BYTES,
+    ) -> CdpConnection:
+        """One owned Unix connection, authenticated before its WebSocket handshake.
+
+        Kernel credentials bind this socket to an already owned process. They do not
+        grant task authority or isolate the caller from arbitrary same-user code.
+        The fixed URI is WebSocket protocol metadata, never a TCP destination.
+        """
+        from websockets.asyncio.client import unix_connect
+
+        path = Path(path)
+        if (not path.is_absolute() or type(expected_pid) is not int or expected_pid <= 0
+                or type(expected_uid) is not int or expected_uid < 0
+                or type(timeout) not in (int, float) or not math.isfinite(timeout) or not 0 < timeout <= 60
+                or type(max_message_bytes) is not int or not 0 < max_message_bytes <= MAX_MESSAGE_BYTES):
+            raise CdpClosed("invalid owned Unix endpoint identity")
+        raw = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        raw.setblocking(False)
+        transferred = False
+        try:
+            async with asyncio.timeout(timeout):
+                await asyncio.get_running_loop().sock_connect(raw, str(path))
+                if hasattr(socket, "SO_PEERCRED"):
+                    pid, uid, _ = struct.unpack("3i", raw.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))
+                elif os.uname().sysname == "Darwin":
+                    credentials = raw.getsockopt(0, 1, 128)  # LOCAL_PEERCRED / xucred
+                    version, uid = struct.unpack_from("=II", credentials)
+                    if version != 0:
+                        raise CdpClosed("Unix peer identity unavailable")
+                    pid = struct.unpack("=i", raw.getsockopt(0, 2, 4))[0]  # LOCAL_PEERPID
+                else:
+                    raise CdpClosed("Unix peer identity unavailable on this platform")
+                if (pid, uid) != (expected_pid, expected_uid):
+                    raise CdpClosed("Unix endpoint belongs to a different process or user")
+                # The library takes this exact authenticated socket; it cannot reconnect
+                # through path or proxy discovery while creating the WebSocket.
+                ws = await unix_connect(
+                    sock=raw, uri="ws://localhost/", open_timeout=timeout, proxy=None,
+                    compression=None, max_size=max_message_bytes, ping_interval=None,
+                )
+                transferred = True
+            connection = cls(ws)
+            connection.unix_peer_identity = {"pid": pid, "uid": uid}
+            return connection
+        finally:
+            if not transferred:
+                raw.close()
 
     @property
     def closed(self) -> bool:

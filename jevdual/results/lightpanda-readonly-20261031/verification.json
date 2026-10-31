@@ -1,0 +1,111 @@
+{
+  "runtime_source": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "wheel_sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb",
+  "wheel_entries": 216,
+  "installed_python_files_equal": 155,
+  "cua_present": false,
+  "browser_use_present": false,
+  "dependency_install_scope": "binary-only qualification dependencies plus exact wheel --no-deps; full Footwork metadata remains unchanged",
+  "local_source_regression": {
+    "passed": 2786,
+    "skipped": 95,
+    "deselected": 66,
+    "mode": "pure Python, absolute PYTHONPATH and borrowed matching-CUA development test environment"
+  },
+  "installed_macos": {
+    "passed": 308,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "installed-macos.txt"
+  },
+  "hosted_linux": {
+    "passed": 308,
+    "failed": 0,
+    "skipped": 0,
+    "run": "https://github.com/Tom-R-Main/Footwork/actions/runs/41239865803",
+    "wheel_sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb",
+    "junit": "output/lightpanda-ci-final/cdp-junit.xml"
+  },
+  "vm_chat": {
+    "state": "verified exact artifact; original records retained on evidence branch",
+    "origin_commit": "2438c65d2d12d0a7d57b0d93a75dfad2c4da48af",
+    "passed": 308,
+    "failed": 0,
+    "skipped": 0,
+    "source": "2b5325edfbab95e095343d0c36ad5544db92d114",
+    "wheel_sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb",
+    "copied_test_hashes_parent_verified": 15,
+    "installed_product_files_byte_verified_by_vm": 211,
+    "cpu_quota": 4,
+    "memory_gib": 16,
+    "test_only_zombies_reaped": 204,
+    "outer_extra_signals": 0,
+    "final_owned_descendants": 0,
+    "observer_gap": false,
+    "monitor_errors": [],
+    "https": "one successful read, seven records, no input authority or retry",
+    "prior_attempt": "308 JUnit cases passed, diagnostic monitor failed with lost wait/cleanup custody; retained separately",
+    "limit": "test-only reaping does not prove product/global cleanup; no2CPU8GB run",
+    "capsule": "vm/origin-manifest.json"
+  },
+  "requirements": [
+    {
+      "criterion": "actual pinned child and kernel Unix peer, one connection and real target",
+      "kind": "historical action",
+      "evidence": "test_lightpanda_launch, test_cdp_transport_deadline, installed real fixtures",
+      "result": "passed locally and hosted Linux; exact installed VM gate also passed within stated limits"
+    },
+    {
+      "criterion": "bounded literal JS DOM content and structural form/password withholding",
+      "kind": "answer",
+      "evidence": "test_lightpanda_observation; two installed password-length fixtures; zero private markers and equal projections",
+      "result": "passed locally and hosted Linux; exact installed VM gate also passed within stated limits"
+    },
+    {
+      "criterion": "no input commands, refs or mutation authority",
+      "kind": "historical action",
+      "evidence": "CLI/schema/library refusals, typed CDP method allowlist, one initial navigation and zero POSTs",
+      "result": "passed locally and hosted Linux; exact installed VM gate also passed within stated limits"
+    },
+    {
+      "criterion": "capture and bounded cleanup independently reported under timeout, SIGTERM and killed engine",
+      "kind": "current state",
+      "evidence": "real fault cells; actual captured handles; no fallback/reconnect",
+      "result": "passed; forced engine loss remains cleanup-unverified; no complete-tree or business-effect claim; exact installed VM gate also passed within stated limits"
+    },
+    {
+      "criterion": "base href does not fabricate destination; child content omitted",
+      "kind": "answer",
+      "evidence": "review-before.txt, review-after.txt; actual base and iframe fixtures",
+      "result": "red then green; srcdoc/data child metadata is modeled, real engine reported no registered frames; exact installed VM gate also passed within stated limits"
+    },
+    {
+      "criterion": "Chromium guard, durable admission and replay remain intact",
+      "kind": "historical action",
+      "evidence": "201 existing checks in the same installed308 gate",
+      "result": "passed locally and hosted Linux; exact installed VM gate also passed within stated limits"
+    },
+    {
+      "criterion": "README retains commands, links, numbers and evidence tables",
+      "kind": "answer",
+      "evidence": "readme-structural.json, full diff, numeric sequence check and61 local link targets",
+      "result": "151 protected spans preserved, including149 original and2 intended additions; private profile/guidance excluded; no voice certification"
+    }
+  ],
+  "typing": "disabled in Lightpanda and owned Chromium routes; existing native/legacy semantics unchanged",
+  "completion": "not_asserted; no requested-effect completion reader or mutable Lightpanda authority",
+  "not_qualified": [
+    "rendered layout/visibility",
+    "atomic or numeric-alias-safe document observation",
+    "Lightpanda input/mutation compatibility",
+    "performance/resource improvement",
+    "2CPU/8GB comparative baseline",
+    "light base metadata installer"
+  ],
+  "retained_failures": [
+    "regression-relative-path-failure.txt",
+    "review-before.txt",
+    "review-first-runtime-failure.txt",
+    "vm/monitor-failure-assessment.json"
+  ]
+}

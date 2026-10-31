@@ -1,0 +1,326 @@
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+........................................................................ [ 70%]
+........................................................................ [ 93%]
+....................                                                     [100%]
+==================================== PASSES ====================================
+___________________ test_guard_failure_never_allows[kwargs1] ___________________
+------------------------------ Captured log call -------------------------------
+WARNING  jevdual.authorize:authorize.py:243 destructive judgment failed on 'Commit fixture': unbound guard reply
+___________________ test_guard_failure_never_allows[kwargs2] ___________________
+------------------------------ Captured log call -------------------------------
+WARNING  jevdual.authorize:authorize.py:243 destructive judgment failed on 'Commit fixture': guard failed
+___________________ test_guard_failure_never_allows[kwargs3] ___________________
+------------------------------ Captured log call -------------------------------
+WARNING  jevdual.authorize:authorize.py:243 destructive judgment failed on 'Commit fixture': judgment returned 'invalid', not a probability
+- generated xml file: /workspace/scratch/footwork-lightpanda-2b5325e-monitored/junit.xml -
+=========================== short test summary info ============================
+PASSED test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing
+PASSED test_browser_cdp_cli.py::test_installed_cli_lost_client_ack_replays_without_redispatch
+PASSED test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change0]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change1]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change2]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change3]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change4]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change5]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change6]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change7]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change8]
+PASSED test_browser_durable_authority.py::test_binding_rejects_incomplete_or_foreign_identity[change9]
+PASSED test_browser_durable_authority.py::test_browser_and_native_bindings_remain_separate
+PASSED test_browser_durable_authority.py::test_missing_or_changed_guard_never_admits[change0]
+PASSED test_browser_durable_authority.py::test_missing_or_changed_guard_never_admits[change1]
+PASSED test_browser_durable_authority.py::test_missing_or_changed_guard_never_admits[change2]
+PASSED test_browser_durable_authority.py::test_missing_or_changed_guard_never_admits[change3]
+PASSED test_browser_durable_authority.py::test_missing_or_changed_guard_never_admits[change4]
+PASSED test_browser_durable_authority.py::test_missing_or_changed_guard_never_admits[change5]
+PASSED test_browser_durable_authority.py::test_guard_digest_binds_session_request_and_exact_subject
+PASSED test_browser_durable_authority.py::test_absent_guard_never_admits[None]
+PASSED test_browser_durable_authority.py::test_absent_guard_never_admits[decision1]
+PASSED test_browser_durable_authority.py::test_request_does_not_enable_typing_or_other_routes[request_value0]
+PASSED test_browser_durable_authority.py::test_request_does_not_enable_typing_or_other_routes[request_value1]
+PASSED test_browser_durable_authority.py::test_request_does_not_enable_typing_or_other_routes[request_value2]
+PASSED test_browser_durable_authority.py::test_request_does_not_enable_typing_or_other_routes[request_value3]
+PASSED test_browser_durable_authority.py::test_same_token_returns_original_before_reobservation_or_new_guard
+PASSED test_browser_durable_authority.py::test_restart_distinguishes_prepared_from_admitted_input[False]
+PASSED test_browser_durable_authority.py::test_restart_distinguishes_prepared_from_admitted_input[True]
+PASSED test_browser_durable_authority.py::test_acknowledgement_never_claims_application_completion[reply0-sent-unknown]
+PASSED test_browser_durable_authority.py::test_acknowledgement_never_claims_application_completion[reply1-not_sent-not_sent]
+PASSED test_browser_durable_authority.py::test_acknowledgement_never_claims_application_completion[reply2-ambiguous-unknown]
+PASSED test_browser_durable_authority.py::test_acknowledgement_never_claims_application_completion[reply3-ambiguous-unknown]
+PASSED test_browser_durable_authority.py::test_acknowledgement_never_claims_application_completion[reply4-ambiguous-unknown]
+PASSED test_browser_durable_authority.py::test_retained_result_survives_death_before_finalization[reply0]
+PASSED test_browser_durable_authority.py::test_retained_result_survives_death_before_finalization[reply1]
+PASSED test_browser_durable_authority.py::test_retained_result_survives_death_before_finalization[reply2]
+PASSED test_browser_durable_authority.py::test_arbitrary_finish_cannot_assert_no_send_or_completion
+PASSED test_browser_durable_authority.py::test_tampered_browser_evidence_never_releases_custody[digest]
+PASSED test_browser_durable_authority.py::test_tampered_browser_evidence_never_releases_custody[binding]
+PASSED test_browser_durable_authority.py::test_tampered_browser_evidence_never_releases_custody[producer]
+PASSED test_browser_durable_authority.py::test_tampered_browser_evidence_never_releases_custody[effect]
+PASSED test_browser_durable_authority.py::test_tampered_browser_evidence_never_releases_custody[guard]
+PASSED test_browser_durable_authority.py::test_tampered_browser_evidence_never_releases_custody[request]
+PASSED test_browser_durable_authority.py::test_runtime_evidence_is_immutable
+PASSED test_browser_durable_authority.py::test_browser_unknown_blocks_native_and_native_unknown_blocks_browser
+PASSED test_browser_durable_authority.py::test_manual_resolution_remains_unsupported
+PASSED test_browser_durable_authority.py::test_interruption_records_unknown_without_fabricating_returned_evidence
+PASSED test_browser_durable_authority.py::test_interruption_prefers_a_retained_returned_record[reply0]
+PASSED test_browser_durable_authority.py::test_interruption_prefers_a_retained_returned_record[reply1]
+PASSED test_browser_durable_authority.py::test_native_retained_receipt_keeps_its_native_validator_in_browser_store
+PASSED test_browser_guard.py::test_configured_guard_binding
+PASSED test_browser_guard.py::test_guard_failure_never_allows[kwargs0]
+PASSED test_browser_guard.py::test_guard_failure_never_allows[kwargs1]
+PASSED test_browser_guard.py::test_guard_failure_never_allows[kwargs2]
+PASSED test_browser_guard.py::test_guard_failure_never_allows[kwargs3]
+PASSED test_browser_guard.py::test_guard_failure_never_allows[kwargs4]
+PASSED test_browser_holder.py::test_admission_and_started_stage_are_committed_before_possible_activation
+PASSED test_browser_holder.py::test_replay_returns_retained_operation_before_observation_or_guard
+PASSED test_browser_holder.py::test_guard_refusal_retains_refs_and_never_admits_or_activates
+PASSED test_browser_holder.py::test_post_admission_failure_and_cancellation_retain_unknown[failure0]
+PASSED test_browser_holder.py::test_post_admission_failure_and_cancellation_retain_unknown[failure1]
+PASSED test_browser_holder.py::test_post_admission_retention_failure_never_certifies_no_send[False]
+PASSED test_browser_holder.py::test_post_admission_retention_failure_never_certifies_no_send[True]
+PASSED test_browser_holder.py::test_wrong_session_and_unbounded_methods_never_touch_browser[extra0]
+PASSED test_browser_holder.py::test_wrong_session_and_unbounded_methods_never_touch_browser[extra1]
+PASSED test_browser_holder.py::test_wrong_session_and_unbounded_methods_never_touch_browser[extra2]
+PASSED test_browser_holder.py::test_wrong_session_and_unbounded_methods_never_touch_browser[extra3]
+PASSED test_browser_holder.py::test_wrong_session_and_unbounded_methods_never_touch_browser[extra4]
+PASSED test_browser_holder.py::test_close_uses_only_original_handle_and_does_not_settle_unknown
+PASSED test_browser_holder.py::test_cleanup_failure_is_reported_without_claiming_all_processes_stopped
+PASSED test_browser_holder.py::test_private_files_and_descriptor_incarnation_are_checked_before_connect
+PASSED test_browser_holder.py::test_lost_socket_response_then_repeat_token_has_one_activation
+PASSED test_browser_holder.py::test_oversize_request_refuses_without_browser_or_journal_activity
+PASSED test_browser_holder.py::test_rpc_deadline_after_admission_retains_unknown_without_retry
+PASSED test_browser_holder.py::test_foreign_socket_peer_is_refused_before_request_read
+PASSED test_browser_holder.py::test_stale_holder_record_refuses_start_without_launch_or_cleanup
+PASSED test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[prepared]
+PASSED test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]
+PASSED test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]
+PASSED test_browser_startup_cli.py::test_start_closes_actual_child_on_readiness_exception
+PASSED test_browser_startup_cli.py::test_cdp_schema_names_an_invocable_command
+PASSED test_browser_startup_cli.py::test_successful_start_does_not_stop_established_holder
+PASSED test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[launch-15]
+PASSED test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[launch-2]
+PASSED test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[connect-15]
+PASSED test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[navigate-15]
+PASSED test_browser_startup_lifecycle.py::test_task_cancellation_during_launch_waits_for_actual_handle_then_cleans_it
+PASSED test_browser_startup_lifecycle.py::test_readiness_failure_still_attempts_cleanup_and_reports_cleanup_uncertainty
+PASSED test_cdp_click.py::test_observation_marker_has_no_fixture_effect
+PASSED test_cdp_click.py::test_native_button_activation_records_exactly_one_independent_ingress
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[intended.textContent = 'Delete fixture']
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[intended.setAttribute('data-record-id', 'other-record')]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[intended.setAttribute('type', 'submit')]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[intended.disabled = true]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[intended.setAttribute('aria-label', 'Delete fixture')]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[document.body.setAttribute('data-customer-id', 'other')]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[let css=document.createElement('style'); css.textContent='#intended::before{content:"Delete "}'; document.head.append(css)]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[intended.replaceWith(intended.cloneNode(true))]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[document.body.setAttribute('inert', '')]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[let fieldset=document.createElement('fieldset'); fieldset.disabled=true; intended.before(fieldset); fieldset.append(intended)]
+PASSED test_cdp_click.py::test_changed_subject_refuses_without_any_fixture_ingress[let form=document.createElement('form'); intended.before(form); form.append(intended)]
+PASSED test_cdp_click.py::test_unsupported_or_incompletely_represented_button_names_refuse[intended.textContent='A'.repeat(121)+' Delete fixture'-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]
+PASSED test_cdp_click.py::test_unsupported_or_incompletely_represented_button_names_refuse[intended.setAttribute('role','button')-Commit fixture]
+PASSED test_cdp_click.py::test_unsupported_or_incompletely_represented_button_names_refuse[intended.innerHTML='<span>Commit fixture</span>'-Commit fixture]
+PASSED test_cdp_click.py::test_unsupported_or_incompletely_represented_button_names_refuse[let name=document.createElement('span'); name.id='external'; name.textContent='Commit fixture'; document.body.append(name); intended.setAttribute('aria-labelledby','external')-Commit fixture]
+PASSED test_cdp_click.py::test_unsupported_or_incompletely_represented_button_names_refuse[intended.setAttribute('data-payload','x'.repeat(9000))-Commit fixture]
+PASSED test_cdp_click.py::test_page_method_and_getter_overrides_cannot_redirect_activation
+PASSED test_cdp_click.py::test_pointerdown_only_app_does_not_gain_a_business_completion_claim
+PASSED test_cdp_click.py::test_same_url_reload_never_uses_a_new_document_context[False]
+PASSED test_cdp_click.py::test_same_url_reload_never_uses_a_new_document_context[True]
+PASSED test_cdp_click.py::test_numeric_handle_alias_cannot_adopt_an_identical_new_document_button
+PASSED test_cdp_click.py::test_document_open_root_replacement_cannot_reuse_an_old_observation
+PASSED test_cdp_click.py::test_closed_pinned_tab_does_not_activate_a_live_sentinel_tab
+PASSED test_cdp_click.py::test_reobservation_and_foreign_connection_reject_old_refs
+PASSED test_cdp_click.py::test_concurrent_calls_with_one_ref_dispatch_once
+PASSED test_cdp_click.py::test_lost_ack_or_cancellation_after_ingress_blocks_even_a_fresh_ref[False]
+PASSED test_cdp_click.py::test_lost_ack_or_cancellation_after_ingress_blocks_even_a_fresh_ref[True]
+PASSED test_cdp_click.py::test_typing_trusted_click_and_navigation_stay_disabled
+PASSED test_cdp_click_contract.py::test_button_target_keeps_complete_attributes_text_and_ancestor_identity
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc0-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc1-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc2-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc3-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc4-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc5-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc6-Continue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc7-Delete]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc8-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc9-Con tinue]
+PASSED test_cdp_click_contract.py::test_unsupported_or_unrepresentable_button_is_not_admitted[doc10-Continue]
+PASSED test_cdp_click_contract.py::test_aria_label_is_admitted_only_when_the_offered_name_matches
+PASSED test_cdp_click_contract.py::test_native_activation_consumes_refs_and_resolves_only_into_the_observed_world
+PASSED test_cdp_click_contract.py::test_a_ref_without_an_observation_document_token_cannot_activate
+PASSED test_cdp_click_contract.py::test_observation_marks_one_private_slot_before_reading_nodes_and_replaces_the_token
+PASSED test_cdp_click_contract.py::test_malformed_marker_setup_keeps_the_observation_unavailable[marker_reply0]
+PASSED test_cdp_click_contract.py::test_malformed_marker_setup_keeps_the_observation_unavailable[marker_reply1]
+PASSED test_cdp_click_contract.py::test_malformed_marker_setup_keeps_the_observation_unavailable[marker_reply2]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result0]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result1]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result2]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result3]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result4]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result5]
+PASSED test_cdp_click_contract.py::test_ambiguous_activation_blocks_even_a_new_observation_ref[result6]
+PASSED test_cdp_click_contract.py::test_known_pre_activation_refusal_and_closed_socket_are_not_sent
+PASSED test_cdp_click_contract.py::test_read_only_validation_loss_never_claims_input_was_sent
+PASSED test_cdp_click_contract.py::test_concurrent_callers_cannot_reuse_the_admitted_ref
+PASSED test_cdp_click_contract.py::test_cancellation_keeps_unknown_and_does_not_enable_a_retry
+PASSED test_cdp_click_contract.py::test_cancellation_during_handle_cleanup_cannot_lose_the_successful_activation
+PASSED test_cdp_click_contract.py::test_typing_navigation_and_trusted_click_remain_disabled
+PASSED test_cdp_click_contract.py::test_bridge_reports_actual_activation_route_without_promoting_business_completion
+PASSED test_cdp_effector.py::test_replies_are_matched_by_id_and_events_reach_listeners
+PASSED test_cdp_effector.py::test_an_error_reply_is_a_received_refusal
+PASSED test_cdp_effector.py::test_a_lost_connection_leaves_in_flight_commands_unknown_and_sends_nothing_after
+PASSED test_cdp_effector.py::test_no_reply_within_the_deadline_is_unknown_not_failed
+PASSED test_cdp_effector.py::test_only_a_loopback_endpoint_is_opened
+PASSED test_cdp_effector.py::test_composition_withholds_sensitive_values_and_disables_disabled_controls
+PASSED test_cdp_effector.py::test_a_controls_user_agent_internals_never_become_candidates_or_labels
+PASSED test_cdp_effector.py::test_child_frames_make_the_snapshot_incomplete
+PASSED test_cdp_effector.py::test_compound_sensitive_autocomplete_never_exposes_the_field_value[section-billing billing cc-number]
+PASSED test_cdp_effector.py::test_compound_sensitive_autocomplete_never_exposes_the_field_value[shipping one-time-code]
+PASSED test_cdp_effector.py::test_compound_sensitive_autocomplete_never_exposes_the_field_value[section-X CC-CSC]
+PASSED test_cdp_effector.py::test_omitted_custom_controls_prevent_a_complete_observation_claim
+PASSED test_cdp_effector.py::test_the_owned_browser_is_observed_as_the_fixture_declares
+PASSED test_cdp_effector.py::test_actions_refuse_before_dispatch_and_a_reload_invalidates_refs
+PASSED test_cdp_effector.py::test_a_stale_port_file_or_a_foreign_endpoint_is_refused
+PASSED test_cdp_effector.py::test_the_cdp_package_imports_no_third_party_module_until_a_connection_opens
+PASSED test_cdp_effector.py::test_only_an_effector_that_refused_before_sending_reports_not_sent
+PASSED test_cdp_launch_custody.py::test_existing_profile_paths_are_refused_without_mutation[empty]
+PASSED test_cdp_launch_custody.py::test_existing_profile_paths_are_refused_without_mutation[populated]
+PASSED test_cdp_launch_custody.py::test_existing_profile_paths_are_refused_without_mutation[symlink]
+PASSED test_cdp_launch_custody.py::test_existing_profile_paths_are_refused_without_mutation[file]
+PASSED test_cdp_launch_custody.py::test_existing_profile_paths_are_refused_without_mutation[dangling_symlink]
+PASSED test_cdp_launch_custody.py::test_fresh_profile_is_created_private_before_process_launch
+PASSED test_cdp_launch_custody.py::test_stop_cleans_a_captured_term_resistant_child_without_touching_a_sentinel
+PASSED test_cdp_launch_custody.py::test_stop_reports_uncertainty_when_the_root_exited_before_inventory
+PASSED test_cdp_launch_custody.py::test_a_descendant_exiting_during_identity_capture_does_not_block_root_cleanup
+PASSED test_cdp_launch_custody.py::test_changed_root_incarnation_is_never_signaled
+PASSED test_cdp_transport_deadline.py::test_command_deadline_bounds_blocked_send_and_retires_the_connection
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222@attacker.example/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222@127.0.0.1:9222/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://user:password@127.0.0.1:9222/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:0/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:65536/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:bad/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[wss://127.0.0.1:9222/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.2:9222/devtools/browser/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/page/x]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/browser/]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/browser/x?host=elsewhere]
+PASSED test_cdp_transport_deadline.py::test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/browser/x#fragment]
+PASSED test_cdp_transport_deadline.py::test_valid_loopback_browser_endpoint_reaches_connect
+PASSED test_cdp_transport_deadline.py::test_sending_and_reply_wait_share_one_budget
+PASSED test_cdp_transport_deadline.py::test_serialization_failure_does_not_admit_or_send_a_command
+PASSED test_cdp_transport_deadline.py::test_an_interrupted_send_retires_other_inflight_commands_as_unknown
+PASSED test_cdp_transport_deadline.py::test_cancelling_a_close_waiter_does_not_cancel_owned_transport_cleanup
+PASSED test_cdp_transport_deadline.py::test_cancellation_removes_pending_command_and_preserves_cancellation[True]
+PASSED test_cdp_transport_deadline.py::test_cancellation_removes_pending_command_and_preserves_cancellation[False]
+PASSED test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile
+PASSED test_lightpanda_cli.py::test_artifact_lookup_never_downloads_or_builds
+PASSED test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[click]
+PASSED test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[type]
+PASSED test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[navigate]
+PASSED test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[evaluate]
+PASSED test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[connect]
+PASSED test_lightpanda_cli.py::test_invalid_url_refuses_before_engine_start[file:///private/input]
+PASSED test_lightpanda_cli.py::test_invalid_url_refuses_before_engine_start[javascript:alert(1)]
+PASSED test_lightpanda_cli.py::test_invalid_url_refuses_before_engine_start[https://u:p@example.test/]
+PASSED test_lightpanda_cli.py::test_unpinned_binary_cannot_execute
+PASSED test_lightpanda_cli.py::test_unqualified_platform_refuses_before_signal_or_engine_setup
+PASSED test_lightpanda_cli.py::test_startup_cleanup_receipt_survives_without_returned_handle[bounded_owned_processes_stopped]
+PASSED test_lightpanda_cli.py::test_startup_cleanup_receipt_survives_without_returned_handle[unverified]
+PASSED test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[nan]
+PASSED test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[inf]
+PASSED test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[0]
+PASSED test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[61]
+PASSED test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[-1]
+PASSED test_lightpanda_cli.py::test_real_installed_read_is_semantic_and_withholds_sensitive_fields
+PASSED test_lightpanda_cli.py::test_real_initial_load_timeout_closes_engine
+PASSED test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]
+PASSED test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]
+PASSED test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/base]
+PASSED test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/frames]
+PASSED test_lightpanda_launch.py::test_existing_directory_or_symlink_is_refused_before_spawn[empty]
+PASSED test_lightpanda_launch.py::test_existing_directory_or_symlink_is_refused_before_spawn[file]
+PASSED test_lightpanda_launch.py::test_existing_directory_or_symlink_is_refused_before_spawn[symlink]
+PASSED test_lightpanda_launch.py::test_existing_directory_or_symlink_is_refused_before_spawn[dangling]
+PASSED test_lightpanda_launch.py::test_binary_preflight_refuses_before_directory_creation[digest]
+PASSED test_lightpanda_launch.py::test_binary_preflight_refuses_before_directory_creation[missing_digest]
+PASSED test_lightpanda_launch.py::test_binary_preflight_refuses_before_directory_creation[not_executable]
+PASSED test_lightpanda_launch.py::test_binary_preflight_refuses_before_directory_creation[symlink]
+PASSED test_lightpanda_launch.py::test_binary_preflight_refuses_before_directory_creation[parent_symlink]
+PASSED test_lightpanda_launch.py::test_socket_length_is_checked_before_spawn_or_directory_creation
+PASSED test_lightpanda_launch.py::test_start_captures_real_handle_before_any_await
+PASSED test_lightpanda_launch.py::test_wrong_executable_after_spawn_only_cleans_original_handle
+PASSED test_lightpanda_launch.py::test_post_spawn_failure_carries_cleanup_and_preserves_original_exception[False-RuntimeError]
+PASSED test_lightpanda_launch.py::test_post_spawn_failure_carries_cleanup_and_preserves_original_exception[False-CancelledError]
+PASSED test_lightpanda_launch.py::test_post_spawn_failure_carries_cleanup_and_preserves_original_exception[False-KeyboardInterrupt]
+PASSED test_lightpanda_launch.py::test_post_spawn_failure_carries_cleanup_and_preserves_original_exception[True-RuntimeError]
+PASSED test_lightpanda_launch.py::test_post_spawn_failure_carries_cleanup_and_preserves_original_exception[True-CancelledError]
+PASSED test_lightpanda_launch.py::test_post_spawn_failure_carries_cleanup_and_preserves_original_exception[True-KeyboardInterrupt]
+PASSED test_lightpanda_launch.py::test_readiness_does_not_open_any_connection_for_missing_or_wrong_socket
+PASSED test_lightpanda_launch.py::test_readiness_checks_original_incarnation_before_socket
+PASSED test_lightpanda_launch.py::test_readiness_cancellation_never_claims_cleanup_or_reconnect
+PASSED test_lightpanda_launch.py::test_unix_peer_verified_before_websocket_handshake
+PASSED test_lightpanda_launch.py::test_foreign_peer_refuses_before_handshake[pid]
+PASSED test_lightpanda_launch.py::test_foreign_peer_refuses_before_handshake[uid]
+PASSED test_lightpanda_launch.py::test_unix_transport_requires_bounded_deadline[0]
+PASSED test_lightpanda_launch.py::test_unix_transport_requires_bounded_deadline[-1]
+PASSED test_lightpanda_launch.py::test_unix_transport_requires_bounded_deadline[True]
+PASSED test_lightpanda_launch.py::test_unix_transport_requires_bounded_deadline[nan]
+PASSED test_lightpanda_launch.py::test_unix_transport_requires_bounded_deadline[inf]
+PASSED test_lightpanda_launch.py::test_unix_transport_requires_bounded_deadline[61]
+PASSED test_lightpanda_launch.py::test_cancelling_handshake_closes_authenticated_socket_without_retry
+PASSED test_lightpanda_launch.py::test_unix_message_budget_refuses_oversized_reply_without_retry
+PASSED test_lightpanda_launch.py::test_socket_with_broad_permissions_refuses_before_connect
+PASSED test_lightpanda_launch.py::test_successful_connection_is_retired_if_original_process_changed
+PASSED test_lightpanda_launch.py::test_stop_keeps_actual_handle_and_captured_incarnation
+PASSED test_lightpanda_launch.py::test_cleanup_uncertainty_is_not_hidden
+PASSED test_lightpanda_launch.py::test_stop_real_owned_child
+PASSED test_lightpanda_observation.py::test_real_target_created_and_one_connection_supplies_bounded_dom_text
+PASSED test_lightpanda_observation.py::test_field_values_and_derived_form_labels_never_enter_projection[short-demo]
+PASSED test_lightpanda_observation.py::test_field_values_and_derived_form_labels_never_enter_projection[another-demonstration-value-with-a-different-length]
+PASSED test_lightpanda_observation.py::test_field_values_and_derived_form_labels_never_enter_projection[\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022]
+PASSED test_lightpanda_observation.py::test_scripts_styles_templates_frames_shadow_and_obvious_hidden_content_are_omitted
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Target.createTarget-reply0]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Target.createTarget-reply1]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Target.getTargets-reply2]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Target.getTargets-reply3]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Target.attachToTarget-reply4]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Target.attachToTarget-reply5]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Page.navigate-reply6]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Page.navigate-reply7]
+PASSED test_lightpanda_observation.py::test_success_shaped_placeholders_and_bad_setup_schemas_refuse[Page.getFrameTree-reply8]
+PASSED test_lightpanda_observation.py::test_bad_initial_url_refuses_before_protocol[file:///etc/passwd]
+PASSED test_lightpanda_observation.py::test_bad_initial_url_refuses_before_protocol[javascript:alert(1)]
+PASSED test_lightpanda_observation.py::test_bad_initial_url_refuses_before_protocol[data:text/html,x]
+PASSED test_lightpanda_observation.py::test_bad_initial_url_refuses_before_protocol[http://a:b@example.test/]
+PASSED test_lightpanda_observation.py::test_bad_initial_url_refuses_before_protocol[http://x:0/]
+PASSED test_lightpanda_observation.py::test_unqualified_process_metadata_refuses[pid-True]
+PASSED test_lightpanda_observation.py::test_unqualified_process_metadata_refuses[start-nan]
+PASSED test_lightpanda_observation.py::test_unqualified_process_metadata_refuses[boot-]
+PASSED test_lightpanda_observation.py::test_unqualified_process_metadata_refuses[binary_sha256-bad]
+PASSED test_lightpanda_observation.py::test_observer_has_no_input_or_arbitrary_script_methods_and_open_is_one_use
+PASSED test_lightpanda_observation.py::test_load_deadline_does_not_retry_or_open_another_target
+PASSED test_lightpanda_observation.py::test_detectable_document_or_target_change_refuses_without_rebinding[loader]
+PASSED test_lightpanda_observation.py::test_detectable_document_or_target_change_refuses_without_rebinding[frame]
+PASSED test_lightpanda_observation.py::test_detectable_document_or_target_change_refuses_without_rebinding[root]
+PASSED test_lightpanda_observation.py::test_detectable_document_or_target_change_refuses_without_rebinding[target]
+PASSED test_lightpanda_observation.py::test_detectable_document_or_target_change_refuses_without_rebinding[context]
+PASSED test_lightpanda_observation.py::test_connection_loss_remains_a_fixed_refusal_with_no_reconnect
+PASSED test_lightpanda_observation.py::test_target_and_frame_url_disagreement_refuses_instead_of_mixing_capture[before]
+PASSED test_lightpanda_observation.py::test_target_and_frame_url_disagreement_refuses_instead_of_mixing_capture[after]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[cycle]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[duplicate_id]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[missing_children]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[wrong_parent]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[bad_attributes]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[deep]
+PASSED test_lightpanda_observation.py::test_malformed_incomplete_and_unbounded_documents_refuse[wide]
+PASSED test_lightpanda_observation.py::test_text_and_record_budgets_are_explicit_and_output_stays_bounded
+PASSED test_lightpanda_observation.py::test_child_frames_are_reported_unavailable_not_captured[https://child.invalid/]
+PASSED test_lightpanda_observation.py::test_child_frames_are_reported_unavailable_not_captured[about:srcdoc]
+PASSED test_lightpanda_observation.py::test_child_frames_are_reported_unavailable_not_captured[data:text/html,private-child]
+PASSED test_lightpanda_observation.py::test_base_href_withholds_destinations_instead_of_guessing_document_relative_urls
+308 passed in 61.59s (0:01:01)

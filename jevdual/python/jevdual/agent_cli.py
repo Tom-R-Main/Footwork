@@ -49,6 +49,7 @@ class RoutingError(ValueError):
 
 def catalog() -> dict:
     from .browser_cli import discovery
+    from .lightpanda_cli import discovery as lightpanda_discovery
     from .tool_catalog import catalog as auxiliary
 
     desktop_route = {
@@ -69,9 +70,10 @@ def catalog() -> dict:
         "agent_commands": ["tools", "catalog", "schema", "doctor", "invoke", "capability", "mcp", "tool"],
         "surfaces": {
             "browser": {
-                "commands": ["start", *sorted(SESSION), "cdp"],
-                "route": "dedicated Chrome / CUA DevTools (legacy); owned headless CDP (explicit cdp)",
+                "commands": ["start", *sorted(SESSION), "cdp", "lightpanda"],
+                "route": "legacy Chrome/CUA; owned Chromium CDP; read-only Lightpanda DOM",
                 "cdp": discovery(),
+                "lightpanda": lightpanda_discovery(),
             },
             "desktop": {"commands": list(LEGACY), "route": desktop_route},
         },
@@ -95,6 +97,7 @@ def _help() -> None:
         "JSON input: invoke --input FILE (or - for stdin), request {command,args}\n"
         "Browser: browser start TASK --url URL --session DIR; browser look/do/read/done/status ...\n"
         "Owned headless browser: browser cdp {start,look,click,status,recover,stop,guide}; typing disabled\n"
+        "Read-only Lightpanda: browser lightpanda {read,guide,artifact}; no input mutation\n"
         "Desktop: desktop start TASK --app APP --session DIR; desktop look/do/read/done/status ...\n"
         "Scoped MCP: capability {config,server,report,doctor}; mcp --scope FILE --journal FILE\n"
         "Auxiliary tools: tool FAMILY COMMAND ... (or FAMILY COMMAND ...)\n"
@@ -196,7 +199,8 @@ def _schema(args: list[str]) -> dict:
             },
         }
     cdp_schema = len(args) >= 2 and args[:2] == ["browser", "cdp"]
-    if cdp_schema:
+    lightpanda_schema = len(args) >= 2 and args[:2] == ["browser", "lightpanda"]
+    if cdp_schema or lightpanda_schema:
         args = args[1:]
     if args[0] in ("browser", "desktop"):
         if len(args) == 1:
@@ -221,6 +225,10 @@ def _schema(args: list[str]) -> dict:
         return family
     if cdp_schema:
         from .browser_cli import build_parser
+
+        selected = args[1:]
+    elif lightpanda_schema:
+        from .lightpanda_cli import build_parser
 
         selected = args[1:]
     elif args and args[0] in ("doctor", "capability", "mcp"):
@@ -258,7 +266,7 @@ def _schema(args: list[str]) -> dict:
         )
     children = [a for a in parser._actions if isinstance(a, argparse._SubParsersAction)]
     return {
-        "command": ["browser", *args] if cdp_schema else args,
+        "command": ["browser", *args] if cdp_schema or lightpanda_schema else args,
         "arguments": options,
         "subcommands": sorted(children[0].choices) if children else [],
     }
@@ -308,7 +316,10 @@ def _doctor(args: list[str]) -> int:
         result["browser_profiles"] = {"cdp": cdp, "legacy": {
             "profile": "full-desktop", "requires": ["CUA", "X11/AT-SPI on Linux"],
         }}
-        result["profile_note"] = "Native desktop blockers do not apply to headless CDP; runtime qualification must be checked separately."
+        from .lightpanda_cli import prerequisites as lightpanda_prerequisites
+
+        result["browser_profiles"]["lightpanda"] = lightpanda_prerequisites()
+        result["profile_note"] = "Native desktop blockers do not apply to the explicit headless browser profiles; runtime qualification is checked separately."
         result["effect_verification"] = "not_asserted"
         _emit(result)
     return code
@@ -337,6 +348,10 @@ def _dispatch(args: list[str], legacy: Callable[[list[str]], int], json_mode: bo
         if json_mode and routed and routed[0] == "server":
             raise RoutingError("MCP server owns stdout; run without --json to preserve its protocol")
         return capability(routed)
+    if command == "browser" and rest and rest[0] == "lightpanda":
+        from .lightpanda_cli import main as lightpanda
+
+        return lightpanda(rest[1:])
     if command == "browser" and rest and rest[0] == "cdp":
         from .browser_cli import main as cdp
 

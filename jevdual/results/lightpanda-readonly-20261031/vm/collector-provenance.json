@@ -1,0 +1,10 @@
+{
+  "main_runner_source_commit": "3bb2bb8cbab7d69a43990b9e1d503c6ed67b18b6",
+  "helper_source_commit": "0451bb3",
+  "helpers": {
+    "receipt_plugin.py": "981fc86376be508aae5ae685aa16a03038747f018616cc28926d8d24b46467af",
+    "pytest_main.py": "c23cefeb8fb2cf19f48946a23cd1cb66606953798057a99d3e5ba34d20ac5c27"
+  },
+  "main_runner_sha256": "11df34ef2859f80a5ab953c5579e5c0761a834723c02e06500e6ebeadbd82ead",
+  "test_hashes_reverified_from_source": true
+}

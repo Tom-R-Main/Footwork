@@ -1,0 +1,33 @@
+{
+  "source": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "entrypoint": "footwork --json browser lightpanda read https://example.org/ --executable PINNED_BINARY",
+  "exit_code": 0,
+  "capture_completed": true,
+  "cleanup": {
+    "status": "bounded_owned_processes_stopped",
+    "complete_tree_inventory": false
+  },
+  "page_url": "https://example.org/",
+  "content_records": 7,
+  "input": {
+    "supported": false,
+    "dispatched": false
+  },
+  "completion": "not_asserted",
+  "protocol_methods": [
+    "Target.createTarget",
+    "Target.getTargets",
+    "Target.attachToTarget",
+    "Page.enable",
+    "Page.navigate",
+    "Target.getTargets",
+    "Page.getFrameTree",
+    "Target.getTargets",
+    "Page.getFrameTree",
+    "DOM.getDocument",
+    "DOM.getDocument",
+    "Page.getFrameTree",
+    "Target.getTargets"
+  ],
+  "content_retained": false
+}
