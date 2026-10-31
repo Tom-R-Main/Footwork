@@ -1,0 +1,18 @@
+{
+  "source": "d9ca03ee60d0f4f7f066a734113f361ae87cd2c3",
+  "base": "c85ac85751b0b9efb15e0c3275b32dfc7c887114",
+  "reviewer": "separate inherited-model context; no model-family diversity",
+  "scope": "all fifteen changed paths, including README, launch, transport, observation, CLI, tests and workflow",
+  "actionable_findings": [],
+  "independent_checks": {
+    "passed": 119,
+    "browser_deselected": 4
+  },
+  "remaining_at_review": [
+    "installed exact artifact",
+    "full regression",
+    "Linux VM",
+    "CI"
+  ],
+  "later_evidence": "See verification.json and report.md; review is not runtime proof."
+}

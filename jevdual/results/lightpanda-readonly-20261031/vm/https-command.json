@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+    "--json",
+    "browser",
+    "lightpanda",
+    "read",
+    "https://example.org/",
+    "--executable",
+    "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/lightpanda-x86_64-linux",
+    "--work-dir",
+    "/tmp/lp-https-ihlk0btc/engine",
+    "--timeout",
+    "30"
+  ],
+  "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/https-example",
+  "attempts": 1,
+  "capture_timeout": 30,
+  "outer_watchdog": 70,
+  "provider_key_forwarded": false,
+  "PYTHONPATH": "unset",
+  "proxy_ca_policy": "inherited unchanged; no TLS bypass",
+  "private_parent": "/tmp/lp-https-ihlk0btc"
+}

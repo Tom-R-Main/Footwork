@@ -1,0 +1,11 @@
+{
+  "candidate_sha256": "f432c263ed22b36f44b543a5562f69a4283a6a82808e0c51bda699952c8c60dd",
+  "candidate_spans": 151,
+  "factuality": "unverified",
+  "protected_spans": 151,
+  "source_sha256": "70c2c1ecb99238113342af261fbcf25b44dda507ec6f65b718fbcd4142ad48d7",
+  "status": "preserved",
+  "verification_scope": "fenced/indented code, inline code, link/image destinations and reference definitions; conservative Markdown subset, no factual or voice validation",
+  "voice": "unverified",
+  "scope_note": "Structural Markdown preservation only; the session separately reviewed the factual diff. Private numeric profile guidance and source passages are excluded."
+}

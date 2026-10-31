@@ -1,0 +1,1339 @@
+{
+  "origin_commit": "2438c65d2d12d0a7d57b0d93a75dfad2c4da48af",
+  "origin_branch": "codex/lightpanda-vm-evidence",
+  "import_scope": "compact exact copies and explicit summaries; full245-file evidence remains on the origin branch, not duplicated here",
+  "full_report_url": "https://github.com/Tom-R-Main/Footwork/blob/2438c65d2d12d0a7d57b0d93a75dfad2c4da48af/jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/report.md",
+  "notebook_url": "https://github.com/Tom-R-Main/Footwork/blob/2438c65d2d12d0a7d57b0d93a75dfad2c4da48af/jevdual/docs/notebook/2026-10-31-lightpanda-vm.md",
+  "history": [
+    "74be7e7b7c8fe068a9c37d3c6c4a6cee488661a6 docs: predict pinned prebuilt Lightpanda metadata preparation before execution",
+    "89f58d59467f27e01190efd3cec043d1bcd9ae65 test: freeze digest-gated Lightpanda metadata commands and host receipts",
+    "6f6d35b3276d45fed6c97df1f74264ce69c8a440 docs: retain unsupported version flag before documented metadata subcommand",
+    "a27ed9399a78bd8a9aea4b31e85279016a1052f5 test: freeze documented Lightpanda version metadata command",
+    "135e124ac95cf29fe93795963e4921cc8d878b50 test: retain pinned Linux Lightpanda version preparation and original flag failure",
+    "63166e51153993c6cec3044fbf11ebd9d7e00b42 docs: preregister exact Lightpanda installed workflow gate and single HTTPS read",
+    "0451bb3edd2ef36172a67cc485a5a6a312c3c27a test: freeze workflow-derived 15-module runner and passive Lightpanda fixture receipts",
+    "e50b51184efc638cd7d7cacbabe349b28b33e4bd test: freeze one installed HTTPS read without retry or network-policy changes",
+    "2bd62b5237aedea282542167e97eba0528ce149c test: retain prior 303-case run and predict reviewed 308-case artifact",
+    "d0c1798cb69c5b3c75ec414e650cda7da9d265b8 test: freeze reviewed-candidate runner and one HTTPS command with unchanged observer",
+    "2523401bbe2e5229fe11e2330117dee0dacaf755 test: preserve monitor-failed 308 attempt before one bounded diagnostic repeat",
+    "3bb2bb8cbab7d69a43990b9e1d503c6ed67b18b6 test: preserve monitor wait ownership and tolerate exited process samples",
+    "2438c65d2d12d0a7d57b0d93a75dfad2c4da48af test: retain exact Lightpanda Linux 308 gate with scoped cleanup and prior monitor failure"
+  ],
+  "files": [
+    {
+      "path": "jevdual/docs/notebook/2026-10-31-lightpanda-vm.md",
+      "bytes": 18687,
+      "sha256": "89553e8fed40f67855b0a2eef2f6ba8662e6055471a007b11188e7aa6d5acf18"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/asset-verification.json",
+      "bytes": 188,
+      "sha256": "8de768b4ea66f5ba14fbadcfed536ed0460a361ddc2efda38bce880080216fc4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/build.json",
+      "bytes": 207,
+      "sha256": "96ef321bee221f8232fa96898a17e2228cd92db013ac353466c17c8952eaa87e"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/command.json",
+      "bytes": 1083,
+      "sha256": "ced895f1fbdeb340f31f6e61c61014a6526c240585d40dc404a49dade7eef711"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/engine-version.json",
+      "bytes": 274,
+      "sha256": "07147282378a24a8845256c6d57f3dadd528cd1c36acc10c66cdc7a31894c687"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/environment.json",
+      "bytes": 5776,
+      "sha256": "80ae00e54a702081c0bcbc13f5b4e2cb1ae3eab2542995537b81d0e4168340fc"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/failure-assessment.json",
+      "bytes": 570,
+      "sha256": "bd2480388d05f8d94162f42cc782946381961913e8ec1f496cc97d868a2e65fb"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/junit.xml",
+      "bytes": 43126,
+      "sha256": "bd596391e3c404e11db4431aff9ecf1a80234c90c2ec7e9b148139b7e5764265"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/observer.jsonl",
+      "bytes": 980210,
+      "sha256": "c81bba268decc165565ae7b395abde7d0c679af9a62ed8f968e2f103fbcec5eb"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/pytest.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/pytest.stdout.txt",
+      "bytes": 34207,
+      "sha256": "fece57b068e6579a1c2044c918783173bec0b6047f6fc68323a2e9b284aed03f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/runner.stderr.txt",
+      "bytes": 922,
+      "sha256": "f920b1a5a5ec7f110378d59144f1752aa6473d7264bada0a06f3240d559f1933"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/asset-verification.json",
+      "bytes": 188,
+      "sha256": "8de768b4ea66f5ba14fbadcfed536ed0460a361ddc2efda38bce880080216fc4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/build.json",
+      "bytes": 207,
+      "sha256": "96ef321bee221f8232fa96898a17e2228cd92db013ac353466c17c8952eaa87e"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/client-lost-ack/events.jsonl",
+      "bytes": 132463,
+      "sha256": "a9cc8f7f41c3c3ef964ff19deaa8378d7871cf3b42b36855c490a91593c878a4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/client-lost-ack/receipt.json",
+      "bytes": 113416,
+      "sha256": "1401d064b4d3a1c2a637a905c369eb74c9bcaf9b1dcc0110adbc45e1c85c4ef8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/missing-guard/events.jsonl",
+      "bytes": 37392,
+      "sha256": "f997b693c14b61faf9ccd121d170e597a61060cd22a64febe9228b71eb646871"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/missing-guard/receipt.json",
+      "bytes": 19809,
+      "sha256": "74a3c3f1970e2bfdf99ad3711976b6ec0a2f6f75787ff127ecd534ff87e6124b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/prepared/events.jsonl",
+      "bytes": 71000,
+      "sha256": "1a6bde5cf470a8f2e195a6b440e7807c5eb68d881c156c96fb9cdc9ffc495363"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/prepared/receipt.json",
+      "bytes": 39938,
+      "sha256": "f86b375653f251b9637a8a31bed87ac68933707432e9745c1a8cdba9251e4586"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/retained/events.jsonl",
+      "bytes": 127690,
+      "sha256": "b0dc722b31c1f5776572fa2c212c9f0e039945078d03d0e81f8f06dd0712e756"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/retained/receipt.json",
+      "bytes": 106262,
+      "sha256": "a2b5e354d18a9a3799c8bf2008c8d817a64448a3fffb7ba7ed129246ca4b4315"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/started/events.jsonl",
+      "bytes": 79255,
+      "sha256": "7d764ed45a250445a0d4705e83411a968a21177c775a8bfb4824dcef17183ae8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/started/receipt.json",
+      "bytes": 41259,
+      "sha256": "8b090bf984a9166055f5c4ec78239ce84876d81772d1a664683025a053c1d890"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-connect-15/events.jsonl",
+      "bytes": 5624,
+      "sha256": "331a987e91e1893cae26c08052387952428441eee99b573c7ddafc37bed0fbac"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-connect-15/receipt.json",
+      "bytes": 3004,
+      "sha256": "b2f72c78a372ab1c067f3e93f851941d5e9fdc267d635b53f6f2b65707cec9e0"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-launch-15/events.jsonl",
+      "bytes": 5521,
+      "sha256": "57bd309b29e33d8911c21d29bd2334586ee5c2ac189f6a10219a772fe95e5232"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-launch-15/receipt.json",
+      "bytes": 2871,
+      "sha256": "b68dbe223ed6533d35048464566bf9c4f3e6226544d6d987bab970aa30b15d61"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-launch-2/events.jsonl",
+      "bytes": 5532,
+      "sha256": "6711eac6660ef7609e448fa0442e96c5837ce0cea5391aaf07d609e4f98654a2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-launch-2/receipt.json",
+      "bytes": 2903,
+      "sha256": "f2178f5713274b98e29b0fdf27991d5e5efcc3b34d11e8ca0396171b418c9d88"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-navigate-15/events.jsonl",
+      "bytes": 5657,
+      "sha256": "36181864ed3ae383fba9f6e8d01f4ca3d7f8dd7dedc8e94dfe9dc37aeaa281f7"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/cdp/startup-navigate-15/receipt.json",
+      "bytes": 3022,
+      "sha256": "414766e9c1a200d2eb06f2f85f038bdc326f9c050d615a3f906081b26ddec982"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_artifact_lookup_never_downloads_or_builds/events.jsonl",
+      "bytes": 5086,
+      "sha256": "5bddf97a7b15da605a3e0e873c520409f0d4d3354b1c03be389a2c86dee4ca80"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_artifact_lookup_never_downloads_or_builds/receipt.json",
+      "bytes": 2894,
+      "sha256": "74cee7f71a6dae219974ce81815b5ce666c032f9bfeebf19bb9bb43f58c9ec66"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[-1]/events.jsonl",
+      "bytes": 4799,
+      "sha256": "4a59322cd983aae80d7b90c98bdbd521be486b03a09af050c6c4333c8111df40"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[-1]/receipt.json",
+      "bytes": 2436,
+      "sha256": "fb7bda8be960a41ae9cbcfd77d689ac10a018d4121093bcb2113681ebaf8bce3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[0]/events.jsonl",
+      "bytes": 4780,
+      "sha256": "ec858991b88d7a04138a7774420a502a6b692bb5981d8bd5a22bdc0b3c9a2e6a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[0]/receipt.json",
+      "bytes": 2432,
+      "sha256": "f2422e9b78af075ab9f9048145ad0f04756817cb4089ef44c85f39808002d96a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[61]/events.jsonl",
+      "bytes": 4800,
+      "sha256": "23aab8dea868a390b34e921fc3873905f243de698db9d790cf522d98746d0a9c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[61]/receipt.json",
+      "bytes": 2436,
+      "sha256": "5f2196d6287cd639bba500ed3b64174268c64406e206278e1f19a2f7c39b6acb"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[inf]/events.jsonl",
+      "bytes": 4817,
+      "sha256": "9f429a391e8e91a699233d8afed1729e57f0df92300a3ab3bfd7e2d7b7889bfd"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[inf]/receipt.json",
+      "bytes": 2440,
+      "sha256": "71714184083d98735a6c8ae4c52c5ecf01b3f9e4f433aaddc13b31461e34d73f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[nan]/events.jsonl",
+      "bytes": 4818,
+      "sha256": "8fdf55fdba72c5c1d645f4db2b9e0a6c5db57b53ed15c619937d710a41cf94cb"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[nan]/receipt.json",
+      "bytes": 2439,
+      "sha256": "7f2cfb75e955eb01de3fa9e0de5be7ed665ccc66133a7019a00333f3689092b5"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[click]/events.jsonl",
+      "bytes": 4344,
+      "sha256": "70192b3cf28339867fcc409436c97b6b793b90316952713e84c7a0699b4ad34f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[click]/receipt.json",
+      "bytes": 2061,
+      "sha256": "1c05f451e67e77a8682ea3635ffe38018fe2e86d502e066018a7910911c43848"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[connect]/events.jsonl",
+      "bytes": 4384,
+      "sha256": "a114f053986800513e1636c2282ddb15925dbe1f7581fc1bbbbd659cc66cdb1b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[connect]/receipt.json",
+      "bytes": 2073,
+      "sha256": "86221b0223d807f22f82dad937114f727dd7c4aed061519c260123ecafa3e6f1"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[evaluate]/events.jsonl",
+      "bytes": 4401,
+      "sha256": "b5b1ca95b323750b5040c81a7c3ba000115e410404bbb989b1da03d3d7a30725"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[evaluate]/receipt.json",
+      "bytes": 2079,
+      "sha256": "4de19daab43755e291bd9c6eb86e8ee254f21ba016a95a79265024eed97e9999"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[navigate]/events.jsonl",
+      "bytes": 4403,
+      "sha256": "fee18d22596a456b9e67bc86289392f1e875ee3d8be00e8a39f356259514888b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[navigate]/receipt.json",
+      "bytes": 2079,
+      "sha256": "aea22cd60e2d91e36689807a2938dc177949144fad916931bd54438ab2af169e"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[type]/events.jsonl",
+      "bytes": 4324,
+      "sha256": "11bd539132d8404ead342630486fc534d90e81c48176d84df198511f82d7c1aa"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[type]/receipt.json",
+      "bytes": 2055,
+      "sha256": "11e87af5b6154dc6090cd871c15bc4ab94d0c7b0e5a7dc1305af48cde7c4cdd2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_installed_lightpanda_discovery_is_an_explicit_readonly_profile/events.jsonl",
+      "bytes": 66338,
+      "sha256": "5ea7f51e67fcb8a72007c8f03b19cf90df3608e57488bbe2611ad542ea784a6e"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_installed_lightpanda_discovery_is_an_explicit_readonly_profile/receipt.json",
+      "bytes": 74481,
+      "sha256": "0219c437056fc29ecf82e894ecc2cbe41133535e2b1ce8c6751356c216f932ca"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_invalid_url_refuses_before_engine_start[file:___private_input]/events.jsonl",
+      "bytes": 5156,
+      "sha256": "78f181608a9377c959c55f25ed95c3846efd6d8f9aa897388b5810cd5835e2ee"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_invalid_url_refuses_before_engine_start[file:___private_input]/receipt.json",
+      "bytes": 2862,
+      "sha256": "9e56ea545ed18063a1de5854a29d86619cc44e4b6cb6b5c7d813a31148bd36ab"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_invalid_url_refuses_before_engine_start[https:__u:p@example.test_]/events.jsonl",
+      "bytes": 5226,
+      "sha256": "e160a202d758075f7877dbe6aa82bdc15d73c8eff44480a18b5db94239c7b75a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_invalid_url_refuses_before_engine_start[https:__u:p@example.test_]/receipt.json",
+      "bytes": 2878,
+      "sha256": "9b8d6f801b61020496496e6b1aed8b795c6ba4b42fdd5fa3af3a316944a37021"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_invalid_url_refuses_before_engine_start[javascript:alert(1)]/events.jsonl",
+      "bytes": 5120,
+      "sha256": "0d5c7cc5fb7031f9a381e343fad045e4d73d77f6a0676761f3e51227a263c461"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_invalid_url_refuses_before_engine_start[javascript:alert(1)]/receipt.json",
+      "bytes": 2854,
+      "sha256": "1299c54d58ce874a921ecfe36f64b8e21c6bd84afb67ce4929f8ce7d93db892b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_base_links_and_omitted_non_http_frames[_base]/events.jsonl",
+      "bytes": 11187,
+      "sha256": "cafd31e2d16ccda92bf3f9138624dce62543a1b25d7562f881f98b71b01a8168"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_base_links_and_omitted_non_http_frames[_base]/receipt.json",
+      "bytes": 10209,
+      "sha256": "4af8b807feb71f86d654e3b1e9d104784dc464e2d6d7306bcdb8c0a1026462e8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_base_links_and_omitted_non_http_frames[_frames]/events.jsonl",
+      "bytes": 11078,
+      "sha256": "96a1c9730bd2228bd33a7f4c34915fba4e63034d4d4fe13d5540710c9fb18c2a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_base_links_and_omitted_non_http_frames[_frames]/receipt.json",
+      "bytes": 9986,
+      "sha256": "22598ea0870ac5fc51d88fafb5320dfa2ccb23b5a7771a4a68869f36856fb6cf"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_initial_load_timeout_closes_engine/events.jsonl",
+      "bytes": 6495,
+      "sha256": "38f4901d933bd98545bff6149aa883016f9de8d7db494698015ca23436492994"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_initial_load_timeout_closes_engine/receipt.json",
+      "bytes": 4235,
+      "sha256": "33181d95430787364461b22d493a794d5a4fbcb25f78153ee8e5a35f1230cd4a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_installed_read_is_semantic_and_withholds_sensitive_fields/events.jsonl",
+      "bytes": 23143,
+      "sha256": "d69399be3c0cfc0f2f259091cf3838eeb0cb52bf28f311ce3c82f99978ca5d30"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_installed_read_is_semantic_and_withholds_sensitive_fields/receipt.json",
+      "bytes": 21907,
+      "sha256": "18bcf798c3cf2a846ee38ff3af04d073f2e955e1467d60150d3e09eb5e07a39d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]/events.jsonl",
+      "bytes": 6364,
+      "sha256": "fe7d16e5e5109aa36c8824627dafe07d95e25f705cf548641401b01cef9eb8af"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]/receipt.json",
+      "bytes": 4549,
+      "sha256": "bb3b1500649524fe1f5acad424a16517b9dbefd3de53d8cdbb96bc362fa6a686"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]/events.jsonl",
+      "bytes": 6248,
+      "sha256": "b0870f63f5c31dc5ab8fdb6f69852b816b1c132dfda5218cbcda536ae0a6ff48"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]/receipt.json",
+      "bytes": 4388,
+      "sha256": "facd693ee08ee08dec7256c01c4d9111b0dc6312adf7428e73bf19bd12415cc8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[bounded_owned_processes_stopped]/events.jsonl",
+      "bytes": 843,
+      "sha256": "23980215ff923db756e3ddb1cff9bb54d12a8c224fd4a5f75cc65b2b1dc00c23"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[bounded_owned_processes_stopped]/receipt.json",
+      "bytes": 308,
+      "sha256": "58b085f42de570930ff71b7ae2cd8cb65c640e429d17e4decfce6c76ff331533"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[unverified]/events.jsonl",
+      "bytes": 780,
+      "sha256": "b568ab3dcde31c11fda9858e942449f7b1469b41fafe14744612d7e8f72482fd"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[unverified]/receipt.json",
+      "bytes": 287,
+      "sha256": "28f6760772b2b37d5d66bf14fbb5c6fa12c7189ca1d04fc999a0647c6d07a8ba"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_unpinned_binary_cannot_execute/events.jsonl",
+      "bytes": 665,
+      "sha256": "eee46c1cf2c90c9ef3ea550ad152928be574d3f21f10251a5d5913216194dc46"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_unpinned_binary_cannot_execute/receipt.json",
+      "bytes": 249,
+      "sha256": "7781af2bcdbae8a34ceaccd21e462dfa640018e4d982f93cbcc951dc8d1c4d7b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_unqualified_platform_refuses_before_signal_or_engine_setup/events.jsonl",
+      "bytes": 749,
+      "sha256": "764e8206161fb817c7dea6bef5b4aa3a57e912e4a25a16025520fbe8aec2f21a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cells/lightpanda/test_unqualified_platform_refuses_before_signal_or_engine_setup/receipt.json",
+      "bytes": 277,
+      "sha256": "35de977533ce0b1a042b87c8c8af01e72e534bb74def150f485cdfdce7f91de3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cleanup.json",
+      "bytes": 55483,
+      "sha256": "81d35c226fd4686fff7f68571b8c8a9047542edb388d090cf2416cbfe1d4551d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/collector-provenance.json",
+      "bytes": 455,
+      "sha256": "eeb19bb5d9d48bf3ca2d96a40f34fa70e48cb64dfe0d463aa0325bf4354a2b35"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/command.json",
+      "bytes": 1173,
+      "sha256": "fb58ee4127d572e87e651312c19e56423b3dbe1e86032116df50c863ce8acb91"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/artifact-lightpanda.json",
+      "bytes": 2419,
+      "sha256": "c6ea5d5cfe32367a3d8f02c087df7ae744ab57b6175e3523e09227dea0b11fcd"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/doctor.json",
+      "bytes": 36666,
+      "sha256": "1e6ef0aeff099a1c90c3ee214500ea78573b1bbe98e9a0f57feb43e11e7b8408"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/guide-cdp.json",
+      "bytes": 6943,
+      "sha256": "4647bda55640ce9d52a5c54773343fd145bc0e89d890259028b8185e945a0ffb"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/guide-lightpanda.json",
+      "bytes": 7379,
+      "sha256": "7d5c7850569c92f70951cfb80dfff54aeb04f9c1357d871aa180236e083d7130"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/schema-cdp.json",
+      "bytes": 3358,
+      "sha256": "66978d98794784194519ed73d8b9d3afdfcd7cb84746069b5eeba78b94f1231b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/schema-lightpanda.json",
+      "bytes": 4018,
+      "sha256": "42d8c946f29bd4623f839d88eeb984fda6b6ffc01bef85e8490fe6ba7e443896"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/discovery/tools.json",
+      "bytes": 21615,
+      "sha256": "10d6d597153d6cef108ccd8a35242c13e9b85227ab7dfe95de46af37fabde133"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/engine-version.json",
+      "bytes": 284,
+      "sha256": "84b989319a7786888ec8d1e943bbd8d51629e914b9a8fc87102aee12d4350593"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/environment.json",
+      "bytes": 5846,
+      "sha256": "645e8bc1446fc071aac833f742b894b7da112168898d5b714b79ce755ebb527b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/command.json",
+      "bytes": 696,
+      "sha256": "cb91efe8ca3218d9e51c8465cd8471be4bfd0ca3b810f893e7e6d204e82ca697"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/owned-process-history.json",
+      "bytes": 225,
+      "sha256": "2efdf76a7409c6419da54ac45a3a07042a74832ee0577c0388aea4dc001902d4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/receipt.json",
+      "bytes": 10585,
+      "sha256": "5de5bbf5799c84da8aa93316623e19636b4189e9ac1a834fbaff18ded21985a3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/stdout.txt",
+      "bytes": 6145,
+      "sha256": "9aefa608a7fbc615d154dfa3e6f22d5bc341369c5fff0afab273887eaf44aaea"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-runner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/inspected-summary.json",
+      "bytes": 12433,
+      "sha256": "39e322874fe2b258eb62a175de6836019658525da64ec01b09734e766ea55b6c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/junit.xml",
+      "bytes": 43125,
+      "sha256": "0f8d108a87ed88290828515bcaaee41b41d01544120cd6e01758b221254b6c03"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/observer.jsonl",
+      "bytes": 987870,
+      "sha256": "98a2bee5c721c5ec0cb823f8976cb0ac1fcf20d2bcd04c2a480e12d0ee324104"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/owned-process-history.json",
+      "bytes": 99781,
+      "sha256": "12994a933affee779b15601f44a0b4ebc4d70470c8b14a15341faa5fec5ef11a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/post-pytest-before-wrapper-reaping.json",
+      "bytes": 34160,
+      "sha256": "23687e15aa2c483d016a4031d83680111f690850e16b1fae9090e3473f3108a3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/post-run-identity-check.json",
+      "bytes": 1043,
+      "sha256": "c3bb13029e665c6b4c0439ae8cb11837c4aa2ee05b53e22557edccb5365c99b8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/pre-owned-processes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/pytest.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/pytest.stdout.txt",
+      "bytes": 34217,
+      "sha256": "76d5db9e44810d3da36d6a55840d9dc6b5c3a3ab8a487866da439c00d20527b0"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/report.md",
+      "bytes": 7038,
+      "sha256": "0c3dc76bcd8883c131a214da9f49cc1a54649c33362add2a0b9a0bfc39f4d23a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/runner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/asset-gh.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/asset-verification.json",
+      "bytes": 104,
+      "sha256": "d31d64178f9f95f13300827b11fe185b2935103885a9ebb1eebd64ded3d3f602"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/build.json",
+      "bytes": 207,
+      "sha256": "15ee98f1fa888fdf96515e1f3645699049ee700dfbf968355fea82eba47cdfc2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/client-lost-ack/events.jsonl",
+      "bytes": 131326,
+      "sha256": "e418049fe854563c9066a5103305defd49fec20ad5e589a1584516e75c6e8fb0"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/client-lost-ack/receipt.json",
+      "bytes": 113228,
+      "sha256": "e7a7eedbb9b7e870c882c174259395897ea3280cd86c12493f79ac63b3e09e40"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/missing-guard/events.jsonl",
+      "bytes": 36890,
+      "sha256": "01b87835fde229b5ad84a8dd39289cac9776bd77994ecfe72a0d57cf36912147"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/missing-guard/receipt.json",
+      "bytes": 19707,
+      "sha256": "aa72f881012e0d5b2b4df29e0b53df133ac21f99a502ed0c6fe799b34cb2bdb1"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/prepared/events.jsonl",
+      "bytes": 70486,
+      "sha256": "0479adba36ab18964b2c2e745a4560efb5ba2e2d3cfeeb1a101227558c1853aa"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/prepared/receipt.json",
+      "bytes": 39881,
+      "sha256": "5d09c32a338683044e0e1e5a4ef48d537a2199708d1bc47667f9288e016baca4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/retained/events.jsonl",
+      "bytes": 127059,
+      "sha256": "868e2129e616a0f1e2fc5e5e4243aba91cd96652af85f2c90d355934ca6ddd5d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/retained/receipt.json",
+      "bytes": 106172,
+      "sha256": "2991e37810445d457922ee23303a77712750f54bdeb4d8d7eed8937cc3aeeed1"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/started/events.jsonl",
+      "bytes": 78594,
+      "sha256": "b95112bffa60d71887a30571770cfa70c5b83f772f836c3489382d0e1bc12304"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/started/receipt.json",
+      "bytes": 41127,
+      "sha256": "09e43a8119cd646095d4ca7e83d5001546c4743b3526aed7443a03b0ab26dd0a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-connect-15/events.jsonl",
+      "bytes": 5573,
+      "sha256": "c60d8ae341f996ee28549e3fac6022fff52eb21536efd67e65f963c153c7727b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-connect-15/receipt.json",
+      "bytes": 2971,
+      "sha256": "b0cd127d62764c41f979ea66c4325eb9b559a2014622b0cd6a3c6adfb5d54881"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-launch-15/events.jsonl",
+      "bytes": 5522,
+      "sha256": "2dbb263a7bffd12b0c83a37e65378a4f571f6d72599a34a90ac8db8e3534c7d8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-launch-15/receipt.json",
+      "bytes": 2923,
+      "sha256": "01ac1dc041b4bea6ec3c19f296221a662cfb6bfad908c67460eebc3b7b116f7d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-launch-2/events.jsonl",
+      "bytes": 5482,
+      "sha256": "fe37c887e1bc4dca01468164126cb0fb3ad5d19cfddd160847c94f4084634680"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-launch-2/receipt.json",
+      "bytes": 2884,
+      "sha256": "dcf470f09833e1bbb219d8768e3c67f45b832ab30579aad1d58ad9692171f9c1"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-navigate-15/events.jsonl",
+      "bytes": 5619,
+      "sha256": "20119b47fde4194005e58afc372d606afd636b3bfabe87402117cd2bd5e4f188"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/cdp/startup-navigate-15/receipt.json",
+      "bytes": 3013,
+      "sha256": "58a894ffd49f64dfd0a63df7ec8524550f65cc379ca927da62fb065ddff8a3e3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_artifact_lookup_never_downloads_or_builds/events.jsonl",
+      "bytes": 4985,
+      "sha256": "bb9a04fd5e8afe57103be49160ddb40dcb2dfb0e7d1357137fbec427ebda004a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_artifact_lookup_never_downloads_or_builds/receipt.json",
+      "bytes": 2874,
+      "sha256": "cf54486f5c8206f9a47d4ba726e8cf0c04abdf3a694d93a42ddece8c940958a5"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[-1]/events.jsonl",
+      "bytes": 4700,
+      "sha256": "8ec7bb65143a0fef227aedc2c1c7c0685661068ffa32565779053069d3b901db"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[-1]/receipt.json",
+      "bytes": 2416,
+      "sha256": "b6aeb03953d34e4a4536e13d35d9557715a86e5afc9a5acaa5cc6b619ab91696"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[0]/events.jsonl",
+      "bytes": 4683,
+      "sha256": "51454a2c4edae6e0dcd50c6dc924b3c321f722bca16876a3bb9654f154d0e84a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[0]/receipt.json",
+      "bytes": 2412,
+      "sha256": "fde86c7bba03d6f5b218c9e2d1f36e1eb37e14ec5f2668735767bcfadc08a777"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[61]/events.jsonl",
+      "bytes": 4700,
+      "sha256": "e3fc3a85e6786f57e95b873895fba046a8152b17efcf4b8de76981d059a5ed3f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[61]/receipt.json",
+      "bytes": 2416,
+      "sha256": "b63a727580671b0a887a93dc971373854ee2e5c5c89f7ca27584b8244231f102"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[inf]/events.jsonl",
+      "bytes": 4716,
+      "sha256": "e1880c8d221e9ada7eae5e99537ad264b66ff7e5289f98dcb99ccd962762adab"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[inf]/receipt.json",
+      "bytes": 2420,
+      "sha256": "1afb7cf7c877bb1f904336dca6ef4b252d352681fdfb6362ce05235e631f46a8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[nan]/events.jsonl",
+      "bytes": 4717,
+      "sha256": "4d4097f1e0fd8a7376ee3b7e6248bd5234e746cd5aa1bd7e61ce5f701e760fb2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_capture_deadline_is_finite_and_bounded[nan]/receipt.json",
+      "bytes": 2420,
+      "sha256": "1cdf4052e66d338df2510ead7624c5fcba68e829684526af3bad1d56413ea180"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[click]/events.jsonl",
+      "bytes": 4243,
+      "sha256": "1b3fbb81ccb11f95f9cd50e60510502836e955737fd229cff92aa8bb6c11b342"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[click]/receipt.json",
+      "bytes": 2041,
+      "sha256": "215d93f3a3f40ba3e78c48ec56e4a254d381d59241d3660a4f2fedd4b597f1f0"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[connect]/events.jsonl",
+      "bytes": 4281,
+      "sha256": "7eabc262035b68cfe97406eb2c2fcb3f899b6dd236838503dbcd436e9f32e93f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[connect]/receipt.json",
+      "bytes": 2053,
+      "sha256": "8333b75fae42ffff33f16a6fdfd45eaf2740fba183adb766ff29ba74f4057d89"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[evaluate]/events.jsonl",
+      "bytes": 4301,
+      "sha256": "4be5e479b0c3e84067da3266f05d07ed6ac3ed1257644bd6038df459bb4bd0d9"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[evaluate]/receipt.json",
+      "bytes": 2059,
+      "sha256": "013941f6b9da142eeeab3119acc0499571944665f5efa0ea4b7ee401df8515e3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[navigate]/events.jsonl",
+      "bytes": 4303,
+      "sha256": "8c059e4cf24217e3f14c5ac6ad8bf4091e99a52013823e4445a4ead2dab366ca"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[navigate]/receipt.json",
+      "bytes": 2058,
+      "sha256": "32c9133cdac1dad43dec58e98b0e932955a42e6d5cabaaf7f2114048eeaef157"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[type]/events.jsonl",
+      "bytes": 4222,
+      "sha256": "d5ae6d81a0c6695034e003298f0f538e99ccacf845252827c62dfb1dda02866b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_input_and_raw_protocol_routes_are_absent[type]/receipt.json",
+      "bytes": 2035,
+      "sha256": "8338f69c617e5d9e605de9c2e4208058981278ed9476c8afe76262c47f6987c7"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_installed_lightpanda_discovery_is_an_explicit_readonly_profile/events.jsonl",
+      "bytes": 65638,
+      "sha256": "b4a907c319bd677e3c681276721e867a943795420e5944465fb37152b8b35ad8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_installed_lightpanda_discovery_is_an_explicit_readonly_profile/receipt.json",
+      "bytes": 74102,
+      "sha256": "d95274c15cf8871d4dbd6271c81f615d292736e921c9ac03bee043251e93de7f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_invalid_url_refuses_before_engine_start[file:/private/input]/events.jsonl",
+      "bytes": 5056,
+      "sha256": "5adb9b8b2977830446ac9fd1daeeec484bca04ff6a38e12e2f29539ae6ef9e45"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_invalid_url_refuses_before_engine_start[file:/private/input]/receipt.json",
+      "bytes": 2842,
+      "sha256": "05e05e44b783a11638ccb80d20f5f9ff1ce68a9dd82fe9c5e44854c9407551d2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_invalid_url_refuses_before_engine_start[https:/u:p@example.test/]/events.jsonl",
+      "bytes": 5128,
+      "sha256": "b065501014eef7d81b285ac6e3d4326cf4bb439a2213908d0155cc6ba93c6f7c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_invalid_url_refuses_before_engine_start[https:/u:p@example.test/]/receipt.json",
+      "bytes": 2858,
+      "sha256": "584106787730554667e63d99ebb4362da1b70f9df818d33513d72e699abecad4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_invalid_url_refuses_before_engine_start[javascript:alert(1)]/events.jsonl",
+      "bytes": 5020,
+      "sha256": "c3a97a572e06bf3f7b1af5154c31a4ddcedb9e3f4acdd0ff34df53d686421656"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_invalid_url_refuses_before_engine_start[javascript:alert(1)]/receipt.json",
+      "bytes": 2834,
+      "sha256": "8193d0ee44e992e4a16a500ee5ce46286edd741219730898b5c3a5df150af022"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_initial_load_timeout_closes_engine/events.jsonl",
+      "bytes": 6347,
+      "sha256": "58ad7e72f4d7cd56eb5986a59f9fd61968277d33de6e5e66470db86f11c2ead1"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_initial_load_timeout_closes_engine/receipt.json",
+      "bytes": 4207,
+      "sha256": "862a29a968c918f2323427ce75a8d0a6550d4ab52016931f3d1447914740bf2d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_installed_read_is_semantic_and_withholds_sensitive_fields/events.jsonl",
+      "bytes": 22347,
+      "sha256": "6885a1a18c5b0cf07888aeb083cba8c026ea2b3dfb1e250de44c1b7782d04c71"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_installed_read_is_semantic_and_withholds_sensitive_fields/receipt.json",
+      "bytes": 21285,
+      "sha256": "a84c97052a69537380522a003dd0c9676187cae75685fcce91561d31691c794c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]/events.jsonl",
+      "bytes": 6246,
+      "sha256": "4ce0d08f8df07b8c3bbd5d093ffd09301ca57ccac9291159a31a8446e95510ea"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]/receipt.json",
+      "bytes": 4521,
+      "sha256": "9d74bc185dc0d7c17659da8fe43d48b432c4b384b21b2509750acf80902a76c7"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]/events.jsonl",
+      "bytes": 6126,
+      "sha256": "0fa75c5252f3bcb0e540470fa2e229124d22f2e4b7ba7687c6a7ff87a6982aae"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]/receipt.json",
+      "bytes": 4358,
+      "sha256": "f7ba3fa20620387350c481cef65bd8da05131d3902a8f7ab0e61d9f62b86d577"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[bounded_owned_processes_stopped]/events.jsonl",
+      "bytes": 840,
+      "sha256": "b15f2b20ed177b7373f8f28d55c3838bf446268c2fabffd444d6711b58e9da7d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[bounded_owned_processes_stopped]/receipt.json",
+      "bytes": 308,
+      "sha256": "58b085f42de570930ff71b7ae2cd8cb65c640e429d17e4decfce6c76ff331533"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[unverified]/events.jsonl",
+      "bytes": 779,
+      "sha256": "979097e0b4b3a1cc8532c85c2cb02d95e16597f32fb0bc05cb242e1971743bf2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[unverified]/receipt.json",
+      "bytes": 287,
+      "sha256": "28f6760772b2b37d5d66bf14fbb5c6fa12c7189ca1d04fc999a0647c6d07a8ba"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_unpinned_binary_cannot_execute/events.jsonl",
+      "bytes": 664,
+      "sha256": "0792205bff2024f1640e4f2a3bc685e3f64f0c61470c413eb877aff4d272a5d0"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_unpinned_binary_cannot_execute/receipt.json",
+      "bytes": 249,
+      "sha256": "7781af2bcdbae8a34ceaccd21e462dfa640018e4d982f93cbcc951dc8d1c4d7b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_unqualified_platform_refuses_before_signal_or_engine_setup/events.jsonl",
+      "bytes": 749,
+      "sha256": "e3aba595e7330b99c967f7d8e4671d8d9ba5c549a96e028480d782b1228c73fd"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cells/lightpanda/test_unqualified_platform_refuses_before_signal_or_engine_setup/receipt.json",
+      "bytes": 277,
+      "sha256": "35de977533ce0b1a042b87c8c8af01e72e534bb74def150f485cdfdce7f91de3"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/cleanup.json",
+      "bytes": 57083,
+      "sha256": "10df09485667168e213e583fb2487fbd1ab973496a9b3194079fb99362449177"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/collector-provenance.json",
+      "bytes": 376,
+      "sha256": "2325b4bccf8957e600d88336d4e6ea14998eb77564cdffb629055ff80d32fbd4"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/command.json",
+      "bytes": 1083,
+      "sha256": "bd433e9d5e76e5353f285d06b450fc4ee4b0d4ae7d9bdcb869c6b649beca6439"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/artifact-lightpanda.json",
+      "bytes": 2399,
+      "sha256": "cf26cec48dc1030029e98c3135eedc9874e0835202f4536fc02f1722c798113f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/doctor.json",
+      "bytes": 36426,
+      "sha256": "bd76b1c6013da693ff9ceaac63d95aa0ba40044a2bce0e9e3eba340c8954eb84"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/guide-cdp.json",
+      "bytes": 6923,
+      "sha256": "dad9de282fd169e550b21e0ef7a5313cc898a1774248473b01b104250100ff4c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/guide-lightpanda.json",
+      "bytes": 7359,
+      "sha256": "5604c3f7851fc5fa5cc19b0415b07a185dac17a2c8d30ea82ca2214238ed486d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/schema-cdp.json",
+      "bytes": 3338,
+      "sha256": "0bf33aa34e084e89d9f374569c865879d17e3db84c854935b4958d9d0a5a43d2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/schema-lightpanda.json",
+      "bytes": 3998,
+      "sha256": "70221ab434a510bd0ef9e2df76b4579dce562348c79b1df296c614efff837a3b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/discovery/tools.json",
+      "bytes": 21516,
+      "sha256": "10e3db41a4a7483d7c6f521decacd2de8a83849883cadfd1a3861186371a062d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/engine-version.json",
+      "bytes": 274,
+      "sha256": "0676dfdae051e33034daabe1016c78987c5f56c823fa53691e618e55fcd49bc2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/environment.json",
+      "bytes": 5776,
+      "sha256": "7837eaeba022bcbdab0152e34971097553d208a5e118eefa97bb6ee6bbe74f6b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-example/command.json",
+      "bytes": 666,
+      "sha256": "7fd0ebf106a6f460fd7c17f98ed5fe6b747870db8b81542c12302dc855bd5a11"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-example/owned-process-history.json",
+      "bytes": 225,
+      "sha256": "513b152f1ab9efdcb393019a6e586f99cbd4575a04429da853faecdcc951e50f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-example/receipt.json",
+      "bytes": 10442,
+      "sha256": "0a3afefde9a8c6203463a959dd50dd901d3b6b07b4707544a7e986abd984cc28"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-example/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-example/stdout.txt",
+      "bytes": 6022,
+      "sha256": "9d9a55b80777ed76980c71a9366d2be9096ed19fc5eb81ca6522801d3f05acf2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-runner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/https-runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/inspected-summary.json",
+      "bytes": 8421,
+      "sha256": "43be89fe72741584d695c071b90feeb4e54c3465649e80fc930f214b27114c81"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/junit.xml",
+      "bytes": 42406,
+      "sha256": "8d33b5311f1f4924eac7acfc5a448c3f37d0b4de0890b728be6e4cf57225dfb2"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/observer.jsonl",
+      "bytes": 955242,
+      "sha256": "45f9907f9ab347e9b701e7cb6b260fe02568826452e86f8097febfa70966e271"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/owned-process-history.json",
+      "bytes": 97331,
+      "sha256": "ed06ea86a74aed0a54f0d37a4aec77c793aafe374b802a4dea695ea3ef582905"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/post-pytest-before-wrapper-reaping.json",
+      "bytes": 35166,
+      "sha256": "6845c9343f1253d2567c4d69e870afbd7b10b44ef07424d372ebdcc81279202c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/pre-owned-processes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/pytest.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/pytest.stdout.txt",
+      "bytes": 33643,
+      "sha256": "86febd11a7bf3c214b83fa4fa3d118c8dfd6c9170cb4e3d0ec9946ba5e933c3a"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/report.md",
+      "bytes": 3800,
+      "sha256": "03fe6730ec4091efbf30130f0f5a551a82601f9411a57dc37d381fe165310059"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/runner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/d9ca03e/runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/https_2b5325e.py",
+      "bytes": 5020,
+      "sha256": "3b466cdea6d8c4a98d5883ca3fe85faacbe81c3c2feea64f08303b4d89e4d33c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/https_2b5325e_monitored.py",
+      "bytes": 5030,
+      "sha256": "35dbd50f09e8813089d7e3cb008dfa71ff2442532b6cc96e6d4fd26705ed56d8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/https_once.py",
+      "bytes": 5020,
+      "sha256": "8b250bb8c40dc813a1cf10507245b05dae094aec9c459decfc4f48703bb7bdcd"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/pytest_main.py",
+      "bytes": 424,
+      "sha256": "c23cefeb8fb2cf19f48946a23cd1cb66606953798057a99d3e5ba34d20ac5c27"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/receipt_plugin.py",
+      "bytes": 7898,
+      "sha256": "981fc86376be508aae5ae685aa16a03038747f018616cc28926d8d24b46467af"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/run_2b5325e.py",
+      "bytes": 11023,
+      "sha256": "7a52ed55d47cf64ac439fedaa6da296f5fc28ec034dfcdb7703cbc6d4f798c13"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/run_2b5325e_monitored.py",
+      "bytes": 11465,
+      "sha256": "11df34ef2859f80a5ab953c5579e5c0761a834723c02e06500e6ebeadbd82ead"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/harness/run_d9ca03e.py",
+      "bytes": 11023,
+      "sha256": "6a55fd05d99e7b070e281beb08ce8e0cd51ad88efaaef507d33b7bb6185e0245"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/notebook-check.txt",
+      "bytes": 15655,
+      "sha256": "e7415aedcf2e9e06c516e1413292c31e0fd47c61b0eaf8f1531715cb10560b53"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/asset-metadata.json",
+      "bytes": 693,
+      "sha256": "fbd106ede5927d9dbd77518c6f4584711b583ab5afba2fb1e64c062fd9b6c8f8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/check_binary.py",
+      "bytes": 6055,
+      "sha256": "6f3db78f914766d69974e13a7ea6cede209472247e236ea9430895bf5c128332"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/cleanup.json",
+      "bytes": 281,
+      "sha256": "27ee08c7e30efaa04069830cefea948863340c71c41137bc52ffcb0df36c643b"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/commands.json",
+      "bytes": 950,
+      "sha256": "af19ff5848ff5e08069468e66267c5c4ba11a822ca5b9fac4f3c10438b66c5aa"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/download.json",
+      "bytes": 77,
+      "sha256": "04337f70096f3c4ae0d336075bc6d80ff7edaab6caedab7964c77a8c1a13d7d8"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/environment.json",
+      "bytes": 1527,
+      "sha256": "617d63a4abe48a78e1675b86f10337ded0ae3973212308504e2e8cc8cb60153d"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/help.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/help.stdout.txt",
+      "bytes": 603,
+      "sha256": "37278fa667420f5f39c044a69ce4e9aedff7722dc23c2910f7ad75200fc9b21c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/notebook-check.txt",
+      "bytes": 15655,
+      "sha256": "b37e44960b837a503fc60b7c57f7bb5db2b1280f8feb43e41456c8c44c939fce"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/redaction.txt",
+      "bytes": 54,
+      "sha256": "880b489239f88b36962d767ebc4fca3dc9720f5aea5580b09d8c4c64bc3e3c12"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/report.md",
+      "bytes": 3815,
+      "sha256": "fb7b541a6942a87bb17ce28ef51c558437c75589d532f72eef0d309d5148aa6c"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/runner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/verification.json",
+      "bytes": 131,
+      "sha256": "af92dee113016f8bbd747e3c549970ffa422b72573013fc64245879d0577a8c9"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/verified-before-execution.json",
+      "bytes": 265,
+      "sha256": "f356d9d6d6b47a344c81e06963fca4b0070796e80f3b61ec8fe3894b7e5b4b99"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version-runner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version-runner.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version-subcommand.json",
+      "bytes": 595,
+      "sha256": "e9884a9b36a3c007186d746171bd72463f7498c250d93ecccda6de433dc44245"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version-subcommand.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version-subcommand.stdout.txt",
+      "bytes": 30,
+      "sha256": "9efe1c4debb85375ea7e249e1bd38bc1f0c5a78392510108041ec723a174e0e5"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version.stderr.txt",
+      "bytes": 102,
+      "sha256": "15e0add57d00e200006296b81465186799730e03de39c93995e5e08b952b068f"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/preparation/version_subcommand.py",
+      "bytes": 1852,
+      "sha256": "027a660ce576c88c10ae51be3434516e4d38308798bffd7d474764dae46f7cd7"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/redaction.txt",
+      "bytes": 54,
+      "sha256": "880b489239f88b36962d767ebc4fca3dc9720f5aea5580b09d8c4c64bc3e3c12"
+    },
+    {
+      "path": "jevdual/results/lightpanda-vm-20261031/report.md",
+      "bytes": 1401,
+      "sha256": "92e0ced39699a5c3f0d9a14e0ef012aa196fb66a1866dbf83cf165fc2bd18ba9"
+    }
+  ],
+  "capsule_files": [
+    {
+      "local": "monitor-failure-assessment.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/failure-assessment.json",
+      "sha256": "bd2480388d05f8d94162f42cc782946381961913e8ec1f496cc97d868a2e65fb",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "engine-version.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/engine-version.json",
+      "sha256": "84b989319a7786888ec8d1e943bbd8d51629e914b9a8fc87102aee12d4350593",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "monitor-failure.stderr.txt",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitor-failure/runner.stderr.txt",
+      "sha256": "f920b1a5a5ec7f110378d59144f1752aa6473d7264bada0a06f3240d559f1933",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "inspected-summary.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/inspected-summary.json",
+      "sha256": "39e322874fe2b258eb62a175de6836019658525da64ec01b09734e766ea55b6c",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "collector-provenance.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/collector-provenance.json",
+      "sha256": "eeb19bb5d9d48bf3ca2d96a40f34fa70e48cb64dfe0d463aa0325bf4354a2b35",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "asset-verification.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/asset-verification.json",
+      "sha256": "8de768b4ea66f5ba14fbadcfed536ed0460a361ddc2efda38bce880080216fc4",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "https-command.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/command.json",
+      "sha256": "cb91efe8ca3218d9e51c8465cd8471be4bfd0ca3b810f893e7e6d204e82ca697",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "command.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/command.json",
+      "sha256": "fb58ee4127d572e87e651312c19e56423b3dbe1e86032116df50c863ce8acb91",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "pytest.stdout.txt",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/pytest.stdout.txt",
+      "sha256": "76d5db9e44810d3da36d6a55840d9dc6b5c3a3ab8a487866da439c00d20527b0",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "post-run-identity-check.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/post-run-identity-check.json",
+      "sha256": "c3bb13029e665c6b4c0439ae8cb11837c4aa2ee05b53e22557edccb5365c99b8",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "environment.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/environment.json",
+      "sha256": "645e8bc1446fc071aac833f742b894b7da112168898d5b714b79ce755ebb527b",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "junit.xml",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/junit.xml",
+      "sha256": "0f8d108a87ed88290828515bcaaee41b41d01544120cd6e01758b221254b6c03",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "build.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/build.json",
+      "sha256": "96ef321bee221f8232fa96898a17e2228cd92db013ac353466c17c8952eaa87e",
+      "mode": "exact_copy"
+    },
+    {
+      "local": "cleanup-summary.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cleanup.json",
+      "mode": "explicit_summary; page content and repeated process arrays excluded"
+    },
+    {
+      "local": "https-summary.json",
+      "origin_path": "jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/https-example/receipt.json",
+      "mode": "explicit_summary; page content and repeated process arrays excluded"
+    }
+  ]
+}

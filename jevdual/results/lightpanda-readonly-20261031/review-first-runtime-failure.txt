@@ -1,0 +1,9 @@
+.....F                                                                   [100%]
+=================================== FAILURES ===================================
+__________ test_real_base_links_and_omitted_non_http_frames[/frames] ___________
+jevdual/tests/test_lightpanda_cli.py:293: in test_real_base_links_and_omitted_non_http_frames
+    assert observation["omitted"]["child_frames"] == 2
+E   assert 0 == 2
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/frames]
+1 failed, 5 passed, 64 deselected in 1.54s

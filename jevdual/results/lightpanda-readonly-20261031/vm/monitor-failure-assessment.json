@@ -1,0 +1,12 @@
+{
+  "source": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "wheel_sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb",
+  "pytest_cases_passed": 308,
+  "pytest_failures": 0,
+  "wrapper_exit": 1,
+  "error": "ProcessLookupError in os.getsid while sampling an exited child",
+  "outer_cleanup_receipt_available": false,
+  "outer_wait_reaping_custody_lost": true,
+  "no_matching_running_pytest_process_observed": true,
+  "limits": "Outer monitor died before cleanup; orphan zombie attribution/reaping is unavailable. No global clean-process claim."
+}

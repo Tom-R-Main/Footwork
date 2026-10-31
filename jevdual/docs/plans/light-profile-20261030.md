@@ -483,3 +483,19 @@ custody, L2 binary-only light package metadata and L0 small-host resource measur
 The deterministic discovery portion of L4 now exposes the explicit route, actual requirements and
 limits through tools, doctor, schema and the installed `browser cdp guide`; the paid cold-agent trial
 remains unrun. Typing stays disabled until its focus race is resolved and separately qualified.
+
+
+## Read-only Lightpanda checkpoint (2026-10-31)
+
+PR19 adds an explicitly selected `footwork browser lightpanda read` route on runtime `2b5325e`.
+One pinned external prebuilt engine and one private Unix connection produce bounded DOM text;
+there are no action refs, click, typing, raw-script or raw-CDP commands. Layout, visibility, atomic
+capture and task completion are unqualified. Input/editable values are withheld; base-href link
+destinations and child content remain unavailable when their semantics cannot be qualified.
+
+The exact wheel passed 308 installed checks on macOS, hosted Linux and the VM chat, without CUA
+or browser-use. The VM measured 4 CPUs/16 GiB, not 2 CPUs/8 GB. See the
+[report and retained failures](../../results/lightpanda-readonly-20261031/report.md).
+This is a separate read-only producer, not a substitute for Chromium authority or closure of L3c.
+L2 dependency metadata, L0 small-host measurements and the cold-agent discovery trial remain open.
+Typing remains disabled pending independent resolution of its focus race.

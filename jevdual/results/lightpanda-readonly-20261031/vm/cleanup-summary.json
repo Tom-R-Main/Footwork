@@ -1,0 +1,19 @@
+{
+  "pytest_returncode": 0,
+  "pytest_timeout": false,
+  "signals": [],
+  "final_owned_descendants": [],
+  "utc_finished": "2026-10-31T20:46:46.792720+00:00",
+  "limits": "bounded known descendants; no atomic inventory/daemon-escape/global no-zombie claim",
+  "observer_gap": false,
+  "monitor_errors": [],
+  "wrapper_returncode": 0,
+  "pre_wrapper_cleanup_count": 204,
+  "pre_wrapper_status_counts": {
+    "zombie": 204
+  },
+  "adopted_wait_count": 204,
+  "full_receipt_url": "https://github.com/Tom-R-Main/Footwork/blob/2438c65d2d12d0a7d57b0d93a75dfad2c4da48af/jevdual/results/lightpanda-vm-20261031/2b5325e-monitored/cleanup.json",
+  "full_receipt_sha256": "81d35c226fd4686fff7f68571b8c8a9047542edb388d090cf2416cbfe1d4551d",
+  "scope": "summary of original test-only wrapper evidence, not product cleanup"
+}

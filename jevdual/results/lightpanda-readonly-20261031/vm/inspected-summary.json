@@ -1,0 +1,474 @@
+{
+  "source": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "wheel_sha256": "373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb",
+  "total": 308,
+  "passed": 308,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "pytest_seconds": 61.59,
+  "pytest_returncode": 0,
+  "wrapper_returncode": 0,
+  "by_module": {
+    "test_browser_cdp_cli": 3,
+    "test_browser_durable_authority": 49,
+    "test_browser_guard": 6,
+    "test_browser_holder": 20,
+    "test_browser_restart_cli": 3,
+    "test_browser_startup_cli": 3,
+    "test_browser_startup_lifecycle": 6,
+    "test_cdp_click": 30,
+    "test_cdp_click_contract": 33,
+    "test_cdp_effector": 17,
+    "test_cdp_launch_custody": 10,
+    "test_cdp_transport_deadline": 21,
+    "test_lightpanda_cli": 25,
+    "test_lightpanda_launch": 37,
+    "test_lightpanda_observation": 45
+  },
+  "runtime_cells": {
+    "cdp/client-lost-ack": {
+      "fixture_records": [
+        {
+          "posts": [
+            "intended"
+          ],
+          "request_paths": null
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "cdp/prepared": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": null
+        }
+      ],
+      "markers": [
+        {
+          "boundary": "prepared",
+          "operation_id": "op_71172c38f071",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "startup_reports": []
+    },
+    "cdp/started": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": null
+        }
+      ],
+      "markers": [
+        {
+          "boundary": "started",
+          "operation_id": "op_3a669fdcedf5",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "startup_reports": []
+    },
+    "cdp/retained": {
+      "fixture_records": [
+        {
+          "posts": [
+            "intended"
+          ],
+          "request_paths": null
+        }
+      ],
+      "markers": [
+        {
+          "boundary": "retained",
+          "operation_id": "op_950d7b4bbf61",
+          "ingress_before_exit": 1,
+          "heavy_imports": []
+        }
+      ],
+      "startup_reports": []
+    },
+    "cdp/startup-launch-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "launch",
+          "pid": 34914,
+          "start": 1793479574.5,
+          "captured": {
+            "34914": 1793479574.5,
+            "34922": 1793479574.54,
+            "34923": 1793479574.54,
+            "34947": 1793479574.59,
+            "34925": 1793479574.57,
+            "34971": 1793479574.63,
+            "34945": 1793479574.58
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 34914,
+          "captured_count": 11,
+          "zombies_before_test_reap": [
+            34916,
+            34920,
+            34922,
+            34947,
+            34945
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "cdp/startup-launch-2": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "launch",
+          "pid": 35024,
+          "start": 1793479576.37,
+          "captured": {
+            "35024": 1793479576.37,
+            "35031": 1793479576.41,
+            "35033": 1793479576.41,
+            "35062": 1793479576.47,
+            "35035": 1793479576.45,
+            "35080": 1793479576.52,
+            "35097": 1793479576.57,
+            "35055": 1793479576.46
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 35024,
+          "captured_count": 13,
+          "zombies_before_test_reap": [
+            35026,
+            35030,
+            35031,
+            35055,
+            35062
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "cdp/startup-connect-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "connect",
+          "pid": 35139,
+          "start": 1793479578.3,
+          "captured": {
+            "35139": 1793479578.3,
+            "35147": 1793479578.34,
+            "35148": 1793479578.34,
+            "35173": 1793479578.4,
+            "35150": 1793479578.38,
+            "35187": 1793479578.45,
+            "35211": 1793479578.5,
+            "35220": 1793479578.53,
+            "35221": 1793479578.54,
+            "35171": 1793479578.39
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "connect",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 35139,
+          "captured_count": 13,
+          "zombies_before_test_reap": [
+            35141,
+            35144,
+            35147,
+            35148,
+            35173,
+            35171
+          ],
+          "test_reaped": 6,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "cdp/startup-navigate-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "navigate",
+          "pid": 35246,
+          "start": 1793479578.84,
+          "captured": {
+            "35246": 1793479578.84,
+            "35254": 1793479578.88,
+            "35255": 1793479578.88,
+            "35279": 1793479578.94,
+            "35257": 1793479578.92,
+            "35302": 1793479578.99,
+            "35319": 1793479579.04,
+            "35328": 1793479579.08,
+            "35329": 1793479579.08,
+            "35350": 1793479579.17,
+            "35277": 1793479578.93
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "navigate",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 35246,
+          "captured_count": 14,
+          "zombies_before_test_reap": [
+            35248,
+            35252,
+            35254,
+            35279,
+            35277
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "lightpanda/test_installed_lightpanda_discovery_is_an_explicit_readonly_profile": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_artifact_lookup_never_downloads_or_builds": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_input_and_raw_protocol_routes_are_absent[click]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_input_and_raw_protocol_routes_are_absent[type]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_input_and_raw_protocol_routes_are_absent[navigate]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_input_and_raw_protocol_routes_are_absent[evaluate]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_input_and_raw_protocol_routes_are_absent[connect]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_invalid_url_refuses_before_engine_start[file:___private_input]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_invalid_url_refuses_before_engine_start[javascript:alert(1)]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_invalid_url_refuses_before_engine_start[https:__u:p@example.test_]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_unpinned_binary_cannot_execute": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_unqualified_platform_refuses_before_signal_or_engine_setup": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[bounded_owned_processes_stopped]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_startup_cleanup_receipt_survives_without_returned_handle[unverified]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_capture_deadline_is_finite_and_bounded[nan]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_capture_deadline_is_finite_and_bounded[inf]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_capture_deadline_is_finite_and_bounded[0]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_capture_deadline_is_finite_and_bounded[61]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_capture_deadline_is_finite_and_bounded[-1]": {
+      "fixture_records": [],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_installed_read_is_semantic_and_withholds_sensitive_fields": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/short",
+            "/long"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_initial_load_timeout_closes_engine": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/slow"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/slow"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/slow"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_base_links_and_omitted_non_http_frames[_base]": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/base"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_base_links_and_omitted_non_http_frames[_frames]": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/frames"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "cdp/missing-guard": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": null
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    }
+  },
+  "https": {
+    "attempts": 1,
+    "exit": 0,
+    "ok": true,
+    "content_records": 7,
+    "protocol_methods": [
+      "Target.createTarget",
+      "Target.getTargets",
+      "Target.attachToTarget",
+      "Page.enable",
+      "Page.navigate",
+      "Target.getTargets",
+      "Page.getFrameTree",
+      "Target.getTargets",
+      "Page.getFrameTree",
+      "DOM.getDocument",
+      "DOM.getDocument",
+      "Page.getFrameTree",
+      "Target.getTargets"
+    ],
+    "input": {
+      "supported": false,
+      "dispatched": false
+    },
+    "cleanup": {
+      "status": "bounded_owned_processes_stopped",
+      "complete_tree_inventory": false
+    }
+  },
+  "coverage_limit": {
+    "real_child_frames_reported": 0,
+    "real_claim": "srcdoc/data iframe DOM content omitted",
+    "opaque_child_frame_metadata": "modeled only"
+  },
+  "prior_monitor_failure": "../2b5325e-monitor-failure/; no final wait/cleanup custody, orphan attribution unverified"
+}

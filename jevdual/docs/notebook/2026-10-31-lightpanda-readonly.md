@@ -44,3 +44,35 @@ Observed: three modeled red controls reproduce both review defects on d9ca03e: t
 Changes: the real fixture now checks omitted DOM subtrees and absence of child content; actual non-HTTP frame metadata remains a modeled protocol control. No FrameTree count is fabricated, and there is no wider iframe-support claim.
 Next: rerun the corrected real DOM-omission check and the new exact installed artifact on both hosts.
 Refs: output/lightpanda-probe/review-before.txt; output/lightpanda-probe/review-after.txt; tests/test_lightpanda_observation.py; tests/test_lightpanda_cli.py.
+
+## LPRO8 · update · 2026-10-31 16:55
+Resolves: LPRO1 = held
+Observed: exact runtime2b5325e and wheel373a43fcccb905ae70fef7f63cb53a478ee40537134384fcc4d534787f43edbb passed 308 installed checks on macOS, hosted Linux and the authorized VM chat. Parent matched all 15 VM test hashes with source; VM attests 211 installed product files equal wheel bytes. Source regression passed 2,786 with95 skipped and66 deselected; lint and notebook checks passed. Selected custody, content/privacy, refusal and interruption controls hold within their declared scope. LPRO6 base-href and modeled child-URL fixes pass, but the real engine reports no child metadata for that fixture, so real child-metadata qualification remains inconclusive.
+Observed: VM source/evidence2438c65 records4 CPUs and16 GiB, one HTTPS read,204 outer harness reaps, zero extra signals and no final captured descendants. The earlier monitor exited on ProcessLookupError after308 passing JUnit cases and lost cleanup/wait custody; that uncertainty remains. A versioned sampler fixed only test diagnostics before one fresh-consumer repeat.
+Inferred: the selected read-only engine contract is usable without a desktop or CUA at runtime. These checks do not establish rendered layout, mutation compatibility, business completion, global orphan absence or low-resource performance.
+Next: land the scoped tranche after final-head CI; metadata splitting and the2CPU/8GB comparison remain next install work.
+Refs: results/lightpanda-readonly-20261031/report.md; results/lightpanda-readonly-20261031/verification.json; results/lightpanda-readonly-20261031/vm/origin-manifest.json; VM origin2438c65 retains the full notebook, harness and245 evidence files.
+
+## LPRO10 · update · 2026-10-31 16:56
+Resolves: LPRO2 = held
+Observed: the exact installed308 gate preserves heading/link/JavaScript positives while two password-length variants yield equal projected content and no private field markers. Structural withholding and declared DOM limits hold in the selected fixtures on both platforms.
+Next: retain these controls through the metadata split; do not generalize structural withholding to arbitrary page-derived secrets.
+Refs: results/lightpanda-readonly-20261031/verification.json; results/lightpanda-readonly-20261031/vm/inspected-summary.json.
+
+## LPRO11 · update · 2026-10-31 16:56
+Resolves: LPRO3 = held
+Observed: the installed timeout, SIGTERM and engine-loss cells preserve separate cleanup status and no reconnect. Forced engine loss stays unverified. Startup ownership controls and the existing Chromium201 gates pass; no input route or authority grant is enabled by Lightpanda observation.
+Next: keep bounded owned cleanup distinct from test-only subreaping and unresolved global orphan attribution.
+Refs: results/lightpanda-readonly-20261031/verification.json; results/lightpanda-readonly-20261031/vm/cleanup-summary.json.
+
+## LPRO12 · update · 2026-10-31 16:56
+Resolves: LPRO6 = inconclusive
+Observed: base-href withholding and modeled non-HTTP child metadata pass their red/green controls. The real fixture proves omitted iframe DOM content, but the engine reports zero registered child frames, so it cannot qualify the actual child metadata branch.
+Next: preserve the modeled-versus-runtime distinction; wider child-frame support needs a separate real protocol fixture.
+Refs: results/lightpanda-readonly-20261031/review-before.txt; results/lightpanda-readonly-20261031/review-after.txt; results/lightpanda-readonly-20261031/vm/inspected-summary.json.
+
+## LPRO9 · summary · 2026-10-31 16:55
+Established: explicit pinned prebuilt Lightpanda read-only profile; one owned peer-checked Unix connection; bounded DOM text with structural form privacy and no action authority; independent cleanup reporting; agent discovery and installed guide; Colophon README revision with151 protected spans preserved. Existing Chromium authority remains covered. Two real review defects were reproduced and corrected, and failed harness expectations remain visible.
+Uncertain: real non-HTTP child metadata beyond the modeled schema, atomic or mutation-safe identity, mutable Lightpanda semantics, resource savings and the2CPU/8GB baseline. The full dependency metadata and existing desktop limitations remain.
+Decision: ship this bounded read-only route through PR19 without enabling typing or claiming the light installer complete. Final CI and merge state live on the PR; runtime and wheel identity remain2b5325e/373a43fc.
+Refs: results/lightpanda-readonly-20261031/report.md; docs/lightpanda-readonly.md; https://github.com/Tom-R-Main/Footwork/pull/19.
