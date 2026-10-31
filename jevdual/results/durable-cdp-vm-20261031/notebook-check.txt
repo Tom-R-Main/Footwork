@@ -1,5 +1,5 @@
-865 entries, 290 predictions: 208 held, 47 failed, 25 inconclusive, 10 open
-held rate 208/255 of predictions resolved held or failed
+868 entries, 291 predictions: 209 held, 47 failed, 25 inconclusive, 10 open
+held rate 209/256 of predictions resolved held or failed
 
 failed (the diagnoses to learn from):
   A3 (2026-09-26-a-session-evidence.md): two places, not one. `_field_receipt` substitutes the placeholder in `shown` but puts the real value in `holds

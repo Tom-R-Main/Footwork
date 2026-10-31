@@ -1,0 +1,8 @@
+{
+  "source_commit": "eaba616",
+  "helpers": {
+    "receipt_plugin.py": "beece1b7042b449af48b533c6a984fe2e899c7017825d830f2d84a445391e9df",
+    "pytest_main.py": "c23cefeb8fb2cf19f48946a23cd1cb66606953798057a99d3e5ba34d20ac5c27"
+  },
+  "main_runner_sha256": "9acc47e71e957cf749c729b6a2fe7886f9f993537e3e301d4110edbb0849f9e0"
+}

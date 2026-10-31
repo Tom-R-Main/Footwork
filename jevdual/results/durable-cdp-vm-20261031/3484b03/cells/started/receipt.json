@@ -1,0 +1,474 @@
+{
+  "nodeids": [
+    "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]"
+  ],
+  "boundary_metadata": [
+    {
+      "path": "/tmp/fw-crash-h501frms/session/test-boundary.json",
+      "sha256": "523fca3e50c7c217f1540d4f293afba29c1bf5728d0b765982b25ad0e8efe1d1",
+      "mtime_ns": 1793473435453602629,
+      "mode": "0o600",
+      "json": {
+        "boundary": "started",
+        "operation_id": "op_b98530032630",
+        "ingress_before_exit": null,
+        "heavy_imports": []
+      }
+    }
+  ],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 7007.75475605,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "fixture": "ingress",
+      "url": "http://127.0.0.1:42241/",
+      "records": []
+    }
+  ],
+  "public_helper_receipts": [
+    {
+      "kind": "helper_return",
+      "monotonic": 7000.97243646,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "look",
+        "--session",
+        "/tmp/fw-crash-h501frms/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "restart-fixture",
+        "snapshot": {
+          "status": "ok",
+          "page": {
+            "url": "http://127.0.0.1:42241/",
+            "title": "Restart boundary"
+          },
+          "snapshot": {
+            "id": "59ebb4af1e31",
+            "complete": false,
+            "omitted": {
+              "css_hidden": 0,
+              "offscreen": 0,
+              "no_layout": 0,
+              "unknown": 0,
+              "budget": 0,
+              "child_frames": 0,
+              "custom_controls_unobserved": 1
+            }
+          },
+          "refs": [
+            {
+              "ref": "59ebb4af1e31:1",
+              "role": "button",
+              "name": "Commit fixture",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            }
+          ],
+          "content_refs": [],
+          "document": {
+            "frame_id": "37E2E64E8AB78F97565C73D65AF23164",
+            "loader_id": "25CCEAC1F6713447294DCD30A97E498B"
+          }
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7001.105570641,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "click",
+        "--session",
+        "/tmp/fw-crash-h501frms/session",
+        "--ref",
+        "59ebb4af1e31:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_response_unknown",
+        "dispatched": null,
+        "retryable": false
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7001.182321277,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "recover",
+        "--session",
+        "/tmp/fw-crash-h501frms/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_b98530032630",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"AB41BD05AC78060251130744B6B82C34\",\"pid\":12602,\"start\":\"1793473434.52\",\"target\":\"37E2E64E8AB78F97565C73D65AF23164\"}",
+            "observation": "59ebb4af1e31:1",
+            "target": "6",
+            "move": "click",
+            "args": {
+              "ref": "59ebb4af1e31:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "a1210a8e731f71b728004873d481ae7251f594dd155eca16be5ab09cfb89f0cb",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "evidence": {},
+            "error": "process ended during dispatch",
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793473435.453046,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793473435.4533484,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793473435.531806,
+                "kind": "recovered_unknown"
+              }
+            ],
+            "created": 1793473435.4529347,
+            "updated": 1793473435.5317245,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7001.261398561,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "status",
+        "--session",
+        "/tmp/fw-crash-h501frms/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_b98530032630",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"AB41BD05AC78060251130744B6B82C34\",\"pid\":12602,\"start\":\"1793473434.52\",\"target\":\"37E2E64E8AB78F97565C73D65AF23164\"}",
+            "observation": "59ebb4af1e31:1",
+            "target": "6",
+            "move": "click",
+            "args": {
+              "ref": "59ebb4af1e31:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "a1210a8e731f71b728004873d481ae7251f594dd155eca16be5ab09cfb89f0cb",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "evidence": {},
+            "error": "process ended during dispatch",
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793473435.453046,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793473435.4533484,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793473435.531806,
+                "kind": "recovered_unknown"
+              }
+            ],
+            "created": 1793473435.4529347,
+            "updated": 1793473435.5317245,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7001.345597146,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "click",
+        "--session",
+        "/tmp/fw-crash-h501frms/session",
+        "--ref",
+        "59ebb4af1e31:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_b98530032630",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"AB41BD05AC78060251130744B6B82C34\",\"pid\":12602,\"start\":\"1793473434.52\",\"target\":\"37E2E64E8AB78F97565C73D65AF23164\"}",
+          "observation": "59ebb4af1e31:1",
+          "target": "6",
+          "move": "click",
+          "args": {
+            "ref": "59ebb4af1e31:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "a1210a8e731f71b728004873d481ae7251f594dd155eca16be5ab09cfb89f0cb",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "ambiguous",
+          "evidence": {},
+          "error": "process ended during dispatch",
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793473435.453046,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793473435.4533484,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793473435.531806,
+              "kind": "recovered_unknown"
+            }
+          ],
+          "created": 1793473435.4529347,
+          "updated": 1793473435.5317245,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7001.421961529,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "click",
+        "--session",
+        "/tmp/fw-crash-h501frms/session",
+        "--ref",
+        "59ebb4af1e31:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_b98530032630",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"AB41BD05AC78060251130744B6B82C34\",\"pid\":12602,\"start\":\"1793473434.52\",\"target\":\"37E2E64E8AB78F97565C73D65AF23164\"}",
+          "observation": "59ebb4af1e31:1",
+          "target": "6",
+          "move": "click",
+          "args": {
+            "ref": "59ebb4af1e31:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "a1210a8e731f71b728004873d481ae7251f594dd155eca16be5ab09cfb89f0cb",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "ambiguous",
+          "evidence": {},
+          "error": "process ended during dispatch",
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793473435.453046,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793473435.4533484,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793473435.531806,
+              "kind": "recovered_unknown"
+            }
+          ],
+          "created": 1793473435.4529347,
+          "updated": 1793473435.5317245,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7001.502107798,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "click",
+        "--session",
+        "/tmp/fw-crash-h501frms/session",
+        "--ref",
+        "59ebb4af1e31:1",
+        "--token",
+        "intent-2"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 7007.752079693,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-h501frms",
+        "start",
+        "Try a new intent",
+        "--session",
+        "/tmp/fw-crash-h501frms/next",
+        "--authority",
+        "/tmp/fw-crash-h501frms/authority.db",
+        "--url",
+        "http://127.0.0.1:42241/"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    }
+  ],
+  "startup_supervisor_receipts": [],
+  "observed_numeric_exits": [
+    {
+      "kind": "public_cli",
+      "pid": 12715,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12718,
+      "returncode": 3,
+      "signal": null
+    },
+    {
+      "kind": "test_only_holder_shim",
+      "pid": 12600,
+      "returncode": 86,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12720,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12721,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12722,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12723,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12724,
+      "returncode": 3,
+      "signal": null
+    },
+    {
+      "kind": "test_only_holder_shim",
+      "pid": 12600,
+      "returncode": 86,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 12726,
+      "returncode": 3,
+      "signal": null
+    },
+    {
+      "kind": "test_only_holder_shim",
+      "pid": 12600,
+      "returncode": 86,
+      "signal": null
+    }
+  ]
+}
