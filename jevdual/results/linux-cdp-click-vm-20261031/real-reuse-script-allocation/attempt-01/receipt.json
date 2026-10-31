@@ -1,0 +1,413 @@
+{
+  "attempt": 1,
+  "initial_setup_worlds": 0,
+  "allocation_order": [
+    "AX",
+    "DOM"
+  ],
+  "source": "c1496ca57c4fe2f49f55e641bbebf8290e7d7ac8",
+  "wheel_sha256": "bba6e946259390c3b89767f8e16f934604e5ccc8f38a36882dd1af22ed075269",
+  "harness_sha256": "c8c06b961b5b1c1118e46ff1d4939d79a62a09b5c5045ef493b863d375224a91",
+  "utc_started": "2026-10-31T17:39:01.253757+00:00",
+  "browser_identity": {
+    "pid": 6119,
+    "start": 1793468340.89
+  },
+  "before": {
+    "execution_context_id": 3,
+    "backend_node_id": 9,
+    "frame_id": "C07EF5AA0F5E51592EC380AD1789A586",
+    "loader_id": "1DAFB4B760E08EB6BF2FEA66E642BE8A",
+    "isolate": {
+      "id": "728f91fba1a82351"
+    },
+    "renderer_processes": [
+      {
+        "type": "renderer",
+        "id": 6202,
+        "cpuTime": 0.02
+      },
+      {
+        "type": "renderer",
+        "id": 6203,
+        "cpuTime": 0.06
+      },
+      {
+        "type": "renderer",
+        "id": 6193,
+        "cpuTime": 0.29
+      }
+    ],
+    "context_events": [
+      {
+        "context": {
+          "id": 2,
+          "origin": "http://127.0.0.1:44213",
+          "name": "",
+          "uniqueId": "-4635698073540380941.-8461313813375425517",
+          "auxData": {
+            "isDefault": true,
+            "type": "default",
+            "frameId": "C07EF5AA0F5E51592EC380AD1789A586"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 3,
+          "origin": "http://127.0.0.1:44213",
+          "name": "footwork-c7a5746a386adb1665222ed2",
+          "uniqueId": "3038296989912200519.8649488220327586995",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "C07EF5AA0F5E51592EC380AD1789A586"
+          }
+        }
+      }
+    ]
+  },
+  "action_marker_calls": 0,
+  "resolution_intercepted": true,
+  "unchanged_resolution_request": {
+    "method": "DOM.resolveNode",
+    "params": {
+      "backendNodeId": 9,
+      "executionContextId": 3
+    },
+    "kwargs": {
+      "session_id": "5D00818DB5049EA2974C3A3A429B923F"
+    }
+  },
+  "script_preallocation": {
+    "node": {
+      "nodeId": 0,
+      "backendNodeId": 3,
+      "nodeType": 1,
+      "nodeName": "SCRIPT",
+      "localName": "script",
+      "nodeValue": "",
+      "childNodeCount": 1,
+      "attributes": []
+    }
+  },
+  "after": {
+    "world_allocations": [
+      2,
+      3
+    ],
+    "execution_context_id": 3,
+    "backend_node_id": 8,
+    "frame_id": "C07EF5AA0F5E51592EC380AD1789A586",
+    "loader_id": "E96EAE34D0287D0D5B373B37DF0DC928",
+    "url": "http://localhost:44213/fixture",
+    "isolate": {
+      "id": "d8c22ebffb251fa"
+    },
+    "renderer_processes": [
+      {
+        "type": "renderer",
+        "id": 6237,
+        "cpuTime": 0.02
+      },
+      {
+        "type": "renderer",
+        "id": 6202,
+        "cpuTime": 0.07
+      },
+      {
+        "type": "renderer",
+        "id": 6203,
+        "cpuTime": 0.06
+      },
+      {
+        "type": "renderer",
+        "id": 6193,
+        "cpuTime": 0.43
+      }
+    ],
+    "context_events": [
+      {
+        "context": {
+          "id": 1,
+          "origin": "http://localhost:44213",
+          "name": "",
+          "uniqueId": "-4674336981973304221.-4859137396928246309",
+          "auxData": {
+            "isDefault": true,
+            "type": "default",
+            "frameId": "C07EF5AA0F5E51592EC380AD1789A586"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 2,
+          "origin": "http://localhost:44213",
+          "name": "unmarked-collision-0",
+          "uniqueId": "-2568785600296649511.-7037800004078656354",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "C07EF5AA0F5E51592EC380AD1789A586"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 3,
+          "origin": "http://localhost:44213",
+          "name": "unmarked-collision-1",
+          "uniqueId": "-2613524459301557625.-7714480596205127284",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "C07EF5AA0F5E51592EC380AD1789A586"
+          }
+        }
+      }
+    ]
+  },
+  "numeric_ids_match": false,
+  "loader_changed": true,
+  "original_resolution_response": {
+    "object": {
+      "type": "object",
+      "subtype": "node",
+      "className": "HTMLButtonElement",
+      "description": "button#sentinel",
+      "objectId": "976193616235090426.3.1"
+    }
+  },
+  "actual_resolved_object_inspection": {
+    "result": {
+      "type": "object",
+      "value": {
+        "url": "http://localhost:44213/fixture",
+        "id": "sentinel",
+        "type": "button",
+        "text": "Sentinel",
+        "markerPresent": false
+      }
+    }
+  },
+  "activation_response": {
+    "result": {
+      "type": "object",
+      "value": {
+        "status": "refused",
+        "code": "document_changed"
+      }
+    }
+  },
+  "effect": {
+    "effect": "refused",
+    "dispatched": false,
+    "delivery": "not_sent",
+    "retryable": null,
+    "error_code": "document_changed",
+    "route": "dom_event"
+  },
+  "ingress": [],
+  "actual_reused_resolution": false,
+  "status": "refused_with_reproduction_gap",
+  "before_module_stop": [
+    {
+      "pid": 6119,
+      "start": 1793468340.89,
+      "parent": 6117,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6121,
+      "start": 1793468340.93,
+      "parent": 6117,
+      "name": "chrome_crashpad_handler",
+      "status": "sleeping",
+      "session": 6120,
+      "group": 6120
+    },
+    {
+      "pid": 6125,
+      "start": 1793468340.93,
+      "parent": 6117,
+      "name": "chrome_crashpad_handler",
+      "status": "sleeping",
+      "session": 6123,
+      "group": 6123
+    },
+    {
+      "pid": 6126,
+      "start": 1793468340.93,
+      "parent": 6119,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6128,
+      "start": 1793468340.93,
+      "parent": 6119,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6153,
+      "start": 1793468340.98,
+      "parent": 6119,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6130,
+      "start": 1793468340.97,
+      "parent": 6128,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6172,
+      "start": 1793468341.02,
+      "parent": 6130,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6193,
+      "start": 1793468341.08,
+      "parent": 6130,
+      "name": "chromium",
+      "status": "running",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6202,
+      "start": 1793468341.1,
+      "parent": 6130,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6203,
+      "start": 1793468341.1,
+      "parent": 6130,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6237,
+      "start": 1793468341.27,
+      "parent": 6130,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    },
+    {
+      "pid": 6151,
+      "start": 1793468340.98,
+      "parent": 6126,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 6119,
+      "group": 6119
+    }
+  ],
+  "saved_ingress": [],
+  "cleanup": {
+    "before_wrapper_cleanup": [
+      {
+        "pid": 6121,
+        "start": 1793468340.93,
+        "parent": 6117,
+        "name": "chrome_crashpad",
+        "status": "zombie",
+        "session": 6120,
+        "group": 6120
+      },
+      {
+        "pid": 6125,
+        "start": 1793468340.93,
+        "parent": 6117,
+        "name": "chrome_crashpad",
+        "status": "zombie",
+        "session": 6123,
+        "group": 6123
+      },
+      {
+        "pid": 6126,
+        "start": 1793468340.93,
+        "parent": 6117,
+        "name": "chromium",
+        "status": "zombie",
+        "session": 6119,
+        "group": 6119
+      },
+      {
+        "pid": 6151,
+        "start": 1793468340.98,
+        "parent": 6117,
+        "name": "chromium",
+        "status": "zombie",
+        "session": 6119,
+        "group": 6119
+      },
+      {
+        "pid": 6153,
+        "start": 1793468340.98,
+        "parent": 6117,
+        "name": "chromium",
+        "status": "zombie",
+        "session": 6119,
+        "group": 6119
+      }
+    ],
+    "signals": [],
+    "adopted_waits": [
+      {
+        "pid": 6121,
+        "raw_wait_status": 0,
+        "returncode": 0
+      },
+      {
+        "pid": 6125,
+        "raw_wait_status": 0,
+        "returncode": 0
+      },
+      {
+        "pid": 6151,
+        "raw_wait_status": 15,
+        "returncode": -15
+      },
+      {
+        "pid": 6126,
+        "raw_wait_status": 15,
+        "returncode": -15
+      },
+      {
+        "pid": 6153,
+        "raw_wait_status": 15,
+        "returncode": -15
+      }
+    ],
+    "final_owned_descendants": []
+  },
+  "utc_finished": "2026-10-31T17:39:01.817783+00:00"
+}
