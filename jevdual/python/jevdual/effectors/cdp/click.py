@@ -76,12 +76,28 @@ def button_targets(document: dict[str, Any], refs: list[dict[str, Any]], backend
     return out
 
 
-# The object is resolved into the observation's existing isolated context, not a new document's
-# world. Validation and activation share this synchronous turn. Page click handlers still execute
-# and can have arbitrary effects; the returned acknowledgement establishes no business postcondition.
-ACTIVATE = r"""function(expected) {
+# Numeric execution context IDs can be reused by another renderer. This single private slot is
+# replaced on observation, never action; retaining both document and root also rejects document.open
+# when Chrome preserves the Document/global/context but replaces its root element.
+MARK_DOCUMENT = r"""function(key, token) {
+    if (!document.documentElement) return {status: 'document_unavailable'};
+    const marker = Object.freeze({token, document, root: document.documentElement});
+    Object.defineProperty(globalThis, key, {value: marker, writable: true, configurable: false});
+    return {status: 'document_marked', token};
+}"""
+
+
+# The object is resolved into the observation's existing isolated context. The marker proves that
+# its numeric ID still names the observed realm/document/root, rather than a new renderer's world.
+# Validation and activation share this synchronous turn. Page click handlers still execute and can
+# have arbitrary effects; the acknowledgement establishes no business postcondition.
+ACTIVATE = r"""function(expected, key, token) {
     const reject = code => ({status: 'refused', code});
     try {
+        const marker = Object.getOwnPropertyDescriptor(globalThis, key)?.value;
+        if (!marker || marker.token !== token || marker.document !== document
+            || !marker.root || marker.root !== document.documentElement || !Object.isFrozen(marker))
+            return reject('document_changed');
         let budget = 8192;
         const take = value => {
             budget -= value.length;

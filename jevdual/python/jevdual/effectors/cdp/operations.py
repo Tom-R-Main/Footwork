@@ -16,7 +16,7 @@ from types import MappingProxyType
 from typing import Any
 
 from ..base import BrowserRefusal, BrowserReply
-from .click import ACTIVATE, ROUTE, ButtonTarget, button_targets
+from .click import ACTIVATE, MARK_DOCUMENT, ROUTE, ButtonTarget, button_targets
 from .launch import OwnedChrome, verify_endpoint
 from .snapshot import STYLES, compose
 from .transport import CdpClosed, CdpConnection, CdpError, CdpUnknownOutcome
@@ -35,6 +35,7 @@ class RefBinding:
     backend_node_id: int
     execution_context_id: int | None = None
     button: ButtonTarget | None = None
+    document_token: str | None = None
 
 
 def _ok(payload: dict[str, Any]) -> BrowserReply:
@@ -63,6 +64,7 @@ class CdpBrowserOperations:
         self._refs: dict[str, RefBinding] = {}
         self._ownership = asyncio.Lock()
         self._world_name = f"footwork-{secrets.token_hex(12)}"
+        self._document_key = f"__footwork_document_{secrets.token_hex(16)}"
         self._click_unknown = False
 
     @classmethod
@@ -145,12 +147,6 @@ class CdpBrowserOperations:
         loader = frame.get("loaderId")
         if not loader:
             return _refused("document_unavailable", "the page reports no document generation")
-        ax = await self.conn.send("Accessibility.getFullAXTree", session_id=session, timeout=20)
-        document = await self.conn.send("DOM.getDocument", {"depth": -1, "pierce": True}, session_id=session,
-                                        timeout=20)
-        layout = await self.conn.send("DOMSnapshot.captureSnapshot", {"computedStyles": list(STYLES)},
-                                      session_id=session, timeout=20)
-        metrics = await self.conn.send("Page.getLayoutMetrics", session_id=session)
         try:
             world = await self.conn.send("Page.createIsolatedWorld", {
                 "frameId": frame.get("id"), "worldName": self._world_name,
@@ -160,6 +156,25 @@ class CdpBrowserOperations:
         execution_context = world.get("executionContextId")
         if type(execution_context) is not int or execution_context <= 0:
             return _refused("document_unavailable", "the observation reports no isolated context")
+        document_token = secrets.token_hex(16)
+        try:
+            marked = await self.conn.send("Runtime.callFunctionOn", {
+                "executionContextId": execution_context, "functionDeclaration": MARK_DOCUMENT,
+                "arguments": [{"value": self._document_key}, {"value": document_token}],
+                "returnByValue": True, "awaitPromise": False,
+            }, session_id=session)
+        except (CdpError, CdpClosed, CdpUnknownOutcome):
+            return _refused("document_unavailable", "the observation's private document marker is unavailable")
+        remote = marked.get("result") if isinstance(marked, dict) else None
+        if (not isinstance(remote, dict) or marked.get("exceptionDetails")
+                or remote.get("value") != {"status": "document_marked", "token": document_token}):
+            return _refused("document_unavailable", "the observation's private document marker was not established")
+        ax = await self.conn.send("Accessibility.getFullAXTree", session_id=session, timeout=20)
+        document = await self.conn.send("DOM.getDocument", {"depth": -1, "pierce": True}, session_id=session,
+                                        timeout=20)
+        layout = await self.conn.send("DOMSnapshot.captureSnapshot", {"computedStyles": list(STYLES)},
+                                      session_id=session, timeout=20)
+        metrics = await self.conn.send("Page.getLayoutMetrics", session_id=session)
         after, _ = await self._main_frame(session)
         if after.get("loaderId") != loader or after.get("id") != frame.get("id"):
             return _refused("document_changed", "the page loaded a new document while it was being observed")
@@ -170,7 +185,7 @@ class CdpBrowserOperations:
         for ref, backend in composed.backend.items():
             self._refs[ref] = RefBinding(self.chrome.incarnation, context, str(tab_id), session,
                                          str(frame.get("id")), str(loader), backend, execution_context,
-                                         buttons.get(backend))
+                                         buttons.get(backend), document_token)
         return _ok({**composed.semantic, "document": {"frame_id": frame.get("id"), "loader_id": loader}})
 
     # ---- bounded native button activation; all other mutations remain unavailable
@@ -220,6 +235,8 @@ class CdpBrowserOperations:
                     return binding
                 if binding.button is None or binding.execution_context_id is None:
                     return _refused("browser_mutation_unqualified", "this control is outside the qualified native-button subset")
+                if not binding.document_token:
+                    return _refused("document_unavailable", "the observed document has no private marker; no activation was sent")
                 resolved = await self.conn.send("DOM.resolveNode", {
                     "backendNodeId": binding.backend_node_id,
                     "executionContextId": binding.execution_context_id,
@@ -238,7 +255,8 @@ class CdpBrowserOperations:
                 try:
                     result = await self.conn.send("Runtime.callFunctionOn", {
                         "objectId": obj, "functionDeclaration": ACTIVATE,
-                        "arguments": [{"value": binding.button.argument()}],
+                        "arguments": [{"value": binding.button.argument()}, {"value": self._document_key},
+                                      {"value": binding.document_token}],
                         "returnByValue": True, "awaitPromise": False,
                     }, session_id=binding.session_id)
                 except CdpClosed:
@@ -256,6 +274,7 @@ class CdpBrowserOperations:
                     return self._unknown_click()
                 if value.get("status") == "refused" and value.get("code") in {
                     "stale_ref", "button_changed", "button_disabled", "button_hidden", "button_validation_unavailable",
+                    "document_changed",
                 }:
                     self._click_unknown = False
                     return _refused(value["code"], "the native button changed or is ineligible; no activation was sent")

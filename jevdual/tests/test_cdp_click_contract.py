@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 from jevdual.browser_driver import BrowserBridge
 from jevdual.effectors.base import BrowserReply
-from jevdual.effectors.cdp.click import ROUTE, button_targets
+from jevdual.effectors.cdp.click import ACTIVATE, MARK_DOCUMENT, ROUTE, button_targets
 from jevdual.effectors.cdp.operations import CdpBrowserOperations, RefBinding
 from jevdual.effectors.cdp.transport import CdpClosed, CdpError, CdpUnknownOutcome
 
@@ -81,6 +81,8 @@ class Connection:
                 raise self.resolve_error
             return {"object": {"objectId": "exact-object", "subtype": "node"}}
         if method == "Runtime.callFunctionOn":
+            if params.get("functionDeclaration") == MARK_DOCUMENT:
+                return {"result": {"value": {"status": "document_marked", "token": params["arguments"][1]["value"]}}}
             self.entered.set()
             if self.release:
                 await self.release.wait()
@@ -100,7 +102,8 @@ def operations(conn):
 
 
 def admit(ops):
-    ops._refs["s:1"] = RefBinding(7.0, "ctx", "tab", "session", "frame", "loader", 10, 99, target()[10])
+    ops._refs["s:1"] = RefBinding(7.0, "ctx", "tab", "session", "frame", "loader", 10, 99,
+                                 target()[10], "observed-document-token")
 
 
 async def click(ops, **kwargs):
@@ -108,7 +111,8 @@ async def click(ops, **kwargs):
 
 
 def activation_count(conn):
-    return sum(name == "Runtime.callFunctionOn" for name, _, _ in conn.sent)
+    return sum(name == "Runtime.callFunctionOn" and params.get("functionDeclaration") == ACTIVATE
+               for name, params, _ in conn.sent)
 
 
 def test_native_activation_consumes_refs_and_resolves_only_into_the_observed_world():
@@ -121,10 +125,81 @@ def test_native_activation_consumes_refs_and_resolves_only_into_the_observed_wor
         assert next(p for m, p, _ in conn.sent if m == "DOM.resolveNode") == {
             "backendNodeId": 10, "executionContextId": 99,
         }
+        invocation = next(p for m, p, _ in conn.sent if m == "Runtime.callFunctionOn")
+        assert invocation["arguments"][1:] == [{"value": ops._document_key}, {"value": "observed-document-token"}]
         again = await click(ops)
         assert again.refusal.code == "stale_ref" and again.dispatched is False
         assert activation_count(conn) == 1
         assert conn.sent[-1][0] != "Input.dispatchMouseEvent"
+
+    asyncio.run(run())
+
+
+def test_a_ref_without_an_observation_document_token_cannot_activate():
+    from dataclasses import replace
+
+    async def run():
+        conn = Connection()
+        ops = operations(conn)
+        ops._refs["s:1"] = replace(ops._refs["s:1"], document_token=None)
+        reply = await click(ops)
+        assert reply.dispatched is False and reply.refusal.code == "document_unavailable"
+        assert activation_count(conn) == 0
+        assert not any(m == "DOM.resolveNode" for m, _, _ in conn.sent)
+
+    asyncio.run(run())
+
+
+def test_observation_marks_one_private_slot_before_reading_nodes_and_replaces_the_token():
+    class SnapshotConnection(Connection):
+        async def send(self, method, params=None, **kwargs):
+            if method == "Page.createIsolatedWorld":
+                self.sent.append((method, params, kwargs))
+                return {"executionContextId": 99}
+            if method == "Accessibility.getFullAXTree":
+                self.sent.append((method, params, kwargs))
+                return {"nodes": []}
+            if method == "DOM.getDocument":
+                self.sent.append((method, params, kwargs))
+                return document()
+            return await super().send(method, params, **kwargs)
+
+    async def run():
+        conn = SnapshotConnection()
+        ops = operations(conn)
+        for _ in range(2):
+            reply = await ops.snapshot(target_id=ops.browser_id, tab_id="tab")
+            assert reply.status == "ok"
+        markers = [p for m, p, _ in conn.sent if m == "Runtime.callFunctionOn"]
+        assert len(markers) == 2 and all(p["functionDeclaration"] == MARK_DOCUMENT for p in markers)
+        assert markers[0]["arguments"][0] == markers[1]["arguments"][0] == {"value": ops._document_key}
+        assert markers[0]["arguments"][1] != markers[1]["arguments"][1]
+        methods = [m for m, _, _ in conn.sent]
+        assert methods.index("Runtime.callFunctionOn") < methods.index("DOM.getDocument")
+        assert activation_count(conn) == 0
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("marker_reply", [
+    {}, {"result": {"value": {"status": "document_marked", "token": "foreign-token"}}},
+    {"exceptionDetails": {"text": "not established"}},
+])
+def test_malformed_marker_setup_keeps_the_observation_unavailable(marker_reply):
+    class SnapshotConnection(Connection):
+        async def send(self, method, params=None, **kwargs):
+            if method == "Page.createIsolatedWorld":
+                return {"executionContextId": 99}
+            if method == "Runtime.callFunctionOn" and params.get("functionDeclaration") == MARK_DOCUMENT:
+                return marker_reply
+            return await super().send(method, params, **kwargs)
+
+    async def run():
+        conn = SnapshotConnection()
+        ops = operations(conn)
+        reply = await ops.snapshot(target_id=ops.browser_id, tab_id="tab")
+        assert reply.dispatched is False and reply.refusal.code == "document_unavailable"
+        assert not ops._refs and activation_count(conn) == 0
 
     asyncio.run(run())
 
@@ -160,6 +235,7 @@ def test_known_pre_activation_refusal_and_closed_socket_are_not_sent():
         assert reply.refusal.code == code and reply.dispatched is False and not ops._click_unknown
 
     asyncio.run(run({"result": {"value": {"status": "refused", "code": "button_changed"}}}, "button_changed"))
+    asyncio.run(run({"result": {"value": {"status": "refused", "code": "document_changed"}}}, "document_changed"))
     asyncio.run(run(CdpClosed("already closed"), "browser_connection_closed"))
 
 
