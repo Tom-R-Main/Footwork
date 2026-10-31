@@ -1,0 +1,48 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_native_button_activation_records_exactly_one_independent_ingress _____
+
+owned = OwnedChrome(pid=99846, incarnation=1793466999.974631, executable='/Applications/Google Chrome.app/Contents/MacOS/Googl...n_0/profile'), headless=True, browser_url='ws://127.0.0.1:58372/devtools/browser/792a6cc8-ffde-4312-8c35-c1516f51a322')
+ingress = ('http://127.0.0.1:58373/fixture', <function ingress.<locals>.records at 0x107482520>)
+
+    @pytest.mark.browser
+    def test_native_button_activation_records_exactly_one_independent_ingress(owned, ingress):
+        async def run():
+            async with await Fixture.open(owned, ingress[0]) as f:
+                nm, id = await f.observe()
+                effect = await f.bridge.act(nm, "click", id)
+                await f.settle()
+                assert effect.effect == "unverifiable" and effect.dispatched is True
+                assert effect.route == "dom_event_native_button"
+                assert ingress[1]() == ["intended"]
+                assert not [m for m in f.ops.conn.sent if m.startswith("Input.")]
+>       asyncio.run(run())
+
+tests/test_cdp_click.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        async with await Fixture.open(owned, ingress[0]) as f:
+            nm, id = await f.observe()
+            effect = await f.bridge.act(nm, "click", id)
+            await f.settle()
+>           assert effect.effect == "unverifiable" and effect.dispatched is True
+E           AssertionError: assert ('refused' == 'unverifiable'
+E             
+E             - unverifiable
+E             + refused)
+
+tests/test_cdp_click.py:157: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_cdp_click.py::test_native_button_activation_records_exactly_one_independent_ingress
+1 failed in 2.06s

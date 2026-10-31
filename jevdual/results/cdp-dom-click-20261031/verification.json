@@ -1,0 +1,29 @@
+{
+  "source": "c1496ca57c4fe2f49f55e641bbebf8290e7d7ac8",
+  "runtime": "873b32f",
+  "wheel_sha256": "bba6e946259390c3b89767f8e16f934604e5ccc8f38a36882dd1af22ed075269",
+  "wheel_entries": 207,
+  "regression": {
+    "passed": 2604,
+    "skipped": 95,
+    "deselected": 51
+  },
+  "macos": {
+    "tests": 111,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "vm_linux": {
+    "tests": 111,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "vm_evidence_source": "9aa195bea98d5120d7ecd64aaa6f04e8c63261da",
+  "runtime_scope": "headless native-button activation on one connection; no typing/trusted/navigation/CLI/durable authority",
+  "actual_alias_before_runtime": "e91bca9",
+  "actual_alias_after_runtime": "873b32f",
+  "actual_alias_after": "context3/backend9 on both documents; different loaders; document_changed/not_sent/zero ingress",
+  "linux_identical_button_actual_collision_reproduced": false
+}

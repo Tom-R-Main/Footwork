@@ -1,0 +1,4 @@
+........................................................................ [ 64%]
+.......................................                                  [100%]
+- generated xml file: /Users/thomasmain/projects/footwork/.worktrees/light-cdp-click/output/cdp-click/installed-macos.xml -
+111 passed in 26.68s
