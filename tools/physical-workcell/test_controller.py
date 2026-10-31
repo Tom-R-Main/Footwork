@@ -6,6 +6,7 @@ Offline retained-write faults are labeled separately from live process terminati
 
 import importlib.util
 import json
+import math
 import os
 import signal
 import socket
@@ -277,6 +278,101 @@ class ControllerProcessTests(unittest.TestCase):
     def goal_path(self, operation_id):
         return self.control / f"goal-{self.body.sha(operation_id.encode())}.json"
 
+    def wait_native_progress(self, marker, operation_id, *, timeout=8):
+        """Test synchronization only: require a bound, positive real simulation step."""
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            try:
+                proof = json.loads(marker.read_bytes())
+            except FileNotFoundError:
+                time.sleep(.01)
+                continue
+            except (OSError, ValueError) as exc:
+                self.fail(f"invalid native progress marker: {exc}; private evidence: {self.work}")
+            expected = {"version": 1, "source_kind": "mujoco_simulation", "run_dir": str(self.root),
+                        "controller_dir": str(self.control), "operation_id": operation_id,
+                        "incarnation": self.incarnation}
+            self.assertIsInstance(proof, dict, "invalid native progress marker")
+            self.assertEqual(set(proof), set(expected) | {"sim_time_before", "sim_time_after"},
+                             "invalid native progress marker")
+            self.assertIs(type(proof["version"]), int, "invalid native progress marker version")
+            self.assertEqual({key: proof[key] for key in expected}, expected,
+                             "invalid native progress marker binding")
+            before, after = proof["sim_time_before"], proof["sim_time_after"]
+            self.assertTrue(type(before) in (int, float) and type(after) in (int, float)
+                            and math.isfinite(before) and math.isfinite(after) and 0 <= before < after,
+                            "invalid native progress marker: no positive real simulation step")
+            return proof
+        self.fail(f"native progress marker timeout; private evidence: {self.work}")
+
+    def native_progress_fault(self):
+        """Pause after a real mj_step, with delay exposing running-before-motion."""
+        script = self.work / "native-progress-barrier-fault.py"
+        marker, release = self.work / "native-progress.json", self.work / "release-native-progress"
+        self.body.create_file(script, f'''import importlib.util
+import os
+import sys
+import threading
+import time
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location("controller_progress_fault", {str(CONTROLLER)!r})
+controller = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(controller)
+marker, release = Path({str(marker)!r}), Path({str(release)!r})
+original_motion = controller.body.motion
+original_execute = controller.Controller.execute
+active = threading.local()
+
+def tracked_execute(self, goal):
+    active.binding = {{"version": 1, "source_kind": "mujoco_simulation", "run_dir": str(self.root),
+                       "controller_dir": str(self.control), "operation_id": goal["operation_id"],
+                       "incarnation": self.incarnation}}
+    try:
+        return original_execute(self, goal)
+    finally:
+        active.binding = None
+
+def tracked_motion(model, data, *args, **kwargs):
+    # Running intent exists already. This deliberately makes elapsed sleep an
+    # unreliable native-progress oracle while leaving real dynamics unchanged.
+    time.sleep(2)
+    binding = active.binding
+    original_step = controller.body.mujoco.mj_step
+    marked = False
+
+    def real_step(step_model, step_data, *step_args, **step_kwargs):
+        nonlocal marked
+        before = float(step_data.time)
+        result = original_step(step_model, step_data, *step_args, **step_kwargs)
+        after = float(step_data.time)
+        if not marked and step_model is model and step_data is data:
+            marked = True
+            proof = {{**binding, "sim_time_before": before, "sim_time_after": after}}
+            temporary = marker.with_suffix(".tmp")
+            controller.body.create_file(temporary, controller.body.encoded(proof))
+            os.replace(temporary, marker)
+            deadline = time.monotonic() + 8
+            while not release.exists():
+                if time.monotonic() >= deadline:
+                    raise RuntimeError("test native-progress barrier release timed out")
+                time.sleep(.01)
+        return result
+
+    # Interpose only for this motion, after doing the actual native step; no
+    # native counters, state or cancellation evidence are manufactured here.
+    controller.body.mujoco.mj_step = real_step
+    try:
+        return original_motion(model, data, *args, **kwargs)
+    finally:
+        controller.body.mujoco.mj_step = original_step
+
+controller.Controller.execute = tracked_execute
+controller.body.motion = tracked_motion
+sys.exit(controller.main())
+'''.encode())
+        return script, marker, release
+
     def test_submitter_exit_and_lost_reply_leave_one_durable_effect(self):
         self.serve(delay=.4)
         proposal = self.proposal(self.observe(), "lost-reply")
@@ -322,13 +418,20 @@ class ControllerProcessTests(unittest.TestCase):
         self.assertFalse(list(self.root.glob("op-*.json")))
 
     def test_running_cancel_verifies_stop_after_real_native_progress(self):
-        self.serve(delay=.1, pace=.003)
-        packet = self.observe()
-        self.submit("cancel-running", self.proposal(packet, "cancel-running"))
-        self.until("cancel-running", {"running"})
-        time.sleep(.18)  # Pace keeps motion active; require the retained progress evidence below.
-        requested = self.cancel("cancel-running")
-        self.assertTrue(requested["cancel_requested"])
+        script, marker, release = self.native_progress_fault()
+        self.serve(delay=.1, pace=.003, fault_script=script)
+        try:
+            packet = self.observe()
+            self.submit("cancel-running", self.proposal(packet, "cancel-running"))
+            self.until("cancel-running", {"running"})
+            progress = self.wait_native_progress(marker, "cancel-running")
+            self.evidence.append({"scenario": "actual_process_with_test_only_native_progress_barrier",
+                                  "fault": "pre_motion_delay_2s_pause_after_real_mj_step",
+                                  "test_synchronization": progress, "native_stop_proof": False})
+            requested = self.cancel("cancel-running")
+            self.assertTrue(requested["cancel_requested"])
+        finally:
+            self.body.create_file(release, b"release test-only native step barrier\n")
         terminal = self.until("cancel-running")
         self.assertEqual(terminal["phase"], "cancelled", terminal)
         self.assertEqual(terminal["cancellation_stage"], "during_motion")
@@ -342,6 +445,24 @@ class ControllerProcessTests(unittest.TestCase):
         state = self.snapshot_state()
         self.cancel("cancel-running")
         self.assertEqual(self.snapshot_state(), state)
+
+    def test_native_progress_wait_refuses_absent_or_invalid_marker(self):
+        marker = self.work / "negative-progress.json"
+        self.incarnation = "fixture-incarnation"
+        with self.assertRaisesRegex(AssertionError, "native progress marker timeout"):
+            self.wait_native_progress(marker, "cancel-running", timeout=.05)
+        valid = {"version": 1, "source_kind": "mujoco_simulation", "run_dir": str(self.root),
+                 "controller_dir": str(self.control), "operation_id": "cancel-running",
+                 "incarnation": self.incarnation, "sim_time_before": 0, "sim_time_after": .002}
+        invalid = [b"{unfinished", self.body.encoded({**valid, "sim_time_after": 0}),
+                   self.body.encoded({**valid, "sim_time_after": True}),
+                   json.dumps({**valid, "sim_time_after": float("inf")}).encode(),
+                   self.body.encoded({**valid, "operation_id": "another-operation"}),
+                   self.body.encoded({**valid, "incarnation": "another-controller"})]
+        for content in invalid:
+            with self.subTest(content=content), self.assertRaisesRegex(AssertionError, "invalid native progress"):
+                marker.write_bytes(content)
+                self.wait_native_progress(marker, "cancel-running", timeout=.05)
 
     def test_controller_death_after_cancel_request_never_claims_verified_stop(self):
         process, _ = self.serve(delay=.1, pace=.003)
@@ -709,7 +830,7 @@ print(json.dumps(result))
             if inside:
                 self.assertEqual(final["phase"], "staged", final)
                 expected = self.root / "expected-order.json"
-                checked = subprocess.run([str(BASE.parents[1] / "jevdual/.venv/bin/footwork"), "check-artifact",
+                checked = subprocess.run([str(self.body.FOOTWORK), "check-artifact",
                                           str(self.root / "order.json"), "--expected-file", str(expected),
                                           "--expected-sha256", self.body.sha(expected.read_bytes())],
                                          capture_output=True, text=True, timeout=8, check=False)
