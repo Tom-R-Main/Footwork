@@ -45,3 +45,9 @@ Hypothesis: if post-admission result retention and its unknown fallback both rai
 Test: an explicit retention-failure sensitivity control injects JournalError after one activation and again from mark_unknown; inspect the public RPC envelope, original durable row and a second-token attempt. This is injected protocol failure, not a reproduced storage incident; ordinary SQLite I/O exceptions already reach the unknown envelope.
 Predicts: current code returns an incorrect no-send envelope; a narrow post-admission fallback returns dispatched=null, retryable=false and retention-unverified, leaves the persisted started row blocked, and never adds activation. Cancellation still propagates after retaining the best available uncertainty.
 Against: the old code already preserves unknown, the fix claims durable retention despite its failure, the second token activates, or cancellation is swallowed.
+
+## DCAU4 · update · 2026-10-31 15:08
+Resolves: DCA5 = held
+Observed: both injected controls failed before the fix: post-activation retention failure returned dispatched=false, and a second retention failure replaced CancelledError with a false no-send reply. A narrow fallback now reports browser_retention_unverified with dispatched=null and retryable=false, preserves cancellation, leaves started custody blocked, and prevents a second activation. This is a sensitivity control, not a reproduced disk-full incident.
+Next: freeze the final runtime, repeat exact installed checks and VM qualification, then close the package without claiming a browser completion reader or light installer.
+Refs: tests/test_browser_holder.py::test_post_admission_retention_failure_never_certifies_no_send; results/durable-cdp-authority-20261031/retention-before.txt

@@ -187,6 +187,39 @@ def test_post_admission_failure_and_cancellation_retain_unknown(runtime, failure
     asyncio.run(run())
 
 
+@pytest.mark.parametrize("cancel", [False, True])
+def test_post_admission_retention_failure_never_certifies_no_send(runtime, monkeypatch, cancel):
+    """Sensitivity control: injected protocol-retention failure, not a real disk incident."""
+    from jevdual.capability.journal import JournalError
+
+    holder, authority, connection, _ = runtime
+
+    def unavailable(*args, **kwargs):
+        raise JournalError("injected retention failure")
+
+    monkeypatch.setattr(authority, "record_reply", unavailable)
+    monkeypatch.setattr(authority, "mark_unknown", unavailable)
+    if cancel:
+        connection.failure = asyncio.CancelledError()
+
+    async def run():
+        await call(holder, "look")
+        if cancel:
+            with pytest.raises(asyncio.CancelledError):
+                await call(holder, "click", token="once", ref="snap:1")
+        else:
+            result = await call(holder, "click", token="once", ref="snap:1")
+            assert result["dispatched"] is None and result["retryable"] is False
+            assert result["code"] == "browser_retention_unverified"
+        original = authority.status()[0]
+        assert original.state == "dispatching" and original.execution_stage == "started"
+        blocked = await call(holder, "click", token="second", ref="snap:1")
+        assert blocked["code"] == "browser_operation_unresolved"
+        assert connection.activations == 1
+
+    asyncio.run(run())
+
+
 @pytest.mark.parametrize("extra", [{"nonce": "wrong"}, {"session_id": "another-session"},
                                    {"method": "type"}, {"method": "navigate"}, {"url": "https://x.invalid"}])
 def test_wrong_session_and_unbounded_methods_never_touch_browser(runtime, extra):

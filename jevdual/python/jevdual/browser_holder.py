@@ -257,10 +257,17 @@ class BrowserHolder:
                 raise
             # No post-admission exception is a no-send certificate. Even cancellation retains
             # uncertainty. Reconciliation inspects only retained execution evidence, never the DOM.
-            operation = self.authority.mark_unknown(admitted.id)
+            try:
+                operation = self.authority.mark_unknown(admitted.id)
+                result = self._operation(operation)
+            except Exception:  # noqa: BLE001 - any retention loss after admission is uncertain
+                # Retention failure is not evidence of non-delivery. Never let it reach the
+                # outer pre-admission JournalError handler, or claim that unknown was persisted.
+                result = {"ok": False, "code": "browser_retention_unverified", "dispatched": None,
+                          "retryable": False, "operation_id": admitted.id, "completion": "unverified"}
             if isinstance(exc, asyncio.CancelledError):
                 raise
-            return self._operation(operation)
+            return result
 
     async def close(self) -> dict[str, Any]:
         if self.closed:
