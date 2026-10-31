@@ -19,3 +19,15 @@ Established: CUA imports and construction are behind a lazy adapter; compatibili
 Uncertain: live Linux stress qualification was not repeated for this wrapper; the new direct-CDP browser, durable recovery, light dependency closure and resource envelope are unbuilt/unmeasured. No binary-consumer CI or merge result is implied by the local checks.
 Decision: ship the bounded L1a implementation separately from the reviewed plan after hosted checks. Continue in dependency order; do not remove required metadata before the light runtime and evidence contract qualify.
 Refs: docs/plans/light-profile-20261030.md; results/light-effector-boundary-20261030/report.md
+
+## LEBU2 · update · 2026-10-30 21:36
+Observed: final-head PR14 CI passes core/native/Rust checks and all three binary consumer jobs, then fails simulator test_running_cancel_verifies_stop_after_real_native_progress: native_steps_before_cancel is zero. The same unchanged simulator source passes PR13. The test waits for controller dispatch intent and then sleeps0.18 seconds; that intent is persisted before native simulation enters its stepping loop.
+Inferred: the test cancels during a pre-step initialization window on this runner; elapsed sleep does not prove the required positive native progress. This inference is narrower than a cancellation-runtime defect.
+Next: LEB2 tests the precondition directly without changing simulator cancellation behavior or weakening the positive-step assertion. Preserve the hosted failure log.
+Refs: https://github.com/Tom-R-Main/Footwork/actions/runs/41154315197; tools/physical-workcell/test_controller.py:324; tools/physical-workcell/controller.py:294; tools/physical-workcell/workcell.py:416
+
+## LEB2 · prediction · 2026-10-30 21:36
+Hypothesis: an actual-process test-only barrier after the first real MuJoCo step can make the cancellation-after-progress case deterministic despite slow pre-step initialization, while leaving production motion and cancellation code unchanged.
+Test: use the existing fault-script fixture to observe a real mj_step advancing simulation time, retain a marker and pause the stepping worker; issue the public cancel command, then release the worker and assert the existing verified-stop, positive-step, retained-generation/state and duplicate-cancel invariants. Test a delayed startup and a bounded no-progress/timeout negative control; rerun controller conformance and hosted CI.
+Predicts: no cancellation is sent before the observed positive step; all original assertions pass under deliberate pre-step delay; no progress or a failed marker cannot satisfy the precondition or silently pass. Production files remain unchanged.
+Against: a marker can precede a real step, no-progress passes, a child remains owned after teardown, or the original stop/state assertions fail after qualified progress.
