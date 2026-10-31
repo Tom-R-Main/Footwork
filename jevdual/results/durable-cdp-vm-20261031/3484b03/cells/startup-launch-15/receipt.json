@@ -1,0 +1,91 @@
+{
+  "nodeids": [
+    "test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[launch-15]"
+  ],
+  "boundary_metadata": [
+    {
+      "path": "/tmp/fw-start-_6rx6msv/session/startup-boundary.json",
+      "sha256": "996507b883dd824b8646a3a2ce0d6ea94c531403ca200ed78e98379ac38f1473",
+      "mtime_ns": 1793473450216022328,
+      "mode": "0o600",
+      "json": {
+        "phase": "launch",
+        "pid": 12863,
+        "start": 1793473449.7,
+        "captured": {
+          "12863": 1793473449.7,
+          "12870": 1793473449.73,
+          "12872": 1793473449.73,
+          "12897": 1793473449.78,
+          "12874": 1793473449.76,
+          "12920": 1793473449.82,
+          "12895": 1793473449.77
+        }
+      }
+    }
+  ],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "startup_supervisor_receipts": [
+    {
+      "kind": "communicate",
+      "monotonic": 7017.499870839,
+      "nodeid": "test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[launch-15]",
+      "process_number": 47,
+      "process_kind": "test_only_startup_supervisor",
+      "owner_nodeid": "test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[launch-15]",
+      "pid": 12860,
+      "argv": [
+        "/workspace/scratch/footwork-durable-cdp-3484b03/consumer/bin/python",
+        "-c",
+        {
+          "test_script_sha256": "a6baba3dc3e52d024fd8c4e663d3d4428a6cdf4b414ce8eec09a83f217c88f12",
+          "characters": 4045
+        },
+        "/tmp/fw-start-_6rx6msv",
+        "launch",
+        "15"
+      ],
+      "cwd": "/tmp/fw-start-_6rx6msv",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "9035285f52de96f7bca2a185e0703c68d317bbf2c6e72cb150eeb4cb539901ba",
+        "bytes": 278,
+        "json": {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 12863,
+          "captured_count": 10,
+          "zombies_before_test_reap": [
+            12865,
+            12869,
+            12870,
+            12895,
+            12897
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        },
+        "text": "{\"phase\": \"launch\", \"test_subreaper\": true, \"holder_exit\": 0, \"live_before_test_cleanup\": [], \"holder_published\": false, \"chrome_pid\": 12863, \"captured_count\": 10, \"zombies_before_test_reap\": [12865, 12869, 12870, 12895, 12897], \"test_reaped\": 5, \"live_after_test_cleanup\": []}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "observed_numeric_exits": [
+    {
+      "kind": "test_only_startup_supervisor",
+      "pid": 12860,
+      "returncode": 0,
+      "signal": null
+    }
+  ]
+}
