@@ -509,7 +509,7 @@ class BrowserBridge:
             out = await self.operations.click(**base, input_route=input_route)
             eff = self._effect(out, operation, id, c.label)
             self.last = None
-            return dataclasses.replace(eff, route=input_route)
+            return dataclasses.replace(eff, route=out.route or input_route)
         elif operation in ("type", "append"):
             # browser_type selects the bound tab for about 100 ms in every mode except
             # insert_text with replace=false (page visibility probe by footwork-9c, 2026-09-25): in

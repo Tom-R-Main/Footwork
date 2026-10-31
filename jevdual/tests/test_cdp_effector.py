@@ -27,6 +27,24 @@ MUTATING = ("Input.", "Runtime.", "DOM.focus", "DOM.setAttributeValue", "DOM.set
             "Page.reload", "Target.createTarget", "Target.closeTarget")
 
 
+def audit_observation(ops):
+    """Permit only the isolated-realm marker; its fixture no-effect check lives in test_cdp_click."""
+    from jevdual.effectors.cdp.click import MARK_DOCUMENT
+
+    original = ops.conn.send
+    page_mutations = []
+
+    async def send(method, params=None, **kwargs):
+        private_marker = (method == "Runtime.callFunctionOn"
+                          and (params or {}).get("functionDeclaration") == MARK_DOCUMENT)
+        if method.startswith(MUTATING) and not private_marker:
+            page_mutations.append(method)
+        return await original(method, params, **kwargs)
+
+    ops.conn.send = send
+    ops.observation_page_mutations = page_mutations
+
+
 # ---- transport, against an in-memory socket
 
 
@@ -313,6 +331,7 @@ def test_the_owned_browser_is_observed_as_the_fixture_declares(chrome, fixture_u
 
     async def run():
         ops = await CdpBrowserOperations.connect(chrome)
+        audit_observation(ops)
         setup, _ = await _goto(ops, fixture_url)
         try:
             bridge = BrowserBridge(None, chrome.pid, 0, operations=ops, policy=ExecutionPolicy("exclusive_desktop"))
@@ -338,7 +357,7 @@ def test_the_owned_browser_is_observed_as_the_fixture_declares(chrome, fixture_u
     assert nm.page_title == "Ticket" and nm.page_url == fixture_url
     assert nm.elements_complete is False and nm.menu.omitted.get("child_frames") == 1
     assert bridge.binding.persistent_target_identity is False
-    assert not [m for m in ops.conn.sent if m.startswith(MUTATING)]
+    assert ops.observation_page_mutations == []
 
 
 @pytest.mark.browser
@@ -347,6 +366,7 @@ def test_actions_refuse_before_dispatch_and_a_reload_invalidates_refs(chrome, fi
 
     async def run():
         ops = await CdpBrowserOperations.connect(chrome)
+        audit_observation(ops)
         setup, session = await _goto(ops, fixture_url)
         try:
             bridge = BrowserBridge(None, chrome.pid, 0, operations=ops, policy=ExecutionPolicy("exclusive_desktop"))
@@ -374,7 +394,7 @@ def test_actions_refuse_before_dispatch_and_a_reload_invalidates_refs(chrome, fi
         ("refused", "browser_mutation_unqualified", False, "not_sent")
     ] * 3
     assert after.refusal.code == "document_changed" and after.dispatched is False
-    assert not [m for m in ops.conn.sent if m.startswith(MUTATING)]
+    assert ops.observation_page_mutations == []
 
 
 @pytest.mark.browser

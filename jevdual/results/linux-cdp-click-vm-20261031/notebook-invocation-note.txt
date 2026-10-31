@@ -1,0 +1,1 @@
+Evidence hygiene only: invoking python -m evals.notebook from the repository root failed with ModuleNotFoundError: No module named 'evals'. The correct jevdual working directory was then used successfully. No candidate or probe test was rerun.

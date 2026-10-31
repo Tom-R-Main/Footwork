@@ -1,0 +1,428 @@
+{
+  "attempt": 3,
+  "initial_setup_worlds": 1,
+  "allocation_order": [
+    "AX",
+    "DOM"
+  ],
+  "source": "c1496ca57c4fe2f49f55e641bbebf8290e7d7ac8",
+  "wheel_sha256": "bba6e946259390c3b89767f8e16f934604e5ccc8f38a36882dd1af22ed075269",
+  "harness_sha256": "d79bf993d5144ca3d4d997473355b8e4f75c3826f494b5d09d1d742364301868",
+  "utc_started": "2026-10-31T17:37:26.512607+00:00",
+  "browser_identity": {
+    "pid": 5775,
+    "start": 1793468246.15
+  },
+  "before": {
+    "execution_context_id": 4,
+    "backend_node_id": 9,
+    "frame_id": "BAF59D7A86C1D180E6E549A2978EB056",
+    "loader_id": "BD5366AD08F83C417B5CCEE2178C9448",
+    "isolate": {
+      "id": "64299cf74f0a121a"
+    },
+    "renderer_processes": [
+      {
+        "type": "renderer",
+        "id": 5863,
+        "cpuTime": 0.02
+      },
+      {
+        "type": "renderer",
+        "id": 5864,
+        "cpuTime": 0.06
+      },
+      {
+        "type": "renderer",
+        "id": 5854,
+        "cpuTime": 0.32
+      }
+    ],
+    "context_events": [
+      {
+        "context": {
+          "id": 2,
+          "origin": "http://127.0.0.1:33153",
+          "name": "",
+          "uniqueId": "-2486950420111760881.9170511812413790501",
+          "auxData": {
+            "isDefault": true,
+            "type": "default",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 3,
+          "origin": "http://127.0.0.1:33153",
+          "name": "initial-padding-0",
+          "uniqueId": "5973133522372457547.8619402007258139568",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 4,
+          "origin": "http://127.0.0.1:33153",
+          "name": "footwork-a74a63f73253fb6dc2a84fcd",
+          "uniqueId": "6910038141377379566.-4788971917390586739",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      }
+    ]
+  },
+  "action_marker_calls": 0,
+  "resolution_intercepted": true,
+  "unchanged_resolution_request": {
+    "method": "DOM.resolveNode",
+    "params": {
+      "backendNodeId": 9,
+      "executionContextId": 4
+    },
+    "kwargs": {
+      "session_id": "832049F5E35BFC6F33814CEFB86693AF"
+    }
+  },
+  "after": {
+    "world_allocations": [
+      2,
+      3,
+      4
+    ],
+    "execution_context_id": 4,
+    "backend_node_id": 8,
+    "frame_id": "BAF59D7A86C1D180E6E549A2978EB056",
+    "loader_id": "2ED6AF492769F57EA708772803C76D66",
+    "url": "http://localhost:33153/fixture",
+    "isolate": {
+      "id": "1e8a795822b63aa7"
+    },
+    "renderer_processes": [
+      {
+        "type": "renderer",
+        "id": 5895,
+        "cpuTime": 0.01
+      },
+      {
+        "type": "renderer",
+        "id": 5863,
+        "cpuTime": 0.04
+      },
+      {
+        "type": "renderer",
+        "id": 5864,
+        "cpuTime": 0.06
+      },
+      {
+        "type": "renderer",
+        "id": 5854,
+        "cpuTime": 0.42
+      }
+    ],
+    "context_events": [
+      {
+        "context": {
+          "id": 1,
+          "origin": "http://localhost:33153",
+          "name": "",
+          "uniqueId": "1833578132207646635.-322992734926795359",
+          "auxData": {
+            "isDefault": true,
+            "type": "default",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 2,
+          "origin": "http://localhost:33153",
+          "name": "unmarked-collision-0",
+          "uniqueId": "3338433323910830153.5986611338855137243",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 3,
+          "origin": "http://localhost:33153",
+          "name": "unmarked-collision-1",
+          "uniqueId": "-2463066512123521089.916703688647244559",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      },
+      {
+        "context": {
+          "id": 4,
+          "origin": "http://localhost:33153",
+          "name": "unmarked-collision-2",
+          "uniqueId": "3181698255169587910.1957324106606714903",
+          "auxData": {
+            "isDefault": false,
+            "type": "isolated",
+            "frameId": "BAF59D7A86C1D180E6E549A2978EB056"
+          }
+        }
+      }
+    ]
+  },
+  "numeric_ids_match": false,
+  "loader_changed": true,
+  "original_resolution_response": {
+    "object": {
+      "type": "object",
+      "subtype": "node",
+      "className": "HTMLButtonElement",
+      "description": "button#sentinel",
+      "objectId": "2200704787370359463.4.1"
+    }
+  },
+  "actual_resolved_object_inspection": {
+    "result": {
+      "type": "object",
+      "value": {
+        "url": "http://localhost:33153/fixture",
+        "id": "sentinel",
+        "type": "button",
+        "text": "Sentinel",
+        "markerPresent": false
+      }
+    }
+  },
+  "activation_response": {
+    "result": {
+      "type": "object",
+      "value": {
+        "status": "refused",
+        "code": "document_changed"
+      }
+    }
+  },
+  "effect": {
+    "effect": "refused",
+    "dispatched": false,
+    "delivery": "not_sent",
+    "retryable": null,
+    "error_code": "document_changed",
+    "route": "dom_event"
+  },
+  "ingress": [],
+  "actual_reused_resolution": false,
+  "status": "refused_with_reproduction_gap",
+  "before_module_stop": [
+    {
+      "pid": 5775,
+      "start": 1793468246.15,
+      "parent": 5509,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5777,
+      "start": 1793468246.18,
+      "parent": 5509,
+      "name": "chrome_crashpad_handler",
+      "status": "sleeping",
+      "session": 5776,
+      "group": 5776
+    },
+    {
+      "pid": 5779,
+      "start": 1793468246.18,
+      "parent": 5509,
+      "name": "chrome_crashpad_handler",
+      "status": "sleeping",
+      "session": 5778,
+      "group": 5778
+    },
+    {
+      "pid": 5783,
+      "start": 1793468246.18,
+      "parent": 5775,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5784,
+      "start": 1793468246.18,
+      "parent": 5775,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5810,
+      "start": 1793468246.24,
+      "parent": 5775,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5786,
+      "start": 1793468246.22,
+      "parent": 5784,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5833,
+      "start": 1793468246.28,
+      "parent": 5786,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5854,
+      "start": 1793468246.35,
+      "parent": 5786,
+      "name": "chromium",
+      "status": "running",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5863,
+      "start": 1793468246.37,
+      "parent": 5786,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5864,
+      "start": 1793468246.37,
+      "parent": 5786,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5895,
+      "start": 1793468246.56,
+      "parent": 5786,
+      "name": "chromium",
+      "status": "sleeping",
+      "session": 5775,
+      "group": 5775
+    },
+    {
+      "pid": 5808,
+      "start": 1793468246.23,
+      "parent": 5783,
+      "name": "chromium",
+      "status": "running",
+      "session": 5775,
+      "group": 5775
+    }
+  ],
+  "saved_ingress": [],
+  "cleanup": {
+    "before_wrapper_cleanup": [
+      {
+        "pid": 5777,
+        "start": 1793468246.18,
+        "parent": 5509,
+        "name": "chrome_crashpad",
+        "status": "zombie",
+        "session": 5776,
+        "group": 5776
+      },
+      {
+        "pid": 5779,
+        "start": 1793468246.18,
+        "parent": 5509,
+        "name": "chrome_crashpad",
+        "status": "zombie",
+        "session": 5778,
+        "group": 5778
+      },
+      {
+        "pid": 5783,
+        "start": 1793468246.18,
+        "parent": 5509,
+        "name": "chromium",
+        "status": "zombie",
+        "session": 5775,
+        "group": 5775
+      },
+      {
+        "pid": 5808,
+        "start": 1793468246.23,
+        "parent": 5509,
+        "name": "chromium",
+        "status": "zombie",
+        "session": 5775,
+        "group": 5775
+      },
+      {
+        "pid": 5810,
+        "start": 1793468246.24,
+        "parent": 5509,
+        "name": "chromium",
+        "status": "zombie",
+        "session": 5775,
+        "group": 5775
+      }
+    ],
+    "signals": [],
+    "adopted_waits": [
+      {
+        "pid": 5777,
+        "raw_wait_status": 0,
+        "returncode": 0
+      },
+      {
+        "pid": 5779,
+        "raw_wait_status": 0,
+        "returncode": 0
+      },
+      {
+        "pid": 5808,
+        "raw_wait_status": 15,
+        "returncode": -15
+      },
+      {
+        "pid": 5783,
+        "raw_wait_status": 15,
+        "returncode": -15
+      },
+      {
+        "pid": 5810,
+        "raw_wait_status": 15,
+        "returncode": -15
+      }
+    ],
+    "final_owned_descendants": []
+  },
+  "utc_finished": "2026-10-31T17:37:27.057657+00:00"
+}

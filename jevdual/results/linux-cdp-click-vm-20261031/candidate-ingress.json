@@ -1,0 +1,142 @@
+[
+  {
+    "fixture_directory": "test_changed_subject_refuses_w0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w1",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w10",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w2",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w3",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w4",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w5",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w6",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w7",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w8",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_changed_subject_refuses_w9",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_closed_pinned_tab_does_no0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_concurrent_calls_with_one0",
+    "records": [
+      {
+        "name": "intended"
+      }
+    ]
+  },
+  {
+    "fixture_directory": "test_document_open_root_replac0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_lost_ack_or_cancellation_0",
+    "records": [
+      {
+        "name": "intended"
+      }
+    ]
+  },
+  {
+    "fixture_directory": "test_lost_ack_or_cancellation_1",
+    "records": [
+      {
+        "name": "intended"
+      }
+    ]
+  },
+  {
+    "fixture_directory": "test_native_button_activation_0",
+    "records": [
+      {
+        "name": "intended"
+      }
+    ]
+  },
+  {
+    "fixture_directory": "test_numeric_handle_alias_cann0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_observation_marker_has_no0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_page_method_and_getter_ov0",
+    "records": [
+      {
+        "name": "intended"
+      }
+    ]
+  },
+  {
+    "fixture_directory": "test_pointerdown_only_app_does0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_reobservation_and_foreign0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_same_url_reload_never_use0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_same_url_reload_never_use1",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_typing_trusted_click_and_0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_unsupported_or_incomplete0",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_unsupported_or_incomplete1",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_unsupported_or_incomplete2",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_unsupported_or_incomplete3",
+    "records": []
+  },
+  {
+    "fixture_directory": "test_unsupported_or_incomplete4",
+    "records": []
+  }
+]

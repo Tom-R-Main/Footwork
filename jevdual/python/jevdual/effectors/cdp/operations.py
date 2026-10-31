@@ -1,22 +1,27 @@
 """Footwork's own browser operations over CDP, for a Chrome launched by :mod:`.launch`.
 
-This first slice (L3a-1) observes only. Click, type and navigate validate the ref's binding and then
-refuse before any input method is sent, saying so (``dispatched=False``). Each ref binds the browser
+The DOM route qualifies plain native button activation on one connection; it is not the pointer/mouse
+event sequence used by CUA. Typing, trusted input and navigation remain unavailable. Each ref binds the browser
 incarnation, browser context, target, CDP session, main frame, its ``loaderId`` (document generation)
 and the backend DOM node; any change refuses. A lost target is never recovered by URL.
 """
 
 from __future__ import annotations
 
+import asyncio
+import logging
 import secrets
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any
 
 from ..base import BrowserRefusal, BrowserReply
+from .click import ACTIVATE, MARK_DOCUMENT, ROUTE, ButtonTarget, button_targets
 from .launch import OwnedChrome, verify_endpoint
 from .snapshot import STYLES, compose
-from .transport import CdpConnection, CdpError
+from .transport import CdpClosed, CdpConnection, CdpError, CdpUnknownOutcome
+
+log = logging.getLogger("jevdual.browser")
 
 
 @dataclass(frozen=True)
@@ -28,6 +33,9 @@ class RefBinding:
     frame_id: str
     loader_id: str
     backend_node_id: int
+    execution_context_id: int | None = None
+    button: ButtonTarget | None = None
+    document_token: str | None = None
 
 
 def _ok(payload: dict[str, Any]) -> BrowserReply:
@@ -54,6 +62,10 @@ class CdpBrowserOperations:
         self._contexts: dict[str, str] = {}
         self._sessions: dict[str, str] = {}
         self._refs: dict[str, RefBinding] = {}
+        self._ownership = asyncio.Lock()
+        self._world_name = f"footwork-{secrets.token_hex(12)}"
+        self._document_key = f"__footwork_document_{secrets.token_hex(16)}"
+        self._click_unknown = False
 
     @classmethod
     async def connect(cls, chrome: OwnedChrome) -> CdpBrowserOperations:
@@ -66,6 +78,7 @@ class CdpBrowserOperations:
         return cls(chrome, conn)
 
     async def close(self) -> None:
+        self._refs.clear()
         await self.conn.close()
 
     # ---- binding
@@ -121,6 +134,11 @@ class CdpBrowserOperations:
     # ---- observation
 
     async def snapshot(self, *, target_id: str, tab_id: str | None) -> BrowserReply:
+        async with self._ownership:
+            self._refs.clear()
+            return await self._snapshot(target_id=target_id, tab_id=tab_id)
+
+    async def _snapshot(self, *, target_id: str, tab_id: str | None) -> BrowserReply:
         bound = await self._session(target_id, tab_id)
         if isinstance(bound, BrowserReply):
             return bound
@@ -129,6 +147,28 @@ class CdpBrowserOperations:
         loader = frame.get("loaderId")
         if not loader:
             return _refused("document_unavailable", "the page reports no document generation")
+        try:
+            world = await self.conn.send("Page.createIsolatedWorld", {
+                "frameId": frame.get("id"), "worldName": self._world_name,
+            }, session_id=session)
+        except CdpError:
+            return _refused("document_unavailable", "the observation's isolated context is unavailable")
+        execution_context = world.get("executionContextId")
+        if type(execution_context) is not int or execution_context <= 0:
+            return _refused("document_unavailable", "the observation reports no isolated context")
+        document_token = secrets.token_hex(16)
+        try:
+            marked = await self.conn.send("Runtime.callFunctionOn", {
+                "executionContextId": execution_context, "functionDeclaration": MARK_DOCUMENT,
+                "arguments": [{"value": self._document_key}, {"value": document_token}],
+                "returnByValue": True, "awaitPromise": False,
+            }, session_id=session)
+        except (CdpError, CdpClosed, CdpUnknownOutcome):
+            return _refused("document_unavailable", "the observation's private document marker is unavailable")
+        remote = marked.get("result") if isinstance(marked, dict) else None
+        if (not isinstance(remote, dict) or marked.get("exceptionDetails")
+                or remote.get("value") != {"status": "document_marked", "token": document_token}):
+            return _refused("document_unavailable", "the observation's private document marker was not established")
         ax = await self.conn.send("Accessibility.getFullAXTree", session_id=session, timeout=20)
         document = await self.conn.send("DOM.getDocument", {"depth": -1, "pierce": True}, session_id=session,
                                         timeout=20)
@@ -141,18 +181,22 @@ class CdpBrowserOperations:
         snapshot_id = secrets.token_hex(6)
         composed = compose(snapshot_id=snapshot_id, url=str(frame.get("url") or ""), ax=ax, document=document,
                            dom_snapshot=layout, metrics=metrics, child_frames=child_frames)
+        buttons = button_targets(document, composed.semantic.get("refs") or [], composed.backend)
         for ref, backend in composed.backend.items():
             self._refs[ref] = RefBinding(self.chrome.incarnation, context, str(tab_id), session,
-                                         str(frame.get("id")), str(loader), backend)
+                                         str(frame.get("id")), str(loader), backend, execution_context,
+                                         buttons.get(backend), document_token)
         return _ok({**composed.semantic, "document": {"frame_id": frame.get("id"), "loader_id": loader}})
 
-    # ---- actions: validated, then refused before dispatch in this slice
+    # ---- bounded native button activation; all other mutations remain unavailable
 
     async def validate(self, *, target_id: str, tab_id: str | None, ref: str) -> BrowserReply | RefBinding:
         """Re-establish the exact tuple a ref was observed under; any difference refuses."""
         binding = self._refs.get(ref)
         if binding is None:
             return _refused("stale_ref", "the ref is not from an observation of this connection")
+        if binding.incarnation != self.chrome.incarnation:
+            return _refused("target_changed", "the ref belongs to another browser incarnation")
         bound = await self._session(target_id, tab_id)
         if isinstance(bound, BrowserReply):
             return bound
@@ -180,7 +224,83 @@ class CdpBrowserOperations:
         )
 
     async def click(self, *, target_id: str, tab_id: str | None, ref: str, input_route: str) -> BrowserReply:
-        return await self._unqualified("click", target_id=target_id, tab_id=tab_id, ref=ref)
+        async with self._ownership:
+            if self._click_unknown:
+                return _refused("browser_delivery_unknown", "an earlier activation is unresolved; no further click was sent")
+            if input_route != "dom_event":
+                return _refused("browser_route_unqualified", "only bounded native-button DOM activation is qualified")
+            try:
+                binding = await self.validate(target_id=target_id, tab_id=tab_id, ref=ref)
+                if isinstance(binding, BrowserReply):
+                    return binding
+                if binding.button is None or binding.execution_context_id is None:
+                    return _refused("browser_mutation_unqualified", "this control is outside the qualified native-button subset")
+                if not binding.document_token:
+                    return _refused("document_unavailable", "the observed document has no private marker; no activation was sent")
+                resolved = await self.conn.send("DOM.resolveNode", {
+                    "backendNodeId": binding.backend_node_id,
+                    "executionContextId": binding.execution_context_id,
+                }, session_id=binding.session_id)
+                obj = (resolved.get("object") or {}).get("objectId")
+                if not isinstance(obj, str) or not obj:
+                    return _refused("stale_ref", "the exact observed node could not be resolved")
+            except (CdpError, CdpClosed, CdpUnknownOutcome):
+                return _refused("browser_validation_unavailable", "read-only target validation failed; no activation was sent")
+
+            # Admission is connection-local. No fresh observation can reset ambiguity, and the
+            # current observation is consumed before anything that might activate a control.
+            self._refs.clear()
+            self._click_unknown = True
+            try:
+                try:
+                    result = await self.conn.send("Runtime.callFunctionOn", {
+                        "objectId": obj, "functionDeclaration": ACTIVATE,
+                        "arguments": [{"value": binding.button.argument()}, {"value": self._document_key},
+                                      {"value": binding.document_token}],
+                        "returnByValue": True, "awaitPromise": False,
+                    }, session_id=binding.session_id)
+                except CdpClosed:
+                    self._click_unknown = False
+                    return _refused("browser_connection_closed", "the connection closed before activation was sent")
+                except asyncio.CancelledError:
+                    raise  # the unknown latch survives cancellation
+                except Exception:  # noqa: BLE001 - admission makes every unclassified loss unknown
+                    return self._unknown_click()
+                if not isinstance(result, dict):
+                    return self._unknown_click()
+                remote = result.get("result")
+                value = remote.get("value") if isinstance(remote, dict) else None
+                if result.get("exceptionDetails") or not isinstance(value, dict):
+                    return self._unknown_click()
+                if value.get("status") == "refused" and value.get("code") in {
+                    "stale_ref", "button_changed", "button_disabled", "button_hidden", "button_validation_unavailable",
+                    "document_changed",
+                }:
+                    self._click_unknown = False
+                    return _refused(value["code"], "the native button changed or is ineligible; no activation was sent")
+                if value == {"status": "invoked"}:
+                    self._click_unknown = False
+                    return BrowserReply("ok", "native button activation invoked; business effect unverified", False,
+                                        MappingProxyType({"status": "ok", "route": ROUTE}),
+                                        dispatched=True, route=ROUTE)
+                return self._unknown_click()
+            finally:
+                try:
+                    await self.conn.send("Runtime.releaseObject", {"objectId": obj},
+                                         session_id=binding.session_id, timeout=0.2)
+                except asyncio.CancelledError:
+                    self._click_unknown = True
+                    raise
+                except Exception as exc:  # noqa: BLE001 - cleanup cannot settle or mask the activation
+                    log.debug("CDP read-handle release unavailable (%s)", type(exc).__name__)
+
+    def _unknown_click(self) -> BrowserReply:
+        detail = {"delivery": "unknown", "retryable": False}
+        refusal = BrowserRefusal("browser_delivery_unknown", "native button activation may have happened; do not retry",
+                                 MappingProxyType(detail))
+        return BrowserReply("refused", refusal.message, False, MappingProxyType({
+            "status": "refused", "refusal": {"code": refusal.code, "message": refusal.message, "detail": detail},
+        }), refusal, dispatched=None, route=ROUTE)
 
     async def type_text(
         self, *, target_id: str, tab_id: str | None, ref: str, text: str, replace: bool
