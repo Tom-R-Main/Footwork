@@ -1,8 +1,8 @@
 """Launch and verify a Chrome that Footwork owns, reached only through its own DevTools endpoint.
 
 Chrome starts with ``--remote-debugging-port=0`` and writes the chosen port and browser path to
-``DevToolsActivePort`` in its profile directory. That file is deleted before launch, so only the
-launched process can write the one that names the endpoint. After connecting, the endpoint must
+``DevToolsActivePort`` in a fresh, private profile directory created exclusively for this launch.
+Existing paths, including symlinks, are refused before any file is changed. After connecting, the endpoint must
 report the launched pid as its browser process and that pid must still have its launch start time.
 Only a handle created here grants cleanup authority; a discovered process never does.
 """
@@ -74,9 +74,13 @@ def _read_port_file(path: Path, *, not_before: float) -> tuple[int, str] | None:
 def launch(executable: str, profile_dir: Path, *, headless: bool = True, timeout: float = 15.0) -> OwnedChrome:
     import psutil
 
-    profile_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+    try:
+        profile_dir.mkdir(parents=True, exist_ok=False, mode=0o700)
+    except OSError as exc:
+        raise LaunchRefused(
+            "browser_profile_unavailable", "Chrome requires a fresh private profile directory"
+        ) from exc
     port_file = profile_dir / "DevToolsActivePort"
-    port_file.unlink(missing_ok=True)  # a stale file must never name the endpoint
     started = time.time() - 1.0  # filesystem timestamps can be coarser than time.time()
     process = subprocess.Popen(
         chrome_args(executable, profile_dir, headless=headless),
