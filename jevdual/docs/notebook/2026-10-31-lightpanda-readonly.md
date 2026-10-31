@@ -38,3 +38,9 @@ Test: regress the review counterexamples with base-href relative links and omitt
 Predicts: a base-bearing document returns readable link labels with an explicit withheld-destination count; an HTTP(S) main document remains readable when omitted child metadata uses about:srcdoc/data URLs. No new protocol method or input authority is enabled.
 Against: output exports a false frame-relative link destination, child URLs escape or are navigated by Footwork, or valid main content remains blocked by an omitted child URL.
 Refs: PR19 review comments4433205173/4433205174; Lightpanda Node.zig297-301 emits documentURL/baseURL null, so that CDP field cannot establish the effective base.
+
+## LPRO7 · update · 2026-10-31 16:38
+Observed: three modeled red controls reproduce both review defects on d9ca03e: two omitted non-HTTP child URLs refuse the whole read, and a base-bearing link exports the wrong destination. After the narrow correction those cases and the real base-href page pass. The first real iframe fixture did not report two child frames as predicted: this pinned engine reported zero in Page.getFrameTree, although the page read succeeded without child text. The assertion about engine frame enumeration failed; it is not counted as real child-URL metadata qualification.
+Changes: the real fixture now checks omitted DOM subtrees and absence of child content; actual non-HTTP frame metadata remains a modeled protocol control. No FrameTree count is fabricated, and there is no wider iframe-support claim.
+Next: rerun the corrected real DOM-omission check and the new exact installed artifact on both hosts.
+Refs: output/lightpanda-probe/review-before.txt; output/lightpanda-probe/review-after.txt; tests/test_lightpanda_observation.py; tests/test_lightpanda_cli.py.

@@ -152,6 +152,10 @@ def fixture_site():
 <select><option>LP_PRIVATE_OPTION</option></select>
 <div contenteditable="true">LP_PRIVATE_EDITABLE</div>
 <p hidden>LP_PRIVATE_HIDDEN</p><script>document.getElementById('ready').textContent='Script content ready';</script>'''
+            if self.path == "/base":
+                html = '<!doctype html><head><base href="https://cdn.example/reports/"></head><body><h1>Public heading</h1><a href="report">Read report</a></body>'
+            elif self.path == "/frames":
+                html = '<!doctype html><h1>Public heading</h1><iframe srcdoc="<p>LP_PRIVATE_CHILD</p>"></iframe><iframe src="data:text/html,LP_PRIVATE_DATA_CHILD"></iframe>'
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
             self.end_headers()
@@ -270,3 +274,24 @@ def test_real_interruption_retains_cleanup_scope_without_reconnect(engine, fixtu
                 process.kill()
             except psutil.NoSuchProcess:
                 pass
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("path", ["/base", "/frames"])
+def test_real_base_links_and_omitted_non_http_frames(engine, fixture_site, path):
+    url, posts, _ = fixture_site
+    result = cli("browser", "lightpanda", "read", url + path, "--executable", engine)
+    assert result["ok"] is True
+    observation = result["observation"]
+    assert "Public heading" in observation["text"]
+    assert "LP_PRIVATE_" not in json.dumps(observation)
+    if path == "/base":
+        link = next(row for row in observation["content"] if row["kind"] == "link")
+        assert link["text"] == "Read report" and "destination" not in link
+        assert observation["omitted"]["link_destinations"] == 1
+    else:
+        assert observation["omitted"]["excluded_subtrees"] >= 3
+        # This pin reports no child frames for srcdoc/data. Their metadata
+        # validation is modeled separately; DOM omission is the runtime claim.
+    assert result["cleanup"]["status"] == "bounded_owned_processes_stopped"
+    assert posts == []

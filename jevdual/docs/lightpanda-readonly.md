@@ -70,7 +70,8 @@ using the process exit code as a completion certificate.
 
 The projector withholds input, textarea, select, editable subtrees and associated form labels. It
 omits scripts, styles, templates, embedded frames and shadow roots from content. Query values and
-fragments are withheld from emitted page/link URLs. It does not provide layout, screenshots,
+fragments are withheld from emitted page/link URLs. Link destinations are withheld when the DOM
+contains a base href, because the engine does not report a qualified effective document base. It does not provide layout, screenshots,
 visibility, accessibility equivalence or actionable element refs. CSS-hidden DOM text can remain.
 
 Reported target/frame/root changes during capture refuse. Matching numeric identifiers still does

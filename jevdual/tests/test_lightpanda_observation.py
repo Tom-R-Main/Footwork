@@ -394,7 +394,8 @@ def test_text_and_record_budgets_are_explicit_and_output_stays_bounded():
     assert len(json.dumps(result).encode()) <= MAX_OUTPUT_BYTES
 
 
-def test_child_frames_are_reported_unavailable_not_captured():
+@pytest.mark.parametrize("child_url", ["https://child.invalid/", "about:srcdoc", "data:text/html,private-child"])
+def test_child_frames_are_reported_unavailable_not_captured(child_url):
     connection = Connection()
     original = connection.send
 
@@ -402,10 +403,20 @@ def test_child_frames_are_reported_unavailable_not_captured():
         result = await original(method, *args, **kwargs)
         if method == "Page.getFrameTree":
             result["frameTree"]["childFrames"] = [{"frame": {"id": "FID-0000000002", "loaderId": "LID-0000000002",
-                                                               "parentId": FRAME, "url": "https://child.invalid/"}}]
+                                                               "parentId": FRAME, "url": child_url}}]
         return result
 
     connection.send = send
     result = observe(connection)
     assert result["omitted"]["child_frames"] == 1
     assert not any(call[0] == "Target.attachToTarget" and call[1]["targetId"] != FRAME for call in connection.sent)
+
+
+def test_base_href_withholds_destinations_instead_of_guessing_document_relative_urls():
+    root = document(lambda e, t: [e("base", attrs=["href", "https://cdn.example/reports/"]),
+                                 e("a", t("Read report"), attrs=["href", "report"])])
+    result = observe(Connection(root))
+    link = next(row for row in result["content"] if row["kind"] == "link")
+    assert link["text"] == "Read report" and "destination" not in link
+    assert result["omitted"]["link_destinations"] == 1
+    assert "cdn.example" not in json.dumps(result)

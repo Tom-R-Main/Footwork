@@ -202,6 +202,9 @@ def project_document(root: dict, *, url: str) -> dict[str, Any]:
     """DOM text only. Field values and raw attributes never enter the public result."""
     ordered, _ = _shape(root, full=True)
     form_ids, controls = set(), set()
+    # The engine reports baseURL=null. Never guess link semantics when a base exists.
+    unqualified_base = any(node["nodeName"].casefold() == "base" and "href" in _attrs(node)
+                           for node, _ in ordered)
     parents = {node["nodeId"]: parent for node, parent in ordered}
     nodes = {node["nodeId"]: node for node, _ in ordered}
     for node, _ in ordered:
@@ -223,7 +226,7 @@ def project_document(root: dict, *, url: str) -> dict[str, Any]:
             parent = parents[parent]
 
     omitted = {"form_subtrees": 0, "form_labels": 0, "excluded_subtrees": 0,
-               "obvious_hidden_subtrees": 0, "shadow_roots": 0, "text_budget": False}
+               "obvious_hidden_subtrees": 0, "shadow_roots": 0, "link_destinations": 0, "text_budget": False}
     skipped, contexts = set(), {}
     records, last_context, total = [], None, 0
     for node, parent in ordered:
@@ -258,7 +261,9 @@ def project_document(root: dict, *, url: str) -> dict[str, Any]:
         if tag in _BLOCKS or re.fullmatch("h[1-6]", tag):
             kind = "heading" if tag.startswith("h") and len(tag) == 2 else _BLOCKS[tag]
             link = None
-            if tag == "a" and attributes.get("href"):
+            if tag == "a" and attributes.get("href") and unqualified_base:
+                omitted["link_destinations"] += 1
+            elif tag == "a" and attributes.get("href"):
                 try:
                     destination = _url(urljoin(url, attributes["href"]))
                 except ObservationRefused:
@@ -336,7 +341,10 @@ class LightpandaObservation:
                 _refuse("lightpanda_protocol_invalid", "the frame identities are inconsistent")
             frame_ids.add(frame_id)
             _id(frame.get("loaderId"), "LID")
-            _url(frame.get("url"))
+            if parent is None:
+                _url(frame.get("url"))
+            elif not isinstance(frame.get("url"), str) or len(frame["url"]) > 16_384:
+                _refuse("lightpanda_protocol_invalid", "the omitted child-frame metadata is malformed")
             if main is None:
                 main = frame
             children = branch.get("childFrames", [])
@@ -440,6 +448,7 @@ class LightpandaObservation:
                                          "screenshots": False, "click": False, "typing": False, "raw_script": False},
                         "limits": ["DOM text is not rendered/visible text; CSS-hidden content may remain.",
                                    "Form values and associated labels are withheld; child frames and shadow roots are omitted.",
+                                   "Link destinations are withheld when a captured base href makes the effective base unqualified.",
                                    "Record IDs identify this capture's text only and cannot authorize input.",
                                    "Matching numeric identifiers does not prove an atomic or mutation-safe document binding.",
                                    "Initial URL loading executes site code and may have network effects."],
