@@ -369,3 +369,37 @@ def test_a_bridge_accepts_another_effectors_operations():
     assert eff.effect == "unverifiable" and eff.summary == "clicked"
     assert calls[-1] == ("click", {"target_id": "target-1", "tab_id": "tab-1", "ref": "snap-1:1",
                                    "input_route": "dom_event"})
+
+
+def test_an_error_flagged_reply_is_a_dispatched_refusal_with_its_text():
+    class Erroring(Wire):
+        async def call_tool(self, name, args_json):
+            result = await super().call_tool(name, args_json)
+            if name == "browser_click":
+                return SimpleNamespace(structured_json=json.dumps({"status": "ok"}), text="driver error",
+                                       is_error=True)
+            return result
+
+    async def run():
+        b = _bridge(Erroring())
+        await b.attach()
+        nm = await b.observe()
+        return await b.act(nm, "click", 1)
+
+    assert _effect(asyncio.run(run())) == (
+        "click", 1, "Continue", "refused", "dom_event", (), "driver error", None, True
+    )
+
+
+@pytest.mark.parametrize("pages", [[URL], [URL, URL], ["https://example.invalid/other"]])
+def test_attach_by_page_binds_only_the_one_tab_showing_it(pages):
+    tabs = [{"tab_id": f"tab-{i}", "active": i == 0, "url": u} for i, u in enumerate(pages)]
+    wire = Wire({"get_browser_state": {**BOUND, "tabs": tabs}})
+    b = _bridge(wire)
+    if pages.count(URL) == 1:
+        asyncio.run(b.attach(expect_url=URL + "#top"))
+        assert b.tab_id == "tab-0" and b.binding.tabs == tuple(tabs)
+    else:
+        with pytest.raises(RuntimeError, match="nothing dispatched"):
+            asyncio.run(b.attach(expect_url=URL))
+    assert [n for n, _ in wire.calls] == ["browser_prepare", "get_browser_state"]

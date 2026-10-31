@@ -21,3 +21,9 @@ Established: BrowserBridge acts only through the Footwork-owned BrowserOperation
 Uncertain: live CUA browser behavior on this branch; whether other CUA browser replies carry fields the bridge should read. Native records remain SDK records behind L1a by design.
 Decision: ship L1b as its own PR after hosted CI. Next is L3a, a direct-CDP BrowserOperations, opt-in and nondurable. CUA stays in base metadata until L3a and L3c qualify.
 Refs: docs/plans/light-profile-20261030.md; results/light-browser-contract-20261031/report.md
+
+## LBCU2 · update · 2026-10-31 11:24
+Observed: a fresh-context read-only review accepted 390fda1 with no defect. It diffed raw args_json strings old against new across nine calls including a non-ASCII replace and found them identical, and ran 13 malformed-reply cases against both. Differences appear only on replies the CUA wire does not produce: a null or non-dict body after dispatch was an AttributeError reaching the command's interrupted-outcome branch and is now an unverifiable dispatched effect; malformed attach refusals raise RuntimeError instead of AttributeError/TypeError; a non-string refusal code becomes None. No caller relies on the old exception types. coexist's Q15 record (asdict of BrowserEffect) gains four keys. Added tests for the is_error refusal path and attach by page (one, two and no matching tabs); the behavior assertions pass on 701fd32.
+Changes: LBC1's identical-behavior claim holds for well-formed CUA replies; on malformed ones the new path is no less conservative and never reports not sent.
+Next: hosted CI on PR 15.
+Refs: tests/test_browser_contract.py; results/light-browser-contract-20261031/report.md
