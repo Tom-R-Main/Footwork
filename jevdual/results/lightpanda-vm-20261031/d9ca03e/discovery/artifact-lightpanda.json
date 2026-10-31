@@ -1,0 +1,53 @@
+{
+  "kind": "communicate",
+  "monotonic": 12606.845128955,
+  "nodeid": "test_lightpanda_cli.py::test_artifact_lookup_never_downloads_or_builds",
+  "process_number": 55,
+  "process_kind": "public_cli",
+  "owner_nodeid": "test_lightpanda_cli.py::test_artifact_lookup_never_downloads_or_builds",
+  "pid": 28633,
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+    "--json",
+    "browser",
+    "lightpanda",
+    "artifact",
+    "--platform",
+    "linux-x86_64"
+  ],
+  "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+  "returncode": 0,
+  "signal": null,
+  "stdout": {
+    "sha256": "fc19e890c0769ec0600bde0aa8d5a8dfe73cd4bef74ec14ee2fa748563af978e",
+    "bytes": 647,
+    "json": {
+      "schema_version": "1",
+      "exit_code": 0,
+      "command_completed": true,
+      "effect_verification": "not_asserted",
+      "output": "",
+      "diagnostics": "",
+      "data": {
+        "platform": "linux-x86_64",
+        "available": true,
+        "name": "lightpanda-x86_64-linux",
+        "asset_id": 694146173,
+        "bytes": 77129032,
+        "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+        "repository": "lightpanda-io/browser",
+        "release": "nightly",
+        "asset_api_url": "https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173",
+        "download_accept": "application/octet-stream",
+        "pin_semantics": "asset bytes and SHA256; the rolling release tag is not source identity"
+      }
+    },
+    "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"platform\": \"linux-x86_64\", \"available\": true, \"name\": \"lightpanda-x86_64-linux\", \"asset_id\": 694146173, \"bytes\": 77129032, \"sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\", \"repository\": \"lightpanda-io/browser\", \"release\": \"nightly\", \"asset_api_url\": \"https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173\", \"download_accept\": \"application/octet-stream\", \"pin_semantics\": \"asset bytes and SHA256; the rolling release tag is not source identity\"}}"
+  },
+  "stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "json": null,
+    "text": ""
+  }
+}

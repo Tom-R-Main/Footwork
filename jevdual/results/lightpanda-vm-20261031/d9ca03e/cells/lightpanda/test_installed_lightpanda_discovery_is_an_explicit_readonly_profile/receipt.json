@@ -1,0 +1,1140 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 12606.491850468,
+      "nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "process_number": 51,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "pid": 28629,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "tools"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "36314a513285c22d7b63648b4e524f1d1ff18bc140b3fd4dcdb00015bb2f9fd4",
+        "bytes": 7756,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "schema_version": "1",
+            "entrypoint": "footwork",
+            "global_options": {
+              "--json": "Prefix before the command; preserves exit status and does not certify effects"
+            },
+            "commands": [
+              "run",
+              "menu",
+              "apps",
+              "start",
+              "look",
+              "inspect-target",
+              "visual-check",
+              "do",
+              "s1",
+              "done",
+              "read",
+              "check-file",
+              "check-artifact",
+              "grant",
+              "snapshot-file",
+              "status"
+            ],
+            "agent_commands": [
+              "tools",
+              "catalog",
+              "schema",
+              "doctor",
+              "invoke",
+              "capability",
+              "mcp",
+              "tool"
+            ],
+            "surfaces": {
+              "browser": {
+                "commands": [
+                  "start",
+                  "check-file",
+                  "do",
+                  "done",
+                  "grant",
+                  "inspect-target",
+                  "look",
+                  "read",
+                  "s1",
+                  "snapshot-file",
+                  "status",
+                  "visual-check",
+                  "cdp",
+                  "lightpanda"
+                ],
+                "route": "legacy Chrome/CUA; owned Chromium CDP; read-only Lightpanda DOM",
+                "cdp": {
+                  "profile": "owned-headless-cdp",
+                  "entrypoint": "footwork browser cdp",
+                  "commands": [
+                    "start",
+                    "look",
+                    "click",
+                    "status",
+                    "recover",
+                    "stop",
+                    "guide"
+                  ],
+                  "requirements": [
+                    "Chrome",
+                    "psutil",
+                    "websockets",
+                    "configured Jev or judgment adapter",
+                    "absolute durable authority"
+                  ],
+                  "desktop_required": false,
+                  "cua_required": false,
+                  "typing": "disabled: unresolved focus race",
+                  "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
+                  "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
+                  "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
+                  "install": "current package metadata still installs full dependencies; light metadata split is pending",
+                  "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user"
+                },
+                "lightpanda": {
+                  "profile": "lightpanda-readonly",
+                  "entrypoint": "footwork browser lightpanda",
+                  "commands": [
+                    "read",
+                    "guide",
+                    "artifact"
+                  ],
+                  "engine": "lightpanda",
+                  "requirements": [
+                    "pinned prebuilt Lightpanda executable",
+                    "psutil",
+                    "websockets",
+                    "Unix peer process identity"
+                  ],
+                  "desktop_required": false,
+                  "cua_required": false,
+                  "model_required": false,
+                  "observation": "bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim",
+                  "typing": "disabled",
+                  "input": "unavailable; no mutation authority or consumable action refs",
+                  "completion": "not_asserted; observation is not task completion",
+                  "lifetime": "one fresh process and one connection per read; no session adoption or reconnect",
+                  "budgets": {
+                    "browser_connections": 1,
+                    "websocket_message_bytes": 4194304,
+                    "dom_nodes": 10000,
+                    "records": 256,
+                    "text_characters": 32768,
+                    "observation_bytes": 262144
+                  },
+                  "install": "external pinned engine; current Footwork metadata still declares full dependencies; light split pending",
+                  "network": "initial URL setup executes website code; read-only describes Footwork input, not website-side effects"
+                }
+              },
+              "desktop": {
+                "commands": [
+                  "run",
+                  "menu",
+                  "apps",
+                  "start",
+                  "look",
+                  "inspect-target",
+                  "visual-check",
+                  "do",
+                  "s1",
+                  "done",
+                  "read",
+                  "check-file",
+                  "check-artifact",
+                  "grant",
+                  "snapshot-file",
+                  "status"
+                ],
+                "route": "native Linux X11/AT-SPI; live target binding required"
+              }
+            },
+            "capability": {
+              "commands": [
+                "doctor",
+                "config",
+                "server",
+                "report"
+              ],
+              "scope": "one configured browser-to-Mousepad job on X11/AT-SPI; Wayland and shared foreground unqualified"
+            },
+            "tools": [
+              {
+                "name": "camera",
+                "commands": [
+                  "doctor",
+                  "capture",
+                  "status"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "ffmpeg; explicit Linux V4L2 device or macOS AVFoundation camera; live device qualification required"
+                ],
+                "missing": [],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/camera-capture-experiment"
+              },
+              {
+                "name": "inbox",
+                "commands": [
+                  "prepare",
+                  "accept",
+                  "status"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "explicit reviewed input; Linux Tesseract with English data or macOS Swift/Vision; ffmpeg for Linux mirror correction"
+                ],
+                "missing": [],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/desk-inbox-experiment"
+              },
+              {
+                "name": "workbench",
+                "commands": [
+                  "link",
+                  "status",
+                  "list"
+                ],
+                "status": "available",
+                "prerequisites": [],
+                "missing": [],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/workbench-notes"
+              },
+              {
+                "name": "workcell",
+                "commands": [
+                  "agent-bench",
+                  "app-handoff",
+                  "bench",
+                  "bench-operator",
+                  "bench-runner",
+                  "body",
+                  "body-network",
+                  "controller",
+                  "episode",
+                  "image-guided",
+                  "measurement",
+                  "network-bench-operator",
+                  "order-app",
+                  "qualify-bench",
+                  "qualify-network-body",
+                  "qualify-network-workbench",
+                  "qualify-order-handoff",
+                  "qualify-workbench-crashes",
+                  "qualify-workbench-health",
+                  "qualify-workbench-recovery",
+                  "qualify-workbench-restarts",
+                  "record-network-workbench",
+                  "score-agent-bench",
+                  "score-network-body",
+                  "score-network-workbench",
+                  "score-operator",
+                  "score-workbench-crashes",
+                  "score-workbench-health",
+                  "score-workbench-recovery",
+                  "score-workbench-restarts"
+                ],
+                "status": "optional_dependencies_missing",
+                "prerequisites": [
+                  "mujoco==3.15.0",
+                  "numpy",
+                  "headless rendering libraries for image operations",
+                  "qualification commands require owned fixture inputs"
+                ],
+                "missing": [
+                  "mujoco",
+                  "numpy"
+                ],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/physical-workcell",
+                "command_prerequisites": {
+                  "record-network-workbench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-bench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-network-body": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-network-workbench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-order-handoff": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-crashes": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-health": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-recovery": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-restarts": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-agent-bench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-network-body": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-network-workbench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-operator": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-crashes": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-health": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-recovery": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-restarts": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ]
+                }
+              },
+              {
+                "name": "browser-inspection",
+                "commands": [
+                  "summarize",
+                  "export"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "Node.js for executable analyses",
+                  "caller-supplied permitted tab/CDP adapter for capture libraries"
+                ],
+                "missing": [],
+                "capture": "adapter_required"
+              },
+              {
+                "name": "inspection-experiments",
+                "commands": [
+                  "compare",
+                  "coverage",
+                  "publication-gate",
+                  "export"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "Node.js for executable analyses",
+                  "caller-supplied permitted tab/CDP adapter for capture libraries"
+                ],
+                "missing": [],
+                "capture": "adapter_required"
+              },
+              {
+                "name": "inspection-transport",
+                "commands": [
+                  "export"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "Node.js for executable analyses",
+                  "caller-supplied permitted tab/CDP adapter for capture libraries"
+                ],
+                "missing": [],
+                "capture": "adapter_required"
+              }
+            ],
+            "effect_semantics": "Read action receipts and resource-bound readback; exit 0 alone is not completion proof"
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"schema_version\": \"1\", \"entrypoint\": \"footwork\", \"global_options\": {\"--json\": \"Prefix before the command; preserves exit status and does not certify effects\"}, \"commands\": [\"run\", \"menu\", \"apps\", \"start\", \"look\", \"inspect-target\", \"visual-check\", \"do\", \"s1\", \"done\", \"read\", \"check-file\", \"check-artifact\", \"grant\", \"snapshot-file\", \"status\"], \"agent_commands\": [\"tools\", \"catalog\", \"schema\", \"doctor\", \"invoke\", \"capability\", \"mcp\", \"tool\"], \"surfaces\": {\"browser\": {\"commands\": [\"start\", \"check-file\", \"do\", \"done\", \"grant\", \"inspect-target\", \"look\", \"read\", \"s1\", \"snapshot-file\", \"status\", \"visual-check\", \"cdp\", \"lightpanda\"], \"route\": \"legacy Chrome/CUA; owned Chromium CDP; read-only Lightpanda DOM\", \"cdp\": {\"profile\": \"owned-headless-cdp\", \"entrypoint\": \"footwork browser cdp\", \"commands\": [\"start\", \"look\", \"click\", \"status\", \"recover\", \"stop\", \"guide\"], \"requirements\": [\"Chrome\", \"psutil\", \"websockets\", \"configured Jev or judgment adapter\", \"absolute durable authority\"], \"desktop_required\": false, \"cua_required\": false, \"typing\": \"disabled: unresolved focus race\", \"activation\": \"dom_event_native_button: directly named plain main-document button[type=button] only\", \"completion\": \"unverified; acknowledgement is not business completion; unknown blocks new mutations\", \"restart\": \"same live holder or retained journal only; no implicit relaunch/adoption/rebinding\", \"install\": \"current package metadata still installs full dependencies; light metadata split is pending\", \"trust\": \"private socket and configured guard; not isolation from arbitrary code running as the same user\"}, \"lightpanda\": {\"profile\": \"lightpanda-readonly\", \"entrypoint\": \"footwork browser lightpanda\", \"commands\": [\"read\", \"guide\", \"artifact\"], \"engine\": \"lightpanda\", \"requirements\": [\"pinned prebuilt Lightpanda executable\", \"psutil\", \"websockets\", \"Unix peer process identity\"], \"desktop_required\": false, \"cua_required\": false, \"model_required\": false, \"observation\": \"bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim\", \"typing\": \"disabled\", \"input\": \"unavailable; no mutation authority or consumable action refs\", \"completion\": \"not_asserted; observation is not task completion\", \"lifetime\": \"one fresh process and one connection per read; no session adoption or reconnect\", \"budgets\": {\"browser_connections\": 1, \"websocket_message_bytes\": 4194304, \"dom_nodes\": 10000, \"records\": 256, \"text_characters\": 32768, \"observation_bytes\": 262144}, \"install\": \"external pinned engine; current Footwork metadata still declares full dependencies; light split pending\", \"network\": \"initial URL setup executes website code; read-only describes Footwork input, not website-side effects\"}}, \"desktop\": {\"commands\": [\"run\", \"menu\", \"apps\", \"start\", \"look\", \"inspect-target\", \"visual-check\", \"do\", \"s1\", \"done\", \"read\", \"check-file\", \"check-artifact\", \"grant\", \"snapshot-file\", \"status\"], \"route\": \"native Linux X11/AT-SPI; live target binding required\"}}, \"capability\": {\"commands\": [\"doctor\", \"config\", \"server\", \"report\"], \"scope\": \"one configured browser-to-Mousepad job on X11/AT-SPI; Wayland and shared foreground unqualified\"}, \"tools\": [{\"name\": \"camera\", \"commands\": [\"doctor\", \"capture\", \"status\"], \"status\": \"available\", \"prerequisites\": [\"ffmpeg; explicit Linux V4L2 device or macOS AVFoundation camera; live device qualification required\"], \"missing\": [], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/camera-capture-experiment\"}, {\"name\": \"inbox\", \"commands\": [\"prepare\", \"accept\", \"status\"], \"status\": \"available\", \"prerequisites\": [\"explicit reviewed input; Linux Tesseract with English data or macOS Swift/Vision; ffmpeg for Linux mirror correction\"], \"missing\": [], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/desk-inbox-experiment\"}, {\"name\": \"workbench\", \"commands\": [\"link\", \"status\", \"list\"], \"status\": \"available\", \"prerequisites\": [], \"missing\": [], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/workbench-notes\"}, {\"name\": \"workcell\", \"commands\": [\"agent-bench\", \"app-handoff\", \"bench\", \"bench-operator\", \"bench-runner\", \"body\", \"body-network\", \"controller\", \"episode\", \"image-guided\", \"measurement\", \"network-bench-operator\", \"order-app\", \"qualify-bench\", \"qualify-network-body\", \"qualify-network-workbench\", \"qualify-order-handoff\", \"qualify-workbench-crashes\", \"qualify-workbench-health\", \"qualify-workbench-recovery\", \"qualify-workbench-restarts\", \"record-network-workbench\", \"score-agent-bench\", \"score-network-body\", \"score-network-workbench\", \"score-operator\", \"score-workbench-crashes\", \"score-workbench-health\", \"score-workbench-recovery\", \"score-workbench-restarts\"], \"status\": \"optional_dependencies_missing\", \"prerequisites\": [\"mujoco==3.15.0\", \"numpy\", \"headless rendering libraries for image operations\", \"qualification commands require owned fixture inputs\"], \"missing\": [\"mujoco\", \"numpy\"], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/physical-workcell\", \"command_prerequisites\": {\"record-network-workbench\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-bench\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-network-body\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-network-workbench\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-order-handoff\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-crashes\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-health\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-recovery\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-restarts\": [\"matching source checkout for Git-frozen research qualification\"], \"score-agent-bench\": [\"matching source checkout for Git-frozen research qualification\"], \"score-network-body\": [\"matching source checkout for Git-frozen research qualification\"], \"score-network-workbench\": [\"matching source checkout for Git-frozen research qualification\"], \"score-operator\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-crashes\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-health\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-recovery\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-restarts\": [\"matching source checkout for Git-frozen research qualification\"]}}, {\"name\": \"browser-inspection\", \"commands\": [\"summarize\", \"export\"], \"status\": \"available\", \"prerequisites\": [\"Node.js for executable analyses\", \"caller-supplied permitted tab/CDP adapter for capture libraries\"], \"missing\": [], \"capture\": \"adapter_required\"}, {\"name\": \"inspection-experiments\", \"commands\": [\"compare\", \"coverage\", \"publication-gate\", \"export\"], \"status\": \"available\", \"prerequisites\": [\"Node.js for executable analyses\", \"caller-supplied permitted tab/CDP adapter for capture libraries\"], \"missing\": [], \"capture\": \"adapter_required\"}, {\"name\": \"inspection-transport\", \"commands\": [\"export\"], \"status\": \"available\", \"prerequisites\": [\"Node.js for executable analyses\", \"caller-supplied permitted tab/CDP adapter for capture libraries\"], \"missing\": [], \"capture\": \"adapter_required\"}], \"effect_semantics\": \"Read action receipts and resource-bound readback; exit 0 alone is not completion proof\"}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12606.552370411,
+      "nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "process_number": 52,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "pid": 28630,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "schema",
+        "browser",
+        "lightpanda",
+        "read"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "5e97307f1e8a13370161ed1d4cdeff0bee08eb72a146e0789023a36b0284c8d2",
+        "bytes": 1081,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "command": [
+              "browser",
+              "lightpanda",
+              "read"
+            ],
+            "arguments": [
+              {
+                "name": "help",
+                "flags": [
+                  "-h",
+                  "--help"
+                ],
+                "required": false,
+                "nargs": 0,
+                "choices": null,
+                "help": "show this help message and exit",
+                "default": "==SUPPRESS=="
+              },
+              {
+                "name": "url",
+                "flags": [],
+                "required": true,
+                "nargs": null,
+                "choices": null,
+                "help": null,
+                "default": null
+              },
+              {
+                "name": "executable",
+                "flags": [
+                  "--executable"
+                ],
+                "required": false,
+                "nargs": null,
+                "choices": null,
+                "help": "pinned prebuilt engine; otherwise FOOTWORK_LIGHTPANDA_EXECUTABLE or PATH",
+                "default": null
+              },
+              {
+                "name": "work_dir",
+                "flags": [
+                  "--work-dir"
+                ],
+                "required": false,
+                "nargs": null,
+                "choices": null,
+                "help": "fresh short absolute engine directory; default private temporary storage",
+                "default": null
+              },
+              {
+                "name": "timeout",
+                "flags": [
+                  "--timeout"
+                ],
+                "required": false,
+                "nargs": null,
+                "choices": null,
+                "help": "overall capture deadline, excluding bounded cleanup",
+                "default": 30.0
+              }
+            ],
+            "subcommands": []
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"command\": [\"browser\", \"lightpanda\", \"read\"], \"arguments\": [{\"name\": \"help\", \"flags\": [\"-h\", \"--help\"], \"required\": false, \"nargs\": 0, \"choices\": null, \"help\": \"show this help message and exit\", \"default\": \"==SUPPRESS==\"}, {\"name\": \"url\", \"flags\": [], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": null, \"default\": null}, {\"name\": \"executable\", \"flags\": [\"--executable\"], \"required\": false, \"nargs\": null, \"choices\": null, \"help\": \"pinned prebuilt engine; otherwise FOOTWORK_LIGHTPANDA_EXECUTABLE or PATH\", \"default\": null}, {\"name\": \"work_dir\", \"flags\": [\"--work-dir\"], \"required\": false, \"nargs\": null, \"choices\": null, \"help\": \"fresh short absolute engine directory; default private temporary storage\", \"default\": null}, {\"name\": \"timeout\", \"flags\": [\"--timeout\"], \"required\": false, \"nargs\": null, \"choices\": null, \"help\": \"overall capture deadline, excluding bounded cleanup\", \"default\": 30.0}], \"subcommands\": []}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12606.620503498,
+      "nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "process_number": 53,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "pid": 28631,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "guide"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "c9bcb4c82b656bb8bad644c150375012a46649ad2874eaa21aafca681b785d9c",
+        "bytes": 2836,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "package_version": "0.0.1",
+            "profile": "lightpanda-readonly",
+            "entrypoint": "footwork browser lightpanda",
+            "commands": [
+              "read",
+              "guide",
+              "artifact"
+            ],
+            "engine": "lightpanda",
+            "requirements": [
+              "pinned prebuilt Lightpanda executable",
+              "psutil",
+              "websockets",
+              "Unix peer process identity"
+            ],
+            "desktop_required": false,
+            "cua_required": false,
+            "model_required": false,
+            "observation": "bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim",
+            "typing": "disabled",
+            "input": "unavailable; no mutation authority or consumable action refs",
+            "completion": "not_asserted; observation is not task completion",
+            "lifetime": "one fresh process and one connection per read; no session adoption or reconnect",
+            "budgets": {
+              "browser_connections": 1,
+              "websocket_message_bytes": 4194304,
+              "dom_nodes": 10000,
+              "records": 256,
+              "text_characters": 32768,
+              "observation_bytes": 262144
+            },
+            "install": "external pinned engine; current Footwork metadata still declares full dependencies; light split pending",
+            "network": "initial URL setup executes website code; read-only describes Footwork input, not website-side effects",
+            "artifact": {
+              "platform": "linux-x86_64",
+              "available": true,
+              "name": "lightpanda-x86_64-linux",
+              "asset_id": 694146173,
+              "bytes": 77129032,
+              "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+              "repository": "lightpanda-io/browser",
+              "release": "nightly",
+              "asset_api_url": "https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173",
+              "download_accept": "application/octet-stream",
+              "pin_semantics": "asset bytes and SHA256; the rolling release tag is not source identity"
+            },
+            "loop": [
+              "artifact: obtain the named external binary through your provisioner and verify its recorded SHA256",
+              "read URL --executable /absolute/lightpanda: load one page and return a bounded semantic observation",
+              "inspect observation limits and cleanup independently; a later read starts a new browser"
+            ],
+            "limits": [
+              "No click, typing, navigation-after-setup, raw JavaScript, raw CDP or durable mutation command is exposed.",
+              "No Jev guard is bypassed: no input mutation can be admitted in this profile.",
+              "Input/editable values, embedded frames and unqualified layout/visibility are withheld by the observer.",
+              "The load event is the setup boundary; complete network idle and future asynchronous content are not asserted.",
+              "Document metadata and content are sampled over an interval; the result grants no later input authority.",
+              "Cleanup uses the original child handle and bounded process inventory; forced death/orphan absence is not guaranteed.",
+              "The private Unix endpoint and peer checks are not isolation from arbitrary same-user code."
+            ]
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"package_version\": \"0.0.1\", \"profile\": \"lightpanda-readonly\", \"entrypoint\": \"footwork browser lightpanda\", \"commands\": [\"read\", \"guide\", \"artifact\"], \"engine\": \"lightpanda\", \"requirements\": [\"pinned prebuilt Lightpanda executable\", \"psutil\", \"websockets\", \"Unix peer process identity\"], \"desktop_required\": false, \"cua_required\": false, \"model_required\": false, \"observation\": \"bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim\", \"typing\": \"disabled\", \"input\": \"unavailable; no mutation authority or consumable action refs\", \"completion\": \"not_asserted; observation is not task completion\", \"lifetime\": \"one fresh process and one connection per read; no session adoption or reconnect\", \"budgets\": {\"browser_connections\": 1, \"websocket_message_bytes\": 4194304, \"dom_nodes\": 10000, \"records\": 256, \"text_characters\": 32768, \"observation_bytes\": 262144}, \"install\": \"external pinned engine; current Footwork metadata still declares full dependencies; light split pending\", \"network\": \"initial URL setup executes website code; read-only describes Footwork input, not website-side effects\", \"artifact\": {\"platform\": \"linux-x86_64\", \"available\": true, \"name\": \"lightpanda-x86_64-linux\", \"asset_id\": 694146173, \"bytes\": 77129032, \"sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\", \"repository\": \"lightpanda-io/browser\", \"release\": \"nightly\", \"asset_api_url\": \"https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173\", \"download_accept\": \"application/octet-stream\", \"pin_semantics\": \"asset bytes and SHA256; the rolling release tag is not source identity\"}, \"loop\": [\"artifact: obtain the named external binary through your provisioner and verify its recorded SHA256\", \"read URL --executable /absolute/lightpanda: load one page and return a bounded semantic observation\", \"inspect observation limits and cleanup independently; a later read starts a new browser\"], \"limits\": [\"No click, typing, navigation-after-setup, raw JavaScript, raw CDP or durable mutation command is exposed.\", \"No Jev guard is bypassed: no input mutation can be admitted in this profile.\", \"Input/editable values, embedded frames and unqualified layout/visibility are withheld by the observer.\", \"The load event is the setup boundary; complete network idle and future asynchronous content are not asserted.\", \"Document metadata and content are sampled over an interval; the result grants no later input authority.\", \"Cleanup uses the original child handle and bounded process inventory; forced death/orphan absence is not guaranteed.\", \"The private Unix endpoint and peer checks are not isolation from arbitrary same-user code.\"]}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12606.780514733,
+      "nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "process_number": 54,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+      "pid": 28632,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "doctor"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "6c731bac1f8c74a5ffc90a35ce40b4aca124594dddf3e6460449722c07fa6e63",
+        "bytes": 13885,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "platform": "linux",
+            "supported": true,
+            "runtime": {
+              "python_version": "3.12.14",
+              "python_requirement": ">=3.11,<4.0",
+              "python_compatible": true,
+              "interpreter": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/python",
+              "architecture": "x86_64",
+              "distribution": {
+                "version": "0.0.1",
+                "location": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages"
+              },
+              "loaded_modules": {
+                "jevdual": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages/jevdual/__init__.py",
+                "jevdual.capability.setup": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages/jevdual/capability/setup.py"
+              }
+            },
+            "dependencies": {
+              "browser-use": {
+                "version": null,
+                "requirement": "==0.13.14",
+                "compatible": false,
+                "location": null
+              },
+              "typesafe-sdk": {
+                "version": null,
+                "requirement": "<1,>=0.7",
+                "compatible": false,
+                "location": null
+              },
+              "orjson": {
+                "version": null,
+                "requirement": ">=3.10",
+                "compatible": false,
+                "location": null
+              },
+              "psutil": {
+                "version": "7.2.2",
+                "requirement": "==7.2.2",
+                "compatible": true,
+                "location": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages"
+              },
+              "websockets": {
+                "version": "15.0.1",
+                "requirement": "==15.0.1",
+                "compatible": true,
+                "location": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages"
+              },
+              "mcp": {
+                "version": null,
+                "requirement": "==2.1.1",
+                "compatible": false,
+                "location": null
+              },
+              "packaging": {
+                "version": "26.3",
+                "requirement": "<27,>=25",
+                "compatible": true,
+                "location": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages"
+              },
+              "cua-driver": {
+                "version": null,
+                "requirement": "==0.38.0+footwork.d5373879.cleanup2",
+                "compatible": false,
+                "location": null
+              },
+              "jeepney": {
+                "version": null,
+                "requirement": "==0.9.0",
+                "compatible": false,
+                "location": null
+              }
+            },
+            "dependency_status": "blocked",
+            "permissions": {
+              "accessibility": "not_checked",
+              "screen_recording": "not_checked",
+              "session": {
+                "x11_display_present": false,
+                "dbus_session_present": false,
+                "wayland_display_present": false,
+                "connection": "not_checked"
+              },
+              "requirements": [
+                "An accessible X11 display and D-Bus desktop session.",
+                "AT-SPI accessibility access to the explicitly bound process and window.",
+                "Live observation and exact text readback before input; environment presence grants no access."
+              ]
+            },
+            "scope": "not_checked",
+            "journal": "not_checked",
+            "warnings": [
+              "Linux X11/AT-SPI access is checked by a live target bind, not this prerequisite report. Wayland and shared foreground input are not qualified."
+            ],
+            "dependency_metadata": "installed distribution",
+            "limitation": "Linux X11/AT-SPI only: one loopback HTTP browser fixture and one identified Mousepad document. Session access, window identity and exact text are checked when binding. Wayland and shared foreground input are not qualified.",
+            "runtime_qualification": "not_checked",
+            "provider_account_required": false,
+            "rust_toolchain_required": false,
+            "blockers": [
+              "dependency_missing",
+              "accessibility_not_checked",
+              "x11_display_not_configured",
+              "session_bus_not_configured"
+            ],
+            "prerequisite_status": "blocked",
+            "qualification": "Prerequisites only. Window identity, current state, effects and job completion require separate checks.",
+            "acceleration": {
+              "component": "jevdual._core",
+              "available": false,
+              "status": "disabled",
+              "backend": "pure-python",
+              "scope": "Optional Jev Rust hot paths; independent of the CUA native driver"
+            },
+            "host_prerequisites": {
+              "schema_version": 1,
+              "platform": "linux",
+              "architecture": "x86_64",
+              "kernel": "6.18.57",
+              "libc": "glibc 2.41",
+              "distribution": {
+                "PRETTY_NAME": "Debian GNU/Linux 13 (trixie)",
+                "VERSION_ID": "13",
+                "ID": "debian"
+              },
+              "python": {
+                "version": "3.12.14",
+                "pip_module": false,
+                "venv_module": true,
+                "ensurepip_module": true
+              },
+              "resources": {
+                "memory": {
+                  "total_bytes": 18882662400,
+                  "available_bytes": 17740611584
+                },
+                "cgroup": {
+                  "versions": [
+                    2
+                  ],
+                  "membership_readable": true,
+                  "memory_limit_bytes": 17179869184,
+                  "memory_remaining_bytes": 15102283776,
+                  "cpu_quota_cores": 4.0,
+                  "scope": "visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified",
+                  "null_limit_meaning": "no finite limit observed, not proof of unlimited resources",
+                  "pids_limit": null,
+                  "pids_remaining_upper_bound": null,
+                  "swap_limit_bytes": null,
+                  "memory_and_swap_limit_bytes": null,
+                  "task_swap_event_snapshots": [
+                    {
+                      "path": ".",
+                      "pids_limit": null,
+                      "pids_current": 279,
+                      "pids_events": {
+                        "max": 0
+                      },
+                      "swap_limit_bytes": null,
+                      "swap_current_bytes": 0,
+                      "swap_events": {
+                        "high": 0,
+                        "max": 0,
+                        "fail": 0
+                      },
+                      "memory_events": {
+                        "low": 0,
+                        "high": 0,
+                        "max": 0,
+                        "oom": 0,
+                        "oom_kill": 0,
+                        "oom_group_kill": 0
+                      },
+                      "memory_failcnt": null,
+                      "memory_and_swap_failcnt": null
+                    }
+                  ],
+                  "counter_scope": "bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown"
+                },
+                "available_memory_upper_bound_bytes": 15102283776,
+                "cpu_count": 5,
+                "cpu_affinity_count": 5
+              },
+              "process_supervision": {
+                "pid1_comm": "tail",
+                "self_parent_pid": 23616,
+                "pid1_is_self": false,
+                "orphan_reaping": "not_checked",
+                "wait_ownership": "not_checked"
+              },
+              "executables_present": {
+                "uv": true,
+                "pip": true,
+                "pip3": true,
+                "rustc": false,
+                "cargo": false,
+                "rustup": false,
+                "cc": true,
+                "clang": false,
+                "pkg-config": true,
+                "google-chrome": false,
+                "google-chrome-stable": false,
+                "chromium": true,
+                "chromium-browser": false,
+                "dbus-run-session": true,
+                "dbus-send": true,
+                "gdbus": true,
+                "Xvfb": false,
+                "node": true,
+                "ffmpeg": true,
+                "tesseract": true
+              },
+              "session_indicators_present": {
+                "DISPLAY": false,
+                "WAYLAND_DISPLAY": false,
+                "DBUS_SESSION_BUS_ADDRESS": false,
+                "XDG_RUNTIME_DIR": false
+              },
+              "prerequisite_candidates": {
+                "browser_executable": true,
+                "graphical_session_indicator": false,
+                "session_bus_indicator": false
+              },
+              "runtime_qualification": "unverified",
+              "effect_verification": "not_asserted",
+              "limitations": [
+                "Executable and environment presence do not establish connection, permissions, or driver support.",
+                "No browser, desktop, accessibility service, native CUA library, or provider was started or queried.",
+                "Resource values are a transient upper bound, not a reservation or build-capacity guarantee.",
+                "Prebuilt installation avoids compilers; Python fallback does not replace native CUA desktop control."
+              ]
+            },
+            "tool_families": [
+              {
+                "name": "camera",
+                "commands": [
+                  "doctor",
+                  "capture",
+                  "status"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "ffmpeg; explicit Linux V4L2 device or macOS AVFoundation camera; live device qualification required"
+                ],
+                "missing": [],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/camera-capture-experiment"
+              },
+              {
+                "name": "inbox",
+                "commands": [
+                  "prepare",
+                  "accept",
+                  "status"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "explicit reviewed input; Linux Tesseract with English data or macOS Swift/Vision; ffmpeg for Linux mirror correction"
+                ],
+                "missing": [],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/desk-inbox-experiment"
+              },
+              {
+                "name": "workbench",
+                "commands": [
+                  "link",
+                  "status",
+                  "list"
+                ],
+                "status": "available",
+                "prerequisites": [],
+                "missing": [],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/workbench-notes"
+              },
+              {
+                "name": "workcell",
+                "commands": [
+                  "agent-bench",
+                  "app-handoff",
+                  "bench",
+                  "bench-operator",
+                  "bench-runner",
+                  "body",
+                  "body-network",
+                  "controller",
+                  "episode",
+                  "image-guided",
+                  "measurement",
+                  "network-bench-operator",
+                  "order-app",
+                  "qualify-bench",
+                  "qualify-network-body",
+                  "qualify-network-workbench",
+                  "qualify-order-handoff",
+                  "qualify-workbench-crashes",
+                  "qualify-workbench-health",
+                  "qualify-workbench-recovery",
+                  "qualify-workbench-restarts",
+                  "record-network-workbench",
+                  "score-agent-bench",
+                  "score-network-body",
+                  "score-network-workbench",
+                  "score-operator",
+                  "score-workbench-crashes",
+                  "score-workbench-health",
+                  "score-workbench-recovery",
+                  "score-workbench-restarts"
+                ],
+                "status": "optional_dependencies_missing",
+                "prerequisites": [
+                  "mujoco==3.15.0",
+                  "numpy",
+                  "headless rendering libraries for image operations",
+                  "qualification commands require owned fixture inputs"
+                ],
+                "missing": [
+                  "mujoco",
+                  "numpy"
+                ],
+                "output_root": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/physical-workcell",
+                "command_prerequisites": {
+                  "record-network-workbench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-bench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-network-body": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-network-workbench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-order-handoff": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-crashes": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-health": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-recovery": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "qualify-workbench-restarts": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-agent-bench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-network-body": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-network-workbench": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-operator": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-crashes": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-health": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-recovery": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ],
+                  "score-workbench-restarts": [
+                    "matching source checkout for Git-frozen research qualification"
+                  ]
+                }
+              },
+              {
+                "name": "browser-inspection",
+                "commands": [
+                  "summarize",
+                  "export"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "Node.js for executable analyses",
+                  "caller-supplied permitted tab/CDP adapter for capture libraries"
+                ],
+                "missing": [],
+                "capture": "adapter_required"
+              },
+              {
+                "name": "inspection-experiments",
+                "commands": [
+                  "compare",
+                  "coverage",
+                  "publication-gate",
+                  "export"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "Node.js for executable analyses",
+                  "caller-supplied permitted tab/CDP adapter for capture libraries"
+                ],
+                "missing": [],
+                "capture": "adapter_required"
+              },
+              {
+                "name": "inspection-transport",
+                "commands": [
+                  "export"
+                ],
+                "status": "available",
+                "prerequisites": [
+                  "Node.js for executable analyses",
+                  "caller-supplied permitted tab/CDP adapter for capture libraries"
+                ],
+                "missing": [],
+                "capture": "adapter_required"
+              }
+            ],
+            "browser_profiles": {
+              "cdp": {
+                "profile": "owned-headless-cdp",
+                "entrypoint": "footwork browser cdp",
+                "commands": [
+                  "start",
+                  "look",
+                  "click",
+                  "status",
+                  "recover",
+                  "stop",
+                  "guide"
+                ],
+                "requirements": [
+                  "Chrome",
+                  "psutil",
+                  "websockets",
+                  "configured Jev or judgment adapter",
+                  "absolute durable authority"
+                ],
+                "desktop_required": false,
+                "cua_required": false,
+                "typing": "disabled: unresolved focus race",
+                "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
+                "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
+                "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
+                "install": "current package metadata still installs full dependencies; light metadata split is pending",
+                "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user",
+                "prerequisite_presence": {
+                  "chrome": true,
+                  "psutil": true,
+                  "websockets": true,
+                  "jev_environment_configured": false,
+                  "judgment_adapter": "explicit per-session configuration; not checked by offline doctor"
+                },
+                "runtime_qualification": "not_checked"
+              },
+              "legacy": {
+                "profile": "full-desktop",
+                "requires": [
+                  "CUA",
+                  "X11/AT-SPI on Linux"
+                ]
+              },
+              "lightpanda": {
+                "profile": "lightpanda-readonly",
+                "entrypoint": "footwork browser lightpanda",
+                "commands": [
+                  "read",
+                  "guide",
+                  "artifact"
+                ],
+                "engine": "lightpanda",
+                "requirements": [
+                  "pinned prebuilt Lightpanda executable",
+                  "psutil",
+                  "websockets",
+                  "Unix peer process identity"
+                ],
+                "desktop_required": false,
+                "cua_required": false,
+                "model_required": false,
+                "observation": "bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim",
+                "typing": "disabled",
+                "input": "unavailable; no mutation authority or consumable action refs",
+                "completion": "not_asserted; observation is not task completion",
+                "lifetime": "one fresh process and one connection per read; no session adoption or reconnect",
+                "budgets": {
+                  "browser_connections": 1,
+                  "websocket_message_bytes": 4194304,
+                  "dom_nodes": 10000,
+                  "records": 256,
+                  "text_characters": 32768,
+                  "observation_bytes": 262144
+                },
+                "install": "external pinned engine; current Footwork metadata still declares full dependencies; light split pending",
+                "network": "initial URL setup executes website code; read-only describes Footwork input, not website-side effects",
+                "artifact": {
+                  "platform": "linux-x86_64",
+                  "available": true,
+                  "name": "lightpanda-x86_64-linux",
+                  "asset_id": 694146173,
+                  "bytes": 77129032,
+                  "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+                  "repository": "lightpanda-io/browser",
+                  "release": "nightly",
+                  "asset_api_url": "https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173",
+                  "download_accept": "application/octet-stream",
+                  "pin_semantics": "asset bytes and SHA256; the rolling release tag is not source identity"
+                },
+                "prerequisite_presence": {
+                  "engine_found": true,
+                  "engine_matches_pin": true,
+                  "psutil": true,
+                  "websockets": true
+                },
+                "runtime_qualification": "not_checked"
+              }
+            },
+            "profile_note": "Native desktop blockers do not apply to the explicit headless browser profiles; runtime qualification is checked separately.",
+            "effect_verification": "not_asserted"
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"platform\": \"linux\", \"supported\": true, \"runtime\": {\"python_version\": \"3.12.14\", \"python_requirement\": \">=3.11,<4.0\", \"python_compatible\": true, \"interpreter\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/python\", \"architecture\": \"x86_64\", \"distribution\": {\"version\": \"0.0.1\", \"location\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages\"}, \"loaded_modules\": {\"jevdual\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages/jevdual/__init__.py\", \"jevdual.capability.setup\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages/jevdual/capability/setup.py\"}}, \"dependencies\": {\"browser-use\": {\"version\": null, \"requirement\": \"==0.13.14\", \"compatible\": false, \"location\": null}, \"typesafe-sdk\": {\"version\": null, \"requirement\": \"<1,>=0.7\", \"compatible\": false, \"location\": null}, \"orjson\": {\"version\": null, \"requirement\": \">=3.10\", \"compatible\": false, \"location\": null}, \"psutil\": {\"version\": \"7.2.2\", \"requirement\": \"==7.2.2\", \"compatible\": true, \"location\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages\"}, \"websockets\": {\"version\": \"15.0.1\", \"requirement\": \"==15.0.1\", \"compatible\": true, \"location\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages\"}, \"mcp\": {\"version\": null, \"requirement\": \"==2.1.1\", \"compatible\": false, \"location\": null}, \"packaging\": {\"version\": \"26.3\", \"requirement\": \"<27,>=25\", \"compatible\": true, \"location\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/lib/python3.12/site-packages\"}, \"cua-driver\": {\"version\": null, \"requirement\": \"==0.38.0+footwork.d5373879.cleanup2\", \"compatible\": false, \"location\": null}, \"jeepney\": {\"version\": null, \"requirement\": \"==0.9.0\", \"compatible\": false, \"location\": null}}, \"dependency_status\": \"blocked\", \"permissions\": {\"accessibility\": \"not_checked\", \"screen_recording\": \"not_checked\", \"session\": {\"x11_display_present\": false, \"dbus_session_present\": false, \"wayland_display_present\": false, \"connection\": \"not_checked\"}, \"requirements\": [\"An accessible X11 display and D-Bus desktop session.\", \"AT-SPI accessibility access to the explicitly bound process and window.\", \"Live observation and exact text readback before input; environment presence grants no access.\"]}, \"scope\": \"not_checked\", \"journal\": \"not_checked\", \"warnings\": [\"Linux X11/AT-SPI access is checked by a live target bind, not this prerequisite report. Wayland and shared foreground input are not qualified.\"], \"dependency_metadata\": \"installed distribution\", \"limitation\": \"Linux X11/AT-SPI only: one loopback HTTP browser fixture and one identified Mousepad document. Session access, window identity and exact text are checked when binding. Wayland and shared foreground input are not qualified.\", \"runtime_qualification\": \"not_checked\", \"provider_account_required\": false, \"rust_toolchain_required\": false, \"blockers\": [\"dependency_missing\", \"accessibility_not_checked\", \"x11_display_not_configured\", \"session_bus_not_configured\"], \"prerequisite_status\": \"blocked\", \"qualification\": \"Prerequisites only. Window identity, current state, effects and job completion require separate checks.\", \"acceleration\": {\"component\": \"jevdual._core\", \"available\": false, \"status\": \"disabled\", \"backend\": \"pure-python\", \"scope\": \"Optional Jev Rust hot paths; independent of the CUA native driver\"}, \"host_prerequisites\": {\"schema_version\": 1, \"platform\": \"linux\", \"architecture\": \"x86_64\", \"kernel\": \"6.18.57\", \"libc\": \"glibc 2.41\", \"distribution\": {\"PRETTY_NAME\": \"Debian GNU/Linux 13 (trixie)\", \"VERSION_ID\": \"13\", \"ID\": \"debian\"}, \"python\": {\"version\": \"3.12.14\", \"pip_module\": false, \"venv_module\": true, \"ensurepip_module\": true}, \"resources\": {\"memory\": {\"total_bytes\": 18882662400, \"available_bytes\": 17740611584}, \"cgroup\": {\"versions\": [2], \"membership_readable\": true, \"memory_limit_bytes\": 17179869184, \"memory_remaining_bytes\": 15102283776, \"cpu_quota_cores\": 4.0, \"scope\": \"visible standard cgroup mounts and ancestors; hidden or custom mounts are unverified\", \"null_limit_meaning\": \"no finite limit observed, not proof of unlimited resources\", \"pids_limit\": null, \"pids_remaining_upper_bound\": null, \"swap_limit_bytes\": null, \"memory_and_swap_limit_bytes\": null, \"task_swap_event_snapshots\": [{\"path\": \".\", \"pids_limit\": null, \"pids_current\": 279, \"pids_events\": {\"max\": 0}, \"swap_limit_bytes\": null, \"swap_current_bytes\": 0, \"swap_events\": {\"high\": 0, \"max\": 0, \"fail\": 0}, \"memory_events\": {\"low\": 0, \"high\": 0, \"max\": 0, \"oom\": 0, \"oom_kill\": 0, \"oom_group_kill\": 0}, \"memory_failcnt\": null, \"memory_and_swap_failcnt\": null}], \"counter_scope\": \"bounded visible hierarchy snapshots; missing/delegated/hidden counters remain unknown\"}, \"available_memory_upper_bound_bytes\": 15102283776, \"cpu_count\": 5, \"cpu_affinity_count\": 5}, \"process_supervision\": {\"pid1_comm\": \"tail\", \"self_parent_pid\": 23616, \"pid1_is_self\": false, \"orphan_reaping\": \"not_checked\", \"wait_ownership\": \"not_checked\"}, \"executables_present\": {\"uv\": true, \"pip\": true, \"pip3\": true, \"rustc\": false, \"cargo\": false, \"rustup\": false, \"cc\": true, \"clang\": false, \"pkg-config\": true, \"google-chrome\": false, \"google-chrome-stable\": false, \"chromium\": true, \"chromium-browser\": false, \"dbus-run-session\": true, \"dbus-send\": true, \"gdbus\": true, \"Xvfb\": false, \"node\": true, \"ffmpeg\": true, \"tesseract\": true}, \"session_indicators_present\": {\"DISPLAY\": false, \"WAYLAND_DISPLAY\": false, \"DBUS_SESSION_BUS_ADDRESS\": false, \"XDG_RUNTIME_DIR\": false}, \"prerequisite_candidates\": {\"browser_executable\": true, \"graphical_session_indicator\": false, \"session_bus_indicator\": false}, \"runtime_qualification\": \"unverified\", \"effect_verification\": \"not_asserted\", \"limitations\": [\"Executable and environment presence do not establish connection, permissions, or driver support.\", \"No browser, desktop, accessibility service, native CUA library, or provider was started or queried.\", \"Resource values are a transient upper bound, not a reservation or build-capacity guarantee.\", \"Prebuilt installation avoids compilers; Python fallback does not replace native CUA desktop control.\"]}, \"tool_families\": [{\"name\": \"camera\", \"commands\": [\"doctor\", \"capture\", \"status\"], \"status\": \"available\", \"prerequisites\": [\"ffmpeg; explicit Linux V4L2 device or macOS AVFoundation camera; live device qualification required\"], \"missing\": [], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/camera-capture-experiment\"}, {\"name\": \"inbox\", \"commands\": [\"prepare\", \"accept\", \"status\"], \"status\": \"available\", \"prerequisites\": [\"explicit reviewed input; Linux Tesseract with English data or macOS Swift/Vision; ffmpeg for Linux mirror correction\"], \"missing\": [], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/desk-inbox-experiment\"}, {\"name\": \"workbench\", \"commands\": [\"link\", \"status\", \"list\"], \"status\": \"available\", \"prerequisites\": [], \"missing\": [], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/workbench-notes\"}, {\"name\": \"workcell\", \"commands\": [\"agent-bench\", \"app-handoff\", \"bench\", \"bench-operator\", \"bench-runner\", \"body\", \"body-network\", \"controller\", \"episode\", \"image-guided\", \"measurement\", \"network-bench-operator\", \"order-app\", \"qualify-bench\", \"qualify-network-body\", \"qualify-network-workbench\", \"qualify-order-handoff\", \"qualify-workbench-crashes\", \"qualify-workbench-health\", \"qualify-workbench-recovery\", \"qualify-workbench-restarts\", \"record-network-workbench\", \"score-agent-bench\", \"score-network-body\", \"score-network-workbench\", \"score-operator\", \"score-workbench-crashes\", \"score-workbench-health\", \"score-workbench-recovery\", \"score-workbench-restarts\"], \"status\": \"optional_dependencies_missing\", \"prerequisites\": [\"mujoco==3.15.0\", \"numpy\", \"headless rendering libraries for image operations\", \"qualification commands require owned fixture inputs\"], \"missing\": [\"mujoco\", \"numpy\"], \"output_root\": \"/workspace/scratch/footwork-lightpanda-d9ca03e/tests/.footwork/tools/physical-workcell\", \"command_prerequisites\": {\"record-network-workbench\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-bench\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-network-body\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-network-workbench\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-order-handoff\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-crashes\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-health\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-recovery\": [\"matching source checkout for Git-frozen research qualification\"], \"qualify-workbench-restarts\": [\"matching source checkout for Git-frozen research qualification\"], \"score-agent-bench\": [\"matching source checkout for Git-frozen research qualification\"], \"score-network-body\": [\"matching source checkout for Git-frozen research qualification\"], \"score-network-workbench\": [\"matching source checkout for Git-frozen research qualification\"], \"score-operator\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-crashes\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-health\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-recovery\": [\"matching source checkout for Git-frozen research qualification\"], \"score-workbench-restarts\": [\"matching source checkout for Git-frozen research qualification\"]}}, {\"name\": \"browser-inspection\", \"commands\": [\"summarize\", \"export\"], \"status\": \"available\", \"prerequisites\": [\"Node.js for executable analyses\", \"caller-supplied permitted tab/CDP adapter for capture libraries\"], \"missing\": [], \"capture\": \"adapter_required\"}, {\"name\": \"inspection-experiments\", \"commands\": [\"compare\", \"coverage\", \"publication-gate\", \"export\"], \"status\": \"available\", \"prerequisites\": [\"Node.js for executable analyses\", \"caller-supplied permitted tab/CDP adapter for capture libraries\"], \"missing\": [], \"capture\": \"adapter_required\"}, {\"name\": \"inspection-transport\", \"commands\": [\"export\"], \"status\": \"available\", \"prerequisites\": [\"Node.js for executable analyses\", \"caller-supplied permitted tab/CDP adapter for capture libraries\"], \"missing\": [], \"capture\": \"adapter_required\"}], \"browser_profiles\": {\"cdp\": {\"profile\": \"owned-headless-cdp\", \"entrypoint\": \"footwork browser cdp\", \"commands\": [\"start\", \"look\", \"click\", \"status\", \"recover\", \"stop\", \"guide\"], \"requirements\": [\"Chrome\", \"psutil\", \"websockets\", \"configured Jev or judgment adapter\", \"absolute durable authority\"], \"desktop_required\": false, \"cua_required\": false, \"typing\": \"disabled: unresolved focus race\", \"activation\": \"dom_event_native_button: directly named plain main-document button[type=button] only\", \"completion\": \"unverified; acknowledgement is not business completion; unknown blocks new mutations\", \"restart\": \"same live holder or retained journal only; no implicit relaunch/adoption/rebinding\", \"install\": \"current package metadata still installs full dependencies; light metadata split is pending\", \"trust\": \"private socket and configured guard; not isolation from arbitrary code running as the same user\", \"prerequisite_presence\": {\"chrome\": true, \"psutil\": true, \"websockets\": true, \"jev_environment_configured\": false, \"judgment_adapter\": \"explicit per-session configuration; not checked by offline doctor\"}, \"runtime_qualification\": \"not_checked\"}, \"legacy\": {\"profile\": \"full-desktop\", \"requires\": [\"CUA\", \"X11/AT-SPI on Linux\"]}, \"lightpanda\": {\"profile\": \"lightpanda-readonly\", \"entrypoint\": \"footwork browser lightpanda\", \"commands\": [\"read\", \"guide\", \"artifact\"], \"engine\": \"lightpanda\", \"requirements\": [\"pinned prebuilt Lightpanda executable\", \"psutil\", \"websockets\", \"Unix peer process identity\"], \"desktop_required\": false, \"cua_required\": false, \"model_required\": false, \"observation\": \"bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim\", \"typing\": \"disabled\", \"input\": \"unavailable; no mutation authority or consumable action refs\", \"completion\": \"not_asserted; observation is not task completion\", \"lifetime\": \"one fresh process and one connection per read; no session adoption or reconnect\", \"budgets\": {\"browser_connections\": 1, \"websocket_message_bytes\": 4194304, \"dom_nodes\": 10000, \"records\": 256, \"text_characters\": 32768, \"observation_bytes\": 262144}, \"install\": \"external pinned engine; current Footwork metadata still declares full dependencies; light split pending\", \"network\": \"initial URL setup executes website code; read-only describes Footwork input, not website-side effects\", \"artifact\": {\"platform\": \"linux-x86_64\", \"available\": true, \"name\": \"lightpanda-x86_64-linux\", \"asset_id\": 694146173, \"bytes\": 77129032, \"sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\", \"repository\": \"lightpanda-io/browser\", \"release\": \"nightly\", \"asset_api_url\": \"https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173\", \"download_accept\": \"application/octet-stream\", \"pin_semantics\": \"asset bytes and SHA256; the rolling release tag is not source identity\"}, \"prerequisite_presence\": {\"engine_found\": true, \"engine_matches_pin\": true, \"psutil\": true, \"websockets\": true}, \"runtime_qualification\": \"not_checked\"}}, \"profile_note\": \"Native desktop blockers do not apply to the explicit headless browser profiles; runtime qualification is checked separately.\", \"effect_verification\": \"not_asserted\"}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

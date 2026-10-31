@@ -1,0 +1,69 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_invalid_url_refuses_before_engine_start[https://u:p@example.test/]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 12607.373986599,
+      "nodeid": "test_lightpanda_cli.py::test_invalid_url_refuses_before_engine_start[https://u:p@example.test/]",
+      "process_number": 63,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_invalid_url_refuses_before_engine_start[https://u:p@example.test/]",
+      "pid": 28641,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "read",
+        "https://u:p@example.test/"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "ab37c1e43241efb189b2efdacd5b851d7d5a120508d36af18d4c0f7b1bac1d30",
+        "bytes": 564,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "schema_version": "1",
+            "profile": "lightpanda-readonly",
+            "ok": false,
+            "code": "lightpanda_url_invalid",
+            "capture_completed": false,
+            "cleanup": {
+              "status": "not_started"
+            },
+            "process_started": false,
+            "message": "Read unavailable; inspect code and cleanup. No automatic fallback.",
+            "input": {
+              "supported": false,
+              "dispatched": false
+            },
+            "completion": "not_asserted",
+            "network_effects": "not_asserted",
+            "retryable": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"schema_version\": \"1\", \"profile\": \"lightpanda-readonly\", \"ok\": false, \"code\": \"lightpanda_url_invalid\", \"capture_completed\": false, \"cleanup\": {\"status\": \"not_started\"}, \"process_started\": false, \"message\": \"Read unavailable; inspect code and cleanup. No automatic fallback.\", \"input\": {\"supported\": false, \"dispatched\": false}, \"completion\": \"not_asserted\", \"network_effects\": \"not_asserted\", \"retryable\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

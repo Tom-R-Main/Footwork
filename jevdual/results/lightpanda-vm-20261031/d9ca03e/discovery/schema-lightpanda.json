@@ -1,0 +1,103 @@
+{
+  "kind": "communicate",
+  "monotonic": 12606.552370411,
+  "nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+  "process_number": 52,
+  "process_kind": "public_cli",
+  "owner_nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+  "pid": 28630,
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+    "--json",
+    "schema",
+    "browser",
+    "lightpanda",
+    "read"
+  ],
+  "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+  "returncode": 0,
+  "signal": null,
+  "stdout": {
+    "sha256": "5e97307f1e8a13370161ed1d4cdeff0bee08eb72a146e0789023a36b0284c8d2",
+    "bytes": 1081,
+    "json": {
+      "schema_version": "1",
+      "exit_code": 0,
+      "command_completed": true,
+      "effect_verification": "not_asserted",
+      "output": "",
+      "diagnostics": "",
+      "data": {
+        "command": [
+          "browser",
+          "lightpanda",
+          "read"
+        ],
+        "arguments": [
+          {
+            "name": "help",
+            "flags": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "nargs": 0,
+            "choices": null,
+            "help": "show this help message and exit",
+            "default": "==SUPPRESS=="
+          },
+          {
+            "name": "url",
+            "flags": [],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": null,
+            "default": null
+          },
+          {
+            "name": "executable",
+            "flags": [
+              "--executable"
+            ],
+            "required": false,
+            "nargs": null,
+            "choices": null,
+            "help": "pinned prebuilt engine; otherwise FOOTWORK_LIGHTPANDA_EXECUTABLE or PATH",
+            "default": null
+          },
+          {
+            "name": "work_dir",
+            "flags": [
+              "--work-dir"
+            ],
+            "required": false,
+            "nargs": null,
+            "choices": null,
+            "help": "fresh short absolute engine directory; default private temporary storage",
+            "default": null
+          },
+          {
+            "name": "timeout",
+            "flags": [
+              "--timeout"
+            ],
+            "required": false,
+            "nargs": null,
+            "choices": null,
+            "help": "overall capture deadline, excluding bounded cleanup",
+            "default": 30.0
+          }
+        ],
+        "subcommands": []
+      }
+    },
+    "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"command\": [\"browser\", \"lightpanda\", \"read\"], \"arguments\": [{\"name\": \"help\", \"flags\": [\"-h\", \"--help\"], \"required\": false, \"nargs\": 0, \"choices\": null, \"help\": \"show this help message and exit\", \"default\": \"==SUPPRESS==\"}, {\"name\": \"url\", \"flags\": [], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": null, \"default\": null}, {\"name\": \"executable\", \"flags\": [\"--executable\"], \"required\": false, \"nargs\": null, \"choices\": null, \"help\": \"pinned prebuilt engine; otherwise FOOTWORK_LIGHTPANDA_EXECUTABLE or PATH\", \"default\": null}, {\"name\": \"work_dir\", \"flags\": [\"--work-dir\"], \"required\": false, \"nargs\": null, \"choices\": null, \"help\": \"fresh short absolute engine directory; default private temporary storage\", \"default\": null}, {\"name\": \"timeout\", \"flags\": [\"--timeout\"], \"required\": false, \"nargs\": null, \"choices\": null, \"help\": \"overall capture deadline, excluding bounded cleanup\", \"default\": 30.0}], \"subcommands\": []}}"
+  },
+  "stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "json": null,
+    "text": ""
+  }
+}

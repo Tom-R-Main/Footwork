@@ -1,0 +1,346 @@
+{
+  "source": "d9ca03ee60d0f4f7f066a734113f361ae87cd2c3",
+  "wheel_sha256": "90790706d08d4799dc4a9a0559a74d575b7a89026bf6cf4ca4e1f12db0052909",
+  "total": 303,
+  "passed": 303,
+  "failed": 0,
+  "skipped": 0,
+  "by_module": {
+    "test_browser_cdp_cli": 3,
+    "test_browser_durable_authority": 49,
+    "test_browser_guard": 6,
+    "test_browser_holder": 20,
+    "test_browser_restart_cli": 3,
+    "test_browser_startup_cli": 3,
+    "test_browser_startup_lifecycle": 6,
+    "test_cdp_click": 30,
+    "test_cdp_click_contract": 33,
+    "test_cdp_effector": 17,
+    "test_cdp_launch_custody": 10,
+    "test_cdp_transport_deadline": 21,
+    "test_lightpanda_cli": 23,
+    "test_lightpanda_launch": 37,
+    "test_lightpanda_observation": 42
+  },
+  "runtime_cells": {
+    "cdp/client-lost-ack": {
+      "fixture_records": [
+        {
+          "posts": [
+            "intended"
+          ],
+          "request_paths": null
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "cdp/missing-guard": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": null
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "cdp/prepared": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": null
+        }
+      ],
+      "markers": [
+        {
+          "boundary": "prepared",
+          "operation_id": "op_fb3ec0778b50",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "startup_reports": []
+    },
+    "cdp/started": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": null
+        }
+      ],
+      "markers": [
+        {
+          "boundary": "started",
+          "operation_id": "op_489532d0413b",
+          "ingress_before_exit": null,
+          "heavy_imports": []
+        }
+      ],
+      "startup_reports": []
+    },
+    "cdp/retained": {
+      "fixture_records": [
+        {
+          "posts": [
+            "intended"
+          ],
+          "request_paths": null
+        }
+      ],
+      "markers": [
+        {
+          "boundary": "retained",
+          "operation_id": "op_93f2346aaf39",
+          "ingress_before_exit": 1,
+          "heavy_imports": []
+        }
+      ],
+      "startup_reports": []
+    },
+    "cdp/startup-launch-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "launch",
+          "pid": 24271,
+          "start": 1793479016.05,
+          "captured": {
+            "24271": 1793479016.05,
+            "24278": 1793479016.09,
+            "24280": 1793479016.09,
+            "24305": 1793479016.15,
+            "24282": 1793479016.13,
+            "24321": 1793479016.19,
+            "24342": 1793479016.25,
+            "24303": 1793479016.15
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 24271,
+          "captured_count": 13,
+          "zombies_before_test_reap": [
+            24273,
+            24277,
+            24278,
+            24280,
+            24305,
+            24303
+          ],
+          "test_reaped": 6,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "cdp/startup-launch-2": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "launch",
+          "pid": 24383,
+          "start": 1793479017.93,
+          "captured": {
+            "24383": 1793479017.93,
+            "24390": 1793479017.97,
+            "24392": 1793479017.97,
+            "24418": 1793479018.02,
+            "24394": 1793479018.0,
+            "24441": 1793479018.07,
+            "24416": 1793479018.01
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "launch",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 24383,
+          "captured_count": 10,
+          "zombies_before_test_reap": [
+            24385,
+            24389,
+            24390,
+            24392,
+            24418,
+            24416
+          ],
+          "test_reaped": 6,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "cdp/startup-connect-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "connect",
+          "pid": 24493,
+          "start": 1793479019.79,
+          "captured": {
+            "24493": 1793479019.79,
+            "24501": 1793479019.83,
+            "24502": 1793479019.83,
+            "24533": 1793479019.89,
+            "24504": 1793479019.87,
+            "24551": 1793479019.94,
+            "24565": 1793479020.0,
+            "24571": 1793479020.02,
+            "24572": 1793479020.02,
+            "24526": 1793479019.88
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "connect",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 24493,
+          "captured_count": 13,
+          "zombies_before_test_reap": [
+            24495,
+            24499,
+            24501,
+            24526,
+            24533
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "cdp/startup-navigate-15": {
+      "fixture_records": [],
+      "markers": [
+        {
+          "phase": "navigate",
+          "pid": 24600,
+          "start": 1793479020.34,
+          "captured": {
+            "24600": 1793479020.34,
+            "24608": 1793479020.38,
+            "24609": 1793479020.38,
+            "24640": 1793479020.44,
+            "24611": 1793479020.41,
+            "24647": 1793479020.48,
+            "24671": 1793479020.53,
+            "24677": 1793479020.55,
+            "24681": 1793479020.56,
+            "24704": 1793479020.64,
+            "24630": 1793479020.42
+          }
+        }
+      ],
+      "startup_reports": [
+        {
+          "phase": "navigate",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 24600,
+          "captured_count": 14,
+          "zombies_before_test_reap": [
+            24602,
+            24606,
+            24608,
+            24630,
+            24640
+          ],
+          "test_reaped": 5,
+          "live_after_test_cleanup": []
+        }
+      ]
+    },
+    "lightpanda/test_real_installed_read_is_semantic_and_withholds_sensitive_fields": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/short",
+            "/long"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_initial_load_timeout_closes_engine": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/slow"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/slow"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    },
+    "lightpanda/test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]": {
+      "fixture_records": [
+        {
+          "posts": [],
+          "request_paths": [
+            "/slow"
+          ]
+        }
+      ],
+      "markers": [],
+      "startup_reports": []
+    }
+  },
+  "https": {
+    "attempts": 1,
+    "exit": 0,
+    "ok": true,
+    "content_records": 7,
+    "protocol_methods": [
+      "Target.createTarget",
+      "Target.getTargets",
+      "Target.attachToTarget",
+      "Page.enable",
+      "Page.navigate",
+      "Target.getTargets",
+      "Page.getFrameTree",
+      "Target.getTargets",
+      "Page.getFrameTree",
+      "DOM.getDocument",
+      "DOM.getDocument",
+      "Page.getFrameTree",
+      "Target.getTargets"
+    ],
+    "input": {
+      "supported": false,
+      "dispatched": false
+    },
+    "cleanup": {
+      "status": "bounded_owned_processes_stopped",
+      "complete_tree_inventory": false
+    }
+  }
+}

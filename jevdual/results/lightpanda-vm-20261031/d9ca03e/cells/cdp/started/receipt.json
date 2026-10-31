@@ -1,0 +1,1007 @@
+{
+  "nodeids": [
+    "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]"
+  ],
+  "boundary_metadata": [
+    {
+      "path": "/tmp/fw-crash-ez0nz9re/session/test-boundary.json",
+      "sha256": "ff923f5143600bf92d0ac9656a042e6190efaba427d83fd87d43ea8d5060686b",
+      "mtime_ns": 1793479001403615209,
+      "mode": "0o600",
+      "json": {
+        "boundary": "started",
+        "operation_id": "op_489532d0413b",
+        "ingress_before_exit": null,
+        "heavy_imports": []
+      }
+    }
+  ],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 12573.735245831,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "fixture": "ingress",
+      "url": "http://127.0.0.1:42373/",
+      "records": [],
+      "request_paths": null
+    }
+  ],
+  "public_helper_receipts": [
+    {
+      "kind": "helper_return",
+      "monotonic": 12566.886789865,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "look",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "restart-fixture",
+        "snapshot": {
+          "status": "ok",
+          "page": {
+            "url": "http://127.0.0.1:42373/",
+            "title": "Restart boundary"
+          },
+          "snapshot": {
+            "id": "dc57e055adfc",
+            "complete": false,
+            "omitted": {
+              "css_hidden": 0,
+              "offscreen": 0,
+              "no_layout": 0,
+              "unknown": 0,
+              "budget": 0,
+              "child_frames": 0,
+              "custom_controls_unobserved": 1
+            }
+          },
+          "refs": [
+            {
+              "ref": "dc57e055adfc:1",
+              "role": "button",
+              "name": "Commit fixture",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            }
+          ],
+          "content_refs": [],
+          "document": {
+            "frame_id": "B86F50202A4670BEC81CD08DF5B4E5A3",
+            "loader_id": "D9CF4E66238610240A231C44E72AE115"
+          }
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12567.062686916,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_response_unknown",
+        "dispatched": null,
+        "retryable": false
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12567.157997145,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "recover",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_489532d0413b",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+            "observation": "dc57e055adfc:1",
+            "target": "7",
+            "move": "click",
+            "args": {
+              "ref": "dc57e055adfc:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "evidence": {},
+            "error": "process ended during dispatch",
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793479001.40282,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793479001.403304,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793479001.504786,
+                "kind": "recovered_unknown"
+              }
+            ],
+            "created": 1793479001.402662,
+            "updated": 1793479001.5046997,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12567.242173018,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "status",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_489532d0413b",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+            "observation": "dc57e055adfc:1",
+            "target": "7",
+            "move": "click",
+            "args": {
+              "ref": "dc57e055adfc:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "evidence": {},
+            "error": "process ended during dispatch",
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793479001.40282,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793479001.403304,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793479001.504786,
+                "kind": "recovered_unknown"
+              }
+            ],
+            "created": 1793479001.402662,
+            "updated": 1793479001.5046997,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12567.347003371,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_489532d0413b",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+          "observation": "dc57e055adfc:1",
+          "target": "7",
+          "move": "click",
+          "args": {
+            "ref": "dc57e055adfc:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "ambiguous",
+          "evidence": {},
+          "error": "process ended during dispatch",
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793479001.40282,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793479001.403304,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793479001.504786,
+              "kind": "recovered_unknown"
+            }
+          ],
+          "created": 1793479001.402662,
+          "updated": 1793479001.5046997,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12567.4394181,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_489532d0413b",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+          "observation": "dc57e055adfc:1",
+          "target": "7",
+          "move": "click",
+          "args": {
+            "ref": "dc57e055adfc:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "ambiguous",
+          "evidence": {},
+          "error": "process ended during dispatch",
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793479001.40282,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793479001.403304,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793479001.504786,
+              "kind": "recovered_unknown"
+            }
+          ],
+          "created": 1793479001.402662,
+          "updated": 1793479001.5046997,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12567.5251179,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-2"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 12573.732062882,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-ez0nz9re",
+        "start",
+        "Try a new intent",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/next",
+        "--authority",
+        "/tmp/fw-crash-ez0nz9re/authority.db",
+        "--url",
+        "http://127.0.0.1:42373/"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    }
+  ],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 12566.886666813,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 30,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24129,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "look",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "2d9b6d98922fc3e29ac25eb16cf83aa27fb007be2ff4f5bc9c61a0d03df18df5",
+        "bytes": 787,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "session_id": "restart-fixture",
+            "snapshot": {
+              "status": "ok",
+              "page": {
+                "url": "http://127.0.0.1:42373/",
+                "title": "Restart boundary"
+              },
+              "snapshot": {
+                "id": "dc57e055adfc",
+                "complete": false,
+                "omitted": {
+                  "css_hidden": 0,
+                  "offscreen": 0,
+                  "no_layout": 0,
+                  "unknown": 0,
+                  "budget": 0,
+                  "child_frames": 0,
+                  "custom_controls_unobserved": 1
+                }
+              },
+              "refs": [
+                {
+                  "ref": "dc57e055adfc:1",
+                  "role": "button",
+                  "name": "Commit fixture",
+                  "actions": [
+                    "click"
+                  ],
+                  "states": {
+                    "focusable": true
+                  },
+                  "visibility": "in_viewport"
+                }
+              ],
+              "content_refs": [],
+              "document": {
+                "frame_id": "B86F50202A4670BEC81CD08DF5B4E5A3",
+                "loader_id": "D9CF4E66238610240A231C44E72AE115"
+              }
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"session_id\": \"restart-fixture\", \"snapshot\": {\"status\": \"ok\", \"page\": {\"url\": \"http://127.0.0.1:42373/\", \"title\": \"Restart boundary\"}, \"snapshot\": {\"id\": \"dc57e055adfc\", \"complete\": false, \"omitted\": {\"css_hidden\": 0, \"offscreen\": 0, \"no_layout\": 0, \"unknown\": 0, \"budget\": 0, \"child_frames\": 0, \"custom_controls_unobserved\": 1}}, \"refs\": [{\"ref\": \"dc57e055adfc:1\", \"role\": \"button\", \"name\": \"Commit fixture\", \"actions\": [\"click\"], \"states\": {\"focusable\": true}, \"visibility\": \"in_viewport\"}], \"content_refs\": [], \"document\": {\"frame_id\": \"B86F50202A4670BEC81CD08DF5B4E5A3\", \"loader_id\": \"D9CF4E66238610240A231C44E72AE115\"}}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12567.062555631,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 31,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24130,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "607553ea9eecc8f11f1b890e7f1676dbace803e50f334dd6149e0e52c4290761",
+        "bytes": 239,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "browser_response_unknown",
+            "dispatched": null,
+            "retryable": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"browser_response_unknown\", \"dispatched\": null, \"retryable\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12567.157333682,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 32,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24132,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "recover",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "f5e1f8906faa2d04f99202cebce9994b1ffcb4d3b3cf347a5134e1c85c45cbbb",
+        "bytes": 1313,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "holder": "unavailable; no relaunch attempted",
+            "session_id": "restart-fixture",
+            "operations": [
+              {
+                "id": "op_489532d0413b",
+                "task": "restart-fixture",
+                "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+                "observation": "dc57e055adfc:1",
+                "target": "7",
+                "move": "click",
+                "args": {
+                  "ref": "dc57e055adfc:1",
+                  "route": "dom_event_native_button"
+                },
+                "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+                "client_token": "intent-1",
+                "state": "unknown",
+                "disposition": "unknown",
+                "phase": "ambiguous",
+                "evidence": {},
+                "error": "process ended during dispatch",
+                "resolved_by": null,
+                "history": [
+                  {
+                    "t": 1793479001.40282,
+                    "kind": "intent",
+                    "protocol": 1,
+                    "authorization": "configured_browser_guard"
+                  },
+                  {
+                    "t": 1793479001.403304,
+                    "kind": "dispatch_started"
+                  },
+                  {
+                    "t": 1793479001.504786,
+                    "kind": "recovered_unknown"
+                  }
+                ],
+                "created": 1793479001.402662,
+                "updated": 1793479001.5046997,
+                "recovery": null,
+                "execution_stage": "started",
+                "completion": "unverified",
+                "retryable": false
+              }
+            ]
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"holder\": \"unavailable; no relaunch attempted\", \"session_id\": \"restart-fixture\", \"operations\": [{\"id\": \"op_489532d0413b\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"65D42AC6D36272F44CB8756D479F12AF\\\",\\\"pid\\\":24017,\\\"start\\\":\\\"1793479000.33\\\",\\\"target\\\":\\\"B86F50202A4670BEC81CD08DF5B4E5A3\\\"}\", \"observation\": \"dc57e055adfc:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"dc57e055adfc:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"ambiguous\", \"evidence\": {}, \"error\": \"process ended during dispatch\", \"resolved_by\": null, \"history\": [{\"t\": 1793479001.40282, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479001.403304, \"kind\": \"dispatch_started\"}, {\"t\": 1793479001.504786, \"kind\": \"recovered_unknown\"}], \"created\": 1793479001.402662, \"updated\": 1793479001.5046997, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}]}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12567.242030747,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 33,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24133,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "status",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "f5e1f8906faa2d04f99202cebce9994b1ffcb4d3b3cf347a5134e1c85c45cbbb",
+        "bytes": 1313,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "holder": "unavailable; no relaunch attempted",
+            "session_id": "restart-fixture",
+            "operations": [
+              {
+                "id": "op_489532d0413b",
+                "task": "restart-fixture",
+                "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+                "observation": "dc57e055adfc:1",
+                "target": "7",
+                "move": "click",
+                "args": {
+                  "ref": "dc57e055adfc:1",
+                  "route": "dom_event_native_button"
+                },
+                "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+                "client_token": "intent-1",
+                "state": "unknown",
+                "disposition": "unknown",
+                "phase": "ambiguous",
+                "evidence": {},
+                "error": "process ended during dispatch",
+                "resolved_by": null,
+                "history": [
+                  {
+                    "t": 1793479001.40282,
+                    "kind": "intent",
+                    "protocol": 1,
+                    "authorization": "configured_browser_guard"
+                  },
+                  {
+                    "t": 1793479001.403304,
+                    "kind": "dispatch_started"
+                  },
+                  {
+                    "t": 1793479001.504786,
+                    "kind": "recovered_unknown"
+                  }
+                ],
+                "created": 1793479001.402662,
+                "updated": 1793479001.5046997,
+                "recovery": null,
+                "execution_stage": "started",
+                "completion": "unverified",
+                "retryable": false
+              }
+            ]
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"holder\": \"unavailable; no relaunch attempted\", \"session_id\": \"restart-fixture\", \"operations\": [{\"id\": \"op_489532d0413b\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"65D42AC6D36272F44CB8756D479F12AF\\\",\\\"pid\\\":24017,\\\"start\\\":\\\"1793479000.33\\\",\\\"target\\\":\\\"B86F50202A4670BEC81CD08DF5B4E5A3\\\"}\", \"observation\": \"dc57e055adfc:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"dc57e055adfc:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"ambiguous\", \"evidence\": {}, \"error\": \"process ended during dispatch\", \"resolved_by\": null, \"history\": [{\"t\": 1793479001.40282, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479001.403304, \"kind\": \"dispatch_started\"}, {\"t\": 1793479001.504786, \"kind\": \"recovered_unknown\"}], \"created\": 1793479001.402662, \"updated\": 1793479001.5046997, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}]}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12567.346863714,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 34,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24134,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "7839d348cff4fc7f00bca5836636ee521ac0bfc987c18e00d1a274a1ac896c62",
+        "bytes": 1272,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "replayed": true,
+            "holder": "unavailable",
+            "operation": {
+              "id": "op_489532d0413b",
+              "task": "restart-fixture",
+              "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+              "observation": "dc57e055adfc:1",
+              "target": "7",
+              "move": "click",
+              "args": {
+                "ref": "dc57e055adfc:1",
+                "route": "dom_event_native_button"
+              },
+              "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+              "client_token": "intent-1",
+              "state": "unknown",
+              "disposition": "unknown",
+              "phase": "ambiguous",
+              "evidence": {},
+              "error": "process ended during dispatch",
+              "resolved_by": null,
+              "history": [
+                {
+                  "t": 1793479001.40282,
+                  "kind": "intent",
+                  "protocol": 1,
+                  "authorization": "configured_browser_guard"
+                },
+                {
+                  "t": 1793479001.403304,
+                  "kind": "dispatch_started"
+                },
+                {
+                  "t": 1793479001.504786,
+                  "kind": "recovered_unknown"
+                }
+              ],
+              "created": 1793479001.402662,
+              "updated": 1793479001.5046997,
+              "recovery": null,
+              "execution_stage": "started",
+              "completion": "unverified",
+              "retryable": false
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"replayed\": true, \"holder\": \"unavailable\", \"operation\": {\"id\": \"op_489532d0413b\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"65D42AC6D36272F44CB8756D479F12AF\\\",\\\"pid\\\":24017,\\\"start\\\":\\\"1793479000.33\\\",\\\"target\\\":\\\"B86F50202A4670BEC81CD08DF5B4E5A3\\\"}\", \"observation\": \"dc57e055adfc:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"dc57e055adfc:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"ambiguous\", \"evidence\": {}, \"error\": \"process ended during dispatch\", \"resolved_by\": null, \"history\": [{\"t\": 1793479001.40282, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479001.403304, \"kind\": \"dispatch_started\"}, {\"t\": 1793479001.504786, \"kind\": \"recovered_unknown\"}], \"created\": 1793479001.402662, \"updated\": 1793479001.5046997, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12567.439140688,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 35,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24135,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "7839d348cff4fc7f00bca5836636ee521ac0bfc987c18e00d1a274a1ac896c62",
+        "bytes": 1272,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "replayed": true,
+            "holder": "unavailable",
+            "operation": {
+              "id": "op_489532d0413b",
+              "task": "restart-fixture",
+              "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"65D42AC6D36272F44CB8756D479F12AF\",\"pid\":24017,\"start\":\"1793479000.33\",\"target\":\"B86F50202A4670BEC81CD08DF5B4E5A3\"}",
+              "observation": "dc57e055adfc:1",
+              "target": "7",
+              "move": "click",
+              "args": {
+                "ref": "dc57e055adfc:1",
+                "route": "dom_event_native_button"
+              },
+              "request_digest": "74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9",
+              "client_token": "intent-1",
+              "state": "unknown",
+              "disposition": "unknown",
+              "phase": "ambiguous",
+              "evidence": {},
+              "error": "process ended during dispatch",
+              "resolved_by": null,
+              "history": [
+                {
+                  "t": 1793479001.40282,
+                  "kind": "intent",
+                  "protocol": 1,
+                  "authorization": "configured_browser_guard"
+                },
+                {
+                  "t": 1793479001.403304,
+                  "kind": "dispatch_started"
+                },
+                {
+                  "t": 1793479001.504786,
+                  "kind": "recovered_unknown"
+                }
+              ],
+              "created": 1793479001.402662,
+              "updated": 1793479001.5046997,
+              "recovery": null,
+              "execution_stage": "started",
+              "completion": "unverified",
+              "retryable": false
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"replayed\": true, \"holder\": \"unavailable\", \"operation\": {\"id\": \"op_489532d0413b\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"65D42AC6D36272F44CB8756D479F12AF\\\",\\\"pid\\\":24017,\\\"start\\\":\\\"1793479000.33\\\",\\\"target\\\":\\\"B86F50202A4670BEC81CD08DF5B4E5A3\\\"}\", \"observation\": \"dc57e055adfc:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"dc57e055adfc:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"74806ddda7bad34fa886bdf287669c70ea0e8b72eed2218dff05e1e2c555e3d9\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"ambiguous\", \"evidence\": {}, \"error\": \"process ended during dispatch\", \"resolved_by\": null, \"history\": [{\"t\": 1793479001.40282, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479001.403304, \"kind\": \"dispatch_started\"}, {\"t\": 1793479001.504786, \"kind\": \"recovered_unknown\"}], \"created\": 1793479001.402662, \"updated\": 1793479001.5046997, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12567.525012283,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 36,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24136,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/session",
+        "--ref",
+        "dc57e055adfc:1",
+        "--token",
+        "intent-2"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "c573ecde228329a1555ee90b85ef07827458df065705be0e8ee1e3130f866b11",
+        "bytes": 308,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "browser_session_unavailable",
+            "message": "request refused; inspect retained authority; no automatic retry",
+            "error_type": "ValueError"
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"browser_session_unavailable\", \"message\": \"request refused; inspect retained authority; no automatic retry\", \"error_type\": \"ValueError\"}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 12573.731894953,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "process_number": 37,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "pid": 24138,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "start",
+        "Try a new intent",
+        "--session",
+        "/tmp/fw-crash-ez0nz9re/next",
+        "--authority",
+        "/tmp/fw-crash-ez0nz9re/authority.db",
+        "--url",
+        "http://127.0.0.1:42373/"
+      ],
+      "cwd": "/tmp/fw-crash-ez0nz9re",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "c573ecde228329a1555ee90b85ef07827458df065705be0e8ee1e3130f866b11",
+        "bytes": 308,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "browser_session_unavailable",
+            "message": "request refused; inspect retained authority; no automatic retry",
+            "error_type": "ValueError"
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"browser_session_unavailable\", \"message\": \"request refused; inspect retained authority; no automatic retry\", \"error_type\": \"ValueError\"}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

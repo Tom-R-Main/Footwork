@@ -1,0 +1,3 @@
+{"kind": "pytest_report", "monotonic": 12607.377059513, "nodeid": "test_lightpanda_cli.py::test_unqualified_platform_refuses_before_signal_or_engine_setup", "phase": "setup", "outcome": "passed", "duration": 0.0001876580008683959, "longrepr": null}
+{"kind": "pytest_report", "monotonic": 12607.377875112, "nodeid": "test_lightpanda_cli.py::test_unqualified_platform_refuses_before_signal_or_engine_setup", "phase": "call", "outcome": "passed", "duration": 0.0007268669996847166, "longrepr": null}
+{"kind": "pytest_report", "monotonic": 12607.378058143, "nodeid": "test_lightpanda_cli.py::test_unqualified_platform_refuses_before_signal_or_engine_setup", "phase": "teardown", "outcome": "passed", "duration": 7.789599840180017e-05, "longrepr": null}

@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/python",
+    "-I",
+    "/workspace/scratch/footwork-lightpanda-d9ca03e/pytest_main.py",
+    "-q",
+    "-rA",
+    "-o",
+    "markers=browser: launches a real owned browser",
+    "--confcutdir=/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+    "--basetemp=/workspace/scratch/footwork-lightpanda-d9ca03e/pytest-tmp",
+    "--junitxml=/workspace/scratch/footwork-lightpanda-d9ca03e/junit.xml",
+    "/workspace/scratch/footwork-lightpanda-d9ca03e/tests"
+  ],
+  "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+  "PYTHONPATH": "unset",
+  "FOOTWORK_CHROME_EXECUTABLE": "/usr/lib/chromium/chromium",
+  "JEVDUAL_PURE_PY": "1",
+  "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+  "FOOTWORK_EXECUTABLE": "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+  "provider_key_forwarded": false,
+  "FOOTWORK_LIGHTPANDA_EXECUTABLE": "/workspace/scratch/footwork-lightpanda-d9ca03e/lightpanda-x86_64-linux",
+  "LIGHTPANDA_DISABLE_TELEMETRY": "true",
+  "LIGHTPANDA_DISABLE_CORE_DUMP": "1"
+}

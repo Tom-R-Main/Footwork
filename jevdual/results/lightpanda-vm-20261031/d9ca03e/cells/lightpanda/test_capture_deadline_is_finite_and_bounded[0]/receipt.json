@@ -1,0 +1,53 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[0]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 12607.552709821,
+      "nodeid": "test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[0]",
+      "process_number": 66,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_capture_deadline_is_finite_and_bounded[0]",
+      "pid": 28644,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-d9ca03e/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "read",
+        "http://127.0.0.1/",
+        "--timeout",
+        "0"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-d9ca03e/tests",
+      "returncode": 2,
+      "signal": null,
+      "stdout": {
+        "sha256": "4fe93ccd52466f1dd630e377c247ce0fb8a3c5cb71747db5bf5f1f1cdb9b644a",
+        "bytes": 498,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 2,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "usage: footwork browser lightpanda read [-h] [--executable EXECUTABLE]\n                                        [--work-dir WORK_DIR]\n                                        [--timeout TIMEOUT]\n                                        url\nfootwork browser lightpanda read: error: argument --timeout: timeout must be between 1 and 60 seconds\n",
+          "data": null
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 2, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"usage: footwork browser lightpanda read [-h] [--executable EXECUTABLE]\\n                                        [--work-dir WORK_DIR]\\n                                        [--timeout TIMEOUT]\\n                                        url\\nfootwork browser lightpanda read: error: argument --timeout: timeout must be between 1 and 60 seconds\\n\", \"data\": null}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}
