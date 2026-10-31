@@ -230,6 +230,10 @@ Do not implement WebSocket framing as part of an effector port.
   activation consumes the observation; uncertain delivery blocks further clicks on that connection,
   including after reobservation. This is a low-level qualification seam, with no new CLI selection or
   agent-facing mutation tool. It does not settle the durable admission and restart work in L3c.
+  Numeric context/backend IDs can alias after renderer replacement. The activation route also checks
+  a private observation-created isolated-realm marker binding its token, document and root objects;
+  action-time validation never creates that marker. A new realm or a document.open root replacement
+  must refuse even when the numeric IDs and visible button fingerprint match.
 - **Readback.** Value, checked state and URL are read in the isolated world to avoid page-patched
   reader functions. This is DOM-state evidence, not independent proof of submission or persistence.
   Fixture ingress counts, stored rows and saved bytes establish those separate postconditions.

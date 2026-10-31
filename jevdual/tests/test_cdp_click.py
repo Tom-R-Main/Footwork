@@ -146,6 +146,24 @@ class Fixture:
             self.setup.unlisten(loaded)
 
 
+def activation_call(method, params):
+    from jevdual.effectors.cdp.click import ACTIVATE
+
+    return method == "Runtime.callFunctionOn" and (params or {}).get("functionDeclaration") == ACTIVATE
+
+
+@pytest.mark.browser
+def test_observation_marker_has_no_fixture_effect(owned, ingress):
+    async def run():
+        async with await Fixture.open(owned, ingress[0]) as f:
+            await f.observe()
+            await f.settle()
+            assert ingress[1]() == []
+            assert await f.eval("document.getElementById('name').value") == "Ada"
+            assert not [m for m in f.ops.conn.sent if m.startswith("Input.")]
+    asyncio.run(run())
+
+
 @pytest.mark.browser
 def test_native_button_activation_records_exactly_one_independent_ingress(owned, ingress):
     async def run():
@@ -256,6 +274,63 @@ def test_same_url_reload_never_uses_a_new_document_context(owned, ingress, late)
 
 
 @pytest.mark.browser
+def test_numeric_handle_alias_cannot_adopt_an_identical_new_document_button(owned, ingress):
+    async def run():
+        async with await Fixture.open(owned, ingress[0]) as f:
+            nm, id = await f.observe()
+            original = f.ops.conn.send
+            substituted = False
+
+            async def send(method, params=None, **kwargs):
+                nonlocal substituted
+                if method == "DOM.resolveNode" and not substituted:
+                    substituted = True
+                    await f.reload()
+                    frame = (await f.setup.send("Page.getFrameTree", session_id=f.session))["frameTree"]["frame"]
+                    world = await f.setup.send("Page.createIsolatedWorld", {
+                        "frameId": frame["id"], "worldName": "fixture-unmarked-replacement",
+                    }, session_id=f.session)
+                    root = (await f.setup.send("DOM.getDocument", session_id=f.session))["root"]["nodeId"]
+                    node = (await f.setup.send("DOM.querySelector", {
+                        "nodeId": root, "selector": "#intended",
+                    }, session_id=f.session))["nodeId"]
+                    backend = (await f.setup.send("DOM.describeNode", {
+                        "nodeId": node,
+                    }, session_id=f.session))["node"]["backendNodeId"]
+                    # Simulate numeric ID aliasing by resolving the new subject while the effector
+                    # still holds the old binding. This is a real Chrome object in a new realm.
+                    return await original(method, {
+                        "backendNodeId": backend, "executionContextId": world["executionContextId"],
+                    }, **kwargs)
+                return await original(method, params, **kwargs)
+
+            f.ops.conn.send = send
+            effect = await f.bridge.act(nm, "click", id)
+            await f.settle()
+            assert substituted, "the numeric-handle alias control was not exercised"
+            assert ingress[1]() == [], "a new document inherited the old observation's activation"
+            assert effect.effect == "refused" and effect.dispatched is False
+    asyncio.run(run())
+
+
+@pytest.mark.browser
+def test_document_open_root_replacement_cannot_reuse_an_old_observation(owned, ingress):
+    async def run():
+        async with await Fixture.open(owned, ingress[0]) as f:
+            nm, id = await f.observe()
+            await f.eval(f"""(() => {{
+                const original = document.getElementById('intended');
+                document.open(); document.write({json.dumps(HTML.decode())}); document.close();
+                document.getElementById('intended').replaceWith(original);
+            }})()""")
+            effect = await f.bridge.act(nm, "click", id)
+            await f.settle()
+            assert effect.effect == "refused" and effect.dispatched is False
+            assert ingress[1]() == []
+    asyncio.run(run())
+
+
+@pytest.mark.browser
 def test_closed_pinned_tab_does_not_activate_a_live_sentinel_tab(owned, ingress):
     async def run():
         async with await Fixture.open(owned, ingress[0]) as f:
@@ -313,7 +388,7 @@ def test_lost_ack_or_cancellation_after_ingress_blocks_even_a_fresh_ref(owned, i
 
             async def send(method, params=None, **kwargs):
                 result = await original(method, params, **kwargs)
-                if method == "Runtime.callFunctionOn":
+                if activation_call(method, params):
                     await f.settle()
                     assert ingress[1]() == ["intended"]
                     if cancel:
