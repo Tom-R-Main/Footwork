@@ -8,3 +8,17 @@ Test: download only this public prebuilt into a new owned scratch directory, pre
 Predicts: the exact Linux artifact verifies and both metadata commands exit0; reported version/digest are retained independently of tag anchoring. Actual current4CPU/16GiB envelope remains recorded rather than assumed2CPU/8GB.
 Against: size/hash mismatch prevents execution, wrong architecture, nonzero/signal/timeout on metadata commands, persistent owned residue, or source identity inferred from a mutable/nightly tag instead of observed binary data.
 Refs: https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173; results/lightpanda-vm-20261031/preparation/; parent branch codex/lightpanda-readonly basedc85ac85 is not yet a qualified candidate
+
+## LPVMU0 · update · 2026-10-31 16:06
+Resolves: LPVM0 = failed
+Observed: public API download returned200/octet-stream, exactly77129032 bytes/hash19f3fee2, ELF64 x86-64, all verified before execution. The guessed --version option exited1 with unknown-command/did_you_mean=version; --help exited0 and explicitly documents version as a subcommand. No signal/timeout, no owned descendants, binary hash unchanged. The helper correctly returned1 for the unsuccessful metadata invocation; this is not a Footwork candidate failure. Original outputs and numeric exits remain retained.
+Next: execute only the documented version subcommand under unchanged safety flags/bounds; no help rerun, read route, socket, target or action probe.
+Refs: results/lightpanda-vm-20261031/preparation/commands.json; results/lightpanda-vm-20261031/preparation/version.stderr.txt; preparation/help.stdout.txt
+
+## LPVM1 · prediction · 2026-10-31 16:06
+Revises: LPVM0
+Hypothesis: this pinned binary reports its actual git version through the documented version subcommand rather than --version.
+Test: reverify the same artifact size/hash before one invocation of version, retain the earlier rejected flag and successful help separately, use telemetry=true-disabled/core=1-disabled and child RLIMIT_CORE0 with10-second bound. No other program mode is invoked.
+Predicts: version exits0 and reports a build/git version suitable for exact-binary provenance without assigning the nightly tag anchor as source.
+Against: nonzero/signal/timeout, altered artifact hash or persistent owned residue.
+Refs: pinned asset694146173; results/lightpanda-vm-20261031/preparation/version-subcommand.json
