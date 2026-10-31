@@ -1,0 +1,94 @@
+{
+  "kind": "communicate",
+  "monotonic": 13111.357774901,
+  "nodeid": "test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing",
+  "process_number": 3,
+  "process_kind": "public_cli",
+  "owner_nodeid": "test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing",
+  "pid": 34267,
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+    "--json",
+    "schema",
+    "browser",
+    "cdp",
+    "click"
+  ],
+  "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+  "returncode": 0,
+  "signal": null,
+  "stdout": {
+    "sha256": "fdbc924797411335b521ae523b209cbb14ab8ff17b3d6415d69ea2e1f87eb6c2",
+    "bytes": 845,
+    "json": {
+      "schema_version": "1",
+      "exit_code": 0,
+      "command_completed": true,
+      "effect_verification": "not_asserted",
+      "output": "",
+      "diagnostics": "",
+      "data": {
+        "command": [
+          "browser",
+          "cdp",
+          "click"
+        ],
+        "arguments": [
+          {
+            "name": "help",
+            "flags": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "nargs": 0,
+            "choices": null,
+            "help": "show this help message and exit",
+            "default": "==SUPPRESS=="
+          },
+          {
+            "name": "session",
+            "flags": [
+              "--session"
+            ],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": null,
+            "default": null
+          },
+          {
+            "name": "ref",
+            "flags": [
+              "--ref"
+            ],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": "opaque ref from the last look; never reselected by label",
+            "default": null
+          },
+          {
+            "name": "token",
+            "flags": [
+              "--token"
+            ],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": "stable token for this intended activation",
+            "default": null
+          }
+        ],
+        "subcommands": []
+      }
+    },
+    "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"command\": [\"browser\", \"cdp\", \"click\"], \"arguments\": [{\"name\": \"help\", \"flags\": [\"-h\", \"--help\"], \"required\": false, \"nargs\": 0, \"choices\": null, \"help\": \"show this help message and exit\", \"default\": \"==SUPPRESS==\"}, {\"name\": \"session\", \"flags\": [\"--session\"], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": null, \"default\": null}, {\"name\": \"ref\", \"flags\": [\"--ref\"], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": \"opaque ref from the last look; never reselected by label\", \"default\": null}, {\"name\": \"token\", \"flags\": [\"--token\"], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": \"stable token for this intended activation\", \"default\": null}], \"subcommands\": []}}"
+  },
+  "stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "json": null,
+    "text": ""
+  }
+}

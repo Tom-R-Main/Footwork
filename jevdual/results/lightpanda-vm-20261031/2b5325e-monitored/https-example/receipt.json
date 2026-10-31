@@ -1,0 +1,171 @@
+{
+  "utc_finished": "2026-10-31T20:47:06.459144+00:00",
+  "returncode": 0,
+  "signal": null,
+  "timeout": false,
+  "attempts": 1,
+  "retry_performed": false,
+  "envelope": {
+    "schema_version": "1",
+    "exit_code": 0,
+    "command_completed": true,
+    "effect_verification": "not_asserted",
+    "output": "",
+    "diagnostics": "",
+    "data": {
+      "schema_version": "1",
+      "profile": "lightpanda-readonly",
+      "ok": true,
+      "code": null,
+      "capture_completed": true,
+      "cleanup": {
+        "status": "bounded_owned_processes_stopped",
+        "complete_tree_inventory": false
+      },
+      "process_started": true,
+      "work_dir": "/tmp/lp-https-ihlk0btc/engine",
+      "engine_identity": {
+        "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+        "pid": 39421,
+        "start": "1793479625.59",
+        "binary_sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+      },
+      "observation": {
+        "schema_version": "1",
+        "producer": "footwork.browser.lightpanda.dom_text",
+        "engine": "lightpanda",
+        "observation_id": "lpobs_24d1450be372b39dbd8ef9af",
+        "identity": {
+          "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+          "pid": 39421,
+          "start": "1793479625.59",
+          "binary_sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+          "connection_id": "4e1695acf1db5b16dcc0882e137d5edb",
+          "browser_context_id": "BID-1",
+          "target_id": "FID-0000000001",
+          "session_id": "SID-1",
+          "frame_id": "FID-0000000001",
+          "loader_id": "LID-0000000001"
+        },
+        "capture": {
+          "start": 1793479626.4173121,
+          "end": 1793479626.4193878,
+          "atomic": false,
+          "reported_identifiers_unchanged": true,
+          "numeric_alias_resistance": "unqualified"
+        },
+        "page": {
+          "url": "https://example.org/",
+          "url_sha256": "8198d1bac40a1033653a78e48800cefc9e6b974ff075c66e5548b5c1e145a2b0",
+          "query_or_fragment_withheld": false,
+          "title": "",
+          "title_source": "DOM.getDocument"
+        },
+        "content": [
+          {
+            "record_id": 1,
+            "kind": "paragraph",
+            "text": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes."
+          },
+          {
+            "record_id": 2,
+            "kind": "paragraph",
+            "text": "\u0647\u0630\u0627 \u0627\u0644\u0646\u0637\u0627\u0642 \u0645\u064f\u062e\u0635\u0635 \u0644\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0641\u064a \u0623\u0645\u062b\u0644\u0629 \u0627\u0644\u062a\u0648\u062b\u064a\u0642 \u062f\u0648\u0646 \u0627\u0644\u062d\u0627\u062c\u0629 \u0625\u0644\u0649 \u0625\u0630\u0646. \u0647\u0630\u0647 \u0644\u064a\u0633\u062a \u062e\u062f\u0645\u0629\u060c \u064a\u064f\u0631\u062c\u0649 \u062a\u062c\u0646\u0628 \u0627\u0644\u0627\u0639\u062a\u0645\u0627\u062f \u0639\u0644\u064a\u0647\u0627 \u0644\u0623\u063a\u0631\u0627\u0636 \u0627\u0644\u0627\u062e\u062a\u0628\u0627\u0631 \u0648\u0627\u0644\u0645\u0631\u0627\u0642\u0628\u0629."
+          },
+          {
+            "record_id": 3,
+            "kind": "paragraph",
+            "text": "\u8be5\u57df\u540d\u4ec5\u7528\u4e8e\u6587\u6863\u793a\u4f8b\uff0c\u65e0\u9700\u83b7\u5f97\u8bb8\u53ef\u3002\u8fd9\u5e76\u975e\u4e00\u9879\u670d\u52a1\uff0c\u8bf7\u52ff\u5c06\u5176\u7528\u4e8e\u6d4b\u8bd5\u548c\u76d1\u63a7\u76ee\u7684\u3002"
+          },
+          {
+            "record_id": 4,
+            "kind": "paragraph",
+            "text": "L\u2019usage de ce domaine est r\u00e9serv\u00e9 \u00e0 des exemples de documentation, sans autorisation pr\u00e9alable. Il ne s\u2019agit pas d\u2019un service ; son utilisation \u00e0 des fins de test ou de surveillance est \u00e0 \u00e9viter."
+          },
+          {
+            "record_id": 5,
+            "kind": "paragraph",
+            "text": "\u0414\u0430\u043d\u043d\u044b\u0439 \u0434\u043e\u043c\u0435\u043d \u043f\u0440\u0435\u0434\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d \u0434\u043b\u044f \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f \u0432 \u043f\u0440\u0438\u043c\u0435\u0440\u0430\u0445 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438 \u0431\u0435\u0437 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e\u0441\u0442\u0438 \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u043f\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u044f. \u042d\u0442\u043e \u043d\u0435 \u0441\u0435\u0440\u0432\u0438\u0441; \u043d\u0435 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u0435\u0433\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u0435 \u0434\u043b\u044f \u0442\u0435\u0441\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f \u0438 \u043c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433\u0430."
+          },
+          {
+            "record_id": 6,
+            "kind": "paragraph",
+            "text": "Este dominio est\u00e1 destinado al uso en ejemplos de documentaci\u00f3n sin necesidad de permiso. Esto no es un servicio; evitar utilizarlo para realizar pruebas o monitoreos."
+          },
+          {
+            "record_id": 7,
+            "kind": "link",
+            "text": "Learn more",
+            "destination": {
+              "url": "https://iana.org/help/example-domains",
+              "url_sha256": "eaa36bdb61546a72286bf5e75c7cf2070a0448b04e9ff1d82a19721a72e515ba",
+              "query_or_fragment_withheld": false
+            }
+          }
+        ],
+        "text": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes.\n\u0647\u0630\u0627 \u0627\u0644\u0646\u0637\u0627\u0642 \u0645\u064f\u062e\u0635\u0635 \u0644\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0641\u064a \u0623\u0645\u062b\u0644\u0629 \u0627\u0644\u062a\u0648\u062b\u064a\u0642 \u062f\u0648\u0646 \u0627\u0644\u062d\u0627\u062c\u0629 \u0625\u0644\u0649 \u0625\u0630\u0646. \u0647\u0630\u0647 \u0644\u064a\u0633\u062a \u062e\u062f\u0645\u0629\u060c \u064a\u064f\u0631\u062c\u0649 \u062a\u062c\u0646\u0628 \u0627\u0644\u0627\u0639\u062a\u0645\u0627\u062f \u0639\u0644\u064a\u0647\u0627 \u0644\u0623\u063a\u0631\u0627\u0636 \u0627\u0644\u0627\u062e\u062a\u0628\u0627\u0631 \u0648\u0627\u0644\u0645\u0631\u0627\u0642\u0628\u0629.\n\u8be5\u57df\u540d\u4ec5\u7528\u4e8e\u6587\u6863\u793a\u4f8b\uff0c\u65e0\u9700\u83b7\u5f97\u8bb8\u53ef\u3002\u8fd9\u5e76\u975e\u4e00\u9879\u670d\u52a1\uff0c\u8bf7\u52ff\u5c06\u5176\u7528\u4e8e\u6d4b\u8bd5\u548c\u76d1\u63a7\u76ee\u7684\u3002\nL\u2019usage de ce domaine est r\u00e9serv\u00e9 \u00e0 des exemples de documentation, sans autorisation pr\u00e9alable. Il ne s\u2019agit pas d\u2019un service ; son utilisation \u00e0 des fins de test ou de surveillance est \u00e0 \u00e9viter.\n\u0414\u0430\u043d\u043d\u044b\u0439 \u0434\u043e\u043c\u0435\u043d \u043f\u0440\u0435\u0434\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d \u0434\u043b\u044f \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f \u0432 \u043f\u0440\u0438\u043c\u0435\u0440\u0430\u0445 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438 \u0431\u0435\u0437 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e\u0441\u0442\u0438 \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u043f\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u044f. \u042d\u0442\u043e \u043d\u0435 \u0441\u0435\u0440\u0432\u0438\u0441; \u043d\u0435 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u0435\u0433\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u0435 \u0434\u043b\u044f \u0442\u0435\u0441\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f \u0438 \u043c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433\u0430.\nEste dominio est\u00e1 destinado al uso en ejemplos de documentaci\u00f3n sin necesidad de permiso. Esto no es un servicio; evitar utilizarlo para realizar pruebas o monitoreos.\nLearn more",
+        "omitted": {
+          "form_subtrees": 0,
+          "form_labels": 0,
+          "excluded_subtrees": 3,
+          "obvious_hidden_subtrees": 1,
+          "shadow_roots": 0,
+          "link_destinations": 0,
+          "text_budget": false,
+          "child_frames": 0
+        },
+        "complete": false,
+        "actions": [],
+        "input_dispatched": false,
+        "mutation_authority": false,
+        "completion": "not_asserted",
+        "capabilities": {
+          "dom_text": true,
+          "layout": false,
+          "visibility": false,
+          "screenshots": false,
+          "click": false,
+          "typing": false,
+          "raw_script": false
+        },
+        "limits": [
+          "DOM text is not rendered/visible text; CSS-hidden content may remain.",
+          "Form values and associated labels are withheld; child frames and shadow roots are omitted.",
+          "Link destinations are withheld when a captured base href makes the effective base unqualified.",
+          "Record IDs identify this capture's text only and cannot authorize input.",
+          "Matching numeric identifiers does not prove an atomic or mutation-safe document binding.",
+          "Initial URL loading executes site code and may have network effects."
+        ]
+      },
+      "protocol_methods": [
+        "Target.createTarget",
+        "Target.getTargets",
+        "Target.attachToTarget",
+        "Page.enable",
+        "Page.navigate",
+        "Target.getTargets",
+        "Page.getFrameTree",
+        "Target.getTargets",
+        "Page.getFrameTree",
+        "DOM.getDocument",
+        "DOM.getDocument",
+        "Page.getFrameTree",
+        "Target.getTargets"
+      ],
+      "message": "Bounded DOM observation captured.",
+      "input": {
+        "supported": false,
+        "dispatched": false
+      },
+      "completion": "not_asserted",
+      "network_effects": "not_asserted",
+      "retryable": false
+    }
+  },
+  "before_wrapper_cleanup": [],
+  "signals": [],
+  "adopted_waits": [],
+  "final_owned_descendants": [],
+  "retained_work_dir": "/tmp/lp-https-ihlk0btc/engine",
+  "work_parent_mode": "0o700"
+}

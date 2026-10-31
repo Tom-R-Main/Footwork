@@ -1,0 +1,101 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 13170.175645132,
+      "nodeid": "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]",
+      "fixture": "fixture_site",
+      "url": "http://127.0.0.1:41229",
+      "records": [],
+      "request_paths": [
+        "/slow"
+      ]
+    }
+  ],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13170.175262575,
+      "nodeid": "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]",
+      "process_number": 73,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[kill_engine]",
+      "pid": 39378,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "read",
+        "http://127.0.0.1:41229/slow",
+        "--executable",
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/lightpanda-x86_64-linux",
+        "--timeout",
+        "15"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "afd76eea61d82608ec2b3e090c45109e8e0fcf010e48df748530c8747c2dd01c",
+        "bytes": 1010,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "schema_version": "1",
+            "profile": "lightpanda-readonly",
+            "ok": false,
+            "code": "lightpanda_load_unavailable",
+            "capture_completed": false,
+            "cleanup": {
+              "status": "unverified",
+              "code": "lightpanda_cleanup_unverified"
+            },
+            "process_started": true,
+            "work_dir": "/tmp/fw-lp-_ba92r04/engine",
+            "engine_identity": {
+              "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+              "pid": 39379,
+              "start": "1793479604.1",
+              "binary_sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+            },
+            "protocol_methods": [
+              "Target.createTarget",
+              "Target.getTargets",
+              "Target.attachToTarget",
+              "Page.enable",
+              "Page.navigate"
+            ],
+            "retained_work_dir": "/tmp/fw-lp-_ba92r04",
+            "message": "Read unavailable; inspect code and cleanup. No automatic fallback.",
+            "input": {
+              "supported": false,
+              "dispatched": false
+            },
+            "completion": "not_asserted",
+            "network_effects": "not_asserted",
+            "retryable": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"schema_version\": \"1\", \"profile\": \"lightpanda-readonly\", \"ok\": false, \"code\": \"lightpanda_load_unavailable\", \"capture_completed\": false, \"cleanup\": {\"status\": \"unverified\", \"code\": \"lightpanda_cleanup_unverified\"}, \"process_started\": true, \"work_dir\": \"/tmp/fw-lp-_ba92r04/engine\", \"engine_identity\": {\"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"pid\": 39379, \"start\": \"1793479604.1\", \"binary_sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\"}, \"protocol_methods\": [\"Target.createTarget\", \"Target.getTargets\", \"Target.attachToTarget\", \"Page.enable\", \"Page.navigate\"], \"retained_work_dir\": \"/tmp/fw-lp-_ba92r04\", \"message\": \"Read unavailable; inspect code and cleanup. No automatic fallback.\", \"input\": {\"supported\": false, \"dispatched\": false}, \"completion\": \"not_asserted\", \"network_effects\": \"not_asserted\", \"retryable\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

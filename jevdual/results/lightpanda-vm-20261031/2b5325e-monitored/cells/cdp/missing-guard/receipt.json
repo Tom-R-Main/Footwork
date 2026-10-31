@@ -1,0 +1,527 @@
+{
+  "nodeids": [
+    "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 13116.042411423,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "fixture": "page",
+      "url": "http://127.0.0.1:38267/",
+      "records": [],
+      "request_paths": null
+    }
+  ],
+  "public_helper_receipts": [
+    {
+      "kind": "helper_return",
+      "monotonic": 13115.454164772,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "start",
+        "Commit the fixture once",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session",
+        "--authority",
+        "/tmp/fw-cdp-2rw9h4hu/authority.db",
+        "--url",
+        "http://127.0.0.1:38267/"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+        "profile": {
+          "profile": "owned-headless-cdp",
+          "entrypoint": "footwork browser cdp",
+          "commands": [
+            "start",
+            "look",
+            "click",
+            "status",
+            "recover",
+            "stop",
+            "guide"
+          ],
+          "requirements": [
+            "Chrome",
+            "psutil",
+            "websockets",
+            "configured Jev or judgment adapter",
+            "absolute durable authority"
+          ],
+          "desktop_required": false,
+          "cua_required": false,
+          "typing": "disabled: unresolved focus race",
+          "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
+          "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
+          "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
+          "install": "current package metadata still installs full dependencies; light metadata split is pending",
+          "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user"
+        },
+        "holder": {
+          "ok": true,
+          "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+          "operations": []
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13115.605949853,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "look",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+        "snapshot": {
+          "status": "ok",
+          "page": {
+            "url": "http://127.0.0.1:38267/",
+            "title": "Durable fixture"
+          },
+          "snapshot": {
+            "id": "e7f4d091a025",
+            "complete": false,
+            "omitted": {
+              "css_hidden": 0,
+              "offscreen": 0,
+              "no_layout": 0,
+              "unknown": 0,
+              "budget": 0,
+              "child_frames": 0,
+              "custom_controls_unobserved": 1
+            }
+          },
+          "refs": [
+            {
+              "ref": "e7f4d091a025:1",
+              "role": "button",
+              "name": "Commit fixture",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            },
+            {
+              "ref": "e7f4d091a025:2",
+              "role": "button",
+              "name": "Sentinel",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            }
+          ],
+          "content_refs": [],
+          "document": {
+            "frame_id": "D46C3BC9E6705570AEB08541E4725674",
+            "loader_id": "4C80AA4EFA5F50F50493053489A026AA"
+          }
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13115.771932394,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session",
+        "--ref",
+        "e7f4d091a025:1",
+        "--token",
+        "missing-guard"
+      ],
+      "result": {
+        "ok": false,
+        "code": "guard_refused",
+        "message": "the configured guard did not authorize this activation",
+        "dispatched": false
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13115.872533558,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "status",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+        "operations": []
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13116.041834257,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "stop",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+        "cleanup": {
+          "status": "bounded_owned_processes_stopped",
+          "complete_tree_inventory": false
+        }
+      }
+    }
+  ],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13115.454034218,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "process_number": 16,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "pid": 34401,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "start",
+        "Commit the fixture once",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session",
+        "--authority",
+        "/tmp/fw-cdp-2rw9h4hu/authority.db",
+        "--url",
+        "http://127.0.0.1:38267/"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "058c4fbcccd39a0ec290d6d58bf0c44ff1d23aead9cdd9857165bd175d3867ab",
+        "bytes": 1202,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+            "profile": {
+              "profile": "owned-headless-cdp",
+              "entrypoint": "footwork browser cdp",
+              "commands": [
+                "start",
+                "look",
+                "click",
+                "status",
+                "recover",
+                "stop",
+                "guide"
+              ],
+              "requirements": [
+                "Chrome",
+                "psutil",
+                "websockets",
+                "configured Jev or judgment adapter",
+                "absolute durable authority"
+              ],
+              "desktop_required": false,
+              "cua_required": false,
+              "typing": "disabled: unresolved focus race",
+              "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
+              "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
+              "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
+              "install": "current package metadata still installs full dependencies; light metadata split is pending",
+              "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user"
+            },
+            "holder": {
+              "ok": true,
+              "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+              "operations": []
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"session_id\": \"cdp_333a76907ee64956baf8201aca28707d\", \"profile\": {\"profile\": \"owned-headless-cdp\", \"entrypoint\": \"footwork browser cdp\", \"commands\": [\"start\", \"look\", \"click\", \"status\", \"recover\", \"stop\", \"guide\"], \"requirements\": [\"Chrome\", \"psutil\", \"websockets\", \"configured Jev or judgment adapter\", \"absolute durable authority\"], \"desktop_required\": false, \"cua_required\": false, \"typing\": \"disabled: unresolved focus race\", \"activation\": \"dom_event_native_button: directly named plain main-document button[type=button] only\", \"completion\": \"unverified; acknowledgement is not business completion; unknown blocks new mutations\", \"restart\": \"same live holder or retained journal only; no implicit relaunch/adoption/rebinding\", \"install\": \"current package metadata still installs full dependencies; light metadata split is pending\", \"trust\": \"private socket and configured guard; not isolation from arbitrary code running as the same user\"}, \"holder\": {\"ok\": true, \"session_id\": \"cdp_333a76907ee64956baf8201aca28707d\", \"operations\": []}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13115.605831798,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "process_number": 17,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "pid": 34519,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "look",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "46e3869ab99b0886e24d4d4aa22d87c612d1feff01266e27fa884fb78ad08ad6",
+        "bytes": 954,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+            "snapshot": {
+              "status": "ok",
+              "page": {
+                "url": "http://127.0.0.1:38267/",
+                "title": "Durable fixture"
+              },
+              "snapshot": {
+                "id": "e7f4d091a025",
+                "complete": false,
+                "omitted": {
+                  "css_hidden": 0,
+                  "offscreen": 0,
+                  "no_layout": 0,
+                  "unknown": 0,
+                  "budget": 0,
+                  "child_frames": 0,
+                  "custom_controls_unobserved": 1
+                }
+              },
+              "refs": [
+                {
+                  "ref": "e7f4d091a025:1",
+                  "role": "button",
+                  "name": "Commit fixture",
+                  "actions": [
+                    "click"
+                  ],
+                  "states": {
+                    "focusable": true
+                  },
+                  "visibility": "in_viewport"
+                },
+                {
+                  "ref": "e7f4d091a025:2",
+                  "role": "button",
+                  "name": "Sentinel",
+                  "actions": [
+                    "click"
+                  ],
+                  "states": {
+                    "focusable": true
+                  },
+                  "visibility": "in_viewport"
+                }
+              ],
+              "content_refs": [],
+              "document": {
+                "frame_id": "D46C3BC9E6705570AEB08541E4725674",
+                "loader_id": "4C80AA4EFA5F50F50493053489A026AA"
+              }
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"session_id\": \"cdp_333a76907ee64956baf8201aca28707d\", \"snapshot\": {\"status\": \"ok\", \"page\": {\"url\": \"http://127.0.0.1:38267/\", \"title\": \"Durable fixture\"}, \"snapshot\": {\"id\": \"e7f4d091a025\", \"complete\": false, \"omitted\": {\"css_hidden\": 0, \"offscreen\": 0, \"no_layout\": 0, \"unknown\": 0, \"budget\": 0, \"child_frames\": 0, \"custom_controls_unobserved\": 1}}, \"refs\": [{\"ref\": \"e7f4d091a025:1\", \"role\": \"button\", \"name\": \"Commit fixture\", \"actions\": [\"click\"], \"states\": {\"focusable\": true}, \"visibility\": \"in_viewport\"}, {\"ref\": \"e7f4d091a025:2\", \"role\": \"button\", \"name\": \"Sentinel\", \"actions\": [\"click\"], \"states\": {\"focusable\": true}, \"visibility\": \"in_viewport\"}], \"content_refs\": [], \"document\": {\"frame_id\": \"D46C3BC9E6705570AEB08541E4725674\", \"loader_id\": \"4C80AA4EFA5F50F50493053489A026AA\"}}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13115.771738887,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "process_number": 18,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "pid": 34520,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session",
+        "--ref",
+        "e7f4d091a025:1",
+        "--token",
+        "missing-guard"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "62c63e156697fe9c4dbd1a0fa1db518e12047ea0d261aad77d65efb25576e28a",
+        "bytes": 278,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "guard_refused",
+            "message": "the configured guard did not authorize this activation",
+            "dispatched": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"guard_refused\", \"message\": \"the configured guard did not authorize this activation\", \"dispatched\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13115.872431777,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "process_number": 19,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "pid": 34521,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "status",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "dafd447cfc3299c2273be3885bec2380d1b8612efc0eca864afe04f1c47eb5a0",
+        "bytes": 233,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+            "operations": []
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"session_id\": \"cdp_333a76907ee64956baf8201aca28707d\", \"operations\": []}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13116.041644436,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "process_number": 20,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "pid": 34522,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "stop",
+        "--session",
+        "/tmp/fw-cdp-2rw9h4hu/session"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "7b6b3d67c93749cba11f4af2fe07e23544fcb46159b5e67256e144475ce6de13",
+        "bytes": 307,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "session_id": "cdp_333a76907ee64956baf8201aca28707d",
+            "cleanup": {
+              "status": "bounded_owned_processes_stopped",
+              "complete_tree_inventory": false
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"session_id\": \"cdp_333a76907ee64956baf8201aca28707d\", \"cleanup\": {\"status\": \"bounded_owned_processes_stopped\", \"complete_tree_inventory\": false}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

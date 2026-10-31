@@ -1,0 +1,10 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_unqualified_platform_refuses_before_signal_or_engine_setup"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [],
+  "startup_supervisor_receipts": []
+}

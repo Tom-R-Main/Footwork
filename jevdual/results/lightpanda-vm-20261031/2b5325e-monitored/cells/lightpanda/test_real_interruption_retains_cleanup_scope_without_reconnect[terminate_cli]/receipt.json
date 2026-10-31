@@ -1,0 +1,99 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 13169.521745599,
+      "nodeid": "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]",
+      "fixture": "fixture_site",
+      "url": "http://127.0.0.1:45831",
+      "records": [],
+      "request_paths": [
+        "/slow"
+      ]
+    }
+  ],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13169.521326607,
+      "nodeid": "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]",
+      "process_number": 72,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_real_interruption_retains_cleanup_scope_without_reconnect[terminate_cli]",
+      "pid": 39367,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "read",
+        "http://127.0.0.1:45831/slow",
+        "--executable",
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/lightpanda-x86_64-linux",
+        "--timeout",
+        "15"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 143,
+      "signal": null,
+      "stdout": {
+        "sha256": "dc23baa33b9a11c221c58aafd0980254c23bc7d3835f4c5e02036bb02d855a2d",
+        "bytes": 942,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 143,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "schema_version": "1",
+            "profile": "lightpanda-readonly",
+            "ok": false,
+            "code": "lightpanda_interrupted",
+            "capture_completed": false,
+            "cleanup": {
+              "status": "bounded_owned_processes_stopped",
+              "complete_tree_inventory": false
+            },
+            "process_started": true,
+            "engine_identity": {
+              "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+              "pid": 39368,
+              "start": "1793479603.44",
+              "binary_sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+            },
+            "protocol_methods": [
+              "Target.createTarget",
+              "Target.getTargets",
+              "Target.attachToTarget",
+              "Page.enable",
+              "Page.navigate"
+            ],
+            "message": "Read interrupted; read cleanup separately. No input route was available.",
+            "input": {
+              "supported": false,
+              "dispatched": false
+            },
+            "completion": "not_asserted",
+            "network_effects": "not_asserted",
+            "retryable": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 143, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"schema_version\": \"1\", \"profile\": \"lightpanda-readonly\", \"ok\": false, \"code\": \"lightpanda_interrupted\", \"capture_completed\": false, \"cleanup\": {\"status\": \"bounded_owned_processes_stopped\", \"complete_tree_inventory\": false}, \"process_started\": true, \"engine_identity\": {\"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"pid\": 39368, \"start\": \"1793479603.44\", \"binary_sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\"}, \"protocol_methods\": [\"Target.createTarget\", \"Target.getTargets\", \"Target.attachToTarget\", \"Page.enable\", \"Page.navigate\"], \"message\": \"Read interrupted; read cleanup separately. No input route was available.\", \"input\": {\"supported\": false, \"dispatched\": false}, \"completion\": \"not_asserted\", \"network_effects\": \"not_asserted\", \"retryable\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

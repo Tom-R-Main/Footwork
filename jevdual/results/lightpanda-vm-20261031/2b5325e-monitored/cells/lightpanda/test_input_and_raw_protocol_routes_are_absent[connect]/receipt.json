@@ -1,0 +1,50 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[connect]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13166.783649014,
+      "nodeid": "test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[connect]",
+      "process_number": 60,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[connect]",
+      "pid": 39325,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "connect"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 2,
+      "signal": null,
+      "stdout": {
+        "sha256": "ae145cd7479431ce0e881980608ed547a86dfeb6f512b54cbf56ec079225a8d6",
+        "bytes": 338,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 2,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "usage: footwork browser lightpanda [-h] {read,guide,artifact} ...\nfootwork browser lightpanda: error: argument command: invalid choice: 'connect' (choose from read, guide, artifact)\n",
+          "data": null
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 2, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"usage: footwork browser lightpanda [-h] {read,guide,artifact} ...\\nfootwork browser lightpanda: error: argument command: invalid choice: 'connect' (choose from read, guide, artifact)\\n\", \"data\": null}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

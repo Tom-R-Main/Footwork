@@ -1,0 +1,178 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/frames]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 13171.507083594,
+      "nodeid": "test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/frames]",
+      "fixture": "fixture_site",
+      "url": "http://127.0.0.1:43383",
+      "records": [],
+      "request_paths": [
+        "/frames"
+      ]
+    }
+  ],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13171.506680115,
+      "nodeid": "test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/frames]",
+      "process_number": 75,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_real_base_links_and_omitted_non_http_frames[/frames]",
+      "pid": 39400,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "read",
+        "http://127.0.0.1:43383/frames",
+        "--executable",
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/lightpanda-x86_64-linux"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "4b96e628cd7165eb1a5c1f6f3d5d86ef303d8094bccc8ed63c05cde0afa0bc8d",
+        "bytes": 3080,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "schema_version": "1",
+            "profile": "lightpanda-readonly",
+            "ok": true,
+            "code": null,
+            "capture_completed": true,
+            "cleanup": {
+              "status": "bounded_owned_processes_stopped",
+              "complete_tree_inventory": false
+            },
+            "process_started": true,
+            "engine_identity": {
+              "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+              "pid": 39401,
+              "start": "1793479605.43",
+              "binary_sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+            },
+            "observation": {
+              "schema_version": "1",
+              "producer": "footwork.browser.lightpanda.dom_text",
+              "engine": "lightpanda",
+              "observation_id": "lpobs_823eb47f6c23b86aaf5c5cfe",
+              "identity": {
+                "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                "pid": 39401,
+                "start": "1793479605.43",
+                "binary_sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+                "connection_id": "dd05595207ad1acc4edcb3e54014f11f",
+                "browser_context_id": "BID-1",
+                "target_id": "FID-0000000001",
+                "session_id": "SID-1",
+                "frame_id": "FID-0000000001",
+                "loader_id": "LID-0000000001"
+              },
+              "capture": {
+                "start": 1793479605.8410635,
+                "end": 1793479605.8423734,
+                "atomic": false,
+                "reported_identifiers_unchanged": true,
+                "numeric_alias_resistance": "unqualified"
+              },
+              "page": {
+                "url": "http://127.0.0.1:43383/frames",
+                "url_sha256": "507de7146576571115cdc09640fc61c551e260c2301d2f42bf411cb1381574ab",
+                "query_or_fragment_withheld": false,
+                "title": "",
+                "title_source": "DOM.getDocument"
+              },
+              "content": [
+                {
+                  "record_id": 1,
+                  "kind": "heading",
+                  "text": "Public heading",
+                  "heading_level": 1
+                }
+              ],
+              "text": "Public heading",
+              "omitted": {
+                "form_subtrees": 0,
+                "form_labels": 0,
+                "excluded_subtrees": 3,
+                "obvious_hidden_subtrees": 0,
+                "shadow_roots": 0,
+                "link_destinations": 0,
+                "text_budget": false,
+                "child_frames": 0
+              },
+              "complete": false,
+              "actions": [],
+              "input_dispatched": false,
+              "mutation_authority": false,
+              "completion": "not_asserted",
+              "capabilities": {
+                "dom_text": true,
+                "layout": false,
+                "visibility": false,
+                "screenshots": false,
+                "click": false,
+                "typing": false,
+                "raw_script": false
+              },
+              "limits": [
+                "DOM text is not rendered/visible text; CSS-hidden content may remain.",
+                "Form values and associated labels are withheld; child frames and shadow roots are omitted.",
+                "Link destinations are withheld when a captured base href makes the effective base unqualified.",
+                "Record IDs identify this capture's text only and cannot authorize input.",
+                "Matching numeric identifiers does not prove an atomic or mutation-safe document binding.",
+                "Initial URL loading executes site code and may have network effects."
+              ]
+            },
+            "protocol_methods": [
+              "Target.createTarget",
+              "Target.getTargets",
+              "Target.attachToTarget",
+              "Page.enable",
+              "Page.navigate",
+              "Target.getTargets",
+              "Page.getFrameTree",
+              "Target.getTargets",
+              "Page.getFrameTree",
+              "DOM.getDocument",
+              "DOM.getDocument",
+              "Page.getFrameTree",
+              "Target.getTargets"
+            ],
+            "message": "Bounded DOM observation captured.",
+            "input": {
+              "supported": false,
+              "dispatched": false
+            },
+            "completion": "not_asserted",
+            "network_effects": "not_asserted",
+            "retryable": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"schema_version\": \"1\", \"profile\": \"lightpanda-readonly\", \"ok\": true, \"code\": null, \"capture_completed\": true, \"cleanup\": {\"status\": \"bounded_owned_processes_stopped\", \"complete_tree_inventory\": false}, \"process_started\": true, \"engine_identity\": {\"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"pid\": 39401, \"start\": \"1793479605.43\", \"binary_sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\"}, \"observation\": {\"schema_version\": \"1\", \"producer\": \"footwork.browser.lightpanda.dom_text\", \"engine\": \"lightpanda\", \"observation_id\": \"lpobs_823eb47f6c23b86aaf5c5cfe\", \"identity\": {\"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"pid\": 39401, \"start\": \"1793479605.43\", \"binary_sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\", \"connection_id\": \"dd05595207ad1acc4edcb3e54014f11f\", \"browser_context_id\": \"BID-1\", \"target_id\": \"FID-0000000001\", \"session_id\": \"SID-1\", \"frame_id\": \"FID-0000000001\", \"loader_id\": \"LID-0000000001\"}, \"capture\": {\"start\": 1793479605.8410635, \"end\": 1793479605.8423734, \"atomic\": false, \"reported_identifiers_unchanged\": true, \"numeric_alias_resistance\": \"unqualified\"}, \"page\": {\"url\": \"http://127.0.0.1:43383/frames\", \"url_sha256\": \"507de7146576571115cdc09640fc61c551e260c2301d2f42bf411cb1381574ab\", \"query_or_fragment_withheld\": false, \"title\": \"\", \"title_source\": \"DOM.getDocument\"}, \"content\": [{\"record_id\": 1, \"kind\": \"heading\", \"text\": \"Public heading\", \"heading_level\": 1}], \"text\": \"Public heading\", \"omitted\": {\"form_subtrees\": 0, \"form_labels\": 0, \"excluded_subtrees\": 3, \"obvious_hidden_subtrees\": 0, \"shadow_roots\": 0, \"link_destinations\": 0, \"text_budget\": false, \"child_frames\": 0}, \"complete\": false, \"actions\": [], \"input_dispatched\": false, \"mutation_authority\": false, \"completion\": \"not_asserted\", \"capabilities\": {\"dom_text\": true, \"layout\": false, \"visibility\": false, \"screenshots\": false, \"click\": false, \"typing\": false, \"raw_script\": false}, \"limits\": [\"DOM text is not rendered/visible text; CSS-hidden content may remain.\", \"Form values and associated labels are withheld; child frames and shadow roots are omitted.\", \"Link destinations are withheld when a captured base href makes the effective base unqualified.\", \"Record IDs identify this capture's text only and cannot authorize input.\", \"Matching numeric identifiers does not prove an atomic or mutation-safe document binding.\", \"Initial URL loading executes site code and may have network effects.\"]}, \"protocol_methods\": [\"Target.createTarget\", \"Target.getTargets\", \"Target.attachToTarget\", \"Page.enable\", \"Page.navigate\", \"Target.getTargets\", \"Page.getFrameTree\", \"Target.getTargets\", \"Page.getFrameTree\", \"DOM.getDocument\", \"DOM.getDocument\", \"Page.getFrameTree\", \"Target.getTargets\"], \"message\": \"Bounded DOM observation captured.\", \"input\": {\"supported\": false, \"dispatched\": false}, \"completion\": \"not_asserted\", \"network_effects\": \"not_asserted\", \"retryable\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

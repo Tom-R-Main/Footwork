@@ -1,0 +1,100 @@
+{
+  "kind": "communicate",
+  "monotonic": 13166.258168462,
+  "nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+  "process_number": 53,
+  "process_kind": "public_cli",
+  "owner_nodeid": "test_lightpanda_cli.py::test_installed_lightpanda_discovery_is_an_explicit_readonly_profile",
+  "pid": 39318,
+  "argv": [
+    "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+    "--json",
+    "browser",
+    "lightpanda",
+    "guide"
+  ],
+  "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+  "returncode": 0,
+  "signal": null,
+  "stdout": {
+    "sha256": "c9bcb4c82b656bb8bad644c150375012a46649ad2874eaa21aafca681b785d9c",
+    "bytes": 2836,
+    "json": {
+      "schema_version": "1",
+      "exit_code": 0,
+      "command_completed": true,
+      "effect_verification": "not_asserted",
+      "output": "",
+      "diagnostics": "",
+      "data": {
+        "package_version": "0.0.1",
+        "profile": "lightpanda-readonly",
+        "entrypoint": "footwork browser lightpanda",
+        "commands": [
+          "read",
+          "guide",
+          "artifact"
+        ],
+        "engine": "lightpanda",
+        "requirements": [
+          "pinned prebuilt Lightpanda executable",
+          "psutil",
+          "websockets",
+          "Unix peer process identity"
+        ],
+        "desktop_required": false,
+        "cua_required": false,
+        "model_required": false,
+        "observation": "bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim",
+        "typing": "disabled",
+        "input": "unavailable; no mutation authority or consumable action refs",
+        "completion": "not_asserted; observation is not task completion",
+        "lifetime": "one fresh process and one connection per read; no session adoption or reconnect",
+        "budgets": {
+          "browser_connections": 1,
+          "websocket_message_bytes": 4194304,
+          "dom_nodes": 10000,
+          "records": 256,
+          "text_characters": 32768,
+          "observation_bytes": 262144
+        },
+        "install": "external pinned engine; current Footwork metadata still declares full dependencies; light split pending",
+        "network": "initial URL setup executes website code; read-only describes Footwork input, not website-side effects",
+        "artifact": {
+          "platform": "linux-x86_64",
+          "available": true,
+          "name": "lightpanda-x86_64-linux",
+          "asset_id": 694146173,
+          "bytes": 77129032,
+          "sha256": "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3",
+          "repository": "lightpanda-io/browser",
+          "release": "nightly",
+          "asset_api_url": "https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173",
+          "download_accept": "application/octet-stream",
+          "pin_semantics": "asset bytes and SHA256; the rolling release tag is not source identity"
+        },
+        "loop": [
+          "artifact: obtain the named external binary through your provisioner and verify its recorded SHA256",
+          "read URL --executable /absolute/lightpanda: load one page and return a bounded semantic observation",
+          "inspect observation limits and cleanup independently; a later read starts a new browser"
+        ],
+        "limits": [
+          "No click, typing, navigation-after-setup, raw JavaScript, raw CDP or durable mutation command is exposed.",
+          "No Jev guard is bypassed: no input mutation can be admitted in this profile.",
+          "Input/editable values, embedded frames and unqualified layout/visibility are withheld by the observer.",
+          "The load event is the setup boundary; complete network idle and future asynchronous content are not asserted.",
+          "Document metadata and content are sampled over an interval; the result grants no later input authority.",
+          "Cleanup uses the original child handle and bounded process inventory; forced death/orphan absence is not guaranteed.",
+          "The private Unix endpoint and peer checks are not isolation from arbitrary same-user code."
+        ]
+      }
+    },
+    "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"package_version\": \"0.0.1\", \"profile\": \"lightpanda-readonly\", \"entrypoint\": \"footwork browser lightpanda\", \"commands\": [\"read\", \"guide\", \"artifact\"], \"engine\": \"lightpanda\", \"requirements\": [\"pinned prebuilt Lightpanda executable\", \"psutil\", \"websockets\", \"Unix peer process identity\"], \"desktop_required\": false, \"cua_required\": false, \"model_required\": false, \"observation\": \"bounded DOM semantics; no layout, visibility, screenshot or accessibility-equivalence claim\", \"typing\": \"disabled\", \"input\": \"unavailable; no mutation authority or consumable action refs\", \"completion\": \"not_asserted; observation is not task completion\", \"lifetime\": \"one fresh process and one connection per read; no session adoption or reconnect\", \"budgets\": {\"browser_connections\": 1, \"websocket_message_bytes\": 4194304, \"dom_nodes\": 10000, \"records\": 256, \"text_characters\": 32768, \"observation_bytes\": 262144}, \"install\": \"external pinned engine; current Footwork metadata still declares full dependencies; light split pending\", \"network\": \"initial URL setup executes website code; read-only describes Footwork input, not website-side effects\", \"artifact\": {\"platform\": \"linux-x86_64\", \"available\": true, \"name\": \"lightpanda-x86_64-linux\", \"asset_id\": 694146173, \"bytes\": 77129032, \"sha256\": \"19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3\", \"repository\": \"lightpanda-io/browser\", \"release\": \"nightly\", \"asset_api_url\": \"https://api.github.com/repos/lightpanda-io/browser/releases/assets/694146173\", \"download_accept\": \"application/octet-stream\", \"pin_semantics\": \"asset bytes and SHA256; the rolling release tag is not source identity\"}, \"loop\": [\"artifact: obtain the named external binary through your provisioner and verify its recorded SHA256\", \"read URL --executable /absolute/lightpanda: load one page and return a bounded semantic observation\", \"inspect observation limits and cleanup independently; a later read starts a new browser\"], \"limits\": [\"No click, typing, navigation-after-setup, raw JavaScript, raw CDP or durable mutation command is exposed.\", \"No Jev guard is bypassed: no input mutation can be admitted in this profile.\", \"Input/editable values, embedded frames and unqualified layout/visibility are withheld by the observer.\", \"The load event is the setup boundary; complete network idle and future asynchronous content are not asserted.\", \"Document metadata and content are sampled over an interval; the result grants no later input authority.\", \"Cleanup uses the original child handle and bounded process inventory; forced death/orphan absence is not guaranteed.\", \"The private Unix endpoint and peer checks are not isolation from arbitrary same-user code.\"]}}"
+  },
+  "stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "json": null,
+    "text": ""
+  }
+}

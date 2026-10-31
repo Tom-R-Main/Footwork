@@ -1,0 +1,1929 @@
+{
+  "nodeids": [
+    "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]"
+  ],
+  "boundary_metadata": [
+    {
+      "path": "/tmp/fw-crash-gjosxnwd/session/test-boundary.json",
+      "sha256": "198e35885dc59bc686c4dd6d1a7600381be23138b783dbd981ab3c2a1070b529",
+      "mtime_ns": 1793479567753739243,
+      "mode": "0o600",
+      "json": {
+        "boundary": "retained",
+        "operation_id": "op_950d7b4bbf61",
+        "ingress_before_exit": 1,
+        "heavy_imports": []
+      }
+    }
+  ],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 13140.097528313,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "fixture": "ingress",
+      "url": "http://127.0.0.1:41661/",
+      "records": [
+        "intended"
+      ],
+      "request_paths": null
+    }
+  ],
+  "public_helper_receipts": [
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.226589933,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "look",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "restart-fixture",
+        "snapshot": {
+          "status": "ok",
+          "page": {
+            "url": "http://127.0.0.1:41661/",
+            "title": "Restart boundary"
+          },
+          "snapshot": {
+            "id": "5792b57b95b2",
+            "complete": false,
+            "omitted": {
+              "css_hidden": 0,
+              "offscreen": 0,
+              "no_layout": 0,
+              "unknown": 0,
+              "budget": 0,
+              "child_frames": 0,
+              "custom_controls_unobserved": 1
+            }
+          },
+          "refs": [
+            {
+              "ref": "5792b57b95b2:1",
+              "role": "button",
+              "name": "Commit fixture",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            }
+          ],
+          "content_refs": [],
+          "document": {
+            "frame_id": "5A5E317E280ADAC3D7F7D01AF018C01E",
+            "loader_id": "7039E32BF4961AEC0A53F03979ABF9CA"
+          }
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.40716158,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_response_unknown",
+        "dispatched": null,
+        "retryable": false
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.492782583,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "recover",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_950d7b4bbf61",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+            "observation": "5792b57b95b2:1",
+            "target": "7",
+            "move": "click",
+            "args": {
+              "ref": "5792b57b95b2:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "sent",
+            "evidence": {
+              "binding": {
+                "backend_node": 7,
+                "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                "execution_context": 3,
+                "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                "pid": 34791,
+                "start": "1793479566.73",
+                "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+              },
+              "execution_receipt": {
+                "basis": "activation_ack",
+                "binding": {
+                  "backend_node": 7,
+                  "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                  "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                  "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                  "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                  "execution_context": 3,
+                  "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                  "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                  "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                  "pid": 34791,
+                  "start": "1793479566.73",
+                  "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                },
+                "custody": "returned",
+                "dispatched": true,
+                "effect": "unverifiable",
+                "error": null,
+                "guard": {
+                  "decision": "allow",
+                  "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                  "producer": "footwork.browser.guard",
+                  "version": 1
+                },
+                "interval": {
+                  "end": 1793479567.7426867,
+                  "start": 1793479567.735848
+                },
+                "kind": "browser_execution",
+                "move": "click",
+                "observation": "5792b57b95b2:1",
+                "operation_id": "op_950d7b4bbf61",
+                "phase": "sent",
+                "producer": {
+                  "name": "footwork.browser.cdp",
+                  "version": 1
+                },
+                "projection": {
+                  "binding": {
+                    "backend_node": 7,
+                    "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                    "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                    "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                    "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                    "execution_context": 3,
+                    "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                    "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                    "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                    "pid": 34791,
+                    "start": "1793479566.73",
+                    "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                  },
+                  "guard": {
+                    "decision": "allow",
+                    "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                    "producer": "footwork.browser.guard",
+                    "version": 1
+                  },
+                  "protocol": "footwork.browser.cdp",
+                  "version": 1
+                },
+                "protocol": "footwork.browser.cdp",
+                "reply": {
+                  "code": null,
+                  "dispatched": true,
+                  "route": "dom_event_native_button",
+                  "status": "ok"
+                },
+                "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                "schema_version": 1,
+                "session_id": "restart-fixture",
+                "target": "7"
+              },
+              "guard": {
+                "decision": "allow",
+                "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                "producer": "footwork.browser.guard",
+                "version": 1
+              },
+              "prior_uncertainty": {
+                "error": "process ended during dispatch",
+                "phase": "ambiguous"
+              },
+              "protocol": "footwork.browser.cdp",
+              "version": 1
+            },
+            "error": null,
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793479567.7353365,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793479567.7358654,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793479567.7429035,
+                "kind": "browser_execution_retained",
+                "protocol": "footwork.browser.cdp",
+                "version": 1
+              },
+              {
+                "t": 1793479567.8397274,
+                "kind": "recovered_unknown"
+              },
+              {
+                "t": 1793479567.8408906,
+                "kind": "execution_reconciled",
+                "disposition": "unknown",
+                "phase": "sent"
+              }
+            ],
+            "created": 1793479567.7352188,
+            "updated": 1793479567.8408418,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.576620312,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "status",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_950d7b4bbf61",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+            "observation": "5792b57b95b2:1",
+            "target": "7",
+            "move": "click",
+            "args": {
+              "ref": "5792b57b95b2:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "sent",
+            "evidence": {
+              "binding": {
+                "backend_node": 7,
+                "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                "execution_context": 3,
+                "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                "pid": 34791,
+                "start": "1793479566.73",
+                "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+              },
+              "execution_receipt": {
+                "basis": "activation_ack",
+                "binding": {
+                  "backend_node": 7,
+                  "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                  "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                  "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                  "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                  "execution_context": 3,
+                  "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                  "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                  "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                  "pid": 34791,
+                  "start": "1793479566.73",
+                  "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                },
+                "custody": "returned",
+                "dispatched": true,
+                "effect": "unverifiable",
+                "error": null,
+                "guard": {
+                  "decision": "allow",
+                  "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                  "producer": "footwork.browser.guard",
+                  "version": 1
+                },
+                "interval": {
+                  "end": 1793479567.7426867,
+                  "start": 1793479567.735848
+                },
+                "kind": "browser_execution",
+                "move": "click",
+                "observation": "5792b57b95b2:1",
+                "operation_id": "op_950d7b4bbf61",
+                "phase": "sent",
+                "producer": {
+                  "name": "footwork.browser.cdp",
+                  "version": 1
+                },
+                "projection": {
+                  "binding": {
+                    "backend_node": 7,
+                    "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                    "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                    "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                    "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                    "execution_context": 3,
+                    "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                    "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                    "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                    "pid": 34791,
+                    "start": "1793479566.73",
+                    "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                  },
+                  "guard": {
+                    "decision": "allow",
+                    "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                    "producer": "footwork.browser.guard",
+                    "version": 1
+                  },
+                  "protocol": "footwork.browser.cdp",
+                  "version": 1
+                },
+                "protocol": "footwork.browser.cdp",
+                "reply": {
+                  "code": null,
+                  "dispatched": true,
+                  "route": "dom_event_native_button",
+                  "status": "ok"
+                },
+                "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                "schema_version": 1,
+                "session_id": "restart-fixture",
+                "target": "7"
+              },
+              "guard": {
+                "decision": "allow",
+                "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                "producer": "footwork.browser.guard",
+                "version": 1
+              },
+              "prior_uncertainty": {
+                "error": "process ended during dispatch",
+                "phase": "ambiguous"
+              },
+              "protocol": "footwork.browser.cdp",
+              "version": 1
+            },
+            "error": null,
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793479567.7353365,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793479567.7358654,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793479567.7429035,
+                "kind": "browser_execution_retained",
+                "protocol": "footwork.browser.cdp",
+                "version": 1
+              },
+              {
+                "t": 1793479567.8397274,
+                "kind": "recovered_unknown"
+              },
+              {
+                "t": 1793479567.8408906,
+                "kind": "execution_reconciled",
+                "disposition": "unknown",
+                "phase": "sent"
+              }
+            ],
+            "created": 1793479567.7352188,
+            "updated": 1793479567.8408418,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.659019829,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_950d7b4bbf61",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+          "observation": "5792b57b95b2:1",
+          "target": "7",
+          "move": "click",
+          "args": {
+            "ref": "5792b57b95b2:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "sent",
+          "evidence": {
+            "binding": {
+              "backend_node": 7,
+              "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+              "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+              "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+              "document_token": "912ab19039ecb8e97f6e33818f134f28",
+              "execution_context": 3,
+              "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+              "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+              "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+              "pid": 34791,
+              "start": "1793479566.73",
+              "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+            },
+            "execution_receipt": {
+              "basis": "activation_ack",
+              "binding": {
+                "backend_node": 7,
+                "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                "execution_context": 3,
+                "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                "pid": 34791,
+                "start": "1793479566.73",
+                "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+              },
+              "custody": "returned",
+              "dispatched": true,
+              "effect": "unverifiable",
+              "error": null,
+              "guard": {
+                "decision": "allow",
+                "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                "producer": "footwork.browser.guard",
+                "version": 1
+              },
+              "interval": {
+                "end": 1793479567.7426867,
+                "start": 1793479567.735848
+              },
+              "kind": "browser_execution",
+              "move": "click",
+              "observation": "5792b57b95b2:1",
+              "operation_id": "op_950d7b4bbf61",
+              "phase": "sent",
+              "producer": {
+                "name": "footwork.browser.cdp",
+                "version": 1
+              },
+              "projection": {
+                "binding": {
+                  "backend_node": 7,
+                  "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                  "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                  "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                  "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                  "execution_context": 3,
+                  "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                  "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                  "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                  "pid": 34791,
+                  "start": "1793479566.73",
+                  "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                },
+                "guard": {
+                  "decision": "allow",
+                  "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                  "producer": "footwork.browser.guard",
+                  "version": 1
+                },
+                "protocol": "footwork.browser.cdp",
+                "version": 1
+              },
+              "protocol": "footwork.browser.cdp",
+              "reply": {
+                "code": null,
+                "dispatched": true,
+                "route": "dom_event_native_button",
+                "status": "ok"
+              },
+              "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+              "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+              "schema_version": 1,
+              "session_id": "restart-fixture",
+              "target": "7"
+            },
+            "guard": {
+              "decision": "allow",
+              "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+              "producer": "footwork.browser.guard",
+              "version": 1
+            },
+            "prior_uncertainty": {
+              "error": "process ended during dispatch",
+              "phase": "ambiguous"
+            },
+            "protocol": "footwork.browser.cdp",
+            "version": 1
+          },
+          "error": null,
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793479567.7353365,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793479567.7358654,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793479567.7429035,
+              "kind": "browser_execution_retained",
+              "protocol": "footwork.browser.cdp",
+              "version": 1
+            },
+            {
+              "t": 1793479567.8397274,
+              "kind": "recovered_unknown"
+            },
+            {
+              "t": 1793479567.8408906,
+              "kind": "execution_reconciled",
+              "disposition": "unknown",
+              "phase": "sent"
+            }
+          ],
+          "created": 1793479567.7352188,
+          "updated": 1793479567.8408418,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.752914093,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_950d7b4bbf61",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+          "observation": "5792b57b95b2:1",
+          "target": "7",
+          "move": "click",
+          "args": {
+            "ref": "5792b57b95b2:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "sent",
+          "evidence": {
+            "binding": {
+              "backend_node": 7,
+              "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+              "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+              "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+              "document_token": "912ab19039ecb8e97f6e33818f134f28",
+              "execution_context": 3,
+              "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+              "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+              "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+              "pid": 34791,
+              "start": "1793479566.73",
+              "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+            },
+            "execution_receipt": {
+              "basis": "activation_ack",
+              "binding": {
+                "backend_node": 7,
+                "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                "execution_context": 3,
+                "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                "pid": 34791,
+                "start": "1793479566.73",
+                "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+              },
+              "custody": "returned",
+              "dispatched": true,
+              "effect": "unverifiable",
+              "error": null,
+              "guard": {
+                "decision": "allow",
+                "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                "producer": "footwork.browser.guard",
+                "version": 1
+              },
+              "interval": {
+                "end": 1793479567.7426867,
+                "start": 1793479567.735848
+              },
+              "kind": "browser_execution",
+              "move": "click",
+              "observation": "5792b57b95b2:1",
+              "operation_id": "op_950d7b4bbf61",
+              "phase": "sent",
+              "producer": {
+                "name": "footwork.browser.cdp",
+                "version": 1
+              },
+              "projection": {
+                "binding": {
+                  "backend_node": 7,
+                  "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                  "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                  "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                  "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                  "execution_context": 3,
+                  "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                  "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                  "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                  "pid": 34791,
+                  "start": "1793479566.73",
+                  "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                },
+                "guard": {
+                  "decision": "allow",
+                  "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                  "producer": "footwork.browser.guard",
+                  "version": 1
+                },
+                "protocol": "footwork.browser.cdp",
+                "version": 1
+              },
+              "protocol": "footwork.browser.cdp",
+              "reply": {
+                "code": null,
+                "dispatched": true,
+                "route": "dom_event_native_button",
+                "status": "ok"
+              },
+              "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+              "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+              "schema_version": 1,
+              "session_id": "restart-fixture",
+              "target": "7"
+            },
+            "guard": {
+              "decision": "allow",
+              "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+              "producer": "footwork.browser.guard",
+              "version": 1
+            },
+            "prior_uncertainty": {
+              "error": "process ended during dispatch",
+              "phase": "ambiguous"
+            },
+            "protocol": "footwork.browser.cdp",
+            "version": 1
+          },
+          "error": null,
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793479567.7353365,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793479567.7358654,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793479567.7429035,
+              "kind": "browser_execution_retained",
+              "protocol": "footwork.browser.cdp",
+              "version": 1
+            },
+            {
+              "t": 1793479567.8397274,
+              "kind": "recovered_unknown"
+            },
+            {
+              "t": 1793479567.8408906,
+              "kind": "execution_reconciled",
+              "disposition": "unknown",
+              "phase": "sent"
+            }
+          ],
+          "created": 1793479567.7352188,
+          "updated": 1793479567.8408418,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13133.829164808,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-2"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 13140.095064581,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-gjosxnwd",
+        "start",
+        "Try a new intent",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/next",
+        "--authority",
+        "/tmp/fw-crash-gjosxnwd/authority.db",
+        "--url",
+        "http://127.0.0.1:41661/"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    }
+  ],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13133.226457767,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 39,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34899,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "look",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "65af13d36303665d7839003abfb559484720f9804ab5692ba873d573d8ccd3bf",
+        "bytes": 787,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "session_id": "restart-fixture",
+            "snapshot": {
+              "status": "ok",
+              "page": {
+                "url": "http://127.0.0.1:41661/",
+                "title": "Restart boundary"
+              },
+              "snapshot": {
+                "id": "5792b57b95b2",
+                "complete": false,
+                "omitted": {
+                  "css_hidden": 0,
+                  "offscreen": 0,
+                  "no_layout": 0,
+                  "unknown": 0,
+                  "budget": 0,
+                  "child_frames": 0,
+                  "custom_controls_unobserved": 1
+                }
+              },
+              "refs": [
+                {
+                  "ref": "5792b57b95b2:1",
+                  "role": "button",
+                  "name": "Commit fixture",
+                  "actions": [
+                    "click"
+                  ],
+                  "states": {
+                    "focusable": true
+                  },
+                  "visibility": "in_viewport"
+                }
+              ],
+              "content_refs": [],
+              "document": {
+                "frame_id": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                "loader_id": "7039E32BF4961AEC0A53F03979ABF9CA"
+              }
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"session_id\": \"restart-fixture\", \"snapshot\": {\"status\": \"ok\", \"page\": {\"url\": \"http://127.0.0.1:41661/\", \"title\": \"Restart boundary\"}, \"snapshot\": {\"id\": \"5792b57b95b2\", \"complete\": false, \"omitted\": {\"css_hidden\": 0, \"offscreen\": 0, \"no_layout\": 0, \"unknown\": 0, \"budget\": 0, \"child_frames\": 0, \"custom_controls_unobserved\": 1}}, \"refs\": [{\"ref\": \"5792b57b95b2:1\", \"role\": \"button\", \"name\": \"Commit fixture\", \"actions\": [\"click\"], \"states\": {\"focusable\": true}, \"visibility\": \"in_viewport\"}], \"content_refs\": [], \"document\": {\"frame_id\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader_id\": \"7039E32BF4961AEC0A53F03979ABF9CA\"}}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13133.4070063,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 40,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34900,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "607553ea9eecc8f11f1b890e7f1676dbace803e50f334dd6149e0e52c4290761",
+        "bytes": 239,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "browser_response_unknown",
+            "dispatched": null,
+            "retryable": false
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"browser_response_unknown\", \"dispatched\": null, \"retryable\": false}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13133.492576077,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 41,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34903,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "recover",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "a85c0c7cf263942569fb8cd1de6492c50e0dcd7cac912762e699561b195168fd",
+        "bytes": 5164,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "holder": "unavailable; no relaunch attempted",
+            "session_id": "restart-fixture",
+            "operations": [
+              {
+                "id": "op_950d7b4bbf61",
+                "task": "restart-fixture",
+                "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                "observation": "5792b57b95b2:1",
+                "target": "7",
+                "move": "click",
+                "args": {
+                  "ref": "5792b57b95b2:1",
+                  "route": "dom_event_native_button"
+                },
+                "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                "client_token": "intent-1",
+                "state": "unknown",
+                "disposition": "unknown",
+                "phase": "sent",
+                "evidence": {
+                  "binding": {
+                    "backend_node": 7,
+                    "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                    "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                    "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                    "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                    "execution_context": 3,
+                    "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                    "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                    "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                    "pid": 34791,
+                    "start": "1793479566.73",
+                    "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                  },
+                  "execution_receipt": {
+                    "basis": "activation_ack",
+                    "binding": {
+                      "backend_node": 7,
+                      "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                      "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                      "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                      "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                      "execution_context": 3,
+                      "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                      "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                      "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                      "pid": 34791,
+                      "start": "1793479566.73",
+                      "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                    },
+                    "custody": "returned",
+                    "dispatched": true,
+                    "effect": "unverifiable",
+                    "error": null,
+                    "guard": {
+                      "decision": "allow",
+                      "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                      "producer": "footwork.browser.guard",
+                      "version": 1
+                    },
+                    "interval": {
+                      "end": 1793479567.7426867,
+                      "start": 1793479567.735848
+                    },
+                    "kind": "browser_execution",
+                    "move": "click",
+                    "observation": "5792b57b95b2:1",
+                    "operation_id": "op_950d7b4bbf61",
+                    "phase": "sent",
+                    "producer": {
+                      "name": "footwork.browser.cdp",
+                      "version": 1
+                    },
+                    "projection": {
+                      "binding": {
+                        "backend_node": 7,
+                        "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                        "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                        "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                        "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                        "execution_context": 3,
+                        "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                        "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                        "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                        "pid": 34791,
+                        "start": "1793479566.73",
+                        "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                      },
+                      "guard": {
+                        "decision": "allow",
+                        "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                        "producer": "footwork.browser.guard",
+                        "version": 1
+                      },
+                      "protocol": "footwork.browser.cdp",
+                      "version": 1
+                    },
+                    "protocol": "footwork.browser.cdp",
+                    "reply": {
+                      "code": null,
+                      "dispatched": true,
+                      "route": "dom_event_native_button",
+                      "status": "ok"
+                    },
+                    "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                    "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                    "schema_version": 1,
+                    "session_id": "restart-fixture",
+                    "target": "7"
+                  },
+                  "guard": {
+                    "decision": "allow",
+                    "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                    "producer": "footwork.browser.guard",
+                    "version": 1
+                  },
+                  "prior_uncertainty": {
+                    "error": "process ended during dispatch",
+                    "phase": "ambiguous"
+                  },
+                  "protocol": "footwork.browser.cdp",
+                  "version": 1
+                },
+                "error": null,
+                "resolved_by": null,
+                "history": [
+                  {
+                    "t": 1793479567.7353365,
+                    "kind": "intent",
+                    "protocol": 1,
+                    "authorization": "configured_browser_guard"
+                  },
+                  {
+                    "t": 1793479567.7358654,
+                    "kind": "dispatch_started"
+                  },
+                  {
+                    "t": 1793479567.7429035,
+                    "kind": "browser_execution_retained",
+                    "protocol": "footwork.browser.cdp",
+                    "version": 1
+                  },
+                  {
+                    "t": 1793479567.8397274,
+                    "kind": "recovered_unknown"
+                  },
+                  {
+                    "t": 1793479567.8408906,
+                    "kind": "execution_reconciled",
+                    "disposition": "unknown",
+                    "phase": "sent"
+                  }
+                ],
+                "created": 1793479567.7352188,
+                "updated": 1793479567.8408418,
+                "recovery": null,
+                "execution_stage": "started",
+                "completion": "unverified",
+                "retryable": false
+              }
+            ]
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"holder\": \"unavailable; no relaunch attempted\", \"session_id\": \"restart-fixture\", \"operations\": [{\"id\": \"op_950d7b4bbf61\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"observation\": \"5792b57b95b2:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"5792b57b95b2:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"sent\", \"evidence\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"execution_receipt\": {\"basis\": \"activation_ack\", \"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"custody\": \"returned\", \"dispatched\": true, \"effect\": \"unverifiable\", \"error\": null, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"interval\": {\"end\": 1793479567.7426867, \"start\": 1793479567.735848}, \"kind\": \"browser_execution\", \"move\": \"click\", \"observation\": \"5792b57b95b2:1\", \"operation_id\": \"op_950d7b4bbf61\", \"phase\": \"sent\", \"producer\": {\"name\": \"footwork.browser.cdp\", \"version\": 1}, \"projection\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"reply\": {\"code\": null, \"dispatched\": true, \"route\": \"dom_event_native_button\", \"status\": \"ok\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"schema_version\": 1, \"session_id\": \"restart-fixture\", \"target\": \"7\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"prior_uncertainty\": {\"error\": \"process ended during dispatch\", \"phase\": \"ambiguous\"}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"error\": null, \"resolved_by\": null, \"history\": [{\"t\": 1793479567.7353365, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479567.7358654, \"kind\": \"dispatch_started\"}, {\"t\": 1793479567.7429035, \"kind\": \"browser_execution_retained\", \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, {\"t\": 1793479567.8397274, \"kind\": \"recovered_unknown\"}, {\"t\": 1793479567.8408906, \"kind\": \"execution_reconciled\", \"disposition\": \"unknown\", \"phase\": \"sent\"}], \"created\": 1793479567.7352188, \"updated\": 1793479567.8408418, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}]}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13133.576371073,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 42,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34904,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "status",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "a85c0c7cf263942569fb8cd1de6492c50e0dcd7cac912762e699561b195168fd",
+        "bytes": 5164,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "holder": "unavailable; no relaunch attempted",
+            "session_id": "restart-fixture",
+            "operations": [
+              {
+                "id": "op_950d7b4bbf61",
+                "task": "restart-fixture",
+                "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                "observation": "5792b57b95b2:1",
+                "target": "7",
+                "move": "click",
+                "args": {
+                  "ref": "5792b57b95b2:1",
+                  "route": "dom_event_native_button"
+                },
+                "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                "client_token": "intent-1",
+                "state": "unknown",
+                "disposition": "unknown",
+                "phase": "sent",
+                "evidence": {
+                  "binding": {
+                    "backend_node": 7,
+                    "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                    "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                    "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                    "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                    "execution_context": 3,
+                    "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                    "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                    "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                    "pid": 34791,
+                    "start": "1793479566.73",
+                    "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                  },
+                  "execution_receipt": {
+                    "basis": "activation_ack",
+                    "binding": {
+                      "backend_node": 7,
+                      "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                      "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                      "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                      "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                      "execution_context": 3,
+                      "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                      "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                      "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                      "pid": 34791,
+                      "start": "1793479566.73",
+                      "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                    },
+                    "custody": "returned",
+                    "dispatched": true,
+                    "effect": "unverifiable",
+                    "error": null,
+                    "guard": {
+                      "decision": "allow",
+                      "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                      "producer": "footwork.browser.guard",
+                      "version": 1
+                    },
+                    "interval": {
+                      "end": 1793479567.7426867,
+                      "start": 1793479567.735848
+                    },
+                    "kind": "browser_execution",
+                    "move": "click",
+                    "observation": "5792b57b95b2:1",
+                    "operation_id": "op_950d7b4bbf61",
+                    "phase": "sent",
+                    "producer": {
+                      "name": "footwork.browser.cdp",
+                      "version": 1
+                    },
+                    "projection": {
+                      "binding": {
+                        "backend_node": 7,
+                        "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                        "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                        "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                        "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                        "execution_context": 3,
+                        "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                        "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                        "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                        "pid": 34791,
+                        "start": "1793479566.73",
+                        "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                      },
+                      "guard": {
+                        "decision": "allow",
+                        "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                        "producer": "footwork.browser.guard",
+                        "version": 1
+                      },
+                      "protocol": "footwork.browser.cdp",
+                      "version": 1
+                    },
+                    "protocol": "footwork.browser.cdp",
+                    "reply": {
+                      "code": null,
+                      "dispatched": true,
+                      "route": "dom_event_native_button",
+                      "status": "ok"
+                    },
+                    "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                    "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                    "schema_version": 1,
+                    "session_id": "restart-fixture",
+                    "target": "7"
+                  },
+                  "guard": {
+                    "decision": "allow",
+                    "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                    "producer": "footwork.browser.guard",
+                    "version": 1
+                  },
+                  "prior_uncertainty": {
+                    "error": "process ended during dispatch",
+                    "phase": "ambiguous"
+                  },
+                  "protocol": "footwork.browser.cdp",
+                  "version": 1
+                },
+                "error": null,
+                "resolved_by": null,
+                "history": [
+                  {
+                    "t": 1793479567.7353365,
+                    "kind": "intent",
+                    "protocol": 1,
+                    "authorization": "configured_browser_guard"
+                  },
+                  {
+                    "t": 1793479567.7358654,
+                    "kind": "dispatch_started"
+                  },
+                  {
+                    "t": 1793479567.7429035,
+                    "kind": "browser_execution_retained",
+                    "protocol": "footwork.browser.cdp",
+                    "version": 1
+                  },
+                  {
+                    "t": 1793479567.8397274,
+                    "kind": "recovered_unknown"
+                  },
+                  {
+                    "t": 1793479567.8408906,
+                    "kind": "execution_reconciled",
+                    "disposition": "unknown",
+                    "phase": "sent"
+                  }
+                ],
+                "created": 1793479567.7352188,
+                "updated": 1793479567.8408418,
+                "recovery": null,
+                "execution_stage": "started",
+                "completion": "unverified",
+                "retryable": false
+              }
+            ]
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"holder\": \"unavailable; no relaunch attempted\", \"session_id\": \"restart-fixture\", \"operations\": [{\"id\": \"op_950d7b4bbf61\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"observation\": \"5792b57b95b2:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"5792b57b95b2:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"sent\", \"evidence\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"execution_receipt\": {\"basis\": \"activation_ack\", \"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"custody\": \"returned\", \"dispatched\": true, \"effect\": \"unverifiable\", \"error\": null, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"interval\": {\"end\": 1793479567.7426867, \"start\": 1793479567.735848}, \"kind\": \"browser_execution\", \"move\": \"click\", \"observation\": \"5792b57b95b2:1\", \"operation_id\": \"op_950d7b4bbf61\", \"phase\": \"sent\", \"producer\": {\"name\": \"footwork.browser.cdp\", \"version\": 1}, \"projection\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"reply\": {\"code\": null, \"dispatched\": true, \"route\": \"dom_event_native_button\", \"status\": \"ok\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"schema_version\": 1, \"session_id\": \"restart-fixture\", \"target\": \"7\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"prior_uncertainty\": {\"error\": \"process ended during dispatch\", \"phase\": \"ambiguous\"}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"error\": null, \"resolved_by\": null, \"history\": [{\"t\": 1793479567.7353365, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479567.7358654, \"kind\": \"dispatch_started\"}, {\"t\": 1793479567.7429035, \"kind\": \"browser_execution_retained\", \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, {\"t\": 1793479567.8397274, \"kind\": \"recovered_unknown\"}, {\"t\": 1793479567.8408906, \"kind\": \"execution_reconciled\", \"disposition\": \"unknown\", \"phase\": \"sent\"}], \"created\": 1793479567.7352188, \"updated\": 1793479567.8408418, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}]}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13133.658802527,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 43,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34905,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "dccaa8041c72f2e58907b6a63f7918ae2ad2c2eca06a3f93709c85fff2a10777",
+        "bytes": 5123,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "replayed": true,
+            "holder": "unavailable",
+            "operation": {
+              "id": "op_950d7b4bbf61",
+              "task": "restart-fixture",
+              "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+              "observation": "5792b57b95b2:1",
+              "target": "7",
+              "move": "click",
+              "args": {
+                "ref": "5792b57b95b2:1",
+                "route": "dom_event_native_button"
+              },
+              "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+              "client_token": "intent-1",
+              "state": "unknown",
+              "disposition": "unknown",
+              "phase": "sent",
+              "evidence": {
+                "binding": {
+                  "backend_node": 7,
+                  "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                  "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                  "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                  "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                  "execution_context": 3,
+                  "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                  "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                  "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                  "pid": 34791,
+                  "start": "1793479566.73",
+                  "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                },
+                "execution_receipt": {
+                  "basis": "activation_ack",
+                  "binding": {
+                    "backend_node": 7,
+                    "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                    "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                    "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                    "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                    "execution_context": 3,
+                    "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                    "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                    "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                    "pid": 34791,
+                    "start": "1793479566.73",
+                    "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                  },
+                  "custody": "returned",
+                  "dispatched": true,
+                  "effect": "unverifiable",
+                  "error": null,
+                  "guard": {
+                    "decision": "allow",
+                    "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                    "producer": "footwork.browser.guard",
+                    "version": 1
+                  },
+                  "interval": {
+                    "end": 1793479567.7426867,
+                    "start": 1793479567.735848
+                  },
+                  "kind": "browser_execution",
+                  "move": "click",
+                  "observation": "5792b57b95b2:1",
+                  "operation_id": "op_950d7b4bbf61",
+                  "phase": "sent",
+                  "producer": {
+                    "name": "footwork.browser.cdp",
+                    "version": 1
+                  },
+                  "projection": {
+                    "binding": {
+                      "backend_node": 7,
+                      "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                      "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                      "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                      "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                      "execution_context": 3,
+                      "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                      "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                      "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                      "pid": 34791,
+                      "start": "1793479566.73",
+                      "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                    },
+                    "guard": {
+                      "decision": "allow",
+                      "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                      "producer": "footwork.browser.guard",
+                      "version": 1
+                    },
+                    "protocol": "footwork.browser.cdp",
+                    "version": 1
+                  },
+                  "protocol": "footwork.browser.cdp",
+                  "reply": {
+                    "code": null,
+                    "dispatched": true,
+                    "route": "dom_event_native_button",
+                    "status": "ok"
+                  },
+                  "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                  "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                  "schema_version": 1,
+                  "session_id": "restart-fixture",
+                  "target": "7"
+                },
+                "guard": {
+                  "decision": "allow",
+                  "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                  "producer": "footwork.browser.guard",
+                  "version": 1
+                },
+                "prior_uncertainty": {
+                  "error": "process ended during dispatch",
+                  "phase": "ambiguous"
+                },
+                "protocol": "footwork.browser.cdp",
+                "version": 1
+              },
+              "error": null,
+              "resolved_by": null,
+              "history": [
+                {
+                  "t": 1793479567.7353365,
+                  "kind": "intent",
+                  "protocol": 1,
+                  "authorization": "configured_browser_guard"
+                },
+                {
+                  "t": 1793479567.7358654,
+                  "kind": "dispatch_started"
+                },
+                {
+                  "t": 1793479567.7429035,
+                  "kind": "browser_execution_retained",
+                  "protocol": "footwork.browser.cdp",
+                  "version": 1
+                },
+                {
+                  "t": 1793479567.8397274,
+                  "kind": "recovered_unknown"
+                },
+                {
+                  "t": 1793479567.8408906,
+                  "kind": "execution_reconciled",
+                  "disposition": "unknown",
+                  "phase": "sent"
+                }
+              ],
+              "created": 1793479567.7352188,
+              "updated": 1793479567.8408418,
+              "recovery": null,
+              "execution_stage": "started",
+              "completion": "unverified",
+              "retryable": false
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"replayed\": true, \"holder\": \"unavailable\", \"operation\": {\"id\": \"op_950d7b4bbf61\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"observation\": \"5792b57b95b2:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"5792b57b95b2:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"sent\", \"evidence\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"execution_receipt\": {\"basis\": \"activation_ack\", \"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"custody\": \"returned\", \"dispatched\": true, \"effect\": \"unverifiable\", \"error\": null, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"interval\": {\"end\": 1793479567.7426867, \"start\": 1793479567.735848}, \"kind\": \"browser_execution\", \"move\": \"click\", \"observation\": \"5792b57b95b2:1\", \"operation_id\": \"op_950d7b4bbf61\", \"phase\": \"sent\", \"producer\": {\"name\": \"footwork.browser.cdp\", \"version\": 1}, \"projection\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"reply\": {\"code\": null, \"dispatched\": true, \"route\": \"dom_event_native_button\", \"status\": \"ok\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"schema_version\": 1, \"session_id\": \"restart-fixture\", \"target\": \"7\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"prior_uncertainty\": {\"error\": \"process ended during dispatch\", \"phase\": \"ambiguous\"}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"error\": null, \"resolved_by\": null, \"history\": [{\"t\": 1793479567.7353365, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479567.7358654, \"kind\": \"dispatch_started\"}, {\"t\": 1793479567.7429035, \"kind\": \"browser_execution_retained\", \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, {\"t\": 1793479567.8397274, \"kind\": \"recovered_unknown\"}, {\"t\": 1793479567.8408906, \"kind\": \"execution_reconciled\", \"disposition\": \"unknown\", \"phase\": \"sent\"}], \"created\": 1793479567.7352188, \"updated\": 1793479567.8408418, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13133.752697031,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 44,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34906,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-1"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "dccaa8041c72f2e58907b6a63f7918ae2ad2c2eca06a3f93709c85fff2a10777",
+        "bytes": 5123,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 0,
+          "command_completed": true,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": true,
+            "replayed": true,
+            "holder": "unavailable",
+            "operation": {
+              "id": "op_950d7b4bbf61",
+              "task": "restart-fixture",
+              "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+              "observation": "5792b57b95b2:1",
+              "target": "7",
+              "move": "click",
+              "args": {
+                "ref": "5792b57b95b2:1",
+                "route": "dom_event_native_button"
+              },
+              "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+              "client_token": "intent-1",
+              "state": "unknown",
+              "disposition": "unknown",
+              "phase": "sent",
+              "evidence": {
+                "binding": {
+                  "backend_node": 7,
+                  "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                  "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                  "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                  "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                  "execution_context": 3,
+                  "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                  "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                  "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                  "pid": 34791,
+                  "start": "1793479566.73",
+                  "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                },
+                "execution_receipt": {
+                  "basis": "activation_ack",
+                  "binding": {
+                    "backend_node": 7,
+                    "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                    "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                    "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                    "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                    "execution_context": 3,
+                    "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                    "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                    "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                    "pid": 34791,
+                    "start": "1793479566.73",
+                    "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                  },
+                  "custody": "returned",
+                  "dispatched": true,
+                  "effect": "unverifiable",
+                  "error": null,
+                  "guard": {
+                    "decision": "allow",
+                    "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                    "producer": "footwork.browser.guard",
+                    "version": 1
+                  },
+                  "interval": {
+                    "end": 1793479567.7426867,
+                    "start": 1793479567.735848
+                  },
+                  "kind": "browser_execution",
+                  "move": "click",
+                  "observation": "5792b57b95b2:1",
+                  "operation_id": "op_950d7b4bbf61",
+                  "phase": "sent",
+                  "producer": {
+                    "name": "footwork.browser.cdp",
+                    "version": 1
+                  },
+                  "projection": {
+                    "binding": {
+                      "backend_node": 7,
+                      "boot": "2ae8c489-cacb-4de9-872b-77459e8d3000",
+                      "browser_context": "0652D98C1EAE265F40658AB5AEFE7380",
+                      "cdp_session": "ECBEDBAAE835A3203FD26BDAF0AB0BD1",
+                      "document_token": "912ab19039ecb8e97f6e33818f134f28",
+                      "execution_context": 3,
+                      "fingerprint": "{\"tag\":\"button\",\"attrs\":[[\"onclick\",\"fetch('/ingress',{method:'POST',body:'intended'})\"],[\"type\",\"button\"]],\"text\":\"Commit fixture\",\"ancestors\":[{\"tag\":\"html\",\"attrs\":[]},{\"tag\":\"body\",\"attrs\":[]}]}",
+                      "frame": "5A5E317E280ADAC3D7F7D01AF018C01E",
+                      "loader": "7039E32BF4961AEC0A53F03979ABF9CA",
+                      "pid": 34791,
+                      "start": "1793479566.73",
+                      "target": "5A5E317E280ADAC3D7F7D01AF018C01E"
+                    },
+                    "guard": {
+                      "decision": "allow",
+                      "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                      "producer": "footwork.browser.guard",
+                      "version": 1
+                    },
+                    "protocol": "footwork.browser.cdp",
+                    "version": 1
+                  },
+                  "protocol": "footwork.browser.cdp",
+                  "reply": {
+                    "code": null,
+                    "dispatched": true,
+                    "route": "dom_event_native_button",
+                    "status": "ok"
+                  },
+                  "request_digest": "bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737",
+                  "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"0652D98C1EAE265F40658AB5AEFE7380\",\"pid\":34791,\"start\":\"1793479566.73\",\"target\":\"5A5E317E280ADAC3D7F7D01AF018C01E\"}",
+                  "schema_version": 1,
+                  "session_id": "restart-fixture",
+                  "target": "7"
+                },
+                "guard": {
+                  "decision": "allow",
+                  "digest": "6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f",
+                  "producer": "footwork.browser.guard",
+                  "version": 1
+                },
+                "prior_uncertainty": {
+                  "error": "process ended during dispatch",
+                  "phase": "ambiguous"
+                },
+                "protocol": "footwork.browser.cdp",
+                "version": 1
+              },
+              "error": null,
+              "resolved_by": null,
+              "history": [
+                {
+                  "t": 1793479567.7353365,
+                  "kind": "intent",
+                  "protocol": 1,
+                  "authorization": "configured_browser_guard"
+                },
+                {
+                  "t": 1793479567.7358654,
+                  "kind": "dispatch_started"
+                },
+                {
+                  "t": 1793479567.7429035,
+                  "kind": "browser_execution_retained",
+                  "protocol": "footwork.browser.cdp",
+                  "version": 1
+                },
+                {
+                  "t": 1793479567.8397274,
+                  "kind": "recovered_unknown"
+                },
+                {
+                  "t": 1793479567.8408906,
+                  "kind": "execution_reconciled",
+                  "disposition": "unknown",
+                  "phase": "sent"
+                }
+              ],
+              "created": 1793479567.7352188,
+              "updated": 1793479567.8408418,
+              "recovery": null,
+              "execution_stage": "started",
+              "completion": "unverified",
+              "retryable": false
+            }
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": true, \"replayed\": true, \"holder\": \"unavailable\", \"operation\": {\"id\": \"op_950d7b4bbf61\", \"task\": \"restart-fixture\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"observation\": \"5792b57b95b2:1\", \"target\": \"7\", \"move\": \"click\", \"args\": {\"ref\": \"5792b57b95b2:1\", \"route\": \"dom_event_native_button\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"client_token\": \"intent-1\", \"state\": \"unknown\", \"disposition\": \"unknown\", \"phase\": \"sent\", \"evidence\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"execution_receipt\": {\"basis\": \"activation_ack\", \"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"custody\": \"returned\", \"dispatched\": true, \"effect\": \"unverifiable\", \"error\": null, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"interval\": {\"end\": 1793479567.7426867, \"start\": 1793479567.735848}, \"kind\": \"browser_execution\", \"move\": \"click\", \"observation\": \"5792b57b95b2:1\", \"operation_id\": \"op_950d7b4bbf61\", \"phase\": \"sent\", \"producer\": {\"name\": \"footwork.browser.cdp\", \"version\": 1}, \"projection\": {\"binding\": {\"backend_node\": 7, \"boot\": \"2ae8c489-cacb-4de9-872b-77459e8d3000\", \"browser_context\": \"0652D98C1EAE265F40658AB5AEFE7380\", \"cdp_session\": \"ECBEDBAAE835A3203FD26BDAF0AB0BD1\", \"document_token\": \"912ab19039ecb8e97f6e33818f134f28\", \"execution_context\": 3, \"fingerprint\": \"{\\\"tag\\\":\\\"button\\\",\\\"attrs\\\":[[\\\"onclick\\\",\\\"fetch('/ingress',{method:'POST',body:'intended'})\\\"],[\\\"type\\\",\\\"button\\\"]],\\\"text\\\":\\\"Commit fixture\\\",\\\"ancestors\\\":[{\\\"tag\\\":\\\"html\\\",\\\"attrs\\\":[]},{\\\"tag\\\":\\\"body\\\",\\\"attrs\\\":[]}]}\", \"frame\": \"5A5E317E280ADAC3D7F7D01AF018C01E\", \"loader\": \"7039E32BF4961AEC0A53F03979ABF9CA\", \"pid\": 34791, \"start\": \"1793479566.73\", \"target\": \"5A5E317E280ADAC3D7F7D01AF018C01E\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"protocol\": \"footwork.browser.cdp\", \"reply\": {\"code\": null, \"dispatched\": true, \"route\": \"dom_event_native_button\", \"status\": \"ok\"}, \"request_digest\": \"bc11a1cd5d32784ef2ea31dfa5d5383055f27731fbcd8f904d4a59c2d4de9737\", \"resource\": \"browser:{\\\"boot\\\":\\\"2ae8c489-cacb-4de9-872b-77459e8d3000\\\",\\\"browser_context\\\":\\\"0652D98C1EAE265F40658AB5AEFE7380\\\",\\\"pid\\\":34791,\\\"start\\\":\\\"1793479566.73\\\",\\\"target\\\":\\\"5A5E317E280ADAC3D7F7D01AF018C01E\\\"}\", \"schema_version\": 1, \"session_id\": \"restart-fixture\", \"target\": \"7\"}, \"guard\": {\"decision\": \"allow\", \"digest\": \"6a0f8ca2391d1f0649cb4879993a6f964e96c8e6f50a26218eec6a017049298f\", \"producer\": \"footwork.browser.guard\", \"version\": 1}, \"prior_uncertainty\": {\"error\": \"process ended during dispatch\", \"phase\": \"ambiguous\"}, \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, \"error\": null, \"resolved_by\": null, \"history\": [{\"t\": 1793479567.7353365, \"kind\": \"intent\", \"protocol\": 1, \"authorization\": \"configured_browser_guard\"}, {\"t\": 1793479567.7358654, \"kind\": \"dispatch_started\"}, {\"t\": 1793479567.7429035, \"kind\": \"browser_execution_retained\", \"protocol\": \"footwork.browser.cdp\", \"version\": 1}, {\"t\": 1793479567.8397274, \"kind\": \"recovered_unknown\"}, {\"t\": 1793479567.8408906, \"kind\": \"execution_reconciled\", \"disposition\": \"unknown\", \"phase\": \"sent\"}], \"created\": 1793479567.7352188, \"updated\": 1793479567.8408418, \"recovery\": null, \"execution_stage\": \"started\", \"completion\": \"unverified\", \"retryable\": false}}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13133.829061776,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 45,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34907,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/session",
+        "--ref",
+        "5792b57b95b2:1",
+        "--token",
+        "intent-2"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "c573ecde228329a1555ee90b85ef07827458df065705be0e8ee1e3130f866b11",
+        "bytes": 308,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "browser_session_unavailable",
+            "message": "request refused; inspect retained authority; no automatic retry",
+            "error_type": "ValueError"
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"browser_session_unavailable\", \"message\": \"request refused; inspect retained authority; no automatic retry\", \"error_type\": \"ValueError\"}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    },
+    {
+      "kind": "communicate",
+      "monotonic": 13140.094952394,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "process_number": 46,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[retained]",
+      "pid": 34909,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "cdp",
+        "start",
+        "Try a new intent",
+        "--session",
+        "/tmp/fw-crash-gjosxnwd/next",
+        "--authority",
+        "/tmp/fw-crash-gjosxnwd/authority.db",
+        "--url",
+        "http://127.0.0.1:41661/"
+      ],
+      "cwd": "/tmp/fw-crash-gjosxnwd",
+      "returncode": 3,
+      "signal": null,
+      "stdout": {
+        "sha256": "c573ecde228329a1555ee90b85ef07827458df065705be0e8ee1e3130f866b11",
+        "bytes": 308,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 3,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "",
+          "data": {
+            "ok": false,
+            "code": "browser_session_unavailable",
+            "message": "request refused; inspect retained authority; no automatic retry",
+            "error_type": "ValueError"
+          }
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 3, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"ok\": false, \"code\": \"browser_session_unavailable\", \"message\": \"request refused; inspect retained authority; no automatic retry\", \"error_type\": \"ValueError\"}}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

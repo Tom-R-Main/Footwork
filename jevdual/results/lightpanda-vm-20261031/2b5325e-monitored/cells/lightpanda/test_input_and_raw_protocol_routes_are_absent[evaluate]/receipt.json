@@ -1,0 +1,50 @@
+{
+  "nodeids": [
+    "test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[evaluate]"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [
+    {
+      "kind": "communicate",
+      "monotonic": 13166.726712394,
+      "nodeid": "test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[evaluate]",
+      "process_number": 59,
+      "process_kind": "public_cli",
+      "owner_nodeid": "test_lightpanda_cli.py::test_input_and_raw_protocol_routes_are_absent[evaluate]",
+      "pid": 39324,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/footwork",
+        "--json",
+        "browser",
+        "lightpanda",
+        "evaluate"
+      ],
+      "cwd": "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/tests",
+      "returncode": 2,
+      "signal": null,
+      "stdout": {
+        "sha256": "8f74b727a7611ccccf00553d582ee36b6442f7bfa46ac2d4e1a91464d19a796e",
+        "bytes": 339,
+        "json": {
+          "schema_version": "1",
+          "exit_code": 2,
+          "command_completed": false,
+          "effect_verification": "not_asserted",
+          "output": "",
+          "diagnostics": "usage: footwork browser lightpanda [-h] {read,guide,artifact} ...\nfootwork browser lightpanda: error: argument command: invalid choice: 'evaluate' (choose from read, guide, artifact)\n",
+          "data": null
+        },
+        "text": "{\"schema_version\": \"1\", \"exit_code\": 2, \"command_completed\": false, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"usage: footwork browser lightpanda [-h] {read,guide,artifact} ...\\nfootwork browser lightpanda: error: argument command: invalid choice: 'evaluate' (choose from read, guide, artifact)\\n\", \"data\": null}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ],
+  "startup_supervisor_receipts": []
+}

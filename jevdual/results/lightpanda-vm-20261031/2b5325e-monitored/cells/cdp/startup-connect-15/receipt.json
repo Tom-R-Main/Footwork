@@ -1,0 +1,88 @@
+{
+  "nodeids": [
+    "test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[connect-15]"
+  ],
+  "boundary_metadata": [
+    {
+      "path": "/tmp/fw-start-jch4hpgv/session/startup-boundary.json",
+      "sha256": "52f3d6a6a1e0237534d08ebdeb8f797118c1c326bb10ec07ad8b81742c5c8c9a",
+      "mtime_ns": 1793479578938092928,
+      "mode": "0o600",
+      "json": {
+        "phase": "connect",
+        "pid": 35139,
+        "start": 1793479578.3,
+        "captured": {
+          "35139": 1793479578.3,
+          "35147": 1793479578.34,
+          "35148": 1793479578.34,
+          "35173": 1793479578.4,
+          "35150": 1793479578.38,
+          "35187": 1793479578.45,
+          "35211": 1793479578.5,
+          "35220": 1793479578.53,
+          "35221": 1793479578.54,
+          "35171": 1793479578.39
+        }
+      }
+    }
+  ],
+  "independent_fixture_records": [],
+  "public_helper_receipts": [],
+  "public_cli_output": [],
+  "startup_supervisor_receipts": [
+    {
+      "kind": "communicate",
+      "monotonic": 13144.725882548,
+      "nodeid": "test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[connect-15]",
+      "process_number": 49,
+      "process_kind": "test_only_startup_supervisor",
+      "owner_nodeid": "test_browser_startup_lifecycle.py::test_real_chrome_startup_signal_releases_owned_live_processes[connect-15]",
+      "pid": 35136,
+      "argv": [
+        "/workspace/scratch/footwork-lightpanda-2b5325e-monitored/consumer/bin/python",
+        "-c",
+        {
+          "test_script_sha256": "a6baba3dc3e52d024fd8c4e663d3d4428a6cdf4b414ce8eec09a83f217c88f12",
+          "characters": 4045
+        },
+        "/tmp/fw-start-jch4hpgv",
+        "connect",
+        "15"
+      ],
+      "cwd": "/tmp/fw-start-jch4hpgv",
+      "returncode": 0,
+      "signal": null,
+      "stdout": {
+        "sha256": "2ebece2bc1ad85940d3ff2996348a1efbc80ef559ede98e9f24b0e89d794c7cb",
+        "bytes": 286,
+        "json": {
+          "phase": "connect",
+          "test_subreaper": true,
+          "holder_exit": 0,
+          "live_before_test_cleanup": [],
+          "holder_published": false,
+          "chrome_pid": 35139,
+          "captured_count": 13,
+          "zombies_before_test_reap": [
+            35141,
+            35144,
+            35147,
+            35148,
+            35173,
+            35171
+          ],
+          "test_reaped": 6,
+          "live_after_test_cleanup": []
+        },
+        "text": "{\"phase\": \"connect\", \"test_subreaper\": true, \"holder_exit\": 0, \"live_before_test_cleanup\": [], \"holder_published\": false, \"chrome_pid\": 35139, \"captured_count\": 13, \"zombies_before_test_reap\": [35141, 35144, 35147, 35148, 35173, 35171], \"test_reaped\": 6, \"live_after_test_cleanup\": []}"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "json": null,
+        "text": ""
+      }
+    }
+  ]
+}
