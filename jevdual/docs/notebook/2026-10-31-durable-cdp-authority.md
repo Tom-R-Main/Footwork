@@ -12,3 +12,7 @@ Hypothesis: discovery can make the owned headless CDP route findable without imp
 Test: installed tools, doctor, schema browser cdp and the version-matched guide with no CUA/browser-use importable; inspect actual command requirements and refusal receipts.
 Predicts: discovery names CDP setup and guard requirements, typed/native-button scope, unverified completion and disabled typing; describes the existing full dependency metadata separately from the future light install.
 Against: a cold agent is directed to CUA/X11 for the CDP route, an unavailable light install is recommended as shipped, or discovery advertises typing/completion unsupported by the executable.
+
+## DCAU1 · update · 2026-10-31 14:49
+Observed: the first real CLI lost-client-ack test delivered exactly one fixture ingress and retained unknown, but recover failed because the CLI caught OSError/ValueError while the holder identity checker raises RuntimeError. The catch boundary was corrected; the three focused discovery/lost-client/missing-guard CLI checks then passed. Four existing unrelated-cwd discovery checks initially failed because the source test used a relative PYTHONPATH; rerunning with the absolute candidate source root passed all 47 focused guard/discovery/authorization checks. These are harness/integration failures, not evidence of browser completion.
+Next: finish exact installed-wheel tests, independent review and VM qualification before resolving DCA1/DCA2. General completion readers, pipe custody and the light metadata split remain open.

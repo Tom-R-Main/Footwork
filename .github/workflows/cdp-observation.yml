@@ -22,14 +22,14 @@ jobs:
       - name: Install only the browser qualification dependencies
         run: |
           uv venv --python 3.12 "$RUNNER_TEMP/cdp-env"
-          uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --only-binary=:all: pytest==8.4.2 psutil==7.2.2 websockets==15.0.1
+          uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --only-binary=:all: pytest==8.4.2 psutil==7.2.2 websockets==15.0.1 'packaging>=25,<27'
           uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --no-deps "$RUNNER_TEMP"/cdp-wheel/*.whl
       - name: Qualify real Chrome outside the checkout without CUA or browser-use
         run: |
           test -x "$FOOTWORK_CHROME_EXECUTABLE"
           "$FOOTWORK_CHROME_EXECUTABLE" --version
           mkdir "$RUNNER_TEMP/cdp-tests"
-          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py "$RUNNER_TEMP/cdp-tests/"
+          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py jevdual/tests/test_browser_durable_authority.py jevdual/tests/test_browser_holder.py jevdual/tests/test_browser_guard.py jevdual/tests/test_browser_cdp_cli.py jevdual/tests/test_browser_restart_cli.py "$RUNNER_TEMP/cdp-tests/"
           cd "$RUNNER_TEMP/cdp-tests"
           unset PYTHONPATH
           "$RUNNER_TEMP/cdp-env/bin/python" -c "import importlib.util; assert importlib.util.find_spec('cua_driver') is None; assert importlib.util.find_spec('browser_use') is None"

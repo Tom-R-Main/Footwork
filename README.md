@@ -33,7 +33,9 @@ For a read-only lookup, a straightforward browser test or an API with its own au
 your existing tools may already cover the job.
 
 Durability is route-specific: native CLI sessions opt in with `--authority`; the scoped MCP service
-has its own journal. The dedicated browser CLI does not inherit native durable replay. See
+has its own journal. The legacy dedicated browser CLI does not inherit native durable replay. An explicit
+[owned headless CDP preview](jevdual/docs/owned-cdp.md) now adds durable admission and restart
+retention for a bounded button route; typing and general browser completion remain unavailable. See
 [**why Footwork, and where it fits**](jevdual/docs/why-footwork.md) for examples and exact boundaries.
 
 ## Start here
@@ -52,6 +54,7 @@ footwork doctor                        # see this machine's prerequisites
 | What you want to do | Start with |
 | --- | --- |
 | Read pages and operate a dedicated browser | [CLI quickstart](jevdual/docs/quickstart.md#open-a-browser-session) |
+| Qualify guarded headless browser actions and restart recovery | [Owned CDP preview](jevdual/docs/owned-cdp.md) |
 | Work in a native app | [macOS operator example](#drive-it) or [Linux X11 guide](jevdual/docs/linux-support.md) |
 | Give an agent one scoped browser-to-document job | [MCP installation](jevdual/docs/capability-packaging.md) and [agent-host recipe](jevdual/docs/installed-agent-host.md) |
 | Review OCR, inspect a target or explore the simulator | [Bundled tool families](jevdual/docs/unified-cli.md#auxiliary-families) |

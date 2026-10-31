@@ -20,12 +20,14 @@ from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from jevdual.effects import Effect, diff
 from jevdual.menu import Menu
-from jevdual.policy import Decision, StepContext
-from jevdual.s1 import Verdict
+
+if TYPE_CHECKING:
+    from jevdual.policy import Decision, StepContext
+    from jevdual.s1 import Verdict
 
 DEFAULT_POLICY_PATH = Path(__file__).with_name("arbiter.toml")
 
@@ -160,7 +162,7 @@ def match_destructive_keyword(text: str, keywords: tuple[str, ...]) -> str | Non
     return None
 
 
-OnDone = Callable[[Decision, Menu, StepContext, Any], Verdict]
+OnDone = Callable[["Decision", Menu, "StepContext", Any], "Verdict"]
 
 
 @dataclass
@@ -220,6 +222,8 @@ class Arbiter:
 
     def _rule(self, name: str, kind: str, reason: str) -> Verdict:
         self.stats[name] += 1
+        from jevdual.s1 import Verdict
+
         return Verdict(kind, f"{name}: {reason}")  # type: ignore[arg-type]
 
     # ---- the ruling ------------------------------------------------------------
