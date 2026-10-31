@@ -1,0 +1,89 @@
+{
+  "kind": "communicate",
+  "monotonic": 6557.295945152,
+  "nodeid": "test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing",
+  "process_number": 4,
+  "process_kind": "public_cli",
+  "owner_nodeid": "test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing",
+  "pid": 7214,
+  "argv": [
+    "/workspace/scratch/footwork-durable-cdp-cad7508/consumer/bin/footwork",
+    "--json",
+    "browser",
+    "cdp",
+    "guide"
+  ],
+  "cwd": "/workspace/scratch/footwork-durable-cdp-cad7508/tests",
+  "returncode": 0,
+  "signal": null,
+  "stdout": {
+    "sha256": "80c96660aef007556c2ec3c0eb530adb54b7f3aa985c13592e59e8f0fcaa4cf6",
+    "bytes": 2717,
+    "json": {
+      "schema_version": "1",
+      "exit_code": 0,
+      "command_completed": true,
+      "effect_verification": "not_asserted",
+      "output": "",
+      "diagnostics": "",
+      "data": {
+        "package_version": "0.0.1",
+        "profile": "owned-headless-cdp",
+        "entrypoint": "footwork browser cdp",
+        "commands": [
+          "start",
+          "look",
+          "click",
+          "status",
+          "recover",
+          "stop",
+          "guide"
+        ],
+        "requirements": [
+          "Chrome",
+          "psutil",
+          "websockets",
+          "configured Jev or judgment adapter",
+          "absolute durable authority"
+        ],
+        "desktop_required": false,
+        "cua_required": false,
+        "typing": "disabled: unresolved focus race",
+        "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
+        "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
+        "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
+        "install": "current package metadata still installs full dependencies; light metadata split is pending",
+        "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user",
+        "loop": [
+          "start TASK --session /short/fresh/dir --authority /absolute/authority.db --url URL",
+          "look --session DIR; choose the exact opaque ref returned by this holder",
+          "click --session DIR --ref REF --token STABLE_INTENT_TOKEN; read operation state and evidence",
+          "status --session DIR --token TOKEN; repeat the exact click request only to retrieve its retained record",
+          "recover --session DIR after holder loss: read-only recovery; no browser is launched",
+          "stop --session DIR; retain the authority database and all unresolved operations"
+        ],
+        "guard_adapter": {
+          "configuration": "--guard-command FILE containing JSON argv, absolute executable first; trusted policy code",
+          "stdin": "footwork.browser.guard.request v1: digest, task, targets, url, title, binding",
+          "stdout": "{producer:footwork.browser.guard,version:1,digest:<same>,probabilities:[p]}",
+          "semantics": "same Authorizer keyword checks and destructive threshold; absent, malformed or failed judgment refuses"
+        },
+        "limits": [
+          "An acknowledged activation remains unknown/unverified without a qualified operation-specific completion reader.",
+          "This tranche has no browser completion reader: recover preserves uncertainty, it cannot mark an effect completed.",
+          "A new token cannot clear an unresolved admission, even across sessions sharing this authority database.",
+          "No typing, trusted input, arbitrary evaluation, navigation RPC, grant bypass or raw CDP endpoint is exposed by this CLI.",
+          "The owned Chrome still uses loopback CDP; private transport is not exclusive custody against same-user code.",
+          "Initial URL loading can itself have website effects; it is setup outside the guarded click protocol."
+        ]
+      }
+    },
+    "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"package_version\": \"0.0.1\", \"profile\": \"owned-headless-cdp\", \"entrypoint\": \"footwork browser cdp\", \"commands\": [\"start\", \"look\", \"click\", \"status\", \"recover\", \"stop\", \"guide\"], \"requirements\": [\"Chrome\", \"psutil\", \"websockets\", \"configured Jev or judgment adapter\", \"absolute durable authority\"], \"desktop_required\": false, \"cua_required\": false, \"typing\": \"disabled: unresolved focus race\", \"activation\": \"dom_event_native_button: directly named plain main-document button[type=button] only\", \"completion\": \"unverified; acknowledgement is not business completion; unknown blocks new mutations\", \"restart\": \"same live holder or retained journal only; no implicit relaunch/adoption/rebinding\", \"install\": \"current package metadata still installs full dependencies; light metadata split is pending\", \"trust\": \"private socket and configured guard; not isolation from arbitrary code running as the same user\", \"loop\": [\"start TASK --session /short/fresh/dir --authority /absolute/authority.db --url URL\", \"look --session DIR; choose the exact opaque ref returned by this holder\", \"click --session DIR --ref REF --token STABLE_INTENT_TOKEN; read operation state and evidence\", \"status --session DIR --token TOKEN; repeat the exact click request only to retrieve its retained record\", \"recover --session DIR after holder loss: read-only recovery; no browser is launched\", \"stop --session DIR; retain the authority database and all unresolved operations\"], \"guard_adapter\": {\"configuration\": \"--guard-command FILE containing JSON argv, absolute executable first; trusted policy code\", \"stdin\": \"footwork.browser.guard.request v1: digest, task, targets, url, title, binding\", \"stdout\": \"{producer:footwork.browser.guard,version:1,digest:<same>,probabilities:[p]}\", \"semantics\": \"same Authorizer keyword checks and destructive threshold; absent, malformed or failed judgment refuses\"}, \"limits\": [\"An acknowledged activation remains unknown/unverified without a qualified operation-specific completion reader.\", \"This tranche has no browser completion reader: recover preserves uncertainty, it cannot mark an effect completed.\", \"A new token cannot clear an unresolved admission, even across sessions sharing this authority database.\", \"No typing, trusted input, arbitrary evaluation, navigation RPC, grant bypass or raw CDP endpoint is exposed by this CLI.\", \"The owned Chrome still uses loopback CDP; private transport is not exclusive custody against same-user code.\", \"Initial URL loading can itself have website effects; it is setup outside the guarded click protocol.\"]}}"
+  },
+  "stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "json": null,
+    "text": ""
+  }
+}

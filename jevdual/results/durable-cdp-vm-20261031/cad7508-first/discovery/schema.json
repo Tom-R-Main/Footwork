@@ -1,0 +1,93 @@
+{
+  "kind": "communicate",
+  "monotonic": 6557.200765782,
+  "nodeid": "test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing",
+  "process_number": 3,
+  "process_kind": "public_cli",
+  "owner_nodeid": "test_browser_cdp_cli.py::test_cdp_discovery_and_disabled_typing",
+  "pid": 7213,
+  "argv": [
+    "/workspace/scratch/footwork-durable-cdp-cad7508/consumer/bin/footwork",
+    "--json",
+    "schema",
+    "browser",
+    "cdp",
+    "click"
+  ],
+  "cwd": "/workspace/scratch/footwork-durable-cdp-cad7508/tests",
+  "returncode": 0,
+  "signal": null,
+  "stdout": {
+    "sha256": "fc39375dd5ed7c43bb2bb15e23a9713ad9c8438328e198d387e0325cd5e594fa",
+    "bytes": 834,
+    "json": {
+      "schema_version": "1",
+      "exit_code": 0,
+      "command_completed": true,
+      "effect_verification": "not_asserted",
+      "output": "",
+      "diagnostics": "",
+      "data": {
+        "command": [
+          "cdp",
+          "click"
+        ],
+        "arguments": [
+          {
+            "name": "help",
+            "flags": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "nargs": 0,
+            "choices": null,
+            "help": "show this help message and exit",
+            "default": "==SUPPRESS=="
+          },
+          {
+            "name": "session",
+            "flags": [
+              "--session"
+            ],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": null,
+            "default": null
+          },
+          {
+            "name": "ref",
+            "flags": [
+              "--ref"
+            ],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": "opaque ref from the last look; never reselected by label",
+            "default": null
+          },
+          {
+            "name": "token",
+            "flags": [
+              "--token"
+            ],
+            "required": true,
+            "nargs": null,
+            "choices": null,
+            "help": "stable token for this intended activation",
+            "default": null
+          }
+        ],
+        "subcommands": []
+      }
+    },
+    "text": "{\"schema_version\": \"1\", \"exit_code\": 0, \"command_completed\": true, \"effect_verification\": \"not_asserted\", \"output\": \"\", \"diagnostics\": \"\", \"data\": {\"command\": [\"cdp\", \"click\"], \"arguments\": [{\"name\": \"help\", \"flags\": [\"-h\", \"--help\"], \"required\": false, \"nargs\": 0, \"choices\": null, \"help\": \"show this help message and exit\", \"default\": \"==SUPPRESS==\"}, {\"name\": \"session\", \"flags\": [\"--session\"], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": null, \"default\": null}, {\"name\": \"ref\", \"flags\": [\"--ref\"], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": \"opaque ref from the last look; never reselected by label\", \"default\": null}, {\"name\": \"token\", \"flags\": [\"--token\"], \"required\": true, \"nargs\": null, \"choices\": null, \"help\": \"stable token for this intended activation\", \"default\": null}], \"subcommands\": []}}"
+  },
+  "stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "json": null,
+    "text": ""
+  }
+}

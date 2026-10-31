@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="190" time="29.294" timestamp="2026-10-31T18:56:30.996048+00:00" hostname="0ee9cd2459ec"><testcase classname="test_browser_cdp_cli" name="test_cdp_discovery_and_disabled_typing" time="0.481" /><testcase classname="test_browser_cdp_cli" name="test_installed_cli_lost_client_ack_replays_without_redispatch" time="3.612" /><testcase classname="test_browser_cdp_cli" name="test_missing_guard_refuses_before_admission" time="0.952" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change0]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change1]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change2]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change3]" time="0.001" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change4]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change5]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change6]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change7]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change8]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_binding_rejects_incomplete_or_foreign_identity[change9]" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_browser_and_native_bindings_remain_separate" time="0.000" /><testcase classname="test_browser_durable_authority" name="test_missing_or_changed_guard_never_admits[change0]" time="0.013" /><testcase classname="test_browser_durable_authority" name="test_missing_or_changed_guard_never_admits[change1]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_missing_or_changed_guard_never_admits[change2]" time="0.010" /><testcase classname="test_browser_durable_authority" name="test_missing_or_changed_guard_never_admits[change3]" time="0.010" /><testcase classname="test_browser_durable_authority" name="test_missing_or_changed_guard_never_admits[change4]" time="0.008" /><testcase classname="test_browser_durable_authority" name="test_missing_or_changed_guard_never_admits[change5]" time="0.009" /><testcase classname="test_browser_durable_authority" name="test_guard_digest_binds_session_request_and_exact_subject" time="0.010" /><testcase classname="test_browser_durable_authority" name="test_absent_guard_never_admits[None]" time="0.010" /><testcase classname="test_browser_durable_authority" name="test_absent_guard_never_admits[decision1]" time="0.009" /><testcase classname="test_browser_durable_authority" name="test_request_does_not_enable_typing_or_other_routes[request_value0]" time="0.021" /><testcase classname="test_browser_durable_authority" name="test_request_does_not_enable_typing_or_other_routes[request_value1]" time="0.013" /><testcase classname="test_browser_durable_authority" name="test_request_does_not_enable_typing_or_other_routes[request_value2]" time="0.017" /><testcase classname="test_browser_durable_authority" name="test_request_does_not_enable_typing_or_other_routes[request_value3]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_same_token_returns_original_before_reobservation_or_new_guard" time="0.015" /><testcase classname="test_browser_durable_authority" name="test_restart_distinguishes_prepared_from_admitted_input[False]" time="0.015" /><testcase classname="test_browser_durable_authority" name="test_restart_distinguishes_prepared_from_admitted_input[True]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_acknowledgement_never_claims_application_completion[reply0-sent-unknown]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_acknowledgement_never_claims_application_completion[reply1-not_sent-not_sent]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_acknowledgement_never_claims_application_completion[reply2-ambiguous-unknown]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_acknowledgement_never_claims_application_completion[reply3-ambiguous-unknown]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_acknowledgement_never_claims_application_completion[reply4-ambiguous-unknown]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_retained_result_survives_death_before_finalization[reply0]" time="0.017" /><testcase classname="test_browser_durable_authority" name="test_retained_result_survives_death_before_finalization[reply1]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_retained_result_survives_death_before_finalization[reply2]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_arbitrary_finish_cannot_assert_no_send_or_completion" time="0.010" /><testcase classname="test_browser_durable_authority" name="test_tampered_browser_evidence_never_releases_custody[digest]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_tampered_browser_evidence_never_releases_custody[binding]" time="0.020" /><testcase classname="test_browser_durable_authority" name="test_tampered_browser_evidence_never_releases_custody[producer]" time="0.016" /><testcase classname="test_browser_durable_authority" name="test_tampered_browser_evidence_never_releases_custody[effect]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_tampered_browser_evidence_never_releases_custody[guard]" time="0.015" /><testcase classname="test_browser_durable_authority" name="test_tampered_browser_evidence_never_releases_custody[request]" time="0.014" /><testcase classname="test_browser_durable_authority" name="test_runtime_evidence_is_immutable" time="0.011" /><testcase classname="test_browser_durable_authority" name="test_browser_unknown_blocks_native_and_native_unknown_blocks_browser" time="0.035" /><testcase classname="test_browser_durable_authority" name="test_manual_resolution_remains_unsupported" time="0.009" /><testcase classname="test_browser_durable_authority" name="test_interruption_records_unknown_without_fabricating_returned_evidence" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_interruption_prefers_a_retained_returned_record[reply0]" time="0.013" /><testcase classname="test_browser_durable_authority" name="test_interruption_prefers_a_retained_returned_record[reply1]" time="0.012" /><testcase classname="test_browser_durable_authority" name="test_native_retained_receipt_keeps_its_native_validator_in_browser_store" time="0.013" /><testcase classname="test_browser_guard" name="test_configured_guard_binding" time="0.034" /><testcase classname="test_browser_guard" name="test_guard_failure_never_allows[kwargs0]" time="0.021" /><testcase classname="test_browser_guard" name="test_guard_failure_never_allows[kwargs1]" time="0.025" /><testcase classname="test_browser_guard" name="test_guard_failure_never_allows[kwargs2]" time="0.018" /><testcase classname="test_browser_guard" name="test_guard_failure_never_allows[kwargs3]" time="0.017" /><testcase classname="test_browser_guard" name="test_guard_failure_never_allows[kwargs4]" time="0.001" /><testcase classname="test_browser_holder" name="test_admission_and_started_stage_are_committed_before_possible_activation" time="0.014" /><testcase classname="test_browser_holder" name="test_replay_returns_retained_operation_before_observation_or_guard" time="0.013" /><testcase classname="test_browser_holder" name="test_guard_refusal_retains_refs_and_never_admits_or_activates" time="0.009" /><testcase classname="test_browser_holder" name="test_post_admission_failure_and_cancellation_retain_unknown[failure0]" time="0.012" /><testcase classname="test_browser_holder" name="test_post_admission_failure_and_cancellation_retain_unknown[failure1]" time="0.010" /><testcase classname="test_browser_holder" name="test_wrong_session_and_unbounded_methods_never_touch_browser[extra0]" time="0.008" /><testcase classname="test_browser_holder" name="test_wrong_session_and_unbounded_methods_never_touch_browser[extra1]" time="0.008" /><testcase classname="test_browser_holder" name="test_wrong_session_and_unbounded_methods_never_touch_browser[extra2]" time="0.009" /><testcase classname="test_browser_holder" name="test_wrong_session_and_unbounded_methods_never_touch_browser[extra3]" time="0.008" /><testcase classname="test_browser_holder" name="test_wrong_session_and_unbounded_methods_never_touch_browser[extra4]" time="0.009" /><testcase classname="test_browser_holder" name="test_close_uses_only_original_handle_and_does_not_settle_unknown" time="0.015" /><testcase classname="test_browser_holder" name="test_cleanup_failure_is_reported_without_claiming_all_processes_stopped" time="0.010" /><testcase classname="test_browser_holder" name="test_private_files_and_descriptor_incarnation_are_checked_before_connect" time="0.011" /><testcase classname="test_browser_holder" name="test_lost_socket_response_then_repeat_token_has_one_activation" time="0.017" /><testcase classname="test_browser_holder" name="test_oversize_request_refuses_without_browser_or_journal_activity" time="0.009" /><testcase classname="test_browser_holder" name="test_rpc_deadline_after_admission_retains_unknown_without_retry" time="0.063" /><testcase classname="test_browser_holder" name="test_foreign_socket_peer_is_refused_before_request_read" time="0.011" /><testcase classname="test_browser_holder" name="test_stale_holder_record_refuses_start_without_launch_or_cleanup" time="0.010" /><testcase classname="test_browser_restart_cli" name="test_cli_recovers_abrupt_holder_death_without_redispatch[prepared]" time="1.365"><failure message="TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'">boundary = 'prepared'
+ingress = ('http://127.0.0.1:37135/', [], &lt;threading.Event at 0x7f045c2e2fc0: unset&gt;)
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("boundary", ["prepared", "started", "retained"])
+    def test_cli_recovers_abrupt_holder_death_without_redispatch(boundary, ingress):
+        url, records, arrived = ingress
+        with tempfile.TemporaryDirectory(prefix="fw-crash-", dir="/tmp") as directory:
+            root = Path(directory)
+            session, holder, identities = _setup(root, url, boundary)
+            try:
+                snapshot = _cli(root, "look", "--session", str(session))["snapshot"]
+                ref = next(row["ref"] for row in snapshot["refs"] if row["name"] == "Commit fixture")
+                _inventory(holder, identities)
+                invocation = ("click", "--session", str(session), "--ref", ref, "--token", "intent-1")
+                interrupted = _cli(root, *invocation, success=False)
+                assert holder.wait(timeout=10) == 86
+                assert interrupted["ok"] is False
+                assert interrupted["dispatched"] is None  # transport loss itself proves no no-send predicate
+                marker = json.loads((session / "test-boundary.json").read_text())
+                assert marker["boundary"] == boundary
+                assert marker["heavy_imports"] == []
+                if boundary == "retained":
+                    assert arrived.wait(10), "activation did not reach the independent fixture ingress"
+                    assert marker["ingress_before_exit"] == 1
+                recovered = _cli(root, "recover", "--session", str(session), "--token", "intent-1")
+                op = recovered["operations"][0]
+                assert op["id"] == marker["operation_id"]
+                assert op["completion"] == "unverified" and op["retryable"] is False
+                assert op["state"] == ("final" if boundary == "prepared" else "unknown")
+                assert op["disposition"] == ("not_sent" if boundary == "prepared" else "unknown")
+                assert op["phase"] == ("not_sent" if boundary == "prepared" else "sent" if boundary == "retained" else "ambiguous")
+                if boundary == "retained":
+                    assert op["evidence"]["execution_receipt"]["basis"] == "activation_ack"
+                else:
+                    assert "execution_receipt" not in op["evidence"]
+                status = _cli(root, "status", "--session", str(session), "--token", "intent-1")
+                assert status["operations"] == recovered["operations"]
+                for _ in range(2):
+                    replay = _cli(root, *invocation)
+                    assert replay["replayed"] is True and replay["operation"]["id"] == op["id"]
+                    assert replay["operation"]["disposition"] == op["disposition"]
+                new_intent = _cli(root, *invocation[:-1], "intent-2", success=False)
+                assert new_intent["ok"] is False  # offline recovery cannot grant a fresh mutation
+                assert records == (["intended"] if boundary == "retained" else [])
+                if boundary != "prepared":
+                    # Remove abandoned test-owned custodians before starting another browser.
+                    # The public start route must reject this domain before launching Chrome.
+                    _test_cleanup(holder, identities)
+                    fresh_session = root / "next"
+                    blocked = _cli(root, "start", "Try a new intent", "--session", str(fresh_session),
+                                   "--authority", str(root / "authority.db"), "--url", url, success=False)
+                    assert blocked["ok"] is False
+                    assert not list(fresh_session.glob("profile-*"))
+                    assert not (fresh_session / "holder.json").exists()
+                    assert records == (["intended"] if boundary == "retained" else [])
+            finally:
+&gt;               _test_cleanup(holder, identities)
+
+test_browser_restart_cli.py:282: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../receipt_plugin.py:153: in observed
+    snapshots(root, 'before_' + name)
+../receipt_plugin.py:119: in snapshots
+    root = Path(root)
+           ^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1162: in __init__
+    super().__init__(*args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;[AttributeError("'PosixPath' object has no attribute '_raw_paths'") raised in repr()] PosixPath object at 0x7f045c47f8b0&gt;
+args = (&lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;,)
+paths = []
+arg = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+path = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+
+    def __init__(self, *args):
+        paths = []
+        for arg in args:
+            if isinstance(arg, PurePath):
+                if arg._flavour is not self._flavour:
+                    # GH-103631: Convert separators for backwards compatibility.
+                    paths.append(arg.as_posix())
+                else:
+                    paths.extend(arg._raw_paths)
+            else:
+                try:
+                    path = os.fspath(arg)
+                except TypeError:
+                    path = arg
+                if not isinstance(path, str):
+&gt;                   raise TypeError(
+                        "argument should be a str or an os.PathLike "
+                        "object where __fspath__ returns a str, "
+                        f"not {type(path).__name__!r}")
+E                   TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:373: TypeError</failure></testcase><testcase classname="test_browser_restart_cli" name="test_cli_recovers_abrupt_holder_death_without_redispatch[started]" time="1.362"><failure message="TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'">boundary = 'started'
+ingress = ('http://127.0.0.1:37761/', [], &lt;threading.Event at 0x7f045c377da0: unset&gt;)
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("boundary", ["prepared", "started", "retained"])
+    def test_cli_recovers_abrupt_holder_death_without_redispatch(boundary, ingress):
+        url, records, arrived = ingress
+        with tempfile.TemporaryDirectory(prefix="fw-crash-", dir="/tmp") as directory:
+            root = Path(directory)
+            session, holder, identities = _setup(root, url, boundary)
+            try:
+                snapshot = _cli(root, "look", "--session", str(session))["snapshot"]
+                ref = next(row["ref"] for row in snapshot["refs"] if row["name"] == "Commit fixture")
+                _inventory(holder, identities)
+                invocation = ("click", "--session", str(session), "--ref", ref, "--token", "intent-1")
+                interrupted = _cli(root, *invocation, success=False)
+                assert holder.wait(timeout=10) == 86
+                assert interrupted["ok"] is False
+                assert interrupted["dispatched"] is None  # transport loss itself proves no no-send predicate
+                marker = json.loads((session / "test-boundary.json").read_text())
+                assert marker["boundary"] == boundary
+                assert marker["heavy_imports"] == []
+                if boundary == "retained":
+                    assert arrived.wait(10), "activation did not reach the independent fixture ingress"
+                    assert marker["ingress_before_exit"] == 1
+                recovered = _cli(root, "recover", "--session", str(session), "--token", "intent-1")
+                op = recovered["operations"][0]
+                assert op["id"] == marker["operation_id"]
+                assert op["completion"] == "unverified" and op["retryable"] is False
+                assert op["state"] == ("final" if boundary == "prepared" else "unknown")
+                assert op["disposition"] == ("not_sent" if boundary == "prepared" else "unknown")
+                assert op["phase"] == ("not_sent" if boundary == "prepared" else "sent" if boundary == "retained" else "ambiguous")
+                if boundary == "retained":
+                    assert op["evidence"]["execution_receipt"]["basis"] == "activation_ack"
+                else:
+                    assert "execution_receipt" not in op["evidence"]
+                status = _cli(root, "status", "--session", str(session), "--token", "intent-1")
+                assert status["operations"] == recovered["operations"]
+                for _ in range(2):
+                    replay = _cli(root, *invocation)
+                    assert replay["replayed"] is True and replay["operation"]["id"] == op["id"]
+                    assert replay["operation"]["disposition"] == op["disposition"]
+                new_intent = _cli(root, *invocation[:-1], "intent-2", success=False)
+                assert new_intent["ok"] is False  # offline recovery cannot grant a fresh mutation
+                assert records == (["intended"] if boundary == "retained" else [])
+                if boundary != "prepared":
+                    # Remove abandoned test-owned custodians before starting another browser.
+                    # The public start route must reject this domain before launching Chrome.
+&gt;                   _test_cleanup(holder, identities)
+
+test_browser_restart_cli.py:273: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../receipt_plugin.py:153: in observed
+    snapshots(root, 'before_' + name)
+../receipt_plugin.py:119: in snapshots
+    root = Path(root)
+           ^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1162: in __init__
+    super().__init__(*args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;[AttributeError("'PosixPath' object has no attribute '_raw_paths'") raised in repr()] PosixPath object at 0x7f045c17a810&gt;
+args = (&lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;,)
+paths = []
+arg = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+path = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+
+    def __init__(self, *args):
+        paths = []
+        for arg in args:
+            if isinstance(arg, PurePath):
+                if arg._flavour is not self._flavour:
+                    # GH-103631: Convert separators for backwards compatibility.
+                    paths.append(arg.as_posix())
+                else:
+                    paths.extend(arg._raw_paths)
+            else:
+                try:
+                    path = os.fspath(arg)
+                except TypeError:
+                    path = arg
+                if not isinstance(path, str):
+&gt;                   raise TypeError(
+                        "argument should be a str or an os.PathLike "
+                        "object where __fspath__ returns a str, "
+                        f"not {type(path).__name__!r}")
+E                   TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:373: TypeError
+
+During handling of the above exception, another exception occurred:
+
+boundary = 'started'
+ingress = ('http://127.0.0.1:37761/', [], &lt;threading.Event at 0x7f045c377da0: unset&gt;)
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("boundary", ["prepared", "started", "retained"])
+    def test_cli_recovers_abrupt_holder_death_without_redispatch(boundary, ingress):
+        url, records, arrived = ingress
+        with tempfile.TemporaryDirectory(prefix="fw-crash-", dir="/tmp") as directory:
+            root = Path(directory)
+            session, holder, identities = _setup(root, url, boundary)
+            try:
+                snapshot = _cli(root, "look", "--session", str(session))["snapshot"]
+                ref = next(row["ref"] for row in snapshot["refs"] if row["name"] == "Commit fixture")
+                _inventory(holder, identities)
+                invocation = ("click", "--session", str(session), "--ref", ref, "--token", "intent-1")
+                interrupted = _cli(root, *invocation, success=False)
+                assert holder.wait(timeout=10) == 86
+                assert interrupted["ok"] is False
+                assert interrupted["dispatched"] is None  # transport loss itself proves no no-send predicate
+                marker = json.loads((session / "test-boundary.json").read_text())
+                assert marker["boundary"] == boundary
+                assert marker["heavy_imports"] == []
+                if boundary == "retained":
+                    assert arrived.wait(10), "activation did not reach the independent fixture ingress"
+                    assert marker["ingress_before_exit"] == 1
+                recovered = _cli(root, "recover", "--session", str(session), "--token", "intent-1")
+                op = recovered["operations"][0]
+                assert op["id"] == marker["operation_id"]
+                assert op["completion"] == "unverified" and op["retryable"] is False
+                assert op["state"] == ("final" if boundary == "prepared" else "unknown")
+                assert op["disposition"] == ("not_sent" if boundary == "prepared" else "unknown")
+                assert op["phase"] == ("not_sent" if boundary == "prepared" else "sent" if boundary == "retained" else "ambiguous")
+                if boundary == "retained":
+                    assert op["evidence"]["execution_receipt"]["basis"] == "activation_ack"
+                else:
+                    assert "execution_receipt" not in op["evidence"]
+                status = _cli(root, "status", "--session", str(session), "--token", "intent-1")
+                assert status["operations"] == recovered["operations"]
+                for _ in range(2):
+                    replay = _cli(root, *invocation)
+                    assert replay["replayed"] is True and replay["operation"]["id"] == op["id"]
+                    assert replay["operation"]["disposition"] == op["disposition"]
+                new_intent = _cli(root, *invocation[:-1], "intent-2", success=False)
+                assert new_intent["ok"] is False  # offline recovery cannot grant a fresh mutation
+                assert records == (["intended"] if boundary == "retained" else [])
+                if boundary != "prepared":
+                    # Remove abandoned test-owned custodians before starting another browser.
+                    # The public start route must reject this domain before launching Chrome.
+                    _test_cleanup(holder, identities)
+                    fresh_session = root / "next"
+                    blocked = _cli(root, "start", "Try a new intent", "--session", str(fresh_session),
+                                   "--authority", str(root / "authority.db"), "--url", url, success=False)
+                    assert blocked["ok"] is False
+                    assert not list(fresh_session.glob("profile-*"))
+                    assert not (fresh_session / "holder.json").exists()
+                    assert records == (["intended"] if boundary == "retained" else [])
+            finally:
+&gt;               _test_cleanup(holder, identities)
+
+test_browser_restart_cli.py:282: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../receipt_plugin.py:153: in observed
+    snapshots(root, 'before_' + name)
+../receipt_plugin.py:119: in snapshots
+    root = Path(root)
+           ^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1162: in __init__
+    super().__init__(*args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;[AttributeError("'PosixPath' object has no attribute '_raw_paths'") raised in repr()] PosixPath object at 0x7f045c17a420&gt;
+args = (&lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;,)
+paths = []
+arg = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+path = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+
+    def __init__(self, *args):
+        paths = []
+        for arg in args:
+            if isinstance(arg, PurePath):
+                if arg._flavour is not self._flavour:
+                    # GH-103631: Convert separators for backwards compatibility.
+                    paths.append(arg.as_posix())
+                else:
+                    paths.extend(arg._raw_paths)
+            else:
+                try:
+                    path = os.fspath(arg)
+                except TypeError:
+                    path = arg
+                if not isinstance(path, str):
+&gt;                   raise TypeError(
+                        "argument should be a str or an os.PathLike "
+                        "object where __fspath__ returns a str, "
+                        f"not {type(path).__name__!r}")
+E                   TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:373: TypeError</failure></testcase><testcase classname="test_browser_restart_cli" name="test_cli_recovers_abrupt_holder_death_without_redispatch[retained]" time="1.667"><failure message="TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'">boundary = 'retained'
+ingress = ('http://127.0.0.1:46123/', ['intended'], &lt;threading.Event at 0x7f045c374b30: set&gt;)
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("boundary", ["prepared", "started", "retained"])
+    def test_cli_recovers_abrupt_holder_death_without_redispatch(boundary, ingress):
+        url, records, arrived = ingress
+        with tempfile.TemporaryDirectory(prefix="fw-crash-", dir="/tmp") as directory:
+            root = Path(directory)
+            session, holder, identities = _setup(root, url, boundary)
+            try:
+                snapshot = _cli(root, "look", "--session", str(session))["snapshot"]
+                ref = next(row["ref"] for row in snapshot["refs"] if row["name"] == "Commit fixture")
+                _inventory(holder, identities)
+                invocation = ("click", "--session", str(session), "--ref", ref, "--token", "intent-1")
+                interrupted = _cli(root, *invocation, success=False)
+                assert holder.wait(timeout=10) == 86
+                assert interrupted["ok"] is False
+                assert interrupted["dispatched"] is None  # transport loss itself proves no no-send predicate
+                marker = json.loads((session / "test-boundary.json").read_text())
+                assert marker["boundary"] == boundary
+                assert marker["heavy_imports"] == []
+                if boundary == "retained":
+                    assert arrived.wait(10), "activation did not reach the independent fixture ingress"
+                    assert marker["ingress_before_exit"] == 1
+                recovered = _cli(root, "recover", "--session", str(session), "--token", "intent-1")
+                op = recovered["operations"][0]
+                assert op["id"] == marker["operation_id"]
+                assert op["completion"] == "unverified" and op["retryable"] is False
+                assert op["state"] == ("final" if boundary == "prepared" else "unknown")
+                assert op["disposition"] == ("not_sent" if boundary == "prepared" else "unknown")
+                assert op["phase"] == ("not_sent" if boundary == "prepared" else "sent" if boundary == "retained" else "ambiguous")
+                if boundary == "retained":
+                    assert op["evidence"]["execution_receipt"]["basis"] == "activation_ack"
+                else:
+                    assert "execution_receipt" not in op["evidence"]
+                status = _cli(root, "status", "--session", str(session), "--token", "intent-1")
+                assert status["operations"] == recovered["operations"]
+                for _ in range(2):
+                    replay = _cli(root, *invocation)
+                    assert replay["replayed"] is True and replay["operation"]["id"] == op["id"]
+                    assert replay["operation"]["disposition"] == op["disposition"]
+                new_intent = _cli(root, *invocation[:-1], "intent-2", success=False)
+                assert new_intent["ok"] is False  # offline recovery cannot grant a fresh mutation
+                assert records == (["intended"] if boundary == "retained" else [])
+                if boundary != "prepared":
+                    # Remove abandoned test-owned custodians before starting another browser.
+                    # The public start route must reject this domain before launching Chrome.
+&gt;                   _test_cleanup(holder, identities)
+
+test_browser_restart_cli.py:273: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../receipt_plugin.py:153: in observed
+    snapshots(root, 'before_' + name)
+../receipt_plugin.py:119: in snapshots
+    root = Path(root)
+           ^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1162: in __init__
+    super().__init__(*args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;[AttributeError("'PosixPath' object has no attribute '_raw_paths'") raised in repr()] PosixPath object at 0x7f045c17a0a0&gt;
+args = (&lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;,)
+paths = []
+arg = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+path = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+
+    def __init__(self, *args):
+        paths = []
+        for arg in args:
+            if isinstance(arg, PurePath):
+                if arg._flavour is not self._flavour:
+                    # GH-103631: Convert separators for backwards compatibility.
+                    paths.append(arg.as_posix())
+                else:
+                    paths.extend(arg._raw_paths)
+            else:
+                try:
+                    path = os.fspath(arg)
+                except TypeError:
+                    path = arg
+                if not isinstance(path, str):
+&gt;                   raise TypeError(
+                        "argument should be a str or an os.PathLike "
+                        "object where __fspath__ returns a str, "
+                        f"not {type(path).__name__!r}")
+E                   TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:373: TypeError
+
+During handling of the above exception, another exception occurred:
+
+boundary = 'retained'
+ingress = ('http://127.0.0.1:46123/', ['intended'], &lt;threading.Event at 0x7f045c374b30: set&gt;)
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("boundary", ["prepared", "started", "retained"])
+    def test_cli_recovers_abrupt_holder_death_without_redispatch(boundary, ingress):
+        url, records, arrived = ingress
+        with tempfile.TemporaryDirectory(prefix="fw-crash-", dir="/tmp") as directory:
+            root = Path(directory)
+            session, holder, identities = _setup(root, url, boundary)
+            try:
+                snapshot = _cli(root, "look", "--session", str(session))["snapshot"]
+                ref = next(row["ref"] for row in snapshot["refs"] if row["name"] == "Commit fixture")
+                _inventory(holder, identities)
+                invocation = ("click", "--session", str(session), "--ref", ref, "--token", "intent-1")
+                interrupted = _cli(root, *invocation, success=False)
+                assert holder.wait(timeout=10) == 86
+                assert interrupted["ok"] is False
+                assert interrupted["dispatched"] is None  # transport loss itself proves no no-send predicate
+                marker = json.loads((session / "test-boundary.json").read_text())
+                assert marker["boundary"] == boundary
+                assert marker["heavy_imports"] == []
+                if boundary == "retained":
+                    assert arrived.wait(10), "activation did not reach the independent fixture ingress"
+                    assert marker["ingress_before_exit"] == 1
+                recovered = _cli(root, "recover", "--session", str(session), "--token", "intent-1")
+                op = recovered["operations"][0]
+                assert op["id"] == marker["operation_id"]
+                assert op["completion"] == "unverified" and op["retryable"] is False
+                assert op["state"] == ("final" if boundary == "prepared" else "unknown")
+                assert op["disposition"] == ("not_sent" if boundary == "prepared" else "unknown")
+                assert op["phase"] == ("not_sent" if boundary == "prepared" else "sent" if boundary == "retained" else "ambiguous")
+                if boundary == "retained":
+                    assert op["evidence"]["execution_receipt"]["basis"] == "activation_ack"
+                else:
+                    assert "execution_receipt" not in op["evidence"]
+                status = _cli(root, "status", "--session", str(session), "--token", "intent-1")
+                assert status["operations"] == recovered["operations"]
+                for _ in range(2):
+                    replay = _cli(root, *invocation)
+                    assert replay["replayed"] is True and replay["operation"]["id"] == op["id"]
+                    assert replay["operation"]["disposition"] == op["disposition"]
+                new_intent = _cli(root, *invocation[:-1], "intent-2", success=False)
+                assert new_intent["ok"] is False  # offline recovery cannot grant a fresh mutation
+                assert records == (["intended"] if boundary == "retained" else [])
+                if boundary != "prepared":
+                    # Remove abandoned test-owned custodians before starting another browser.
+                    # The public start route must reject this domain before launching Chrome.
+                    _test_cleanup(holder, identities)
+                    fresh_session = root / "next"
+                    blocked = _cli(root, "start", "Try a new intent", "--session", str(fresh_session),
+                                   "--authority", str(root / "authority.db"), "--url", url, success=False)
+                    assert blocked["ok"] is False
+                    assert not list(fresh_session.glob("profile-*"))
+                    assert not (fresh_session / "holder.json").exists()
+                    assert records == (["intended"] if boundary == "retained" else [])
+            finally:
+&gt;               _test_cleanup(holder, identities)
+
+test_browser_restart_cli.py:282: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../receipt_plugin.py:153: in observed
+    snapshots(root, 'before_' + name)
+../receipt_plugin.py:119: in snapshots
+    root = Path(root)
+           ^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1162: in __init__
+    super().__init__(*args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;[AttributeError("'PosixPath' object has no attribute '_raw_paths'") raised in repr()] PosixPath object at 0x7f045c17bf40&gt;
+args = (&lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;,)
+paths = []
+arg = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+path = &lt;Popen: returncode: 86 args: ['/workspace/scratch/footwork-durable-cdp-cad75...&gt;
+
+    def __init__(self, *args):
+        paths = []
+        for arg in args:
+            if isinstance(arg, PurePath):
+                if arg._flavour is not self._flavour:
+                    # GH-103631: Convert separators for backwards compatibility.
+                    paths.append(arg.as_posix())
+                else:
+                    paths.extend(arg._raw_paths)
+            else:
+                try:
+                    path = os.fspath(arg)
+                except TypeError:
+                    path = arg
+                if not isinstance(path, str):
+&gt;                   raise TypeError(
+                        "argument should be a str or an os.PathLike "
+                        "object where __fspath__ returns a str, "
+                        f"not {type(path).__name__!r}")
+E                   TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'Popen'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:373: TypeError</failure></testcase><testcase classname="test_cdp_click" name="test_observation_marker_has_no_fixture_effect" time="0.428" /><testcase classname="test_cdp_click" name="test_native_button_activation_records_exactly_one_independent_ingress" time="0.427" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[intended.textContent = 'Delete fixture']" time="0.416" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[intended.setAttribute('data-record-id', 'other-record')]" time="0.412" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[intended.setAttribute('type', 'submit')]" time="0.396" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[intended.disabled = true]" time="0.410" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[intended.setAttribute('aria-label', 'Delete fixture')]" time="0.407" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[document.body.setAttribute('data-customer-id', 'other')]" time="0.408" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[let css=document.createElement('style'); css.textContent='#intended::before{content:&quot;Delete &quot;}'; document.head.append(css)]" time="0.389" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[intended.replaceWith(intended.cloneNode(true))]" time="0.417" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[document.body.setAttribute('inert', '')]" time="0.411" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[let fieldset=document.createElement('fieldset'); fieldset.disabled=true; intended.before(fieldset); fieldset.append(intended)]" time="0.401" /><testcase classname="test_cdp_click" name="test_changed_subject_refuses_without_any_fixture_ingress[let form=document.createElement('form'); intended.before(form); form.append(intended)]" time="0.369" /><testcase classname="test_cdp_click" name="test_unsupported_or_incompletely_represented_button_names_refuse[intended.textContent='A'.repeat(121)+' Delete fixture'-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]" time="0.407" /><testcase classname="test_cdp_click" name="test_unsupported_or_incompletely_represented_button_names_refuse[intended.setAttribute('role','button')-Commit fixture]" time="0.426" /><testcase classname="test_cdp_click" name="test_unsupported_or_incompletely_represented_button_names_refuse[intended.innerHTML='&lt;span&gt;Commit fixture&lt;/span&gt;'-Commit fixture]" time="0.405" /><testcase classname="test_cdp_click" name="test_unsupported_or_incompletely_represented_button_names_refuse[let name=document.createElement('span'); name.id='external'; name.textContent='Commit fixture'; document.body.append(name); intended.setAttribute('aria-labelledby','external')-Commit fixture]" time="0.415" /><testcase classname="test_cdp_click" name="test_unsupported_or_incompletely_represented_button_names_refuse[intended.setAttribute('data-payload','x'.repeat(9000))-Commit fixture]" time="0.384" /><testcase classname="test_cdp_click" name="test_page_method_and_getter_overrides_cannot_redirect_activation" time="0.473" /><testcase classname="test_cdp_click" name="test_pointerdown_only_app_does_not_gain_a_business_completion_claim" time="0.444" /><testcase classname="test_cdp_click" name="test_same_url_reload_never_uses_a_new_document_context[False]" time="0.450" /><testcase classname="test_cdp_click" name="test_same_url_reload_never_uses_a_new_document_context[True]" time="0.426" /><testcase classname="test_cdp_click" name="test_numeric_handle_alias_cannot_adopt_an_identical_new_document_button" time="0.452" /><testcase classname="test_cdp_click" name="test_document_open_root_replacement_cannot_reuse_an_old_observation" time="0.438" /><testcase classname="test_cdp_click" name="test_closed_pinned_tab_does_not_activate_a_live_sentinel_tab" time="0.475" /><testcase classname="test_cdp_click" name="test_reobservation_and_foreign_connection_reject_old_refs" time="0.431" /><testcase classname="test_cdp_click" name="test_concurrent_calls_with_one_ref_dispatch_once" time="0.424" /><testcase classname="test_cdp_click" name="test_lost_ack_or_cancellation_after_ingress_blocks_even_a_fresh_ref[False]" time="0.411" /><testcase classname="test_cdp_click" name="test_lost_ack_or_cancellation_after_ingress_blocks_even_a_fresh_ref[True]" time="0.432" /><testcase classname="test_cdp_click" name="test_typing_trusted_click_and_navigation_stay_disabled" time="0.423" /><testcase classname="test_cdp_click_contract" name="test_button_target_keeps_complete_attributes_text_and_ancestor_identity" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc0-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc1-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc2-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc3-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc4-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc5-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc6-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc7-Delete]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc8-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc9-Con tinue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_unsupported_or_unrepresentable_button_is_not_admitted[doc10-Continue]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_aria_label_is_admitted_only_when_the_offered_name_matches" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_native_activation_consumes_refs_and_resolves_only_into_the_observed_world" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_a_ref_without_an_observation_document_token_cannot_activate" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_observation_marks_one_private_slot_before_reading_nodes_and_replaces_the_token" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_malformed_marker_setup_keeps_the_observation_unavailable[marker_reply0]" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_malformed_marker_setup_keeps_the_observation_unavailable[marker_reply1]" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_malformed_marker_setup_keeps_the_observation_unavailable[marker_reply2]" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result0]" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result1]" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result2]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result3]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result4]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result5]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_ambiguous_activation_blocks_even_a_new_observation_ref[result6]" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_known_pre_activation_refusal_and_closed_socket_are_not_sent" time="0.001" /><testcase classname="test_cdp_click_contract" name="test_read_only_validation_loss_never_claims_input_was_sent" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_concurrent_callers_cannot_reuse_the_admitted_ref" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_cancellation_keeps_unknown_and_does_not_enable_a_retry" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_cancellation_during_handle_cleanup_cannot_lose_the_successful_activation" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_typing_navigation_and_trusted_click_remain_disabled" time="0.000" /><testcase classname="test_cdp_click_contract" name="test_bridge_reports_actual_activation_route_without_promoting_business_completion" time="0.000" /><testcase classname="test_cdp_effector" name="test_replies_are_matched_by_id_and_events_reach_listeners" time="0.001" /><testcase classname="test_cdp_effector" name="test_an_error_reply_is_a_received_refusal" time="0.000" /><testcase classname="test_cdp_effector" name="test_a_lost_connection_leaves_in_flight_commands_unknown_and_sends_nothing_after" time="0.000" /><testcase classname="test_cdp_effector" name="test_no_reply_within_the_deadline_is_unknown_not_failed" time="0.051" /><testcase classname="test_cdp_effector" name="test_only_a_loopback_endpoint_is_opened" time="0.000" /><testcase classname="test_cdp_effector" name="test_composition_withholds_sensitive_values_and_disables_disabled_controls" time="0.000" /><testcase classname="test_cdp_effector" name="test_a_controls_user_agent_internals_never_become_candidates_or_labels" time="0.000" /><testcase classname="test_cdp_effector" name="test_child_frames_make_the_snapshot_incomplete" time="0.000" /><testcase classname="test_cdp_effector" name="test_compound_sensitive_autocomplete_never_exposes_the_field_value[section-billing billing cc-number]" time="0.000" /><testcase classname="test_cdp_effector" name="test_compound_sensitive_autocomplete_never_exposes_the_field_value[shipping one-time-code]" time="0.000" /><testcase classname="test_cdp_effector" name="test_compound_sensitive_autocomplete_never_exposes_the_field_value[section-X CC-CSC]" time="0.000" /><testcase classname="test_cdp_effector" name="test_omitted_custom_controls_prevent_a_complete_observation_claim" time="0.000" /><testcase classname="test_cdp_effector" name="test_the_owned_browser_is_observed_as_the_fixture_declares" time="0.824" /><testcase classname="test_cdp_effector" name="test_actions_refuse_before_dispatch_and_a_reload_invalidates_refs" time="0.977" /><testcase classname="test_cdp_effector" name="test_a_stale_port_file_or_a_foreign_endpoint_is_refused" time="0.291" /><testcase classname="test_cdp_effector" name="test_the_cdp_package_imports_no_third_party_module_until_a_connection_opens" time="0.061" /><testcase classname="test_cdp_effector" name="test_only_an_effector_that_refused_before_sending_reports_not_sent" time="0.001" /><testcase classname="test_cdp_launch_custody" name="test_existing_profile_paths_are_refused_without_mutation[empty]" time="0.001" /><testcase classname="test_cdp_launch_custody" name="test_existing_profile_paths_are_refused_without_mutation[populated]" time="0.001" /><testcase classname="test_cdp_launch_custody" name="test_existing_profile_paths_are_refused_without_mutation[symlink]" time="0.001" /><testcase classname="test_cdp_launch_custody" name="test_existing_profile_paths_are_refused_without_mutation[file]" time="0.001" /><testcase classname="test_cdp_launch_custody" name="test_existing_profile_paths_are_refused_without_mutation[dangling_symlink]" time="0.001" /><testcase classname="test_cdp_launch_custody" name="test_fresh_profile_is_created_private_before_process_launch" time="0.014" /><testcase classname="test_cdp_launch_custody" name="test_stop_cleans_a_captured_term_resistant_child_without_touching_a_sentinel" time="3.084" /><testcase classname="test_cdp_launch_custody" name="test_stop_reports_uncertainty_when_the_root_exited_before_inventory" time="0.017" /><testcase classname="test_cdp_launch_custody" name="test_a_descendant_exiting_during_identity_capture_does_not_block_root_cleanup" time="0.002" /><testcase classname="test_cdp_launch_custody" name="test_changed_root_incarnation_is_never_signaled" time="0.002" /><testcase classname="test_cdp_transport_deadline" name="test_command_deadline_bounds_blocked_send_and_retires_the_connection" time="0.021" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222@attacker.example/devtools/browser/x]" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222@127.0.0.1:9222/devtools/browser/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://user:password@127.0.0.1:9222/devtools/browser/x]" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:0/devtools/browser/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:65536/devtools/browser/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:bad/devtools/browser/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1/devtools/browser/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[wss://127.0.0.1:9222/devtools/browser/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.2:9222/devtools/browser/x]" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/page/x]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/browser/]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/browser/x?host=elsewhere]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_invalid_endpoint_never_opens_a_connection[ws://127.0.0.1:9222/devtools/browser/x#fragment]" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_valid_loopback_browser_endpoint_reaches_connect" time="0.000" /><testcase classname="test_cdp_transport_deadline" name="test_sending_and_reply_wait_share_one_budget" time="0.502" /><testcase classname="test_cdp_transport_deadline" name="test_serialization_failure_does_not_admit_or_send_a_command" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_an_interrupted_send_retires_other_inflight_commands_as_unknown" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_cancelling_a_close_waiter_does_not_cancel_owned_transport_cleanup" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_cancellation_removes_pending_command_and_preserves_cancellation[True]" time="0.001" /><testcase classname="test_cdp_transport_deadline" name="test_cancellation_removes_pending_command_and_preserves_cancellation[False]" time="0.001" /></testsuite></testsuites>

@@ -1,0 +1,235 @@
+{
+  "nodeids": [
+    "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission"
+  ],
+  "boundary_metadata": [],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 6561.934183524,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "fixture": "page",
+      "url": "http://127.0.0.1:33387/",
+      "records": []
+    }
+  ],
+  "public_helper_receipts": [
+    {
+      "kind": "helper_return",
+      "monotonic": 6561.482957959,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "start",
+        "Commit the fixture once",
+        "--session",
+        "/tmp/fw-cdp-tjl32ren/session",
+        "--authority",
+        "/tmp/fw-cdp-tjl32ren/authority.db",
+        "--url",
+        "http://127.0.0.1:33387/"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_d950d27c58ec4af2a9f2bc8d1214fc77",
+        "profile": {
+          "profile": "owned-headless-cdp",
+          "entrypoint": "footwork browser cdp",
+          "commands": [
+            "start",
+            "look",
+            "click",
+            "status",
+            "recover",
+            "stop",
+            "guide"
+          ],
+          "requirements": [
+            "Chrome",
+            "psutil",
+            "websockets",
+            "configured Jev or judgment adapter",
+            "absolute durable authority"
+          ],
+          "desktop_required": false,
+          "cua_required": false,
+          "typing": "disabled: unresolved focus race",
+          "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
+          "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
+          "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
+          "install": "current package metadata still installs full dependencies; light metadata split is pending",
+          "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user"
+        },
+        "holder": {
+          "ok": true,
+          "session_id": "cdp_d950d27c58ec4af2a9f2bc8d1214fc77",
+          "operations": []
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6561.599978336,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "look",
+        "--session",
+        "/tmp/fw-cdp-tjl32ren/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_d950d27c58ec4af2a9f2bc8d1214fc77",
+        "snapshot": {
+          "status": "ok",
+          "page": {
+            "url": "http://127.0.0.1:33387/",
+            "title": "Durable fixture"
+          },
+          "snapshot": {
+            "id": "da27063fa456",
+            "complete": false,
+            "omitted": {
+              "css_hidden": 0,
+              "offscreen": 0,
+              "no_layout": 0,
+              "unknown": 0,
+              "budget": 0,
+              "child_frames": 0,
+              "custom_controls_unobserved": 1
+            }
+          },
+          "refs": [
+            {
+              "ref": "da27063fa456:1",
+              "role": "button",
+              "name": "Commit fixture",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            },
+            {
+              "ref": "da27063fa456:2",
+              "role": "button",
+              "name": "Sentinel",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            }
+          ],
+          "content_refs": [],
+          "document": {
+            "frame_id": "80111CDD97301D3898B3C5539F3E8E8B",
+            "loader_id": "A41F52C978C987B61560713DC47D82E6"
+          }
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6561.722399387,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "click",
+        "--session",
+        "/tmp/fw-cdp-tjl32ren/session",
+        "--ref",
+        "da27063fa456:1",
+        "--token",
+        "missing-guard"
+      ],
+      "result": {
+        "ok": false,
+        "code": "guard_refused",
+        "message": "the configured guard did not authorize this activation",
+        "dispatched": false
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6561.807640804,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "status",
+        "--session",
+        "/tmp/fw-cdp-tjl32ren/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_d950d27c58ec4af2a9f2bc8d1214fc77",
+        "operations": []
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6561.933561122,
+      "nodeid": "test_browser_cdp_cli.py::test_missing_guard_refuses_before_admission",
+      "helper": "cli",
+      "arguments": [
+        "browser",
+        "cdp",
+        "stop",
+        "--session",
+        "/tmp/fw-cdp-tjl32ren/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "cdp_d950d27c58ec4af2a9f2bc8d1214fc77",
+        "cleanup": {
+          "status": "bounded_owned_processes_stopped",
+          "complete_tree_inventory": false
+        }
+      }
+    }
+  ],
+  "observed_numeric_exits": [
+    {
+      "kind": "public_cli",
+      "pid": 7346,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7462,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7467,
+      "returncode": 3,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7468,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7469,
+      "returncode": 0,
+      "signal": null
+    }
+  ]
+}

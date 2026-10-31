@@ -1,0 +1,432 @@
+{
+  "nodeids": [
+    "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]"
+  ],
+  "boundary_metadata": [
+    {
+      "path": "/tmp/fw-crash-lfmqsw5x/session/test-boundary.json",
+      "sha256": "bd7a391e763a3aeaaaad0bc826fd9216d1de350f38869d51b3e66ab9ed7fd6bf",
+      "mtime_ns": 1793472999324478485,
+      "mode": "0o600",
+      "json": {
+        "boundary": "started",
+        "operation_id": "op_20043ef2b6d0",
+        "ingress_before_exit": null,
+        "heavy_imports": []
+      }
+    }
+  ],
+  "independent_fixture_records": [
+    {
+      "kind": "independent_fixture_records",
+      "monotonic": 6565.43092112,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "fixture": "ingress",
+      "url": "http://127.0.0.1:37761/",
+      "records": []
+    }
+  ],
+  "public_helper_receipts": [
+    {
+      "kind": "helper_return",
+      "monotonic": 6564.829147879,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "look",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session"
+      ],
+      "result": {
+        "ok": true,
+        "session_id": "restart-fixture",
+        "snapshot": {
+          "status": "ok",
+          "page": {
+            "url": "http://127.0.0.1:37761/",
+            "title": "Restart boundary"
+          },
+          "snapshot": {
+            "id": "720ae8e1bddb",
+            "complete": false,
+            "omitted": {
+              "css_hidden": 0,
+              "offscreen": 0,
+              "no_layout": 0,
+              "unknown": 0,
+              "budget": 0,
+              "child_frames": 0,
+              "custom_controls_unobserved": 1
+            }
+          },
+          "refs": [
+            {
+              "ref": "720ae8e1bddb:1",
+              "role": "button",
+              "name": "Commit fixture",
+              "actions": [
+                "click"
+              ],
+              "states": {
+                "focusable": true
+              },
+              "visibility": "in_viewport"
+            }
+          ],
+          "content_refs": [],
+          "document": {
+            "frame_id": "D7C29F287E4850DD12572CC8FF7D12B6",
+            "loader_id": "FEFF3672F2EA2D73F51E225CCC976925"
+          }
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6564.977455887,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "click",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session",
+        "--ref",
+        "720ae8e1bddb:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_response_unknown",
+        "dispatched": null,
+        "retryable": false
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6565.060260968,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "recover",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_20043ef2b6d0",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"5EB23C93CE04AEA7C57169EF540E8464\",\"pid\":7607,\"start\":\"1793472998.33\",\"target\":\"D7C29F287E4850DD12572CC8FF7D12B6\"}",
+            "observation": "720ae8e1bddb:1",
+            "target": "7",
+            "move": "click",
+            "args": {
+              "ref": "720ae8e1bddb:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "379512119d22feb9bbf633933c28ab6ed7d7ffd1d3d263701d271b6228c94174",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "evidence": {},
+            "error": "process ended during dispatch",
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793472999.3239045,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793472999.324241,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793472999.4091787,
+                "kind": "recovered_unknown"
+              }
+            ],
+            "created": 1793472999.3237054,
+            "updated": 1793472999.409095,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6565.141494781,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "status",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "holder": "unavailable; no relaunch attempted",
+        "session_id": "restart-fixture",
+        "operations": [
+          {
+            "id": "op_20043ef2b6d0",
+            "task": "restart-fixture",
+            "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"5EB23C93CE04AEA7C57169EF540E8464\",\"pid\":7607,\"start\":\"1793472998.33\",\"target\":\"D7C29F287E4850DD12572CC8FF7D12B6\"}",
+            "observation": "720ae8e1bddb:1",
+            "target": "7",
+            "move": "click",
+            "args": {
+              "ref": "720ae8e1bddb:1",
+              "route": "dom_event_native_button"
+            },
+            "request_digest": "379512119d22feb9bbf633933c28ab6ed7d7ffd1d3d263701d271b6228c94174",
+            "client_token": "intent-1",
+            "state": "unknown",
+            "disposition": "unknown",
+            "phase": "ambiguous",
+            "evidence": {},
+            "error": "process ended during dispatch",
+            "resolved_by": null,
+            "history": [
+              {
+                "t": 1793472999.3239045,
+                "kind": "intent",
+                "protocol": 1,
+                "authorization": "configured_browser_guard"
+              },
+              {
+                "t": 1793472999.324241,
+                "kind": "dispatch_started"
+              },
+              {
+                "t": 1793472999.4091787,
+                "kind": "recovered_unknown"
+              }
+            ],
+            "created": 1793472999.3237054,
+            "updated": 1793472999.409095,
+            "recovery": null,
+            "execution_stage": "started",
+            "completion": "unverified",
+            "retryable": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6565.224257029,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "click",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session",
+        "--ref",
+        "720ae8e1bddb:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_20043ef2b6d0",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"5EB23C93CE04AEA7C57169EF540E8464\",\"pid\":7607,\"start\":\"1793472998.33\",\"target\":\"D7C29F287E4850DD12572CC8FF7D12B6\"}",
+          "observation": "720ae8e1bddb:1",
+          "target": "7",
+          "move": "click",
+          "args": {
+            "ref": "720ae8e1bddb:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "379512119d22feb9bbf633933c28ab6ed7d7ffd1d3d263701d271b6228c94174",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "ambiguous",
+          "evidence": {},
+          "error": "process ended during dispatch",
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793472999.3239045,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793472999.324241,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793472999.4091787,
+              "kind": "recovered_unknown"
+            }
+          ],
+          "created": 1793472999.3237054,
+          "updated": 1793472999.409095,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6565.310053734,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "click",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session",
+        "--ref",
+        "720ae8e1bddb:1",
+        "--token",
+        "intent-1"
+      ],
+      "result": {
+        "ok": true,
+        "replayed": true,
+        "holder": "unavailable",
+        "operation": {
+          "id": "op_20043ef2b6d0",
+          "task": "restart-fixture",
+          "resource": "browser:{\"boot\":\"2ae8c489-cacb-4de9-872b-77459e8d3000\",\"browser_context\":\"5EB23C93CE04AEA7C57169EF540E8464\",\"pid\":7607,\"start\":\"1793472998.33\",\"target\":\"D7C29F287E4850DD12572CC8FF7D12B6\"}",
+          "observation": "720ae8e1bddb:1",
+          "target": "7",
+          "move": "click",
+          "args": {
+            "ref": "720ae8e1bddb:1",
+            "route": "dom_event_native_button"
+          },
+          "request_digest": "379512119d22feb9bbf633933c28ab6ed7d7ffd1d3d263701d271b6228c94174",
+          "client_token": "intent-1",
+          "state": "unknown",
+          "disposition": "unknown",
+          "phase": "ambiguous",
+          "evidence": {},
+          "error": "process ended during dispatch",
+          "resolved_by": null,
+          "history": [
+            {
+              "t": 1793472999.3239045,
+              "kind": "intent",
+              "protocol": 1,
+              "authorization": "configured_browser_guard"
+            },
+            {
+              "t": 1793472999.324241,
+              "kind": "dispatch_started"
+            },
+            {
+              "t": 1793472999.4091787,
+              "kind": "recovered_unknown"
+            }
+          ],
+          "created": 1793472999.3237054,
+          "updated": 1793472999.409095,
+          "recovery": null,
+          "execution_stage": "started",
+          "completion": "unverified",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "kind": "helper_return",
+      "monotonic": 6565.394666495,
+      "nodeid": "test_browser_restart_cli.py::test_cli_recovers_abrupt_holder_death_without_redispatch[started]",
+      "helper": "_cli",
+      "arguments": [
+        "/tmp/fw-crash-lfmqsw5x",
+        "click",
+        "--session",
+        "/tmp/fw-crash-lfmqsw5x/session",
+        "--ref",
+        "720ae8e1bddb:1",
+        "--token",
+        "intent-2"
+      ],
+      "result": {
+        "ok": false,
+        "code": "browser_session_unavailable",
+        "message": "request refused; inspect retained authority; no automatic retry",
+        "error_type": "ValueError"
+      }
+    }
+  ],
+  "observed_numeric_exits": [
+    {
+      "kind": "public_cli",
+      "pid": 7717,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7719,
+      "returncode": 3,
+      "signal": null
+    },
+    {
+      "kind": "test_only_holder_shim",
+      "pid": 7605,
+      "returncode": 86,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7721,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7722,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7723,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7724,
+      "returncode": 0,
+      "signal": null
+    },
+    {
+      "kind": "public_cli",
+      "pid": 7746,
+      "returncode": 3,
+      "signal": null
+    }
+  ]
+}
