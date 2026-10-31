@@ -1,0 +1,66 @@
+{
+  "source_commit": "dda70d06848d802bd35393f46c14381d2874486b",
+  "wheel_sha256": "f1a67ce77bff88c0ed3e94940b56d57f5dff2f5a407493cd184bb440856726db",
+  "cases": [
+    {
+      "surface": "native",
+      "existing": false,
+      "exit": 7,
+      "preserved": true,
+      "response": {
+        "schema_version": "1",
+        "exit_code": 7,
+        "command_completed": false,
+        "effect_verification": "not_asserted",
+        "output": "",
+        "diagnostics": "stopped: effector_unavailable: desktop effector requires cua-driver. Install the matching full Footwork bundle with its pinned cua-driver wheel.\n",
+        "data": null
+      }
+    },
+    {
+      "surface": "native",
+      "existing": true,
+      "exit": 7,
+      "preserved": true,
+      "response": {
+        "schema_version": "1",
+        "exit_code": 7,
+        "command_completed": false,
+        "effect_verification": "not_asserted",
+        "output": "",
+        "diagnostics": "stopped: effector_unavailable: desktop effector requires cua-driver. Install the matching full Footwork bundle with its pinned cua-driver wheel.\n",
+        "data": null
+      }
+    },
+    {
+      "surface": "browser",
+      "existing": false,
+      "exit": 7,
+      "preserved": true,
+      "response": {
+        "schema_version": "1",
+        "exit_code": 7,
+        "command_completed": false,
+        "effect_verification": "not_asserted",
+        "output": "",
+        "diagnostics": "stopped: effector_unavailable: browser effector requires cua-driver. Install the matching full Footwork bundle with its pinned cua-driver wheel.\n",
+        "data": null
+      }
+    },
+    {
+      "surface": "browser",
+      "existing": true,
+      "exit": 7,
+      "preserved": true,
+      "response": {
+        "schema_version": "1",
+        "exit_code": 7,
+        "command_completed": false,
+        "effect_verification": "not_asserted",
+        "output": "",
+        "diagnostics": "stopped: effector_unavailable: browser effector requires cua-driver. Install the matching full Footwork bundle with its pinned cua-driver wheel.\n",
+        "data": null
+      }
+    }
+  ]
+}

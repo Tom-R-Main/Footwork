@@ -1,0 +1,224 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_start_without_sdk_preserves_existing_session_and_never_launches[False-False] _
+
+browser = False, existing = False
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104fa6480>
+capsys = <_pytest.capture.CaptureFixture object at 0x1068b0950>
+
+    @pytest.mark.parametrize("browser", [False, True])
+    @pytest.mark.parametrize("existing", [False, True])
+    def test_start_without_sdk_preserves_existing_session_and_never_launches(
+        browser, existing, tmp_path, monkeypatch, capsys
+    ):
+        from jevdual import browser_driver, carry, cli, grants, native
+        from jevdual.session import SessionState
+    
+        directory = tmp_path / "session"
+        original = {}
+        if existing:
+            directory.mkdir()
+            SessionState(dir=str(directory), app="fixture", pid=1, window_id=2, task="retained").save()
+            for name in ("session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
+                (directory / name).write_bytes(b'{"fixture": "retained"}\n')
+            original = {p.name: p.read_bytes() for p in directory.iterdir()}
+        original_import = builtins.__import__
+        launches = []
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def launch(*args):
+            launches.append(args)
+            raise RuntimeError("browser launch must follow the optional-effector check")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        monkeypatch.setattr(native, "require_accessibility", lambda: None)
+        monkeypatch.setattr(browser_driver, "_begin_chrome", launch)
+        args = ["--json", "start", "replacement task", "--session", str(directory)]
+        if browser:
+            args.append("--browser")
+        status = cli.main(args)
+        output = capsys.readouterr().out
+        for name, before in original.items():
+            assert (directory / name).exists(), f"missing effector removed {name}"
+            # The normal error handler may append a stop record, retaining history.
+            if name == "session.jsonl":
+                assert (directory / name).read_bytes().startswith(before)
+            else:
+                assert (directory / name).read_bytes() == before
+        if not existing:
+>           assert not directory.exists()
+E           AssertionError: assert not True
+E            +  where True = exists()
+E            +    where exists = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv0/session').exists
+
+tests/test_effector_boundary.py:282: AssertionError
+_ test_start_without_sdk_preserves_existing_session_and_never_launches[False-True] _
+
+browser = True, existing = False
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x104fa5fd0>
+capsys = <_pytest.capture.CaptureFixture object at 0x106945d00>
+
+    @pytest.mark.parametrize("browser", [False, True])
+    @pytest.mark.parametrize("existing", [False, True])
+    def test_start_without_sdk_preserves_existing_session_and_never_launches(
+        browser, existing, tmp_path, monkeypatch, capsys
+    ):
+        from jevdual import browser_driver, carry, cli, grants, native
+        from jevdual.session import SessionState
+    
+        directory = tmp_path / "session"
+        original = {}
+        if existing:
+            directory.mkdir()
+            SessionState(dir=str(directory), app="fixture", pid=1, window_id=2, task="retained").save()
+            for name in ("session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
+                (directory / name).write_bytes(b'{"fixture": "retained"}\n')
+            original = {p.name: p.read_bytes() for p in directory.iterdir()}
+        original_import = builtins.__import__
+        launches = []
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def launch(*args):
+            launches.append(args)
+            raise RuntimeError("browser launch must follow the optional-effector check")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        monkeypatch.setattr(native, "require_accessibility", lambda: None)
+        monkeypatch.setattr(browser_driver, "_begin_chrome", launch)
+        args = ["--json", "start", "replacement task", "--session", str(directory)]
+        if browser:
+            args.append("--browser")
+        status = cli.main(args)
+        output = capsys.readouterr().out
+        for name, before in original.items():
+            assert (directory / name).exists(), f"missing effector removed {name}"
+            # The normal error handler may append a stop record, retaining history.
+            if name == "session.jsonl":
+                assert (directory / name).read_bytes().startswith(before)
+            else:
+                assert (directory / name).read_bytes() == before
+        if not existing:
+>           assert not directory.exists()
+E           AssertionError: assert not True
+E            +  where True = exists()
+E            +    where exists = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv1/session').exists
+
+tests/test_effector_boundary.py:282: AssertionError
+_ test_start_without_sdk_preserves_existing_session_and_never_launches[True-False] _
+
+browser = False, existing = True
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106944b60>
+capsys = <_pytest.capture.CaptureFixture object at 0x1069455e0>
+
+    @pytest.mark.parametrize("browser", [False, True])
+    @pytest.mark.parametrize("existing", [False, True])
+    def test_start_without_sdk_preserves_existing_session_and_never_launches(
+        browser, existing, tmp_path, monkeypatch, capsys
+    ):
+        from jevdual import browser_driver, carry, cli, grants, native
+        from jevdual.session import SessionState
+    
+        directory = tmp_path / "session"
+        original = {}
+        if existing:
+            directory.mkdir()
+            SessionState(dir=str(directory), app="fixture", pid=1, window_id=2, task="retained").save()
+            for name in ("session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
+                (directory / name).write_bytes(b'{"fixture": "retained"}\n')
+            original = {p.name: p.read_bytes() for p in directory.iterdir()}
+        original_import = builtins.__import__
+        launches = []
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def launch(*args):
+            launches.append(args)
+            raise RuntimeError("browser launch must follow the optional-effector check")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        monkeypatch.setattr(native, "require_accessibility", lambda: None)
+        monkeypatch.setattr(browser_driver, "_begin_chrome", launch)
+        args = ["--json", "start", "replacement task", "--session", str(directory)]
+        if browser:
+            args.append("--browser")
+        status = cli.main(args)
+        output = capsys.readouterr().out
+        for name, before in original.items():
+>           assert (directory / name).exists(), f"missing effector removed {name}"
+E           AssertionError: missing effector removed carries.json
+E           assert False
+E            +  where False = exists()
+E            +    where exists = (PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv2/session') / 'carries.json').exists
+
+tests/test_effector_boundary.py:275: AssertionError
+_ test_start_without_sdk_preserves_existing_session_and_never_launches[True-True] _
+
+browser = True, existing = True
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106984f50>
+capsys = <_pytest.capture.CaptureFixture object at 0x106985a00>
+
+    @pytest.mark.parametrize("browser", [False, True])
+    @pytest.mark.parametrize("existing", [False, True])
+    def test_start_without_sdk_preserves_existing_session_and_never_launches(
+        browser, existing, tmp_path, monkeypatch, capsys
+    ):
+        from jevdual import browser_driver, carry, cli, grants, native
+        from jevdual.session import SessionState
+    
+        directory = tmp_path / "session"
+        original = {}
+        if existing:
+            directory.mkdir()
+            SessionState(dir=str(directory), app="fixture", pid=1, window_id=2, task="retained").save()
+            for name in ("session.jsonl", carry.CARRIES, carry.SNAPSHOTS, grants.GRANTS):
+                (directory / name).write_bytes(b'{"fixture": "retained"}\n')
+            original = {p.name: p.read_bytes() for p in directory.iterdir()}
+        original_import = builtins.__import__
+        launches = []
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def launch(*args):
+            launches.append(args)
+            raise RuntimeError("browser launch must follow the optional-effector check")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        monkeypatch.setattr(native, "require_accessibility", lambda: None)
+        monkeypatch.setattr(browser_driver, "_begin_chrome", launch)
+        args = ["--json", "start", "replacement task", "--session", str(directory)]
+        if browser:
+            args.append("--browser")
+        status = cli.main(args)
+        output = capsys.readouterr().out
+        for name, before in original.items():
+>           assert (directory / name).exists(), f"missing effector removed {name}"
+E           AssertionError: missing effector removed carries.json
+E           assert False
+E            +  where False = exists()
+E            +    where exists = (PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-354/test_start_without_sdk_preserv3/session') / 'carries.json').exists
+
+tests/test_effector_boundary.py:275: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_effector_boundary.py::test_start_without_sdk_preserves_existing_session_and_never_launches[False-False]
+FAILED tests/test_effector_boundary.py::test_start_without_sdk_preserves_existing_session_and_never_launches[False-True]
+FAILED tests/test_effector_boundary.py::test_start_without_sdk_preserves_existing_session_and_never_launches[True-False]
+FAILED tests/test_effector_boundary.py::test_start_without_sdk_preserves_existing_session_and_never_launches[True-True]
+4 failed, 15 deselected in 0.31s

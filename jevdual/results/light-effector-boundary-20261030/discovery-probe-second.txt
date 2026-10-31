@@ -1,0 +1,50 @@
+.F...................................................................... [ 20%]
+........................................................................ [ 40%]
+........................................................................ [ 61%]
+................................................................ssssssss [ 81%]
+ssssssssssssssssssssss..........................................         [100%]
+=================================== FAILURES ===================================
+______ test_discovery_and_command_modules_do_not_load_optional_effectors _______
+
+    def test_discovery_and_command_modules_do_not_load_optional_effectors():
+        code = r'''
+    import contextlib, importlib, importlib.abc, io, json, sys
+    blocked = ("browser_use", "cdp_use", "cua_driver", "Quartz", "AppKit", "ApplicationServices", "jeepney", "mujoco")
+    class NoOptional(importlib.abc.MetaPathFinder):
+        def find_spec(self, fullname, path=None, target=None):
+            if fullname.split(".", 1)[0] in blocked:
+                raise ModuleNotFoundError("optional module blocked: " + fullname, name=fullname)
+    sys.meta_path.insert(0, NoOptional())
+    # Discovery can probe availability without importing. Model missing top-level
+    # packages there as well; raising from find_spec would model a broken finder.
+    find_spec = importlib.util.find_spec
+    importlib.util.find_spec = lambda name, *a, **kw: None if name.split(".", 1)[0] in blocked else find_spec(name, *a, **kw)
+    for name in ("cli", "agent_cli", "session", "native", "browser_driver", "linux_session", "linux_x11", "capability.backend", "capability.mcp_server", "effectors", "effectors.cua"):
+        importlib.import_module("jevdual." + name)
+    from jevdual.cli import main
+    for command in ("catalog", "schema", "doctor"):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            status = main(["--json", command])
+        assert status == 0, (command, status)
+        assert isinstance(json.loads(out.getvalue()), dict), command
+    assert not any(name.split(".", 1)[0] in blocked for name in sys.modules)
+    print("discovery works with optional imports blocked")
+    '''
+        result = subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True,
+            env={**os.environ, "PYTHONPATH": str(ROOT / "python"), "JEVDUAL_PURE_PY": "1"},
+            cwd=ROOT, check=False,
+        )
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 11, in <module>
+E         AttributeError: module 'importlib' has no attribute 'util'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/Users/thomasmain/projects/footwork/.worktrees/light-profile/output/light-effector-boundary/ch...all last):\n  File "<string>", line 11, in <module>\nAttributeError: module \'importlib\' has no attribute \'util\'\n').returncode
+
+tests/test_effector_boundary.py:67: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_effector_boundary.py::test_discovery_and_command_modules_do_not_load_optional_effectors
+1 failed, 321 passed, 30 skipped in 5.69s

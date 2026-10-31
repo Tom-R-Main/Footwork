@@ -907,7 +907,10 @@ class NativeBridge:
         budget: MenuBudget | None = None,
         screenshot_path: str | None = None,
     ) -> NativeMenu:
-        from cua_driver import GetWindowStateInput
+        from jevdual.effectors import require_available
+
+        require_available("desktop")
+        from jevdual.effectors.cua import window_state_input
 
         if self.policy.locked():
             # nothing on a locked screen can be observed, so nothing can be decided or sent: stop and say why
@@ -917,7 +920,7 @@ class NativeBridge:
         # AX observations only rather than capture a possibly changed page.
         capture_path = screenshot_path if self.observation_guard is None else None
         snap = await self.driver.get_window_state(
-            GetWindowStateInput(
+            window_state_input(
                 pid=self.pid,
                 window_id=self.window_id,
                 session=self.session,
@@ -976,9 +979,9 @@ class NativeBridge:
             # an unrelated name or different PID must still fail caller scope.
             if (observed.pid == self.pid and "." in observed.app_name
                     and callable(getattr(self.driver, "list_apps", None))):
-                from cua_driver import ListAppsInput
+                from jevdual.effectors.cua import list_apps_input
 
-                apps = (await self.driver.list_apps(ListAppsInput())).apps
+                apps = (await self.driver.list_apps(list_apps_input())).apps
                 matches = [app for app in apps if app.pid == self.pid and observed.app_name.casefold() in {
                     str(app.name or "").casefold(), str(getattr(app, "bundle_id", None) or "").casefold()
                 }]
@@ -1007,9 +1010,9 @@ class NativeBridge:
         return self.last
 
     def _target(self) -> Any:
-        from cua_driver import ActionTarget
+        from jevdual.effectors.cua import window_target
 
-        return ActionTarget.WINDOW(pid=self.pid, window_id=self.window_id)
+        return window_target(pid=self.pid, window_id=self.window_id)
 
     def _require_fresh(self, nm: NativeMenu, id: int) -> tuple[Candidate, str]:
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
@@ -1502,13 +1505,13 @@ class NativeBridge:
             raise NativeBridgeError(exc.reason, str(exc), dispatched=True) from exc
 
     async def _click_token(self, token: str) -> Any:
-        from cua_driver import ClickInput, ClickPosition, InputDeliveryMode
+        from jevdual.effectors.cua import background_delivery, click_input, element_position
 
         return await self.driver.click(
-            ClickInput(
+            click_input(
                 target=self._target(),
-                position=ClickPosition.ELEMENT(element_token=token),
-                delivery_mode=InputDeliveryMode.BACKGROUND,
+                position=element_position(element_token=token),
+                delivery_mode=background_delivery(),
                 session=self.session,
                 button=None,
                 count=None,
@@ -2348,13 +2351,16 @@ class NativeBridge:
         self.dispatches += 1
         label = " > ".join(path)
         if sys.platform == "linux":
-            from cua_driver import InvokeMenuInput
+            from jevdual.effectors import require_available
+
+            require_available("desktop")
+            from jevdual.effectors.cua import invoke_menu_input
 
             refusal = self.policy.permits("background", why=f"menu {label}")
             if refusal is not None:
                 return self._not_sent("menu", -1, label, refusal.code, refusal.reason, "background")
             try:
-                outcome = await self.driver.invoke_menu(InvokeMenuInput(
+                outcome = await self.driver.invoke_menu(invoke_menu_input(
                     pid=self.pid, window_id=self.window_id, path=list(path), session=self.session
                 ))
             except Exception as exc:  # noqa: BLE001 - delivery may be uncertain
@@ -2394,10 +2400,10 @@ class NativeBridge:
                 ax.press_menu(self.pid, list(path))
             except ax.AXError as exc:
                 if exc.reason == "menu_missing" and self.policy.mode == "exclusive_desktop":
-                    from cua_driver import InvokeMenuInput
+                    from jevdual.effectors.cua import invoke_menu_input
 
                     return await self.driver.invoke_menu(
-                        InvokeMenuInput(
+                        invoke_menu_input(
                             pid=self.pid, window_id=self.window_id, path=list(path), session=self.session
                         )
                     )
@@ -2436,10 +2442,10 @@ class NativeBridge:
     async def verify(self, predicates: list[Any], *, timeout_ms: int | None = None) -> tuple[str, str]:
         """Run the Driver's ``verify_state`` and return ``(status, text)`` with status one of
         satisfied / unsatisfied / unknown. ``unknown`` never means success."""
-        from cua_driver import VerifyStateInput
+        from jevdual.effectors.cua import verify_state_input
 
         res = await self.driver.verify_state(
-            VerifyStateInput(
+            verify_state_input(
                 pid=self.pid,
                 window_id=self.window_id,
                 expect=predicates,
@@ -2513,9 +2519,9 @@ def with_save_readback(eff: NativeEffect, rb: dict[str, Any]) -> NativeEffect:
 async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -> tuple[int, int, str]:
     """``(pid, window_id, title)`` of the largest on-screen titled window of a running app (whose title
     contains ``title_contains`` when given), or raise ``LookupError``."""
-    from cua_driver import ListAppsInput, ListWindowsInput
+    from jevdual.effectors.cua import list_apps_input, list_windows_input
 
-    apps = await driver.list_apps(ListAppsInput())
+    apps = await driver.list_apps(list_apps_input())
     match = [a for a in apps.apps if a.name == app_name]
     if not match:
         raise LookupError(f"{app_name!r} is not running (Driver list_apps)")
@@ -2523,7 +2529,7 @@ async def find_window(driver: Any, app_name: str, *, title_contains: str = "") -
     if not pid or pid <= 0 or getattr(match[0], "running", True) is False:
         # the Driver lists installed apps too, with pid 0: say so instead of a window-discovery error
         raise LookupError(f"{app_name!r} is installed but not running; open it first")
-    wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+    wins = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
     titled = [w for w in wins.windows if w.title]
     if title_contains:
         titled = [w for w in titled if title_contains.casefold() in w.title.casefold()]
@@ -2542,9 +2548,9 @@ async def find_window_for_pid(driver: Any, pid: int, *, title_contains: str = ""
     """``(window_id, title)`` of the largest on-screen titled window of one process (whose title contains
     ``title_contains`` when given), or raise ``LookupError``. Used after ``launch_app`` returned the pid of a
     fresh instance: ``list_apps`` reports one pid per bundle, so a second instance is invisible to it."""
-    from cua_driver import ListWindowsInput
+    from jevdual.effectors.cua import list_windows_input
 
-    wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+    wins = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
     titled = [w for w in wins.windows if w.title]
     if title_contains:
         titled = [w for w in titled if title_contains.casefold() in w.title.casefold()]
@@ -2598,14 +2604,14 @@ async def open_url(app_name: str, url: str, *, settle_s: float = 3.0) -> str:
 
 async def app_windows(driver: Any, app_name: str) -> tuple[int, list[tuple[int, str, float]]]:
     """``(pid, [(window_id, title, area)])`` of an app's on-screen windows, as the Driver lists them."""
-    from cua_driver import ListAppsInput, ListWindowsInput
+    from jevdual.effectors.cua import list_apps_input, list_windows_input
 
-    apps = await driver.list_apps(ListAppsInput())
+    apps = await driver.list_apps(list_apps_input())
     match = [a for a in apps.apps if a.name == app_name]
     if not match:
         raise LookupError(f"{app_name!r} is not running (Driver list_apps)")
     pid = match[0].pid
-    wins = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+    wins = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
     return pid, [(w.window_id, w.title or "", float(w.bounds.width * w.bounds.height)) for w in wins.windows]
 
 

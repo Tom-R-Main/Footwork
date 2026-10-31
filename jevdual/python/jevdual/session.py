@@ -868,9 +868,9 @@ async def bind(state: SessionState):
         await bridge.attach(expect_url=state.last_url or None)
         state.browser_tab = bridge.tab_id or ""
         return driver, bridge
-    from cua_driver import CuaDriver
+    from jevdual.effectors import desktop_effector
 
-    driver = CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     if state.native_scope or state.finder_scope:
         return driver, _native_bridge(
             driver,
@@ -984,8 +984,7 @@ def finish_observation(
 
 
 async def cmd_start(args: Any) -> int:
-    from cua_driver import CuaDriver
-
+    from jevdual.effectors import desktop_effector, require_available
     from jevdual.native import (
         address_bar,
         find_window,
@@ -995,6 +994,9 @@ async def cmd_start(args: Any) -> int:
         require_accessibility,
     )
 
+    # Refuse a missing implementation before resetting any prior session or
+    # launching Chrome. Import availability does not create a native runtime.
+    require_available("browser" if getattr(args, "browser", False) else "desktop")
     d = session_dir(args.session)
     operations = getattr(args, "_operations", None)
     durable = bool(getattr(args, "authority", None))
@@ -1078,7 +1080,7 @@ async def cmd_start(args: Any) -> int:
         (d / old).unlink(missing_ok=True)
     if getattr(args, "browser", False):
         return await _start_browser(args, d)
-    driver = CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     try:
         try:
             if explicit_pid is not None:
@@ -1087,11 +1089,10 @@ async def cmd_start(args: Any) -> int:
             else:
                 pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
             if finder_scope:
-                from cua_driver import ListWindowsInput
-
+                from jevdual.effectors.cua import list_windows_input
                 from jevdual.finder_targets import FinderBinding, FinderTargetError, resolve, resolve_marker
 
-                windows = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+                windows = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
                 matches = []
                 for window in windows.windows:
                     if args.window and args.window.casefold() not in window.title.casefold():

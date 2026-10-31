@@ -181,7 +181,10 @@ class TextEditInstance:
 
     @classmethod
     async def launch(cls, driver: Any, files: list[Path]) -> TextEditInstance:
-        from cua_driver import ListWindowsInput
+        from jevdual.effectors import require_available
+
+        require_available("desktop")
+        from jevdual.effectors.cua import list_windows_input
 
         before = _textedit_pids()
         subprocess.run(
@@ -206,7 +209,7 @@ class TextEditInstance:
             if not new:
                 continue
             pid = max(new)
-            listed = await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))
+            listed = await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))
             wins = {w.title: w.window_id for w in listed.windows if w.title}
             if all(f.name in wins for f in files):
                 break
@@ -702,9 +705,9 @@ async def case_background_tab(driver_unused: Any, work: Path) -> CaseResult:
         assert pid is not None, "test Chrome did not start"
         await asyncio.sleep(3.0)
         driver = bd.configured_driver(pid)
-        from cua_driver import ListWindowsInput
+        from jevdual.effectors.cua import list_windows_input
 
-        wins = (await driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True))).windows
+        wins = (await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))).windows
         w = max(wins, key=lambda w: w.bounds.width * w.bounds.height)
         bridge = bd.BrowserBridge(driver, pid, w.window_id, session="q15")
         bound = await bridge.attach()
@@ -776,11 +779,12 @@ CASES = {
 
 
 async def run_case(key: str, work: Path | None = None) -> CaseResult:
-    from cua_driver import CuaDriver
+    from jevdual.effectors import desktop_effector, require_available
 
+    require_available("desktop")
     require_idle(BETWEEN_S if work is not None else GUARD_IDLE_S)
     work = work or Path(tempfile.mkdtemp(prefix="q15-"))
-    driver = CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     try:
         return await CASES[key](driver, work)
     except Exception as exc:  # noqa: BLE001 - a crashed case is a failed case with its reason

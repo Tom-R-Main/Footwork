@@ -45,11 +45,12 @@ def _out_dir(arg: str | None) -> Path:
 
 
 async def cmd_apps(_: argparse.Namespace) -> int:
-    from cua_driver import CuaDriver, ListAppsInput
+    from jevdual.effectors import desktop_effector
+    from jevdual.effectors.cua import list_apps_input
 
-    driver = CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     try:
-        apps = await driver.list_apps(ListAppsInput())
+        apps = await driver.list_apps(list_apps_input())
         for a in sorted(apps.apps, key=lambda a: a.name.casefold()):
             print(f"{a.pid:>7}  {a.name}")
     finally:
@@ -67,12 +68,11 @@ async def cmd_check_artifact(args: argparse.Namespace) -> int:
 
 
 async def cmd_menu(args: argparse.Namespace) -> int:
-    from cua_driver import CuaDriver
-
+    from jevdual.effectors import desktop_effector
     from jevdual.native import NativeBridge, find_window
 
     t0 = time.perf_counter()
-    driver = CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     try:
         pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")
         nm = await NativeBridge(driver, pid, wid).observe(include_menu_bar=args.menu_bar)
@@ -105,7 +105,9 @@ def _step_line(o: Any) -> str:
 
 
 async def cmd_run(args: argparse.Namespace) -> int:
-    from cua_driver import CuaDriver
+    from jevdual.effectors import desktop_effector, require_available
+
+    require_available("desktop")
     from typesafe_sdk import AsyncTypeSafeClient
 
     from jevdual.arbiter import Arbiter, ArbiterPolicy
@@ -133,7 +135,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
     def mark(what: str) -> None:
         marks.append((what, time.perf_counter() - t_start))
 
-    driver = CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     mark("driver up")
     try:
         pid, wid, title = await find_window(driver, args.app, title_contains=args.window or "")

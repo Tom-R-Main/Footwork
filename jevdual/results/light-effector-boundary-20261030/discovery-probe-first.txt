@@ -1,0 +1,59 @@
+.F...................................................................... [ 20%]
+........................................................................ [ 40%]
+........................................................................ [ 61%]
+................................................................ssssssss [ 81%]
+ssssssssssssssssssssssF.........................................         [100%]
+=================================== FAILURES ===================================
+______ test_discovery_and_command_modules_do_not_load_optional_effectors _______
+
+    def test_discovery_and_command_modules_do_not_load_optional_effectors():
+        code = r'''
+    import contextlib, importlib, importlib.abc, io, json, sys
+    blocked = ("browser_use", "cdp_use", "cua_driver", "Quartz", "AppKit", "ApplicationServices", "jeepney", "mujoco")
+    class NoOptional(importlib.abc.MetaPathFinder):
+        def find_spec(self, fullname, path=None, target=None):
+            if fullname.split(".", 1)[0] in blocked:
+                raise ModuleNotFoundError("optional module blocked: " + fullname, name=fullname)
+    sys.meta_path.insert(0, NoOptional())
+    for name in ("cli", "agent_cli", "session", "native", "browser_driver", "linux_session", "linux_x11", "capability.backend", "capability.mcp_server", "effectors", "effectors.cua"):
+        importlib.import_module("jevdual." + name)
+    from jevdual.cli import main
+    for command in ("catalog", "schema", "doctor"):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            status = main(["--json", command])
+        assert status == 0, (command, status)
+        assert isinstance(json.loads(out.getvalue()), dict), command
+    assert not any(name.split(".", 1)[0] in blocked for name in sys.modules)
+    print("discovery works with optional imports blocked")
+    '''
+        result = subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True,
+            env={**os.environ, "PYTHONPATH": str(ROOT / "python"), "JEVDUAL_PURE_PY": "1"},
+            cwd=ROOT, check=False,
+        )
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 16, in <module>
+E         AssertionError: ('catalog', 2)
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/Users/thomasmain/projects/footwork/jevdual/.venv/bin/python', '-c', '\nimport contextlib, imp...derr='Traceback (most recent call last):\n  File "<string>", line 16, in <module>\nAssertionError: (\'catalog\', 2)\n').returncode
+
+tests/test_effector_boundary.py:65: AssertionError
+______________________ test_cua_driver_version_is_pinned _______________________
+
+    def test_cua_driver_version_is_pinned():
+        # every native module: the effect vocabulary and refusal codes below are this version's
+>       assert importlib.metadata.version("cua-driver") == PINNED_VERSION
+E       AssertionError: assert '0.38.0+footwork.d5373879' == '0.38.0+footw...3879.cleanup2'
+E         
+E         - 0.38.0+footwork.d5373879.cleanup2
+E         ?                         ---------
+E         + 0.38.0+footwork.d5373879
+
+tests/contract/test_cua_driver_seams.py:36: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_effector_boundary.py::test_discovery_and_command_modules_do_not_load_optional_effectors
+FAILED tests/contract/test_cua_driver_seams.py::test_cua_driver_version_is_pinned
+2 failed, 320 passed, 30 skipped in 5.67s

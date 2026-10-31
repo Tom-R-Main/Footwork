@@ -1,0 +1,481 @@
+FFFFFFF                                                                  [100%]
+=================================== FAILURES ===================================
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[browser_launch] _
+
+entry = 'browser_launch'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10666be90>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+>           action()
+
+jevdual/tests/test_effector_boundary.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+jevdual/tests/test_effector_boundary.py:325: in <lambda>
+    action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/browser_driver.py:562: in bind_footwork_chrome
+    pid, launch = _begin_chrome(url)
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (None,), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+E       Failed: browser_launch reached an external side effect before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:319: Failed
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[browser_authorization_host] _
+
+entry = 'browser_authorization_host'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106706b40>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+>           action()
+
+jevdual/tests/test_effector_boundary.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+jevdual/tests/test_effector_boundary.py:328: in <lambda>
+    action = lambda: browser_driver._host_class(1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jevdual/python/jevdual/browser_driver.py:218: in _host_class
+    return authorization_host(pid, executable=chrome_executable(), owned_pid=lambda: chrome_pid())
+                                              ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+E       Failed: browser_authorization_host reached an external side effect before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:319: Failed
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[run_keys] _
+
+entry = 'run_keys'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106707740>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+>           action()
+
+jevdual/tests/test_effector_boundary.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+jevdual/tests/test_effector_boundary.py:333: in <lambda>
+    action = lambda: asyncio.run(cli.cmd_run(args))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/cli.py:122: in cmd_run
+    keys = load_keys()
+           ^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+E       Failed: run_keys reached an external side effect before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:319: Failed
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[run_output] _
+
+entry = 'run_output'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10720f500>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+>           action()
+
+jevdual/tests/test_effector_boundary.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+jevdual/tests/test_effector_boundary.py:333: in <lambda>
+    action = lambda: asyncio.run(cli.cmd_run(args))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/cli.py:126: in cmd_run
+    out = _out_dir(args.out)
+          ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const3/must-not-create',)
+kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+E       Failed: run_output reached an external side effect before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:319: Failed
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[coexist_idle] _
+
+entry = 'coexist_idle'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10720fd70>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+>           action()
+
+jevdual/tests/test_effector_boundary.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+jevdual/tests/test_effector_boundary.py:337: in <lambda>
+    action = lambda: asyncio.run(coexist.run_case("C1"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/coexist.py:781: in run_case
+    require_idle(BETWEEN_S if work is not None else GUARD_IDLE_S)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (20.0,), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+E       Failed: coexist_idle reached an external side effect before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:319: Failed
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[coexist_temporary_directory] _
+
+entry = 'coexist_temporary_directory'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1072288f0>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+>           action()
+
+jevdual/tests/test_effector_boundary.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+jevdual/tests/test_effector_boundary.py:337: in <lambda>
+    action = lambda: asyncio.run(coexist.run_case("C1"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/coexist.py:782: in run_case
+    work = work or Path(tempfile.mkdtemp(prefix="q15-"))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {'prefix': 'q15-'}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+E       Failed: coexist_temporary_directory reached an external side effect before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:319: Failed
+_ test_missing_sdk_refuses_constructor_entry_before_external_side_effects[linux_probe_phase] _
+
+entry = 'linux_probe_phase'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-359/test_missing_sdk_refuses_const6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10720faa0>
+
+    @pytest.mark.parametrize("entry", [
+        "browser_launch", "browser_authorization_host", "run_keys", "run_output",
+        "coexist_idle", "coexist_temporary_directory", "linux_probe_phase",
+    ])
+    def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entry, tmp_path, monkeypatch):
+        from jevdual import browser_driver, cli, coexist, keys, linux_session
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached an external side effect before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        phases = []
+        if entry == "browser_launch":
+            monkeypatch.setattr(browser_driver, "_begin_chrome", forbidden)
+            action = lambda: asyncio.run(browser_driver.bind_footwork_chrome())
+        elif entry == "browser_authorization_host":
+            monkeypatch.setattr(browser_driver, "chrome_executable", forbidden)
+            action = lambda: browser_driver._host_class(1)
+        elif entry in ("run_keys", "run_output"):
+            monkeypatch.setattr(keys, "load_keys", forbidden if entry == "run_keys" else lambda: {"TYPESAFE_API_KEY": True})
+            monkeypatch.setattr(cli, "_out_dir", forbidden)
+            args = SimpleNamespace(out=str(tmp_path / "must-not-create"))
+            action = lambda: asyncio.run(cli.cmd_run(args))
+        elif entry in ("coexist_idle", "coexist_temporary_directory"):
+            monkeypatch.setattr(coexist, "require_idle", forbidden if entry == "coexist_idle" else lambda *_: None)
+            monkeypatch.setattr(coexist.tempfile, "mkdtemp", forbidden)
+            action = lambda: asyncio.run(coexist.run_case("C1"))
+        else:
+            action = lambda: asyncio.run(linux_session._target_probe(1, tmp_path / "document", phases.append))
+        with pytest.raises(EffectorUnavailable):
+            action()
+        assert not (tmp_path / "must-not-create").exists()
+        if entry == "linux_probe_phase":
+>           assert phases == ["import"]
+E           AssertionError: assert ['import', 'create'] == ['import']
+E             
+E             Left contains one more item: 'create'
+E             Use -v to get more diff
+
+jevdual/tests/test_effector_boundary.py:344: AssertionError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[browser_launch]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[browser_authorization_host]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[run_keys]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[run_output]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[coexist_idle]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[coexist_temporary_directory]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_refuses_constructor_entry_before_external_side_effects[linux_probe_phase]
+7 failed, 22 deselected in 0.39s

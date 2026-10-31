@@ -576,16 +576,18 @@ class ProbeEvents:
 
 async def _target_probe(pid: int, document: Path, phase=lambda _: None) -> dict:
     phase('import')
-    import cua_driver as cd
+    from jevdual.effectors import desktop_effector, require_available
 
+    require_available("desktop")
+    from jevdual.effectors.cua import list_windows_input
     from jevdual.linux_documents import bind
     from jevdual.native import NativeBridge
 
     phase('create')
-    driver = cd.CuaDriver.create(embedded=True)
+    driver = desktop_effector()
     try:
         phase('list_windows')
-        windows = (await driver.list_windows(cd.ListWindowsInput(pid=pid, on_screen_only=True))).windows
+        windows = (await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))).windows
         if len(windows) != 1:
             return {'ready': False, 'reason': 'window_not_unique', 'window_count': len(windows)}
         phase('observe')

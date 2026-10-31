@@ -88,12 +88,11 @@ class ScopedBackend:
                     await driver.shutdown()
                     raise
             else:
-                from cua_driver import CuaDriver
-
+                from jevdual.effectors import desktop_effector
                 from jevdual.native import NativeBridge
 
                 spec = self.scope[name]
-                driver = CuaDriver.create(embedded=True)
+                driver = desktop_effector()
                 bridge = NativeBridge(
                     driver, spec["pid"], spec["window_id"], session=self.session, live_check=True
                 )

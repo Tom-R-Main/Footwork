@@ -1,0 +1,574 @@
+ssss.................................................................... [  2%]
+.............ssssssssssssssssssssssssss...........ssssssssssss.......... [  5%]
+.sssssssssssssssssss.................................................... [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+............................................................FFFF........ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+......s........F.................s...................................... [ 47%]
+........................................................................ [ 50%]
+........................................................................ [ 53%]
+........................................................................ [ 55%]
+.......................ssssssssssssssssssssssssssssss................... [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+..................ss.ss.s............................................... [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 72%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+........................ss.............................................. [ 89%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 97%]
+............................................................             [100%]
+=================================== FAILURES ===================================
+_ test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[before-0] _
+
+prepared = (<jevdual.capability.journal.Journal object at 0x17ca40110>, <jevdual.capability.recovery.ExecutionStore object at 0x1...': 'recovery-fixture', 'resource': 'native:77:4', 'observation': 'obs_fixture', 'target': 'target_fixture', ...}, ...})
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_fixed_worker_deadline_fen0')
+hang = 'before', pre_boundary_delay = 0
+
+    @pytest.mark.parametrize(
+        ("hang", "pre_boundary_delay"), [("before", 0), ("after", 0), ("before", 0.4), ("after", 0.4)]
+    )
+    def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
+        prepared, tmp_path, hang, pre_boundary_delay
+    ):
+        """Run the fixed worker; trigger its original deadline at an observed blocked OS-read boundary."""
+        journal, store, op, _ = prepared
+        op = journal.start(op.id)
+        packet_path = store.directory(op.id) / "packet.json"
+        effect = tmp_path / "observed-effect.json"
+        boundary = tmp_path / "observed-boundary.json"
+        child_code = textwrap.dedent(
+            """
+            import asyncio,json,os,sys,threading
+            from pathlib import Path
+            from types import SimpleNamespace
+            import pytest
+            from jevdual import native,posture
+            from jevdual.capability import backend as capability_backend
+            from jevdual.capability import execution_worker,recovery
+            from tests.fixtures.native_world import TextWorld
+            packet_path,effect,hang=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
+            pre_boundary_delay,boundary=float(sys.argv[4]),Path(sys.argv[5])
+            packet=json.loads(packet_path.read_text())
+            scope=packet['recovery']['scope']
+            world=TextWorld(Path(scope['destination']['document']),content='Invoice\\n',window_id=4,frame=(0,0,100,100))
+            patch=pytest.MonkeyPatch()
+            # This child exercises a simulated Mac, while its process and import
+            # machinery must retain the real Linux host when run in Linux CI.
+            for module in (native,posture,capability_backend,recovery):
+                patch.setattr(module,'sys',SimpleNamespace(platform='darwin',executable=sys.executable))
+            world.install(patch)
+            patch.setattr(recovery,'native_identity',lambda scope:packet['recovery']['identity'])
+            patch.setattr(execution_worker,'native_identity',lambda scope:packet['recovery']['identity'])
+            original_timer=threading.Timer
+            boundary_reached=threading.Event()
+            def at_boundary(interval,fn):
+                def fire():
+                    if not boundary_reached.wait(timeout=3):
+                        os._exit(3)  # unqualified boundary, never manufacture a deadline receipt
+                    fn()  # the unchanged production admission fence and deadline writer
+                return original_timer(0,fire)
+            patch.setattr(threading,'Timer',at_boundary)
+            original_read=world.get_window_state
+            first_read=True
+            async def blocked_read(inp):
+                global first_read
+                if first_read:
+                    first_read=False
+                    await asyncio.sleep(pre_boundary_delay)
+                if hang=='before' or world.content.endswith('17.25 USD'):
+                    if hang=='after':
+                        assert effect.exists()
+                        assert json.loads(effect.read_text())['actual']==world.content=='Invoice\\n17.25 USD'
+                    boundary.write_text(json.dumps({'phase':hang,'actual':world.content}))
+                    boundary_reached.set()
+                    await asyncio.sleep(10)
+                return await original_read(inp)
+            patch.setattr(world,'get_window_state',blocked_read)
+            import ApplicationServices
+            def record_set(el,name,value):
+                result=world._set(el,name,value)
+                if name=='AXSelectedText':
+                    effect.write_text(json.dumps({'actual':world.content}))
+                return result
+            patch.setattr(ApplicationServices,'AXUIElementSetAttributeValue',record_set)
+            raise SystemExit(asyncio.run(execution_worker.run(packet_path)))
+            """
+        )
+        child = subprocess.Popen(
+            [
+                sys.executable,
+                "-c",
+                child_code,
+                str(packet_path),
+                str(effect),
+                hang,
+                str(pre_boundary_delay),
+                str(boundary),
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+        )
+        try:
+            stdout, stderr = child.communicate(timeout=5)
+        except BaseException:
+            child.kill()
+            child.communicate(timeout=3)
+            raise
+>       assert child.returncode == 2, (stdout, stderr)
+E       AssertionError: ('', 'Traceback (most recent call last):
+E           File "<string>", line 9, in <module>
+E         ModuleNotFoundError: No module named \'tests\'
+E         ')
+E       assert 1 == 2
+E        +  where 1 = <Popen: returncode: 1 args: ['/Users/thomasmain/projects/footwork/.worktrees...>.returncode
+
+jevdual/tests/test_capability_recovery.py:368: AssertionError
+_ test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[after-0] _
+
+prepared = (<jevdual.capability.journal.Journal object at 0x17ca41c70>, <jevdual.capability.recovery.ExecutionStore object at 0x1...': 'recovery-fixture', 'resource': 'native:77:4', 'observation': 'obs_fixture', 'target': 'target_fixture', ...}, ...})
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_fixed_worker_deadline_fen1')
+hang = 'after', pre_boundary_delay = 0
+
+    @pytest.mark.parametrize(
+        ("hang", "pre_boundary_delay"), [("before", 0), ("after", 0), ("before", 0.4), ("after", 0.4)]
+    )
+    def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
+        prepared, tmp_path, hang, pre_boundary_delay
+    ):
+        """Run the fixed worker; trigger its original deadline at an observed blocked OS-read boundary."""
+        journal, store, op, _ = prepared
+        op = journal.start(op.id)
+        packet_path = store.directory(op.id) / "packet.json"
+        effect = tmp_path / "observed-effect.json"
+        boundary = tmp_path / "observed-boundary.json"
+        child_code = textwrap.dedent(
+            """
+            import asyncio,json,os,sys,threading
+            from pathlib import Path
+            from types import SimpleNamespace
+            import pytest
+            from jevdual import native,posture
+            from jevdual.capability import backend as capability_backend
+            from jevdual.capability import execution_worker,recovery
+            from tests.fixtures.native_world import TextWorld
+            packet_path,effect,hang=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
+            pre_boundary_delay,boundary=float(sys.argv[4]),Path(sys.argv[5])
+            packet=json.loads(packet_path.read_text())
+            scope=packet['recovery']['scope']
+            world=TextWorld(Path(scope['destination']['document']),content='Invoice\\n',window_id=4,frame=(0,0,100,100))
+            patch=pytest.MonkeyPatch()
+            # This child exercises a simulated Mac, while its process and import
+            # machinery must retain the real Linux host when run in Linux CI.
+            for module in (native,posture,capability_backend,recovery):
+                patch.setattr(module,'sys',SimpleNamespace(platform='darwin',executable=sys.executable))
+            world.install(patch)
+            patch.setattr(recovery,'native_identity',lambda scope:packet['recovery']['identity'])
+            patch.setattr(execution_worker,'native_identity',lambda scope:packet['recovery']['identity'])
+            original_timer=threading.Timer
+            boundary_reached=threading.Event()
+            def at_boundary(interval,fn):
+                def fire():
+                    if not boundary_reached.wait(timeout=3):
+                        os._exit(3)  # unqualified boundary, never manufacture a deadline receipt
+                    fn()  # the unchanged production admission fence and deadline writer
+                return original_timer(0,fire)
+            patch.setattr(threading,'Timer',at_boundary)
+            original_read=world.get_window_state
+            first_read=True
+            async def blocked_read(inp):
+                global first_read
+                if first_read:
+                    first_read=False
+                    await asyncio.sleep(pre_boundary_delay)
+                if hang=='before' or world.content.endswith('17.25 USD'):
+                    if hang=='after':
+                        assert effect.exists()
+                        assert json.loads(effect.read_text())['actual']==world.content=='Invoice\\n17.25 USD'
+                    boundary.write_text(json.dumps({'phase':hang,'actual':world.content}))
+                    boundary_reached.set()
+                    await asyncio.sleep(10)
+                return await original_read(inp)
+            patch.setattr(world,'get_window_state',blocked_read)
+            import ApplicationServices
+            def record_set(el,name,value):
+                result=world._set(el,name,value)
+                if name=='AXSelectedText':
+                    effect.write_text(json.dumps({'actual':world.content}))
+                return result
+            patch.setattr(ApplicationServices,'AXUIElementSetAttributeValue',record_set)
+            raise SystemExit(asyncio.run(execution_worker.run(packet_path)))
+            """
+        )
+        child = subprocess.Popen(
+            [
+                sys.executable,
+                "-c",
+                child_code,
+                str(packet_path),
+                str(effect),
+                hang,
+                str(pre_boundary_delay),
+                str(boundary),
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+        )
+        try:
+            stdout, stderr = child.communicate(timeout=5)
+        except BaseException:
+            child.kill()
+            child.communicate(timeout=3)
+            raise
+>       assert child.returncode == 2, (stdout, stderr)
+E       AssertionError: ('', 'Traceback (most recent call last):
+E           File "<string>", line 9, in <module>
+E         ModuleNotFoundError: No module named \'tests\'
+E         ')
+E       assert 1 == 2
+E        +  where 1 = <Popen: returncode: 1 args: ['/Users/thomasmain/projects/footwork/.worktrees...>.returncode
+
+jevdual/tests/test_capability_recovery.py:368: AssertionError
+_ test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[before-0.4] _
+
+prepared = (<jevdual.capability.journal.Journal object at 0x17ca40a40>, <jevdual.capability.recovery.ExecutionStore object at 0x1...': 'recovery-fixture', 'resource': 'native:77:4', 'observation': 'obs_fixture', 'target': 'target_fixture', ...}, ...})
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_fixed_worker_deadline_fen2')
+hang = 'before', pre_boundary_delay = 0.4
+
+    @pytest.mark.parametrize(
+        ("hang", "pre_boundary_delay"), [("before", 0), ("after", 0), ("before", 0.4), ("after", 0.4)]
+    )
+    def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
+        prepared, tmp_path, hang, pre_boundary_delay
+    ):
+        """Run the fixed worker; trigger its original deadline at an observed blocked OS-read boundary."""
+        journal, store, op, _ = prepared
+        op = journal.start(op.id)
+        packet_path = store.directory(op.id) / "packet.json"
+        effect = tmp_path / "observed-effect.json"
+        boundary = tmp_path / "observed-boundary.json"
+        child_code = textwrap.dedent(
+            """
+            import asyncio,json,os,sys,threading
+            from pathlib import Path
+            from types import SimpleNamespace
+            import pytest
+            from jevdual import native,posture
+            from jevdual.capability import backend as capability_backend
+            from jevdual.capability import execution_worker,recovery
+            from tests.fixtures.native_world import TextWorld
+            packet_path,effect,hang=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
+            pre_boundary_delay,boundary=float(sys.argv[4]),Path(sys.argv[5])
+            packet=json.loads(packet_path.read_text())
+            scope=packet['recovery']['scope']
+            world=TextWorld(Path(scope['destination']['document']),content='Invoice\\n',window_id=4,frame=(0,0,100,100))
+            patch=pytest.MonkeyPatch()
+            # This child exercises a simulated Mac, while its process and import
+            # machinery must retain the real Linux host when run in Linux CI.
+            for module in (native,posture,capability_backend,recovery):
+                patch.setattr(module,'sys',SimpleNamespace(platform='darwin',executable=sys.executable))
+            world.install(patch)
+            patch.setattr(recovery,'native_identity',lambda scope:packet['recovery']['identity'])
+            patch.setattr(execution_worker,'native_identity',lambda scope:packet['recovery']['identity'])
+            original_timer=threading.Timer
+            boundary_reached=threading.Event()
+            def at_boundary(interval,fn):
+                def fire():
+                    if not boundary_reached.wait(timeout=3):
+                        os._exit(3)  # unqualified boundary, never manufacture a deadline receipt
+                    fn()  # the unchanged production admission fence and deadline writer
+                return original_timer(0,fire)
+            patch.setattr(threading,'Timer',at_boundary)
+            original_read=world.get_window_state
+            first_read=True
+            async def blocked_read(inp):
+                global first_read
+                if first_read:
+                    first_read=False
+                    await asyncio.sleep(pre_boundary_delay)
+                if hang=='before' or world.content.endswith('17.25 USD'):
+                    if hang=='after':
+                        assert effect.exists()
+                        assert json.loads(effect.read_text())['actual']==world.content=='Invoice\\n17.25 USD'
+                    boundary.write_text(json.dumps({'phase':hang,'actual':world.content}))
+                    boundary_reached.set()
+                    await asyncio.sleep(10)
+                return await original_read(inp)
+            patch.setattr(world,'get_window_state',blocked_read)
+            import ApplicationServices
+            def record_set(el,name,value):
+                result=world._set(el,name,value)
+                if name=='AXSelectedText':
+                    effect.write_text(json.dumps({'actual':world.content}))
+                return result
+            patch.setattr(ApplicationServices,'AXUIElementSetAttributeValue',record_set)
+            raise SystemExit(asyncio.run(execution_worker.run(packet_path)))
+            """
+        )
+        child = subprocess.Popen(
+            [
+                sys.executable,
+                "-c",
+                child_code,
+                str(packet_path),
+                str(effect),
+                hang,
+                str(pre_boundary_delay),
+                str(boundary),
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+        )
+        try:
+            stdout, stderr = child.communicate(timeout=5)
+        except BaseException:
+            child.kill()
+            child.communicate(timeout=3)
+            raise
+>       assert child.returncode == 2, (stdout, stderr)
+E       AssertionError: ('', 'Traceback (most recent call last):
+E           File "<string>", line 9, in <module>
+E         ModuleNotFoundError: No module named \'tests\'
+E         ')
+E       assert 1 == 2
+E        +  where 1 = <Popen: returncode: 1 args: ['/Users/thomasmain/projects/footwork/.worktrees...>.returncode
+
+jevdual/tests/test_capability_recovery.py:368: AssertionError
+_ test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[after-0.4] _
+
+prepared = (<jevdual.capability.journal.Journal object at 0x17ca40770>, <jevdual.capability.recovery.ExecutionStore object at 0x1...': 'recovery-fixture', 'resource': 'native:77:4', 'observation': 'obs_fixture', 'target': 'target_fixture', ...}, ...})
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_fixed_worker_deadline_fen3')
+hang = 'after', pre_boundary_delay = 0.4
+
+    @pytest.mark.parametrize(
+        ("hang", "pre_boundary_delay"), [("before", 0), ("after", 0), ("before", 0.4), ("after", 0.4)]
+    )
+    def test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty(
+        prepared, tmp_path, hang, pre_boundary_delay
+    ):
+        """Run the fixed worker; trigger its original deadline at an observed blocked OS-read boundary."""
+        journal, store, op, _ = prepared
+        op = journal.start(op.id)
+        packet_path = store.directory(op.id) / "packet.json"
+        effect = tmp_path / "observed-effect.json"
+        boundary = tmp_path / "observed-boundary.json"
+        child_code = textwrap.dedent(
+            """
+            import asyncio,json,os,sys,threading
+            from pathlib import Path
+            from types import SimpleNamespace
+            import pytest
+            from jevdual import native,posture
+            from jevdual.capability import backend as capability_backend
+            from jevdual.capability import execution_worker,recovery
+            from tests.fixtures.native_world import TextWorld
+            packet_path,effect,hang=Path(sys.argv[1]),Path(sys.argv[2]),sys.argv[3]
+            pre_boundary_delay,boundary=float(sys.argv[4]),Path(sys.argv[5])
+            packet=json.loads(packet_path.read_text())
+            scope=packet['recovery']['scope']
+            world=TextWorld(Path(scope['destination']['document']),content='Invoice\\n',window_id=4,frame=(0,0,100,100))
+            patch=pytest.MonkeyPatch()
+            # This child exercises a simulated Mac, while its process and import
+            # machinery must retain the real Linux host when run in Linux CI.
+            for module in (native,posture,capability_backend,recovery):
+                patch.setattr(module,'sys',SimpleNamespace(platform='darwin',executable=sys.executable))
+            world.install(patch)
+            patch.setattr(recovery,'native_identity',lambda scope:packet['recovery']['identity'])
+            patch.setattr(execution_worker,'native_identity',lambda scope:packet['recovery']['identity'])
+            original_timer=threading.Timer
+            boundary_reached=threading.Event()
+            def at_boundary(interval,fn):
+                def fire():
+                    if not boundary_reached.wait(timeout=3):
+                        os._exit(3)  # unqualified boundary, never manufacture a deadline receipt
+                    fn()  # the unchanged production admission fence and deadline writer
+                return original_timer(0,fire)
+            patch.setattr(threading,'Timer',at_boundary)
+            original_read=world.get_window_state
+            first_read=True
+            async def blocked_read(inp):
+                global first_read
+                if first_read:
+                    first_read=False
+                    await asyncio.sleep(pre_boundary_delay)
+                if hang=='before' or world.content.endswith('17.25 USD'):
+                    if hang=='after':
+                        assert effect.exists()
+                        assert json.loads(effect.read_text())['actual']==world.content=='Invoice\\n17.25 USD'
+                    boundary.write_text(json.dumps({'phase':hang,'actual':world.content}))
+                    boundary_reached.set()
+                    await asyncio.sleep(10)
+                return await original_read(inp)
+            patch.setattr(world,'get_window_state',blocked_read)
+            import ApplicationServices
+            def record_set(el,name,value):
+                result=world._set(el,name,value)
+                if name=='AXSelectedText':
+                    effect.write_text(json.dumps({'actual':world.content}))
+                return result
+            patch.setattr(ApplicationServices,'AXUIElementSetAttributeValue',record_set)
+            raise SystemExit(asyncio.run(execution_worker.run(packet_path)))
+            """
+        )
+        child = subprocess.Popen(
+            [
+                sys.executable,
+                "-c",
+                child_code,
+                str(packet_path),
+                str(effect),
+                hang,
+                str(pre_boundary_delay),
+                str(boundary),
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+        )
+        try:
+            stdout, stderr = child.communicate(timeout=5)
+        except BaseException:
+            child.kill()
+            child.communicate(timeout=3)
+            raise
+>       assert child.returncode == 2, (stdout, stderr)
+E       AssertionError: ('', 'Traceback (most recent call last):
+E           File "<string>", line 9, in <module>
+E         ModuleNotFoundError: No module named \'tests\'
+E         ')
+E       assert 1 == 2
+E        +  where 1 = <Popen: returncode: 1 args: ['/Users/thomasmain/projects/footwork/.worktrees...>.returncode
+
+jevdual/tests/test_capability_recovery.py:368: AssertionError
+__________________ test_redact_results_keeps_task_ids_intact ___________________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_redact_results_keeps_task0')
+
+    def test_redact_results_keeps_task_ids_intact(tmp_path):
+        import json
+        import subprocess
+        import sys
+    
+        from evals.tasks.schema import load_all
+    
+        tasks = [t for ts in load_all().values() for t in ts if t.secrets]
+        victim = next((t for t in tasks for v in t.secrets.values() if v and v in t.id), None)
+        if victim is None:
+            import pytest
+    
+            pytest.skip("no task id contains a secret value")
+        secret = next(v for v in victim.secrets.values() if v in victim.id)
+        run = tmp_path / "run"
+        run.mkdir()
+        (run / "results.json").write_text(
+            json.dumps([{"task_id": victim.id, "arm": "dual", "answer": f"typed {secret} here"}])
+        )
+>       subprocess.run([sys.executable, "scripts/redact_results.py", str(run)], check=True, capture_output=True)
+
+jevdual/tests/test_evals_runner.py:318: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = None, check = True
+popenargs = (['/Users/thomasmain/projects/footwork/.worktrees/light-profile/output/light-effector-boundary/check-env312/bin/python...var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_redact_results_keeps_task0/run'],)
+kwargs = {'stdout': -1, 'stderr': -1}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/Users/thomasmain/projects/footwork/.worktrees/light-profile/output/light-effector-boundary/check-env312/bin/python', 'scripts/redact_results.py', '/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-353/test_redact_results_keeps_task0/run']' returned non-zero exit status 2.
+
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:571: CalledProcessError
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_capability_recovery.py::test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[before-0]
+FAILED jevdual/tests/test_capability_recovery.py::test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[after-0]
+FAILED jevdual/tests/test_capability_recovery.py::test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[before-0.4]
+FAILED jevdual/tests/test_capability_recovery.py::test_fixed_worker_deadline_fences_admission_and_preserves_uncertainty[after-0.4]
+FAILED jevdual/tests/test_evals_runner.py::test_redact_results_keeps_task_ids_intact
+5 failed, 2475 passed, 100 skipped, 13 deselected in 124.55s (0:02:04)
