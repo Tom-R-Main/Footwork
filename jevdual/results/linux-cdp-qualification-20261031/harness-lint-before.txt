@@ -1,0 +1,66 @@
+PLR0402 [*] Use `from jevdual.effectors.cdp import operations` in lieu of alias
+  --> results/linux-cdp-qualification-20261031/harness/baseline.py:84:12
+   |
+82 |     assert not importlib.util.find_spec('browser_use')
+83 |     import jevdual
+84 |     import jevdual.effectors.cdp.operations as operations
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+85 |
+86 |     wheel = next((ROOT / 'wheel').glob('*.whl'))
+   |
+help: Replace with `from jevdual.effectors.cdp import operations`
+   |
+83 |     import jevdual
+   -     import jevdual.effectors.cdp.operations as operations
+84 +     from jevdual.effectors.cdp import operations
+85 |
+   |
+
+UP017 [*] Use `datetime.UTC` alias
+   --> results/linux-cdp-qualification-20261031/harness/baseline.py:110:37
+    |
+108 |     assert libc.prctl(37, ctypes.byref(state), 0, 0, 0) == 0 and state.value == 1
+109 |     metadata = {
+110 |         'utc_started': datetime.now(timezone.utc).isoformat(), 'baseline_source': BASE,
+    |                                     ^^^^^^^^^^^^
+111 |         'measurement_commit': subprocess.check_output(['git', '-C', str(SOURCE), 'rev-parse', 'HEAD'], text=True).strip(),
+112 |         'harness_sha256': sha(Path(__file__)), 'wheel': {'name': wheel.name, 'sha256': sha(wheel)},
+    |
+help: Convert to `datetime.UTC` alias
+    |
+15  | import zipfile
+    - from datetime import datetime, timezone
+16  + from datetime import datetime, timezone, UTC
+17  | from pathlib import Path
+--------------------------------------------------------------------------------
+109 |     metadata = {
+    -         'utc_started': datetime.now(timezone.utc).isoformat(), 'baseline_source': BASE,
+110 +         'utc_started': datetime.now(UTC).isoformat(), 'baseline_source': BASE,
+111 |         'measurement_commit': subprocess.check_output(['git', '-C', str(SOURCE), 'rev-parse', 'HEAD'], text=True).strip(),
+    |
+
+UP017 [*] Use `datetime.UTC` alias
+   --> results/linux-cdp-qualification-20261031/harness/baseline.py:193:55
+    |
+191 |                          'pre_wrapper_cleanup': pre_cleanup, 'signals': signals,
+192 |                          'adopted_waits': waits, 'final_owned_descendants': final,
+193 |                          'utc_finished': datetime.now(timezone.utc).isoformat(),
+    |                                                       ^^^^^^^^^^^^
+194 |                          'limits': 'bounded known descendants; no atomic inventory/daemon-escape/global no-zombie claim'})
+195 |     return 1 if timed_out or final else (code if code >= 0 else 128 - code)
+    |
+help: Convert to `datetime.UTC` alias
+    |
+15  | import zipfile
+    - from datetime import datetime, timezone
+16  + from datetime import datetime, timezone, UTC
+17  | from pathlib import Path
+--------------------------------------------------------------------------------
+192 |                          'adopted_waits': waits, 'final_owned_descendants': final,
+    -                          'utc_finished': datetime.now(timezone.utc).isoformat(),
+193 +                          'utc_finished': datetime.now(UTC).isoformat(),
+194 |                          'limits': 'bounded known descendants; no atomic inventory/daemon-escape/global no-zombie claim'})
+    |
+
+Found 3 errors.
+[*] 3 fixable with the `--fix` option.

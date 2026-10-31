@@ -13,7 +13,7 @@ import subprocess
 import sys
 import time
 import zipfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import psutil
@@ -81,7 +81,7 @@ def main():
     assert not importlib.util.find_spec('cua_driver')
     assert not importlib.util.find_spec('browser_use')
     import jevdual
-    import jevdual.effectors.cdp.operations as operations
+    from jevdual.effectors.cdp import operations
 
     wheel = next((ROOT / 'wheel').glob('*.whl'))
     package_root = Path(jevdual.__file__).parent.parent
@@ -107,7 +107,7 @@ def main():
     state = ctypes.c_int()
     assert libc.prctl(37, ctypes.byref(state), 0, 0, 0) == 0 and state.value == 1
     metadata = {
-        'utc_started': datetime.now(timezone.utc).isoformat(), 'baseline_source': BASE,
+        'utc_started': datetime.now(UTC).isoformat(), 'baseline_source': BASE,
         'measurement_commit': subprocess.check_output(['git', '-C', str(SOURCE), 'rev-parse', 'HEAD'], text=True).strip(),
         'harness_sha256': sha(Path(__file__)), 'wheel': {'name': wheel.name, 'sha256': sha(wheel)},
         'test_sha256': hashes, 'verified_installed_package_files': len(verified),
@@ -190,7 +190,7 @@ def main():
     save('cleanup.json', {'pytest_returncode': code, 'pytest_timeout': timed_out,
                          'pre_wrapper_cleanup': pre_cleanup, 'signals': signals,
                          'adopted_waits': waits, 'final_owned_descendants': final,
-                         'utc_finished': datetime.now(timezone.utc).isoformat(),
+                         'utc_finished': datetime.now(UTC).isoformat(),
                          'limits': 'bounded known descendants; no atomic inventory/daemon-escape/global no-zombie claim'})
     return 1 if timed_out or final else (code if code >= 0 else 128 - code)
 

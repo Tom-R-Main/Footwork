@@ -1,0 +1,6 @@
+{
+  "swap_total_kib": 0,
+  "swap_free_kib": 0,
+  "source_product_diff_from_baseline": "empty: python/tests/pyproject.toml/uv.lock",
+  "original_worktree_preserved": "/workspace/Footwork at 06ea9182d5ca4d661c5893ba57b9a55a5ab4f1fe"
+}

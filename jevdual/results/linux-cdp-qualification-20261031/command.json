@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/workspace/scratch/footwork-cdp-qualification-20261031/consumer/bin/python",
+    "-I",
+    "-m",
+    "pytest",
+    "-vv",
+    "-rA",
+    "--confcutdir=/workspace/scratch/footwork-cdp-qualification-20261031/tests",
+    "--basetemp=/workspace/scratch/footwork-cdp-qualification-20261031/pytest-tmp",
+    "--junitxml=/workspace/scratch/footwork-cdp-qualification-20261031/junit.xml",
+    "/workspace/scratch/footwork-cdp-qualification-20261031/tests"
+  ],
+  "cwd": "/workspace/scratch/footwork-cdp-qualification-20261031/tests",
+  "PYTHONPATH": "unset",
+  "FOOTWORK_CHROME_EXECUTABLE": "/usr/lib/chromium/chromium",
+  "JEVDUAL_PURE_PY": "1",
+  "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"
+}
