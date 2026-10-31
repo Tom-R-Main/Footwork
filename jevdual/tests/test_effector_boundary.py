@@ -342,3 +342,54 @@ def test_missing_sdk_refuses_constructor_entry_before_external_side_effects(entr
     assert not (tmp_path / "must-not-create").exists()
     if entry == "linux_probe_phase":
         assert phases == ["import"]
+
+
+@pytest.mark.parametrize("entry", [
+    "textedit_enumeration", "textedit_launch", "native_observe_lock", "native_observe_accessibility",
+    "linux_menu_posture", "native_verify", "native_click", "find_window", "find_window_for_pid", "app_windows",
+])
+def test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls(entry, tmp_path, monkeypatch):
+    from jevdual import coexist, native
+
+    original_import = builtins.__import__
+
+    def missing(name, *args, **kwargs):
+        if name == "cua_driver":
+            raise ModuleNotFoundError("missing optional SDK", name=name)
+        return original_import(name, *args, **kwargs)
+
+    def forbidden(*args, **kwargs):
+        pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+
+    monkeypatch.setattr(builtins, "__import__", missing)
+    driver = SimpleNamespace(
+        list_apps=forbidden, list_windows=forbidden, verify_state=forbidden, click=forbidden,
+    )
+    policy = SimpleNamespace(locked=lambda: False, permits=forbidden)
+    bridge = native.NativeBridge(driver, 1, 2, policy=policy)
+    if entry in ("textedit_enumeration", "textedit_launch"):
+        monkeypatch.setattr(coexist, "_textedit_pids", forbidden if entry == "textedit_enumeration" else set)
+        monkeypatch.setattr(coexist.subprocess, "run", forbidden)
+        action = coexist.TextEditInstance.launch(driver, [tmp_path / "document"])
+    elif entry.startswith("native_observe"):
+        if entry == "native_observe_lock":
+            policy.locked = forbidden
+        monkeypatch.setattr(native, "require_accessibility", forbidden)
+        action = bridge.observe()
+    elif entry == "linux_menu_posture":
+        monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+        snapshot = SimpleNamespace(snapshot_id="fixture")
+        bridge.last = snapshot
+        action = bridge.menu(snapshot, ["File", "Save"])
+    elif entry == "native_verify":
+        action = bridge.verify([])
+    elif entry == "native_click":
+        action = bridge._click_token("fixture:1")
+    elif entry == "find_window":
+        action = native.find_window(driver, "fixture")
+    elif entry == "find_window_for_pid":
+        action = native.find_window_for_pid(driver, 1)
+    else:
+        action = native.app_windows(driver, "fixture")
+    with pytest.raises(EffectorUnavailable):
+        asyncio.run(action)

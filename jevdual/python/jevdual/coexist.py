@@ -181,6 +181,9 @@ class TextEditInstance:
 
     @classmethod
     async def launch(cls, driver: Any, files: list[Path]) -> TextEditInstance:
+        from jevdual.effectors import require_available
+
+        require_available("desktop")
         from jevdual.effectors.cua import list_windows_input
 
         before = _textedit_pids()

@@ -907,6 +907,9 @@ class NativeBridge:
         budget: MenuBudget | None = None,
         screenshot_path: str | None = None,
     ) -> NativeMenu:
+        from jevdual.effectors import require_available
+
+        require_available("desktop")
         from jevdual.effectors.cua import window_state_input
 
         if self.policy.locked():
@@ -2348,6 +2351,9 @@ class NativeBridge:
         self.dispatches += 1
         label = " > ".join(path)
         if sys.platform == "linux":
+            from jevdual.effectors import require_available
+
+            require_available("desktop")
             from jevdual.effectors.cua import invoke_menu_input
 
             refusal = self.policy.permits("background", why=f"menu {label}")
