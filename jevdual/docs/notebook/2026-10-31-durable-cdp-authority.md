@@ -39,3 +39,9 @@ Observed: after shortening the probe path, both the exceptional-startup handle t
 Changes: CLI failure exits close the actual direct child; holder handlers latch stop before launch, shield the launch-thread result, cancel only readiness tasks after retaining the Chrome handle, and never publish readiness after stop. Forced CLI termination carries browser_cleanup_unverified; startup cleanup exceptions propagate.
 Next: rebuild the exact candidate, rerun installed checks and the VM fault cells, then resolve DCA1/DCA2 and close review.
 Refs: tests/test_browser_startup_cli.py; tests/test_browser_startup_lifecycle.py; results/durable-cdp-authority-20261031/startup-signal-before.txt
+
+## DCA5 · prediction · 2026-10-31 15:07
+Hypothesis: if post-admission result retention and its unknown fallback both raise JournalError, the holder's outer pre-admission error handler can misreport dispatched=false after activation.
+Test: an explicit retention-failure sensitivity control injects JournalError after one activation and again from mark_unknown; inspect the public RPC envelope, original durable row and a second-token attempt. This is injected protocol failure, not a reproduced storage incident; ordinary SQLite I/O exceptions already reach the unknown envelope.
+Predicts: current code returns an incorrect no-send envelope; a narrow post-admission fallback returns dispatched=null, retryable=false and retention-unverified, leaves the persisted started row blocked, and never adds activation. Cancellation still propagates after retaining the best available uncertainty.
+Against: the old code already preserves unknown, the fix claims durable retention despite its failure, the second token activates, or cancellation is swallowed.
