@@ -24,14 +24,27 @@ jobs:
           uv venv --python 3.12 "$RUNNER_TEMP/cdp-env"
           uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --only-binary=:all: pytest==8.4.2 psutil==7.2.2 websockets==15.0.1 'packaging>=25,<27'
           uv pip install --python "$RUNNER_TEMP/cdp-env/bin/python" --no-deps "$RUNNER_TEMP"/cdp-wheel/*.whl
-      - name: Qualify real Chrome outside the checkout without CUA or browser-use
+      - name: Provision the pinned external Lightpanda binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/lightpanda-io/browser/releases/assets/694146173 -H 'Accept: application/octet-stream' > "$RUNNER_TEMP/lightpanda"
+          python - "$RUNNER_TEMP/lightpanda" <<'PYCODE'
+          import hashlib, pathlib, sys
+          path = pathlib.Path(sys.argv[1])
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == "19f3fee25fb14bb75a1e0c1e0f8ab9cce842950544e4a144fbad3884c94b98a3"
+          path.chmod(0o700)
+          PYCODE
+          LIGHTPANDA_DISABLE_TELEMETRY=true LIGHTPANDA_DISABLE_CORE_DUMP=1 "$RUNNER_TEMP/lightpanda" version
+      - name: Qualify owned Chrome and read-only Lightpanda outside the checkout
         run: |
           test -x "$FOOTWORK_CHROME_EXECUTABLE"
           "$FOOTWORK_CHROME_EXECUTABLE" --version
           mkdir "$RUNNER_TEMP/cdp-tests"
-          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py jevdual/tests/test_browser_durable_authority.py jevdual/tests/test_browser_holder.py jevdual/tests/test_browser_guard.py jevdual/tests/test_browser_cdp_cli.py jevdual/tests/test_browser_restart_cli.py jevdual/tests/test_browser_startup_cli.py jevdual/tests/test_browser_startup_lifecycle.py "$RUNNER_TEMP/cdp-tests/"
+          cp jevdual/tests/test_cdp_effector.py jevdual/tests/test_cdp_transport_deadline.py jevdual/tests/test_cdp_launch_custody.py jevdual/tests/test_cdp_click.py jevdual/tests/test_cdp_click_contract.py jevdual/tests/test_browser_durable_authority.py jevdual/tests/test_browser_holder.py jevdual/tests/test_browser_guard.py jevdual/tests/test_browser_cdp_cli.py jevdual/tests/test_browser_restart_cli.py jevdual/tests/test_browser_startup_cli.py jevdual/tests/test_browser_startup_lifecycle.py jevdual/tests/test_lightpanda_launch.py jevdual/tests/test_lightpanda_observation.py jevdual/tests/test_lightpanda_cli.py "$RUNNER_TEMP/cdp-tests/"
           cd "$RUNNER_TEMP/cdp-tests"
           unset PYTHONPATH
+          export FOOTWORK_LIGHTPANDA_EXECUTABLE="$RUNNER_TEMP/lightpanda"
           "$RUNNER_TEMP/cdp-env/bin/python" -c "import importlib.util; assert importlib.util.find_spec('cua_driver') is None; assert importlib.util.find_spec('browser_use') is None"
           "$RUNNER_TEMP/cdp-env/bin/python" -m pytest -q -o 'markers=browser: launches a real owned browser' --junitxml="$RUNNER_TEMP/cdp-junit.xml" .
       - uses: actions/upload-artifact@v4

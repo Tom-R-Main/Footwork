@@ -5,19 +5,21 @@
 
 **Give your agent a computer—and a receipt.**
 
-Footwork lets a person or an agent observe a browser or desktop app, choose an explicit action, and
-check what happened. Fresh target IDs, action gates and retained receipts keep the next step tied to
-the state that was actually observed. Completion checks compare claims with evidence from the session.
-Less “I clicked it, so it must be done.” More checking the result.
+Footwork gives a person or an agent a way to act on a computer and check what happened. It can
+observe a browser or desktop app, choose an explicit action, and inspect the result. Fresh target
+IDs and action gates tie each step to the state it observed. Retained receipts and completion checks
+let you inspect the evidence behind a success claim.
 
 Use the `footwork` CLI one step at a time, connect a scoped job through MCP, or run a model-driven
 loop with [TypeSafe Jev](https://docs.typesafe.ai) as an optional fast System 1. The Python package is
-`jevdual`; Footwork is the product.
+called `jevdual`. Footwork is the product.
 
 ## Why use Footwork?
 
-Keep the agent you already use. Footwork adds checks and a durable record around supported computer
-actions, so a lost response or a confident completion message does not have to become guesswork.
+Keep the agent you already use. Put Footwork between its proposals and supported computer actions.
+It can refuse a stale target, retain an uncertain operation, and check a completion claim against
+evidence. These checks matter when an action may have worked but its response is gone, or when the
+agent's account of success needs a second look.
 
 | When the work gets tricky | What Footwork adds |
 | --- | --- |
@@ -27,23 +29,23 @@ actions, so a lost response or a confident completion message does not have to b
 | A job crosses a browser and a document | Scoped MCP operations with source binding, append receipts and duplicate/restart status |
 | The agent shares your Mac | Background-only input by default, with explicit foreground permissions and activity checks |
 
-Use it for document updates, cross-app handoffs and agent workflows where an incorrect success
-report or a second mutation matters. A safe stop has a cost; Footwork makes that stop inspectable.
-For a read-only lookup, a straightforward browser test or an API with its own authoritative results,
-your existing tools may already cover the job.
+Footwork fits document updates, cross-app handoffs, and jobs where a second mutation would matter.
+A safe stop is useful when you can see why it happened and what remains unresolved. For a read-only
+lookup, a simple browser test, or an API that already supplies authoritative results, your current
+tools may be enough.
 
-Durability is route-specific: native CLI sessions opt in with `--authority`; the scoped MCP service
-has its own journal. The legacy dedicated browser CLI does not inherit native durable replay. An explicit
-[owned headless CDP preview](jevdual/docs/owned-cdp.md) now adds durable admission and restart
-retention for a bounded button route; typing and general browser completion remain unavailable. See
+Choose durability for the route you use. Native CLI sessions opt in with `--authority`; the scoped
+MCP service has its own journal. The legacy dedicated browser CLI doesn't inherit native durable
+replay. The [owned headless CDP preview](jevdual/docs/owned-cdp.md) retains admitted operations across
+restart for a bounded button route. Typing and general browser completion remain unavailable. See
 [**why Footwork, and where it fits**](jevdual/docs/why-footwork.md) for examples and exact boundaries.
 
 ## Start here
 
 [**Install and get your first checked result →**](jevdual/docs/quickstart.md)
 
-The quickstart builds or installs a host-specific bundle, checks saved bytes without a model, then
-opens an owned browser session. Once installed:
+The quickstart takes you from a host-specific bundle to a saved-byte check that needs no model,
+then to an owned browser session. Build or install the bundle, then try:
 
 ```sh
 footwork tools                         # discover the installed tools
@@ -53,17 +55,23 @@ footwork doctor                        # see this machine's prerequisites
 
 | What you want to do | Start with |
 | --- | --- |
+| Read a JavaScript page without a desktop | [Read-only Lightpanda](jevdual/docs/lightpanda-readonly.md) |
 | Read pages and operate a dedicated browser | [CLI quickstart](jevdual/docs/quickstart.md#open-a-browser-session) |
 | Qualify guarded headless browser actions and restart recovery | [Owned CDP preview](jevdual/docs/owned-cdp.md) |
 | Work in a native app | [macOS operator example](#drive-it) or [Linux X11 guide](jevdual/docs/linux-support.md) |
 | Give an agent one scoped browser-to-document job | [MCP installation](jevdual/docs/capability-packaging.md) and [agent-host recipe](jevdual/docs/installed-agent-host.md) |
 | Review OCR, inspect a target or explore the simulator | [Bundled tool families](jevdual/docs/unified-cli.md#auxiliary-families) |
 
-macOS has the broader native-app qualification record. Linux desktop support is a preview covering the qualified X11/AT-SPI and
-Mousepad paths documented in the [Linux guide](jevdual/docs/linux-support.md). Repeated Linux desktop
-sessions still have known native teardown aborts and target-readiness timeouts; Wayland, shared Linux
-foreground control and physical cameras remain unqualified. The dated evidence below records what
-was measured on each artifact.
+`footwork browser lightpanda read` uses one fresh owned process and connection to return bounded DOM
+text, with input and editable values withheld. It enables no input actions or typing and makes no
+geometry or visibility claims. The initial URL runs website code, and CSS-hidden DOM content can
+remain. Footwork still declares full dependencies; the external engine is pinned and prebuilt.
+
+macOS has the broader native-app qualification record. Linux desktop support is a preview of the
+X11/AT-SPI and Mousepad paths in the [Linux guide](jevdual/docs/linux-support.md). Repeated Linux desktop
+sessions still have known native teardown aborts and target-readiness timeouts. Wayland, shared Linux
+foreground control, and physical cameras haven't been qualified. The dated evidence below shows
+what was measured on each artifact.
 
 ## Drive it
 
@@ -78,15 +86,20 @@ footwork do click 12             # through the gate; settle, reobserve, print th
 footwork done "624"              # the verifier judges the claim against the window and the trail
 ```
 
-Also `do type | append | key | hotkey | menu | scroll | enter`, `status`, and `footwork run` for the whole
-loop: by default the measured **guarded** arm (an LLM decides every step behind the guard), or `--arm dual`
-for Jev as System 1 with the LLM on escalation. Nothing dispatches on an id from an older
-observation; text comes from the task or from named secrets (`{NAME}` read from `$FOOTWORK_SECRET_NAME`,
-never printed); `--authorize "<label>"` names the one change the operator approved. Sessions default to
-`background_only`: the person's front app, pointer and keyboard are left alone (`--mode` grants more).
-`start --browser` drives footwork's own Chrome profile through the Driver's DevTools route instead of the
-accessibility tree. Observation and literal reads need no model key. The `s1`, guarded action and completion examples
-use a configured TypeSafe key; model-driven runs also need their selected provider credentials.
+The stepwise commands also include `do type | append | key | hotkey | menu | scroll | enter` and
+`status`. Use `footwork run` for the whole loop. Its default is the measured **guarded** arm: an LLM
+chooses every step behind the guard. Select `--arm dual` for Jev as System 1, with the LLM handling
+escalations.
+
+An action can't use an id from an older observation. Text comes from the task or from named secrets
+(`{NAME}` read from `$FOOTWORK_SECRET_NAME`, never printed). `--authorize "<label>"` names the change
+the operator approved. Sessions default to `background_only`, leaving the person's front app,
+pointer, and keyboard alone (`--mode` grants more).
+
+`start --browser` drives Footwork's own Chrome profile through the Driver's DevTools route instead
+of the accessibility tree. Observation and literal reads don't need a model key. The `s1`, guarded
+action, and completion examples use a configured TypeSafe key. Model-driven runs also need their
+selected provider credentials.
 
 For private visual inspection, use a numeric ID from the current native observation:
 
@@ -94,19 +107,20 @@ For private visual inspection, use a numeric ID from the current native observat
 footwork inspect-target 12 --operation click --postcondition "The selected editor enters crop mode"
 ```
 
-This records a fresh window PNG, target-bound manifest and static HTML preview under the session's
-`inspection/` directory. The preview outlines the offered target over the unchanged original image
-and displays the operation and required postcondition. It makes no model calls, executes no action
-and does not verify the stated effect.
-Sessions that have handled secrets withhold screenshots before capture. Missing or unqualified
-capture geometry, truncated observations and changed target identities refuse inspection.
-Native AX projections may be partial: the manifest records that limit, and label-based inspection
-requires a complete observation. Browser inspection through this command is not yet qualified.
+This saves a fresh window PNG, target-bound manifest, and static HTML preview in the session's
+`inspection/` directory. The preview outlines the offered target on the original image and shows the
+operation and required postcondition. It makes no model calls, sends no action, and doesn't verify
+the stated effect.
+
+A session that has handled secrets withholds screenshots before capture. Inspection refuses missing
+or unqualified geometry, truncated observations, and changed target identities. Native AX projections
+may be partial; the manifest records that limit, and label-based inspection requires a complete
+observation. Browser inspection through this command is not yet qualified.
 
 `footwork visual-check --request request.json --session SESSION` prepares one native advisory
 document/reference or crop/subject check. It records the original capture and a structured receipt.
-Explicit `--provider decisions --disclose` enables one bounded provider request using an existing
-key; the default contacts no provider. Visual answers grant no action or completion authority.
+Explicit `--provider decisions --disclose` enables one bounded provider request with an existing key.
+The default contacts no provider. A visual answer grants no action or completion authority.
 See [visual check inputs, limits and escalation](jevdual/docs/visual-checks.md).
 
 Measured this way on 2026-09-25 ([`docs/plans/legible-harness.md`](jevdual/docs/plans/legible-harness.md)):
@@ -115,10 +129,10 @@ append-and-save in 9 s, the save confirmed by the window title losing its edited
 
 ## More tools
 
-Optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
-timestamped evidence through an existing tab/CDP adapter. They are dependency-free ESM helpers,
-separate from the Python driver and verification gates. Their contract is tested offline; live
-capture fidelity must be calibrated on the selected browser.
+The optional [browser inspection utilities](tools/browser-inspection/README.md) collect redacted,
+timestamped evidence through an existing tab/CDP adapter. These dependency-free ESM helpers are
+separate from the Python driver and verification gates. Their contract is tested offline. Live
+capture fidelity must be calibrated on the browser you choose.
 
 The optional [desk paper inbox](tools/desk-inbox-experiment/README.md) connects a saved
 camera frame to local text recognition and a reviewed inbox note. Its private review keeps
@@ -145,16 +159,16 @@ cancellation and crash trials, retained failures and the boundary of supported r
 
 ## What it does, measured
 
-Every number below comes from a run directory under [`jevdual/results/`](jevdual/results/), with
-experiment definitions in [`jevdual/docs/experiments/`](jevdual/docs/experiments/). These are dated
-research results, not promises about a new app, platform or model.
+Every number below comes from a run directory under [`jevdual/results/`](jevdual/results/). The
+experiment definitions are in [`jevdual/docs/experiments/`](jevdual/docs/experiments/). Each result
+belongs to a dated run. It doesn't establish how a new app, platform, or model will behave.
 
 ### The browser
 
-Three arms are compared on the same tasks: **stock** browser-use with the LLM alone, **guarded** (the LLM behind
-Jev verification and the gate, no Jev actions), and **dual** (the guard plus Jev taking the mechanical steps).
-System 2 in every run is Muse Spark 1.3 Contributor over the Meta Model API, chosen because it is cheap and
-fast and therefore the hardest baseline for Jev to beat on cost.
+The experiments compare three arms on the same tasks: **stock** browser-use with the LLM alone,
+**guarded** with Jev verification and the gate but no Jev actions, and **dual** with the guard plus Jev
+taking the mechanical steps. System 2 in every run is Muse Spark 1.3 Contributor over the Meta Model
+API. It was chosen as a cheap, fast baseline, making its cost hard for Jev to beat.
 
 **Fixture heldout**, 10 local tasks, frozen settings, rerun once when the verifier changed
 ([`results/heldout-adopt.md`](jevdual/results/heldout-adopt.md)):
@@ -174,20 +188,21 @@ three same-code runs ([`results/q9-live-dev.md`](jevdual/results/q9-live-dev.md)
 | dual | 51 to 52 / 55 | 0 | 161 to 193 | 360 to 391 | 0.449 to 0.492 | 0.0100 to 0.0117 |
 | stock (one run) | 51 / 55 | 1 (its own LLM judge accepted it) | 265 | 0 | 0.382 | |
 
-What that says, in order of how sure we are:
+Here is what those measurements support:
 
-- **The guard is the product.** Zero false completions on the guarded arm on every split and run, on these
-  predicates, at about two Jev calls per task, and at the LLM's own cost. The guard is not infallible: in
-  the Q8 run the dual arm clicked an authorized Delete twice and the verifier accepted it
-  ([`results/q8-consent.md`](jevdual/results/q8-consent.md), the one false completion). The LLM alone deletes the account when asked to
-  reach a page, and its own judge marks that a success.
-- **Jev acting saves driver work, not money yet.** Dual makes 23 to 29% fewer driver requests than the
-  guarded arm across two same-night samples and runs its own steps at a median 1.4 s against 15.7 s for an
-  LLM step, but pays for that in Jev volume; task wall time between the arms is not distinguishable on
-  live sites, and dual matches stock's cost only on the fixture heldout so far.
-- **System 2 delegating bounded subgoals to Jev did not pay** in three measurements
-  ([`Q9`](jevdual/docs/experiments/Q9.md)): more cost, no more completions. The executor reached 5 of 30
-  assignments; an audit then found software defects behind most of those failures, and the repaired build
+- **The guard is the product.** On these predicates, the guarded arm had zero false completions on
+  every split and run. It used about two Jev calls per task, at the LLM's own cost. There is a useful
+  counterexample: in Q8, the dual arm clicked an authorized Delete twice and the verifier accepted it
+  ([`results/q8-consent.md`](jevdual/results/q8-consent.md), the one false completion). The LLM alone deleted the account when asked to
+  reach a page, and its own judge marked that a success.
+- **Jev acting saves driver work, not money yet.** Across two same-night samples, dual made 23 to 29%
+  fewer driver requests than the guarded arm. Its own steps took a median 1.4 s against 15.7 s for an
+  LLM step. It paid for that in Jev volume. Task wall time between the arms wasn't distinguishable on
+  live sites, and dual has matched stock's cost only on the fixture heldout so far.
+- **Bounded delegation remains opt-in.** Giving Jev subgoals from System 2 cost more without more
+  completions in three measurements
+  ([`Q9`](jevdual/docs/experiments/Q9.md)). The executor reached 5 of 30
+  assignments. An audit found software defects behind most of those failures; the repaired build
   was measured again ([`results/q9e-delegate-fixed.md`](jevdual/results/q9e-delegate-fixed.md)): 36
   verified against 41 for the same-day guarded arm, $0.644 against $0.424, 3 of 27 assignments reached.
   Delegation stays available as a tool, off by default.
@@ -252,8 +267,8 @@ What that says, in order of how sure we are:
   confidence floors, noul thresholds, streak and no-effect rules. Every threshold is a starting point
   recorded in the file; none has been tuned on heldout data.
 - **Rust** ([`crates/jevdual-core`](jevdual/crates/jevdual-core)): paint-order occlusion, snapshot lookup,
-  element hashes and evidence matching as PyO3 ports with pure-Python twins and equality tests. Honest
-  note: the DOM pipeline is not the bottleneck; Jev and the driver are.
+  element hashes and evidence matching as PyO3 ports with pure-Python twins and equality tests. The
+  DOM pipeline isn't the bottleneck; Jev and the driver are.
 
 ## The eval rig
 
@@ -277,7 +292,7 @@ uv sync                        # builds Footwork and the exact CUA native refere
 uv run pytest                  # unit and equality tests, no keys needed
 ```
 
-To run the agent or the evals you need a TypeSafe key (`TYPESAFE_API_KEY`) and a System 2 key
+To run the agent or the evals, configure a TypeSafe key (`TYPESAFE_API_KEY`) and a System 2 key
 (`MODEL_API_KEY` for the Meta Model API, or wire another provider in `evals/runner.py`):
 
 ```sh
@@ -298,22 +313,24 @@ verifier and no S1 policy; see `evals/runner.py` (`guarded` arm) for the exact w
 | [`jevdual/evals/`](jevdual/evals/) | runner, predicates, report, metrics, paired comparison, task files, fixture site |
 | [`jevdual/results/`](jevdual/results/) | every run directory and its write-up; the README's numbers come from here |
 | [`jevdual/docs/experiments/`](jevdual/docs/experiments/) | pre-registered questions Q1 to Q15 with results and decisions |
-| [`jevdual/docs/`](jevdual/docs/) | design notes, plans (`plans/legible-harness.md` is the current one), the Cua survey, the Rust boundary rule, upstream reuse inventory |
+| [`jevdual/docs/`](jevdual/docs/) | design notes, plans (including `plans/legible-harness.md`), the Cua survey, the Rust boundary rule, upstream reuse inventory |
 | [`browser-use/`](browser-use/) | upstream pinned as a submodule at the studied commit; the package imports the PyPI release |
 
 ## Status
 
-Research code with a working product core. The guard and the reactive dual loop are measured on the
-browser; the native arm and the operator session are measured on a small native split and a coexistence
-suite and stay experimental. Delegation and evidence selection are off by default. The
-[status audit of 2026-09-26](jevdual/results/status-audit-20260926/README.md) reproduced five contract
-breaks offline (operator sessions following the active browser tab, field receipts that overstate, a secret
-in a receipt, the browser path continuing when its destructive judgment fails, short documents replaced
-unpaused). Open, in order ([`plan`](jevdual/docs/plans/next-work.md)): those fixes, authorization parity
-across routes, the input loss after navigation, then receipts again (Q12b), verifier evidence and recovery,
-a narrower declaration (Q11b), and one contract across browser and native (Q13). Whether the browser should
-go through the accessibility tree too (Q14) has a working route but no comparison yet. Calibration claims
-wait on the human audit sheets. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change.
+Footwork has a working product core and a dated research record. The guard and reactive dual loop
+are measured on the browser. The native arm and operator session have measurements on a small native
+split and a coexistence suite; they remain experimental. Delegation and evidence selection are off
+by default.
+
+The [status audit of 2026-09-26](jevdual/results/status-audit-20260926/README.md) reproduced five contract
+breaks offline: operator sessions following the active browser tab, overstated field receipts, a
+secret in a receipt, the browser continuing after destructive judgment failed, and short documents
+replaced without a pause. Its [`plan`](jevdual/docs/plans/next-work.md) put those fixes first, followed
+by authorization parity across routes, input loss after navigation, receipts again (Q12b), verifier
+evidence and recovery, a narrower declaration (Q11b), and one contract across browser and native
+(Q13). The accessibility-tree browser route (Q14) works but hasn't had a comparison. Calibration
+claims await the human audit sheets. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change.
 
 ## Credits
 

@@ -37,6 +37,11 @@ Installation includes the pinned MuJoCo tool extra by default; `--core-only` omi
 
 The legacy `footwork browser start/look/do` verbs and `footwork desktop` route to the existing session commands. `start`, `look`, `do`, `read`, `done`, and `status` retain the existing admission checks, fresh target identities, receipts and completion verification. Browser start uses Footwork's dedicated Chrome; desktop start selects a running native app. Use separate explicit `--session` directories for independent tasks. Initial same-Space Chrome attachment may require bringing that owned Chrome window to the foreground.
 
+For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
+This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
+values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and
+`guide` for the installed pin and contract; see the [read-only Lightpanda guide](lightpanda-readonly.md).
+
 For owned headless browsing, use the explicit `footwork browser cdp` route. It keeps guarded admission and unresolved operations across CLI and holder restart without CUA or a desktop session at runtime. Only the bounded native-button route is enabled; typing stays disabled and acknowledgement is not completion. Run `footwork browser cdp guide` for the installed contract, or read the [owned CDP guide](owned-cdp.md). Package metadata still installs the full dependencies; the light installer remains pending.
 
 The original top-level verbs remain compatible. `footwork capability` exposes the existing scoped MCP configuration/server/report commands through the same executable. Its browser-to-TextEdit scope remains intentionally bounded; it does not grant generic input access to an MCP host.
