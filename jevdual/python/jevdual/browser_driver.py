@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import asyncio
 import dataclasses
-import json
 import logging
 import os
 import shutil
@@ -31,6 +30,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from jevdual.effectors.base import BrowserBinding, BrowserOperations, BrowserReply
 from jevdual.menu import Candidate, Menu, _tri, control_state
 
 log = logging.getLogger("jevdual.browser")
@@ -357,6 +357,25 @@ class BrowserEffect:
     error_code: str | None = None
     #: False when the posture refused the step before anything reached the browser
     dispatched: bool = True
+    #: the effector's own delivery word on a refusal ("unknown" after an acknowledged input), and
+    #: whether it says a retry is safe. Carried for the record; a refusal alone never means not sent.
+    delivery: str | None = None
+    retryable: bool | None = None
+    #: the effector's advisory recovery text and suggested call; diagnostic data, never agent-callable
+    hint: str | None = None
+    next_call: dict[str, Any] | None = None
+
+
+def _refusal_message(reply: BrowserReply) -> str:
+    return (reply.refusal.message if reply.refusal is not None else "") or reply.text
+
+
+def _with_text(reply: BrowserReply) -> dict[str, Any]:
+    """The reply as the compatibility ``attach`` result: its fields plus ``_text`` and ``_is_error``."""
+    out = dict(reply.payload)
+    out.setdefault("_text", reply.text)
+    out.setdefault("_is_error", reply.is_error)
+    return out
 
 
 class BrowserBridge:
@@ -370,10 +389,14 @@ class BrowserBridge:
         *,
         session: str = SESSION_LABEL,
         policy: Any = None,
+        operations: BrowserOperations | None = None,
     ):
+        from jevdual.effectors import browser_operations
         from jevdual.posture import ExecutionPolicy
 
+        #: the driver's lifecycle (shutdown) stays with whoever created it; the bridge only acts
         self.driver = driver
+        self.operations = operations or browser_operations(driver, session=session)
         self.pid = pid
         self.window_id = window_id
         self.session = session
@@ -382,18 +405,8 @@ class BrowserBridge:
         self.policy = policy or ExecutionPolicy("background_only")
         self.target_id: str | None = None
         self.tab_id: str | None = None
+        self.binding: BrowserBinding | None = None
         self.last: WebMenu | None = None
-
-    async def _tool(self, name: str, args: dict[str, Any]) -> dict[str, Any]:
-        r = await self.driver.call_tool(name, json.dumps({"session": self.session, **args}))
-        raw = getattr(r, "structured_json", None) or "{}"
-        try:
-            out = json.loads(raw)
-        except json.JSONDecodeError:
-            out = {}
-        out.setdefault("_text", str(getattr(r, "text", "") or ""))
-        out.setdefault("_is_error", bool(getattr(r, "is_error", False)))
-        return out
 
     async def attach(self, *, tab_id: str | None = None, expect_url: str | None = None) -> dict[str, Any]:
         """Bind the window's browser target. With ``expect_url`` (the page a session last observed) the
@@ -401,21 +414,16 @@ class BrowserBridge:
         ids are handles for one connection, new on every command (the Q13 oracle stage, 2026-09-28), so a
         session cannot carry them across commands. ``tab_id`` binds a handle within one connection.
         Without either, it takes the active tab (a new session)."""
-        prep = await self._tool(
-            "browser_prepare",
-            {"pid": self.pid, "window_id": self.window_id, "strategy": {"kind": "existing_profile"}},
-        )
-        if prep.get("status") == "refused":
-            raise RuntimeError(
-                f"browser_prepare refused: {prep.get('refusal', {}).get('message', prep['_text'])[:200]}"
-            )
-        bound = await self._tool("get_browser_state", {"pid": self.pid, "window_id": self.window_id})
-        if bound.get("status") != "ok":
-            raise RuntimeError(
-                f"bind refused: {bound.get('refusal', {}).get('message', bound['_text'])[:200]}"
-            )
+        prep = await self.operations.prepare(pid=self.pid, window_id=self.window_id)
+        if prep.status == "refused":
+            raise RuntimeError(f"browser_prepare refused: {_refusal_message(prep)[:200]}")
+        reply = await self.operations.bind(pid=self.pid, window_id=self.window_id)
+        if reply.status != "ok":
+            raise RuntimeError(f"bind refused: {_refusal_message(reply)[:200]}")
+        bound = _with_text(reply)
         self.target_id = bound["target_id"]
         tabs = bound.get("tabs") or []
+        self.binding = BrowserBinding(target_id=self.target_id, tabs=tuple(tabs))
         if expect_url:
             want = _page_key(expect_url)
             same = [t for t in tabs if _page_key(str(t.get("url") or "")) == want]
@@ -448,13 +456,10 @@ class BrowserBridge:
     async def observe(self, *, screenshot_path: str | None = None, **_: Any) -> WebMenu:
         if self.target_id is None:
             await self.attach()
-        s = await self._tool(
-            "get_browser_state",
-            {"target_id": self.target_id, "tab_id": self.tab_id, "snapshot_format": "semantic_v2"},
-        )
-        if s.get("status") == "refused":
-            raise RuntimeError(f"snapshot refused: {s.get('refusal', {}).get('message', s['_text'])[:200]}")
-        self.last = menu_from_semantic(s)
+        reply = await self.operations.snapshot(target_id=self.target_id, tab_id=self.tab_id)
+        if reply.status == "refused":
+            raise RuntimeError(f"snapshot refused: {_refusal_message(reply)[:200]}")
+        self.last = menu_from_semantic(dict(reply.payload))
         return self.last
 
     def _fresh(self, nm: WebMenu, id: int) -> tuple[Candidate, str]:
@@ -466,12 +471,22 @@ class BrowserBridge:
             raise RuntimeError(f"id {id} is not on snapshot {nm.snapshot_id}")
         return c, ref
 
-    def _effect(self, out: dict[str, Any], op: str, id: int, label: str) -> BrowserEffect:
-        if out.get("status") == "refused" or out.get("_is_error"):
-            msg = (out.get("refusal") or {}).get("message") or out["_text"]
-            code = (out.get("refusal") or {}).get("code")
-            return BrowserEffect(op, id, label, "refused", summary=str(msg)[:200], error_code=code)
-        return BrowserEffect(op, id, label, "unverifiable", summary=out["_text"][:200])
+    def _effect(self, reply: BrowserReply, op: str, id: int, label: str) -> BrowserEffect:
+        advice = {"hint": reply.hint, "next_call": dict(reply.next_call) if reply.next_call else None}
+        if reply.refused:
+            refusal = reply.refusal
+            return BrowserEffect(
+                op,
+                id,
+                label,
+                "refused",
+                summary=_refusal_message(reply)[:200],
+                error_code=refusal.code if refusal is not None else None,
+                delivery=refusal.delivery if refusal is not None else None,
+                retryable=refusal.retryable if refusal is not None else None,
+                **advice,
+            )
+        return BrowserEffect(op, id, label, "unverifiable", summary=reply.text[:200], **advice)
 
     #: form controls whose trusted (hardware-like) click did not toggle them in the background
     #: on 2026-09-25 (receipts said suspected no-op, the snapshot agreed): a synthetic DOM click
@@ -482,14 +497,14 @@ class BrowserBridge:
         self, nm: WebMenu, operation: str, id: int, text: str | None = None, *, route: str | None = None
     ) -> BrowserEffect:
         c, ref = self._fresh(nm, id)
-        base = {"target_id": self.target_id, "tab_id": self.tab_id}
+        base = {"target_id": self.target_id, "tab_id": self.tab_id, "ref": ref}
         if operation == "click":
             # 2026-09-25: in this background posture the trusted route toggled no radio or checkbox,
             # activated no submit button and opened no suggestion link (six no-op receipts, zero
             # successes); the DOM route did all of them. DOM is the default; the receipt proves the
             # outcome either way, and --route trusted is there for controls that ignore synthetic clicks.
             input_route = route or "dom_event"
-            out = await self._tool("browser_click", {**base, "ref": ref, "input_route": input_route})
+            out = await self.operations.click(**base, input_route=input_route)
             eff = self._effect(out, operation, id, c.label)
             self.last = None
             return dataclasses.replace(eff, route=input_route)
@@ -518,10 +533,7 @@ class BrowserBridge:
                         error_code=refusal.code,
                         dispatched=False,
                     )
-            out = await self._tool(
-                "browser_type",
-                {**base, "ref": ref, "text": text or "", "mode": "insert_text", "replace": needs_replace},
-            )
+            out = await self.operations.type_text(**base, text=text or "", replace=needs_replace)
         else:
             hint = (
                 "; content beyond this observation cannot be scrolled into view here, so an answer from "
@@ -538,9 +550,7 @@ class BrowserBridge:
     async def navigate(self, url: str) -> BrowserEffect:
         if self.target_id is None:
             await self.attach()
-        out = await self._tool(
-            "browser_navigate", {"target_id": self.target_id, "tab_id": self.tab_id, "url": url}
-        )
+        out = await self.operations.navigate(target_id=self.target_id, tab_id=self.tab_id, url=url)
         self.last = None
         return self._effect(out, "navigate", -1, url)
 
