@@ -213,66 +213,16 @@ def launch_chrome(url: str | None = None, *, settle_s: float = 4.0) -> int:
 
 
 def _host_class(pid: int) -> Any:
-    import cua_driver as cd
-    import psutil
+    from jevdual.effectors.cua import authorization_host
 
-    executable = chrome_executable()
-    if chrome_pid() != pid:
-        raise RuntimeError("browser process does not match the owned profile")
-    incarnation = psutil.Process(pid).create_time()
-
-    class FootworkAuthorizationHost(cd.DriverAuthorizationHost):
-        """Allow attaching to footwork's own Chrome and nothing else."""
-
-        async def authorize(self, request: Any) -> Any:
-            try:
-                res = json.loads(request.resource_json or "{}")
-            except json.JSONDecodeError:
-                res = {}
-            if not isinstance(res, dict):
-                res = {}
-            fp = res.get("process_fingerprint") or {}
-            if not isinstance(fp, dict):
-                fp = {}
-            try:
-                same_process = chrome_pid() == pid and psutil.Process(pid).create_time() == incarnation
-            except (psutil.Error, RuntimeError, OSError):
-                same_process = False
-            ok = (
-                same_process
-                and res.get("pid") == pid
-                and res.get("endpoint_owner_pid") in (None, pid)
-                and fp.get("executable") == executable
-            )
-            log.info(
-                "driver authorization %s: %s", "allowed" if ok else "denied", request.human_summary[:160]
-            )
-            action = cd.DriverAuthorizationAction.ALLOW if ok else cd.DriverAuthorizationAction.DENY
-            return cd.DriverAuthorizationDecision(action=action, request_digest=request.request_digest)
-
-    return FootworkAuthorizationHost
+    return authorization_host(pid, executable=chrome_executable(), owned_pid=lambda: chrome_pid())
 
 
 def configured_driver(pid: int) -> Any:
-    """A Driver whose authorization callback allows footwork's Chrome only. Call from inside a
-    running event loop: the binding needs it to deliver the callback."""
-    import cua_driver as cd
-    from cua_driver import _native
+    """Compatibility entrypoint for the owned-browser CUA effector."""
+    from jevdual.effectors import browser_effector
 
-    _native.uniffi_set_event_loop(asyncio.get_running_loop())
-    opts = cd.ConfiguredDriverOptions(
-        claude_code_compatibility=False,
-        authorization=cd.RuntimeAuthorizationOptions(
-            allowed_modes=[cd.SessionPermissionMode.STANDARD],
-            compatibility_mode=cd.SessionPermissionMode.STANDARD,
-            compatibility_capability_manifest_path=None,
-            compatibility_bounded_manifest_path=None,
-            unrestricted_acknowledged=False,
-            max_session_ttl_seconds=8 * 3600,
-            max_idle_ttl_seconds=1800,
-        ),
-    )
-    return cd.CuaDriver.create_configured_with_authorization_host(opts, _host_class(pid)())
+    return browser_effector(pid, host_factory=_host_class)
 
 
 @dataclass
@@ -607,7 +557,7 @@ class BrowserBridge:
 
 async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) -> tuple[Any, BrowserBridge]:
     """Launch or find footwork's Chrome, build the configured Driver, bind its largest window."""
-    from cua_driver import ListWindowsInput
+    from jevdual.effectors.cua import list_windows_input
 
     pid, launch = _begin_chrome(url)
     driver = helper = None
@@ -632,7 +582,7 @@ async def bind_footwork_chrome(url: str | None = None, *, policy: Any = None) ->
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 raise RuntimeError("footwork's Chrome has no on-screen window after bounded recovery")
-            wins = await asyncio.wait_for(driver.list_windows(ListWindowsInput(pid=pid, on_screen_only=True)),
+            wins = await asyncio.wait_for(driver.list_windows(list_windows_input(pid=pid, on_screen_only=True)),
                                           timeout=remaining)
             if wins.windows:
                 if any(w.pid != pid for w in wins.windows):
