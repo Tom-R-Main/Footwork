@@ -1,0 +1,403 @@
+FFFFF.....                                                               [100%]
+=================================== FAILURES ===================================
+_ test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[textedit_enumeration] _
+
+entry = 'textedit_enumeration'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-362/test_missing_sdk_input_refuses0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1084f3f50>
+
+    @pytest.mark.parametrize("entry", [
+        "textedit_enumeration", "textedit_launch", "native_observe_lock", "native_observe_accessibility",
+        "linux_menu_posture", "native_verify", "native_click", "find_window", "find_window_for_pid", "app_windows",
+    ])
+    def test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls(entry, tmp_path, monkeypatch):
+        from jevdual import coexist, native
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        driver = SimpleNamespace(
+            list_apps=forbidden, list_windows=forbidden, verify_state=forbidden, click=forbidden,
+        )
+        policy = SimpleNamespace(locked=lambda: False, permits=forbidden)
+        bridge = native.NativeBridge(driver, 1, 2, policy=policy)
+        if entry in ("textedit_enumeration", "textedit_launch"):
+            monkeypatch.setattr(coexist, "_textedit_pids", forbidden if entry == "textedit_enumeration" else set)
+            monkeypatch.setattr(coexist.subprocess, "run", forbidden)
+            action = coexist.TextEditInstance.launch(driver, [tmp_path / "document"])
+        elif entry.startswith("native_observe"):
+            if entry == "native_observe_lock":
+                policy.locked = forbidden
+            monkeypatch.setattr(native, "require_accessibility", forbidden)
+            action = bridge.observe()
+        elif entry == "linux_menu_posture":
+            monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+            snapshot = SimpleNamespace(snapshot_id="fixture")
+            bridge.last = snapshot
+            action = bridge.menu(snapshot, ["File", "Save"])
+        elif entry == "native_verify":
+            action = bridge.verify([])
+        elif entry == "native_click":
+            action = bridge._click_token("fixture:1")
+        elif entry == "find_window":
+            action = native.find_window(driver, "fixture")
+        elif entry == "find_window_for_pid":
+            action = native.find_window_for_pid(driver, 1)
+        else:
+            action = native.app_windows(driver, "fixture")
+        with pytest.raises(EffectorUnavailable):
+>           asyncio.run(action)
+
+jevdual/tests/test_effector_boundary.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/coexist.py:186: in launch
+    before = _textedit_pids()
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+E       Failed: textedit_enumeration reached a host probe, launch or driver call before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:362: Failed
+_ test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[textedit_launch] _
+
+entry = 'textedit_launch'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-362/test_missing_sdk_input_refuses1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108a876e0>
+
+    @pytest.mark.parametrize("entry", [
+        "textedit_enumeration", "textedit_launch", "native_observe_lock", "native_observe_accessibility",
+        "linux_menu_posture", "native_verify", "native_click", "find_window", "find_window_for_pid", "app_windows",
+    ])
+    def test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls(entry, tmp_path, monkeypatch):
+        from jevdual import coexist, native
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        driver = SimpleNamespace(
+            list_apps=forbidden, list_windows=forbidden, verify_state=forbidden, click=forbidden,
+        )
+        policy = SimpleNamespace(locked=lambda: False, permits=forbidden)
+        bridge = native.NativeBridge(driver, 1, 2, policy=policy)
+        if entry in ("textedit_enumeration", "textedit_launch"):
+            monkeypatch.setattr(coexist, "_textedit_pids", forbidden if entry == "textedit_enumeration" else set)
+            monkeypatch.setattr(coexist.subprocess, "run", forbidden)
+            action = coexist.TextEditInstance.launch(driver, [tmp_path / "document"])
+        elif entry.startswith("native_observe"):
+            if entry == "native_observe_lock":
+                policy.locked = forbidden
+            monkeypatch.setattr(native, "require_accessibility", forbidden)
+            action = bridge.observe()
+        elif entry == "linux_menu_posture":
+            monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+            snapshot = SimpleNamespace(snapshot_id="fixture")
+            bridge.last = snapshot
+            action = bridge.menu(snapshot, ["File", "Save"])
+        elif entry == "native_verify":
+            action = bridge.verify([])
+        elif entry == "native_click":
+            action = bridge._click_token("fixture:1")
+        elif entry == "find_window":
+            action = native.find_window(driver, "fixture")
+        elif entry == "find_window_for_pid":
+            action = native.find_window_for_pid(driver, 1)
+        else:
+            action = native.app_windows(driver, "fixture")
+        with pytest.raises(EffectorUnavailable):
+>           asyncio.run(action)
+
+jevdual/tests/test_effector_boundary.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/coexist.py:187: in launch
+    subprocess.run(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (['open', '-n', '-g', '-a', 'TextEdit', '/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-362/test_missing_sdk_input_refuses1/document', ...],)
+kwargs = {'check': True}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+E       Failed: textedit_launch reached a host probe, launch or driver call before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:362: Failed
+_ test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[native_observe_lock] _
+
+entry = 'native_observe_lock'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-362/test_missing_sdk_input_refuses2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108ab0ad0>
+
+    @pytest.mark.parametrize("entry", [
+        "textedit_enumeration", "textedit_launch", "native_observe_lock", "native_observe_accessibility",
+        "linux_menu_posture", "native_verify", "native_click", "find_window", "find_window_for_pid", "app_windows",
+    ])
+    def test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls(entry, tmp_path, monkeypatch):
+        from jevdual import coexist, native
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        driver = SimpleNamespace(
+            list_apps=forbidden, list_windows=forbidden, verify_state=forbidden, click=forbidden,
+        )
+        policy = SimpleNamespace(locked=lambda: False, permits=forbidden)
+        bridge = native.NativeBridge(driver, 1, 2, policy=policy)
+        if entry in ("textedit_enumeration", "textedit_launch"):
+            monkeypatch.setattr(coexist, "_textedit_pids", forbidden if entry == "textedit_enumeration" else set)
+            monkeypatch.setattr(coexist.subprocess, "run", forbidden)
+            action = coexist.TextEditInstance.launch(driver, [tmp_path / "document"])
+        elif entry.startswith("native_observe"):
+            if entry == "native_observe_lock":
+                policy.locked = forbidden
+            monkeypatch.setattr(native, "require_accessibility", forbidden)
+            action = bridge.observe()
+        elif entry == "linux_menu_posture":
+            monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+            snapshot = SimpleNamespace(snapshot_id="fixture")
+            bridge.last = snapshot
+            action = bridge.menu(snapshot, ["File", "Save"])
+        elif entry == "native_verify":
+            action = bridge.verify([])
+        elif entry == "native_click":
+            action = bridge._click_token("fixture:1")
+        elif entry == "find_window":
+            action = native.find_window(driver, "fixture")
+        elif entry == "find_window_for_pid":
+            action = native.find_window_for_pid(driver, 1)
+        else:
+            action = native.app_windows(driver, "fixture")
+        with pytest.raises(EffectorUnavailable):
+>           asyncio.run(action)
+
+jevdual/tests/test_effector_boundary.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/native.py:912: in observe
+    if self.policy.locked():
+       ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+E       Failed: native_observe_lock reached a host probe, launch or driver call before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:362: Failed
+_ test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[native_observe_accessibility] _
+
+entry = 'native_observe_accessibility'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-362/test_missing_sdk_input_refuses3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10847ef90>
+
+    @pytest.mark.parametrize("entry", [
+        "textedit_enumeration", "textedit_launch", "native_observe_lock", "native_observe_accessibility",
+        "linux_menu_posture", "native_verify", "native_click", "find_window", "find_window_for_pid", "app_windows",
+    ])
+    def test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls(entry, tmp_path, monkeypatch):
+        from jevdual import coexist, native
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        driver = SimpleNamespace(
+            list_apps=forbidden, list_windows=forbidden, verify_state=forbidden, click=forbidden,
+        )
+        policy = SimpleNamespace(locked=lambda: False, permits=forbidden)
+        bridge = native.NativeBridge(driver, 1, 2, policy=policy)
+        if entry in ("textedit_enumeration", "textedit_launch"):
+            monkeypatch.setattr(coexist, "_textedit_pids", forbidden if entry == "textedit_enumeration" else set)
+            monkeypatch.setattr(coexist.subprocess, "run", forbidden)
+            action = coexist.TextEditInstance.launch(driver, [tmp_path / "document"])
+        elif entry.startswith("native_observe"):
+            if entry == "native_observe_lock":
+                policy.locked = forbidden
+            monkeypatch.setattr(native, "require_accessibility", forbidden)
+            action = bridge.observe()
+        elif entry == "linux_menu_posture":
+            monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+            snapshot = SimpleNamespace(snapshot_id="fixture")
+            bridge.last = snapshot
+            action = bridge.menu(snapshot, ["File", "Save"])
+        elif entry == "native_verify":
+            action = bridge.verify([])
+        elif entry == "native_click":
+            action = bridge._click_token("fixture:1")
+        elif entry == "find_window":
+            action = native.find_window(driver, "fixture")
+        elif entry == "find_window_for_pid":
+            action = native.find_window_for_pid(driver, 1)
+        else:
+            action = native.app_windows(driver, "fixture")
+        with pytest.raises(EffectorUnavailable):
+>           asyncio.run(action)
+
+jevdual/tests/test_effector_boundary.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/native.py:915: in observe
+    require_accessibility()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (), kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+E       Failed: native_observe_accessibility reached a host probe, launch or driver call before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:362: Failed
+_ test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[linux_menu_posture] _
+
+entry = 'linux_menu_posture'
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-362/test_missing_sdk_input_refuses4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1084b9010>
+
+    @pytest.mark.parametrize("entry", [
+        "textedit_enumeration", "textedit_launch", "native_observe_lock", "native_observe_accessibility",
+        "linux_menu_posture", "native_verify", "native_click", "find_window", "find_window_for_pid", "app_windows",
+    ])
+    def test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls(entry, tmp_path, monkeypatch):
+        from jevdual import coexist, native
+    
+        original_import = builtins.__import__
+    
+        def missing(name, *args, **kwargs):
+            if name == "cua_driver":
+                raise ModuleNotFoundError("missing optional SDK", name=name)
+            return original_import(name, *args, **kwargs)
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+    
+        monkeypatch.setattr(builtins, "__import__", missing)
+        driver = SimpleNamespace(
+            list_apps=forbidden, list_windows=forbidden, verify_state=forbidden, click=forbidden,
+        )
+        policy = SimpleNamespace(locked=lambda: False, permits=forbidden)
+        bridge = native.NativeBridge(driver, 1, 2, policy=policy)
+        if entry in ("textedit_enumeration", "textedit_launch"):
+            monkeypatch.setattr(coexist, "_textedit_pids", forbidden if entry == "textedit_enumeration" else set)
+            monkeypatch.setattr(coexist.subprocess, "run", forbidden)
+            action = coexist.TextEditInstance.launch(driver, [tmp_path / "document"])
+        elif entry.startswith("native_observe"):
+            if entry == "native_observe_lock":
+                policy.locked = forbidden
+            monkeypatch.setattr(native, "require_accessibility", forbidden)
+            action = bridge.observe()
+        elif entry == "linux_menu_posture":
+            monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+            snapshot = SimpleNamespace(snapshot_id="fixture")
+            bridge.last = snapshot
+            action = bridge.menu(snapshot, ["File", "Save"])
+        elif entry == "native_verify":
+            action = bridge.verify([])
+        elif entry == "native_click":
+            action = bridge._click_token("fixture:1")
+        elif entry == "find_window":
+            action = native.find_window(driver, "fixture")
+        elif entry == "find_window_for_pid":
+            action = native.find_window_for_pid(driver, 1)
+        else:
+            action = native.app_windows(driver, "fixture")
+        with pytest.raises(EffectorUnavailable):
+>           asyncio.run(action)
+
+jevdual/tests/test_effector_boundary.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+jevdual/python/jevdual/native.py:2353: in menu
+    refusal = self.policy.permits("background", why=f"menu {label}")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ('background',), kwargs = {'why': 'menu File > Save'}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail(f"{entry} reached a host probe, launch or driver call before missing-effector refusal")
+E       Failed: linux_menu_posture reached a host probe, launch or driver call before missing-effector refusal
+
+jevdual/tests/test_effector_boundary.py:362: Failed
+=========================== short test summary info ============================
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[textedit_enumeration]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[textedit_launch]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[native_observe_lock]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[native_observe_accessibility]
+FAILED jevdual/tests/test_effector_boundary.py::test_missing_sdk_input_refuses_before_host_probes_launches_or_driver_calls[linux_menu_posture]
+5 failed, 5 passed, 29 deselected in 0.24s
