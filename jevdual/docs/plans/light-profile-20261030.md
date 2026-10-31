@@ -105,8 +105,8 @@ Checked on `52601b1` unless noted.
 
 L1a is the first implementation PR. It must preserve the merged reliability fix and current SDK
 payloads. L1b changes data representation only after that seam is checked. L3a remains opt-in in the
-full install; L2 must not make a preview browser into a default durable mutation route. L3b and L6
-remain later packages, not prerequisites for the initial light release. Each implementation PR names
+full install; L2 must not make a preview browser into a default durable mutation route. L6 remains a later package. L3b is required before mutations across CLI processes unless L3a
+first qualifies an explicit cross-connection identity mechanism; pipe transport alone is not that proof. Each implementation PR names
 its checked artifact, remaining packages and recovery to the preceding qualified release.
 
 ## L0. Baseline and guards (no behavior change)
@@ -145,12 +145,15 @@ Collision: this rewrites driver construction in `session.py`, `native.py`, `brow
   completed portable data model. Existing browser compatibility entrypoints delegate to the adapter;
   strict root/incarnation authorization and awaited shutdown remain unchanged. Never convert a broken
   transitive import or native loader failure into “optional package absent.”
-- **L1b owned contract.** Narrow `DesktopEffector` and `BrowserEffector` protocols and frozen records
-  describe exactly what callers read. Derive the fields from callers and fixture coverage as well as
-  seam tests; those tests assert subsets and do not define complete snapshots. Normalize every enum,
-  optional field, unknown extension and refusal payload without strengthening evidence or dropping
-  delivery/coverage metadata. Preserve `hint` and `next_call`, whose removal previously broke refusals.
-- Replace generic `call_tool` inside bridge callers with bounded typed adapter operations in L1b.
+- **L1b owned browser contract.** Reuse the existing Footwork-owned `WebMenu` and `BrowserEffect`;
+  introduce only the binding/ref/coverage/delivery fields the new browser needs. Keep native SDK
+  records behind L1a until a real owned desktop adapter needs another shape. No full native DTO clone.
+  The browser CUA adapter translates current wire replies without dropping optional/extension fields
+  or strengthening legacy identity/delivery claims. Missing context, document generation and persistent
+  target identity stay explicitly unavailable. Preserve `hint` and `next_call`, whose removal previously
+  broke refusals. Derive fields from callers and independent fixtures, not subset SDK seam assertions.
+- Replace browser `call_tool` coupling with bounded typed adapter operations in L1b; defer the
+  native request migration until an owned desktop adapter requires it.
   No unrestricted new tool or raw CDP surface is exposed to the host agent.
 - Keep upstream seam tests where CUA is installed; add implementation-independent tests for identity,
   stale references, pre-dispatch refusal and unknown outcomes. L1a also tests the absent-package path
@@ -180,7 +183,9 @@ Do not implement WebSocket framing as part of an effector port.
   `--remote-debugging-port=0`; Footwork reads `DevToolsActivePort` from its own profile directory and
   connects to the browser-level path it names, after `chrome_pid()` and `_incarnation` match the
   recorded root. Parity with today's fixed loopback port, without a predictable port. (WebSocket
-  framing is provided by the transport dependency, not handwritten.)
+  framing is provided by the transport dependency, not handwritten.) Headless launch/readiness uses
+  the owned process, endpoint and pinned target. It cannot reuse the CUA launcher's required on-screen
+  native-window discovery or invent a native window ID.
 - **Identity.** Each ref binds browser incarnation, context, target, CDP session, frame, nonempty
   `loaderId` and backend node. Reobserve that exact tuple and the node's connected/editable/enabled
   state, operation eligibility and relevant semantics before dispatch. Unknown generation invalidates
@@ -193,7 +198,11 @@ Do not implement WebSocket framing as part of an effector port.
   emitted in the shape `menu_from_semantic` already consumes (`page`, `snapshot`, `refs` with
   `ref`/`role`/`name`/`states`/`actions`/`value`), so `WebMenu`, candidate ids and receipts stay
   unchanged. Refs bind the complete identity tuple above; omissions, unsupported frames and truncation are
-  explicit coverage fields. Sensitive-input redaction ports the rule now
+  explicit coverage fields. Keep complete bounded text values separate from clipped candidate
+  previews: today `menu_from_semantic` clips values to 200 characters and `Authorizer.action_for`
+  reads `WebMenu.values`. An exact empty value, unavailable value, redaction and truncation must
+  remain distinct. If complete text cannot be read within the declared limit, withhold text mutation.
+  Sensitive-input redaction ports the rule now
   read from browser-use's `_SENSITIVE_INPUT_TYPES` and `_SENSITIVE_AUTOCOMPLETE_PREFIXES` into a
   Footwork constant, with provenance (L5).
 - **Actions.** Click `dom_event`: `DOM.resolveNode` then `Runtime.callFunctionOn` in an isolated world
@@ -206,6 +215,11 @@ Do not implement WebSocket framing as part of an effector port.
 - **Readback.** Value, checked state and URL are read in the isolated world to avoid page-patched
   reader functions. This is DOM-state evidence, not independent proof of submission or persistence.
   Fixture ingress counts, stored rows and saved bytes establish those separate postconditions.
+- **Across commands.** Persist the selected effector and exact browser/document/element subject.
+  Current `cmd_do` reobserves and matches presentation labels/positions; that is not CDP element
+  continuity. Use a bounded connection holder/broker or qualify an explicit cross-connection mechanism
+  before enabling mutation across CLI processes. A new transport session cannot silently inherit old
+  refs; until qualified, a cross-connection action refuses instead of selecting a replacement node.
 - **Prohibited.** No raw CDP or JavaScript passthrough to the agent, no automatic route switch, no
   resend after an unknown outcome.
 - **Selection.** `FOOTWORK_BROWSER_EFFECTOR=cdp|cua` and `browser start --effector`, recorded in
@@ -233,8 +247,12 @@ route switch or uncertain retry is permitted. Headless/headed results are record
 The current `browser_authority_unqualified` refusal remains until this package closes. Owning a CDP
 transport or observing a changed DOM does not supply durable admission.
 
-- Persist browser/context/target identity and operation arguments before dispatch; reuse the existing
-  authority store and `Backend` admission/readback contract without weakening native identity checks.
+- Persist browser/context/target identity and operation arguments before dispatch. Reuse authority
+  storage/admission concepts, with a versioned browser execution producer and validator; do not extend
+  the native `{boot,pid,start,window_id}` producer allowlist with CDP acknowledgements. The existing
+  scoped capability browser source is read-only and its writable destination is native; a new browser
+  backend needs its own qualified scope. Matching current DOM readback cannot manufacture historical
+  execution evidence or turn the nondurable service path into restart-safe authority.
 - Separate not-sent, admitted/possibly-sent, observed effect, verified postcondition and completed.
   Any loss after admission retains unknown and blocks redispatch, including after CLI/broker restart.
 - Reconcile unknown operations through read-only evidence bound to the intended resource and arguments.
@@ -416,3 +434,12 @@ typing selection was unspecified; isolated-world readback was overclaimed; nativ
 the wrong extra; resource heuristics and consumer/source-build roles were unsupported. L1 is split so
 compatibility isolation can be verified before a data-model migration. The resource and paid-discovery
 studies remain unrun. No light-profile runtime guarantee follows from this plan review.
+
+
+### Follow-on caller tracing
+
+The L1a implementation review traced `browser_driver.WebMenu/BrowserEffect`, `session.bind/cmd_do`,
+`authorize.action_for`, `operator_evidence` and `capability.backend/service`. It narrowed L1b to the
+browser contract and identified three prerequisites now explicit above: target-only headless readiness,
+exact text distinct from presentation clipping, and qualified cross-command reference continuity.
+Browser durable receipts need their own versioned producer; native receipt validation stays strict.
