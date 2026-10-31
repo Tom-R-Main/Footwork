@@ -28,3 +28,16 @@ Test: a dedicated Python helper starts a child that installs SIGTERM ignore and 
 Predicts: current stop returns with the resistant child alive; revised cleanup stops the captured child, leaves the sentinel alone, and refuses already-lost custody. It never issues a second group signal after root reaping.
 Against: current cleanup already stops the resistant child; revised cleanup signals the unrelated sentinel, targets a changed process incarnation, returns with a live captured child or claims full cleanup without an inventory.
 Refs: python/jevdual/effectors/cdp/launch.py; tests/test_cdp_launch_custody.py; parent review request.
+
+## LCU2 · update · 2026-10-31 12:06
+Resolves: LC2 = held
+Observed: before correction the actual helper root exited on group TERM while its TERM-resistant child remained running; the typed lost-custody control failed because no cleanup-uncertainty exception existed. After correction the captured child stops, the root is reaped, and the unrelated sentinel remains live. The signal spy sees exactly one group TERM before root reaping. Ten custody checks pass, including a vanished-child inventory race and a changed-root-incarnation refusal; the current 17 CDP checks also pass, including three real-Chrome observations. Ruff passes. The already-exited-root test uses an input barrier to capture its handle before releasing it to exit.
+Changes: cleanup captures descendants' pid/start identities while the owned root is live, skips ordinary individual exits during capture, reaps the root, and revalidates known children before individual TERM/KILL and bounded waits. It never signals a group after reaping its root. An unavailable inventory or surviving known child raises CleanupUnverified; launch failure cleanup attaches that uncertainty to the original exception rather than masking its cause.
+Next: parent artifact verification and CI. Concurrent forks after inventory and daemon escape remain outside this bounded claim; stopped zombies depend on their reaper and are not represented as proof of a fully empty process tree. LC2's heading time was transcribed as 12:05; git records its prediction commit 8f2141c at 12:03 before the helper test.
+Refs: tests/test_cdp_launch_custody.py; output/cdp-launch-custody/cleanup-before.txt; output/cdp-launch-custody/cleanup-after.txt; output/cdp-launch-custody/custody-final.txt.
+
+## LCS2 · summary · 2026-10-31 12:06
+Established: fresh-profile custody is retained; bounded cleanup stops the captured TERM-resistant child after the root exits and leaves an unrelated sentinel untouched. Lost root custody is explicit uncertainty, not success.
+Uncertain: inventory is not atomic and does not establish custody of descendants that fork or escape after it; this package does not provide a general process supervisor or a no-zombie guarantee.
+Decision: hand off the profile and bounded descendant-cleanup corrections for parent review, exact artifact checks and hosted CI.
+Refs: python/jevdual/effectors/cdp/launch.py; tests/test_cdp_launch_custody.py.

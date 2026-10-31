@@ -27,6 +27,12 @@ class LaunchRefused(RuntimeError):
         super().__init__(message)
 
 
+class CleanupUnverified(RuntimeError):
+    """Owned cleanup could not establish the bounded known-process postcondition."""
+
+    code = "browser_cleanup_unverified"
+
+
 @dataclass(frozen=True)
 class OwnedChrome:
     pid: int
@@ -104,31 +110,94 @@ def launch(executable: str, profile_dir: Path, *, headless: bool = True, timeout
             pid=process.pid, incarnation=incarnation, executable=executable, profile_dir=profile_dir,
             headless=headless, browser_url=f"ws://127.0.0.1:{port}{path}", process=process,
         )
-    except BaseException:
-        _terminate(process)
+    except BaseException as exc:
+        try:
+            _terminate(process)
+        except CleanupUnverified as cleanup:
+            exc.add_note(str(cleanup))
         raise
 
 
-def _terminate(process: subprocess.Popen) -> None:
+def _terminate(process: subprocess.Popen, *, incarnation: float | None = None) -> None:
+    """Stop the root and descendants inventoried while its custody can still be checked.
+
+    A process group is signaled only before this Popen root is reaped. Captured descendants are
+    subsequently addressed individually, with a fresh start-time check and psutil's reuse guard.
+    This bounded inventory cannot prove absence of a concurrently forked or escaped descendant.
+    """
+    import psutil
+
     if process.poll() is not None:
-        return
+        raise CleanupUnverified("the browser root exited before descendants could be inventoried")
     try:
-        os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        return
+        root = psutil.Process(process.pid)
+        if incarnation is not None and root.create_time() != incarnation:
+            raise CleanupUnverified("the browser root changed incarnation before cleanup")
+        descendants = []
+        for child in root.children(recursive=True):
+            try:
+                descendants.append((child.pid, child.create_time()))
+            except psutil.NoSuchProcess:
+                pass  # an ordinary child exit during inventory requires no signal
+    except psutil.Error as exc:
+        raise CleanupUnverified("the browser descendant inventory was unavailable") from exc
+
+    def live(identity: tuple[int, float]):
+        try:
+            child = psutil.Process(identity[0])
+            if child.create_time() != identity[1] or child.status() == psutil.STATUS_ZOMBIE:
+                return None
+            return child
+        except psutil.NoSuchProcess:
+            return None
+        except psutil.Error as exc:
+            raise CleanupUnverified("a captured descendant could not be revalidated") from exc
+
+    def signal_children(sig: int) -> None:
+        for identity in descendants:
+            child = live(identity)
+            if child is not None:
+                try:
+                    child.send_signal(sig)
+                except psutil.NoSuchProcess:
+                    pass
+                except psutil.Error as exc:
+                    raise CleanupUnverified("a captured descendant could not be stopped") from exc
+
+    def wait_children(timeout: float) -> bool:
+        deadline = time.monotonic() + timeout
+        while any(live(identity) is not None for identity in descendants):
+            if time.monotonic() >= deadline:
+                return False
+            time.sleep(0.02)
+        return True
+
+    # poll can reap a newly exited root: never signal its numeric group after that point.
+    if process.poll() is None:
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
     try:
         process.wait(timeout=3)
     except subprocess.TimeoutExpired:
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            return
+        # Popen keeps its unreaped direct child's identity; do not signal the group here.
+        process.kill()
         process.wait(timeout=3)
+    signal_children(signal.SIGTERM)
+    if not wait_children(3):
+        signal_children(signal.SIGKILL)
+        if not wait_children(3):
+            raise CleanupUnverified("captured browser descendants survived bounded cleanup")
 
 
 def stop(chrome: OwnedChrome) -> None:
-    """Stop a browser this module launched. Never called for a discovered process."""
-    _terminate(chrome.process)
+    """Stop this launched root and its captured descendants, or report cleanup uncertainty.
+
+    This is not an atomic process-tree inventory or proof against daemon escape. The caller owns
+    removal of the fresh profile directory after cleanup; no external profile is removed here.
+    """
+    _terminate(chrome.process, incarnation=chrome.incarnation)
 
 
 async def verify_endpoint(conn, chrome: OwnedChrome) -> None:
