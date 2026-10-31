@@ -7,3 +7,10 @@ Test: in a disposable headless Chrome with two ordinary local fixture fields, fo
 Predicts: the initial focus check is correct but only the sentinel receives the probe text; neither a successful acknowledgement nor checking the intended field after the send establishes safe targeted delivery.
 Against: insertion stays attached to the previously checked field despite the independently observed focus change, or the protocol refuses without changing either field.
 Refs: docs/plans/light-profile-20261030.md (L3a Actions); python/jevdual/effectors/cdp/operations.py (mutations remain refused).
+
+## LCDIU1 · update · 2026-10-31 12:09
+Resolves: LCDI1 = held
+Observed: the installed 817d1fb wheel on macOS Chrome 156 first reported intended as activeElement. A page timer then focused sentinel. The single acknowledged Input.insertText changed only sentinel to the probe text; intended remained exactly empty. The protocol qualification probe used its own disposable profile and closed its connection and captured browser processes.
+Inferred: focus checking plus a later insertion cannot establish target-local delivery, including when the initial check occurs in an isolated world. The intervening focus change is page state, independent of the reader's realm.
+Next: qualify DOM-event clicking separately; keep typing refused until a delivery mechanism protects the exact target through dispatch and handles changed semantics, values and lost acknowledgements. No live effect, CLI selection or mutation effector was enabled by this probe.
+Refs: output/cdp-takeover/focus_probe.py; output/cdp-takeover/focus-result.json; results/light-cdp-read-20261031/report.md.
