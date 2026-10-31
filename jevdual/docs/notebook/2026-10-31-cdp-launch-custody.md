@@ -20,3 +20,11 @@ Established: an owned CDP launch requires a newly created private profile; pre-e
 Uncertain: shutdown of a TERM-resistant descendant after its root exits; root termination is not a full process-tree postcondition. Linux runtime behavior remains the parent's installed-wheel CI check.
 Decision: hand off the scoped profile-custody correction and its negative controls. Preserve process-tree cleanup as a separate qualification issue rather than claiming group TERM proves cleanup.
 Refs: python/jevdual/effectors/cdp/launch.py; tests/test_cdp_launch_custody.py.
+
+## LC2 · prediction · 2026-10-31 12:05
+Question: does owned cleanup leave a TERM-resistant descendant alive when the root exits promptly?
+Hypothesis: waiting only for the root after group TERM returns before a TERM-resistant child exits. Capturing descendant pid/start identities while the root is owned and live, then revalidating and stopping those exact processes, closes this demonstrated path without group signaling after the root is reaped.
+Test: a dedicated Python helper starts a child that installs SIGTERM ignore and records readiness. A separate sentinel process shares no custody. Run stop and assert the root is reaped, the captured child no longer runs, and the unrelated sentinel is alive. Also exercise a root that exits before inventory: cleanup must raise a typed uncertainty rather than claim success. First run the resistant-child case against the current cleanup, then fix and rerun with real-Chrome observation and profile-custody tests.
+Predicts: current stop returns with the resistant child alive; revised cleanup stops the captured child, leaves the sentinel alone, and refuses already-lost custody. It never issues a second group signal after root reaping.
+Against: current cleanup already stops the resistant child; revised cleanup signals the unrelated sentinel, targets a changed process incarnation, returns with a live captured child or claims full cleanup without an inventory.
+Refs: python/jevdual/effectors/cdp/launch.py; tests/test_cdp_launch_custody.py; parent review request.
