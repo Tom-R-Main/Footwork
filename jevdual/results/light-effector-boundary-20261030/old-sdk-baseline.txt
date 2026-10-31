@@ -1,0 +1,21 @@
+........................................................................ [ 21%]
+........................................................................ [ 42%]
+........................................................................ [ 64%]
+.................................................sssssssssssssssssssssss [ 85%]
+sssssssF.........................................                        [100%]
+=================================== FAILURES ===================================
+______________________ test_cua_driver_version_is_pinned _______________________
+
+    def test_cua_driver_version_is_pinned():
+        # every native module: the effect vocabulary and refusal codes below are this version's
+>       assert importlib.metadata.version("cua-driver") == PINNED_VERSION
+E       AssertionError: assert '0.38.0+footwork.d5373879' == '0.38.0+footw...3879.cleanup2'
+E         
+E         - 0.38.0+footwork.d5373879.cleanup2
+E         ?                         ---------
+E         + 0.38.0+footwork.d5373879
+
+tests/contract/test_cua_driver_seams.py:36: AssertionError
+=========================== short test summary info ============================
+FAILED tests/contract/test_cua_driver_seams.py::test_cua_driver_version_is_pinned
+1 failed, 306 passed, 30 skipped in 5.00s
