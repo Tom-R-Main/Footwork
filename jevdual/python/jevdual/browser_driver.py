@@ -484,6 +484,8 @@ class BrowserBridge:
                 error_code=refusal.code if refusal is not None else None,
                 delivery=refusal.delivery if refusal is not None else None,
                 retryable=refusal.retryable if refusal is not None else None,
+                # only an effector that refused before sending may say nothing was sent
+                dispatched=reply.dispatched is not False,
                 **advice,
             )
         return BrowserEffect(op, id, label, "unverifiable", summary=reply.text[:200], **advice)

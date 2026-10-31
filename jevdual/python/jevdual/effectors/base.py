@@ -63,6 +63,9 @@ class BrowserReply:
     #: the effector's suggested follow-up call. It names an effector tool, so it is carried for
     #: diagnosis only and never offered to the host agent as a callable surface.
     next_call: Mapping[str, Any] | None = None
+    #: False only when the effector knows nothing reached the page (it refused before sending);
+    #: None when the reply cannot say, which is every CUA reply
+    dispatched: bool | None = None
 
     @property
     def refused(self) -> bool:
