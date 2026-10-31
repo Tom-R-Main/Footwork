@@ -39,7 +39,7 @@ Inferred: replacing elapsed-time inference with observed progress removes this r
 Next: retry final-head CI, retain its earlier failure and require all gates before merging PR14. Browser-only contract, headless readiness, exact-value and cross-command custody refinements are now explicit in the plan; no new browser is claimed.
 Refs: results/light-effector-boundary-20261030/report.md; results/light-effector-boundary-20261030/ci-simulator-failure.txt; results/light-effector-boundary-20261030/controller-parent-final.txt; source0d4dba8
 
-## LEB3 · prediction · 2026-10-30 21:58
+## LEB3 · prediction · 2026-10-30 21:56
 Hypothesis: moving eager SDK imports into lazy factories also changes the missing-package precondition at direct bind_footwork_chrome, cmd_run and coexist.run_case entry: they can launch Chrome, read keys/create output or probe the human/create a temp directory before the factory detects absence. Import-only entry preflights can restore the original failure ordering across this class of callers without creating a driver.
 Test: absent-SDK public/API entry tests replace the first external side effect with a forbidden sentinel (Chrome launch, key load/output creation, idle probe/temp creation). Reproduce before correction, then require effector_unavailable with no sentinel entered. Audit all former CuaDriver constructor imports and the Linux target probe; rerun SDK/native/session regressions and rebuild the installed artifact.
 Predicts: each API refuses before its first external side effect when CUA is absent; normal factories/SDK records/shutdown behavior stay unchanged and existing fixtures pass.
