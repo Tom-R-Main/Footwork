@@ -66,6 +66,8 @@ class BrowserReply:
     #: False only when the effector knows nothing reached the page (it refused before sending);
     #: None when the reply cannot say, which is every CUA reply
     dispatched: bool | None = None
+    #: qualified actual delivery route, when distinct from the caller's requested route
+    route: str | None = None
 
     @property
     def refused(self) -> bool:
