@@ -99,6 +99,7 @@ alone is not proof that the wider task is complete.
 
 ## Choose your next route
 
+- **Owned headless browser:** the [CDP preview](owned-cdp.md) adds guarded button activation and durable restart retention without a desktop at runtime. Typing and general browser completion remain unavailable; the light dependency-metadata split is still pending.
 - **Native apps:** try the [macOS operator example](../../README.md#drive-it), or the
   [Linux Mousepad path](linux-support.md#exact-text-and-document-scope). Linux repeated desktop
   sessions have known native teardown aborts and target-readiness timeouts; current qualification

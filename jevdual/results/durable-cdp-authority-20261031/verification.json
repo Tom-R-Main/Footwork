@@ -1,0 +1,98 @@
+{
+  "source": "e4df2c6b04644c332c8a636c556ae2fee0822d28",
+  "wheel_sha256": "ae780174a9f0dcfc0583dd9ed9c814f9f940fbfa54b6f64fdf50aad38233b059",
+  "wheel_entries": 211,
+  "installed_package_files_equal": 206,
+  "local_platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+  "local_regression": {
+    "passed": 2685,
+    "skipped": 95,
+    "deselected": 60,
+    "mode": "pure Python; borrowed matching-CUA development test environment"
+  },
+  "installed": {
+    "passed": 201,
+    "cua_driver_present": false,
+    "browser_use_present": false,
+    "mode": "minimal binary-only dependency environment, source-matched wheel installed --no-deps; not the future light installer"
+  },
+  "typing": "disabled in CDP CLI/RPC and effector",
+  "completion_reader": "not implemented; ack/loss remains unknown and completion unverified",
+  "vm": {
+    "report": "../durable-cdp-vm-20261031/e4df2c6/report.md",
+    "evidence_origin": "7a874eb1d00d94767ab8b6fcc3907be1084b32ba",
+    "passed": 201,
+    "failed": 0,
+    "skipped": 0,
+    "unchanged_test_files_verified": 12,
+    "installed_package_files_equal": 206,
+    "cpu_quota": 4,
+    "memory_gib": 16,
+    "outer_test_wrapper_zombies_reaped": 205,
+    "outer_extra_signals": 0,
+    "outer_final_owned_descendants": 0,
+    "nested_startup_supervisor_reaps": [
+      5,
+      6,
+      5,
+      6
+    ],
+    "limit": "test-only subreaping is not product cleanup; no 2CPU/8GB baseline"
+  },
+  "requirements": [
+    {
+      "criterion": "Admission is committed before possible activation",
+      "kind": "historical action",
+      "evidence": "test_browser_holder + test_browser_restart_cli",
+      "result": "local and exact installed VM passed"
+    },
+    {
+      "criterion": "Stable token replay after client/holder loss never redispatches",
+      "kind": "historical action",
+      "evidence": "test_browser_cdp_cli + test_browser_restart_cli; independent ingress 0/0/1",
+      "result": "local and exact installed VM passed"
+    },
+    {
+      "criterion": "Unknown blocks other mutations across sessions/shared native domain",
+      "kind": "historical action",
+      "evidence": "test_browser_durable_authority + test_browser_holder",
+      "result": "local and exact installed VM passed"
+    },
+    {
+      "criterion": "Configured judgment required and failures refuse before admission",
+      "kind": "historical action",
+      "evidence": "test_browser_guard + test_missing_guard_refuses_before_admission",
+      "result": "local and exact installed VM passed; no paid/live Jev quality trial"
+    },
+    {
+      "criterion": "Native evidence does not accept browser identity or producer",
+      "kind": "historical action",
+      "evidence": "test_browser_durable_authority + existing native evidence tests",
+      "result": "local and exact installed VM passed; native allowlists unchanged"
+    },
+    {
+      "criterion": "Pre-readiness signals preserve actual owned Chrome handle",
+      "kind": "current state",
+      "evidence": "test_browser_startup_lifecycle; old wheel fails, fixed four real cells pass",
+      "result": "local and exact installed VM passed; absence only for captured live processes; test reaping separate"
+    },
+    {
+      "criterion": "Installed discovery names CDP scope, prerequisites and unavailable features",
+      "kind": "answer",
+      "evidence": "test_browser_cdp_cli; tools/doctor/schema/guide",
+      "result": "local and exact installed VM passed"
+    },
+    {
+      "criterion": "Typing stays disabled",
+      "kind": "historical action",
+      "evidence": "effector refusal contracts + CLI parser + RPC allowlist tests",
+      "result": "local and exact installed VM passed"
+    },
+    {
+      "criterion": "Post-admission retention failure cannot certify no-send or swallow cancellation",
+      "kind": "historical action",
+      "evidence": "test_browser_holder::test_post_admission_retention_failure_never_certifies_no_send",
+      "result": "local and exact installed VM passed; injected sensitivity control, not actual storage incident"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "anchors": [
+    {
+      "id": "ev-cd1396cf9a543a0da0cb6fed",
+      "head": "5868f7c05020e047c00e68e4abf9253cce864f41",
+      "path": "cli/src/connection.rs",
+      "start_line": 1084,
+      "end_line": 1169,
+      "file_sha256": "e7fc52ddc052a54d672dc5bf70c4d8f7d03a2c8131dd5f5c672f373c687cf112",
+      "slice_sha256": "318de6abda8850260fc42d6fade2b9d44353afb1fa9b149a318bcde90d3437c5",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "agent-browser",
+      "transfer": "Separate known not-sent transport from any possible-send loss; never replay a mutation."
+    },
+    {
+      "id": "ev-cd2d3b7de9e879914b7b949f",
+      "head": "5868f7c05020e047c00e68e4abf9253cce864f41",
+      "path": "cli/src/connection.rs",
+      "start_line": 1234,
+      "end_line": 1347,
+      "file_sha256": "e7fc52ddc052a54d672dc5bf70c4d8f7d03a2c8131dd5f5c672f373c687cf112",
+      "slice_sha256": "333e9209d1b56d62b91e6ed6ffd0439a6461f109440ad4f64b68e08f6014a2c2",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "agent-browser",
+      "transfer": "Lost-response fixture must establish one request independently."
+    },
+    {
+      "id": "ev-0860862fcd5501a1b90e9be5",
+      "head": "5868f7c05020e047c00e68e4abf9253cce864f41",
+      "path": "cli/src/native/browser.rs",
+      "start_line": 1335,
+      "end_line": 1427,
+      "file_sha256": "b8e5bbf9f9305aa6e424aa4a140a76d88fac8ec9b4442ab77b5bccac67a515a6",
+      "slice_sha256": "6bcbb8113c5f98155dd43cbdd276539e06af6ec423d64f4e322f3a4c641cc0a0",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "agent-browser",
+      "transfer": "Strict pinned target disappearance refuses; no neighbor or URL rebinding."
+    },
+    {
+      "id": "ev-b92b3e95bf09305b505fe79d",
+      "head": "5868f7c05020e047c00e68e4abf9253cce864f41",
+      "path": "cli/src/native/browser.rs",
+      "start_line": 4409,
+      "end_line": 4434,
+      "file_sha256": "b8e5bbf9f9305aa6e424aa4a140a76d88fac8ec9b4442ab77b5bccac67a515a6",
+      "slice_sha256": "e8a39b946d2f15e8148e4931fc93d5226f193614dac5bd8ec015f75a2b0baf46",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "agent-browser",
+      "transfer": "A missing pinned target does not authorize creating a blank replacement."
+    },
+    {
+      "id": "ev-8add12cd6d9cc35bdf944399",
+      "head": "7862adfd3424d6f379af01f4276a87019b08c507",
+      "path": "allocate.go",
+      "start_line": 404,
+      "end_line": 445,
+      "file_sha256": "283773a715d9e1282a869d00368e5547083f9c982c706ebac3eee995712cfe98",
+      "slice_sha256": "e0eb431556e344e87f0b857cf735669f34471445b755fbdc2816980b609e634e",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "chromedp",
+      "transfer": "Keep the actual owned child handle and one wait lifecycle."
+    },
+    {
+      "id": "ev-15d2df3506a0b868b3b39c3b",
+      "head": "5868f7c05020e047c00e68e4abf9253cce864f41",
+      "path": "cli/src/native/daemon.rs",
+      "start_line": 886,
+      "end_line": 945,
+      "file_sha256": "6f2ca91e22a27dfee2b24e229b750aea9edc6fc54c3078b62af03cdffc93f81e",
+      "slice_sha256": "f62669da53e7097926331b87ba99d3143088133c1c6bea3c905d5fd46ea71f23",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "agent-browser",
+      "transfer": "Do not copy process-global waitpid(-1) into a normal holder."
+    },
+    {
+      "id": "ev-fc71b3ad345ca30e5cef188d",
+      "head": "369448a167e8b3da4ca5bca0b3307500c3371828",
+      "path": "src/tini.c",
+      "start_line": 423,
+      "end_line": 462,
+      "file_sha256": "edc7bcc873afc9a6770601e3b84d1b74528461d33a5f913ce1e8b5798f1cec75",
+      "slice_sha256": "162e4515bc4b82a0065ff561d657d713619bab6c7a5fda852e0d7da10f10e1d7",
+      "dirty": false,
+      "claim_limit": "Source observation; does not prove runtime behavior or transfer.",
+      "repository": "tini",
+      "transfer": "Orphan reaping belongs to a declared init/subreaper role, not business completion evidence."
+    }
+  ],
+  "rejected_transfers": [
+    "automatic daemon respawn as operation recovery",
+    "PID or executable name as process incarnation",
+    "locator fallback as continuation of an observed ref",
+    "CDP command IDs as durable idempotency keys",
+    "global orphan reaping inside the holder",
+    "DOM agreement as proof of historical application"
+  ],
+  "target_contract": "docs/owned-cdp.md",
+  "target_native_validator": "python/jevdual/operator_evidence.py remains unchanged"
+}

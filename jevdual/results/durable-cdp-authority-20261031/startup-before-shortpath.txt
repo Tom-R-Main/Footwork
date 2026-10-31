@@ -1,0 +1,19 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+____________ test_start_closes_actual_child_on_readiness_exception _____________
+tests/test_browser_startup_cli.py:50: in test_start_closes_actual_child_on_readiness_exception
+    assert child.terminated and child.waited
+E   assert (False)
+E    +  where False = <tests.test_browser_startup_cli.test_start_closes_actual_child_on_readiness_exception.<locals>.Child object at 0x107fdedb0>.terminated
+__________________ test_cdp_schema_names_an_invocable_command __________________
+tests/test_browser_startup_cli.py:57: in test_cdp_schema_names_an_invocable_command
+    assert schema["command"] == ["browser", "cdp", "click"]
+E   AssertionError: assert ['cdp', 'click'] == ['browser', 'cdp', 'click']
+E     
+E     At index 0 diff: 'cdp' != 'browser'
+E     Right contains one more item: 'click'
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/test_browser_startup_cli.py::test_start_closes_actual_child_on_readiness_exception
+FAILED tests/test_browser_startup_cli.py::test_cdp_schema_names_an_invocable_command
+2 failed in 0.12s

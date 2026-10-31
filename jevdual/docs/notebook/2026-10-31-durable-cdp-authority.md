@@ -51,3 +51,15 @@ Resolves: DCA5 = held
 Observed: both injected controls failed before the fix: post-activation retention failure returned dispatched=false, and a second retention failure replaced CancelledError with a false no-send reply. A narrow fallback now reports browser_retention_unverified with dispatched=null and retryable=false, preserves cancellation, leaves started custody blocked, and prevents a second activation. This is a sensitivity control, not a reproduced disk-full incident.
 Next: freeze the final runtime, repeat exact installed checks and VM qualification, then close the package without claiming a browser completion reader or light installer.
 Refs: tests/test_browser_holder.py::test_post_admission_retention_failure_never_certifies_no_send; results/durable-cdp-authority-20261031/retention-before.txt
+
+## DCAU5 · update · 2026-10-31 15:17
+Resolves: DCA1 = held; DCA2 = held
+Observed: final runtime e4df2c6 and wheel ae780174 passed 201 installed checks locally and 201/201 in the VM, with no CUA/browser-use. All 206 installed package files and all 12 copied VM test files match the candidate. Real interruption cells retain independent ingress 0/0/1, client-loss replay retains one effect, unknown blocks new mutations, and installed tools/doctor/schema/guide expose actual requirements and disabled typing. The source regression gate passed 2685 tests (95 skipped, 60 browser/live deselected). VM evidence arrived as ten notebook/results-only commits from 7a874eb and was imported with -x provenance; no candidate source or tests changed during measurement. Earlier VM 187/3 collector failures and 199/199 run remain separate history.
+Next: finish final-head hosted checks and merge PR18; keep L3c completion readers, pipe custody, L2 metadata and small-host measurement open.
+Refs: results/durable-cdp-authority-20261031/report.md; results/durable-cdp-vm-20261031/e4df2c6/report.md
+
+## DCAS · summary · 2026-10-31 15:17
+Established: explicit guarded owned-CDP admission and read-only restart retention are checked on the source-matched installed artifact, including lost client reply, committed holder death boundaries, pre-readiness signals and injected double-retention failure. Independent review found no remaining actionable defect in the changed runtime after remediation. Native validators and legacy CUA behavior are preserved.
+Uncertain: no qualified browser completion reader exists; acknowledgement remains unknown/unverified and blocks new mutation. Loopback CDP is not same-user isolation. Bounded inventories do not establish global process cleanliness; VM outer test wrapper reaped 205 zombies and nested startup supervisors separately reaped 5/6/5/6. This is a 4-CPU/16GiB VM, not the requested future small-host resource baseline. No live paid Jev quality trial or light package-metadata install was run.
+Decision: accept this bounded authority/restart package for PR18 through the final hosted/merge gates, keep CDP typing disabled, and retain the remaining plan gates explicitly.
+Refs: results/durable-cdp-authority-20261031/verification.json; results/durable-cdp-authority-20261031/review.json; docs/owned-cdp.md

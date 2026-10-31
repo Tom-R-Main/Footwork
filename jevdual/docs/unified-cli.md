@@ -35,7 +35,9 @@ Installation includes the pinned MuJoCo tool extra by default; `--core-only` omi
 
 ## Browser and computer operations
 
-`footwork browser` and `footwork desktop` route to the existing session commands. `start`, `look`, `do`, `read`, `done`, and `status` retain the existing admission checks, fresh target identities, receipts and completion verification. Browser start uses Footwork's dedicated Chrome; desktop start selects a running native app. Use separate explicit `--session` directories for independent tasks. Initial same-Space Chrome attachment may require bringing that owned Chrome window to the foreground.
+The legacy `footwork browser start/look/do` verbs and `footwork desktop` route to the existing session commands. `start`, `look`, `do`, `read`, `done`, and `status` retain the existing admission checks, fresh target identities, receipts and completion verification. Browser start uses Footwork's dedicated Chrome; desktop start selects a running native app. Use separate explicit `--session` directories for independent tasks. Initial same-Space Chrome attachment may require bringing that owned Chrome window to the foreground.
+
+For owned headless browsing, use the explicit `footwork browser cdp` route. It keeps guarded admission and unresolved operations across CLI and holder restart without CUA or a desktop session at runtime. Only the bounded native-button route is enabled; typing stays disabled and acknowledgement is not completion. Run `footwork browser cdp guide` for the installed contract, or read the [owned CDP guide](owned-cdp.md). Package metadata still installs the full dependencies; the light installer remains pending.
 
 The original top-level verbs remain compatible. `footwork capability` exposes the existing scoped MCP configuration/server/report commands through the same executable. Its browser-to-TextEdit scope remains intentionally bounded; it does not grant generic input access to an MCP host.
 
@@ -45,7 +47,7 @@ The original top-level verbs remain compatible. `footwork capability` exposes th
 
 `doctor` also includes `host_prerequisites`: OS, architecture, Python, available memory, visible Linux cgroup limits, executable presence and session indicators. The same probe runs before installation with `python3 python/jevdual/host_probe.py` from `jevdual/`, or after installation with `python -m jevdual.host_probe`. It does not launch programs, contact providers, or expose environment-variable values. A present executable or display variable does not qualify a working browser or desktop. Linux native workflows remain unqualified; see [Linux qualification](linux-support.md).
 
-The dedicated browser launcher recognizes installed Linux Chrome/Chromium binaries. Set `FOOTWORK_CHROME_EXECUTABLE` to the actual browser executable for a nonstandard installation such as Chrome for Testing. The process must match that executable, the exact owned profile and debugging port, and the current user. A shell wrapper with a different process executable does not qualify. These launch checks do not supply missing desktop permissions or durable browser admission.
+The dedicated browser launcher recognizes installed Linux Chrome/Chromium binaries. Set `FOOTWORK_CHROME_EXECUTABLE` to the actual browser executable for a nonstandard installation such as Chrome for Testing. The process must match that executable, the exact owned profile and debugging port, and the current user. A shell wrapper with a different process executable does not qualify. These legacy launch checks do not supply missing desktop permissions or durable browser admission; the explicit CDP route above uses its own holder and authority protocol.
 
 ## Auxiliary families
 
@@ -71,4 +73,4 @@ printf '%s' '{"command":"schema","args":["browser","start"]}' | footwork invoke 
 
 Discovery and observation do not contact a model provider. Commands that request Jev judgment or model-driven execution retain their existing credential and admission requirements. Doctor reports runtime prerequisites; it does not validate model credentials or certify a completed GUI effect.
 
-The macOS CI artifacts include `ci-agent-bundle/install.py`, its manifest and both wheels. Download the artifact for the desired Python profile, then run its installer against a new environment as above. This path needs compatible Python and either uv or venv with pip/ensurepip; the consumer does not need a checkout or Rust compiler. Browser/desktop GUI control remains scoped to the qualified macOS drivers and permissions.
+The macOS CI artifacts include `ci-agent-bundle/install.py`, its manifest and both wheels. Download the artifact for the desired Python profile, then run its installer against a new environment as above. This path needs compatible Python and either uv or venv with pip/ensurepip; the consumer does not need a checkout or Rust compiler. Native control remains scoped to its [macOS permissions](quickstart.md) and [Linux X11 preview](linux-support.md); the explicit owned CDP route has the separate headless qualification described above.
