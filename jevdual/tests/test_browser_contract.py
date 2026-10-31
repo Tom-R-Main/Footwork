@@ -15,7 +15,6 @@ import json
 from types import SimpleNamespace
 
 import pytest
-
 from jevdual import browser_driver, cli
 from jevdual.browser_driver import BrowserBridge
 from jevdual.posture import ExecutionPolicy
