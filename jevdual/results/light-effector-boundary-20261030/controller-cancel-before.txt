@@ -1,0 +1,13 @@
+F
+======================================================================
+FAIL: test_running_cancel_verifies_stop_after_real_native_progress (test_controller.ControllerProcessTests.test_running_cancel_verifies_stop_after_real_native_progress)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/test_controller.py", line 351, in test_running_cancel_verifies_stop_after_real_native_progress
+    self.assertGreater(terminal["stop_evidence"]["native_steps_before_cancel"], 0)
+AssertionError: 0 not greater than 0
+
+----------------------------------------------------------------------
+Ran 1 test in 8.290s
+
+FAILED (failures=1)

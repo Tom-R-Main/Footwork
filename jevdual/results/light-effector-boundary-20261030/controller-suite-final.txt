@@ -1,0 +1,27 @@
+......F.......F..............
+======================================================================
+FAIL: test_image_feedback_contact_and_conditional_saved_json (test_controller.ControllerProcessTests.test_image_feedback_contact_and_conditional_saved_json)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/test_controller.py", line 831, in test_image_feedback_contact_and_conditional_saved_json
+    self.assertEqual(final["phase"], "staged", final)
+AssertionError: 'unknown' != 'staged'
+- unknown
++ staged
+ : {'accepted_at': 1793410775.224811, 'accepted_incarnation': '2a36b544541e4bdfa2bdab5848ddf994', 'active_operation_id': None, 'cancel_requested': False, 'controller_dir': '/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/output/c4552511/c', 'current_health': 'blocked', 'current_incarnation': '2a36b544541e4bdfa2bdab5848ddf994', 'finished_at': 1793410775.293302, 'historical_outcome': 'unknown', 'image_generation': 5, 'operation_id': 'loop-5', 'phase': 'unknown', 'pid': 31928, 'proposal_sha256': '0b8e6c3bc7a567aa112458fd39e594b41f152180f704b38d10f2c5e7b66e504f', 'reason': 'lower effect is unresolved', 'replayed': False, 'run_dir': '/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/output/c4552511/r', 'source_kind': 'mujoco_simulation'}
+
+======================================================================
+FAIL: test_satisfied_current_scene_cannot_replace_missing_execution_history (test_controller.ControllerProcessTests.test_satisfied_current_scene_cannot_replace_missing_execution_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/test_controller.py", line 607, in test_satisfied_current_scene_cannot_replace_missing_execution_history
+    self.assertEqual(self.until("history-missing")["phase"], "staged")
+AssertionError: 'unknown' != 'staged'
+- unknown
++ staged
+
+
+----------------------------------------------------------------------
+Ran 29 tests in 32.061s
+
+FAILED (failures=2)

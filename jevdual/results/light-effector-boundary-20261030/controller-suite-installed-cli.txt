@@ -1,0 +1,21 @@
+......E......................
+======================================================================
+ERROR: test_image_feedback_contact_and_conditional_saved_json (test_controller.ControllerProcessTests.test_image_feedback_contact_and_conditional_saved_json)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/test_controller.py", line 833, in test_image_feedback_contact_and_conditional_saved_json
+    checked = subprocess.run([str(BASE.parents[1] / "jevdual/.venv/bin/footwork"), "check-artifact",
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/thomasmain/projects/footwork/.worktrees/light-profile/jevdual/.venv/bin/footwork'
+
+----------------------------------------------------------------------
+Ran 29 tests in 32.303s
+
+FAILED (errors=1)

@@ -1,0 +1,30 @@
+E.
+======================================================================
+ERROR: test_native_progress_wait_refuses_absent_or_invalid_marker (test_controller.ControllerProcessTests.test_native_progress_wait_refuses_absent_or_invalid_marker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/test_controller.py", line 458, in test_native_progress_wait_refuses_absent_or_invalid_marker
+    self.body.encoded({**valid, "sim_time_after": float("inf")}),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/thomasmain/projects/footwork/.worktrees/light-profile/tools/physical-workcell/workcell.py", line 49, in encoded
+    return (json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 398, in _iterencode_dict
+    yield _floatstr(value)
+          ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 240, in floatstr
+    raise ValueError(
+ValueError: Out of range float values are not JSON compliant: inf
+
+----------------------------------------------------------------------
+Ran 2 tests in 5.727s
+
+FAILED (errors=1)
