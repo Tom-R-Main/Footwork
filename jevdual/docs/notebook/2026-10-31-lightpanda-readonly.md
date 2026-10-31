@@ -25,3 +25,16 @@ Inferred: a separate DOM-only producer can use this engine without borrowing Chr
 Changes: the final conformance review counts spaces/newlines inside the declared text-character budget. README revision used the explicitly selected local Colophon paul-graham profile through a private numeric guidance export; the session drafted the candidate without another writing-provider call. Structural checking preserves all 149 original technical spans and the two intended new route spans, without certifying voice or facts.
 Next: freeze the source, qualify the exact installed wheel on macOS and in the authorized Linux VM chat, and review the complete diff before merge.
 Refs: output/lightpanda-binaries/local-provenance.json; output/lightpanda-launch/real-transport.json; output/lightpanda-probe/cli-real-faults.txt; output/lightpanda-probe/unit-final-first.txt; output/readme-colophon/final-structural-check.json.
+
+## LPRO5 · update · 2026-10-31 16:34
+Observed: the exact d9ca03e wheel (90790706d08d4799dc4a9a0559a74d575b7a89026bf6cf4ca4e1f12db0052909) passed all 303 installed checks on macOS without CUA/browser-use; all 155 installed Python files matched source. The installed public command read the documented HTTPS example and reported bounded cleanup separately. A separate inherited-model reviewer found no actionable defects and independently reran 119 focused checks; this is a separate context, not model-family diversity.
+Observed: the first full source invocation used a relative PYTHONPATH. Its five failures were all ModuleNotFoundError in subprocess tests changing cwd (2,778 passed); the test environment lost the source path. This is a harness invocation failure, preserved before rerunning with an absolute source path. No product code or assertion changed.
+Next: collect the corrected source result, Linux exact-wheel evidence and final CI; light installer metadata and Lightpanda mutations remain outside this package.
+Refs: output/lightpanda-installed/identity.json; output/lightpanda-installed/junit.xml; output/lightpanda-installed/https-example.json; output/lightpanda-probe/regression.txt; output/lightpanda-probe/regression-absolute-path.txt.
+
+## LPRO6 · prediction · 2026-10-31 16:37
+Hypothesis: the read-only projection can preserve useful main-page content without guessing effective link bases or treating omitted child-frame URLs as eligible top-level reads.
+Test: regress the review counterexamples with base-href relative links and omitted about:srcdoc/data frames; withhold destinations when any captured base href makes them unqualified, and retain bounded child metadata without exporting or navigating it. Run modeled red controls before the correction, then real pinned-engine cases and affected installed checks.
+Predicts: a base-bearing document returns readable link labels with an explicit withheld-destination count; an HTTP(S) main document remains readable when omitted child metadata uses about:srcdoc/data URLs. No new protocol method or input authority is enabled.
+Against: output exports a false frame-relative link destination, child URLs escape or are navigated by Footwork, or valid main content remains blocked by an omitted child URL.
+Refs: PR19 review comments4433205173/4433205174; Lightpanda Node.zig297-301 emits documentURL/baseURL null, so that CDP field cannot establish the effective base.
