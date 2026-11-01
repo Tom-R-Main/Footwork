@@ -15,7 +15,7 @@ from pathlib import Path
 
 REPO = Path("/repo/jevdual")
 CACHE = Path("/workspace/cua-driver/.native-cache/target/release")
-RUSTC = Path("/home/ubuntu/.cargo/bin/rustc")
+RUSTC = Path("/home/ubuntu/.rustup/toolchains/1.97.1-aarch64-unknown-linux-gnu/bin/rustc")
 FILES = (
     "libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs",
     "libs/cua-driver/rust/crates/platform-linux/src/atspi/mod.rs",
