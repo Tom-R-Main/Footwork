@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "write_through_editable_proxies"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.008971792000011192,
+  "result": {
+    "boundary": "write_through_editable_proxies",
+    "client_timeout_ms": null,
+    "elapsed_ms": 2,
+    "error": null,
+    "ok": true,
+    "ordinary_zbus_timeout_ms": 25000,
+    "result": true
+  },
+  "label": "write_through_editable_proxies-ack",
+  "boundary": "write_through_editable_proxies",
+  "fixture_mode": "ack",
+  "client_timeout_ms": null,
+  "attempts": 1,
+  "effects": 1,
+  "methods": [
+    "InsertText"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-a9pQnUdTCc,guid=9363b2fcd96a68c8a8b459796ae795a7",
+    "--journal",
+    "/results/first/write_through_editable_proxies-ack/target.jsonl",
+    "--ready",
+    "/results/first/write_through_editable_proxies-ack/ready.json",
+    "--mode",
+    "ack",
+    "--primary",
+    "InsertText",
+    "--invocation",
+    "write_through_editable_proxies-ack"
+  ],
+  "expected_control_effects": 1,
+  "control_passed": true,
+  "safety_one_effect": true
+}

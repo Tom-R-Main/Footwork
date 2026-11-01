@@ -1,0 +1,18 @@
+[
+  {
+    "owned": "target",
+    "pid": 65,
+    "pre_stop_returncode": null,
+    "returncode": -15,
+    "escalated": false,
+    "wait_completed": true
+  },
+  {
+    "owned": "private_bus",
+    "pid": 64,
+    "pre_stop_returncode": null,
+    "returncode": 0,
+    "escalated": false,
+    "wait_completed": true
+  }
+]

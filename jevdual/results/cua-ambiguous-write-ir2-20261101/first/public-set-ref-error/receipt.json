@@ -1,0 +1,54 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "public_set_ref"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.018566834000012022,
+  "result": {
+    "backstop_extra_ms": 500,
+    "boundary": "public_set_ref",
+    "elapsed_ms": 4,
+    "error": "text_write_uncertain: EditableText.SetTextContents acknowledgement unavailable; delivery unknown: org.freedesktop.DBus.Error.Failed: IR1 effect already applied",
+    "ok": false,
+    "operation_budget_ms": 3000
+  },
+  "label": "public-set-ref-error",
+  "boundary": "public_set_ref",
+  "fixture_mode": "error",
+  "client_timeout_ms": null,
+  "attempts": 1,
+  "effects": 1,
+  "methods": [
+    "SetTextContents"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-M2ExvevHIF,guid=262a6be717485e8e3b451c9d6ae795a8",
+    "--journal",
+    "/results/first/public-set-ref-error/target.jsonl",
+    "--ready",
+    "/results/first/public-set-ref-error/ready.json",
+    "--mode",
+    "error",
+    "--primary",
+    "SetTextContents",
+    "--invocation",
+    "public-set-ref-error"
+  ],
+  "expected_control_effects": null,
+  "control_passed": null,
+  "safety_one_effect": true
+}

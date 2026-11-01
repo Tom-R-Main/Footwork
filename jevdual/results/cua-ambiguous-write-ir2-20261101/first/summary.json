@@ -1,0 +1,784 @@
+{
+  "scope": "actual pinned Linux helpers and public retained-ref function in private D-Bus; not registered TypeText or SetValueTool and not Footwork product",
+  "frozen_commit": "86fece5898f8f4256432db9718e2158b5fa1cf2d",
+  "candidate_patch_sha256": "c1367501dc3f3eeca7f2f4d8d0afd3dda6c3c64af9542e4690ee3fb6d1f2d6a3",
+  "binary_sha256": "0ffc93c1eab592e6caabd7cf495fd707feb80c1c3d14611c725e8dd91de96f98",
+  "case_count": 14,
+  "failures": [],
+  "cases": [
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.017266208000023653,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 2,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "set_value_on-ack",
+      "boundary": "set_value_on",
+      "fixture_mode": "ack",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-abDXYgd2ev,guid=45c45414e0536c0d44f414b66ae795a7",
+        "--journal",
+        "/results/first/set_value_on-ack/target.jsonl",
+        "--ready",
+        "/results/first/set_value_on-ack/ready.json",
+        "--mode",
+        "ack",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-ack"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.008963208000068335,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 3,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "set_value_on-false",
+      "boundary": "set_value_on",
+      "fixture_mode": "false",
+      "client_timeout_ms": null,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-a5FCYefisk,guid=7769088161be27c06c2c67206ae795a7",
+        "--journal",
+        "/results/first/set_value_on-false/target.jsonl",
+        "--ready",
+        "/results/first/set_value_on-false/ready.json",
+        "--mode",
+        "false",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-false"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.009490125000070293,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 2,
+        "error": "text_write_uncertain: EditableText.SetTextContents acknowledgement unavailable; delivery unknown: org.freedesktop.DBus.Error.Failed: IR1 effect already applied",
+        "ok": false,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": null
+      },
+      "label": "set_value_on-error",
+      "boundary": "set_value_on",
+      "fixture_mode": "error",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-pCQQedTPvo,guid=b0accda2652a0cdecab799d96ae795a7",
+        "--journal",
+        "/results/first/set_value_on-error/target.jsonl",
+        "--ready",
+        "/results/first/set_value_on-error/ready.json",
+        "--mode",
+        "error",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-error"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.12405999999998585,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": 100,
+        "elapsed_ms": 103,
+        "error": "text_write_uncertain: EditableText.SetTextContents acknowledgement unavailable; delivery unknown: I/O error: timed out: timed out",
+        "ok": false,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": null
+      },
+      "label": "set_value_on-withhold",
+      "boundary": "set_value_on",
+      "fixture_mode": "withhold",
+      "client_timeout_ms": 100,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-x5cw8qzZyo,guid=aa2a22547de2a596629c0dbb6ae795a7",
+        "--journal",
+        "/results/first/set_value_on-withhold/target.jsonl",
+        "--ready",
+        "/results/first/set_value_on-withhold/ready.json",
+        "--mode",
+        "withhold",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-withhold"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "write_through_editable_proxies"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.008971792000011192,
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": null,
+        "elapsed_ms": 2,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "write_through_editable_proxies-ack",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "ack",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-a9pQnUdTCc,guid=9363b2fcd96a68c8a8b459796ae795a7",
+        "--journal",
+        "/results/first/write_through_editable_proxies-ack/target.jsonl",
+        "--ready",
+        "/results/first/write_through_editable_proxies-ack/ready.json",
+        "--mode",
+        "ack",
+        "--primary",
+        "InsertText",
+        "--invocation",
+        "write_through_editable_proxies-ack"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "write_through_editable_proxies"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.017051334000029783,
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": null,
+        "elapsed_ms": 3,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "write_through_editable_proxies-false",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "false",
+      "client_timeout_ms": null,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "InsertText",
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-Z5MGbDtH8Q,guid=de291e2822a25cd8c48ac5386ae795a7",
+        "--journal",
+        "/results/first/write_through_editable_proxies-false/target.jsonl",
+        "--ready",
+        "/results/first/write_through_editable_proxies-false/ready.json",
+        "--mode",
+        "false",
+        "--primary",
+        "InsertText",
+        "--invocation",
+        "write_through_editable_proxies-false"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "write_through_editable_proxies"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.009093957999994018,
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": null,
+        "elapsed_ms": 2,
+        "error": "text_write_uncertain: EditableText.InsertText acknowledgement unavailable; delivery unknown: org.freedesktop.DBus.Error.Failed: IR1 effect already applied",
+        "ok": false,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": null
+      },
+      "label": "write_through_editable_proxies-error",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "error",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-r1D3E34lIC,guid=b698e31d2cb4c20b6b1612a76ae795a7",
+        "--journal",
+        "/results/first/write_through_editable_proxies-error/target.jsonl",
+        "--ready",
+        "/results/first/write_through_editable_proxies-error/ready.json",
+        "--mode",
+        "error",
+        "--primary",
+        "InsertText",
+        "--invocation",
+        "write_through_editable_proxies-error"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "write_through_editable_proxies"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.12020641599997361,
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": 100,
+        "elapsed_ms": 106,
+        "error": "text_write_uncertain: EditableText.InsertText acknowledgement unavailable; delivery unknown: I/O error: timed out: timed out",
+        "ok": false,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": null
+      },
+      "label": "write_through_editable_proxies-withhold",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "withhold",
+      "client_timeout_ms": 100,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-ltviKeIz8k,guid=6b0cf9caa1de304c3b9349ce6ae795a8",
+        "--journal",
+        "/results/first/write_through_editable_proxies-withhold/target.jsonl",
+        "--ready",
+        "/results/first/write_through_editable_proxies-withhold/ready.json",
+        "--mode",
+        "withhold",
+        "--primary",
+        "InsertText",
+        "--invocation",
+        "write_through_editable_proxies-withhold"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "public_set_ref"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.017445625000050313,
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 3,
+        "error": null,
+        "ok": true,
+        "operation_budget_ms": 3000
+      },
+      "label": "public-set-ref-ack",
+      "boundary": "public_set_ref",
+      "fixture_mode": "ack",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-AwQD39NTIc,guid=caafcebdd78f145ede9a283f6ae795a8",
+        "--journal",
+        "/results/first/public-set-ref-ack/target.jsonl",
+        "--ready",
+        "/results/first/public-set-ref-ack/ready.json",
+        "--mode",
+        "ack",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "public-set-ref-ack"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "public_set_ref"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.01747287500006678,
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 4,
+        "error": null,
+        "ok": true,
+        "operation_budget_ms": 3000
+      },
+      "label": "public-set-ref-false",
+      "boundary": "public_set_ref",
+      "fixture_mode": "false",
+      "client_timeout_ms": null,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-yew1HNnH42,guid=6f70264528621bb40d37578e6ae795a8",
+        "--journal",
+        "/results/first/public-set-ref-false/target.jsonl",
+        "--ready",
+        "/results/first/public-set-ref-false/ready.json",
+        "--mode",
+        "false",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "public-set-ref-false"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "public_set_ref"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.018566834000012022,
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 4,
+        "error": "text_write_uncertain: EditableText.SetTextContents acknowledgement unavailable; delivery unknown: org.freedesktop.DBus.Error.Failed: IR1 effect already applied",
+        "ok": false,
+        "operation_budget_ms": 3000
+      },
+      "label": "public-set-ref-error",
+      "boundary": "public_set_ref",
+      "fixture_mode": "error",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-M2ExvevHIF,guid=262a6be717485e8e3b451c9d6ae795a8",
+        "--journal",
+        "/results/first/public-set-ref-error/target.jsonl",
+        "--ready",
+        "/results/first/public-set-ref-error/ready.json",
+        "--mode",
+        "error",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "public-set-ref-error"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "public_set_ref"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 3.5314952100000028,
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 3507,
+        "error": "text_write_uncertain: AT-SPI cached set_value deadline acknowledgement unavailable; delivery unknown",
+        "ok": false,
+        "operation_budget_ms": 3000
+      },
+      "label": "public-set-ref-withhold",
+      "boundary": "public_set_ref",
+      "fixture_mode": "withhold",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-YZpGuy0MBN,guid=c567c15cb0b8ca170e2842ac6ae795a8",
+        "--journal",
+        "/results/first/public-set-ref-withhold/target.jsonl",
+        "--ready",
+        "/results/first/public-set-ref-withhold/ready.json",
+        "--mode",
+        "withhold",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "public-set-ref-withhold"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "direct_timeout"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.1240077919999294,
+      "result": {
+        "boundary": "direct_timeout",
+        "client_timeout_ms": 100,
+        "elapsed_ms": 102,
+        "error": "InputOutput(Custom { kind: TimedOut, error: \"timed out\" })",
+        "ok": false,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": null
+      },
+      "label": "direct-client-timeout-control",
+      "boundary": "direct_timeout",
+      "fixture_mode": "withhold",
+      "client_timeout_ms": 100,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-V2eVZDjoJJ,guid=4e3cad380e67863a554d10186ae795ab",
+        "--journal",
+        "/results/first/direct-client-timeout-control/target.jsonl",
+        "--ready",
+        "/results/first/direct-client-timeout-control/ready.json",
+        "--mode",
+        "withhold",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "direct-client-timeout-control"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/work/build-v2/bin/ir1-probe",
+        "double_set_control"
+      ],
+      "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.00946275000001151,
+      "result": {
+        "boundary": "double_set_control",
+        "client_timeout_ms": null,
+        "elapsed_ms": 3,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "equal-final-value-double-effect-control",
+      "boundary": "double_set_control",
+      "fixture_mode": "ack",
+      "client_timeout_ms": null,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "SetTextContents",
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/footwork/bin/python",
+        "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-qj8Tiw5JWk,guid=0da035f73eed83f29a1eb3bf6ae795ac",
+        "--journal",
+        "/results/first/equal-final-value-double-effect-control/target.jsonl",
+        "--ready",
+        "/results/first/equal-final-value-double-effect-control/ready.json",
+        "--mode",
+        "ack",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "equal-final-value-double-effect-control"
+      ],
+      "expected_control_effects": 2,
+      "control_passed": true,
+      "safety_one_effect": false
+    }
+  ]
+}

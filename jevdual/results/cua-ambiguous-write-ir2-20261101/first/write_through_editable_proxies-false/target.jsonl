@@ -1,0 +1,6 @@
+{"invocation": "write_through_editable_proxies-false", "monotonic_ns": 620193872449, "kind": "target_ready", "pid": 35, "unique_name": ":1.0"}
+{"invocation": "write_through_editable_proxies-false", "monotonic_ns": 620217361532, "kind": "method_received", "method": "InsertText", "arguments": [0, "TOKEN", 5], "serial": 4}
+{"invocation": "write_through_editable_proxies-false", "monotonic_ns": 620217599907, "kind": "reply_behavior", "method": "InsertText", "behavior": "false", "value": ""}
+{"invocation": "write_through_editable_proxies-false", "monotonic_ns": 620217990782, "kind": "method_received", "method": "SetTextContents", "arguments": ["TOKEN"], "serial": 5}
+{"invocation": "write_through_editable_proxies-false", "monotonic_ns": 620218106115, "kind": "effect_applied", "method": "SetTextContents", "before": "", "after": "TOKEN"}
+{"invocation": "write_through_editable_proxies-false", "monotonic_ns": 620218208824, "kind": "reply_behavior", "method": "SetTextContents", "behavior": "ack", "value": "TOKEN"}

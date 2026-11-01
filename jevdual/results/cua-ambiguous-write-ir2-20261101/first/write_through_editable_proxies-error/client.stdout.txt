@@ -1,0 +1,1 @@
+{"boundary":"write_through_editable_proxies","client_timeout_ms":null,"elapsed_ms":2,"error":"text_write_uncertain: EditableText.InsertText acknowledgement unavailable; delivery unknown: org.freedesktop.DBus.Error.Failed: IR1 effect already applied","ok":false,"ordinary_zbus_timeout_ms":25000,"result":null}

@@ -1,0 +1,4 @@
+{"invocation": "public-set-ref-error", "monotonic_ns": 620637895699, "kind": "target_ready", "pid": 60, "unique_name": ":1.0"}
+{"invocation": "public-set-ref-error", "monotonic_ns": 620657298990, "kind": "method_received", "method": "SetTextContents", "arguments": ["TOKEN"], "serial": 12}
+{"invocation": "public-set-ref-error", "monotonic_ns": 620657478990, "kind": "effect_applied", "method": "SetTextContents", "before": "", "after": "TOKEN"}
+{"invocation": "public-set-ref-error", "monotonic_ns": 620657557949, "kind": "reply_behavior", "method": "SetTextContents", "behavior": "error", "value": "TOKEN"}

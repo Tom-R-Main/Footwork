@@ -1,0 +1,4 @@
+{"invocation": "write_through_editable_proxies-ack", "monotonic_ns": 620133021740, "kind": "target_ready", "pid": 30, "unique_name": ":1.0"}
+{"invocation": "write_through_editable_proxies-ack", "monotonic_ns": 620159311490, "kind": "method_received", "method": "InsertText", "arguments": [0, "TOKEN", 5], "serial": 4}
+{"invocation": "write_through_editable_proxies-ack", "monotonic_ns": 620159487532, "kind": "effect_applied", "method": "InsertText", "before": "", "after": "TOKEN"}
+{"invocation": "write_through_editable_proxies-ack", "monotonic_ns": 620159579532, "kind": "reply_behavior", "method": "InsertText", "behavior": "ack", "value": "TOKEN"}

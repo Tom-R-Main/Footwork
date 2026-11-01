@@ -1,0 +1,4 @@
+{"invocation": "write_through_editable_proxies-withhold", "monotonic_ns": 620335912282, "kind": "target_ready", "pid": 45, "unique_name": ":1.0"}
+{"invocation": "write_through_editable_proxies-withhold", "monotonic_ns": 620353234990, "kind": "method_received", "method": "InsertText", "arguments": [0, "TOKEN", 5], "serial": 4}
+{"invocation": "write_through_editable_proxies-withhold", "monotonic_ns": 620353435657, "kind": "effect_applied", "method": "InsertText", "before": "", "after": "TOKEN"}
+{"invocation": "write_through_editable_proxies-withhold", "monotonic_ns": 620353528907, "kind": "reply_behavior", "method": "InsertText", "behavior": "withhold", "value": "TOKEN"}

@@ -1,0 +1,143 @@
+{
+  "status": "verified",
+  "case_count": 14,
+  "all_clients_returned": true,
+  "independent_journals_match_receipts": true,
+  "journal_effect_precedes_error_or_withhold": true,
+  "owned_fixture_waits": 28,
+  "cleanup_escalations": 0,
+  "compile_exit": 0,
+  "link_exit": 0,
+  "dependency_artifacts": 40,
+  "probe_sha256": "0ffc93c1eab592e6caabd7cf495fd707feb80c1c3d14611c725e8dd91de96f98",
+  "frozen_commit": "86fece5898f8f4256432db9718e2158b5fa1cf2d",
+  "cases": [
+    {
+      "label": "set_value_on-ack",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": true,
+      "first_reply_behavior": "ack",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "set_value_on-false",
+      "journal_attempts": 2,
+      "journal_effects": 1,
+      "client_ok": true,
+      "first_reply_behavior": "false",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "set_value_on-error",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "error",
+      "cleanup_waits": 2,
+      "ir1_effects": 2
+    },
+    {
+      "label": "set_value_on-withhold",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "withhold",
+      "cleanup_waits": 2,
+      "ir1_effects": 2
+    },
+    {
+      "label": "write_through_editable_proxies-ack",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": true,
+      "first_reply_behavior": "ack",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "write_through_editable_proxies-false",
+      "journal_attempts": 2,
+      "journal_effects": 1,
+      "client_ok": true,
+      "first_reply_behavior": "false",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "write_through_editable_proxies-error",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "error",
+      "cleanup_waits": 2,
+      "ir1_effects": 2
+    },
+    {
+      "label": "write_through_editable_proxies-withhold",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "withhold",
+      "cleanup_waits": 2,
+      "ir1_effects": 2
+    },
+    {
+      "label": "public-set-ref-ack",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": true,
+      "first_reply_behavior": "ack",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "public-set-ref-false",
+      "journal_attempts": 2,
+      "journal_effects": 1,
+      "client_ok": true,
+      "first_reply_behavior": "false",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "public-set-ref-error",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "error",
+      "cleanup_waits": 2,
+      "ir1_effects": 2
+    },
+    {
+      "label": "public-set-ref-withhold",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "withhold",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "direct-client-timeout-control",
+      "journal_attempts": 1,
+      "journal_effects": 1,
+      "client_ok": false,
+      "first_reply_behavior": "withhold",
+      "cleanup_waits": 2,
+      "ir1_effects": 1
+    },
+    {
+      "label": "equal-final-value-double-effect-control",
+      "journal_attempts": 2,
+      "journal_effects": 2,
+      "client_ok": true,
+      "first_reply_behavior": "ack",
+      "cleanup_waits": 2,
+      "ir1_effects": 2
+    }
+  ],
+  "limits": "Private fixture actual helpers and native retained-ref; no registered TypeTextTool/SetValueTool, full Footwork product, ordinary default helper timeout, or batch dispatch qualification."
+}

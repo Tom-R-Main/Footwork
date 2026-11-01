@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "/work/build-v2/bin/ir1-probe",
+    "direct_timeout"
+  ],
+  "cwd": "/repo/jevdual/scripts/ir1_replay_audit",
+  "returncode": 0,
+  "signal": null,
+  "watchdog_expired": false,
+  "elapsed_seconds": 0.1240077919999294,
+  "result": {
+    "boundary": "direct_timeout",
+    "client_timeout_ms": 100,
+    "elapsed_ms": 102,
+    "error": "InputOutput(Custom { kind: TimedOut, error: \"timed out\" })",
+    "ok": false,
+    "ordinary_zbus_timeout_ms": 25000,
+    "result": null
+  },
+  "label": "direct-client-timeout-control",
+  "boundary": "direct_timeout",
+  "fixture_mode": "withhold",
+  "client_timeout_ms": 100,
+  "attempts": 1,
+  "effects": 1,
+  "methods": [
+    "SetTextContents"
+  ],
+  "transitions": [
+    {
+      "before": "",
+      "after": "TOKEN"
+    }
+  ],
+  "final_value": "TOKEN",
+  "target_argv": [
+    "/workspace/footwork/bin/python",
+    "/repo/jevdual/scripts/ir1_replay_audit/target.py",
+    "--address",
+    "unix:path=/tmp/dbus-V2eVZDjoJJ,guid=4e3cad380e67863a554d10186ae795ab",
+    "--journal",
+    "/results/first/direct-client-timeout-control/target.jsonl",
+    "--ready",
+    "/results/first/direct-client-timeout-control/ready.json",
+    "--mode",
+    "withhold",
+    "--primary",
+    "SetTextContents",
+    "--invocation",
+    "direct-client-timeout-control"
+  ],
+  "expected_control_effects": 1,
+  "control_passed": true,
+  "safety_one_effect": true
+}

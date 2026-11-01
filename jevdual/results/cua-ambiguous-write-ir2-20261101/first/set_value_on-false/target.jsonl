@@ -1,0 +1,6 @@
+{"invocation": "set_value_on-false", "monotonic_ns": 619838673782, "kind": "target_ready", "pid": 15, "unique_name": ":1.0"}
+{"invocation": "set_value_on-false", "monotonic_ns": 619858722323, "kind": "method_received", "method": "SetTextContents", "arguments": ["TOKEN"], "serial": 3}
+{"invocation": "set_value_on-false", "monotonic_ns": 619858902365, "kind": "reply_behavior", "method": "SetTextContents", "behavior": "false", "value": ""}
+{"invocation": "set_value_on-false", "monotonic_ns": 619859348490, "kind": "method_received", "method": "InsertText", "arguments": [0, "TOKEN", 5], "serial": 5}
+{"invocation": "set_value_on-false", "monotonic_ns": 619859448365, "kind": "effect_applied", "method": "InsertText", "before": "", "after": "TOKEN"}
+{"invocation": "set_value_on-false", "monotonic_ns": 619859535948, "kind": "reply_behavior", "method": "InsertText", "behavior": "ack", "value": "TOKEN"}
