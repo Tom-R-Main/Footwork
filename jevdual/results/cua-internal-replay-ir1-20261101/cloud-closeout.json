@@ -1,0 +1,2662 @@
+{
+  "purpose": "Inspection/export only after security-stop; no request or authorization to execute audit code",
+  "origin_preregistration_commit": "56df6cf6a56a10bfe8e16e4f0174ad57405a5676",
+  "preregistration_commit": "d7f888101290e5100ad90f39d924beefbeb0935b",
+  "test_package_commit": "48f93946b39e9f51f45b291b57152692e0d55033",
+  "closeout_commit": "1c517ca0b3f7445bd1ca35d913d09b6ba1660c64",
+  "files": {
+    "jevdual/scripts/ir1_replay_audit/run.py": "\"\"\"Finite IR1 first run; independent fixture journal precedes client grading.\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport select\nimport subprocess\nimport sys\nimport time\n\n\ndef save(path, data):\n    path.write_text(json.dumps(data, indent=2)+'\\n')\n\n\ndef command(argv, cwd, env, timeout, out):\n    start=time.monotonic()\n    with (out/'client.stdout.txt').open('w') as stdout,(out/'client.stderr.txt').open('w') as stderr:\n        child=subprocess.Popen(argv,cwd=cwd,env=env,stdin=subprocess.DEVNULL,stdout=stdout,stderr=stderr)\n        expired=False\n        try:code=child.wait(timeout=timeout)\n        except subprocess.TimeoutExpired:\n            expired=True;child.terminate()\n            try:code=child.wait(timeout=3)\n            except subprocess.TimeoutExpired:child.kill();code=child.wait()\n    raw=(out/'client.stdout.txt').read_text()\n    try:result=json.loads(raw.strip().splitlines()[-1])\n    except (ValueError,IndexError):result=None\n    return {'argv':argv,'cwd':str(cwd),'returncode':code,'signal':-code if code<0 else None,'watchdog_expired':expired,'elapsed_seconds':time.monotonic()-start,'result':result}\n\n\ndef target_case(package, task, output, arm, mode, timeout, label):\n    out=output/label;out.mkdir(mode=0o700)\n    bus=None;target=None;cleanup=[]\n    env=dict(os.environ)\n    for key in list(env):\n        if key in ['DISPLAY','WAYLAND_DISPLAY','DBUS_SESSION_BUS_ADDRESS','AT_SPI_BUS_ADDRESS','OPENAI_API_KEY','ANTHROPIC_API_KEY','TYPESAFE_API_KEY','PYTHONPATH']:\n            env.pop(key,None)\n    try:\n        bus=subprocess.Popen(['/usr/bin/dbus-daemon','--session','--nofork','--print-address=1'],stdout=subprocess.PIPE,stderr=(out/'bus.stderr.txt').open('w'),text=True)\n        assert select.select([bus.stdout],[],[],3)[0], 'private bus startup timeout'\n        address=bus.stdout.readline().strip();assert address.startswith('unix:')\n        env.update(DBUS_SESSION_BUS_ADDRESS=address,AT_SPI_BUS_ADDRESS=address)\n        primary='InsertText' if arm=='write_through_editable_proxies' else 'SetTextContents'\n        target_argv=[sys.executable,str(package/'target.py'),'--address',address,'--journal',str(out/'target.jsonl'),'--ready',str(out/'ready.json'),'--mode',mode,'--primary',primary,'--invocation',label]\n        target=subprocess.Popen(target_argv,env=env,stdout=(out/'target.stdout.txt').open('w'),stderr=(out/'target.stderr.txt').open('w'))\n        deadline=time.monotonic()+4\n        while not (out/'ready.json').exists() and time.monotonic()<deadline:\n            if target.poll() is not None:raise RuntimeError('target startup failed')\n            time.sleep(.02)\n        ready=json.loads((out/'ready.json').read_text());env['IR1_TARGET_BUS']=ready['bus']\n        if timeout is not None:env['IR1_TIMEOUT_MS']=str(timeout)\n        if arm=='linux_ax':\n            env['PYTHONPATH']=str(package.parents[1]/'python')\n            argv=[sys.executable,str(package/'ax_control.py')]\n        else:argv=[str(task/'bin/ir1-probe'),arm]\n        record=command(argv,package,env,40,out)\n        journal=[json.loads(x) for x in (out/'target.jsonl').read_text().splitlines()]\n        attempts=[x for x in journal if x['kind']=='method_received'];effects=[x for x in journal if x['kind']=='effect_applied']\n        record.update(label=label,boundary=arm,fixture_mode=mode,client_timeout_ms=timeout,attempts=len(attempts),effects=len(effects),methods=[x['method'] for x in attempts],transitions=[{'before':x['before'],'after':x['after']} for x in effects],final_value=effects[-1]['after'] if effects else '',target_argv=target_argv)\n        expected=2 if arm=='double_set_control' else (1 if mode in ['ack','false'] or arm in ['direct_timeout','linux_ax'] else None)\n        record['expected_control_effects']=expected\n        record['control_passed']=None if expected is None else len(effects)==expected and (record['result'] is not None)\n        record['safety_one_effect']=len(effects)<=1\n        save(out/'receipt.json',record)\n    except Exception as error:\n        record={'label':label,'boundary':arm,'fixture_mode':mode,'infrastructure_error':f'{type(error).__name__}: {error}'}\n        save(out/'receipt.json',record)\n    finally:\n        for name,child in [('target',target),('private_bus',bus)]:\n            if child is None:continue\n            before=child.poll()\n            if before is None:child.terminate()\n            escalated=False\n            try:code=child.wait(timeout=3)\n            except subprocess.TimeoutExpired:escalated=True;child.kill();code=child.wait()\n            cleanup.append({'owned':name,'pid':child.pid,'pre_stop_returncode':before,'returncode':code,'escalated':escalated,'wait_completed':True})\n        save(out/'cleanup.json',cleanup)\n    print(json.dumps(record),flush=True)\n    return record\n\n\ndef main():\n    p=argparse.ArgumentParser();p.add_argument('task',type=Path);p.add_argument('output',type=Path);a=p.parse_args()\n    package=Path(__file__).resolve().parent;a.output.mkdir(mode=0o700)\n    cases=[]\n    for arm in ['set_value_on','write_through_editable_proxies']:\n        for mode in ['ack','false','error','withhold']:\n            cases.append((arm,mode,100 if mode=='withhold' else None,arm+'-'+mode))\n        cases.append((arm,'withhold',None,arm+'-withhold-default25s'))\n    for mode in ['ack','false','error','withhold']:cases.append(('public_set_ref',mode,None,'public-set-ref-'+mode))\n    cases += [('direct_timeout','withhold',100,'direct-client-timeout-control'),('double_set_control','ack',None,'equal-final-value-double-effect-control'),('linux_ax','ack',None,'footwork-adapter-ack'),('linux_ax','withhold',None,'footwork-adapter-withhold')]\n    records=[target_case(package,a.task,a.output,*case) for case in cases]\n    batch_cases=[('ack',None,None),('pre_refusal','true',None),('post_error','true',None),('post_error','false',None),('post_error',None,None),('post_error','true','explicit'),('post_error','true','inherited'),('post_error',None,'direct')]\n    for i,(mode,fallback,delivery) in enumerate(batch_cases):\n        out=a.output/f'batch-{i+1:02d}';out.mkdir(mode=0o700);env=dict(os.environ,IR1_MODE=mode,IR1_JOURNAL=str(out/'target.jsonl'))\n        for key in ['IR1_FOREGROUND_FALLBACK','IR1_EXPLICIT_BACKGROUND','IR1_INHERITED_BACKGROUND','IR1_DIRECT','DISPLAY','DBUS_SESSION_BUS_ADDRESS','AT_SPI_BUS_ADDRESS']:env.pop(key,None)\n        if fallback is not None:env['IR1_FOREGROUND_FALLBACK']=fallback\n        if delivery is not None:env['IR1_'+{'explicit':'EXPLICIT_BACKGROUND','inherited':'INHERITED_BACKGROUND','direct':'DIRECT'}[delivery]]='1'\n        record=command([str(a.task/'bin/ir1-probe'),'batch'],package,env,15,out)\n        journal=[json.loads(x) for x in (out/'target.jsonl').read_text().splitlines()] if (out/'target.jsonl').exists() else []\n        record.update(label=out.name,mode=mode,fallback=fallback,delivery=delivery,attempts=len(journal),effects=sum(x['effect_applied'] for x in journal))\n        save(out/'receipt.json',record);records.append(record);print(json.dumps(record),flush=True)\n    save(a.output/'summary.json',{'cases':records,'native_archive_sha256':'5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401','binary_sha256':hashlib.sha256((a.task/'bin/ir1-probe').read_bytes()).hexdigest(),'scope':'audit only; actual helpers/private bus versus separate real registry dispatch; no full product identity qualification'})\n    red=any(x.get('effects',0)>1 and x.get('fixture_mode') in ['error','withhold'] for x in records)\n    raise SystemExit(1 if red else 0)\n\n\nif __name__=='__main__':main()\n",
+    "jevdual/scripts/ir1_replay_audit/target.py": "\"\"\"Independent private-bus AT-SPI target. Never imports CUA or Footwork.\"\"\"\nimport argparse\nimport json\nimport os\nimport time\nfrom pathlib import Path\n\nfrom jeepney import DBusAddress, HeaderFields, MessageType, new_method_call\nfrom jeepney.io.blocking import open_dbus_connection\nfrom jeepney.wrappers import new_error, new_method_return\n\n\ndef main():\n    p = argparse.ArgumentParser()\n    for name in ['address', 'journal', 'ready', 'mode', 'primary', 'invocation']:\n        p.add_argument('--'+name, required=True)\n    a = p.parse_args()\n    conn = open_dbus_connection(bus=a.address)\n    daemon = DBusAddress('/org/freedesktop/DBus', bus_name='org.freedesktop.DBus', interface='org.freedesktop.DBus')\n    for name in ['org.footwork.IR1Target', 'org.a11y.Bus', 'org.a11y.atspi.Registry']:\n        conn.send_and_get_reply(new_method_call(daemon, 'RequestName', 'su', (name, 0)), timeout=2)\n    journal = Path(a.journal).open('a', buffering=1)\n    value = ''\n    first = True\n\n    def log(kind, **fields):\n        journal.write(json.dumps({'invocation':a.invocation, 'monotonic_ns':time.monotonic_ns(),\n                                  'kind':kind, **fields})+'\\n')\n        journal.flush()\n        os.fsync(journal.fileno())\n\n    log('target_ready', pid=os.getpid(), unique_name=conn.unique_name)\n    Path(a.ready).write_text(json.dumps({'pid':os.getpid(), 'bus':conn.unique_name}))\n    while True:\n        msg = conn.receive(timeout=120)\n        if msg.header.message_type != MessageType.method_call:\n            continue\n        fields = msg.header.fields\n        method = fields.get(HeaderFields.member, '')\n        interface = fields.get(HeaderFields.interface, '')\n        if method in ['SetTextContents', 'InsertText'] and interface == 'org.a11y.atspi.EditableText':\n            log('method_received', method=method, arguments=list(msg.body), serial=msg.header.serial)\n            fault = a.mode if first and method == a.primary else 'ack'\n            first = False\n            if fault != 'false':\n                before = value\n                if method == 'SetTextContents':\n                    value = msg.body[0]\n                else:\n                    offset, text, length = msg.body\n                    value = value[:offset]+text[:length]+value[offset:]\n                log('effect_applied', method=method, before=before, after=value)\n            log('reply_behavior', method=method, behavior=fault, value=value)\n            if fault == 'withhold':\n                # No held lock or awaited handler: continue servicing the bus.\n                continue\n            if fault == 'error':\n                conn.send(new_error(msg, 'org.freedesktop.DBus.Error.Failed', 's', ('IR1 effect already applied',)))\n            else:\n                conn.send(new_method_return(msg, 'b', (fault != 'false',)))\n        elif method == 'GetInterfaces':\n            conn.send(new_method_return(msg, 'as', (['org.a11y.atspi.Accessible', 'org.a11y.atspi.EditableText', 'org.a11y.atspi.Text'],)))\n        elif method == 'GetRoleName':\n            conn.send(new_method_return(msg, 's', ('entry',)))\n        elif method == 'GetAddress':\n            conn.send(new_method_return(msg, 's', (a.address,)))\n        elif method in ['RegisterEvent', 'DeregisterEvent']:\n            conn.send(new_method_return(msg))\n        elif method == 'Get' and interface == 'org.freedesktop.DBus.Properties':\n            prop = msg.body[1]\n            result = ('i', len(value)) if prop == 'CharacterCount' else ('i', 0)\n            conn.send(new_method_return(msg, 'v', (result,)))\n        elif method == 'GetText':\n            conn.send(new_method_return(msg, 's', (value,)))\n        else:\n            log('unsupported_method', interface=interface, method=method)\n            conn.send(new_error(msg, 'org.freedesktop.DBus.Error.UnknownMethod', 's', ('IR1 unsupported method',)))\n\n\nif __name__ == '__main__':\n    main()\n",
+    "jevdual/scripts/ir1_replay_audit/ax_control.py": "\"\"\"Real single-write owner/private bus; identity/writability checks stubbed.\n\nThis is NOT X11 binding or current product runtime qualification.\n\"\"\"\nimport contextlib\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport time\n\nfrom jevdual import linux_ax as ax\n\n\n@contextlib.contextmanager\ndef fixture_binding(_element):\n    with ax._Bus() as bus:\n        yield bus\n\n\nclass Element:\n    ref = (os.environ['IR1_TARGET_BUS'], '/org/a11y/atspi/accessible/1')\n\n\nax._bound = fixture_binding\nax._validate = lambda *_: None\nax._writable = lambda *_: True\nstart = time.monotonic()\ntry:\n    ax.set_value_ack(Element(), 'TOKEN')\n    outcome = {'ok':True}\nexcept Exception as error:\n    outcome = {'ok':False, 'type':type(error).__name__, 'error':str(error), 'code':getattr(error,'code',None)}\nprint(json.dumps({'boundary':'linux_ax.set_value_ack; binding and writability stubbed; actual private-bus call',\n                  'source_sha256':hashlib.sha256(Path(ax.__file__).read_bytes()).hexdigest(),\n                  'timeout_seconds':ax._TIMEOUT, 'elapsed_seconds':time.monotonic()-start, **outcome}))\n",
+    "jevdual/scripts/ir1_replay_audit/supervise.py": "\"\"\"Owned subprocess lifetime and finite whole-run bound; no global reaper.\"\"\"\nimport ctypes\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport signal\nimport subprocess\nimport sys\nimport time\n\nimport psutil\n\n\ndef descendants():\n    rows=[]\n    for p in psutil.Process().children(recursive=True):\n        try:rows.append({'pid':p.pid,'start':p.create_time(),'status':p.status(),'name':p.name()})\n        except (psutil.NoSuchProcess,ProcessLookupError):pass\n    return rows\n\n\ndef send(row, sig):\n    fd=None\n    try:\n        p=psutil.Process(row['pid'])\n        if p.create_time()!=row['start']:return 'identity_changed'\n        fd=os.pidfd_open(row['pid'])\n        if p.create_time()!=row['start']:return 'identity_changed'\n        signal.pidfd_send_signal(fd,sig);return 'sent'\n    except (psutil.NoSuchProcess,ProcessLookupError):return 'exited'\n    finally:\n        if fd is not None:os.close(fd)\n\n\ndef main():\n    package=Path(__file__).resolve().parent;task=Path(sys.argv[1]);out=Path(sys.argv[2]);out.mkdir(mode=0o700)\n    assert ctypes.CDLL(None,use_errno=True).prctl(36,1,0,0,0)==0\n    env=dict(os.environ)\n    for k in ['OPENAI_API_KEY','ANTHROPIC_API_KEY','TYPESAFE_API_KEY','DISPLAY','WAYLAND_DISPLAY','DBUS_SESSION_BUS_ADDRESS','AT_SPI_BUS_ADDRESS']:env.pop(k,None)\n    cmd=[sys.executable,str(package/'run.py'),str(task),str(out/'first')]\n    metadata={'argv':cmd,'cwd':str(package),'test_package_commit':subprocess.check_output(['git','-C',str(package),'rev-parse','HEAD'],text=True).strip(),'source_archive_sha256':'5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401','package_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in package.iterdir() if p.is_file()},'whole_run_bound_seconds':240,'python':sys.version}\n    (out/'command.json').write_text(json.dumps(metadata,indent=2)+'\\n')\n    with (out/'stdout.txt').open('w') as stdout,(out/'stderr.txt').open('w') as stderr:\n        child=subprocess.Popen(cmd,cwd=package,env=env,stdin=subprocess.DEVNULL,stdout=stdout,stderr=stderr,start_new_session=True)\n        deadline=time.monotonic()+240;history={};errors=[];signals=[]\n        while child.poll() is None and time.monotonic()<deadline:\n            try:\n                for row in descendants():history[(row['pid'],row['start'])]=row\n            except Exception as error:errors.append(type(error).__name__+': '+str(error))\n            time.sleep(.05)\n        timeout=child.poll() is None\n        if timeout:\n            for sig in [signal.SIGTERM,signal.SIGKILL]:\n                for row in descendants():\n                    if row['status']!='zombie':signals.append({**row,'signal':int(sig),'result':send(row,sig)})\n                try:child.wait(timeout=3);break\n                except subprocess.TimeoutExpired:pass\n        code=child.wait()\n    before=descendants();waits=[]\n    def reap():\n        while True:\n            try:pid,status=os.waitpid(-1,os.WNOHANG)\n            except ChildProcessError:return\n            if not pid:return\n            waits.append({'pid':pid,'raw_status':status,'returncode':os.waitstatus_to_exitcode(status)})\n    for sig in [signal.SIGTERM,signal.SIGKILL]:\n        for row in descendants():\n            if row['status']!='zombie':signals.append({**row,'signal':int(sig),'result':send(row,sig)})\n        deadline=time.monotonic()+3\n        while descendants() and time.monotonic()<deadline:reap();time.sleep(.02)\n        reap()\n        if not descendants():break\n    report={'command_returncode':code,'whole_run_timeout':timeout,'monitor_errors':errors,'pre_supervisor_cleanup':before,'signals':signals,'adopted_waits':waits,'final_owned_descendants':descendants(),'scope':'test-only subreaper, captured owned descendants; target/bus explicit stops separately journaled'}\n    (out/'cleanup.json').write_text(json.dumps(report,indent=2)+'\\n');(out/'process-history.json').write_text(json.dumps(list(history.values()),indent=2)+'\\n')\n    print(json.dumps(report));raise SystemExit(code if code else int(bool(timeout or errors or descendants())))\n\n\nif __name__=='__main__':main()\n",
+    "jevdual/scripts/ir1_replay_audit/native_probe.rs": "// Test-only child module appended to the *complete* unchanged pinned native.rs.\nuse super::*;\nuse std::io::Write;\nuse std::sync::Arc;\nuse std::sync::atomic::{AtomicUsize, Ordering};\nuse cua_driver_core::protocol::ToolResult;\nuse cua_driver_core::tool::{Tool, ToolDef, ToolRegistry};\nuse serde_json::{Value, json};\n\npub fn run() {\n    let arm = std::env::args().nth(1).unwrap();\n    if arm == \"batch\" { runtime().block_on(batch()); return; }\n    let start = std::time::Instant::now();\n    let bus = std::env::var(\"IR1_TARGET_BUS\").unwrap();\n    if arm == \"public_set_ref\" {\n        let r = set_value_ref(&ObjectRef {bus, path:\"/org/a11y/atspi/accessible/1\".into()}, \"TOKEN\");\n        println!(\"{}\", json!({\"boundary\":arm,\"ok\":r.is_ok(),\"error\":r.err().map(|e|format!(\"{e:#}\")),\"elapsed_ms\":start.elapsed().as_millis(),\"operation_budget_ms\":REF_ACTION_BUDGET.as_millis(),\"backstop_extra_ms\":500}));\n        return;\n    }\n    runtime().block_on(async {\n        let address = std::env::var(\"DBUS_SESSION_BUS_ADDRESS\").unwrap();\n        let mut builder = zbus::connection::Builder::address(address.as_str()).unwrap();\n        let timeout = std::env::var(\"IR1_TIMEOUT_MS\").ok().map(|x|x.parse::<u64>().unwrap());\n        if let Some(ms) = timeout { builder = builder.method_timeout(Duration::from_millis(ms)); }\n        let conn = builder.build().await.unwrap();\n        let acc = AccessibleProxy::builder(&conn).destination(bus.as_str()).unwrap()\n            .path(\"/org/a11y/atspi/accessible/1\").unwrap()\n            .cache_properties(zbus::proxy::CacheProperties::No).build().await.unwrap();\n        let result: Result<Value> = match arm.as_str() {\n            \"set_value_on\" => set_value_on(&acc, false, \"TOKEN\", \"owned fixture\").await.map(|_|json!(true)),\n            \"write_through_editable_proxies\" => {\n                let proxies = acc.proxies().await.unwrap();\n                write_through_editable_proxies(&proxies, \"TOKEN\").await.map(|v|json!(v))\n            },\n            \"direct_timeout\" => {\n                let proxies = acc.proxies().await.unwrap();\n                proxies.editable_text().await.unwrap().set_text_contents(\"TOKEN\").await\n                    .map(|v|json!(v)).map_err(|e|anyhow!(\"{e:?}\"))\n            },\n            \"double_set_control\" => {\n                let proxies = acc.proxies().await.unwrap();\n                let et = proxies.editable_text().await.unwrap();\n                et.set_text_contents(\"TOKEN\").await.unwrap();\n                et.set_text_contents(\"TOKEN\").await.unwrap();\n                Ok(json!(true))\n            },\n            _ => panic!(\"unknown arm\"),\n        };\n        println!(\"{}\",json!({\"boundary\":arm,\"client_timeout_ms\":timeout,\"ordinary_zbus_timeout_ms\":25000,\"ok\":result.is_ok(),\"result\":result.as_ref().ok(),\"error\":result.err().map(|e|format!(\"{e:#}\")),\"elapsed_ms\":start.elapsed().as_millis()}));\n        conn.close().await.unwrap();\n    });\n}\n\nstruct Counted { def:ToolDef, calls:Arc<AtomicUsize>, mode:String }\n#[async_trait::async_trait]\nimpl Tool for Counted {\n    fn def(&self)->&ToolDef { &self.def }\n    async fn invoke(&self,args:Value)->ToolResult {\n        let n=self.calls.fetch_add(1,Ordering::SeqCst)+1;\n        let effect=!(self.mode==\"pre_refusal\"&&n==1);\n        let result=if self.mode==\"ack\"||n>1 {ToolResult::text(\"target applied\")}\n            else {ToolResult::error(if effect {\"May have landed. Retry with delivery_mode:\\\"foreground\\\"\"} else {\"No mutation sent. Retry with delivery_mode:\\\"foreground\\\"\"})\n                .with_structured(json!({\"dispatched\":effect,\"may_have_landed\":effect,\"retryable\":false,\"escalation\":{\"recommended\":\"foreground\"}}))};\n        let path=std::env::var(\"IR1_JOURNAL\").unwrap();\n        let mut file=std::fs::OpenOptions::new().create(true).append(true).open(path).unwrap();\n        writeln!(file,\"{}\",json!({\"attempt\":n,\"effect_applied\":effect,\"arguments\":args,\"first_or_later_result\":result})).unwrap();\n        file.sync_all().unwrap();\n        result\n    }\n}\nasync fn batch() {\n    let mode=std::env::var(\"IR1_MODE\").unwrap();\n    let direct=std::env::var(\"IR1_DIRECT\").is_ok();\n    let mut registry=ToolRegistry::new();\n    let calls=Arc::new(AtomicUsize::new(0));\n    registry.register(Box::new(Counted{calls:calls.clone(),mode,def:ToolDef{name:\"set_value\".into(),description:\"IR1 counted target; no native input\".into(),input_schema:json!({\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"string\"},\"delivery_mode\":{\"type\":\"string\"}},\"additionalProperties\":false}),read_only:false,destructive:false,idempotent:false,open_world:false}}));\n    registry.register_session_tools();\n    let registry=Arc::new(registry);registry.init_self_weak();\n    let mut args=json!({\"value\":\"TOKEN\"});\n    if std::env::var(\"IR1_EXPLICIT_BACKGROUND\").is_ok(){args[\"delivery_mode\"]=json!(\"background\");}\n    let result=if direct {registry.invoke(\"set_value\",args).await} else {\n        let mut batch=json!({\"steps\":[{\"tool\":\"set_value\",\"args\":args}]});\n        if let Ok(v)=std::env::var(\"IR1_FOREGROUND_FALLBACK\"){batch[\"foreground_fallback\"]=json!(v==\"true\");}\n        if std::env::var(\"IR1_INHERITED_BACKGROUND\").is_ok(){batch[\"delivery_mode\"]=json!(\"background\");}\n        registry.invoke(\"run_steps\",batch).await\n    };\n    println!(\"{}\",json!({\"boundary\":\"actual core registry/run_steps\",\"direct\":direct,\"attempts\":calls.load(Ordering::SeqCst),\"final_result\":result}));\n}\n",
+    "jevdual/scripts/ir1_replay_audit/build.py": "\"\"\"Offline compile using exact Cargo-fingerprint-selected existing artifacts.\n\nNo Cargo.lock/manifest/production function is edited. Only an audit cfg module\nis appended in a task-owned copy. Full pinned Linux source is compiled, not a\ncopied mutation function/model. Original dependency features are preserved.\n\"\"\"\nimport hashlib\nimport json\nimport os\nimport subprocess\nimport sys\nimport tarfile\nfrom pathlib import Path\n\nPIN='5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401'\n\n\ndef main():\n    package=Path(__file__).resolve().parent\n    repo=package.parents[1]\n    task=Path(sys.argv[1]);task.mkdir(mode=0o700)\n    archive=repo/'vendor/cua-driver/native-source.tar.gz'\n    assert hashlib.sha256(archive.read_bytes()).hexdigest()==PIN\n    source=task/'source';source.mkdir()\n    with tarfile.open(archive) as tf:\n        for m in tf.getmembers():\n            assert not m.issym() and not m.islnk() and not Path(m.name).is_absolute() and '..' not in Path(m.name).parts\n        tf.extractall(source,filter='data')\n    workspace=source/'libs/cua-driver/rust'\n    native=workspace/'crates/platform-linux/src/atspi/native.rs'\n    original=native.read_bytes()\n    suffix=f'\\n#[cfg(ir1_audit)]\\n#[path = {json.dumps(str(package/\"native_probe.rs\"))}]\\npub mod ir1_audit;\\n'\n    native.write_bytes(original+suffix.encode())\n    cache=Path('/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug')\n    fingerprint=next((cache/'.fingerprint').glob('platform-linux-*/lib-platform_linux.json'))\n    fp=json.loads(fingerprint.read_text());deps=[];extern=[]\n    for _,name,_,wanted in fp['deps']:\n        matches=[]\n        for f in (cache/'.fingerprint').glob('*/lib-'+name):\n            if int.from_bytes(bytes.fromhex(f.read_text().strip()),'little')==wanted:\n                suffix=f.parent.name.rsplit('-',1)[1]\n                matches += [p for p in [cache/'deps'/f'lib{name}-{suffix}.rlib',cache/'deps'/f'lib{name}-{suffix}.so'] if p.is_file()]\n        assert len(matches)==1,(name,matches)\n        path=matches[0];extern+=['--extern',f'{name}={path}'];deps.append({'name':name,'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})\n    rustc=Path('/workspace/.footwork-setup/rustup/toolchains/1.97.1-x86_64-unknown-linux-gnu/bin/rustc')\n    out=task/'bin';out.mkdir()\n    env=dict(os.environ,CARGO_MANIFEST_DIR=str(workspace/'crates/platform-linux'),CARGO_PKG_VERSION='0.38.0',CARGO_PKG_NAME='platform-linux',CUA_DRIVER_GIT_SHA='d5373879e9e0baf5a63999ac4d26902340c0ce20')\n    libs=['-L',f'dependency={cache/\"deps\"}']\n    for p in sorted((cache/'build').glob('*/out')):libs+=['-L',f'native={p}']\n    libs+=['-L','native=/workspace/.footwork-setup/sysroot/usr/lib/x86_64-linux-gnu']\n    command=[str(rustc),'--edition=2021','--crate-name','platform_linux','--crate-type','rlib',str(workspace/'crates/platform-linux/src/lib.rs'),'--cfg','ir1_audit','--cfg','feature=\"default\"','-C','debuginfo=0','-o',str(out/'libplatform_linux.rlib'),*libs,*extern]\n    manifest={'archive_sha256':PIN,'production_native_sha256':hashlib.sha256(original).hexdigest(),'test_augmented_native_sha256':hashlib.sha256(native.read_bytes()).hexdigest(),'production_prefix_byte_identical':native.read_bytes()[:len(original)]==original,'cargo_lock_sha256':hashlib.sha256((workspace/'Cargo.lock').read_bytes()).hexdigest(),'original_feature_fingerprint':fp,'dependency_artifacts':deps,'commands':[command]}\n    (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\\n')\n    p=subprocess.run(command,cwd=workspace,env=env,stdout=(task/'compile.stdout.txt').open('w'),stderr=(task/'compile.stderr.txt').open('w'));manifest['compile_exit']=p.returncode\n    (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\\n')\n    if p.returncode:raise SystemExit(p.returncode)\n    entry=task/'main.rs';entry.write_text('fn main(){platform_linux::atspi::native::ir1_audit::run();}\\n')\n    command=[str(rustc),'--edition=2021',str(entry),'--extern',f'platform_linux={out/\"libplatform_linux.rlib\"}',*libs,'-C','debuginfo=0','-o',str(out/'ir1-probe')]\n    manifest['commands'].append(command)\n    p=subprocess.run(command,cwd=workspace,env=env,stdout=(task/'link.stdout.txt').open('w'),stderr=(task/'link.stderr.txt').open('w'));manifest['link_exit']=p.returncode\n    if p.returncode==0:manifest['probe_sha256']=hashlib.sha256((out/'ir1-probe').read_bytes()).hexdigest()\n    (task/'build.json').write_text(json.dumps(manifest,indent=2)+'\\n');raise SystemExit(p.returncode)\n\n\nif __name__=='__main__':main()\n"
+  },
+  "file_sha256": {
+    "jevdual/scripts/ir1_replay_audit/run.py": "52c6d563305c74598731e9f437338dd09095b090d49971ffe7f6d8b6e5a05911",
+    "jevdual/scripts/ir1_replay_audit/target.py": "b6390639ecce8d69e5acdad5979c05e05e1b0972ce9be09bbba0cb1c95ae8fe8",
+    "jevdual/scripts/ir1_replay_audit/ax_control.py": "06a86c5f58fb9998616735103e7526418315121c5e8a8703e3bc284348b52f32",
+    "jevdual/scripts/ir1_replay_audit/supervise.py": "1a6c2140b1129038ca9a3581d8c67c8759a4b37733d08f49eca9a271af72eefe",
+    "jevdual/scripts/ir1_replay_audit/native_probe.rs": "117e661c12e7cd4b6afc60392a38a5489f4d00e025050df6afa664d5208247d9",
+    "jevdual/scripts/ir1_replay_audit/build.py": "88c59cfa97ecc28f4aaf5e40999f267bbc5d892d97b573b271ad9e248bac92dc"
+  },
+  "preregistration_file_sha256": {
+    "jevdual/docs/experiments/IR1-cua-internal-replay.md": "4118dab786584b719ed685776abed3fe28c88fe0e4b6f402a92337732ab63932",
+    "jevdual/docs/notebook/2026-11-01-cua-internal-replay.md": "558f14658b23a42134673df1c74b28942a851529537280fecd1c538d28df16c8",
+    "jevdual/docs/upstream/cua-internal-replay-audit-20261101.md": "167cddb7bc06247a90fd436b6823a74e0524020b6f4bf225a3ad95a7d7c612ca"
+  },
+  "cases": [
+    {
+      "label": "batch-01",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "ack",
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.032576819001405966,
+      "attempts": 1,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 1,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: 1/1 steps ok\n1. set_value ok: target applied",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": null,
+            "ok": true,
+            "steps": [
+              {
+                "index": 0,
+                "message": "target applied",
+                "ok": true,
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-02",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "pre_refusal",
+      "fallback": "true",
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.06428873500044574,
+      "attempts": 2,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 2,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: 1/1 steps ok\n1. set_value ok: target applied; background delivery was refused, so it ran in the foreground",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": null,
+            "ok": true,
+            "steps": [
+              {
+                "delivery_fallback": "foreground",
+                "index": 0,
+                "message": "target applied",
+                "ok": true,
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-03",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "post_error",
+      "fallback": "true",
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.03233683899816242,
+      "attempts": 2,
+      "effects": 2,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 2,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: 1/1 steps ok\n1. set_value ok: target applied; background delivery was refused, so it ran in the foreground",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": null,
+            "ok": true,
+            "steps": [
+              {
+                "delivery_fallback": "foreground",
+                "index": 0,
+                "message": "target applied",
+                "ok": true,
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-04",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "post_error",
+      "fallback": "false",
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.03254569800265017,
+      "attempts": 1,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 1,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: step 1 of 1 failed; 0 step(s) ran before it, 0 not run\n1. set_value ERROR (action): May have landed. Retry with delivery_mode:\"foreground\" To run it, send the batch again from step 1 with \"delivery_mode\":\"foreground\" on this step, or set \"foreground_fallback\":true on run_steps (the window is activated and the pointer may move).",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": 0,
+            "ok": false,
+            "steps": [
+              {
+                "index": 0,
+                "message": "May have landed. Retry with delivery_mode:\"foreground\" To run it, send the batch again from step 1 with \"delivery_mode\":\"foreground\" on this step, or set \"foreground_fallback\":true on run_steps (the window is activated and the pointer may move).",
+                "ok": false,
+                "phase": "action",
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-05",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "post_error",
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.0322498289970099,
+      "attempts": 1,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 1,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: step 1 of 1 failed; 0 step(s) ran before it, 0 not run\n1. set_value ERROR (action): May have landed. Retry with delivery_mode:\"foreground\" To run it, send the batch again from step 1 with \"delivery_mode\":\"foreground\" on this step, or set \"foreground_fallback\":true on run_steps (the window is activated and the pointer may move).",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": 0,
+            "ok": false,
+            "steps": [
+              {
+                "index": 0,
+                "message": "May have landed. Retry with delivery_mode:\"foreground\" To run it, send the batch again from step 1 with \"delivery_mode\":\"foreground\" on this step, or set \"foreground_fallback\":true on run_steps (the window is activated and the pointer may move).",
+                "ok": false,
+                "phase": "action",
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-06",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "post_error",
+      "fallback": "true",
+      "delivery": "explicit",
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.032144152999535436,
+      "attempts": 1,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 1,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: step 1 of 1 failed; 0 step(s) ran before it, 0 not run\n1. set_value ERROR (action): May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": 0,
+            "ok": false,
+            "steps": [
+              {
+                "index": 0,
+                "message": "May have landed. Retry with delivery_mode:\"foreground\"",
+                "ok": false,
+                "phase": "action",
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-07",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "post_error",
+      "fallback": "true",
+      "delivery": "inherited",
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.06441813800120144,
+      "attempts": 1,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 1,
+        "boundary": "actual core registry/run_steps",
+        "direct": false,
+        "final_result": {
+          "content": [
+            {
+              "text": "run_steps: step 1 of 1 failed; 0 step(s) ran before it, 0 not run\n1. set_value ERROR (action): May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "executed": 1,
+            "failed_step": 0,
+            "ok": false,
+            "steps": [
+              {
+                "index": 0,
+                "message": "May have landed. Retry with delivery_mode:\"foreground\"",
+                "ok": false,
+                "phase": "action",
+                "tool": "set_value"
+              }
+            ],
+            "total": 1
+          }
+        }
+      }
+    },
+    {
+      "label": "batch-08",
+      "boundary": null,
+      "fixture_mode": null,
+      "mode": "post_error",
+      "fallback": null,
+      "delivery": "direct",
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.018892121999670053,
+      "attempts": 1,
+      "effects": 1,
+      "methods": null,
+      "transitions": null,
+      "final_value": null,
+      "result": {
+        "attempts": 1,
+        "boundary": "actual core registry/run_steps",
+        "direct": true,
+        "final_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      }
+    },
+    {
+      "label": "direct-client-timeout-control",
+      "boundary": "direct_timeout",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.11435739200169337,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "direct_timeout",
+        "client_timeout_ms": 100,
+        "elapsed_ms": 104,
+        "error": "InputOutput(Custom { kind: TimedOut, error: \"timed out\" })",
+        "ok": false,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": null
+      }
+    },
+    {
+      "label": "equal-final-value-double-effect-control",
+      "boundary": "double_set_control",
+      "fixture_mode": "ack",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.01594975300031365,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "SetTextContents",
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "double_set_control",
+        "client_timeout_ms": null,
+        "elapsed_ms": 5,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "footwork-adapter-ack",
+      "boundary": "linux_ax",
+      "fixture_mode": "ack",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.11431859200092731,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "linux_ax.set_value_ack; binding and writability stubbed; actual private-bus call",
+        "source_sha256": "ee6d25eb4a36970868094f5e5ac21b33e3adf3e8698abf28dcb6c3f1a34d4c1d",
+        "timeout_seconds": 2.0,
+        "elapsed_seconds": 0.009541785999317653,
+        "ok": true
+      }
+    },
+    {
+      "label": "footwork-adapter-withhold",
+      "boundary": "linux_ax",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 2.070308203998138,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "linux_ax.set_value_ack; binding and writability stubbed; actual private-bus call",
+        "source_sha256": "ee6d25eb4a36970868094f5e5ac21b33e3adf3e8698abf28dcb6c3f1a34d4c1d",
+        "timeout_seconds": 2.0,
+        "elapsed_seconds": 2.008780617001321,
+        "ok": false,
+        "type": "AXError",
+        "error": "the accessibility reply is unavailable",
+        "code": null
+      }
+    },
+    {
+      "label": "public-set-ref-ack",
+      "boundary": "public_set_ref",
+      "fixture_mode": "ack",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.016145068999321666,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 11,
+        "error": null,
+        "ok": true,
+        "operation_budget_ms": 3000
+      }
+    },
+    {
+      "label": "public-set-ref-error",
+      "boundary": "public_set_ref",
+      "fixture_mode": "error",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.032421599000372225,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKENTOKEN"
+        }
+      ],
+      "final_value": "TOKENTOKEN",
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 13,
+        "error": null,
+        "ok": true,
+        "operation_budget_ms": 3000
+      }
+    },
+    {
+      "label": "public-set-ref-false",
+      "boundary": "public_set_ref",
+      "fixture_mode": "false",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.016348320001270622,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 10,
+        "error": null,
+        "ok": true,
+        "operation_budget_ms": 3000
+      }
+    },
+    {
+      "label": "public-set-ref-withhold",
+      "boundary": "public_set_ref",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 3.524797395999485,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "backstop_extra_ms": 500,
+        "boundary": "public_set_ref",
+        "elapsed_ms": 3502,
+        "error": "set_value (cached element) timed out",
+        "ok": false,
+        "operation_budget_ms": 3000
+      }
+    },
+    {
+      "label": "set_value_on-ack",
+      "boundary": "set_value_on",
+      "fixture_mode": "ack",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.016289743998640915,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 5,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "set_value_on-error",
+      "boundary": "set_value_on",
+      "fixture_mode": "error",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.01599686899862718,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKENTOKEN"
+        }
+      ],
+      "final_value": "TOKENTOKEN",
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 6,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "set_value_on-false",
+      "boundary": "set_value_on",
+      "fixture_mode": "false",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.015970110998750897,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 7,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "set_value_on-withhold",
+      "boundary": "set_value_on",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.16541862399753882,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKENTOKEN"
+        }
+      ],
+      "final_value": "TOKENTOKEN",
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": 100,
+        "elapsed_ms": 110,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "set_value_on-withhold-default25s",
+      "boundary": "set_value_on",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": -15,
+      "watchdog_expired": true,
+      "elapsed_seconds": 40.001874575998954,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": null
+    },
+    {
+      "label": "write_through_editable_proxies-ack",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "ack",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.016269791001832346,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": null,
+        "elapsed_ms": 4,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "write_through_editable_proxies-error",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "error",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.0322247049989528,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "InsertText",
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": null,
+        "elapsed_ms": 10,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "write_through_editable_proxies-false",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "false",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.016065326999523677,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "InsertText",
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": null,
+        "elapsed_ms": 6,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "write_through_editable_proxies-withhold",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": 0,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.11498369900073158,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "InsertText",
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": {
+        "boundary": "write_through_editable_proxies",
+        "client_timeout_ms": 100,
+        "elapsed_ms": 108,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      }
+    },
+    {
+      "label": "write_through_editable_proxies-withhold-default25s",
+      "boundary": "write_through_editable_proxies",
+      "fixture_mode": "withhold",
+      "mode": null,
+      "fallback": null,
+      "delivery": null,
+      "returncode": -15,
+      "watchdog_expired": true,
+      "elapsed_seconds": 40.001909762999276,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "result": null
+    }
+  ],
+  "independent_target_journals": {
+    "batch-01": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_de2fa545481c4aa1a77edaa043815436:implicit-direct",
+          "_transport_session_id": "__cua_runtime_de2fa545481c4aa1a77edaa043815436:implicit-direct",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "target applied",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    ],
+    "batch-02": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_5c6aeca1cae74a559e6cbb859a768e5c:implicit-direct",
+          "_transport_session_id": "__cua_runtime_5c6aeca1cae74a559e6cbb859a768e5c:implicit-direct",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": false,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "No mutation sent. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": false,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": false,
+            "retryable": false
+          }
+        }
+      },
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_5c6aeca1cae74a559e6cbb859a768e5c:implicit-direct",
+          "_transport_session_id": "__cua_runtime_5c6aeca1cae74a559e6cbb859a768e5c:implicit-direct",
+          "delivery_mode": "foreground",
+          "value": "TOKEN"
+        },
+        "attempt": 2,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "target applied",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    ],
+    "batch-03": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_3eae2b66a53d4fe2a4556e4935aa771c:implicit-direct",
+          "_transport_session_id": "__cua_runtime_3eae2b66a53d4fe2a4556e4935aa771c:implicit-direct",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      },
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_3eae2b66a53d4fe2a4556e4935aa771c:implicit-direct",
+          "_transport_session_id": "__cua_runtime_3eae2b66a53d4fe2a4556e4935aa771c:implicit-direct",
+          "delivery_mode": "foreground",
+          "value": "TOKEN"
+        },
+        "attempt": 2,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "target applied",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    ],
+    "batch-04": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_96168fd98265440184ca4607f99ca482:implicit-direct",
+          "_transport_session_id": "__cua_runtime_96168fd98265440184ca4607f99ca482:implicit-direct",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "batch-05": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_f81fd7e919ff4a05ab7cdbb7b3d5e069:implicit-direct",
+          "_transport_session_id": "__cua_runtime_f81fd7e919ff4a05ab7cdbb7b3d5e069:implicit-direct",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "batch-06": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_f6dad49ca27e4755bca875ad7e84d68d:implicit-direct",
+          "_transport_session_id": "__cua_runtime_f6dad49ca27e4755bca875ad7e84d68d:implicit-direct",
+          "delivery_mode": "background",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "batch-07": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_cc214273e9a14342ab0f89a4cba99a08:implicit-direct",
+          "_transport_session_id": "__cua_runtime_cc214273e9a14342ab0f89a4cba99a08:implicit-direct",
+          "delivery_mode": "background",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "batch-08": [
+      {
+        "arguments": {
+          "_session_id": "__cua_runtime_aeb0e33705d94d4ca4d147343c4c0094:implicit-direct",
+          "_transport_session_id": "__cua_runtime_aeb0e33705d94d4ca4d147343c4c0094:implicit-direct",
+          "value": "TOKEN"
+        },
+        "attempt": 1,
+        "effect_applied": true,
+        "first_or_later_result": {
+          "content": [
+            {
+              "text": "May have landed. Retry with delivery_mode:\"foreground\"",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "dispatched": true,
+            "escalation": {
+              "recommended": "foreground"
+            },
+            "may_have_landed": true,
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "direct-client-timeout-control": [
+      {
+        "invocation": "direct-client-timeout-control",
+        "monotonic_ns": 21559799240987,
+        "kind": "target_ready",
+        "pid": 58941,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "direct-client-timeout-control",
+        "monotonic_ns": 21559813339443,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "direct-client-timeout-control",
+        "monotonic_ns": 21559813887189,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "direct-client-timeout-control",
+        "monotonic_ns": 21559814153172,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      }
+    ],
+    "equal-final-value-double-effect-control": [
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559958593539,
+        "kind": "target_ready",
+        "pid": 58946,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559973187204,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559973769466,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559974164100,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      },
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559974991956,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 4
+      },
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559975394732,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "TOKEN",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "equal-final-value-double-effect-control",
+        "monotonic_ns": 21559975735006,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "footwork-adapter-ack": [
+      {
+        "invocation": "footwork-adapter-ack",
+        "monotonic_ns": 21560027053039,
+        "kind": "target_ready",
+        "pid": 58951,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "footwork-adapter-ack",
+        "monotonic_ns": 21560094575717,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "footwork-adapter-ack",
+        "monotonic_ns": 21560095212385,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "footwork-adapter-ack",
+        "monotonic_ns": 21560095515564,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "footwork-adapter-withhold": [
+      {
+        "invocation": "footwork-adapter-withhold",
+        "monotonic_ns": 21560182278647,
+        "kind": "target_ready",
+        "pid": 58954,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "footwork-adapter-withhold",
+        "monotonic_ns": 21560239304100,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "footwork-adapter-withhold",
+        "monotonic_ns": 21560240098085,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "footwork-adapter-withhold",
+        "monotonic_ns": 21560240505508,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      }
+    ],
+    "public-set-ref-ack": [
+      {
+        "invocation": "public-set-ref-ack",
+        "monotonic_ns": 21555985567833,
+        "kind": "target_ready",
+        "pid": 58921,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "public-set-ref-ack",
+        "monotonic_ns": 21556003064524,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 12
+      },
+      {
+        "invocation": "public-set-ref-ack",
+        "monotonic_ns": 21556003902756,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "public-set-ref-ack",
+        "monotonic_ns": 21556004349437,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "public-set-ref-error": [
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556135338691,
+        "kind": "target_ready",
+        "pid": 58931,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556171858554,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 12
+      },
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556172690746,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556173116386,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "error",
+        "value": "TOKEN"
+      },
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556174393447,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 14
+      },
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556174872336,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "TOKEN",
+        "after": "TOKENTOKEN"
+      },
+      {
+        "invocation": "public-set-ref-error",
+        "monotonic_ns": 21556175221103,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "ack",
+        "value": "TOKENTOKEN"
+      }
+    ],
+    "public-set-ref-false": [
+      {
+        "invocation": "public-set-ref-false",
+        "monotonic_ns": 21556054902962,
+        "kind": "target_ready",
+        "pid": 58926,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "public-set-ref-false",
+        "monotonic_ns": 21556083211274,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 12
+      },
+      {
+        "invocation": "public-set-ref-false",
+        "monotonic_ns": 21556084217034,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "false",
+        "value": ""
+      },
+      {
+        "invocation": "public-set-ref-false",
+        "monotonic_ns": 21556085711757,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 14
+      },
+      {
+        "invocation": "public-set-ref-false",
+        "monotonic_ns": 21556086262583,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "public-set-ref-false",
+        "monotonic_ns": 21556086504180,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "public-set-ref-withhold": [
+      {
+        "invocation": "public-set-ref-withhold",
+        "monotonic_ns": 21556228784365,
+        "kind": "target_ready",
+        "pid": 58936,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "public-set-ref-withhold",
+        "monotonic_ns": 21556245949545,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 12
+      },
+      {
+        "invocation": "public-set-ref-withhold",
+        "monotonic_ns": 21556246465359,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "public-set-ref-withhold",
+        "monotonic_ns": 21556246857510,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      }
+    ],
+    "set_value_on-ack": [
+      {
+        "invocation": "set_value_on-ack",
+        "monotonic_ns": 21475023045397,
+        "kind": "target_ready",
+        "pid": 58825,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "set_value_on-ack",
+        "monotonic_ns": 21475043230672,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "set_value_on-ack",
+        "monotonic_ns": 21475044049536,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-ack",
+        "monotonic_ns": 21475044304754,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "set_value_on-error": [
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475151853784,
+        "kind": "target_ready",
+        "pid": 58835,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475166535897,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475167088616,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475167359747,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "error",
+        "value": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475168824768,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 5
+      },
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475169220374,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "TOKEN",
+        "after": "TOKENTOKEN"
+      },
+      {
+        "invocation": "set_value_on-error",
+        "monotonic_ns": 21475169451116,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "ack",
+        "value": "TOKENTOKEN"
+      }
+    ],
+    "set_value_on-false": [
+      {
+        "invocation": "set_value_on-false",
+        "monotonic_ns": 21475094536412,
+        "kind": "target_ready",
+        "pid": 58830,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "set_value_on-false",
+        "monotonic_ns": 21475104484802,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "set_value_on-false",
+        "monotonic_ns": 21475105192680,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "false",
+        "value": ""
+      },
+      {
+        "invocation": "set_value_on-false",
+        "monotonic_ns": 21475106706613,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 5
+      },
+      {
+        "invocation": "set_value_on-false",
+        "monotonic_ns": 21475107232733,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-false",
+        "monotonic_ns": 21475107565446,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "set_value_on-withhold": [
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475220721058,
+        "kind": "target_ready",
+        "pid": 58840,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475230619463,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475231148047,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475231337537,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475336264837,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 5
+      },
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475336916523,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "TOKEN",
+        "after": "TOKENTOKEN"
+      },
+      {
+        "invocation": "set_value_on-withhold",
+        "monotonic_ns": 21475337241454,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "ack",
+        "value": "TOKENTOKEN"
+      }
+    ],
+    "set_value_on-withhold-default25s": [
+      {
+        "invocation": "set_value_on-withhold-default25s",
+        "monotonic_ns": 21475430706748,
+        "kind": "target_ready",
+        "pid": 58845,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "set_value_on-withhold-default25s",
+        "monotonic_ns": 21475440143659,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 3
+      },
+      {
+        "invocation": "set_value_on-withhold-default25s",
+        "monotonic_ns": 21475440609359,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "set_value_on-withhold-default25s",
+        "monotonic_ns": 21475440901341,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      }
+    ],
+    "write_through_editable_proxies-ack": [
+      {
+        "invocation": "write_through_editable_proxies-ack",
+        "monotonic_ns": 21515478836994,
+        "kind": "target_ready",
+        "pid": 58891,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "write_through_editable_proxies-ack",
+        "monotonic_ns": 21515490664474,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 4
+      },
+      {
+        "invocation": "write_through_editable_proxies-ack",
+        "monotonic_ns": 21515491229130,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-ack",
+        "monotonic_ns": 21515491524678,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "write_through_editable_proxies-error": [
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515627655823,
+        "kind": "target_ready",
+        "pid": 58901,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515640147231,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 4
+      },
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515640934227,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515641420698,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "error",
+        "value": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515644781396,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 5
+      },
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515645278352,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "TOKEN",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-error",
+        "monotonic_ns": 21515645492319,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "write_through_editable_proxies-false": [
+      {
+        "invocation": "write_through_editable_proxies-false",
+        "monotonic_ns": 21515547231521,
+        "kind": "target_ready",
+        "pid": 58896,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "write_through_editable_proxies-false",
+        "monotonic_ns": 21515573643095,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 4
+      },
+      {
+        "invocation": "write_through_editable_proxies-false",
+        "monotonic_ns": 21515574224997,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "false",
+        "value": ""
+      },
+      {
+        "invocation": "write_through_editable_proxies-false",
+        "monotonic_ns": 21515575003410,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 5
+      },
+      {
+        "invocation": "write_through_editable_proxies-false",
+        "monotonic_ns": 21515575375495,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-false",
+        "monotonic_ns": 21515575692645,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "write_through_editable_proxies-withhold": [
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515740448908,
+        "kind": "target_ready",
+        "pid": 58906,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515769091025,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 4
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515769931590,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515770356199,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515870928426,
+        "kind": "method_received",
+        "method": "SetTextContents",
+        "arguments": [
+          "TOKEN"
+        ],
+        "serial": 5
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515871824102,
+        "kind": "effect_applied",
+        "method": "SetTextContents",
+        "before": "TOKEN",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold",
+        "monotonic_ns": 21515872273087,
+        "kind": "reply_behavior",
+        "method": "SetTextContents",
+        "behavior": "ack",
+        "value": "TOKEN"
+      }
+    ],
+    "write_through_editable_proxies-withhold-default25s": [
+      {
+        "invocation": "write_through_editable_proxies-withhold-default25s",
+        "monotonic_ns": 21515921467859,
+        "kind": "target_ready",
+        "pid": 58911,
+        "unique_name": ":1.0"
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold-default25s",
+        "monotonic_ns": 21515946908844,
+        "kind": "method_received",
+        "method": "InsertText",
+        "arguments": [
+          0,
+          "TOKEN",
+          5
+        ],
+        "serial": 4
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold-default25s",
+        "monotonic_ns": 21515947530425,
+        "kind": "effect_applied",
+        "method": "InsertText",
+        "before": "",
+        "after": "TOKEN"
+      },
+      {
+        "invocation": "write_through_editable_proxies-withhold-default25s",
+        "monotonic_ns": 21515947977247,
+        "kind": "reply_behavior",
+        "method": "InsertText",
+        "behavior": "withhold",
+        "value": "TOKEN"
+      }
+    ]
+  },
+  "owned_fixture_cleanup": {
+    "direct-client-timeout-control": [
+      {
+        "owned": "target",
+        "pid": 58941,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58940,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "equal-final-value-double-effect-control": [
+      {
+        "owned": "target",
+        "pid": 58946,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58945,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "footwork-adapter-ack": [
+      {
+        "owned": "target",
+        "pid": 58951,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58950,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "footwork-adapter-withhold": [
+      {
+        "owned": "target",
+        "pid": 58954,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58953,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "public-set-ref-ack": [
+      {
+        "owned": "target",
+        "pid": 58921,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58920,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "public-set-ref-error": [
+      {
+        "owned": "target",
+        "pid": 58931,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58930,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "public-set-ref-false": [
+      {
+        "owned": "target",
+        "pid": 58926,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58925,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "public-set-ref-withhold": [
+      {
+        "owned": "target",
+        "pid": 58936,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58935,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "set_value_on-ack": [
+      {
+        "owned": "target",
+        "pid": 58825,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58824,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "set_value_on-error": [
+      {
+        "owned": "target",
+        "pid": 58835,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58834,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "set_value_on-false": [
+      {
+        "owned": "target",
+        "pid": 58830,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58829,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "set_value_on-withhold": [
+      {
+        "owned": "target",
+        "pid": 58840,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58839,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "set_value_on-withhold-default25s": [
+      {
+        "owned": "target",
+        "pid": 58845,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58844,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "write_through_editable_proxies-ack": [
+      {
+        "owned": "target",
+        "pid": 58891,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58890,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "write_through_editable_proxies-error": [
+      {
+        "owned": "target",
+        "pid": 58901,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58900,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "write_through_editable_proxies-false": [
+      {
+        "owned": "target",
+        "pid": 58896,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58895,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "write_through_editable_proxies-withhold": [
+      {
+        "owned": "target",
+        "pid": 58906,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58905,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ],
+    "write_through_editable_proxies-withhold-default25s": [
+      {
+        "owned": "target",
+        "pid": 58911,
+        "pre_stop_returncode": null,
+        "returncode": -15,
+        "escalated": false,
+        "wait_completed": true
+      },
+      {
+        "owned": "private_bus",
+        "pid": 58910,
+        "pre_stop_returncode": null,
+        "returncode": 0,
+        "escalated": false,
+        "wait_completed": true
+      }
+    ]
+  },
+  "supervisor_cleanup": {
+    "command_returncode": 1,
+    "whole_run_timeout": false,
+    "monitor_errors": [],
+    "pre_supervisor_cleanup": [],
+    "signals": [],
+    "adopted_waits": [],
+    "final_owned_descendants": [],
+    "scope": "test-only subreaper, captured owned descendants; target/bus explicit stops separately journaled"
+  },
+  "build_identity": {
+    "archive_sha256": "5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401",
+    "production_native_sha256": "e15a9da1a1b7b696a79ded21f9df7c61545b531a481bf87e24eefc43ad007eea",
+    "test_augmented_native_sha256": "fb1a64ce2dca5272402eb5bfcfafb0918079d861bbab410d54c19f1548e4c428",
+    "production_prefix_byte_identical": true,
+    "cargo_lock_sha256": "3a75d89d3f2fc53cf9e910beb3a754b28f27d29f2a2d4feed632b3959eed557f",
+    "dependency_artifacts": [
+      {
+        "name": "wayland_scanner",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libwayland_scanner-29b4bc786279dd5e.so",
+        "sha256": "3c5b659adbc809b462725221b3308b4cbeb6232240541b8363124aa44b034b95"
+      },
+      {
+        "name": "keyring",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libkeyring-08198227c42de07b.rlib",
+        "sha256": "2720b93c40c3ed8da80e12edf71253ca870c7be50bb99d9fe603830a37f29ed9"
+      },
+      {
+        "name": "url",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/liburl-ad213fb90cad2da8.rlib",
+        "sha256": "381b22f500264120481a6b73f20c25b515ae267f43ed848fa772055406d7857b"
+      },
+      {
+        "name": "tokio",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libtokio-c8e8556ce749ea6e.rlib",
+        "sha256": "c0b523c7029e1f55e6a43b452b7058d661f0dd576ae10e03478a764647bda83f"
+      },
+      {
+        "name": "zbus",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libzbus-8b8409974470635e.rlib",
+        "sha256": "d7ffa5c695c23a73b0b20b844246ee11749bc999db56c3f64b44a0d69f39818c"
+      },
+      {
+        "name": "bitflags",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libbitflags-4a5b8356b5aaf308.rlib",
+        "sha256": "4a780e76ad094b07ccbe6814233cbd4233889c6d831a4fbe1dad403a0b6921ba"
+      },
+      {
+        "name": "wayland_backend",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libwayland_backend-dc69370efae24329.rlib",
+        "sha256": "fe2349dc26fb3e61c4caffa586953c216d7ee9487168fc71bfe14d9d8476b078"
+      },
+      {
+        "name": "x11",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libx11-cdc01974ddf38444.rlib",
+        "sha256": "d85ddb96a65dc13e6bb012d8ed7b778fdb0a894b0a2bcafa947c051876acce14"
+      },
+      {
+        "name": "pip_preview",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libpip_preview-63bd500bceae4fd1.rlib",
+        "sha256": "2350ebb54dcb41fcce844d9e27803905673b9216581a15fda4c193b1f1981855"
+      },
+      {
+        "name": "image",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libimage-41e679a72e5d4855.rlib",
+        "sha256": "6e600410e8429b7be4f32f7395c6aa5e780ff70e9e13eb8b5836aa773de56de8"
+      },
+      {
+        "name": "tiny_skia",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libtiny_skia-44f7bc0108cba43a.rlib",
+        "sha256": "10f7efdb46f98e9f85c4ddf2cb107f21e52dd117a711bfdcb516a2ac8a3932a6"
+      },
+      {
+        "name": "cua_driver_contract",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libcua_driver_contract-43289b6afbbafe95.rlib",
+        "sha256": "8255a51d792f384b4151f76cd073d63d7ca5b3aee8179157a50932807a16d37c"
+      },
+      {
+        "name": "cursor_overlay",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libcursor_overlay-9ca2a3aa71178f1a.rlib",
+        "sha256": "0808e276497eda64902fc3211912600e4468059a3121c4243fec83ebb4996734"
+      },
+      {
+        "name": "wayland_protocols",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libwayland_protocols-44620b819a813c71.rlib",
+        "sha256": "c9206691fc174cbf182c6034c40c4a649bb449560b59a30de32cb6be34969e2b"
+      },
+      {
+        "name": "futures_util",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libfutures_util-716fb969dd881140.rlib",
+        "sha256": "0260cdb8c0b2b57fbda73de59899229cdcc2b705c060de116f85e83950848a98"
+      },
+      {
+        "name": "wayland_client",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libwayland_client-649bff90df7c65a8.rlib",
+        "sha256": "ca1dbf1fed6a6350036ca0bfe4bbf78cf73cdc0ce6838f20607d2d79aa60b7ba"
+      },
+      {
+        "name": "memmap2",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libmemmap2-abfc455555efead2.rlib",
+        "sha256": "eecf1db0a26259a5c945ba2f3731e1e7cace4491ed069f289eb8c67a5a5d6b3c"
+      },
+      {
+        "name": "getrandom",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libgetrandom-f49a07f91ed3f322.rlib",
+        "sha256": "5d0a89208bf196c3cb483725c04a82d997bedca83c6392b0b13e07ede01b4885"
+      },
+      {
+        "name": "libc",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/liblibc-e2b768b31179ae2c.rlib",
+        "sha256": "d9d884ecd4e12850426249bfa78934c24e5f4c0433687d1462a1f4cfbd2190a4"
+      },
+      {
+        "name": "atspi",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libatspi-5467a248902427a8.rlib",
+        "sha256": "d8141c98d4bc91fbe4f9588a59654727070e08126fa51003399a75dab5c32761"
+      },
+      {
+        "name": "clipboard_rs",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libclipboard_rs-983eef1c8668a595.rlib",
+        "sha256": "0a57bcce1cb9ff3ed6fc3456ac99af6fdbbc237e1ac5a0268a8c0aff3f8b67d2"
+      },
+      {
+        "name": "cua_driver_core",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libcua_driver_core-ffb8bede6cfbf5aa.rlib",
+        "sha256": "4d64c44abeb68e5d85dc4266005cc96a478fc904d380b5b313f5b3f61789c3ae"
+      },
+      {
+        "name": "thiserror",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libthiserror-e66594c20b6911aa.rlib",
+        "sha256": "7eddfb3b92e1371e12090d6dff304772abc20f884bad7ca099089148726cf540"
+      },
+      {
+        "name": "dirs",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libdirs-a585a7f1d8809c32.rlib",
+        "sha256": "2e408546d6fb9b7169606f84e91e05dac7b35a39d7d2c177b26c1bcb4565a8da"
+      },
+      {
+        "name": "evdev",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libevdev-3ceb6de4c9e87969.rlib",
+        "sha256": "a02e127e08931ba3ac7a2c3ff07e2d49c4f653271fd47e6c694dd4970cf53e03"
+      },
+      {
+        "name": "crossbeam_channel",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libcrossbeam_channel-01043076890ca837.rlib",
+        "sha256": "a385fde4cadab7c59bf40d7a872d71ab82e8fbfd8a319b33dd45ddb88930366e"
+      },
+      {
+        "name": "sha2",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libsha2-2fd993683f47a540.rlib",
+        "sha256": "f50cdaa74d8a496e94844210495289638c69e80488b39cec7c7769235021d4b0"
+      },
+      {
+        "name": "meval",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libmeval-152ccb9c7654907d.rlib",
+        "sha256": "8b9d0e2c22f0b3f3b4aaa83dc3df14da08a325bb05ccc2677e717cf19431c52d"
+      },
+      {
+        "name": "ashpd",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libashpd-239ddc4e1fc9aea3.rlib",
+        "sha256": "3a88357cad185c19a31d4e767964ba72a3da05dbc115248c24d617fc9f8240a7"
+      },
+      {
+        "name": "socket2",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libsocket2-8f86e3bc042a4c7b.rlib",
+        "sha256": "f6c1ad55b1a935b312a568532fd0143bd661e02575eb2d288a63592887b288c4"
+      },
+      {
+        "name": "anyhow",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libanyhow-fa734b4ca1c7ad5e.rlib",
+        "sha256": "46abc88cbdb73cece754aa34e87cc4bb3abed5a9ad8cd00387115d13b5d9426a"
+      },
+      {
+        "name": "zeroize",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libzeroize-2ecf2ddf7e92b44f.rlib",
+        "sha256": "6bf77d36fb4ab282bf227db96188946deaa88d5c1661812442a5798e18fe3da1"
+      },
+      {
+        "name": "base64",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libbase64-ef7c71042959ea5a.rlib",
+        "sha256": "67238c8947673db2f6ff7b3f7e680ea244485f5905b1bfa574a3832a146adb25"
+      },
+      {
+        "name": "serde",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libserde-a36e20a8854ca52a.rlib",
+        "sha256": "8428334a011b4af4be45dd0fd391ffef3b61e652192313374b8279ad11d6b276"
+      },
+      {
+        "name": "serde_json",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libserde_json-7fd02a788db2fe71.rlib",
+        "sha256": "2d9e010542f56769adc50d3aa8ab183a61cc8e8b8593094100e3ab42ad9e2f21"
+      },
+      {
+        "name": "tracing",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libtracing-e40447a6b8b603af.rlib",
+        "sha256": "da56fe4e85ab7f71d0dfe425059e6cc7d1b8cfd3a378579cc04ebbe81e1a095d"
+      },
+      {
+        "name": "x11rb",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libx11rb-6e51b1684ac5706e.rlib",
+        "sha256": "b03bde01f0b54fd44bba8171eb39e386cec01a682b9f643aece11bfe82279696"
+      },
+      {
+        "name": "async_trait",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libasync_trait-b8a64162f53dbbf0.so",
+        "sha256": "f68e02269e2442f8c29958df91ab3829a28e61781588169687c22300083df5ed"
+      },
+      {
+        "name": "wayland_protocols_wlr",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libwayland_protocols_wlr-5eb1b301a9d30468.rlib",
+        "sha256": "0ac458dfa5814aa669c03b3d69ac8f88ac5ffe6a3eabdd11230b8629ccfcc6ba"
+      },
+      {
+        "name": "atspi_connection",
+        "path": "/workspace/Footwork/jevdual/vendor/cua-driver/.native-cache/target/debug/deps/libatspi_connection-fddadc20c1bf32ec.rlib",
+        "sha256": "f7735a80ee6bc079024fbf50b5b0ada7561d8888ab03d99d08eb81ec82c0d632"
+      }
+    ],
+    "compile_exit": 0,
+    "link_exit": 0,
+    "probe_sha256": "fe767c90d60e62f368d8c96d802359e4b8fc066251d5ceb9fb1de86959cefbbd"
+  },
+  "command": [
+    "/workspace/Footwork/jevdual/.venv/bin/python",
+    "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/run.py",
+    "/workspace/scratch/cua-internal-replay-ir1-v2",
+    "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first"
+  ],
+  "report": "# IR1: first-run evidence, recovery-only closeout\n\nPreregistration transport **d7f888101290e5100ad90f39d924beefbeb0935b** exactly matches supplied three blobs from **56df6cf6a56a10bfe8e16e4f0174ad57405a5676**. Frozen test package **48f93946b39e9f51f45b291b57152692e0d55033**. Actual cloud base2b5325e differs from unavailable parent2ea51b3; native archive is identical, SHA256 **5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401**.\n\nThe parent reported an automated security check flagging the audit execution for possible cybersecurity risk. On recovery inspection the already-started run had finished. **No blocked command was retried, no new audit case executed, no bypass attempted.** No active audit runner/helper remained; no closeout signal was sent. Saved results below are from that original run only.\n\n## Saved boundaries and effects\n\n| Boundary / fault | Attempts / applied effects | Saved outcome |\n| --- | --- | --- |\n| Both actual private helpers, normal ACK | 1 / 1 each | Success |\n| Both helpers, false before effect | 2 / 1 each | Successful alternate write |\n| Both helpers, apply then explicit D-Bus error | 2 / 2 each | Success; acknowledged error, **not missing ACK** |\n| Both helpers, apply then withhold; declared100ms client timeout | 2 / 2 each | Success after alternate method; missing-reply evidence scoped to altered timeout/private helper |\n| Public native `set_value_ref`, post-effect error | 2 / 2 | Success; SetTextContents\u2192InsertText, final TOKENTOKEN |\n| Public native `set_value_ref`, withheld reply, ordinary3s+500ms backstop | 1 / 1 | Timeout error at3502ms; no alternate observed |\n| Helper-default withheld arms | 1 / 1 each, partial | **Unavailable**: both hit40s watchdog, exit\u221215, no client result |\n| Direct100ms D-Bus timeout control | 1 / 1 | `InputOutput(...TimedOut...timed out)` |\n| Deliberate equal-final-value double SetTextContents | 2 / 2 | Final TOKEN; journal detects both effects |\n| `linux_ax.set_value_ack`, ACK / withheld | 1 / 1 each | ACK succeeds; withheld returns AXError after2.009s, no alternate send |\n\nSetValue helper's post-effect alternates produce TOKEN\u2192TOKENTOKEN. Insert-first helper's alternate SetTextContents can leave TOKEN\u2192TOKEN, hiding the extra effect in final value alone. Independent target journals record method receipt, applied transition and reply behavior, fsynced before withholding; the service never waits holding a journal/object lock and continues servicing later methods.\n\nThe `default25s` case names and `ordinary_zbus_timeout_ms:25000` output field were **unverified fixture assumptions**, not measured default-timeout evidence. The40s watchdog outcomes cannot establish normal helper completion, default timeout replay or a normal-return negative. Preserve them as unavailable; no retry is authorized in this closeout.\n\nThe public reachability result is the actual platform-native cached-ref function, **not the registered SetValueTool, full CUA SDK authorization route, or desktop binding**. No generic outer SetValueTool keyboard fallback is claimed. No public TypeText route was exercised.\n\n## Separate actual core dispatch\n\nActual pinned cached core registry/run_steps invokes the counted registered Tool twice when foreground_fallback=true and delivery_mode is omitted, despite its first error carrying dispatched=true/may_have_landed=true/retryable=false plus foreground advice. The independent per-attempt journal preserves that first result; the final batch report alone says success/one step. This proves registry retry, **not D-Bus effects**. Normal ACK invokes once; true pre-send refusal invokes twice but declares one effect; false/default fallback, explicit/inherited background delivery and direct-tool controls invoke once. No product run_steps/run_actions/run_script call was established; script-authored retries are not tested here.\n\nThe Footwork AX control calls the actual single-write method over the private bus but stubs binding/writability/identity validation. Its linux_ax.py hash **ee6d25eb4a36970868094f5e5ac21b33e3adf3e8698abf28dcb6c3f1a34d4c1d** matches the parent's current file; cloud native.py hash differs. This is a supplemental single-send uncertainty control, **not current whole-product runtime qualification or a generalized Footwork bug**.\n\n## Build, counts and cleanup\n\nBoth offline compiles succeeded with Rust1.97.1. The entire pinned Linux module was compiled, with a test-only child-module suffix; production function bodies/constant prefix and Cargo.lock were retained byte-for-byte. Default Cargo feature selection and40 cached dependency artifacts were selected by exact existing Cargo fingerprint. No dependency install/fetch or pin change. [Build provenance](execution-build/build.json), [frozen commands/package hashes](command.json). Audit binary SHA256 **fe767c90d60e62f368d8c96d802359e4b8fc066251d5ceb9fb1de86959cefbbd**. Cached core artifacts are separately hashed; no claim of a new clean dependency build.\n\nThere are **26 saved receipts:24 normally returned clients and2 watchdog-unavailable clients**. The overall driver exit1 retained red one-effect safety assertions; it was not converted to success. All36 explicit target/private-bus waits completed, no helper escalation. The outer supervisor recorded no remaining descendants, no intervention or monitor errors. All55 captured process identities were absent on recovery inspection. These are scoped test-owned cleanup facts, not a global census or product guarantee.\n\nRaw [first-run journals and receipts](first/), [stdout](stdout.txt), [stderr](stderr.txt), [supervisor cleanup](cleanup.json), and [compact closeout](closeout.json) are preserved. No production fix, new test, shared desktop mutation, OBS change, install/fetch or push/PR occurred during recovery/closeout. Parent owns further review; this package stops here.\n",
+  "limits": {
+    "status": "recovery/closeout only after parent-reported automated security interruption; no test or blocked command rerun",
+    "preregistration_commit": "d7f888101290e5100ad90f39d924beefbeb0935b",
+    "origin_preregistration_commit": "56df6cf6a56a10bfe8e16e4f0174ad57405a5676",
+    "test_package_commit": "48f93946b39e9f51f45b291b57152692e0d55033",
+    "actual_cloud_base": "2b5325edfbab95e095343d0c36ad5544db92d114",
+    "unavailable_parent_base": "2ea51b30c71c3135a895103615005d14fd26f0ca",
+    "saved_receipts": 26,
+    "normal_client_return_cases": 24,
+    "unavailable_outcomes": [
+      "set_value_on-withhold-default25s",
+      "write_through_editable_proxies-withhold-default25s"
+    ],
+    "unavailable_reason": "Each reached 40s watchdog with one recorded effect and no client result. The default25s label and hardcoded ordinary_zbus_timeout_ms field were fixture assumptions, not measured default timeout evidence. No default-helper timeout/replay conclusion.",
+    "highest_native_boundary": "actual public platform-linux set_value_ref over private AT-SPI target; not registered SetValueTool or full SDK/desktop identity qualification",
+    "batch_scope": "actual cached pinned core registry/run_steps with counted test tool; dispatch evidence, not native D-Bus effects",
+    "footwork_scope": "actual linux_ax.set_value_ack single private-bus send with identity/writability checks stubbed; exact linux_ax file matches parent hash, native.py differs; no whole current product runtime qualification",
+    "no_new_closeout_tests": true,
+    "no_active_audit_helpers_on_check": true,
+    "no_closeout_signals_sent": true,
+    "saved_owned_fixture_waits": 36,
+    "saved_helper_escalations": 0,
+    "native_archive_sha256": "5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401",
+    "execution_binary_sha256": "fe767c90d60e62f368d8c96d802359e4b8fc066251d5ceb9fb1de86959cefbbd"
+  }
+}

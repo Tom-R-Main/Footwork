@@ -1,5 +1,7 @@
 # Pinned CUA internal replay: first Linux run
 
+> **Recovery update, November 1, 2026 14:09 EST:** The complete first-run package is now available. The partial-availability statements below record what was known before recovery and are superseded by [the cloud closeout](cloud-closeout-report.md), [the complete structured evidence](cloud-closeout.json), and [the independent parent verification](parent-verification.json). No original case was rerun. The recovered result establishes second effects after post-effect errors in both actual pinned native helpers and the public native retained-reference function, plus shortened-timeout missing-reply replay in both helpers. The public native ordinary-budget withheld-reply case stopped with one effect and a timeout. Two default-helper withheld cases remain watchdog-unavailable. Separately, optional batch foreground fallback dispatched a counted tool twice despite `may_have_landed=true`. This does not establish a current Footwork whole-product defect or a registered SetValueTool missing-reply replay. The installed CUA pin is unchanged.
+
 Status: **second mutations observed at actual native-helper boundaries; complete cloud closeout unavailable**. This is a partial first-run record, not a completed public-tool or Footwork runtime qualification. No fix or dependency change was made.
 
 ## Source and ordering
