@@ -33,6 +33,7 @@ import math
 import re
 import sys
 import uuid
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -202,6 +203,9 @@ class NativeMenu:
     #: Pre-pruning address bars for scope checks; deduplication cannot prove uniqueness.
     scope_address_bars: tuple[tuple[int, str | None], ...] | None = None
     chrome_scope: Any = None
+    #: Pre-pruning semantic collisions. Snapshot indices/tokens and geometry do not distinguish
+    #: these backing controls across observations, even when pruning leaves just one offered row.
+    ambiguous_targets: frozenset[int] = frozenset()
 
     def token(self, id: int) -> str | None:
         return self.tokens.get(id)
@@ -307,10 +311,10 @@ def _prune(
     'button'``) unless it is a text field, and repeats of the same (role, label, value, section) beyond
     the first (a page with 27 identical "More actions" buttons offers one). A toggle that reports its
     state is kept even when repeated, when its whole group is: two "Enabled" switches are two settings,
-    and dropping the second hid its change from the effect diff. The ``do`` and ``_live`` identity
-    checks tell repeats apart by their position among the offered peers, which only holds when every
-    peer is offered, so a group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first
-    member only, as any other repeat. Then cap the count."""
+    and dropping the second hid its change from the effect diff. Such rows remain observable, but
+    generic native actions refuse their ambiguity: peer position is not backing-object identity.
+    A group larger than ``TOGGLE_REPEATS_KEPT`` or cut by the cap offers its first member only, as
+    any other repeat; its pre-pruning ambiguity is retained separately. Then cap the count."""
 
     def key_of(c: Candidate) -> tuple[str, str, str | None, str | None]:
         return (c.role, c.label, c.value, c.section)
@@ -499,6 +503,10 @@ def menu_from_snapshot(
         if candidate.role in ("textbox", "searchbox")
         and any(hint in candidate.label.casefold() for hint in ADDRESS_BAR_HINTS)
     )
+    identity_counts = Counter((c.role, c.label, c.section) for c in candidates)
+    ambiguous_targets = frozenset(
+        c.id for c in candidates if identity_counts[c.role, c.label, c.section] > 1
+    )
     candidates, tokens, frames = _prune(candidates, tokens, frames, omitted, b)
     kept = {c.id for c in candidates}
     values = {i: v for i, v in values.items() if i in kept}
@@ -558,6 +566,7 @@ def menu_from_snapshot(
         ax_roles=ax_roles,
         web=frozenset(i for i in web if i in kept),
         scope_address_bars=scope_address_bars,
+        ambiguous_targets=ambiguous_targets & kept,
     )
 
 
@@ -1027,29 +1036,29 @@ class NativeBridge:
             raise NativeBridgeError("target_missing", f"id {id} is not on the menu from {nm.snapshot_id}")
         return cand, token
 
+    def _require_unambiguous(self, nm: NativeMenu, id: int) -> None:
+        peers = peer_position(nm.menu.candidates, id)
+        if id in nm.ambiguous_targets or (peers is not None and peers[1] > 1):
+            cand = nm.menu.candidate(id)
+            raise NativeBridgeError(
+                "target_ambiguous",
+                f"[{id}] {cand.label if cand else ''!r} has alike native controls without qualified "
+                "backing identity; position, state and a fresh token cannot distinguish them. "
+                "Nothing dispatched. Use a distinctly labelled or scoped control.",
+            )
+
     async def _live(self, nm: NativeMenu, id: int, operation: str) -> tuple[NativeMenu, int]:
-        """Reobserve and find the decided element again: the same (role, label, section), its id kept
-        when it still names it, else the unique element that does. A text field whose value changed, a
-        checkbox whose state changed, or an element that is gone or no longer unique refuses the step:
-        the person or another agent changed the window since the decision."""
+        """Reobserve and find the decided unique element again: the same (role, label, section), its
+        id kept when it still names it, else the unique element that does. Ambiguous controls refuse
+        because their identity is unavailable. A changed text value or checkbox state, or a missing
+        control, also refuses the step."""
         cand = nm.menu.candidate(id)
         assert cand is not None
+        self._require_unambiguous(nm, id)
         fresh = await self.observe()
         key = (cand.role, cand.label, cand.section)
         same = fresh.menu.candidate(id)
-        decided = peer_position(nm.menu.candidates, id)
-        if decided is not None and decided[1] > 1:
-            # one of several same-label controls (repeated toggles are kept): the id alone may now name
-            # a sibling, so the decided one is the same position among the same number of peers
-            peers = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
-            if len(peers) != decided[1]:
-                raise NativeBridgeError(
-                    "target_changed",
-                    f"[{id}] {cand.label!r} was {decided[0] + 1} of {decided[1]} alike; the window now has "
-                    f"{len(peers)}",
-                )
-            hit = peers[decided[0]]
-        elif same is not None and (same.role, same.label, same.section) == key:
+        if same is not None and (same.role, same.label, same.section) == key:
             hit = same
         else:
             matches = [c for c in fresh.menu.candidates if (c.role, c.label, c.section) == key]
@@ -1059,6 +1068,7 @@ class NativeBridge:
                     f"[{id}] {cand.label!r} is {'gone' if not matches else 'no longer unique'} in the window now",
                 )
             hit = matches[0]
+        self._require_unambiguous(fresh, hit.id)
         if operation in ("type", "append", "enter") and _norm_tail(nm.values.get(id, "")) != _norm_tail(
             fresh.values.get(hit.id, "")
         ):
@@ -2095,6 +2105,7 @@ class NativeBridge:
             )
         if operation in ("type", "append") and text is None:
             raise NativeBridgeError("text_required", f"{operation} on [{id}] needs a value")
+        self._require_unambiguous(nm, id)
         decision_snapshot, decision_target = nm.snapshot_id, id
         if self.live_check or self.observation_guard is not None:
             decided_values = nm.values

@@ -61,6 +61,16 @@ def _fmt(x: float) -> str:
 
 
 @dataclass
+class ToggleControl:
+    """One backing setting; its identity is deliberately absent from the SDK observation."""
+
+    identity: str
+    label: str = "Enabled"
+    value: str = "0"
+    role: str = "AXCheckBox"
+
+
+@dataclass
 class World:
     """A Driver double: ``create()`` hands out this same world, so state survives between commands."""
 
@@ -74,6 +84,9 @@ class World:
     presses: list[str] = field(default_factory=list)
     #: element_index -> [label, AX value "0" | "1" | "2"]: extra AXCheckBox elements a click toggles
     toggles: dict[int, list[str]] = field(default_factory=dict)
+    #: Independently identified settings can move between the SDK's snapshot-local indices.
+    backed_toggles: dict[int, ToggleControl] = field(default_factory=dict)
+    toggle_writes: list[str] = field(default_factory=list)
     tool_calls: list[tuple[str, dict[str, Any]]] = field(default_factory=list)
     n: int = 0
     base: dict[str, Any] = field(default_factory=lambda: json.loads(FIXTURE.read_text()))
@@ -125,8 +138,14 @@ class World:
                 "actions": ["AXPress"],
                 "frame": {"x": 440.0, "y": 380.0 + 20 * (idx % 10), "w": 100.0, "h": 18.0},
             }
-            for idx, (label, value) in self.toggles.items()
+            for idx, (label, value) in {
+                **self.toggles,
+                **{idx: (control.label, control.value) for idx, control in self.backed_toggles.items()},
+            }.items()
         ]
+        for row in snap["elements"]:
+            if row["element_index"] in self.backed_toggles:
+                row["role"] = self.backed_toggles[row["element_index"]].role
         snap["tree_markdown"] = self._markdown()
         return snap
 
@@ -140,7 +159,11 @@ class World:
         if label in self.refuse:
             raise RuntimeError("tool='click', message='AX action failed', error_code='ax_failed'")
         self.presses.append(label)
-        if int(idx) in self.toggles:
+        if int(idx) in self.backed_toggles:
+            control = self.backed_toggles[int(idx)]
+            self.toggle_writes.append(control.identity)
+            control.value = "0" if control.value == "1" else "1"
+        elif int(idx) in self.toggles:
             self.toggles[int(idx)][1] = "0" if self.toggles[int(idx)][1] == "1" else "1"
         else:
             self.calc.press(label)
@@ -168,6 +191,8 @@ class World:
     def _label(self, idx: int) -> str | None:
         if idx in self.relabels:
             return self.relabels[idx]
+        if idx in self.backed_toggles:
+            return self.backed_toggles[idx].label
         if idx in self.toggles:
             return self.toggles[idx][0]
         el = next((e for e in self.base["elements"] if e["element_index"] == idx), None)

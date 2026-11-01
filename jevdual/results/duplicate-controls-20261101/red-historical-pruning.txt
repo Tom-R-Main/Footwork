@@ -1,0 +1,38 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_a_previously_pruned_native_lookalike_cannot_replace_the_selected_backing_button _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x112d64b80>
+
+    def test_a_previously_pruned_native_lookalike_cannot_replace_the_selected_backing_button(world, fw):
+        from tests.fixtures.native_world import ToggleControl
+    
+        selected = ToggleControl("setting-A", label="Enable", role="AXButton")
+        lookalike = ToggleControl("setting-B", label="Enable", role="AXButton")
+        world.backed_toggles = {200: selected, 201: lookalike}
+        fw("start", "Enable setting A", "--app", "Calculator")
+        offered = {row["id"] for row in _state(fw)["last_candidates"]}
+        assert 200 in offered and 201 not in offered
+        # The next command sees a singleton with the same public fields and index. Only the previous
+        # observation knew that a pruned lookalike existed, so that uncertainty must survive save/load.
+        world.backed_toggles = {200: lookalike}
+        code, out, err = fw("do", "click", "200", "--no-judge")
+>       assert world.toggle_writes == [], (code, out, err, world.toggle_writes)
+E       AssertionError: (0, "judgment mode: explicit --no-judge; keyword/replacement-only checks, no Jev judgment
+E         dispatched click(Enable): d...w Sidebar'
+E           [  23] button     'Mode'
+E           [ 200] button     'Enable'
+E         page text (3 chars):
+E         0
+E         0
+E         ", '', ['setting-B'])
+E       assert ['setting-B'] == []
+E         
+E         Left contains one more item: 'setting-B'
+E         Use -v to get more diff
+
+tests/test_session_scenarios.py:1997: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_a_previously_pruned_native_lookalike_cannot_replace_the_selected_backing_button
+1 failed, 125 deselected in 0.80s

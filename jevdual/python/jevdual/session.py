@@ -77,6 +77,8 @@ class SessionState:
     last_title: str = ""
     last_page_text: str = ""
     last_candidates: list[dict[str, Any]] = field(default_factory=list)
+    #: None identifies a legacy baseline without pre-pruning native collision evidence.
+    last_native_ambiguous: list[int] | None = None
     last_snapshot: str = ""
     pending: dict[str, Any] | None = None  # the action dispatched by the last `do`, awaiting its receipt
     #: "native" (accessibility route) or "browser" (the Driver's DevTools route on footwork's Chrome)
@@ -153,6 +155,7 @@ class SessionState:
         self.last_title = nm.menu.title
         self.last_page_text = nm.menu.page_text
         self.last_candidates = [{k: getattr(c, k) for k in _CAND_FIELDS} for c in nm.menu.candidates]
+        self.last_native_ambiguous = sorted(getattr(nm, "ambiguous_targets", ()))
         self.last_snapshot = nm.snapshot_id
 
 
@@ -1578,6 +1581,7 @@ async def cmd_do(args: Any) -> int:
         # the ids the operator chose from: the observation before this command, not the fresh one
         chosen_from = {c["id"]: c["label"] for c in state.last_candidates}
         chosen_cands = list(state.last_candidates)
+        chosen_ambiguity = state.last_native_ambiguous
         nm, receipt = await observe(state, bridge)
         if receipt:
             print(f"receipt (previous action): {receipt['text']}")
@@ -1621,6 +1625,17 @@ async def cmd_do(args: Any) -> int:
                     f"id {cid} is {target.label!r} {now[0] + 1 if now else '?'} of {now[1] if now else '?'} "
                     f"now; it was {was[0] + 1} of {was[1]} when you looked; the page changed. "
                     "Nothing dispatched. Choose again from the observation below.",
+                    file=sys.stderr,
+                )
+                print(render_observation(nm, text_chars=args.text, receipt=None))
+                return 4
+            if state.mode == "native" and known is not None and (
+                chosen_ambiguity is None or cid in chosen_ambiguity
+            ):
+                print(
+                    f"target_ambiguous: id {cid} has no qualified backing identity in the previous "
+                    "native observation (including peers hidden by pruning). Nothing dispatched. "
+                    "Choose a distinctly labelled or scoped control from a fresh observation.",
                     file=sys.stderr,
                 )
                 print(render_observation(nm, text_chars=args.text, receipt=None))

@@ -1851,7 +1851,10 @@ async def test_capability_resource_replacement_during_live_observation_sends_not
     assert world.writes == [] and world.content == "Invoice report"
 
 
-def test_the_second_of_two_same_label_switches_is_offered_and_its_toggle_is_named(world, fw):
+def test_the_second_of_two_same_label_switches_is_observed_and_its_change_is_named(world, fw):
+    from jevdual.effects import diff
+    from jevdual.session import SessionState
+
     # 2026-10-28 (notebook CTL3): native pruning kept only the first of two "Enabled" switches, so
     # the second could not be chosen and a change to it was invisible to the effect diff
     world.toggles = {200: ["Enabled", "1"], 201: ["Enabled", "0"]}
@@ -1859,11 +1862,16 @@ def test_the_second_of_two_same_label_switches_is_offered_and_its_toggle_is_name
     rows = [ln.strip() for ln in out.splitlines() if ln.strip().startswith("[") and "'Enabled'" in ln]
     assert [int(r[1 : r.index("]")]) for r in rows] == [200, 201]
     assert "checked=True" in rows[0] and "checked=False" in rows[1]
-    code, out, err = fw("do", "click", "201", "--no-judge")
+    before = SessionState.load(fw.session).last_menu()
+    # Both remain evidence, but native actions now refuse their unresolved backing identity.
+    # An external change must still be visible to the observation diff.
+    world.toggles[201][1] = "1"
+    code, out, err = fw("look")
     assert code == 0, err
     assert world.toggles[201][1] == "1" and world.toggles[200][1] == "1"
-    assert "'Enabled' checked False -> True" in out
-    assert _state(fw)["memory"][-1].endswith("-> confirmed")
+    after = SessionState.load(fw.session).last_menu()
+    assert "'Enabled' checked False -> True" in diff(before, after).summary
+    assert world.presses == []
 
 
 def test_a_reload_with_unchanged_switches_is_not_progress(world, fw):
@@ -1887,3 +1895,122 @@ def test_a_shifted_window_refuses_the_wrong_one_of_two_same_label_switches(world
     code, _, err = fw("do", "click", "201", "--no-judge")
     assert code == 4 and "1 of 2 now; it was 2 of 2" in err and "Nothing dispatched" in err
     assert world.presses == [] and [v for _, v in world.toggles.values()] == ["1", "0", "0"]
+
+
+@pytest.mark.parametrize("change", ["reorder", "replace", "unchanged"])
+def test_indistinguishable_native_switches_never_authorize_a_backing_setting_by_position(world, fw, change):
+    from tests.fixtures.native_world import ToggleControl
+
+    first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+    world.backed_toggles = {200: first, 201: selected}
+    code, out, err = fw("start", "Enable setting B", "--app", "Calculator")
+    assert code == 0, err
+    assert {200, 201} <= {row["id"] for row in _state(fw)["last_candidates"]}
+    if change == "reorder":
+        world.backed_toggles = {200: selected, 201: first}
+    elif change == "replace":
+        world.backed_toggles[201] = ToggleControl("replacement-C")
+
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    # The effect oracle names the backing setting, independent of its label, index and token.
+    # No field in the public snapshot distinguishes these controls, even without a reorder.
+    assert world.toggle_writes == [], (change, code, out, err, world.toggle_writes)
+    assert first.value == selected.value == "0"
+    assert code == 4 and "target_ambiguous" in err, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert not [record for record in records if record["kind"] == "do"]
+
+
+def test_a_distinct_native_switch_still_changes_the_selected_backing_setting(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    first = ToggleControl("setting-A", label="Enable A")
+    selected = ToggleControl("setting-B", label="Enable B")
+    world.backed_toggles = {200: first, 201: selected}
+    fw("start", "Enable B", "--app", "Calculator")
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 0, (out, err)
+    assert world.toggle_writes == ["setting-B"]
+    assert first.value == "0" and selected.value == "1"
+
+
+def test_pruning_duplicate_native_switches_does_not_make_the_retained_one_unique(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    world.backed_toggles = {200 + i: ToggleControl(f"setting-{i}") for i in range(5)}
+    fw("start", "Enable the first setting", "--app", "Calculator")
+    offered = {row["id"] for row in _state(fw)["last_candidates"]}
+    assert 200 in offered and not offered.intersection({201, 202, 203, 204})
+    code, out, err = fw("do", "click", "200", "--no-judge")
+    assert world.toggle_writes == [], (code, out, err, world.toggle_writes)
+    assert code == 4 and "target_ambiguous" in err, (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    assert not [record for record in records if record["kind"] == "do"]
+
+
+def test_a_native_switch_becoming_ambiguous_during_revalidation_sends_nothing(world, fw, monkeypatch):
+    from tests.fixtures.native_world import ToggleControl
+
+    selected = ToggleControl("setting-B")
+    world.backed_toggles = {201: selected}
+    fw("start", "Enable setting B", "--app", "Calculator")
+    next_observation = world.n + 1
+    observe = world.get_window_state
+
+    async def add_sibling_after_the_command_observes(inp):
+        snapshot = await observe(inp)
+        if world.n == next_observation:
+            world.backed_toggles[200] = ToggleControl("new-setting-A")
+        return snapshot
+
+    monkeypatch.setattr(world, "get_window_state", add_sibling_after_the_command_observes)
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert world.toggle_writes == [] and selected.value == "0", (code, out, err)
+    assert "target_ambiguous" in out + err
+
+
+def test_a_native_switch_peer_disappearing_does_not_rebind_the_selected_setting(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    first, selected = ToggleControl("setting-A"), ToggleControl("setting-B")
+    world.backed_toggles = {200: first, 201: selected}
+    fw("start", "Enable setting B", "--app", "Calculator")
+    world.backed_toggles = {201: first}
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 4 and "Nothing dispatched" in err, (out, err)
+    assert world.toggle_writes == [] and first.value == selected.value == "0"
+
+
+def test_a_previously_pruned_native_lookalike_cannot_replace_the_selected_backing_button(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    selected = ToggleControl("setting-A", label="Enable", role="AXButton")
+    lookalike = ToggleControl("setting-B", label="Enable", role="AXButton")
+    world.backed_toggles = {200: selected, 201: lookalike}
+    fw("start", "Enable setting A", "--app", "Calculator")
+    offered = {row["id"] for row in _state(fw)["last_candidates"]}
+    assert 200 in offered and 201 not in offered
+    # The next command sees a singleton with the same public fields and index. Only the previous
+    # observation knew that a pruned lookalike existed, so that uncertainty must survive save/load.
+    world.backed_toggles = {200: lookalike}
+    code, out, err = fw("do", "click", "200", "--no-judge")
+    assert world.toggle_writes == [], (code, out, err, world.toggle_writes)
+    assert selected.value == lookalike.value == "0"
+    assert "target_ambiguous" in out + err
+
+
+def test_a_legacy_native_baseline_requires_fresh_selection_before_numeric_input(world, fw):
+    from tests.fixtures.native_world import ToggleControl
+
+    selected = ToggleControl("setting-B", label="Enable B")
+    world.backed_toggles = {201: selected}
+    fw("start", "Enable B", "--app", "Calculator")
+    old_state = _state(fw)
+    old_state.pop("last_native_ambiguous", None)
+    (fw.session / "session.json").write_text(json.dumps(old_state))
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 4 and "target_ambiguous" in err, (out, err)
+    assert world.toggle_writes == [] and selected.value == "0"
+    assert fw("look")[0] == 0
+    code, out, err = fw("do", "click", "201", "--no-judge")
+    assert code == 0 and world.toggle_writes == ["setting-B"], (out, err)
