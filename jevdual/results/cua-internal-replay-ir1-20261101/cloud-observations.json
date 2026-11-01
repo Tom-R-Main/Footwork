@@ -1,0 +1,319 @@
+{
+  "cloud_thread": "01a18d7f-d0d0-733c-93c9-8f554f4190df",
+  "host": "durable",
+  "thread_title": "Test project in VM",
+  "local_prediction_commit": "56df6cf6a56a10bfe8e16e4f0174ad57405a5676",
+  "cloud_prediction_commit": "d7f8881",
+  "cloud_base": "2b5325edfbab95e095343d0c36ad5544db92d114",
+  "cloud_test_commit": "48f93946b39e9f51f45b291b57152692e0d55033",
+  "probe_sha256": "fe767c90d60e62f368d8c96d802359e4b8fc066251d5ceb9fb1de86959cefbbd",
+  "counts": [
+    {
+      "label": "set_value_on-ack",
+      "attempts": 1,
+      "effects": 1,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "set_value_on-error",
+      "attempts": 2,
+      "effects": 2,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "set_value_on-false",
+      "attempts": 2,
+      "effects": 1,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "set_value_on-withhold",
+      "attempts": 2,
+      "effects": 2,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "set_value_on-withhold-default25s",
+      "attempts": 1,
+      "effects": 1,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "write_through_editable_proxies-ack",
+      "attempts": 1,
+      "effects": 1,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "write_through_editable_proxies-error",
+      "attempts": 2,
+      "effects": 2,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "write_through_editable_proxies-false",
+      "attempts": 2,
+      "effects": 1,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    },
+    {
+      "label": "write_through_editable_proxies-withhold",
+      "attempts": 2,
+      "effects": 2,
+      "error_reported": "None",
+      "infrastructure_error_reported": "None",
+      "source": "complete compact command output, original receipt remains in cloud"
+    }
+  ],
+  "complete_receipts_recovered": [
+    {
+      "argv": [
+        "/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.016289743998640915,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 5,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "set_value_on-ack",
+      "boundary": "set_value_on",
+      "fixture_mode": "ack",
+      "client_timeout_ms": null,
+      "attempts": 1,
+      "effects": 1,
+      "methods": [
+        "SetTextContents"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/Footwork/jevdual/.venv/bin/python",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-S6zm0MDEDp,guid=7c4417f4dba0dff654cd41066ae78680",
+        "--journal",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-ack/target.jsonl",
+        "--ready",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-ack/ready.json",
+        "--mode",
+        "ack",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-ack"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.015970110998750897,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 7,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "set_value_on-false",
+      "boundary": "set_value_on",
+      "fixture_mode": "false",
+      "client_timeout_ms": null,
+      "attempts": 2,
+      "effects": 1,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        }
+      ],
+      "final_value": "TOKEN",
+      "target_argv": [
+        "/workspace/Footwork/jevdual/.venv/bin/python",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-nr8xwaOquE,guid=a1dd9bfa9211a7beb6c3c10c6ae78680",
+        "--journal",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-false/target.jsonl",
+        "--ready",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-false/ready.json",
+        "--mode",
+        "false",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-false"
+      ],
+      "expected_control_effects": 1,
+      "control_passed": true,
+      "safety_one_effect": true
+    },
+    {
+      "argv": [
+        "/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe",
+        "set_value_on"
+      ],
+      "cwd": "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit",
+      "returncode": 0,
+      "signal": null,
+      "watchdog_expired": false,
+      "elapsed_seconds": 0.01599686899862718,
+      "result": {
+        "boundary": "set_value_on",
+        "client_timeout_ms": null,
+        "elapsed_ms": 6,
+        "error": null,
+        "ok": true,
+        "ordinary_zbus_timeout_ms": 25000,
+        "result": true
+      },
+      "label": "set_value_on-error",
+      "boundary": "set_value_on",
+      "fixture_mode": "error",
+      "client_timeout_ms": null,
+      "attempts": 2,
+      "effects": 2,
+      "methods": [
+        "SetTextContents",
+        "InsertText"
+      ],
+      "transitions": [
+        {
+          "before": "",
+          "after": "TOKEN"
+        },
+        {
+          "before": "TOKEN",
+          "after": "TOKENTOKEN"
+        }
+      ],
+      "final_value": "TOKENTOKEN",
+      "target_argv": [
+        "/workspace/Footwork/jevdual/.venv/bin/python",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/target.py",
+        "--address",
+        "unix:path=/tmp/dbus-anGTdf3JDw,guid=cb81e187764026ee951ab0a46ae78680",
+        "--journal",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-error/target.jsonl",
+        "--ready",
+        "/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-error/ready.json",
+        "--mode",
+        "error",
+        "--primary",
+        "SetTextContents",
+        "--invocation",
+        "set_value_on-error"
+      ],
+      "expected_control_effects": null,
+      "control_passed": null,
+      "safety_one_effect": false
+    }
+  ],
+  "observations": [
+    {
+      "type": "commandExecution",
+      "id": "exec-7ec432e3-e894-440f-951d-4830fd147ca3",
+      "command": "/bin/bash -lc 'git add jevdual/scripts/ir1_replay_audit/supervise.py; git commit -m \"test: freeze bounded owned-process supervision for IR1 first execution\"; git rev-parse HEAD; tail -4 /workspace/scratch/cua-internal-replay-ir1-v2/compile.stderr.txt 2>/dev/null; cat /workspace/scratch/ir1-build-v2.stderr.txt'",
+      "cwd": "/workspace/footwork-cua-replay-audit-vm",
+      "status": "completed",
+      "exitCode": 0,
+      "durationMs": 0,
+      "output": {
+        "text": "[codex/cua-internal-replay-audit-vm 48f9394] test: freeze bounded owned-process supervision for IR1 first execution\n 1 file changed, 79 insertions(+)\n create mode 100644 jevdual/scripts/ir1_replay_audit/supervise.py\n48f93946b39e9f51f45b291b57152692e0d55033\n",
+        "truncated": false
+      }
+    },
+    {
+      "type": "commandExecution",
+      "id": "exec-778dac1f-3eb4-447d-ae9f-c4aeb3a13f9e",
+      "command": "/bin/bash -lc \"tail -5 jevdual/results/cua-internal-replay-ir1-20261101/stdout.txt; cat jevdual/results/cua-internal-replay-ir1-20261101/stderr.txt; ls jevdual/results/cua-internal-replay-ir1-20261101/first; date -u '+%H:%M:%S UTC'\"",
+      "cwd": "/workspace/footwork-cua-replay-audit-vm",
+      "status": "completed",
+      "exitCode": 0,
+      "durationMs": 0,
+      "output": {
+        "text": "{\"argv\": [\"/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe\", \"set_value_on\"], \"cwd\": \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit\", \"returncode\": 0, \"signal\": null, \"watchdog_expired\": false, \"elapsed_seconds\": 0.016289743998640915, \"result\": {\"boundary\": \"set_value_on\", \"client_timeout_ms\": null, \"elapsed_ms\": 5, \"error\": null, \"ok\": true, \"ordinary_zbus_timeout_ms\": 25000, \"result\": true}, \"label\": \"set_value_on-ack\", \"boundary\": \"set_value_on\", \"fixture_mode\": \"ack\", \"client_timeout_ms\": null, \"attempts\": 1, \"effects\": 1, \"methods\": [\"SetTextContents\"], \"transitions\": [{\"before\": \"\", \"after\": \"TOKEN\"}], \"final_value\": \"TOKEN\", \"target_argv\": [\"/workspace/Footwork/jevdual/.venv/bin/python\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/target.py\", \"--address\", \"unix:path=/tmp/dbus-S6zm0MDEDp,guid=7c4417f4dba0dff654cd41066ae78680\", \"--journal\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-ack/target.jsonl\", \"--ready\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-ack/ready.json\", \"--mode\", \"ack\", \"--primary\", \"SetTextContents\", \"--invocation\", \"set_value_on-ack\"], \"expected_control_effects\": 1, \"control_passed\": true, \"safety_one_effect\": true}\n{\"argv\": [\"/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe\", \"set_value_on\"], \"cwd\": \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit\", \"returncode\": 0, \"signal\": null, \"watchdog_expired\": false, \"elapsed_seconds\": 0.015970110998750897, \"result\": {\"boundary\": \"set_value_on\", \"client_timeout_ms\": null, \"elapsed_ms\": 7, \"error\": null, \"ok\": true, \"ordinary_zbus_timeout_ms\": 25000, \"result\": true}, \"label\": \"set_value_on-false\", \"boundary\": \"set_value_on\", \"fixture_mode\": \"false\", \"client_timeout_ms\": null, \"attempts\": 2, \"effects\": 1, \"methods\": [\"SetTextContents\", \"InsertText\"], \"transitions\": [{\"before\": \"\", \"after\": \"TOKEN\"}], \"final_value\": \"TOKEN\", \"target_argv\": [\"/workspace/Footwork/jevdual/.venv/bin/python\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/target.py\", \"--address\", \"unix:path=/tmp/dbus-nr8xwaOquE,guid=a1dd9bfa9211a7beb6c3c10c6ae78680\", \"--journal\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-false/target.jsonl\", \"--ready\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-false/ready.json\", \"--mode\", \"false\", \"--primary\", \"SetTextContents\", \"--invocation\", \"set_value_on-false\"], \"expected_control_effects\": 1, \"control_passed\": true, \"safety_one_effect\": true}\n{\"argv\": [\"/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe\", \"set_value_on\"], \"cwd\": \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit\", \"returncode\": 0, \"signal\": null, \"watchdog_expired\": false, \"elapsed_seconds\": 0.01599686899862718, \"result\": {\"boundary\": \"set_value_on\", \"client_timeout_ms\": null, \"elapsed_ms\": 6, \"error\": null, \"ok\": true, \"ordinary_zbus_timeout_ms\": 25000, \"result\": true}, \"label\": \"set_value_on-error\", \"boundary\": \"set_value_on\", \"fixture_mode\": \"error\", \"client_timeout_ms\": null, \"attempts\": 2, \"effects\": 2, \"methods\": [\"SetTextContents\", \"InsertText\"], \"transitions\": [{\"before\": \"\", \"after\": \"TOKEN\"}, {\"before\": \"TOKEN\", \"after\": \"TOKENTOKEN\"}], \"final_value\": \"TOKENTOKEN\", \"target_argv\": [\"/workspace/Footwork/jevdual/.venv/bin/python\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit/target.py\", \"--address\", \"unix:path=/tmp/dbus-anGTdf3JDw,guid=cb81e187764026ee951ab0a46ae78680\", \"--journal\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-error/target.jsonl\", \"--ready\", \"/workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101/first/set_value_on-error/ready.json\", \"--mode\", \"error\", \"--primary\", \"SetTextContents\", \"--invocation\", \"set_value_on-error\"], \"expected_control_effects\": null, \"control_passed\": null, \"safety_one_effect\": false}\n{\"argv\": [\"/workspace/scratch/cua-internal-replay-ir1-v2/bin/ir1-probe\", \"set_value_on\"], \"cwd\": \"/workspace/footwork-cua-replay-audit-vm/jevdual/scripts/ir1_replay_audit\", \"returncode\": 0, \"signal\": null, \"watchdog_expired\": false, \"elapsed_seconds\": 0.16541862399753882, \"result\": {\"boundary\": \"set_value_on\", \"client_timeout_ms\": 100, \"elapsed_ms\": 110, \"error\": null, \"ok\": true, \"ordinary_zbus_timeout_ms\": 25000, \"result\": true}, \"label\": \"set_value_on-withhold\", \"boundary\": \"set_value_on\", \"fixture_mode\": \"withhold\", \"client_timeout_ms\": 100, \"attempts\": 2, \"effects\": 2, \"methods\": [\"SetTextContents\", \"InsertText\"], \"transitions\": [{\"before\": \"\", \"after\": \"TOKEN\"}, {\"before\": \"TOKEN\", \"after\": \"TOKENTOKEN\"}], \"final_value\": \"TOKENTOKEN\", \"target_argv\": [\"/workspace/Footwork/jevdual/.venv/bin/python\", \"",
+        "truncated": true,
+        "originalChars": 5763
+      }
+    },
+    {
+      "type": "commandExecution",
+      "id": "exec-398b7600-e07f-4abe-85a9-ab164daaa331",
+      "command": "/bin/bash -lc \"python - <<'PY'\nimport json\nfrom pathlib import Path\nr=Path('jevdual/results/cua-internal-replay-ir1-20261101/first')\nfor p in sorted(r.glob('*/receipt.json')):\n d=json.loads(p.read_text());print(p.parent.name,d.get('attempts'),d.get('effects'),(d.get('result') or {}).get('error'),d.get('infrastructure_error'))\nPY\ntail -4 jevdual/results/cua-internal-replay-ir1-20261101/stderr.txt; date -u '+%H:%M:%S UTC'\"",
+      "cwd": "/workspace/footwork-cua-replay-audit-vm",
+      "status": "completed",
+      "exitCode": 0,
+      "durationMs": 0,
+      "output": {
+        "text": "set_value_on-ack 1 1 None None\nset_value_on-error 2 2 None None\nset_value_on-false 2 1 None None\nset_value_on-withhold 2 2 None None\nset_value_on-withhold-default25s 1 1 None None\nwrite_through_editable_proxies-ack 1 1 None None\nwrite_through_editable_proxies-error 2 2 None None\nwrite_through_editable_proxies-false 2 1 None None\nwrite_through_editable_proxies-withhold 2 2 None None\n18:36:47 UTC\n",
+        "truncated": false
+      }
+    },
+    {
+      "type": "commandExecution",
+      "id": "exec-25946af0-d51a-4f00-b9e1-bb79ac937b83",
+      "command": "/bin/bash -lc \"python - <<'PY'\nimport json,hashlib\nfrom pathlib import Path\nr=Path('/workspace/scratch/cua-internal-replay-ir1-v2');b=json.loads((r/'build.json').read_text());assert b['compile_exit']==b['link_exit']==0 and b['production_prefix_byte_identical'];assert b['archive_sha256']=='5588fa808559de5982f9195c1031696f51a67b057164fd42b60485ac6c30b401';assert b['cargo_lock_sha256']=='3a75d89d3f2fc53cf9e910beb3a754b28f27d29f2a2d4feed632b3959eed557f';print('verified build',b['probe_sha256'],'dependency features',b['original_feature_fingerprint']['features'],'dependencies',len(b['dependency_artifacts']))\nPY\n/workspace/Footwork/jevdual/.venv/bin/python jevdual/scripts/ir1_replay_audit/supervise.py /workspace/scratch/cua-internal-replay-ir1-v2 /workspace/footwork-cua-replay-audit-vm/jevdual/results/cua-internal-replay-ir1-20261101\"",
+      "cwd": "/workspace/footwork-cua-replay-audit-vm",
+      "status": "failed",
+      "exitCode": 1,
+      "durationMs": 88095,
+      "output": {
+        "text": "verified build fe767c90d60e62f368d8c96d802359e4b8fc066251d5ceb9fb1de86959cefbbd dependency features [\"default\"] dependencies 40\n{\"command_returncode\": 1, \"whole_run_timeout\": false, \"monitor_errors\": [], \"pre_supervisor_cleanup\": [], \"signals\": [], \"adopted_waits\": [], \"final_owned_descendants\": [], \"scope\": \"test-only subreaper, captured owned descendants; target/bus explicit stops separately journaled\"}\n",
+        "truncated": false
+      }
+    }
+  ],
+  "limits": [
+    "Cloud agent turn flagged for possible cybersecurity risk after runner returned1; no blocked operation rerun.",
+    "Recovery-only follow-up sent, but Codex thread tools and CUA fallback then returned Transport closed.",
+    "Complete journals/final case matrix and cloud test package not yet imported; file-change previews include explicitly truncated files.",
+    "Supervisor observed command_returncode1, no whole-run timeout, monitor_errors[], no final owned descendants; separate fixture cleanup receipts not imported.",
+    "No Mac resolving test, production patch or pin bump."
+  ]
+}
