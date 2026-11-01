@@ -14,7 +14,7 @@ pin. This image is an execution input, not source authority.
 
 Run `build_mac_linux.py` with `/repo` mounted read-only and the task-owned
 `output/cua-ir2-mac-linux-20261101` directory mounted at `/work`. It extracts
-the archive, checks hashes, applies the patch with zero fuzz, compiles the
+the archive, checks hashes, applies the patch with Git's exact context, compiles the
 complete Linux module plus the test-only IR1 child module, then links the probe.
 Run `run_mac_linux.py` with the same mounts and
 `jevdual/results/cua-ambiguous-write-ir2-20261101` mounted at `/results`.

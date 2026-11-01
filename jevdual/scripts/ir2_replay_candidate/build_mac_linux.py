@@ -50,15 +50,23 @@ def main() -> None:
     for item in spec["files"]:
         assert item["path"] in FILES
         assert sha(source / item["path"]) == item["before_sha256"]
+    patch_path = package / "candidate.patch"
+    check = subprocess.run(
+        ["/usr/bin/git", "apply", "--check", str(patch_path)],
+        cwd=source,
+        capture_output=True,
+        check=False,
+    )
+    assert check.returncode == 0, check.stderr.decode(errors="replace")
     patch = subprocess.run(
-        ["/usr/bin/patch", "-p1", "-F", "0", "-d", str(source)],
-        input=(package / "candidate.patch").read_bytes(),
+        ["/usr/bin/git", "apply", str(patch_path)],
+        cwd=source,
         capture_output=True,
         check=False,
     )
     (task / "patch.stdout.txt").write_bytes(patch.stdout)
     (task / "patch.stderr.txt").write_bytes(patch.stderr)
-    assert patch.returncode == 0, "candidate patch failed to apply without fuzz"
+    assert patch.returncode == 0, "candidate patch failed to apply with exact context"
     for item in spec["files"]:
         assert sha(source / item["path"]) == item["candidate_sha256"]
 
