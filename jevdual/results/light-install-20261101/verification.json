@@ -57,5 +57,10 @@
     "Full-profile real installed native runtime not established by older-CUA source .venv",
     "No 2CPU/8GB resource benefit or generic engine compatibility claim"
   ],
-  "worker_commits": false
+  "worker_commits": false,
+  "parent_followup": {
+    "checked_implementation_commit": "81d6985791298d151c9610bc10b1b00816137b07",
+    "integration_report": "../duplicate-controls-light-install-20261101/report.md",
+    "note": "Original source_files identify the worker handoff snapshot; parent appended notebook/result evidence after that snapshot. Product/source implementation files remain unchanged."
+  }
 }

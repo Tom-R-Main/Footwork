@@ -67,5 +67,10 @@
     "Label selection explicitly queries the current observation; generic numeric selection from legacy baselines requires fresh selection.",
     "Current-only ambiguity inside act preserves existing exit0 plus typed not-dispatched receipt contract; inspect dispatched status, not process exit alone.",
     "Parent will retain final broad checks and artifact identity separately; no PR, merge or deployment performed."
-  ]
+  ],
+  "parent_followup": {
+    "checked_implementation_commit": "81d6985791298d151c9610bc10b1b00816137b07",
+    "integration_report": "../duplicate-controls-light-install-20261101/report.md",
+    "note": "Original source_files identify the worker handoff snapshot; parent appended notebook/result evidence after that snapshot. Product/source implementation files remain unchanged."
+  }
 }

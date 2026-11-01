@@ -1,0 +1,47 @@
+{
+  "checked_source_commit": "81d6985791298d151c9610bc10b1b00816137b07",
+  "wheel_sha256": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a",
+  "light_manifest": {
+    "files": {
+      "install.py": "471167c071b38638ceeadad6cb077bdf98b52512f35c30cb7d32ebcf96a3a4da",
+      "jevdual-0.0.1-py3-none-any.whl": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a"
+    },
+    "product": "jevdual-0.0.1-py3-none-any.whl",
+    "profile": "light",
+    "schema_version": 2
+  },
+  "full_manifest": {
+    "cua": "cua_driver-0.38.0+footwork.d5373879.cleanup2-py3-none-macosx_13_0_arm64.whl",
+    "files": {
+      "cua_driver-0.38.0+footwork.d5373879.cleanup2-py3-none-macosx_13_0_arm64.whl": "23815cfcd8e248c831ff42b9bb74c220a52ecbd0a586f48d5eaf872d4f6f6c74",
+      "install.py": "471167c071b38638ceeadad6cb077bdf98b52512f35c30cb7d32ebcf96a3a4da",
+      "jevdual-0.0.1-py3-none-any.whl": "0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a"
+    },
+    "product": "jevdual-0.0.1-py3-none-any.whl",
+    "profile": "full",
+    "schema_version": 2
+  },
+  "requirements": [
+    "typesafe-sdk>=0.7,<1",
+    "orjson>=3.10",
+    "psutil==7.2.2",
+    "websockets==15.0.1",
+    "mcp==2.1.1",
+    "packaging>=25,<27",
+    "cua-driver==0.38.0+footwork.d5373879.cleanup2; extra == \"desktop\"",
+    "jeepney==0.9.0; (sys_platform == 'linux') and extra == \"desktop\"",
+    "pyobjc-framework-applicationservices>=12; (sys_platform == 'darwin') and extra == \"desktop\"",
+    "pyobjc-framework-quartz>=12; (sys_platform == 'darwin') and extra == \"desktop\"",
+    "pyobjc-framework-cocoa>=12; (sys_platform == 'darwin') and extra == \"desktop\"",
+    "browser-use==0.13.14; extra == \"agent\"",
+    "mujoco==3.15.0; extra == \"tools\""
+  ],
+  "extras": [
+    "desktop",
+    "agent",
+    "tools"
+  ],
+  "no_source_build": true,
+  "external_engine_sha256": "273a4659510f8c48e6c5f26a2eee6aa20051632210cbf0f59975ac705056c44f",
+  "full_fresh_dependency_install": "not_run; local compatible CUA wheel bundle and negative missing-dependency check only"
+}

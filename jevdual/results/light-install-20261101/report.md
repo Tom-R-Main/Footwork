@@ -31,3 +31,11 @@ remain the parent's qualification step; no final runtime or hosted result is ass
 No native delivery, guard, durable admission, uncertain-operation, typing, external engine pin,
 or completion contract was changed. Full installed native runtime and small-host resource
 measurements remain separate. Worker edits are uncommitted for parent integration and review.
+
+## Parent final artifact qualification
+
+Source `81d6985791298d151c9610bc10b1b00816137b07` produced wheel `0c777e645947f308e93b01e939eaf964dae5a6e77c81c7d4ef269e7f51d41a4a`. Its217-entry source/RECORD verification passes; all212 installed product files match. A final genuinely fresh-cache binary resolver install passed with35 packages, no desktop/agent distributions and observed profile light. Public tools/schema/doctor pass; native requests report unavailable; the installed CLI's loopback pinned-Lightpanda read preserves semantic text, field privacy, no input authority and independent bounded cleanup.
+
+The generated light installer also succeeds offline using the project-owned cache; profile mismatch and unavailable full binary dependency controls refuse as intended. Both manifests pass hash checks and contain the same product wheel. `final-artifact-verification.json`, `final-clean-receipt.json`, `final-installed-public.json` and `verify_installed_light.py` retain this final evidence.
+
+The combined source suite passes2848 with51 skips and66 deselections after using the exact local CUA pin in a task-owned overlay. The earlier shared-venv mismatch is retained in the [integration report](../duplicate-controls-light-install-20261101/report.md). No new hosted CI, fresh full-native install, live native delivery or small-host resource qualification is claimed.

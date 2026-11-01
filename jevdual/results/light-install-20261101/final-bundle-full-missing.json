@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12",
+    "/Users/thomasmain/projects/footwork/output/light-install-20261101/final-full-bundle/install.py",
+    "--profile",
+    "full",
+    "--core-only",
+    "--offline",
+    "--venv",
+    "/Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-full-missing-deps",
+    "--python",
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12"
+  ],
+  "expected_exit": 1,
+  "exit": 1,
+  "diagnostic": "Using CPython 3.12.6 interpreter at: /Library/Frameworks/Python.framework/Versions/3.12/bin/python3.12\nCreating virtual environment at: /Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-full-missing-deps\nActivate with: source /Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-full-missing-deps/bin/activate\nUsing Python 3.12.6 environment at: /Users/thomasmain/projects/footwork/output/light-install-20261101/bundle-full-missing-deps\n  \u00d7 No solution found when resolving dependencies:\n  \u2570\u2500\u25b6 Because psutil was not found in the cache and jevdual==0.0.1 depends on\n      psutil==7.2.2, we can conclude that jevdual==0.0.1 cannot be used.\n      And because only jevdual[desktop]==0.0.1 is available and you\n      require jevdual[desktop], we can conclude that your requirements are\n      unsatisfiable.\n\n      hint: Packages were unavailable because the network was disabled. When\n      the network is disabled, registry packages may only be read from the\n      cache.\nBinary dependency installation failed for profile full; provide its compatible wheels (or choose light to omit native/agent dependencies). No compilation or fallback attempted.\n"
+}
