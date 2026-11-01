@@ -1,0 +1,338 @@
+--- a/libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs
++++ b/libs/cua-driver/rust/crates/platform-linux/src/atspi/native.rs
+@@ -2801,6 +2801,40 @@
+     write_through_editable_proxies(&proxies, text).await
+ }
+ 
++/// A mutation was awaited without a trustworthy acknowledgement. Never treat
++/// this as a proven no-send or as permission to try a second actuator.
++#[derive(Debug)]
++pub struct TextWriteUncertain {
++    operation: &'static str,
++    source: Option<zbus::Error>,
++}
++
++impl std::fmt::Display for TextWriteUncertain {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(f, "text_write_uncertain: {} acknowledgement unavailable; delivery unknown", self.operation)
++    }
++}
++
++impl std::error::Error for TextWriteUncertain {
++    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
++        self.source.as_ref().map(|error| error as &(dyn std::error::Error + 'static))
++    }
++}
++
++pub fn is_text_write_uncertain(error: &anyhow::Error) -> bool {
++    error.is::<TextWriteUncertain>()
++}
++
++/// A write-owner deadline can expire after sending. Without delivery proof,
++/// conservatively keep uncertainty even if the timeout actually preceded send.
++pub(crate) fn uncertain_text_write(operation: &'static str) -> anyhow::Error {
++    TextWriteUncertain { operation, source: None }.into()
++}
++
++fn text_write_ack(operation: &'static str, reply: zbus::Result<bool>) -> Result<bool> {
++    reply.map_err(|source| TextWriteUncertain { operation, source: Some(source) }.into())
++}
++
+ async fn write_through_editable_proxies(
+     proxies: &atspi::proxy::proxy_ext::Proxies<'_>,
+     text: &str,
+@@ -2816,10 +2850,10 @@
+     };
+     let len = text.chars().count() as i32;
+ 
+-    if et.insert_text(off, text, len).await.unwrap_or(false) {
++    if text_write_ack("EditableText.InsertText", et.insert_text(off, text, len).await)? {
+         return Ok(true);
+     }
+-    if et.set_text_contents(text).await.unwrap_or(false) {
++    if text_write_ack("EditableText.SetTextContents", et.set_text_contents(text).await)? {
+         return Ok(true);
+     }
+     Ok(false)
+@@ -2833,7 +2867,7 @@
+         async {
+             let conn = shared_connection().await?;
+             // Focused editable known from the event log: write there directly.
+-            if let Some(true) = write_into_focused_editable(conn, pid, text).await {
++            if let Some(true) = write_into_focused_editable(conn, pid, text).await? {
+                 return Ok(());
+             }
+             let Collected {
+@@ -2849,7 +2883,7 @@
+                 Err(anyhow!("no writable AT-SPI element found for pid {pid}"))
+             }
+         },
+-        || Err(anyhow!("AT-SPI editable lookup timed out for pid {pid}")),
++        || Err(uncertain_text_write("AT-SPI editable lookup deadline")),
+     )
+ }
+ 
+@@ -2893,9 +2927,7 @@
+             }
+         },
+         || {
+-            Err(anyhow!(
+-                "AT-SPI editable write timed out for element {idx} in pid {pid}"
+-            ))
++            Err(uncertain_text_write("AT-SPI indexed editable deadline"))
+         },
+     )
+ }
+@@ -2905,7 +2937,7 @@
+         INPUT_QUERY_BUDGET,
+         async {
+             let conn = shared_connection().await?;
+-            if let Some(true) = write_into_focused_editable(conn, pid, text).await {
++            if let Some(true) = write_into_focused_editable(conn, pid, text).await? {
+                 return Ok(true);
+             }
+             let Collected {
+@@ -2998,7 +3030,7 @@
+                             // so it should accept the keystrokes even though the window is unfocused.
+                             if let Err(e) = crate::input::send_type_text(xid, text) {
+                                 dlog!("GTK3 fallback: send_type_text failed: {e}");
+-                                return Ok(false);
++                                return Err(uncertain_text_write("GTK3 keyboard write"));
+                             }
+ 
+                             dlog!("GTK3 fallback: X11 click+type succeeded");
+@@ -3011,8 +3043,7 @@
+             Ok(false)
+         },
+         || {
+-            dlog!("insert_text timed out for pid {pid}; falling back to synthetic typing");
+-            Ok(false)
++            Err(uncertain_text_write("AT-SPI insert_text deadline"))
+         },
+     )
+ }
+@@ -3820,7 +3851,7 @@
+                 Err(anyhow!("EditableText write was rejected"))
+             }
+         },
+-        || Err(anyhow!("type_into_editable (cached element) timed out")),
++        || Err(uncertain_text_write("AT-SPI cached editable deadline")),
+     )
+ }
+ 
+@@ -3831,18 +3862,23 @@
+     conn: &AccessibilityConnection,
+     pid: u32,
+     text: &str,
+-) -> Option<bool> {
+-    let (acc, oref) = focused_accessible_via_events(conn, pid).await?;
+-    let ifaces = call(acc.get_interfaces()).await?.ok()?;
++) -> Result<Option<bool>> {
++    let Some((acc, oref)) = focused_accessible_via_events(conn, pid).await else {
++        return Ok(None);
++    };
++    let Some(Ok(ifaces)) = call(acc.get_interfaces()).await else {
++        return Ok(None);
++    };
+     if !ifaces.contains(Interface::EditableText) {
+         dlog!("focused object {} is not editable", oref.path);
+-        return Some(false);
++        return Ok(Some(false));
+     }
+     match write_into_editable_acc(&acc, ifaces.contains(Interface::Component), text).await {
+-        Ok(written) => Some(written),
++        Ok(written) => Ok(Some(written)),
++        Err(error) if is_text_write_uncertain(&error) => Err(error),
+         Err(error) => {
+             dlog!("focused editable write failed: {error:#}");
+-            Some(false)
++            Ok(Some(false))
+         }
+     }
+ }
+@@ -5270,7 +5306,7 @@
+     if let Ok(et) = proxies.editable_text().await {
+         // Replace whole contents (parity with the Windows/macOS set_value,
+         // which overwrite rather than insert at the caret).
+-        if et.set_text_contents(value).await.unwrap_or(false) {
++        if text_write_ack("EditableText.SetTextContents", et.set_text_contents(value).await)? {
+             commit_editable_write(&proxies).await;
+             return Ok(());
+         }
+@@ -5281,7 +5317,7 @@
+             Err(_) => 0,
+         };
+         let len = value.chars().count() as i32;
+-        if et.insert_text(off, value, len).await.unwrap_or(false) {
++        if text_write_ack("EditableText.InsertText", et.insert_text(off, value, len).await)? {
+             commit_editable_write(&proxies).await;
+             return Ok(());
+         }
+@@ -5296,7 +5332,7 @@
+             .map_err(|e| anyhow!("Value unavailable: {e}"))?
+             .set_current_value(v)
+             .await
+-            .map_err(|e| anyhow!("setCurrentValue failed: {e}"))?;
++            .map_err(|source| TextWriteUncertain { operation: "Value.SetCurrentValue", source: Some(source) })?;
+         return Ok(());
+     }
+     Err(anyhow!(
+@@ -5325,9 +5361,7 @@
+             .await
+         },
+         || {
+-            Err(anyhow!(
+-                "set_value timed out for pid {pid} (app unresponsive to AT-SPI)"
+-            ))
++            Err(uncertain_text_write("AT-SPI indexed set_value deadline"))
+         },
+     )
+ }
+@@ -5352,7 +5386,7 @@
+             )
+             .await
+         },
+-        || Err(anyhow!("set_value (cached element) timed out")),
++        || Err(uncertain_text_write("AT-SPI cached set_value deadline")),
+     )
+ }
+ 
+--- a/libs/cua-driver/rust/crates/platform-linux/src/atspi/mod.rs
++++ b/libs/cua-driver/rust/crates/platform-linux/src/atspi/mod.rs
+@@ -615,7 +615,7 @@
+             Ok(done) => return Ok(done),
+             Err(error) => error,
+         };
+-        if !self.may_reresolve {
++        if native::is_text_write_uncertain(&error) || !self.may_reresolve {
+             return Err(error);
+         }
+         tracing::debug!(
+--- a/libs/cua-driver/rust/crates/platform-linux/src/tools/impl_.rs
++++ b/libs/cua-driver/rust/crates/platform-linux/src/tools/impl_.rs
+@@ -2726,7 +2726,34 @@
+ /// Map an input-path error to a tool error, attaching the structured
+ /// foreground `code` (`foreground_unavailable` / `foreground_timeout`) when the
+ /// message carries one so the caller can branch instead of parsing prose.
++/// Project an unknown write without no-send claims or foreground/retry advice.
++fn text_write_uncertainty_result(error: &anyhow::Error) -> Option<ToolResult> {
++    crate::atspi::native::is_text_write_uncertain(error).then(|| {
++        ToolResult::error(error.to_string()).with_structured(json!({
++            "code": "text_write_uncertain",
++            "effect": "unknown",
++            "dispatched": null,
++            "retryable": false,
++            "verified": false,
++        }))
++    })
++}
++
++/// A panicked/cancelled blocking writer also cannot prove that nothing landed.
++fn stop_uncertain_text_attempt<T>(
++    attempt: &Result<anyhow::Result<T>, tokio::task::JoinError>,
++) -> Option<ToolResult> {
++    match attempt {
++        Ok(Err(error)) => text_write_uncertainty_result(error),
++        Err(_) => text_write_uncertainty_result(&crate::atspi::native::uncertain_text_write("AT-SPI worker")),
++        _ => None,
++    }
++}
++
+ fn input_error_result(e: anyhow::Error) -> ToolResult {
++    if let Some(result) = text_write_uncertainty_result(&e) {
++        return result;
++    }
+     let text = e.to_string();
+     if crate::input::is_uinput_unavailable(&e) {
+         // The focus-free real-input route exists but this process cannot open
+@@ -7777,13 +7804,13 @@
+             if !is_chromium_embedder(pid) && !is_webkitgtk_embedder(pid) {
+                 if let Some(element) = token.clone() {
+                     let text_ax = text.clone();
+-                    if matches!(
+-                        tokio::task::spawn_blocking(move || crate::atspi::type_into_token(
+-                            pid, &element, &text_ax
+-                        ))
+-                        .await,
+-                        Ok(Ok(()))
+-                    ) {
++                    let targeted = tokio::task::spawn_blocking(move || crate::atspi::type_into_token(
++                        pid, &element, &text_ax
++                    )).await;
++                    if let Some(refusal) = stop_uncertain_text_attempt(&targeted) {
++                        return refusal;
++                    }
++                    if matches!(targeted, Ok(Ok(()))) {
+                         position_named_session_keyboard_cursor(
+                             &self.state,
+                             &args,
+@@ -7886,6 +7913,9 @@
+                 crate::atspi::type_into_token(pid, &target, &text_at)
+             })
+             .await;
++            if let Some(refusal) = stop_uncertain_text_attempt(&targeted) {
++                return refusal;
++            }
+             if let Ok(Ok(())) = targeted {
+                 return type_text_ax_result_verified(pid, element, &text, "via targeted AT-SPI")
+                     .await;
+@@ -8001,6 +8031,9 @@
+                 crate::atspi::type_into_token(pid, &target, &text_at)
+             })
+             .await;
++            if let Some(refusal) = stop_uncertain_text_attempt(&targeted) {
++                return refusal;
++            }
+             if let Ok(Err(error)) = &targeted {
+                 // The observed object is gone: nothing was written to it.
+                 if let Some(stale) = stale_observed_element("type_text", element.index, error) {
+@@ -8282,6 +8315,9 @@
+             tokio::task::spawn_blocking(move || crate::atspi::type_into_editable(pid, &text_clone))
+                 .await;
+ 
++        if let Some(refusal) = stop_uncertain_text_attempt(&atspi_result) {
++            return refusal;
++        }
+         match atspi_result {
+             Ok(Ok(())) => {
+                 // AT-SPI succeeded — focus-free typing worked (Qt6, GTK4, etc.)!
+@@ -8310,13 +8346,22 @@
+             // Try AT-SPI again now that widgets should be exposed
+             let result = crate::atspi::type_into_editable(pid, &text_clone2);
+ 
+-            // Restore state with FocusOut
+-            crate::input::send_focus_out(xid)?;
+-
+-            result
++            // Cleanup must not replace an ambiguous write with a generic miss,
++            // or turn an acknowledged write into permission for another route.
++            let cleanup = crate::input::send_focus_out(xid);
++            match (result, cleanup) {
++                (Ok(()), Ok(())) => Ok(()),
++                (Ok(()), Err(_)) => Err(crate::atspi::native::uncertain_text_write("Qt5 cleanup after EditableText")),
++                (Err(error), _) if crate::atspi::native::is_text_write_uncertain(&error) => Err(error),
++                (Err(error), Ok(())) => Err(error),
++                (Err(_), Err(error)) => Err(error),
++            }
+         })
+         .await;
+ 
++        if let Some(refusal) = stop_uncertain_text_attempt(&qt5_result) {
++            return refusal;
++        }
+         match qt5_result {
+             Ok(Ok(())) => {
+                 return type_text_ax_result(pid, text_len, "via AT-SPI with focus workaround");
+@@ -8347,8 +8392,10 @@
+             // focused widget, so background XSendEvent typing doesn't land. Fill
+             // the editable field via AT-SPI instead — focus-free and toolkit-
+             // agnostic. Fall back to Tk send or XSendEvent when no a11y field is exposed.
+-            if crate::atspi::insert_text(pid, &text).unwrap_or(false) {
+-                return Ok(("ax", None));
++            match crate::atspi::insert_text(pid, &text) {
++                Ok(true) => return Ok(("ax", None)),
++                Err(error) if crate::atspi::native::is_text_write_uncertain(&error) => return Err(error),
++                _ => {},
+             }
+             // Tk apps: use Tk's `send` command (no AT-SPI bridge, so AT-SPI above
+             // returned false). This is the Tk-specific override, like CDP for Chromium.

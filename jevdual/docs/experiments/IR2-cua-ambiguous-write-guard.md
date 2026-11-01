@@ -19,3 +19,7 @@ Target-owned applied mutation entries per one invocation after the first applied
 ## Evidence discipline
 
 The notebook prediction is committed before execution. The candidate patch and harness get their own frozen commit before the first resolving test. Preserve original IR1 receipts; write new results to `results/cua-ambiguous-write-ir2-20261101/`. Run `scripts/redact_results.py` before committing result artifacts. Append a dated result section without editing the preregistration above.
+
+## Amendment · November 1, 2026, 14:24 EST
+
+The Linux cloud chat was stopped by an automated possible-cybersecurity-risk review while preparing the candidate; it ran no IR2 build or test. The user then explicitly moved IR2 tests to the Mac. The parent recovered a byte-verified draft patch and manifest for inspection. Execute the first resolving test on this Mac in an existing isolated Linux container or VM if available, since the actual pinned Linux AT-SPI source requires Linux. Keep the same private D-Bus effect oracle, exact pin, frozen candidate commit and no shared desktop input. If no suitable local Linux runtime is available without a network fetch/install, report that limit; a copied or macOS-only model does not resolve the Linux runtime prediction. The original cloud-first design above remains as the historical preregistration.
