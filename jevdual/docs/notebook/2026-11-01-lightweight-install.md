@@ -1,0 +1,9 @@
+# Supported lightweight installation
+
+## LWI1 · prediction · 2026-11-01 01:27
+Question: does the supported wheel install avoid native and agent dependencies when the light runtime is selected?
+Hypothesis: optional runtime imports already support CUA-free CDP and Lightpanda, but package metadata and builder/consumer scripts still force the full dependency closure. Explicit desktop/agent extras and light/full artifact profiles can make the existing boundary installable without changing delivery authority.
+Test: inspect and test the built wheel Requires-Dist and profile manifests; resolve/install its light profile offline into a fresh project-owned environment, invoke installed catalog/schema/doctor and a local read-only fixture where the pinned engine is available, and require absent native requests to refuse before host effects. Preserve full-profile metadata/artifact and existing package checks as positive controls; test unsupported/missing wheel failures without compilation or fallback.
+Predicts: the unchanged wheel or installer selects CUA/browser-use for a light install; the corrected profile installs neither and the installed public light CLI works with explicit unavailable-effector refusals. The full profile still names and carries its required dependencies.
+Against: baseline already provides a supported light dependency closure; the new wheel omits a real light runtime dependency, discovery imports an excluded package, a consumer compiles/falls back silently, full installs lose required artifacts, or the available offline artifacts cannot establish a clean resolver-based installation.
+Refs: docs/plans/light-profile-20261030.md L2; docs/notebook/2026-10-31-lightpanda-readonly.md; scripts/build_capability_wheel.py; scripts/build_agent_bundle.py; scripts/capability_clean_install.py; source baseline7852bb7
