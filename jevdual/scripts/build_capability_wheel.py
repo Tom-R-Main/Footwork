@@ -69,7 +69,12 @@ def inventory(root: Path) -> tuple[str, dict[str, bytes]]:
     metadata.extend(f"Requires-Dist: {dep}" for dep in project["dependencies"])
     for extra, dependencies in project.get("optional-dependencies", {}).items():
         metadata.append(f"Provides-Extra: {extra}")
-        metadata.extend(f'Requires-Dist: {dep}; extra == "{extra}"' for dep in dependencies)
+        for dependency in dependencies:
+            requirement, separator, marker = dependency.partition(";")
+            extra_marker = f'extra == "{extra}"'
+            if separator:
+                extra_marker = f"({marker.strip()}) and {extra_marker}"
+            metadata.append(f"Requires-Dist: {requirement.strip()}; {extra_marker}")
     files[f"{dist}/METADATA"] = ("\n".join(metadata) + "\n\n").encode()
     files[f"{dist}/WHEEL"] = (
         b"Wheel-Version: 1.0\nGenerator: footwork-stdlib\nRoot-Is-Purelib: true\nTag: py3-none-any\n"

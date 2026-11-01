@@ -33,7 +33,7 @@ results: list[dict] = []
 
 
 def fw(session: str, *argv: str, check: bool = True) -> str:
-    cmd = ["uv", "run", "footwork", *argv, "--session", str(OUT / session)]
+    cmd = ["uv", "run", "--no-sync", "footwork", *argv, "--session", str(OUT / session)]
     p = subprocess.run(cmd, capture_output=True, text=True, check=False)
     with LOG.open("a") as fh:
         fh.write(f"$ footwork {' '.join(argv)} [{session}] -> {p.returncode}\n{p.stdout}{p.stderr}\n")

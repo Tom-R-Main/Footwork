@@ -1267,21 +1267,25 @@ name = "jevdual"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "browser-use" },
-    { name = "cua-driver" },
-    { name = "jeepney", marker = "sys_platform == 'linux'" },
     { name = "mcp" },
     { name = "orjson" },
     { name = "packaging" },
     { name = "psutil" },
-    { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'" },
-    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
-    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'" },
     { name = "typesafe-sdk" },
     { name = "websockets" },
 ]
 
 [package.optional-dependencies]
+agent = [
+    { name = "browser-use" },
+]
+desktop = [
+    { name = "cua-driver" },
+    { name = "jeepney", marker = "sys_platform == 'linux'" },
+    { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'" },
+]
 tools = [
     { name = "mujoco" },
 ]
@@ -1301,21 +1305,21 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "browser-use", specifier = "==0.13.14" },
-    { name = "cua-driver", directory = "vendor/cua-driver" },
-    { name = "jeepney", marker = "sys_platform == 'linux'", specifier = "==0.9.0" },
+    { name = "browser-use", marker = "extra == 'agent'", specifier = "==0.13.14" },
+    { name = "cua-driver", marker = "extra == 'desktop'", directory = "vendor/cua-driver" },
+    { name = "jeepney", marker = "sys_platform == 'linux' and extra == 'desktop'", specifier = "==0.9.0" },
     { name = "mcp", specifier = "==2.1.1" },
     { name = "mujoco", marker = "extra == 'tools'", specifier = "==3.15.0" },
     { name = "orjson", specifier = ">=3.10" },
     { name = "packaging", specifier = ">=25,<27" },
     { name = "psutil", specifier = "==7.2.2" },
-    { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin'", specifier = ">=12" },
-    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=12" },
-    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'", specifier = ">=12" },
+    { name = "pyobjc-framework-applicationservices", marker = "sys_platform == 'darwin' and extra == 'desktop'", specifier = ">=12" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin' and extra == 'desktop'", specifier = ">=12" },
+    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin' and extra == 'desktop'", specifier = ">=12" },
     { name = "typesafe-sdk", specifier = ">=0.7,<1" },
     { name = "websockets", specifier = "==15.0.1" },
 ]
-provides-extras = ["tools"]
+provides-extras = ["desktop", "agent", "tools"]
 
 [package.metadata.requires-dev]
 dev = [

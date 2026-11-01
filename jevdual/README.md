@@ -107,10 +107,10 @@ matcher is 46 to 82x faster and byte-identical to the Python reference on the fi
 
 ```sh
 rustup toolchain install 1.97.1 --profile minimal
-uv sync                                    # builds the extension and pinned native CUA source
-uv run pytest                              # native; JEVDUAL_PURE_PY=1 for pure Python
-JEVDUAL_BROWSER_TESTS=1 uv run pytest tests/integration tests/test_tools.py
-uv run python -m evals.runner --split dev --arm stock --arm dual --llm meta
+uv sync --extra desktop --extra agent       # full environment; builds extension and pinned CUA source
+uv run --no-sync pytest                              # native; JEVDUAL_PURE_PY=1 for pure Python
+JEVDUAL_BROWSER_TESTS=1 uv run --no-sync pytest tests/integration tests/test_tools.py
+uv run --no-sync python -m evals.runner --split dev --arm stock --arm dual --llm meta
 ```
 
 Keys are files under `~/.config/jevdual` (`TYPESAFE_API_KEY`, `META_MODEL_API_KEY`), materialized

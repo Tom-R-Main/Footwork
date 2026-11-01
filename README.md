@@ -44,7 +44,7 @@ restart for a bounded button route. Typing and general browser completion remain
 
 [**Install and get your first checked result →**](jevdual/docs/quickstart.md)
 
-The quickstart takes you from a host-specific bundle to a saved-byte check that needs no model,
+The quickstart takes you from a selected light or full bundle to a saved-byte check that needs no model,
 then to an owned browser session. Build or install the bundle, then try:
 
 ```sh
@@ -65,7 +65,7 @@ footwork doctor                        # see this machine's prerequisites
 `footwork browser lightpanda read` uses one fresh owned process and connection to return bounded DOM
 text, with input and editable values withheld. It enables no input actions or typing and makes no
 geometry or visibility claims. The initial URL runs website code, and CSS-hidden DOM content can
-remain. Footwork still declares full dependencies; the external engine is pinned and prebuilt.
+remain. The base light install omits CUA and browser-use; the external engine is pinned and prebuilt.
 
 macOS has the broader native-app qualification record. Linux desktop support is a preview of the
 X11/AT-SPI and Mousepad paths in the [Linux guide](jevdual/docs/linux-support.md). Repeated Linux desktop
@@ -288,17 +288,17 @@ Here is what those measurements support:
 git clone --recurse-submodules https://github.com/Tom-R-Main/Footwork.git
 cd Footwork/jevdual
 rustup toolchain install 1.97.1 --profile minimal  # pinned CUA source compiler
-uv sync                        # builds Footwork and the exact CUA native reference
-uv run pytest                  # unit and equality tests, no keys needed
+uv sync --extra desktop --extra agent  # full research environment; builds the exact CUA native reference
+uv run --no-sync pytest                  # unit and equality tests, no keys needed
 ```
 
 To run the agent or the evals, configure a TypeSafe key (`TYPESAFE_API_KEY`) and a System 2 key
 (`MODEL_API_KEY` for the Meta Model API, or wire another provider in `evals/runner.py`):
 
 ```sh
-uv run python -m evals.runner --split dev --arm stock --arm guarded --arm dual --llm meta
-uv run python -m evals.runner --split live-dev --arm guarded --llm meta --task lw-python-creator
-uv run python -m evals.paired results/<before> results/<after> --arm dual
+uv run --no-sync python -m evals.runner --split dev --arm stock --arm guarded --arm dual --llm meta
+uv run --no-sync python -m evals.runner --split live-dev --arm guarded --llm meta --task lw-python-creator
+uv run --no-sync python -m evals.paired results/<before> results/<after> --arm dual
 ```
 
 Use the guard alone with any browser-use agent by constructing `DualProcessAgent` with an `ArbiterHook`

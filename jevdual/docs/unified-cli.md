@@ -11,27 +11,66 @@ footwork --json tools
 
 The catalog states each family's actual commands and prerequisites. Missing hardware, OS permissions, optional runtimes or an injected browser adapter remain explicit gaps; discovery does not grant access.
 
+## Choose an installation profile
+
+The base `jevdual` wheel is the light profile: judgment, exact file checks, owned CDP and read-only
+Lightpanda support without CUA or browser-use. Chrome and the pinned Lightpanda executable remain
+separate prerequisites for their respective routes.
+
+| Selection | Additional dependencies |
+| --- | --- |
+| `jevdual` or light bundle | No native or agent dependencies |
+| `jevdual[desktop]` | Pinned CUA, PyObjC on macOS, Jeepney on Linux |
+| `jevdual[agent]` | Pinned browser-use |
+| Full bundle | Desktop and agent extras, plus simulator tools unless `--core-only` is selected |
+
+`footwork tools` and `doctor` report the profile observed from installed distributions; Python does
+not retain the extras originally requested. This reports dependency presence, not qualified runtime
+access. An unsupported native request in a light environment refuses with `effector_unavailable`
+before creating a driver. Install the matching full bundle to use those commands.
+
 ## Build one bundle
 
-From `jevdual/`, with uv, Python and the [CUA native build prerequisites](upstream/cua-driver-build.md):
+From `jevdual/`, build a light bundle using existing Python:
 
 ```sh
 python scripts/sync_tool_resources.py --check
-python scripts/build_agent_bundle.py --output /absolute/owned/footwork-bundle
+python scripts/build_agent_bundle.py --profile light --output /absolute/owned/footwork-light-bundle
 ```
 
-The bundle contains the Footwork wheel, the exact host-platform CUA wheel, `install.py`, and a SHA256 manifest. To reuse a checked CUA wheel, pass `--cua-wheel /absolute/path/cua_driver-….whl`. The source pin must match. No registry publication is required.
-
-Install the bundle once into a new environment:
+For native desktop, the legacy browser route and the browser-use agent, build a full bundle with uv
+and the [CUA native build prerequisites](upstream/cua-driver-build.md):
 
 ```sh
-python /absolute/owned/footwork-bundle/install.py --venv /absolute/owned/footwork-env --python 3.12
+python scripts/build_agent_bundle.py --profile full --output /absolute/owned/footwork-full-bundle
+```
+
+Both bundles contain the same portable Footwork wheel, `install.py`, and a SHA256 manifest. The full
+bundle additionally carries the exact host-platform CUA wheel. To reuse a checked native wheel,
+pass `--cua-wheel /absolute/path/cua_driver.whl` to the full builder; its source pin must match.
+The light builder never builds or carries CUA. No registry publication is required.
+
+Install the chosen bundle into a new environment:
+
+```sh
+python /absolute/owned/footwork-light-bundle/install.py --profile light \
+  --venv /absolute/owned/footwork-env --python 3.12
 /absolute/owned/footwork-env/bin/footwork tools
 ```
 
-Use that absolute executable from the agent host or add its `bin` directory to the host's PATH. On Windows the executable is under `Scripts`. Existing environments are refused rather than overwritten. The installer uses an existing Python and either uv or its venv module. Without uv, it uses the interpreter's pip >=22.3 or seeds pip into the new environment from Python's bundled ensurepip. It never downloads Python or compiles dependencies: missing compatible binary wheels stop installation. The CUA wheel must match the selected interpreter's OS and architecture before an environment is created; Linux wheels also require compatible system libraries.
+For a full bundle, use its path and `--profile full`. A mismatched profile refuses before creating
+an environment. Use the absolute executable from the agent host or add its `bin` directory to PATH.
+On Windows the executable is under `Scripts`. Existing environments are refused rather than
+overwritten. The installer uses an existing Python and either uv or venv with pip/ensurepip.
+It never downloads Python or compiles dependencies: missing compatible binary wheels stop
+installation. The full bundle's CUA wheel must match the interpreter's OS and architecture before
+an environment is created; Linux wheels also require compatible system libraries.
 
-Installation includes the pinned MuJoCo tool extra by default; `--core-only` omits simulator dependencies. With uv, `--offline` uses locally available wheels and cache; with pip it disables package-index lookup and uses the bundle's local wheelhouse. The bundle initially contains the product and CUA wheels, so its transitive dependencies must also be supplied for an offline installation. Node, ffmpeg, cameras, platform libraries and applicable OS grants remain separate prerequisites. Swift/Vision OCR remains macOS-specific.
+`--offline` disables network access to package indexes. Supply compatible wheels for every selected
+transitive dependency in the bundle directory; locally cached uv artifacts may also be available.
+`--core-only` omits simulator dependencies from full installs. Node, ffmpeg, cameras, platform
+libraries and applicable OS grants remain separate prerequisites. Swift/Vision OCR is macOS-specific.
+These profiles do not establish a RAM or startup improvement; small-host measurement is separate.
 
 ## Browser and computer operations
 
@@ -42,7 +81,7 @@ This separate profile owns one fresh external prebuilt engine and connection, wi
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and
 `guide` for the installed pin and contract; see the [read-only Lightpanda guide](lightpanda-readonly.md).
 
-For owned headless browsing, use the explicit `footwork browser cdp` route. It keeps guarded admission and unresolved operations across CLI and holder restart without CUA or a desktop session at runtime. Only the bounded native-button route is enabled; typing stays disabled and acknowledgement is not completion. Run `footwork browser cdp guide` for the installed contract, or read the [owned CDP guide](owned-cdp.md). Package metadata still installs the full dependencies; the light installer remains pending.
+For owned headless browsing, use the explicit `footwork browser cdp` route. It keeps guarded admission and unresolved operations across CLI and holder restart without CUA or a desktop session at runtime. Only the bounded native-button route is enabled; typing stays disabled and acknowledgement is not completion. Run `footwork browser cdp guide` for the installed contract, or read the [owned CDP guide](owned-cdp.md). The base light package supports this route without native or agent extras.
 
 The original top-level verbs remain compatible. `footwork capability` exposes the existing scoped MCP configuration/server/report commands through the same executable. Its browser-to-TextEdit scope remains intentionally bounded; it does not grant generic input access to an MCP host.
 

@@ -9,6 +9,43 @@ permissions:
   contents: read
 
 jobs:
+  light-consumer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: jevdual
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+          version: "0.12.5"
+      - name: Build the light installer without native compilation
+        run: python scripts/build_agent_bundle.py --profile light --output "$GITHUB_WORKSPACE/output/ci-light-bundle"
+      - name: Resolve the light wheel into a fresh binary-only environment
+        run: |
+          python scripts/capability_clean_install.py --profile light \
+            --python "$(command -v python)" \
+            --wheel "$GITHUB_WORKSPACE"/output/ci-light-bundle/*.whl \
+            --run-dir "$GITHUB_WORKSPACE/output/ci-light-installed"
+          python scripts/unified_cli_check.py --python "$GITHUB_WORKSPACE/output/ci-light-installed/venv/bin/python"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: light-${{ matrix.os }}-py3.12
+          path: |
+            output/ci-light-bundle/*
+            output/ci-light-installed/receipt.json
+            output/ci-light-installed/*.log
+
   consumer-artifact:
     strategy:
       fail-fast: false
@@ -58,14 +95,15 @@ jobs:
       - name: Fresh binary dependency installation
         run: |
           python scripts/capability_clean_install.py \
+            --profile full \
             --python "$(command -v python)" \
             --wheel "$GITHUB_WORKSPACE"/output/ci-package/build-one/*.whl \
             --find-links "$GITHUB_WORKSPACE/output/ci-cua" \
             --run-dir "$GITHUB_WORKSPACE/output/ci-dependencies"
       - name: Verify install-once bundle and installed simulator
         run: |
-          python scripts/build_agent_bundle.py --cua-wheel "$GITHUB_WORKSPACE"/output/ci-cua/*.whl --output "$GITHUB_WORKSPACE/output/ci-agent-bundle"
-          python "$GITHUB_WORKSPACE/output/ci-agent-bundle/install.py" --python "$(command -v python)" --venv "$GITHUB_WORKSPACE/output/ci-agent-installed"
+          python scripts/build_agent_bundle.py --profile full --cua-wheel "$GITHUB_WORKSPACE"/output/ci-cua/*.whl --output "$GITHUB_WORKSPACE/output/ci-agent-bundle"
+          python "$GITHUB_WORKSPACE/output/ci-agent-bundle/install.py" --profile full --python "$(command -v python)" --venv "$GITHUB_WORKSPACE/output/ci-agent-installed"
           python scripts/unified_cli_check.py --python "$GITHUB_WORKSPACE/output/ci-agent-installed/bin/python" --tools
       - name: Retain candidate artifact and qualification receipts
         if: always()

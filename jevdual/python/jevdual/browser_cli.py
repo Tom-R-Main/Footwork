@@ -48,7 +48,7 @@ def discovery() -> dict:
         "activation": "dom_event_native_button: directly named plain main-document button[type=button] only",
         "completion": "unverified; acknowledgement is not business completion; unknown blocks new mutations",
         "restart": "same live holder or retained journal only; no implicit relaunch/adoption/rebinding",
-        "install": "current package metadata still installs full dependencies; light metadata split is pending",
+        "install": "base light package metadata supports this route; install without extras or use the light bundle",
         "trust": "private socket and configured guard; not isolation from arbitrary code running as the same user",
     }
 

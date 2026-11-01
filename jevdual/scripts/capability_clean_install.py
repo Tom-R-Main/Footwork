@@ -23,10 +23,13 @@ import sys,json,importlib.metadata,importlib
 from pathlib import Path
 import jevdual,jevdual.capability.execution_worker as worker
 from jevdual._native import BACKEND
-names=("cua_driver","psutil","mcp","packaging")
-if sys.platform == "darwin":
+profile=globals().get("FOOTWORK_INSTALL_PROFILE", "full")
+names=("psutil","mcp","packaging")
+if profile == "full":
+    names += ("cua_driver",)
+if profile == "full" and sys.platform == "darwin":
     names += ("ApplicationServices","Quartz","Foundation")
-elif sys.platform == "linux":
+elif profile == "full" and sys.platform == "linux":
     names += ("jeepney",)
 modules={n:str(importlib.import_module(n).__file__) for n in names}
 print(json.dumps({"version":sys.version,"prefix":sys.prefix,"base_prefix":sys.base_prefix,"python":sys.executable,"package":jevdual.__file__,"worker":worker.__file__,"backend":BACKEND,"module_origins":modules,"sys_path":sys.path}))
@@ -88,6 +91,8 @@ def main() -> int:
     parser.add_argument("--python", type=Path, required=True)
     parser.add_argument("--wheel", type=Path, required=True)
     parser.add_argument("--find-links", type=Path, help="Local wheelhouse containing the built CUA dependency")
+    parser.add_argument("--profile", choices=("light", "full"), default="full")
+    parser.add_argument("--offline", action="store_true", help="resolve only from the supplied local wheelhouse")
     parser.add_argument("--run-dir", type=Path, required=True)
     args = parser.parse_args()
     root, wheel = args.run_dir.resolve(), args.wheel.resolve()
@@ -96,8 +101,8 @@ def main() -> int:
     wheelhouse = args.find_links.resolve() if args.find_links else None
     if wheelhouse is not None and not wheelhouse.is_dir():
         parser.error("--find-links requires an existing wheelhouse directory")
-    cua_wheels = sorted(wheelhouse.glob("cua_driver-*.whl")) if wheelhouse else []
-    if wheelhouse is not None and len(cua_wheels) != 1:
+    cua_wheels = sorted(wheelhouse.glob("cua_driver-*.whl")) if wheelhouse and args.profile == "full" else []
+    if args.profile == "full" and wheelhouse is not None and len(cua_wheels) != 1:
         parser.error("--find-links requires exactly one CUA wheel for this installation platform")
     provenance = source_commit(PROJECT)
     root.mkdir(parents=True, exist_ok=False, mode=0o700)
@@ -121,8 +126,10 @@ def main() -> int:
         "cache_initially_empty": not list(cache.iterdir()),
         "system_site_packages": False,
         "borrowed_dependencies": False,
-        "registry": "https://pypi.org/simple",
+        "registry": None if args.offline else "https://pypi.org/simple",
         "binary_only": True,
+        "profile": args.profile,
+        "offline": args.offline,
         "local_dependency_wheels": {
             path.name: hashlib.sha256(path.read_bytes()).hexdigest()
             for path in sorted(wheelhouse.glob("*.whl"))
@@ -189,14 +196,13 @@ def main() -> int:
             "install",
             "--python",
             python,
-            "--default-index",
-            "https://pypi.org/simple",
             "--only-binary",
             ":all:",
         ]
+        + (["--offline", "--no-index"] if args.offline else ["--default-index", "https://pypi.org/simple"])
         + (["--find-links", str(wheelhouse)] if wheelhouse else [])
         + [
-            str(wheel),
+            str(wheel) + ("[desktop,agent]" if args.profile == "full" else ""),
         ]
         + [str(path) for path in cua_wheels],
     ):
@@ -205,7 +211,7 @@ def main() -> int:
         return 1
     if not run("inventory", common + ["pip", "list", "--python", python, "--format", "json"]):
         return 1
-    if not run("origins", [python, "-I", "-c", ORIGIN_PROBE], timeout=30):
+    if not run("origins", [python, "-I", "-c", f'FOOTWORK_INSTALL_PROFILE = "{args.profile}"\n' + ORIGIN_PROBE], timeout=30):
         return 1
     origins = json.loads((root / "origins.stdout.log").read_text())
     if not all(
@@ -237,7 +243,24 @@ def main() -> int:
     if not run("doctor", [str(venv / "bin/footwork-capability"), "doctor"], timeout=30):
         return 1
     receipt["doctor"] = json.loads((root / "doctor.stdout.log").read_text())
+    if not require(receipt["doctor"].get("dependency_status") == "met", "dependency_compatibility"):
+        return 1
+    if not require(
+        receipt["doctor"].get("installation", {}).get("profile") == args.profile,
+        "observed_installation_profile",
+    ):
+        return 1
     receipt["inventory"] = json.loads((root / "inventory.stdout.log").read_text())
+    installed_names = {item["name"].lower().replace("_", "-") for item in receipt["inventory"]}
+    if args.profile == "light" and not require(
+        not {"cua-driver", "browser-use", "jeepney"}.intersection(installed_names)
+        and not any(name.startswith("pyobjc") for name in installed_names), "light_dependency_closure"
+    ):
+        return 1
+    if args.profile == "full" and not require(
+        {"cua-driver", "browser-use"}.issubset(installed_names), "full_dependency_closure"
+    ):
+        return 1
     tag_probe = 'import json,importlib.metadata;print(json.dumps([{"name":d.metadata["Name"],"version":d.version,"tags":[l[5:] for l in (d.read_text("WHEEL") or "").splitlines() if l.startswith("Tag: ")]} for d in importlib.metadata.distributions()]))'
     if not run("wheel-tags", [python, "-I", "-c", tag_probe], timeout=30):
         return 1

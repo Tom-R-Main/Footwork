@@ -9,9 +9,9 @@ it can activate the button. The next CLI process can retrieve that operation by 
 It will not click again to find out whether the first click worked.
 
 This is an explicit preview route, `footwork browser cdp`. The older `footwork browser start/look/do`
-commands keep their existing CUA behavior. The package still declares its full dependencies; the
-CUA-free **install** is a later packaging change. A manually assembled qualification environment is
-not yet the supported light installer.
+commands keep their existing CUA behavior. Install the base Footwork wheel without extras, or use a `--profile light` bundle,
+for the CUA-free dependency set. The legacy commands require the matching full bundle.
+See [installation profiles](unified-cli.md#choose-an-installation-profile).
 
 ## The loop
 

@@ -54,7 +54,7 @@ def discovery() -> dict:
         "budgets": {"browser_connections": 1, "websocket_message_bytes": 4 * 1024 * 1024,
                     "dom_nodes": 10_000, "records": 256, "text_characters": 32_768,
                     "observation_bytes": 262_144},
-        "install": "external pinned engine; current Footwork metadata still declares full dependencies; light split pending",
+        "install": "base light package metadata plus a separately provisioned pinned external engine; no CUA dependency",
         "network": "initial URL setup executes website code; read-only describes Footwork input, not website-side effects",
     }
 

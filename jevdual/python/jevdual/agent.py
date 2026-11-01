@@ -14,7 +14,16 @@ import dataclasses
 import logging
 from typing import TYPE_CHECKING, Any, Protocol
 
-from browser_use.agent.service import Agent
+try:
+    from browser_use.agent.service import Agent
+except ModuleNotFoundError as exc:
+    if exc.name != "browser_use":
+        raise
+    from jevdual.effectors.base import EffectorUnavailable
+
+    raise EffectorUnavailable(
+        "agent", "browser-use", "Install the Footwork wheel with [agent], or use the matching full bundle."
+    ) from exc
 
 if TYPE_CHECKING:
     from browser_use.agent.views import AgentOutput

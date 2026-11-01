@@ -109,7 +109,7 @@ def local_cua_tag():
     return 'win_' + {'x86_64': 'amd64'}.get(machine, machine)
 
 
-def fixture_bundle(root, *, tag=None, requires=None):
+def fixture_bundle(root, *, tag=None, requires=None, profile="full"):
     """Tiny real wheels exercise the installer without claiming Footwork runtime qualification."""
     import hashlib
 
@@ -118,7 +118,8 @@ def fixture_bundle(root, *, tag=None, requires=None):
     installer.write_text(installer_module().INSTALLER)
     product = 'jevdual-0.0.1-py3-none-any.whl'
     cua = 'cua_driver-0.38.0-py3-none-' + (tag or local_cua_tag()) + '.whl'
-    for name, distribution in ((product, 'jevdual'), (cua, 'cua_driver')):
+    distributions = ((product, 'jevdual'), (cua, 'cua_driver')) if profile == "full" else ((product, 'jevdual'),)
+    for name, distribution in distributions:
         version = '0.0.1' if distribution == 'jevdual' else '0.38.0'
         info = f'{distribution}-{version}.dist-info/'
         metadata = f'Metadata-Version: 2.1\nName: {distribution}\nVersion: {version}\n'
@@ -136,8 +137,10 @@ def fixture_bundle(root, *, tag=None, requires=None):
         with zipfile.ZipFile(root / name, 'w') as archive:
             for path, content in entries.items():
                 archive.writestr(path, content)
-    manifest = {'schema_version': 1, 'product': product, 'cua': cua,
+    manifest = {'schema_version': 2, 'profile': profile, 'product': product,
                 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in root.iterdir()}}
+    if profile == "full":
+        manifest['cua'] = cua
     (root / 'MANIFEST.json').write_text(json.dumps(manifest))
     return installer
 
@@ -290,4 +293,15 @@ def test_uv_route_never_downloads_python_or_builds_dependencies(tmp_path, monkey
     assert calls[1][:3] == ['/existing/uv', 'pip', 'install']
     assert calls[1][calls[1].index('--only-binary') + 1] == ':all:'
     assert '--offline' in calls[1]
-    assert any(value.endswith('.whl[tools]') for value in calls[1])
+    assert any(value.endswith('.whl[desktop,agent,tools]') for value in calls[1])
+
+
+def test_light_installer_works_offline_without_cua_or_uv(tmp_path, monkeypatch):
+    installer = fixture_bundle(tmp_path / 'bundle', profile="light")
+    assert not list(installer.parent.glob("cua_driver-*.whl"))
+    result = run_installer(installer, tmp_path / 'installed', monkeypatch)
+    assert result.returncode == 0, result.stderr
+    receipt = json.loads(result.stdout.splitlines()[-1])
+    assert receipt['installed'] is True and receipt['profile'] == 'light'
+    observed = subprocess.run([receipt['executable'], 'tools'], capture_output=True, text=True, check=True)
+    assert observed.stdout.strip() == 'fixture tools available'

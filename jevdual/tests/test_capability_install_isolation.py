@@ -125,7 +125,7 @@ def test_installer_selects_built_cua_wheel_explicitly(tmp_path, monkeypatch):
         "--find-links", str(wheelhouse), "--run-dir", str(project / "output/run"),
     ])
     assert module.main() == 1
-    assert commands[-1][-2:] == [str(wheel), str(dependency)]
+    assert commands[-1][-2:] == [str(wheel) + "[desktop,agent]", str(dependency)]
     receipt = json.loads((project / "output/run/receipt.json").read_text())
     assert receipt["local_dependency_wheels"] == {
         dependency.name: hashlib.sha256(dependency.read_bytes()).hexdigest()

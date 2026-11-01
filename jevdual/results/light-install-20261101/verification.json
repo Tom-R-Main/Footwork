@@ -1,0 +1,61 @@
+{
+  "status": "checked source; final combined artifact qualification pending parent",
+  "prediction_commit": "ecb01de",
+  "baseline": "7852bb7bb1106a7b00a1c15395bf19d99606a97a",
+  "source_head": "ecb01de7122d6b04314a742691852e9042778771",
+  "uncommitted_source_sha256": {
+    "pyproject.toml": "f7f389f2bfeacfbbfb4fd49083bdf688ef568b90a7b3c8e636b7c3a2c511c3a6",
+    "uv.lock": "d8913a552646584c6e5eb8969712aad6b682b8ec0175471a3e11396abe0ede17",
+    "python/jevdual/install_profile.py": "42d36b41d4273ae09aa5ae7f5657473039c9cf2edf8bb16a96a5174063a7ea76",
+    "python/jevdual/agent.py": "80c5e2956057fe77daae83b61c70564e10d1e9fd1170fde4914a5ec04103387a",
+    "python/jevdual/agent_cli.py": "842c8d6c92c329e1889fabb7028f70cb405588886b6e9f44a91863237a913265",
+    "python/jevdual/capability/setup.py": "7d6f48c415986f6317b655bdbc02de1758c85543caea0b7048d4367fb91fc198",
+    "python/jevdual/browser_cli.py": "b006470a9e02036bcb83bfb2cdd88b6befe5a3c1c68a7b047adef46f4b3dcfa4",
+    "python/jevdual/lightpanda_cli.py": "e245b02c5f53d34f264e7042f1a8130170b2b10a158b81bd6e685cd04043e363",
+    "scripts/build_agent_bundle.py": "03a61f3589ce79af56cdd1c4a6bd202cf5354489ae286f820b7430647f9458ae",
+    "scripts/build_capability_wheel.py": "86f610cafe2f7d6e89232c8802ddb300247f388e5e9dec2c22378e6ad3283a5c",
+    "scripts/capability_clean_install.py": "751be8135660596fcb1816cd679b8eaca3e5934c532ca31f8f05256f24233d39",
+    "tests/test_light_install_profiles.py": "e16140d49ad599b985a408b9458725fb064ba84f19bdbdb21450be7582a16316",
+    "tests/test_capability_install_isolation.py": "d493df94b21358a7652f8d10d2741b8bceaea2d71a5614e293c1dfa65b3d7671",
+    "tests/test_unified_packaging.py": "d8a11d348b5e48d5b798dd575eea0a115c15442e05e3f97803ad7f6789d45025"
+  },
+  "red": {
+    "command": ".venv/bin/python -m pytest tests/test_light_install_profiles.py -q",
+    "exit": 1,
+    "failures": 4,
+    "reason": "Base metadata includes native/agent packages; bundle profile API absent",
+    "artifact": "red.txt"
+  },
+  "checks": [
+    {
+      "command": ".venv/bin/python -m pytest tests/test_light_install_profiles.py tests/test_capability_install_isolation.py tests/test_unified_packaging.py tests/test_capability_packaging.py tests/test_capability_doctor.py tests/test_lightpanda_cli.py tests/test_browser_cdp_cli.py tests/test_effector_boundary.py tests/test_onboarding_packet.py tests/test_release_candidate.py -q",
+      "exit": 0,
+      "passed": 170,
+      "skipped": 6,
+      "artifact": "packaging-final.txt"
+    },
+    {
+      "command": "uv lock --check --offline --no-build --cache-dir output/light-install-20261101/uv-lock-cache",
+      "exit": 0,
+      "resolved_packages": 300,
+      "artifact": "lock-check.txt"
+    },
+    {
+      "command": ".venv/bin/ruff check scripts python/jevdual tests/test_light_install_profiles.py tests/test_unified_packaging.py tests/test_capability_install_isolation.py",
+      "exit": 0,
+      "artifact": "ruff.txt"
+    }
+  ],
+  "initial_parent_install": {
+    "wheel_sha256": "9d13de45e8090eb907f35149eb952e42787f3ce64c740606a092850440eda3ce",
+    "receipt": "../../../output/light-install-20261101/parent-light-clean/receipt.json",
+    "scope": "Earlier candidate actual fresh-cache binary-only light dependency resolution, installed origins, discovery/doctor, native absence; not final artifact."
+  },
+  "limits": [
+    "Final combined wheel and local pinned-engine fixture qualification owned by parent",
+    "Hosted Linux/macOS jobs configured, not executed in this worker",
+    "Full-profile real installed native runtime not established by older-CUA source .venv",
+    "No 2CPU/8GB resource benefit or generic engine compatibility claim"
+  ],
+  "worker_commits": false
+}

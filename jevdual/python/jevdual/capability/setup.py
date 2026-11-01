@@ -183,6 +183,9 @@ def _distribution_provenance(name: str) -> dict:
 
 def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> dict:
     """Probe prerequisites only; met prerequisites do not qualify a native resource."""
+    from jevdual.install_profile import installation
+
+    observed_installation = installation()
     dependencies = {}
     warnings = []
     blockers = []
@@ -226,7 +229,10 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
         for declaration in declared or []:
             try:
                 required = Requirement(declaration)
-                if required.marker and not required.marker.evaluate():
+                if required.marker and not any(
+                    required.marker.evaluate({"extra": extra})
+                    for extra in ["", *observed_installation["observed_extras"]]
+                ):
                     continue
                 name, requirement = required.name, str(required.specifier)
                 understood = (
@@ -310,6 +316,7 @@ def doctor(scope_path: Path | None = None, journal_path: Path | None = None) -> 
             "loaded_modules": loaded_modules,
         },
         "dependencies": dependencies,
+        "installation": observed_installation,
         "dependency_status": dependency_status,
         "permissions": permissions,
         "scope": "not_checked",

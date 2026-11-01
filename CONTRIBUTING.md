@@ -34,10 +34,10 @@ Footwork is research code with an evaluation discipline. The discipline is the p
 ```sh
 cd jevdual
 rustup toolchain install 1.97.1 --profile minimal  # CUA reference source build
-uv sync
-uv run ruff check python evals tests scripts
-uv run pytest                              # no keys needed
-JEVDUAL_BROWSER_TESTS=1 uv run pytest -m browser   # launches headless Chromium
+uv sync --extra desktop --extra agent
+uv run --no-sync ruff check python evals tests scripts
+uv run --no-sync pytest                              # no keys needed
+JEVDUAL_BROWSER_TESTS=1 uv run --no-sync pytest -m browser   # launches headless Chromium
 scripts/upstream_tests.sh                  # browser-use's own CI modules against this package
 ```
 

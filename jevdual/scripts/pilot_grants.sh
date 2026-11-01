@@ -9,7 +9,7 @@ STAMP="$(date +%Y%m%d-%H%M%S)"; OUT="results/grants-pilot-$STAMP"; S="$OUT/sessi
 NAME="grants-$STAMP"; DIR="$HOME/footwork-pilot/$NAME"
 mkdir -p "$OUT" "$DIR"; echo a > "$DIR/a.txt"; echo b > "$DIR/b.txt"
 LOG="$OUT/pilot.log"
-fw() { echo "\$ footwork $*" >> "$LOG"; uv run footwork "$@" --session "$S" 2>&1 | tee -a "$LOG"; }
+fw() { echo "\$ footwork $*" >> "$LOG"; uv run --no-sync footwork "$@" --session "$S" 2>&1 | tee -a "$LOG"; }
 step() { echo "== $*" | tee -a "$LOG"; }
 open "$DIR"; sleep 3
 step "bind the Finder window"; fw start "Move a.txt to the Trash, nothing else" --app Finder --window "$NAME" --mode foreground_permitted > /dev/null

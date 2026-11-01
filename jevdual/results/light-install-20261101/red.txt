@@ -1,0 +1,57 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_______ test_built_wheel_has_light_base_and_platform_scoped_full_extras ________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-507/test_built_wheel_has_light_bas0')
+
+    def test_built_wheel_has_light_base_and_platform_scoped_full_extras(tmp_path):
+        wheel = script("build_capability_wheel").build(ROOT, tmp_path / "wheel")
+        metadata, requirements = wheel_requirements(wheel)
+        base = selected(requirements)
+        assert {"mcp", "typesafe-sdk", "orjson", "psutil", "websockets", "packaging"} <= base
+>       assert not {"cua-driver", "browser-use", "jeepney", "pyobjc-framework-cocoa"} & base
+E       AssertionError: assert not ({'browser-use', 'cua-driver', 'jeepney', 'pyobjc-framework-cocoa'} & {'browser-use', 'cua-driver', 'jeepney', 'mcp', 'orjson', 'packaging', ...})
+
+tests/test_light_install_profiles.py:48: AssertionError
+________________ test_light_bundle_never_builds_or_carries_cua _________________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-507/test_light_bundle_never_builds0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106b6eff0>
+
+    def test_light_bundle_never_builds_or_carries_cua(tmp_path, monkeypatch):
+        bundle = script("build_agent_bundle")
+        monkeypatch.setattr(bundle.subprocess, "run", lambda *a, **kw: pytest.fail("light built native code"))
+        output = tmp_path / "bundle"
+>       manifest = bundle.build_bundle(output, profile="light")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: build_bundle() got an unexpected keyword argument 'profile'
+
+tests/test_light_install_profiles.py:62: TypeError
+______ test_light_bundle_rejects_full_install_before_environment_creation ______
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-507/test_light_bundle_rejects_full0')
+
+    def test_light_bundle_rejects_full_install_before_environment_creation(tmp_path):
+        output = tmp_path / "bundle"
+>       script("build_agent_bundle").build_bundle(output, profile="light")
+E       TypeError: build_bundle() got an unexpected keyword argument 'profile'
+
+tests/test_light_install_profiles.py:71: TypeError
+_______________ test_light_profile_rejects_native_wheel_argument _______________
+
+tmp_path = PosixPath('/private/var/folders/7h/tm0p7snx2h7d74lx2vb5376m0000gn/T/pytest-of-thomasmain/pytest-507/test_light_profile_rejects_nat0')
+
+    def test_light_profile_rejects_native_wheel_argument(tmp_path):
+        wheel = tmp_path / "cua_driver-fixture.whl"
+        wheel.write_bytes(b"not needed for light")
+        with pytest.raises(ValueError, match="light"):
+>           script("build_agent_bundle").build_bundle(tmp_path / "bundle", cua_wheel=wheel, profile="light")
+E           TypeError: build_bundle() got an unexpected keyword argument 'profile'
+
+tests/test_light_install_profiles.py:85: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_light_install_profiles.py::test_built_wheel_has_light_base_and_platform_scoped_full_extras
+FAILED tests/test_light_install_profiles.py::test_light_bundle_never_builds_or_carries_cua
+FAILED tests/test_light_install_profiles.py::test_light_bundle_rejects_full_install_before_environment_creation
+FAILED tests/test_light_install_profiles.py::test_light_profile_rejects_native_wheel_argument
+4 failed in 3.57s

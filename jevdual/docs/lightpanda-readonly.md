@@ -24,8 +24,8 @@ workflow. The command never downloads, installs or builds an engine. A different
 unsupported platform refuses; there is no source-build fallback.
 
 This tranche pins Linux x86-64 and macOS arm64 artifacts. Linux needs a compatible glibc-based host.
-The external engine is separate from the Footwork wheel. Footwork's dependency metadata still
-declares its full dependencies; the binary-only light metadata split remains a later package.
+The external engine is separate from the Footwork wheel. Install Footwork's base wheel without extras or choose a `--profile light` bundle.
+The light dependency set omits CUA and browser-use; see [installation profiles](unified-cli.md#choose-an-installation-profile).
 
 ## Read one URL
 
