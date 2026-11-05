@@ -86,6 +86,7 @@ class DragRefused(ValueError):
 
 
 class Poster(Protocol):
+    def move(self, x: float, y: float) -> None: ...
     def down(self, x: float, y: float) -> None: ...
     def drag(self, x: float, y: float) -> None: ...
     def up(self, x: float, y: float) -> None: ...
@@ -112,8 +113,22 @@ def plan_drag(
         raise DragRefused(
             "drag_too_short", f"{math.dist(start, end):.1f} pt is under {settings.min_distance_pt} pt"
         )
+    return plan_path(start, end, settings, seed=seed, planner=planner)
+
+
+def plan_path(
+    start: tuple[float, float],
+    end: tuple[float, float],
+    settings: DragSettings = DEFAULT,
+    *,
+    seed: str = "drag",
+    planner: Any = None,
+) -> DragPlan:
+    """CUA's planned path from ``start`` to ``end``, repeats dropped, ending exactly on ``end``."""
     if planner is None:
-        import cua_driver as planner
+        from jevdual.effectors.cua import cursor_planner
+
+        planner = cursor_planner()
     params = planner.default_cursor_motion_params()
     params.arc_size = settings.arc_size
     trajectory = planner.plan_cursor_move(
@@ -145,6 +160,46 @@ def plan_drag(
 class _Abort(Exception):
     def __init__(self, cause: str) -> None:
         self.cause = cause
+
+
+def play_move(
+    plan: DragPlan,
+    poster: Poster,
+    clock: Clock,
+    settings: DragSettings = DEFAULT,
+    *,
+    cancelled: Callable[[], bool] = lambda: False,
+) -> DragResult:
+    """Move the pointer along ``plan`` with no button, as an approach before a press."""
+    tolerance = 1.5 * plan.max_step_pt + 2.0
+    result = DragResult("aborted:unknown")
+    last = plan.start
+    t0 = last_post = clock.now()
+    try:
+        for s in plan.samples[1:]:
+            if cancelled():
+                raise _Abort("cancelled")
+            cause = poster.foreign_input()
+            if cause is not None:
+                raise _Abort(f"pointer_contended:{cause}")
+            loc = poster.location()
+            if math.dist(loc, last) > tolerance:
+                raise _Abort(f"pointer_contended:pointer_moved {loc[0]:.1f},{loc[1]:.1f}")
+            due = t0 + s.t
+            clock.sleep_until(due)
+            now = clock.now()
+            if now - last_post > settings.max_gap_s:
+                raise _Abort("playback_stall")
+            poster.move(s.x, s.y)
+            result.lateness_s.append(now - due)
+            result.max_gap_s = max(result.max_gap_s, now - last_post)
+            result.posted_drags += 1
+            last, last_post = (s.x, s.y), now
+        result.outcome = "arrived"
+    except _Abort as abort:
+        result.outcome = f"aborted:{abort.cause}"
+        result.causes.append(abort.cause)
+    return result
 
 
 def play_drag(
@@ -256,6 +311,9 @@ class QuartzPoster:
         if click_state is not None:
             q.CGEventSetIntegerValueField(event, q.kCGMouseEventClickState, click_state)
         q.CGEventPost(q.kCGHIDEventTap, event)
+
+    def move(self, x: float, y: float) -> None:
+        self._mouse(self.q.kCGEventMouseMoved, x, y)
 
     def down(self, x: float, y: float) -> None:
         self._own[self.q.kCGEventLeftMouseDown] += 1

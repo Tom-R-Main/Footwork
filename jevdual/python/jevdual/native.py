@@ -1053,10 +1053,15 @@ class NativeBridge:
         id kept when it still names it, else the unique element that does. Ambiguous controls refuse
         because their identity is unavailable. A changed text value or checkbox state, or a missing
         control, also refuses the step."""
+        self._require_unambiguous(nm, id)
+        fresh = await self.observe()
+        return fresh, self._rematch(nm, fresh, id, operation)
+
+    def _rematch(self, nm: NativeMenu, fresh: NativeMenu, id: int, operation: str) -> int:
+        """The id in ``fresh`` of the decided element ``id`` of ``nm``, under ``_live``'s rules."""
         cand = nm.menu.candidate(id)
         assert cand is not None
         self._require_unambiguous(nm, id)
-        fresh = await self.observe()
         key = (cand.role, cand.label, cand.section)
         same = fresh.menu.candidate(id)
         if same is not None and (same.role, same.label, same.section) == key:
@@ -1082,7 +1087,7 @@ class NativeBridge:
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} changed state since the decision"
             )
-        return fresh, hit.id
+        return hit.id
 
     def _not_sent(
         self, operation: str, target: int, label: str, code: str, reason: str, delivery: str
@@ -2083,6 +2088,72 @@ class NativeBridge:
                 delivery_basis="ax_finder_rename_readback" if count else "unknown",
                 native_readback=proof,
             )
+
+    async def drag(self, nm: NativeMenu, source: int, destination: int) -> NativeEffect:
+        """Drag the real pointer from ``source``'s centre to ``destination``'s centre (``jevdual.drag``).
+
+        Desktop-scoped: it moves the person's pointer and holds its button, so it runs only in
+        exclusive_desktop. Both targets are re-found after one live re-observation. The approach to the
+        source is a planned pointer move; once the button is down every exit releases it."""
+        from jevdual import drag as d
+
+        src, _ = self._require_fresh(nm, source)
+        dst, _ = self._require_fresh(nm, destination)
+        label = f"{src.label} -> {dst.label}"
+        if source == destination:
+            raise NativeBridgeError("drag_same_target", f"[{source}] {src.label!r} is both ends of the drag")
+        self._require_unambiguous(nm, source)
+        self._require_unambiguous(nm, destination)
+        refusal = self.policy.permits("desktop", why=f"drag {label!r} (it moves the real pointer and holds its button)")
+        if refusal is not None:
+            return self._not_sent("drag", source, label, refusal.code, refusal.reason, "desktop")
+        if self.live_check or self.observation_guard is not None:
+            fresh = await self.observe()
+            source, destination = (
+                self._rematch(nm, fresh, source, "drag"),
+                self._rematch(nm, fresh, destination, "drag"),
+            )
+            nm = fresh
+        self.last = None
+        self.dispatches += 1
+        frames = [nm.frames.get(i) for i in (source, destination)]
+        if any(f is None or f[2] <= 0 or f[3] <= 0 for f in frames):
+            return self._not_sent("drag", source, label, "frame_unavailable", "a drag needs both targets' frames", "desktop")
+        (sx, sy, sw, sh), (tx, ty, tw, th) = frames  # type: ignore[misc]
+        start, end = (sx + sw / 2, sy + sh / 2), (tx + tw / 2, ty + th / 2)
+        settings = d.DragSettings()
+        seed = f"{self.session}|{nm.snapshot_id}|{source}|{destination}"
+        try:
+            plan = d.plan_drag(start, end, settings, seed=seed)
+        except d.DragRefused as exc:
+            return self._not_sent("drag", source, label, exc.code, str(exc), "desktop")
+        poster, clock = d.QuartzPoster(), d.MonotonicClock()
+        here = poster.location()
+        approach = None
+        if math.dist(here, start) >= 1.0:
+            approach = await asyncio.to_thread(
+                d.play_move, d.plan_path(here, start, settings, seed=seed + "|approach"), poster, clock, settings
+            )
+            if approach.outcome != "arrived":
+                return NativeEffect(
+                    "drag", source, label, "unverifiable", "desktop_pointer",
+                    (f"approach {approach.outcome} after {approach.posted_drags} moves; button never pressed",),
+                    f"drag approach {approach.outcome}", f"drag_{approach.outcome}",
+                    delivery="desktop", dispatched=True,
+                )
+        result = await asyncio.to_thread(d.play_drag, plan, poster, clock, settings)
+        evidence = (
+            f"approach {approach.posted_drags if approach else 0} moves",
+            f"pressed at {start[0]:.1f},{start[1]:.1f}",
+            f"{result.posted_drags} drags, largest gap {result.max_gap_s * 1000:.1f} ms",
+            f"released at {result.released_at[0]:.1f},{result.released_at[1]:.1f}" if result.released_at else "not released",
+            *(["escape sent before release"] if result.escape_sent else []),
+        )
+        return NativeEffect(
+            "drag", source, label, "unverifiable", "desktop_pointer", evidence,
+            f"drag {result.outcome}", None if result.outcome == "dropped" else f"drag_{result.outcome}",
+            delivery="desktop", dispatched=True,
+        )
 
     async def act(
         self,

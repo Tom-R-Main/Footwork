@@ -1427,7 +1427,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </body></html>'''
 
 
-_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "drag", "key", "hotkey", "menu", "navigate")
 
 
 def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, ...], tuple[str, ...]]:
@@ -1454,6 +1454,11 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
         if not path:
             raise SystemExit('menu needs a path, e.g. menu "File > Save"')
         return op, None, None, (), path
+    if op == "drag":
+        if len(words) != 3:
+            raise SystemExit('drag needs a source and a destination, e.g. drag 12 30 or drag "Card A" "Done"')
+        source = int(words[1]) if words[1].lstrip("-").isdigit() else words[1]
+        return op, source, words[2], (), ()  # type: ignore[return-value]
     if len(words) < 2:
         raise SystemExit(f'{op} needs an element id or a label, e.g. {op} 65 or {op} "Telephone"')
     text = " ".join(words[2:]) if len(words) > 2 else None
@@ -1463,6 +1468,15 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
         return op, int(words[1]), text, (), ()
     # a label: resolved against the fresh observation in cmd_do (ids renumber between snapshots)
     return op, words[1], text, (), ()  # type: ignore[return-value]
+
+
+def resolve_destination(nm: Any, selector: str) -> tuple[Any, str]:
+    """A drag's destination on the fresh observation: an element id, or a label as ``resolve_label``."""
+    if selector.lstrip("-").isdigit():
+        cand = nm.menu.candidate(int(selector))
+        return cand, "" if cand is not None else f"destination id {selector} is not on the current observation"
+    rid, why = resolve_label(nm, selector)
+    return (nm.menu.candidate(rid), "") if rid is not None else (None, f"destination: {why}")
 
 
 def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
@@ -1650,6 +1664,24 @@ async def cmd_do(args: Any) -> int:
                 return 4
         if op == "move" and file_target is None:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
+        destination = None
+        if op == "drag":
+            if state.mode != "native" or not callable(getattr(bridge, "drag", None)):
+                print("not admitted: drag is a native route (footwork start --app ...)", file=sys.stderr)
+                return 2
+            destination, why = resolve_destination(nm, text or "")
+            if destination is None:
+                print(why, file=sys.stderr)
+                return 4
+            known = chosen_from.get(destination.id)
+            if known is not None and known != destination.label:
+                print(
+                    f"destination id {destination.id} is now {destination.label!r}, it was {known!r} when you "
+                    "looked; the page changed. Nothing dispatched.",
+                    file=sys.stderr,
+                )
+                return 4
+            text = shown_text = destination.label
         judge = None
         client = None
         # every route the authorizer judges (authorize.JUDGED_ROUTES), plus navigation: a key or Return
@@ -1692,9 +1724,11 @@ async def cmd_do(args: Any) -> int:
         if op == "navigate":
             action = dataclasses.replace(action, label=f"navigate to {shown_text}", route="click")
         line = f"{op}({target.label if target else (shown_text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
+        if destination is not None and target is not None:
+            line = f"drag({target.label} -> {destination.label})"
         if carried is not None:
             line += f" text=@{carried.name} (from {carried.surface} {carried.location or carried.title})"
-        elif shown_text:
+        elif shown_text and op != "drag":
             line += f" text={shown_text[:60]!r}"
         if operations is not None:
             line = _safe_operation_value(state, line, text if secret_used else None)
@@ -1848,6 +1882,9 @@ async def cmd_do(args: Any) -> int:
                 eff = await bridge.key(nm, keys[-1], list(keys[:-1]))
             elif op == "menu":
                 eff = await bridge.menu(nm, list(path))
+            elif op == "drag":
+                assert target is not None and destination is not None
+                eff = await bridge.drag(nm, target.id, destination.id)
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
@@ -2499,7 +2536,7 @@ def _proposal(
 ) -> grants.Proposal:
     arguments = (
         text
-        if op in ("type", "append", "move", "navigate")
+        if op in ("type", "append", "move", "navigate", "drag")
         else ("+".join(keys) if keys else " > ".join(path) or None)
     )
     return grants.Proposal(
@@ -2562,6 +2599,12 @@ async def cmd_grant(args: Any) -> int:
             if target is None:
                 print(f"id {cid} is not on the current observation", file=sys.stderr)
                 return 4
+        if op == "drag":
+            destination, why = resolve_destination(nm, raw_text or "")
+            if destination is None:
+                print(why, file=sys.stderr)
+                return 4
+            raw_text = destination.label
         g = grants.issue(
             _proposal(
                 state,

@@ -4,7 +4,10 @@ The poster and clock are replaced, so the scenarios see every pointer event the 
 rest of the command (observation, resolution, posture, judgment, authorization, receipts) is real.
 """
 
+# ruff: noqa: F811  (the scenario fixtures are imported by name)
 from __future__ import annotations
+
+from typing import ClassVar
 
 import pytest
 
@@ -14,7 +17,7 @@ from tests.test_session_scenarios import _id, _mac_selectors, _state, fw, world 
 
 
 class Poster:
-    events: list[tuple[str, float, float]] = []
+    events: ClassVar[list[tuple[str, float, float]]] = []
 
     def __init__(self) -> None:
         self.pointer = (10.0, 10.0)
@@ -94,7 +97,7 @@ def test_a_drag_approaches_presses_on_the_source_and_releases_on_the_destination
 
 def test_background_only_posts_nothing_and_says_the_drag_needs_the_desktop(world, fw, poster):
     _, out, _ = fw("start", "Drag a key", "--app", "Calculator")
-    code, out, _ = fw("do", "drag", str(_id(out, "7")), str(_id(out, "8")), "--no-judge")
+    _, out, _ = fw("do", "drag", str(_id(out, "7")), str(_id(out, "8")), "--no-judge")
     assert poster.events == []
     assert "requires_desktop" in out
 
@@ -113,7 +116,7 @@ def test_dropping_onto_delete_pauses_before_anything_is_posted(world, fw, poster
 
 def test_a_drag_needs_two_targets(world, fw, poster):
     fw("start", "Drag a key", "--app", "Calculator", "--mode", "exclusive_desktop")
-    with pytest.raises(SystemExit) as exc:
-        fw("do", "drag", "7", "--no-judge")
-    assert "drag needs a source and a destination" in str(exc.value)
+    code, out, err = fw("do", "drag", "7", "--no-judge")
+    assert code != 0, (code, out, err)
+    assert "drag needs a source and a destination" in out + err
     assert poster.events == []
