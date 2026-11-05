@@ -12,8 +12,10 @@ failed step, because a take is never retried mid-way.
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -26,8 +28,115 @@ REVISION = "Hold the replay scene a bit longer"
 WINDOW = {"x": 36, "y": 40, "w": 1440, "h": 932}
 
 
+SCENE = "Footwork DemoGeek take"
+INPUT = "Footwork take window"
+
+
 class TakeFailed(Exception):
     pass
+
+
+class Obs:
+    """OBS through scripts/obs_ws.py: a dedicated take scene with one window capture, recorded, then the
+    previous program scene restored. Nothing else in the user's OBS setup is changed."""
+
+    def __init__(self, take: Take) -> None:
+        sys.path.insert(0, str(Path(__file__).parent))
+        import obs_ws
+
+        self.call = lambda *reqs: asyncio.run(obs_ws.call(list(reqs)))
+        self.take = take
+        self.previous: str | None = None
+
+    def one(self, request: str, data: dict | None = None) -> dict:
+        r = self.call((request, data or {}))[0]
+        if not r["ok"]:
+            raise TakeFailed(f"OBS {request} failed: {r['status']}")
+        return r["data"] or {}
+
+    def setup(self, window_id: int) -> dict:
+        scenes = self.one("GetSceneList")
+        self.previous = scenes["currentProgramSceneName"]
+        if SCENE not in [x["sceneName"] for x in scenes["scenes"]]:
+            self.one("CreateScene", {"sceneName": SCENE})
+        settings = {
+            "type": 1,
+            "application": "com.google.Chrome",
+            "window": window_id,
+            "show_cursor": True,
+            "hide_obs": True,
+        }
+        inputs = [i["inputName"] for i in self.one("GetInputList")["inputs"]]
+        if INPUT in inputs:
+            self.one("SetInputSettings", {"inputName": INPUT, "inputSettings": settings, "overlay": True})
+        else:
+            self.one(
+                "CreateInput",
+                {
+                    "sceneName": SCENE,
+                    "inputName": INPUT,
+                    "inputKind": "screen_capture",
+                    "inputSettings": settings,
+                },
+            )
+        item = self.one("GetSceneItemId", {"sceneName": SCENE, "sourceName": INPUT})["sceneItemId"]
+        video = self.one("GetVideoSettings")
+        self.one(
+            "SetSceneItemTransform",
+            {
+                "sceneName": SCENE,
+                "sceneItemId": item,
+                "sceneItemTransform": {
+                    "boundsType": "OBS_BOUNDS_SCALE_INNER",
+                    "boundsWidth": video["baseWidth"],
+                    "boundsHeight": video["baseHeight"],
+                    "boundsAlignment": 0,
+                    "alignment": 5,
+                    "positionX": 0,
+                    "positionY": 0,
+                },
+            },
+        )
+        readback = {
+            "input": self.one("GetInputSettings", {"inputName": INPUT}),
+            "transform": self.one("GetSceneItemTransform", {"sceneName": SCENE, "sceneItemId": item}),
+            "video": video,
+            "record_directory": self.one("GetRecordDirectory"),
+            "output": {
+                name: self.one("GetProfileParameter", {"parameterCategory": cat, "parameterName": name})
+                for cat, name in (
+                    ("Output", "Mode"),
+                    ("SimpleOutput", "RecFormat2"),
+                    ("SimpleOutput", "RecEncoder"),
+                    ("SimpleOutput", "RecQuality"),
+                )
+            },
+        }
+        got = readback["input"]["inputSettings"]
+        if got.get("show_cursor") is not True or got.get("window") != window_id or got.get("type") != 1:
+            raise TakeFailed(f"OBS capture readback differs: {got}")
+        (self.take.out / "obs-settings.json").write_text(json.dumps(readback, indent=1))
+        self.take.record(step="setup", cmd="obs setup", code=0, readback=readback)
+        return readback
+
+    def start(self) -> None:
+        self.one("SetCurrentProgramScene", {"sceneName": SCENE})
+        self.one("StartRecord")
+        deadline = time.monotonic() + 10
+        while not self.one("GetRecordStatus")["outputActive"]:
+            if time.monotonic() > deadline:
+                raise TakeFailed("OBS did not start recording")
+            time.sleep(0.2)
+        self.take.record(step="setup", cmd="obs recording", code=0)
+
+    def stop(self) -> str | None:
+        path = None
+        if self.one("GetRecordStatus")["outputActive"]:
+            path = self.one("StopRecord").get("outputPath")
+        if self.previous:
+            self.one("SetCurrentProgramScene", {"sceneName": self.previous})
+        self.take.record(step="end", cmd="obs stopped", code=0, path=path)
+        return path
 
 
 class Take:
@@ -110,8 +219,32 @@ def chrome(out: Path, url: str) -> int:
     return min(int(p) for p in pids)
 
 
-def run(take: Take, url: str) -> None:
+def overlays(pid: int) -> list[str]:
+    """Windows above layer 0 that overlap the scene window below the menu bar (plan: overlay_present)."""
+    import Quartz
+
+    x, y, w, h = WINDOW["x"], WINDOW["y"], WINDOW["w"], WINDOW["h"]
+    hits = []
+    for win in Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListOptionOnScreenOnly, 0):
+        b = win.get("kCGWindowBounds") or {}
+        if win.get("kCGWindowLayer", 0) <= 0 or win.get("kCGWindowOwnerPID") == pid:
+            continue
+        bx, by, bw, bh = b.get("X", 0), b.get("Y", 0), b.get("Width", 0), b.get("Height", 0)
+        if by + bh <= 33 or win.get("kCGWindowAlpha", 1) == 0:  # the menu-bar strip
+            continue
+        if bx < x + w and bx + bw > x and by < y + h and by + bh > y:
+            hits.append(
+                f"{win.get('kCGWindowOwnerName')} layer {win.get('kCGWindowLayer')} at {bx},{by} {bw}x{bh}"
+            )
+    return hits
+
+
+def run(take: Take, url: str, obs: Obs | None, *, allow_overlay: bool = False) -> None:
     pid = chrome(take.out, url)
+    if found := overlays(pid):
+        take.record(step="setup", cmd="overlay_present", code=0 if allow_overlay else 1, overlays=found)
+        if not allow_overlay:
+            raise TakeFailed(f"setup: overlay_present: {found}; hide them and start again")
     out = take.fw(
         "setup",
         "start",
@@ -135,6 +268,11 @@ def run(take: Take, url: str) -> None:
         raise TakeFailed(f"setup: the content area is not 1440x900 CSS px: {out[:300]}")
     take.wait_for("setup", "'Message'", 10)  # Chrome builds web accessibility lazily
     take.fw("setup", "park", "--place")
+    if obs is not None:
+        window_id = int(re.search(r"bound Google Chrome window (\d+)", out).group(1))
+        obs.setup(window_id)
+        obs.start()
+        time.sleep(1.0)  # a still lead-in before the first gesture
     take.record(step="rolling", cmd="filmed_phase rolling")
     # 1-2: brief
     # a web textarea offers type, not click: in a filmed take, type travels to the field first
@@ -173,19 +311,34 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
     ap.add_argument("--url", default="http://localhost:8766/index.html")
+    ap.add_argument("--record", action="store_true", help="record with OBS (needs OBS_WEBSOCKET_PASSWORD)")
+    ap.add_argument("--allow-overlay", action="store_true", help="diagnostic only: proceed over a layer>0 window")
     args = ap.parse_args()
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     take = Take(out)
+    obs = Obs(take) if args.record else None
+    code = 0
     try:
-        run(take, args.url)
+        run(take, args.url, obs, allow_overlay=args.allow_overlay)
     except TakeFailed as exc:
         take.record(step="failed", cmd=str(exc)[:500])
         print(f"take failed: {exc}", file=sys.stderr)
-        return 1
+        code = 1
     finally:
+        if obs is not None:
+            try:
+                path = obs.stop()
+                if path and Path(path).exists():
+                    moved = out / Path(path).name
+                    shutil.move(path, moved)
+                    take.record(step="end", cmd="recording moved", code=0, path=str(moved))
+                    print(f"recording: {moved}")
+            except TakeFailed as exc:
+                print(f"OBS cleanup: {exc}", file=sys.stderr)
+                code = 1
         subprocess.run(["pkill", "-f", f"user-data-dir={out / 'chrome-profile'}"], check=False)
-    return 0
+    return code
 
 
 if __name__ == "__main__":
