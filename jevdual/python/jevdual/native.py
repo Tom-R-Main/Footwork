@@ -435,6 +435,10 @@ def menu_from_snapshot(
             if mapped is None:
                 omitted["unmapped_role"] = omitted.get("unmapped_role", 0) + 1
                 continue
+        if mapped is None and ax_role == "AXGroup" and _get(el, "in_web_content") and _get(el, "label"):
+            # a labelled web group (role="group" with an accessible name, like a storyboard card) is a
+            # place a person points at; hovering is the one thing to do with it (filmed takes)
+            mapped = ("group", ("hover",))
         if mapped is None and ax_role == "AXImage" and "AXOpen" in actions:
             # a Finder icon-view item: an image that opens (P0 breadth, 2026-09-25); clicking selects it
             mapped = ("file", ("click",))
@@ -891,6 +895,8 @@ class NativeBridge:
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
         self.observation_guard = observation_guard
+        #: filmed pointer mode (``jevdual.filmed``): the pointer travels to each target before an action
+        self.filmed: Any = None
         self.finder_scope = finder_scope
         self._foreground_inputs = 0
         self._ax = ax
@@ -1504,6 +1510,8 @@ class NativeBridge:
             "text": text,
             "delivery_mode": "background",
         }
+        if self.filmed is not None:
+            args["delay_ms"] = self.filmed.type_delay_ms
         if self.session:
             args["session"] = self.session
         try:
@@ -1574,6 +1582,8 @@ class NativeBridge:
         self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
     ) -> NativeEffect:
         """Rename or move the exact owned file through Finder's front/key UI."""
+        if self.filmed is not None:
+            raise NativeBridgeError("cross_window", "file operations are refused in a filmed take")
         target, id = self.resolve_file(nm, selector)
         self._require_fresh(nm, id)
         if operation == "move":
@@ -2114,6 +2124,25 @@ class NativeBridge:
                 native_readback=proof,
             )
 
+    async def _filmed_gate(
+        self, operation: str, id: int, label: str, frame: Any, *, approach: bool = False
+    ) -> NativeEffect | None:
+        """In a filmed take: refuse once the take ended, else travel to the target first when asked."""
+        if self.filmed is None:
+            return None
+        from jevdual.filmed import FilmedRefusal
+
+        try:
+            if approach:
+                if frame is None or frame[2] <= 0 or frame[3] <= 0:
+                    raise FilmedRefusal("frame_unavailable", f"{label!r} has no frame to travel to")
+                await self.filmed.approach(tuple(frame), label)
+            else:
+                self.filmed.check()
+        except FilmedRefusal as refusal:
+            return self._not_sent(operation, id, label, refusal.code, refusal.reason, "desktop")
+        return None
+
     async def drag(self, nm: NativeMenu, source: int, destination: int) -> NativeEffect:
         """Drag the real pointer from ``source``'s centre to ``destination``'s centre (``jevdual.drag``).
 
@@ -2155,6 +2184,11 @@ class NativeBridge:
         poster, clock = d.QuartzPoster(), d.MonotonicClock()
         here = poster.location()
         approach = None
+        if self.filmed is not None:
+            refused = await self._filmed_gate("drag", source, label, frames[0], approach=True)
+            if refused is not None:
+                return refused
+            here = start
         if math.dist(here, start) >= 1.0:
             approach = await asyncio.to_thread(
                 d.play_move, d.plan_path(here, start, settings, seed=seed + "|approach"), poster, clock, settings
@@ -2167,6 +2201,10 @@ class NativeBridge:
                     delivery="desktop", dispatched=True,
                 )
         result = await asyncio.to_thread(d.play_drag, plan, poster, clock, settings)
+        if self.filmed is not None:
+            self.filmed.last_pointer = result.released_at
+            if result.outcome != "dropped":
+                self.filmed.end_take(result.outcome.removeprefix("aborted:"))
         evidence = (
             f"approach {approach.posted_drags if approach else 0} moves",
             f"pressed at {start[0]:.1f},{start[1]:.1f}",
@@ -2214,6 +2252,9 @@ class NativeBridge:
         self.last = None
         self.dispatches += 1
         label = cand.label
+        refused = await self._filmed_gate(operation, id, label, nm.frames.get(id), approach=operation != "enter")
+        if refused is not None:
+            return refused
         if operation == "append":
             assert text is not None
             result = await self._append(nm, id, cand, text, append_precondition)
@@ -2304,6 +2345,8 @@ class NativeBridge:
         mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("key", -1, "+".join([*mods, key]), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None
@@ -2416,6 +2459,8 @@ class NativeBridge:
         background chord. Asked of the posture first; ``key`` is the background route for a chord."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("hotkey", -1, "+".join(keys), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None
@@ -2469,6 +2514,8 @@ class NativeBridge:
         invoke_menu remains the route only in exclusive_desktop, for a path AX cannot resolve."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("menu", -1, " > ".join(path), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None

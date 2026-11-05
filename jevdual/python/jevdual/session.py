@@ -101,6 +101,8 @@ class SessionState:
     native_scope: dict[str, str] = field(default_factory=dict)
     finder_scope: dict[str, Any] = field(default_factory=dict)
     ticket_scope: dict[str, Any] = field(default_factory=dict)
+    #: filmed pointer mode (``jevdual.filmed.Filmed.to_record``); empty when off
+    filmed: dict[str, Any] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
@@ -875,15 +877,26 @@ async def bind(state: SessionState):
 
     driver = desktop_effector()
     if state.native_scope or state.finder_scope:
-        return driver, _native_bridge(
-            driver,
-            state.pid,
-            state.window_id,
-            state.posture,
-            native_scope=state.native_scope,
-            finder_scope=state.finder_scope,
+        return driver, _filmed(
+            state,
+            _native_bridge(
+                driver,
+                state.pid,
+                state.window_id,
+                state.posture,
+                native_scope=state.native_scope,
+                finder_scope=state.finder_scope,
+            ),
         )
-    return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
+    return driver, _filmed(state, _native_bridge(driver, state.pid, state.window_id, state.posture))
+
+
+def _filmed(state: SessionState, bridge: Any) -> Any:
+    if state.filmed:
+        from jevdual.filmed import Filmed
+
+        bridge.filmed = Filmed.from_record(state.filmed)
+    return bridge
 
 
 def _native_bridge(
@@ -984,6 +997,84 @@ def finish_observation(
 
 
 # ---- commands --------------------------------------------------------------------------------
+
+
+def _filmed_setup(state: SessionState, args: Any) -> str | None:
+    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
+    and rest position converted from viewport CSS px to screen points."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed
+
+    if state.posture != "exclusive_desktop":
+        return "--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop"
+
+    def pair(raw: str | None, n: int, name: str) -> tuple[float, ...] | None:
+        if raw is None:
+            return None
+        parts = [float(v) for v in raw.replace(" ", "").split(",")]
+        if len(parts) != n:
+            raise ValueError(f"{name} needs {n} numbers, got {raw!r}")
+        return tuple(parts)
+
+    try:
+        win = ax.window_element(state.pid, state.window_id)
+        window = ax.frame_of(win)
+        web = ax.web_area_frame(win)
+        keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
+        rest = pair(getattr(args, "rest", None), 2, "--rest")
+    except (ax.AXError, ValueError) as exc:
+        return str(exc)
+    if window is None:
+        return "the scene window has no frame"
+    content = web or window
+    origin = (content.x, content.y)
+    filmed = Filmed(
+        window=(window.x, window.y, window.w, window.h),
+        content=(content.x, content.y, content.w, content.h),
+        keep_out=(origin[0] + keep[0], origin[1] + keep[1], keep[2], keep[3]) if keep else None,
+        rest=(origin[0] + rest[0], origin[1] + rest[1]) if rest else None,
+        type_delay_ms=getattr(args, "type_delay_ms", 65),
+    )
+    if filmed.rest is not None and filmed.keep_out is not None:
+        from jevdual.filmed import _inside
+
+        if _inside(filmed.rest, filmed.keep_out):
+            return "the rest position is inside the keep-out"
+    state.filmed = filmed.to_record()
+    print(
+        f"filmed take: content {content.w:.0f}x{content.h:.0f} at {content.x:.0f},{content.y:.0f}; "
+        f"keep-out {filmed.keep_out}; rest {filmed.rest}"
+    )
+    return None
+
+
+async def cmd_park(args: Any) -> int:
+    """Filmed take: move the pointer to the rest position, or to X Y in viewport CSS px."""
+    from jevdual.filmed import Filmed, FilmedRefusal
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("park needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    if (args.x is None) != (args.y is None):
+        print("park takes both X and Y, or neither (the rest position)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    point = filmed.viewport(args.x, args.y) if args.x is not None else None
+    try:
+        record = await filmed.park(point)
+    except FilmedRefusal as refusal:
+        state.filmed = filmed.to_record()
+        state.log({"kind": "park", "refused": refusal.code, "reason": refusal.reason})
+        state.save()
+        print(f"park refused: {refusal.code}: {refusal.reason}", file=sys.stderr)
+        return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "park", **record})
+    state.save()
+    to = record["to"]
+    print(f"parked at {to[0]:.1f},{to[1]:.1f} ({record.get('samples', 0)} samples)")
+    return 0
 
 
 async def cmd_start(args: Any) -> int:
@@ -1150,6 +1241,11 @@ async def cmd_start(args: Any) -> int:
             answer_expected=args.answer,
             posture=getattr(args, "mode", None) or "background_only",
         )
+        if getattr(args, "pointer_motion", "off") == "filmed":
+            refusal = _filmed_setup(state, args)
+            if refusal:
+                print(f"not starting: {refusal}", file=sys.stderr)
+                return 2
         if durable:
             from jevdual.session_operations import native_identity
 
@@ -1922,6 +2018,8 @@ async def cmd_do(args: Any) -> int:
                 )
             raise
         exec_ms = (time.perf_counter() - t0) * 1000
+        if getattr(bridge, "filmed", None) is not None:
+            state.filmed = bridge.filmed.to_record()
         state.pending = {
             "line": line,
             "driver_effect": driver_effect,

@@ -116,6 +116,18 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
+def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
+    """The frame of the first AXWebArea under ``win`` (a browser's content area), or None."""
+    stack = [(win, 0)]
+    while stack:
+        el, d = stack.pop()
+        if _attr(el, "AXRole") == "AXWebArea":
+            return frame_of(el)
+        if d < depth:
+            stack.extend((c, d + 1) for c in reversed(_attr(el, "AXChildren") or []))
+    return None
+
+
 def placeholder(el: Any) -> str | None:
     """The element's AXPlaceholderValue, or None."""
     v = _attr(el, "AXPlaceholderValue")

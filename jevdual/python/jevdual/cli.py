@@ -361,8 +361,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="execution posture: background_only never takes the foreground (default); foreground_permitted "
         "takes it only after 3 s without your input; exclusive_desktop assumes nobody is using this desktop",
     )
+    st.add_argument(
+        "--pointer-motion",
+        choices=("off", "filmed"),
+        default="off",
+        help="filmed (exclusive_desktop, native): the real pointer travels to each target like a person's",
+    )
+    st.add_argument("--keep-out", help="filmed: X,Y,W,H in viewport CSS px that no pointer path may enter")
+    st.add_argument("--rest", help="filmed: X,Y in viewport CSS px where footwork park rests the pointer")
+    st.add_argument("--type-delay-ms", type=int, default=65, help="filmed: milliseconds between typed characters")
     common(st)
     st.set_defaults(fn=S.cmd_start)
+    pk = sub.add_parser("park", help="filmed take: move the pointer to the rest position, or to X Y (viewport CSS px)")
+    pk.add_argument("x", type=float, nargs="?")
+    pk.add_argument("y", type=float, nargs="?")
+    common(pk)
+    pk.set_defaults(fn=S.cmd_park)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")
     lk.add_argument("--menu-bar", action="store_true", help="native: also list the app's menu items")
     common(lk)

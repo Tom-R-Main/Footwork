@@ -123,14 +123,18 @@ def plan_path(
     *,
     seed: str = "drag",
     planner: Any = None,
+    timing: str | None = None,
 ) -> DragPlan:
-    """CUA's planned path from ``start`` to ``end``, repeats dropped, ending exactly on ``end``."""
+    """CUA's planned path from ``start`` to ``end``, repeats dropped, ending exactly on ``end``.
+    ``timing`` names a ``CursorMotionTiming`` member (for example ``DELIBERATE``); default is CUA's."""
     if planner is None:
         from jevdual.effectors.cua import cursor_planner
 
         planner = cursor_planner()
     params = planner.default_cursor_motion_params()
     params.arc_size = settings.arc_size
+    if timing is not None:
+        params.timing = getattr(planner.CursorMotionTiming, timing)
     trajectory = planner.plan_cursor_move(
         params,
         planner.CursorMoveRequest(
