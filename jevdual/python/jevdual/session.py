@@ -1048,6 +1048,35 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
     return None
 
 
+async def cmd_keep_out(args: Any) -> int:
+    """Filmed take: arm the keep-out when the frame it protects appears, or turn it off."""
+    from jevdual.filmed import Filmed, _inside
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("keep-out needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    if args.rect.strip().lower() == "off":
+        filmed.keep_out = None
+    else:
+        try:
+            x, y, w, h = (float(v) for v in args.rect.replace(" ", "").split(","))
+        except ValueError:
+            print(f"keep-out takes X,Y,W,H or off, got {args.rect!r}", file=sys.stderr)
+            return 2
+        filmed.keep_out = (filmed.content[0] + x, filmed.content[1] + y, w, h)
+        for name, point in (("rest position", filmed.rest), ("pointer", filmed.last_pointer)):
+            if point is not None and _inside(tuple(point), filmed.keep_out):
+                print(f"keep-out refused: the {name} {point} is inside it", file=sys.stderr)
+                return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "keep_out", "rect": filmed.keep_out})
+    state.save()
+    print(f"keep-out {filmed.keep_out}")
+    return 0
+
+
 async def cmd_park(args: Any) -> int:
     """Filmed take: move the pointer to the rest position, or to X Y in viewport CSS px."""
     from jevdual.filmed import Filmed, FilmedRefusal

@@ -237,3 +237,16 @@ def test_setup_placement_ignores_the_keep_out_and_sets_continuity(world, fw, fil
     assert code == 0, err
     assert filmed.events == [("move", 440.0, 370.0)]
     assert _state(fw)["filmed"]["last_pointer"] == [440.0, 370.0]
+
+
+def test_the_keep_out_is_armed_mid_take_and_refused_when_the_pointer_is_inside(world, fw, filmed):
+    out = _start(fw)
+    seven = _id(out, "7")
+    code, _, err = fw("keep-out", "0,120,300,40")
+    assert code == 0, err
+    _, out, err = fw("do", "click", str(seven), "--no-judge")
+    assert "path_crosses_keepout" in out + err and world.presses == []
+    assert fw("keep-out", "off")[0] == 0
+    assert fw("do", "click", str(seven), "--no-judge")[0] == 0 and world.presses == ["7"]
+    code, _, err = fw("keep-out", "0,200,300,100")  # the pointer now rests on 7, inside it
+    assert code == 4 and "pointer" in err

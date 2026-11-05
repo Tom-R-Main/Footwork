@@ -126,8 +126,6 @@ def run(take: Take, url: str) -> None:
         "exclusive_desktop",
         "--pointer-motion",
         "filmed",
-        "--keep-out",
-        KEEP_OUT,
         "--rest",
         REST,
         "--authorize",
@@ -151,6 +149,8 @@ def run(take: Take, url: str) -> None:
         take.fw("4", "do", "hover", f"Scene {n}:")
         time.sleep(0.7)
     # 5-6: record, then park while the product draws its own cursor
+    # the product frame draws its own cursor from Record on: no path may enter it from here
+    take.fw("5", "keep-out", KEEP_OUT)
     take.fw("5", "do", "click", "Record it")
     take.fw("6", "park")
     take.wait_for("5", "'See proof'", 15)
