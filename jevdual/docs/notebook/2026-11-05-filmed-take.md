@@ -21,3 +21,12 @@ Refs: FT1; 2026-11-05-pointer-drag.md PDU3; demogeek design/pointer-motion/PLAN.
 Resolves: FT1 = held
 Observed: tests/test_placeholder_value.py failed on its own commit (value 'Describe what to film…') and passes on 92d69aa, where a filled web field keeps 'Relay demo'. Live footwork look on the prototype with the change lists [5] textbox 'Message' with no value; before it showed = 'Describe what to film…'.
 Next: FT2, the filmed pointer mode.
+
+## FT3 · prediction · 2026-11-05 18:58
+Question: why is take 8's recording black for its whole 55 s, when take 7's capture of the same window showed it?
+Hypothesis: take 8 retargeted the existing "Footwork take window" input with SetInputSettings (take 7 created it), and the screen_capture source kept a dead window stream; the settings readback reads settings, not frames, so setup passed.
+Alternatives: the capture needs time after a new window appears; Screen Recording permission for OBS lapsed.
+Test: the runner removes and recreates its own input on every take and, before StartRecord, requires a GetSourceScreenshot of the input that is not uniformly black (retrying for 5 s); then recorded take 9.
+Predicts: take 9 passes the frame check on the first or second try and its recording shows the window throughout (freezedetect finds no freeze longer than the scripted waits).
+Against: the frame check fails on a recreated input (then it is timing or permission), or take 9 is black although the check passed.
+Refs: results/demogeek-take-20261105-7, -8 (obs-settings.json, take.jsonl)
