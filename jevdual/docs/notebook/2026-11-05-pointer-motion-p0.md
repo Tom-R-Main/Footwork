@@ -21,3 +21,7 @@ Test: scripts/p0_live_hover.py on bd4f64d: Calculator in front, idle guard (HID 
 Predicts: the hover dispatches and the pointer is within 1 pt of the frame centre on both axes.
 Against: the pointer lands near half the centre (the fix did not take effect live), or more than 1 pt off by any other amount, or CUA's endpoint guard refuses a point over the frontmost Calculator.
 Refs: PMU1; results/p0-live-hover-20261105/result.json (to be written)
+
+## PMU2 · update · 2026-11-05 16:45
+Observed: scripts/p0_live_hover.py on ded1270 stopped at NativeBridge.observe with the Accessibility error before any input; the pointer was not moved and no result file was written. The process tree is zsh under claude under T3 Code (Nightly).app, which has no Accessibility grant.
+Next: PM2 stays open. Rerun after the owner grants Accessibility to the launching host, or from a host that already has it; never reset or edit TCC from here.
