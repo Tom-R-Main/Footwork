@@ -139,9 +139,9 @@ def run(take: Take, url: str) -> None:
     take.fw("setup", "park", "--place")
     take.record(step="rolling", cmd="filmed_phase rolling")
     # 1-2: brief
-    take.fw("1", "do", "click", "Message")
+    # a web textarea offers type, not click: in a filmed take, type travels to the field first
     take.fw("1", "do", "type", "Message", BRIEF)
-    take.fw("2", "do", "enter", "Message")
+    take.fw("2", "do", "key", "Return")
     take.wait_for("2", "'45 sec'", 15)
     # 3: length
     take.fw("3", "do", "click", "45 sec")
@@ -155,9 +155,8 @@ def run(take: Take, url: str) -> None:
     take.fw("6", "park")
     take.wait_for("5", "'See proof'", 15)
     # 7: revision
-    take.fw("7", "do", "click", "Message")
     take.fw("7", "do", "type", "Message", REVISION)
-    take.fw("7", "do", "enter", "Message")
+    take.fw("7", "do", "key", "Return")
     take.wait_for("7", "is now 12s", 15)
     # 8-9: jump to the replay segment, then waypoint below the frame and open the proof
     take.fw("8", "do", "click", "Replay it, 12 seconds. Click to jump.")
