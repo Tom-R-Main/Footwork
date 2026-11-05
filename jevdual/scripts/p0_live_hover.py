@@ -14,17 +14,20 @@ import time
 from pathlib import Path
 
 
-async def main(out: Path) -> int:
-    import Quartz
+def calculator_pid() -> int:
+    subprocess.run(["open", "-a", "Calculator"], check=True)
+    time.sleep(1.5)
+    found = subprocess.run(["pgrep", "-x", "Calculator"], capture_output=True, text=True, check=True)
+    return int(found.stdout.split()[0])
 
+
+async def main(out: Path, pid: int) -> int:
+    import Quartz
     from jevdual.coexist import idle_seconds
     from jevdual.effectors.cua import create_desktop_driver, list_windows_input
     from jevdual.native import NativeBridge
     from jevdual.posture import ExecutionPolicy
 
-    subprocess.run(["open", "-a", "Calculator"], check=True)
-    await asyncio.sleep(1.5)
-    pid = int(subprocess.run(["pgrep", "-x", "Calculator"], capture_output=True, text=True).stdout.split()[0])
     driver = create_desktop_driver()
     wins = (await driver.list_windows(list_windows_input(pid=pid, on_screen_only=True))).windows
     win = max(wins, key=lambda w: w.bounds.width * w.bounds.height)
@@ -66,4 +69,4 @@ async def main(out: Path) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(asyncio.run(main(Path(sys.argv[1]))))
+    sys.exit(asyncio.run(main(Path(sys.argv[1]), calculator_pid())))
