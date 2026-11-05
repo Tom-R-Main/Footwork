@@ -38,7 +38,9 @@ async def main(out: Path, pid: int) -> int:
     fx, fy, fw, fh = nm.frames[target.id]
     centre = (fx + fw / 2, fy + fh / 2)
     before = Quartz.CGEventGetLocation(Quartz.CGEventCreate(None))
-    idle = idle_seconds()
+    deadline = time.monotonic() + 15.0
+    while (idle := idle_seconds()) < 3.0 and time.monotonic() < deadline:
+        await asyncio.sleep(0.25)
     result: dict = {
         "frame": [fx, fy, fw, fh],
         "centre_pt": centre,
