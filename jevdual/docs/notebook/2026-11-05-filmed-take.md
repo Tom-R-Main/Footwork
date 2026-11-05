@@ -30,3 +30,8 @@ Test: the runner removes and recreates its own input on every take and, before S
 Predicts: take 9 passes the frame check on the first or second try and its recording shows the window throughout (freezedetect finds no freeze longer than the scripted waits).
 Against: the frame check fails on a recreated input (then it is timing or permission), or take 9 is black although the check passed.
 Refs: results/demogeek-take-20261105-7, -8 (obs-settings.json, take.jsonl)
+
+## FTU2 · update · 2026-11-05 19:00
+Resolves: FT3 = failed
+Observed: take 9's runner recreated the input under a new name (7355e51; OBS kept the old one listed after RemoveInput) and its frame check refused after 21 black screenshots. A fresh full-display capture then returned "Failed to render screenshot" (702) for 6 s, as did the user's own window source. OBS's screen capture is down for the whole process, not for one retargeted input. Take 8 itself was right on the Footwork side: 14 gestures all arrived, 70–109 samples over 0.77–1.06 s each, max gap 13.7 ms, the take never ended (results/demogeek-take-20261105-8/session/session.json).
+Next: recover OBS capture (probably a restart, the user's call), then a recorded take with the frame check; ask the OBS_MCP thread why a closed captured window wedges capture.
