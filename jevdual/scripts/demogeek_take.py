@@ -47,6 +47,7 @@ class Obs:
         self.call = lambda *reqs: asyncio.run(obs_ws.call(list(reqs)))
         self.take = take
         self.previous: str | None = None
+        self.input = INPUT
 
     def one(self, request: str, data: dict | None = None) -> dict:
         r = self.call((request, data or {}))[0]
@@ -66,25 +67,24 @@ class Obs:
             "show_cursor": True,
             "hide_obs": True,
         }
-        inputs = [i["inputName"] for i in self.one("GetInputList")["inputs"]]
-        if INPUT in inputs:
-            # our own input; retargeting it with SetInputSettings recorded black frames (FT3)
-            self.one("RemoveInput", {"inputName": INPUT})
-            deadline = time.monotonic() + 3
-            while INPUT in [i["inputName"] for i in self.one("GetInputList")["inputs"]]:
-                if time.monotonic() > deadline:
-                    raise TakeFailed("OBS did not remove the previous take input")
-                time.sleep(0.1)
+        # Each take gets its own input. A screen_capture whose window closed keeps a dead stream:
+        # retargeting it recorded black (FT3), and OBS acknowledges RemoveInput but keeps it listed.
+        for old in self.one("GetSceneItemList", {"sceneName": SCENE})["sceneItems"]:
+            self.one("RemoveSceneItem", {"sceneName": SCENE, "sceneItemId": old["sceneItemId"]})
+        for i in self.one("GetInputList")["inputs"]:
+            if i["inputName"].startswith(INPUT):
+                self.call(("RemoveInput", {"inputName": i["inputName"]}))  # best effort
+        self.input = f"{INPUT} {time.strftime('%H%M%S')}"
         self.one(
             "CreateInput",
             {
                 "sceneName": SCENE,
-                "inputName": INPUT,
+                "inputName": self.input,
                 "inputKind": "screen_capture",
                 "inputSettings": settings,
             },
         )
-        item = self.one("GetSceneItemId", {"sceneName": SCENE, "sourceName": INPUT})["sceneItemId"]
+        item = self.one("GetSceneItemId", {"sceneName": SCENE, "sourceName": self.input})["sceneItemId"]
         video = self.one("GetVideoSettings")
         self.one(
             "SetSceneItemTransform",
@@ -103,7 +103,7 @@ class Obs:
             },
         )
         readback = {
-            "input": self.one("GetInputSettings", {"inputName": INPUT}),
+            "input": self.one("GetInputSettings", {"inputName": self.input}),
             "transform": self.one("GetSceneItemTransform", {"sceneName": SCENE, "sceneItemId": item}),
             "video": video,
             "record_directory": self.one("GetRecordDirectory"),
@@ -136,7 +136,7 @@ class Obs:
         while True:
             tries += 1
             r = self.call(
-                ("GetSourceScreenshot", {"sourceName": INPUT, "imageFormat": "png", "imageWidth": 160})
+                ("GetSourceScreenshot", {"sourceName": self.input, "imageFormat": "png", "imageWidth": 160})
             )[0]
             if r["ok"]:
                 data = r["data"]["imageData"].split(",", 1)[1]
