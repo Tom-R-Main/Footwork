@@ -1,0 +1,18 @@
+# Filmed take readiness: DemoGeek iteration 6 end to end
+
+## FT1 · prediction · 2026-11-05 17:57
+Question: why does Footwork's observation of DemoGeek's empty Message textarea show the value 'Describe what to film…'?
+Hypothesis: CUA's tree builder substitutes AXPlaceholderValue when AXValue is empty (cua-driver platform-macos ax/tree.rs:500-503), and Footwork takes that as the field's value; a direct read showed AXValue '' and AXPlaceholderValue 'Describe what to film…'.
+Alternatives: Chrome reports the placeholder as AXValue itself.
+Test: a bridge-level test with a fake AX layer where a web text field's AXValue is empty and its placeholder equals the reported value; then a live footwork look on the prototype.
+Predicts: today the observation carries the placeholder as the value; after a narrow correction (web text fields only, where AXValue is empty and AXPlaceholderValue equals the reported value) the value is empty, a field with real text keeps it, and a live look shows Message with no value.
+Against: the live look still shows the placeholder after the correction, or a field holding real text loses it.
+Refs: design/iteration-6/take/TAKE.md (demogeek cbeafd6)
+
+## FT2 · prediction · 2026-11-05 17:57
+Question: can footwork's existing click, hover and type routes be filmed with the real pointer travelling to each target like a person's, without changing how the action is delivered?
+Hypothesis: a filmed pointer mode that, before delivery, plays CUA's planned path from the pointer's current location to the target's centre (refused when every arc fallback leaves the window or enters the keep-out), keeps the pointer where the gesture ended, and ends the take on idle movement or contention, gives the film a continuous pointer while the AX press, hover and type_text delivery stay as today.
+Test: scenario tests with the poster and clock replaced: approach then delivery for click, hover and type; a path that would cross the keep-out takes a lower arc or is refused before anything is posted; park to the rest position and to a viewport point; a pointer moved between commands ends the take and every later filmed route refuses. Live: the rehearsal take on the prototype, recorded by OBS.
+Predicts: offline each case as stated; live, every TAKE.md step completes, the pointer never enters the keep-out after step 5, and the recording shows continuous motion between targets with no jump.
+Against: delivery changes (a click lands as a pointer click rather than an AX press), a path enters the keep-out, or the film shows the pointer jump.
+Refs: FT1; 2026-11-05-pointer-drag.md PDU3; demogeek design/pointer-motion/PLAN.md v13
