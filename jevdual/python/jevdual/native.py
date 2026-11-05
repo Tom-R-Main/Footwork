@@ -1003,6 +1003,8 @@ class NativeBridge:
             unavailable = sum("value" not in proof for proof in linux_text.values())
             if unavailable:
                 observed.menu.omitted["exact_text_unqualified"] = unavailable
+        if sys.platform == "darwin" and observed.web:
+            observed = await asyncio.to_thread(self._without_placeholders, observed)
         if self.observation_guard is not None and observed.app_name in {"Chrome", "Google Chrome"}:
             from jevdual.chrome_scope import capture
 
@@ -1018,6 +1020,29 @@ class NativeBridge:
             observed = dataclasses.replace(observed, visual_capture_error="scope_guard_withheld_pixels")
         self.last = observed
         return self.last
+
+    def _without_placeholders(self, nm: NativeMenu) -> NativeMenu:
+        """CUA reports AXPlaceholderValue as the value of an empty text field (platform-macos
+        ax/tree.rs:500-503). For web text fields, read the field itself: when its AXValue is empty and
+        its placeholder is the reported value, the field is empty (notebook FT1). At most 8 fields."""
+        empty: list[int] = []
+        for cand in nm.menu.candidates:
+            reported = nm.values.get(cand.id)
+            frame = nm.frames.get(cand.id)
+            if cand.id not in nm.web or not reported or frame is None or len(empty) >= 8:
+                continue
+            try:
+                el = self.ax.resolve(self.pid, self.window_id, nm.ax_roles[cand.id], self.ax.Frame(*frame))
+                if self.ax.value(el) == "" and self.ax.placeholder(el) == reported:
+                    empty.append(cand.id)
+            except Exception:  # noqa: BLE001, S112 - unreadable keeps the reported value
+                continue
+        if not empty:
+            return nm
+        for cand in nm.menu.candidates:
+            if cand.id in empty:
+                object.__setattr__(cand, "value", None)  # this observation's own candidate objects
+        return dataclasses.replace(nm, values={**nm.values, **dict.fromkeys(empty, "")})
 
     def _target(self) -> Any:
         from jevdual.effectors.cua import window_target

@@ -116,6 +116,12 @@ def resolve(pid: int, window_id: int, role: str, frame: Frame | None) -> Any:
     return hits[0]
 
 
+def placeholder(el: Any) -> str | None:
+    """The element's AXPlaceholderValue, or None."""
+    v = _attr(el, "AXPlaceholderValue")
+    return None if v is None else str(v)
+
+
 def value(el: Any) -> str:
     """The element's exact AXValue. An empty text view reports none at all (Notes' new note body,
     2026-09-25); it is the empty string only when the element says it holds no characters."""
