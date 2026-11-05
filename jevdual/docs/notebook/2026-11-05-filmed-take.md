@@ -16,3 +16,8 @@ Test: scenario tests with the poster and clock replaced: approach then delivery 
 Predicts: offline each case as stated; live, every TAKE.md step completes, the pointer never enters the keep-out after step 5, and the recording shows continuous motion between targets with no jump.
 Against: delivery changes (a click lands as a pointer click rather than an AX press), a path enters the keep-out, or the film shows the pointer jump.
 Refs: FT1; 2026-11-05-pointer-drag.md PDU3; demogeek design/pointer-motion/PLAN.md v13
+
+## FTU1 · update · 2026-11-05 17:58
+Resolves: FT1 = held
+Observed: tests/test_placeholder_value.py failed on its own commit (value 'Describe what to film…') and passes on 92d69aa, where a filled web field keeps 'Relay demo'. Live footwork look on the prototype with the change lists [5] textbox 'Message' with no value; before it showed = 'Describe what to film…'.
+Next: FT2, the filmed pointer mode.
