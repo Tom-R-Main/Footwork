@@ -228,3 +228,12 @@ def test_filmed_typing_paces_the_characters(monkeypatch):
     typed = [args for name, args in d.calls if name == "type_text"]
     assert typed and typed[0]["delay_ms"] == 72, d.calls
     assert json.dumps(typed[0])
+
+
+def test_setup_placement_ignores_the_keep_out_and_sets_continuity(world, fw, filmed):
+    _start(fw, "--keep-out", "0,120,300,40")
+    Poster.pointer = (900.0, 900.0)  # wherever the person left it, outside the window
+    code, _, err = fw("park", "--place")
+    assert code == 0, err
+    assert filmed.events == [("move", 440.0, 370.0)]
+    assert _state(fw)["filmed"]["last_pointer"] == [440.0, 370.0]

@@ -157,6 +157,30 @@ class Filmed:
         x, y, w, h = frame
         return await asyncio.to_thread(self._move, (x + w / 2, y + h / 2), "approach", label)
 
+    def place(self, point: Point | None = None) -> dict[str, Any]:
+        """Setup only, off camera: put the pointer at ``point`` (or the rest position) in one move,
+        with no path admission, and make it the take's continuity reference."""
+        from jevdual import drag
+
+        self.check()
+        target = point if point is not None else self.rest
+        if target is None:
+            raise FilmedRefusal("rest_unset", "no rest position; start the take with --rest X,Y")
+        poster = drag.QuartzPoster()
+        here = poster.location()
+        poster.move(*target)
+        self.last_pointer = target
+        record = {
+            "kind": "place",
+            "label": "setup",
+            "from": here,
+            "to": target,
+            "samples": 1,
+            "outcome": "arrived",
+        }
+        self.gestures.append(record)
+        return record
+
     async def park(self, point: Point | None = None) -> dict[str, Any]:
         """Travel to ``point`` (screen points), or to the rest position."""
         target = point if point is not None else self.rest

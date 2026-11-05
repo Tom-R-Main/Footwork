@@ -375,6 +375,7 @@ def build_parser() -> argparse.ArgumentParser:
     pk = sub.add_parser("park", help="filmed take: move the pointer to the rest position, or to X Y (viewport CSS px)")
     pk.add_argument("x", type=float, nargs="?")
     pk.add_argument("y", type=float, nargs="?")
+    pk.add_argument("--place", action="store_true", help="setup only, off camera: one move, no path admission")
     common(pk)
     pk.set_defaults(fn=S.cmd_park)
     lk = sub.add_parser("look", help="observe; prints the receipt for the last action")

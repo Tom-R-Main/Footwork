@@ -1062,7 +1062,7 @@ async def cmd_park(args: Any) -> int:
     filmed = Filmed.from_record(state.filmed)
     point = filmed.viewport(args.x, args.y) if args.x is not None else None
     try:
-        record = await filmed.park(point)
+        record = filmed.place(point) if getattr(args, "place", False) else await filmed.park(point)
     except FilmedRefusal as refusal:
         state.filmed = filmed.to_record()
         state.log({"kind": "park", "refused": refusal.code, "reason": refusal.reason})
