@@ -14,3 +14,10 @@ Resolves: PM1 = held
 Observed: tests/test_pointer_scale.py on dba1d55 (scale model, no fix): scale 1 landed at (463, 569), scale 2 at (231.5, 284.5), exactly half. On bd4f64d both land at (463, 569); test_hover_is_desktop_scoped now sees (20, 20) desktop pixels for a (10, 10) point centre at scale 2, and test_hover_without_a_readable_scale_moves_nothing refuses with scale_unknown and no move_cursor. Full suite: 2905 passed, 62 skipped, 1 failed (test_cua_driver_version_is_pinned, which fails identically with these changes stashed: the installed wheel reports 0.38.0+footwork.d5373879, the test expects the .cleanup2 label).
 Inferred: the offline half of P0 holds; the fake now models the same divide CUA performs, so it cannot tell whether the real scale read matches the display under the pointer on a multi-display setup (main display only, as CUA does).
 Next: P0's live acceptance, one hover with the idle guard landing within 1 pt of an element centre on this Retina display, waits for the owner's direct authorization of desktop takeover.
+
+## PM2 · prediction · 2026-11-05 16:44
+Hypothesis: with bd4f64d, a real desktop hover on this Retina display (main display scale 2) lands on the element's centre in points.
+Test: scripts/p0_live_hover.py on bd4f64d: Calculator in front, idle guard (HID idle at least 3 s), one hover on "7" through NativeBridge in exclusive_desktop, then read the pointer with CGEventGetLocation.
+Predicts: the hover dispatches and the pointer is within 1 pt of the frame centre on both axes.
+Against: the pointer lands near half the centre (the fix did not take effect live), or more than 1 pt off by any other amount, or CUA's endpoint guard refuses a point over the frontmost Calculator.
+Refs: PMU1; results/p0-live-hover-20261105/result.json (to be written)
