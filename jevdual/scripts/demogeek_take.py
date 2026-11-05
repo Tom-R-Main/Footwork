@@ -239,6 +239,21 @@ def overlays(pid: int) -> list[str]:
     return hits
 
 
+def wait_idle(take: Take, quiet_s: float = 3.0, timeout: float = 20.0) -> None:
+    """Refuse to roll while a person is using the mouse or keyboard: need quiet_s with no input."""
+    import Quartz
+
+    state = Quartz.kCGEventSourceStateCombinedSessionState
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        idle = Quartz.CGEventSourceSecondsSinceLastEventType(state, Quartz.kCGAnyInputEventType)
+        if idle >= quiet_s:
+            take.record(step="setup", cmd="idle", code=0, idle_s=round(idle, 1))
+            return
+        time.sleep(0.25)
+    raise TakeFailed(f"setup: input_active: the mouse or keyboard was used in the last {quiet_s} s for {timeout} s")
+
+
 def run(take: Take, url: str, obs: Obs | None, *, allow_overlay: bool = False) -> None:
     pid = chrome(take.out, url)
     if found := overlays(pid):
@@ -267,6 +282,7 @@ def run(take: Take, url: str, obs: Obs | None, *, allow_overlay: bool = False) -
     if "content 1440x900" not in out:
         raise TakeFailed(f"setup: the content area is not 1440x900 CSS px: {out[:300]}")
     take.wait_for("setup", "'Message'", 10)  # Chrome builds web accessibility lazily
+    wait_idle(take)
     take.fw("setup", "park", "--place")
     if obs is not None:
         window_id = int(re.search(r"bound Google Chrome window (\d+)", out).group(1))
