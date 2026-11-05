@@ -435,10 +435,6 @@ def menu_from_snapshot(
             if mapped is None:
                 omitted["unmapped_role"] = omitted.get("unmapped_role", 0) + 1
                 continue
-        if mapped is None and ax_role == "AXGroup" and _get(el, "in_web_content") and _get(el, "label"):
-            # a labelled web group (role="group" with an accessible name, like a storyboard card) is a
-            # place a person points at; hovering is the one thing to do with it (filmed takes)
-            mapped = ("group", ("hover",))
         if mapped is None and ax_role == "AXImage" and "AXOpen" in actions:
             # a Finder icon-view item: an image that opens (P0 breadth, 2026-09-25); clicking selects it
             mapped = ("file", ("click",))

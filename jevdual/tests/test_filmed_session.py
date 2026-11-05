@@ -169,37 +169,6 @@ def test_filmed_needs_the_exclusive_desktop(world, fw, filmed):
     assert code == 2 and "exclusive_desktop" in err
 
 
-def test_a_labelled_web_group_is_a_hover_target_and_an_unlabelled_one_is_not():
-    from types import SimpleNamespace
-
-    from jevdual.native import menu_from_snapshot
-
-    def group(i, label):
-        return {
-            "element_index": i,
-            "role": "AXGroup",
-            "label": label,
-            "element_token": f"s1:{i}",
-            "frame": {"x": 10.0 * i, "y": 10.0, "w": 100.0, "h": 50.0},
-            "actions": ["AXShowMenu"],
-            "in_web_content": True,
-        }
-
-    snap = SimpleNamespace(
-        snapshot_id="s1",
-        app_name="Google Chrome",
-        window_title="DemoGeek",
-        pid=1,
-        window_id=2,
-        elements_complete=True,
-        tree_markdown="",
-        elements=[group(1, "Scene 1: A delivery fails, 3 seconds"), group(2, "")],
-    )
-    nm = menu_from_snapshot(snap)
-    scenes = [c for c in nm.menu.candidates if c.role == "group"]
-    assert [(c.label, c.operations) for c in scenes] == [("Scene 1: A delivery fails, 3 seconds", ("hover",))]
-
-
 def test_filmed_typing_paces_the_characters(monkeypatch):
     import asyncio
     import json
@@ -250,3 +219,19 @@ def test_the_keep_out_is_armed_mid_take_and_refused_when_the_pointer_is_inside(w
     assert fw("do", "click", str(seven), "--no-judge")[0] == 0 and world.presses == ["7"]
     code, _, err = fw("keep-out", "0,200,300,100")  # the pointer now rests on 7, inside it
     assert code == 4 and "pointer" in err
+
+
+def test_point_rests_over_a_collapsed_group_and_refuses_an_ambiguous_name(world, fw, filmed, monkeypatch):
+    from jevdual import ax
+
+    scenes = [
+        ("AXGroup", f"Scene {n}: a scene, 9 seconds", ax.Frame(440.0 + 60 * n, 500.0, 50.0, 40.0))
+        for n in (1, 2)
+    ]
+    monkeypatch.setattr(ax, "labelled", lambda win, label: [h for h in scenes if h[1].startswith(label)])
+    _start(fw)
+    code, _, err = fw("point", "Scene 2:")
+    assert code == 0, err
+    assert _moves(filmed.events)[-1] == (585.0, 520.0) and world.presses == []
+    code, _, err = fw("point", "Scene")
+    assert code == 4 and "2 elements" in err

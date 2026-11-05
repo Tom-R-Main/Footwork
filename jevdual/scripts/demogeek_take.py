@@ -146,7 +146,7 @@ def run(take: Take, url: str) -> None:
     take.wait_for("3", "'Record it'", 15)
     # 4: hover each scene, hover to hover
     for n in range(1, 5):
-        take.fw("4", "do", "hover", f"Scene {n}:")
+        take.fw("4", "point", f"Scene {n}:")  # Chrome's groups are collapsed by the Driver; point finds them
         time.sleep(0.7)
     # 5-6: record, then park while the product draws its own cursor
     # the product frame draws its own cursor from Record on: no path may enter it from here

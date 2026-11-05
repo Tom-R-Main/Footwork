@@ -128,6 +128,26 @@ def web_area_frame(win: Any, *, depth: int = 12) -> Frame | None:
     return None
 
 
+def labelled(win: Any, label: str, *, limit: int = 6000) -> list[tuple[str, str, Frame]]:
+    """Elements under ``win`` whose AXDescription or AXTitle is ``label`` or starts with it, as
+    ``(role, name, frame)``. Reaches containers the Driver collapses (CUA drops every AXGroup)."""
+    want = label.casefold()
+    hits: list[tuple[str, str, Frame]] = []
+    queue, seen = [win], 0
+    while queue and seen < limit:
+        el = queue.pop(0)
+        seen += 1
+        for attr in ("AXDescription", "AXTitle"):
+            name = _attr(el, attr)
+            if isinstance(name, str) and name.strip() and name.casefold().startswith(want):
+                frame = frame_of(el)
+                if frame is not None and frame.w > 0 and frame.h > 0:
+                    hits.append((str(_attr(el, "AXRole") or ""), name, frame))
+                break
+        queue.extend(_attr(el, "AXChildren") or [])
+    return hits
+
+
 def placeholder(el: Any) -> str | None:
     """The element's AXPlaceholderValue, or None."""
     v = _attr(el, "AXPlaceholderValue")

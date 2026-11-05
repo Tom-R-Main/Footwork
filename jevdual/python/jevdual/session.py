@@ -1048,6 +1048,45 @@ def _filmed_setup(state: SessionState, args: Any) -> str | None:
     return None
 
 
+async def cmd_point(args: Any) -> int:
+    """Filmed take: rest the pointer over the one element named LABEL. Nothing is delivered; the page's
+    own hover state shows because the real pointer is there. Finds containers the Driver collapses."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed, FilmedRefusal
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("point needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    try:
+        hits = await asyncio.to_thread(ax.labelled, ax.window_element(state.pid, state.window_id), args.label)
+    except ax.AXError as exc:
+        print(f"point refused: {exc}", file=sys.stderr)
+        return 4
+    exact = [h for h in hits if h[1].casefold() == args.label.casefold()]
+    hits = exact or hits
+    names = sorted({h[1] for h in hits})
+    if len(names) != 1:
+        why = "no element" if not names else f"{len(names)} elements ({', '.join(repr(n[:40]) for n in names[:4])})"
+        print(f"point refused: {why} named {args.label!r}", file=sys.stderr)
+        return 4
+    role, name, frame = hits[0]
+    try:
+        record = await filmed.approach((frame.x, frame.y, frame.w, frame.h), name)
+    except FilmedRefusal as refusal:
+        state.filmed = filmed.to_record()
+        state.log({"kind": "point", "label": name, "refused": refusal.code, "reason": refusal.reason})
+        state.save()
+        print(f"point refused: {refusal.code}: {refusal.reason}", file=sys.stderr)
+        return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "point", "role": role, **record})
+    state.save()
+    print(f"pointing at {role} {name[:60]!r} ({record.get('samples', 0)} samples)")
+    return 0
+
+
 async def cmd_keep_out(args: Any) -> int:
     """Filmed take: arm the keep-out when the frame it protects appears, or turn it off."""
     from jevdual.filmed import Filmed, _inside
