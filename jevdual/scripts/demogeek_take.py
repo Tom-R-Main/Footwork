@@ -68,17 +68,22 @@ class Obs:
         }
         inputs = [i["inputName"] for i in self.one("GetInputList")["inputs"]]
         if INPUT in inputs:
-            self.one("SetInputSettings", {"inputName": INPUT, "inputSettings": settings, "overlay": True})
-        else:
-            self.one(
-                "CreateInput",
-                {
-                    "sceneName": SCENE,
-                    "inputName": INPUT,
-                    "inputKind": "screen_capture",
-                    "inputSettings": settings,
-                },
-            )
+            # our own input; retargeting it with SetInputSettings recorded black frames (FT3)
+            self.one("RemoveInput", {"inputName": INPUT})
+            deadline = time.monotonic() + 3
+            while INPUT in [i["inputName"] for i in self.one("GetInputList")["inputs"]]:
+                if time.monotonic() > deadline:
+                    raise TakeFailed("OBS did not remove the previous take input")
+                time.sleep(0.1)
+        self.one(
+            "CreateInput",
+            {
+                "sceneName": SCENE,
+                "inputName": INPUT,
+                "inputKind": "screen_capture",
+                "inputSettings": settings,
+            },
+        )
         item = self.one("GetSceneItemId", {"sceneName": SCENE, "sourceName": INPUT})["sceneItemId"]
         video = self.one("GetVideoSettings")
         self.one(
@@ -115,9 +120,37 @@ class Obs:
         got = readback["input"]["inputSettings"]
         if got.get("show_cursor") is not True or got.get("window") != window_id or got.get("type") != 1:
             raise TakeFailed(f"OBS capture readback differs: {got}")
+        readback["frame"] = self.frame_check()
         (self.take.out / "obs-settings.json").write_text(json.dumps(readback, indent=1))
         self.take.record(step="setup", cmd="obs setup", code=0, readback=readback)
         return readback
+
+    def frame_check(self, timeout: float = 5.0) -> dict:
+        """The capture shows something: a source screenshot whose pixels are not one flat colour."""
+        import base64
+        import io
+
+        from PIL import Image, ImageStat
+
+        deadline, tries = time.monotonic() + timeout, 0
+        while True:
+            tries += 1
+            r = self.call(
+                ("GetSourceScreenshot", {"sourceName": INPUT, "imageFormat": "png", "imageWidth": 160})
+            )[0]
+            if r["ok"]:
+                data = r["data"]["imageData"].split(",", 1)[1]
+                img = Image.open(io.BytesIO(base64.b64decode(data))).convert("L")
+                stat = ImageStat.Stat(img)
+                lo, hi = img.getextrema()
+                result = {"tries": tries, "mean": round(stat.mean[0], 1), "range": [lo, hi], "size": img.size}
+                if hi - lo >= 24:
+                    return result
+            else:
+                result = {"tries": tries, "status": r["status"]}
+            if time.monotonic() > deadline:
+                raise TakeFailed(f"OBS capture shows no picture: {result}")
+            time.sleep(0.25)
 
     def start(self) -> None:
         self.one("SetCurrentProgramScene", {"sceneName": SCENE})
@@ -251,7 +284,9 @@ def wait_idle(take: Take, quiet_s: float = 3.0, timeout: float = 20.0) -> None:
             take.record(step="setup", cmd="idle", code=0, idle_s=round(idle, 1))
             return
         time.sleep(0.25)
-    raise TakeFailed(f"setup: input_active: the mouse or keyboard was used in the last {quiet_s} s for {timeout} s")
+    raise TakeFailed(
+        f"setup: input_active: the mouse or keyboard was used in the last {quiet_s} s for {timeout} s"
+    )
 
 
 def run(take: Take, url: str, obs: Obs | None, *, allow_overlay: bool = False) -> None:
@@ -328,7 +363,9 @@ def main() -> int:
     ap.add_argument("out")
     ap.add_argument("--url", default="http://localhost:8766/index.html")
     ap.add_argument("--record", action="store_true", help="record with OBS (needs OBS_WEBSOCKET_PASSWORD)")
-    ap.add_argument("--allow-overlay", action="store_true", help="diagnostic only: proceed over a layer>0 window")
+    ap.add_argument(
+        "--allow-overlay", action="store_true", help="diagnostic only: proceed over a layer>0 window"
+    )
     args = ap.parse_args()
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
