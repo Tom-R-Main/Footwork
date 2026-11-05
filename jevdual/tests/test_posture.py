@@ -479,7 +479,8 @@ def test_hover_is_desktop_scoped():
             "frame": {"x": 5.0, "y": 5.0, "w": 10.0, "h": 10.0},
         }
     ]
-    d = FakeDriver(doc_snapshot("hello", extra=extra))
+    screen = SimpleNamespace(is_error=False, structured_json='{"scale_factor": 2.0}')
+    d = FakeDriver(doc_snapshot("hello", extra=extra), replies={"get_screen_size": [screen]})
     b = bridge_for(d, "foreground_permitted")
     nm = run(b.observe())
     object.__setattr__(nm.menu.candidate(5), "operations", ("click", "hover"))
@@ -490,7 +491,35 @@ def test_hover_is_desktop_scoped():
     object.__setattr__(nm.menu.candidate(5), "operations", ("click", "hover"))
     eff = run(b.act(nm, "hover", 5))
     assert d.calls[-1][0] == "move_cursor" and d.calls[-1][1]["scope"] == "desktop"
+    # the frame centre (10, 10) in points, in CUA desktop pixels at the read scale
+    assert (d.calls[-1][1]["x"], d.calls[-1][1]["y"]) == (20.0, 20.0)
     assert eff.delivery == "desktop"
+
+
+def test_hover_without_a_readable_scale_moves_nothing():
+    """Promise: if the main display's backing scale cannot be read, a hover refuses before the pointer
+    moves, rather than guess a scale and land elsewhere."""
+    extra = [
+        {
+            "element_index": 5,
+            "role": "AXLink",
+            "label": "Help",
+            "element_token": "s00000001:5",
+            "frame": {"x": 5.0, "y": 5.0, "w": 10.0, "h": 10.0},
+        }
+    ]
+    for reply in (
+        SimpleNamespace(is_error=True, structured_json=None),
+        SimpleNamespace(is_error=False, structured_json='{"scale_factor": 0}'),
+        RuntimeError("tool='get_screen_size', message='No main display detected.'"),
+    ):
+        d = FakeDriver(doc_snapshot("hello", extra=extra), replies={"get_screen_size": [reply]})
+        b = bridge_for(d, "exclusive_desktop")
+        nm = run(b.observe())
+        object.__setattr__(nm.menu.candidate(5), "operations", ("click", "hover"))
+        eff = run(b.act(nm, "hover", 5))
+        assert eff.error_code == "scale_unknown" and not eff.dispatched
+        assert "move_cursor" not in [name for name, _ in d.calls]
 
 
 # ---- no data rebuilt from a preview ---------------------------------------------------------------

@@ -40,6 +40,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from jevdual import pointer
 from jevdual.menu import (
     Candidate,
     ControlState,
@@ -2137,12 +2138,28 @@ class NativeBridge:
             if refusal is not None:
                 return self._not_sent("hover", id, label, refusal.code, refusal.reason, "desktop")
             fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
+            # CUA's desktop scope takes screenshot pixels and divides by the main display's backing
+            # scale; read that same scale rather than assume one (notebook PM1).
+            try:
+                scale = pointer.main_display_scale(
+                    await self.driver.call_tool("get_screen_size", json.dumps({"session": self.session}))
+                )
+            except Exception:  # noqa: BLE001
+                scale = None
+            if scale is None:
+                return self._not_sent(
+                    "hover",
+                    id,
+                    label,
+                    "scale_unknown",
+                    "the main display's backing scale could not be read; the pointer was not moved",
+                    "desktop",
+                )
+            at = pointer.desktop_pixels(fx + fw / 2, fy + fh / 2, scale)
             try:
                 outcome = await self.driver.call_tool(
                     "move_cursor",
-                    json.dumps(
-                        {"x": fx + fw / 2, "y": fy + fh / 2, "scope": "desktop", "session": self.session}
-                    ),
+                    json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
                 )
             except Exception as exc:  # noqa: BLE001
                 outcome = exc

@@ -192,7 +192,9 @@ class World:
             structured = json.dumps({"width": 1512, "height": 982, "scale_factor": self.scale})
         elif name == "move_cursor" and args.get("scope") == "desktop":
             self.pointer = (args["x"] / self.scale, args["y"] / self.scale)
-        return SimpleNamespace(action=None, text="", is_error=False, error_code=None, structured_json=structured)
+        return SimpleNamespace(
+            action=None, text="", is_error=False, error_code=None, structured_json=structured
+        )
 
     # ---- rendering
 
