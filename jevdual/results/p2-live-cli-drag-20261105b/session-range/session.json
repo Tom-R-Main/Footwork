@@ -1,0 +1,268 @@
+{
+ "dir": "/Users/thomasmain/projects/footwork/jevdual/results/p2-live-cli-drag-20261105b/session-range",
+ "app": "Google Chrome",
+ "pid": 29021,
+ "window_id": 39094,
+ "task": "Set the volume to 75",
+ "requirements": [],
+ "authorized": [],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: drag(Volume -> Mark 75) -> unverifiable"
+ ],
+ "last_url": "app://Google Chrome",
+ "last_title": "footwork drag fixture",
+ "last_page_text": "range moves 71 {\"value\":76}\n127.0.0.1:56806",
+ "last_candidates": [
+  {
+   "id": 1,
+   "label": "Reload",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 2,
+   "label": "View site information",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 3,
+   "label": "Address and search bar",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "enter"
+   ],
+   "value": "127.0.0.1:56806",
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 4,
+   "label": "Bookmark this tab",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 5,
+   "label": "You",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 6,
+   "label": "Chrome",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "Card A",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 9,
+   "label": "Done column",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 10,
+   "label": "Volume",
+   "role": "slider",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 11,
+   "label": "Mark 75",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 13,
+   "label": "Tab search",
+   "role": "combobox",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 14,
+   "label": "footwork drag fixture - Memory usage - 15.4 MB",
+   "role": "radio",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": true,
+   "selected": true,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 15,
+   "label": "Close",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 16,
+   "label": "New Tab",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  }
+ ],
+ "last_native_ambiguous": [],
+ "last_snapshot": "s00000003",
+ "pending": null,
+ "mode": "native",
+ "posture": "exclusive_desktop",
+ "browser_tab": "",
+ "secret_names": [],
+ "visual_generation": "110158569a8f42568e8657be54622a75",
+ "last_visual_check": null,
+ "authority": "/Users/thomasmain/projects/footwork/jevdual/results/p2-live-cli-drag-20261105b/authority-range.sqlite",
+ "session_id": "24f66002dc1044b891e6cdb92890d94b",
+ "native_binding": {
+  "pid": 29021,
+  "start": "0x1.abb4056aa7247p+30",
+  "boot": "1F825449-CCDF-4D20-874A-5B4751D91889",
+  "window_id": 39094
+ },
+ "native_scope": {
+  "url": "http://127.0.0.1:56806/",
+  "title": "footwork drag fixture"
+ },
+ "finder_scope": {},
+ "ticket_scope": {}
+}
