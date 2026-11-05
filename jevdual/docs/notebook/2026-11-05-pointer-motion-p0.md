@@ -25,3 +25,9 @@ Refs: PMU1; results/p0-live-hover-20261105/result.json (to be written)
 ## PMU2 · update · 2026-11-05 16:45
 Observed: scripts/p0_live_hover.py on ded1270 stopped at NativeBridge.observe with the Accessibility error before any input; the pointer was not moved and no result file was written. The process tree is zsh under claude under T3 Code (Nightly).app, which has no Accessibility grant.
 Next: PM2 stays open. Rerun after the owner grants Accessibility to the launching host, or from a host that already has it; never reset or edit TCC from here.
+
+## PMU3 · update · 2026-11-05 16:46
+Resolves: PM2 = held
+Observed: after the owner granted Accessibility and Input Monitoring to T3 Code (both preflight true), scripts/p0_live_hover.py on 4bd9abe (bd4f64d's fix; the script now waits up to 15 s for the idle guard after the first try on ded1270 refused at 2.1 s idle, nothing moved) hovered Calculator's "7" (frame 439,545 48x48) with 11.6 s idle: pointer moved from (927.1, 433.1) to (463.0, 569.0), the frame centre, error 0.0 pt; effect dispatched, unverifiable, no error. results/p0-live-hover-20261105/result.json.
+Inferred: P0's acceptance holds on this Retina display; the fake's divide-by-scale model matches the real driver here.
+Next: P0 closes. P1a: write the pre-registered experiment file in docs/experiments/ and commit it before the poster probe.
