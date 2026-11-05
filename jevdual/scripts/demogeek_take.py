@@ -149,9 +149,10 @@ def run(take: Take, url: str) -> None:
         take.fw("4", "point", f"Scene {n}:")  # Chrome's groups are collapsed by the Driver; point finds them
         time.sleep(0.7)
     # 5-6: record, then park while the product draws its own cursor
-    # the product frame draws its own cursor from Record on: no path may enter it from here
-    take.fw("5", "keep-out", KEEP_OUT)
+    # "Record it" is in the chat column, outside the frame. The product draws its own cursor from Record
+    # on, so the keep-out is armed right after the click (the pointer is on the button) and before the park
     take.fw("5", "do", "click", "Record it")
+    take.fw("5", "keep-out", KEEP_OUT)
     take.fw("6", "park")
     take.wait_for("5", "'See proof'", 15)
     # 7: revision
