@@ -54,11 +54,12 @@ def one(name: str, start, end, out: Path, settings: DragSettings) -> dict:
     if idle < 3.0:
         return {"name": name, "outcome": "refused:idle_guard", "idle_s": idle}
     poster = QuartzPoster()  # baseline the counters after the idle wait
+    began = time.monotonic()  # system-wide on macOS, so comparable with the fixture's stamps
     result = play_drag(plan, poster, clock, settings)
     time.sleep(0.3)
     after = poster.location()
     seen = wait_for(events_path, 5.0)
-    evs = [e for e in seen["events"] if e["mono"] >= 0]
+    evs = [e for e in seen["events"] if e["mono"] >= began]
     motions = [e for e in evs if e["kind"] == "motion"]
     gaps = [b["mono"] - a["mono"] for a, b in itertools.pairwise(motions)]
     posted = [(s.x, s.y) for s in plan.samples]
