@@ -1,0 +1,137 @@
+{
+ "dir": "/Users/thomasmain/projects/footwork/jevdual/results/demogeek-take-20261105-7/session",
+ "app": "Google Chrome",
+ "pid": 69355,
+ "window_id": 39586,
+ "task": "Make a Relay demo in DemoGeek",
+ "requirements": [],
+ "authorized": [
+  "Send"
+ ],
+ "answer_expected": false,
+ "step": 1,
+ "status": "open",
+ "memory": [
+  "step 1: type(Message) text='Show how a failed webhook gets replayed in relay.dev' -> refused"
+ ],
+ "last_url": "app://Google Chrome",
+ "last_title": "DemoGeek",
+ "last_page_text": "New demo\nPaste your product's URL, or describe the moment you want people to see.\nDescribe what to film\u2026",
+ "last_candidates": [
+  {
+   "id": 6,
+   "label": "Attach files",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Message",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": "textarea",
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "relay.dev: show how a failed webhook gets replayed",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  }
+ ],
+ "last_native_ambiguous": [],
+ "last_snapshot": "s00000003",
+ "pending": null,
+ "mode": "native",
+ "posture": "exclusive_desktop",
+ "browser_tab": "",
+ "secret_names": [],
+ "visual_generation": "a1508f6bad69458f94f55be5757fb5d5",
+ "last_visual_check": null,
+ "authority": "",
+ "session_id": "",
+ "native_binding": {},
+ "native_scope": {},
+ "finder_scope": {},
+ "ticket_scope": {},
+ "filmed": {
+  "window": [
+   36.0,
+   40.0,
+   1440.0,
+   932.0
+  ],
+  "content": [
+   36.0,
+   72.0,
+   1440.0,
+   900.0
+  ],
+  "keep_out": null,
+  "rest": [
+   396.0,
+   532.0
+  ],
+  "margin_pt": 4.0,
+  "arcs": [
+   0.18,
+   0.1,
+   0.05,
+   0.0
+  ],
+  "timing": "DELIBERATE",
+  "dwell_s": 0.18,
+  "type_delay_ms": 65,
+  "continuity_pt": 2.0,
+  "take_ended": "pointer_moved_idle",
+  "last_pointer": [
+   396.0,
+   532.0
+  ],
+  "gestures": [
+   {
+    "kind": "place",
+    "label": "setup",
+    "from": [
+     391.84375,
+     175.33984375
+    ],
+    "to": [
+     396.0,
+     532.0
+    ],
+    "samples": 1,
+    "outcome": "arrived"
+   }
+  ]
+ }
+}

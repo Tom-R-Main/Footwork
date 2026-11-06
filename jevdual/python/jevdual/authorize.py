@@ -37,11 +37,12 @@ from jevdual.native import NativeMenu
 
 log = logging.getLogger("jevdual.authorize")
 
-Route = Literal["click", "type", "append", "move", "enter", "key", "hotkey", "menu", "scroll", "hover"]
+Route = Literal["click", "type", "append", "move", "enter", "key", "hotkey", "menu", "scroll", "hover", "drag"]
 
 #: chord meanings the keyword gate can read
 #: routes System 2 proposes that get the destructive judgment (type is covered by the replace rule)
-JUDGED_ROUTES = ("click", "move", "menu", "hotkey", "key", "enter")
+#: a drop can do what a click can (onto Trash, onto a delete zone), so a drag is judged like one
+JUDGED_ROUTES = ("click", "move", "menu", "hotkey", "key", "enter", "drag")
 
 CHORD_MEANING = {
     "cmd+delete": "delete",
@@ -113,6 +114,8 @@ def action_for(
         label = CHORD_MEANING["return"]
     elif route == "move":
         label = f"move {target.value if target else 'file'} to {text}"
+    elif route == "drag":
+        label = f"drag {target.label if target else ''} onto {text}"
     else:
         label = target.label if target is not None else route
     current = nm.values.get(target.id) if target is not None else None
@@ -128,6 +131,7 @@ GRANT_ROUTES = (
     "type",
     "append",
     "move",
+    "drag",
     "enter",
     "scroll",
     "hover",

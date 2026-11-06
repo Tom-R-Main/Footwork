@@ -40,6 +40,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from jevdual import pointer
 from jevdual.menu import (
     Candidate,
     ControlState,
@@ -890,6 +891,8 @@ class NativeBridge:
         self.policy = policy if policy is not None else ExecutionPolicy("background_only")
         self.live_check = live_check
         self.observation_guard = observation_guard
+        #: filmed pointer mode (``jevdual.filmed``): the pointer travels to each target before an action
+        self.filmed: Any = None
         self.finder_scope = finder_scope
         self._foreground_inputs = 0
         self._ax = ax
@@ -1002,6 +1005,8 @@ class NativeBridge:
             unavailable = sum("value" not in proof for proof in linux_text.values())
             if unavailable:
                 observed.menu.omitted["exact_text_unqualified"] = unavailable
+        if sys.platform == "darwin" and observed.web:
+            observed = await asyncio.to_thread(self._without_placeholders, observed)
         if self.observation_guard is not None and observed.app_name in {"Chrome", "Google Chrome"}:
             from jevdual.chrome_scope import capture
 
@@ -1017,6 +1022,29 @@ class NativeBridge:
             observed = dataclasses.replace(observed, visual_capture_error="scope_guard_withheld_pixels")
         self.last = observed
         return self.last
+
+    def _without_placeholders(self, nm: NativeMenu) -> NativeMenu:
+        """CUA reports AXPlaceholderValue as the value of an empty text field (platform-macos
+        ax/tree.rs:500-503). For web text fields, read the field itself: when its AXValue is empty and
+        its placeholder is the reported value, the field is empty (notebook FT1). At most 8 fields."""
+        empty: list[int] = []
+        for cand in nm.menu.candidates:
+            reported = nm.values.get(cand.id)
+            frame = nm.frames.get(cand.id)
+            if cand.id not in nm.web or not reported or frame is None or len(empty) >= 8:
+                continue
+            try:
+                el = self.ax.resolve(self.pid, self.window_id, nm.ax_roles[cand.id], self.ax.Frame(*frame))
+                if self.ax.value(el) == "" and self.ax.placeholder(el) == reported:
+                    empty.append(cand.id)
+            except Exception:  # noqa: BLE001, S112 - unreadable keeps the reported value
+                continue
+        if not empty:
+            return nm
+        for cand in nm.menu.candidates:
+            if cand.id in empty:
+                object.__setattr__(cand, "value", None)  # this observation's own candidate objects
+        return dataclasses.replace(nm, values={**nm.values, **dict.fromkeys(empty, "")})
 
     def _target(self) -> Any:
         from jevdual.effectors.cua import window_target
@@ -1052,10 +1080,15 @@ class NativeBridge:
         id kept when it still names it, else the unique element that does. Ambiguous controls refuse
         because their identity is unavailable. A changed text value or checkbox state, or a missing
         control, also refuses the step."""
+        self._require_unambiguous(nm, id)
+        fresh = await self.observe()
+        return fresh, self._rematch(nm, fresh, id, operation)
+
+    def _rematch(self, nm: NativeMenu, fresh: NativeMenu, id: int, operation: str) -> int:
+        """The id in ``fresh`` of the decided element ``id`` of ``nm``, under ``_live``'s rules."""
         cand = nm.menu.candidate(id)
         assert cand is not None
         self._require_unambiguous(nm, id)
-        fresh = await self.observe()
         key = (cand.role, cand.label, cand.section)
         same = fresh.menu.candidate(id)
         if same is not None and (same.role, same.label, same.section) == key:
@@ -1081,7 +1114,7 @@ class NativeBridge:
             raise NativeBridgeError(
                 "precondition_changed", f"[{id}] {cand.label!r} changed state since the decision"
             )
-        return fresh, hit.id
+        return hit.id
 
     def _not_sent(
         self, operation: str, target: int, label: str, code: str, reason: str, delivery: str
@@ -1473,6 +1506,8 @@ class NativeBridge:
             "text": text,
             "delivery_mode": "background",
         }
+        if self.filmed is not None:
+            args["delay_ms"] = self.filmed.type_delay_ms
         if self.session:
             args["session"] = self.session
         try:
@@ -1543,6 +1578,8 @@ class NativeBridge:
         self, nm: NativeMenu, operation: str, selector: str, text: str | None = None
     ) -> NativeEffect:
         """Rename or move the exact owned file through Finder's front/key UI."""
+        if self.filmed is not None:
+            raise NativeBridgeError("cross_window", "file operations are refused in a filmed take")
         target, id = self.resolve_file(nm, selector)
         self._require_fresh(nm, id)
         if operation == "move":
@@ -2083,6 +2120,100 @@ class NativeBridge:
                 native_readback=proof,
             )
 
+    async def _filmed_gate(
+        self, operation: str, id: int, label: str, frame: Any, *, approach: bool = False
+    ) -> NativeEffect | None:
+        """In a filmed take: refuse once the take ended, else travel to the target first when asked."""
+        if self.filmed is None:
+            return None
+        from jevdual.filmed import FilmedRefusal
+
+        try:
+            if approach:
+                if frame is None or frame[2] <= 0 or frame[3] <= 0:
+                    raise FilmedRefusal("frame_unavailable", f"{label!r} has no frame to travel to")
+                await self.filmed.approach(tuple(frame), label)
+            else:
+                self.filmed.check()
+        except FilmedRefusal as refusal:
+            return self._not_sent(operation, id, label, refusal.code, refusal.reason, "desktop")
+        return None
+
+    async def drag(self, nm: NativeMenu, source: int, destination: int) -> NativeEffect:
+        """Drag the real pointer from ``source``'s centre to ``destination``'s centre (``jevdual.drag``).
+
+        Desktop-scoped: it moves the person's pointer and holds its button, so it runs only in
+        exclusive_desktop. Both targets are re-found after one live re-observation. The approach to the
+        source is a planned pointer move; once the button is down every exit releases it."""
+        from jevdual import drag as d
+
+        src, _ = self._require_fresh(nm, source)
+        dst, _ = self._require_fresh(nm, destination)
+        label = f"{src.label} -> {dst.label}"
+        if source == destination:
+            raise NativeBridgeError("drag_same_target", f"[{source}] {src.label!r} is both ends of the drag")
+        self._require_unambiguous(nm, source)
+        self._require_unambiguous(nm, destination)
+        refusal = self.policy.permits("desktop", why=f"drag {label!r} (it moves the real pointer and holds its button)")
+        if refusal is not None:
+            return self._not_sent("drag", source, label, refusal.code, refusal.reason, "desktop")
+        if self.live_check or self.observation_guard is not None:
+            fresh = await self.observe()
+            source, destination = (
+                self._rematch(nm, fresh, source, "drag"),
+                self._rematch(nm, fresh, destination, "drag"),
+            )
+            nm = fresh
+        self.last = None
+        self.dispatches += 1
+        frames = [nm.frames.get(i) for i in (source, destination)]
+        if any(f is None or f[2] <= 0 or f[3] <= 0 for f in frames):
+            return self._not_sent("drag", source, label, "frame_unavailable", "a drag needs both targets' frames", "desktop")
+        (sx, sy, sw, sh), (tx, ty, tw, th) = frames  # type: ignore[misc]
+        start, end = (sx + sw / 2, sy + sh / 2), (tx + tw / 2, ty + th / 2)
+        settings = d.DragSettings()
+        seed = f"{self.session}|{nm.snapshot_id}|{source}|{destination}"
+        try:
+            plan = d.plan_drag(start, end, settings, seed=seed)
+        except d.DragRefused as exc:
+            return self._not_sent("drag", source, label, exc.code, str(exc), "desktop")
+        poster, clock = d.QuartzPoster(), d.MonotonicClock()
+        here = poster.location()
+        approach = None
+        if self.filmed is not None:
+            refused = await self._filmed_gate("drag", source, label, frames[0], approach=True)
+            if refused is not None:
+                return refused
+            here = start
+        if math.dist(here, start) >= 1.0:
+            approach = await asyncio.to_thread(
+                d.play_move, d.plan_path(here, start, settings, seed=seed + "|approach"), poster, clock, settings
+            )
+            if approach.outcome != "arrived":
+                return NativeEffect(
+                    "drag", source, label, "unverifiable", "desktop_pointer",
+                    (f"approach {approach.outcome} after {approach.posted_drags} moves; button never pressed",),
+                    f"drag approach {approach.outcome}", f"drag_{approach.outcome}",
+                    delivery="desktop", dispatched=True,
+                )
+        result = await asyncio.to_thread(d.play_drag, plan, poster, clock, settings)
+        if self.filmed is not None:
+            self.filmed.last_pointer = result.released_at
+            if result.outcome != "dropped":
+                self.filmed.end_take(result.outcome.removeprefix("aborted:"))
+        evidence = (
+            f"approach {approach.posted_drags if approach else 0} moves",
+            f"pressed at {start[0]:.1f},{start[1]:.1f}",
+            f"{result.posted_drags} drags, largest gap {result.max_gap_s * 1000:.1f} ms",
+            f"released at {result.released_at[0]:.1f},{result.released_at[1]:.1f}" if result.released_at else "not released",
+            *(["escape sent before release"] if result.escape_sent else []),
+        )
+        return NativeEffect(
+            "drag", source, label, "unverifiable", "desktop_pointer", evidence,
+            f"drag {result.outcome}", None if result.outcome == "dropped" else f"drag_{result.outcome}",
+            delivery="desktop", dispatched=True,
+        )
+
     async def act(
         self,
         nm: NativeMenu,
@@ -2117,6 +2248,9 @@ class NativeBridge:
         self.last = None
         self.dispatches += 1
         label = cand.label
+        refused = await self._filmed_gate(operation, id, label, nm.frames.get(id), approach=operation != "enter")
+        if refused is not None:
+            return refused
         if operation == "append":
             assert text is not None
             result = await self._append(nm, id, cand, text, append_precondition)
@@ -2137,12 +2271,28 @@ class NativeBridge:
             if refusal is not None:
                 return self._not_sent("hover", id, label, refusal.code, refusal.reason, "desktop")
             fx, fy, fw, fh = nm.frames.get(id, (0.0, 0.0, 0.0, 0.0))
+            # CUA's desktop scope takes screenshot pixels and divides by the main display's backing
+            # scale; read that same scale rather than assume one (notebook PM1).
+            try:
+                scale = pointer.main_display_scale(
+                    await self.driver.call_tool("get_screen_size", json.dumps({"session": self.session}))
+                )
+            except Exception:  # noqa: BLE001
+                scale = None
+            if scale is None:
+                return self._not_sent(
+                    "hover",
+                    id,
+                    label,
+                    "scale_unknown",
+                    "the main display's backing scale could not be read; the pointer was not moved",
+                    "desktop",
+                )
+            at = pointer.desktop_pixels(fx + fw / 2, fy + fh / 2, scale)
             try:
                 outcome = await self.driver.call_tool(
                     "move_cursor",
-                    json.dumps(
-                        {"x": fx + fw / 2, "y": fy + fh / 2, "scope": "desktop", "session": self.session}
-                    ),
+                    json.dumps({"x": at.x, "y": at.y, "scope": "desktop", "session": self.session}),
                 )
             except Exception as exc:  # noqa: BLE001
                 outcome = exc
@@ -2191,6 +2341,8 @@ class NativeBridge:
         mods = [{"command": "cmd", "option": "alt", "control": "ctrl"}.get(m, m) for m in (modifiers or [])]
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "key press decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("key", -1, "+".join([*mods, key]), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None
@@ -2303,6 +2455,8 @@ class NativeBridge:
         background chord. Asked of the posture first; ``key`` is the background route for a chord."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "hotkey decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("hotkey", -1, "+".join(keys), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None
@@ -2356,6 +2510,8 @@ class NativeBridge:
         invoke_menu remains the route only in exclusive_desktop, for a path AX cannot resolve."""
         if self.last is None or nm.snapshot_id != self.last.snapshot_id:
             raise NativeBridgeError("stale", "menu decided on a stale snapshot; reobserve")
+        if (refused := await self._filmed_gate("menu", -1, " > ".join(path), None)) is not None:
+            return refused
         if self.observation_guard is not None:
             await self.observe()
         self.last = None

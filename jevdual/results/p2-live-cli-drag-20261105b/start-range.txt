@@ -1,0 +1,23 @@
+bound Google Chrome window 39094 'footwork drag fixture' (exclusive_desktop)
+Google Chrome: 'footwork drag fixture'  [elements_incomplete 1]
+note: this observation is incomplete; the page holds more than is shown here, and an answer drawn from it covers only what is shown
+14 elements:
+  [   1] button     'Reload'
+  [   2] combobox   'View site information'
+  [   3] textbox    'Address and search bar' = '127.0.0.1:56806'
+  [   4] button     'Bookmark this tab'
+  [   5] button     'You'
+  [   6] combobox   'Chrome'
+  [   8] button     'Card A'
+  [   9] button     'Done column'
+  [  10] slider     'Volume'
+  [  11] button     'Mark 75'
+  [  13] combobox   'Tab search'
+  [  14] radio      'footwork drag fixture - Memory usage - 15.4 MB' checked=True selected
+  [  15] button     'Close'
+  [  16] button     'New Tab'
+page text (54 chars):
+card moves 92 {"dropped_in_zone":true}
+127.0.0.1:56806
+
+session: /Users/thomasmain/projects/footwork/jevdual/results/p2-live-cli-drag-20261105b/session-range  (export FOOTWORK_SESSION=/Users/thomasmain/projects/footwork/jevdual/results/p2-live-cli-drag-20261105b/session-range to omit --session)

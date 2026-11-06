@@ -101,6 +101,8 @@ class SessionState:
     native_scope: dict[str, str] = field(default_factory=dict)
     finder_scope: dict[str, Any] = field(default_factory=dict)
     ticket_scope: dict[str, Any] = field(default_factory=dict)
+    #: filmed pointer mode (``jevdual.filmed.Filmed.to_record``); empty when off
+    filmed: dict[str, Any] = field(default_factory=dict)
 
     @property
     def path(self) -> Path:
@@ -875,15 +877,26 @@ async def bind(state: SessionState):
 
     driver = desktop_effector()
     if state.native_scope or state.finder_scope:
-        return driver, _native_bridge(
-            driver,
-            state.pid,
-            state.window_id,
-            state.posture,
-            native_scope=state.native_scope,
-            finder_scope=state.finder_scope,
+        return driver, _filmed(
+            state,
+            _native_bridge(
+                driver,
+                state.pid,
+                state.window_id,
+                state.posture,
+                native_scope=state.native_scope,
+                finder_scope=state.finder_scope,
+            ),
         )
-    return driver, _native_bridge(driver, state.pid, state.window_id, state.posture)
+    return driver, _filmed(state, _native_bridge(driver, state.pid, state.window_id, state.posture))
+
+
+def _filmed(state: SessionState, bridge: Any) -> Any:
+    if state.filmed:
+        from jevdual.filmed import Filmed
+
+        bridge.filmed = Filmed.from_record(state.filmed)
+    return bridge
 
 
 def _native_bridge(
@@ -984,6 +997,152 @@ def finish_observation(
 
 
 # ---- commands --------------------------------------------------------------------------------
+
+
+def _filmed_setup(state: SessionState, args: Any) -> str | None:
+    """Record a filmed take's geometry at start: the scene window, its web content origin, and the keep-out
+    and rest position converted from viewport CSS px to screen points."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed
+
+    if state.posture != "exclusive_desktop":
+        return "--pointer-motion filmed moves the real pointer; it needs --mode exclusive_desktop"
+
+    def pair(raw: str | None, n: int, name: str) -> tuple[float, ...] | None:
+        if raw is None:
+            return None
+        parts = [float(v) for v in raw.replace(" ", "").split(",")]
+        if len(parts) != n:
+            raise ValueError(f"{name} needs {n} numbers, got {raw!r}")
+        return tuple(parts)
+
+    try:
+        win = ax.window_element(state.pid, state.window_id)
+        window = ax.frame_of(win)
+        web = ax.web_area_frame(win)
+        keep = pair(getattr(args, "keep_out", None), 4, "--keep-out")
+        rest = pair(getattr(args, "rest", None), 2, "--rest")
+    except (ax.AXError, ValueError) as exc:
+        return str(exc)
+    if window is None:
+        return "the scene window has no frame"
+    content = web or window
+    origin = (content.x, content.y)
+    filmed = Filmed(
+        window=(window.x, window.y, window.w, window.h),
+        content=(content.x, content.y, content.w, content.h),
+        keep_out=(origin[0] + keep[0], origin[1] + keep[1], keep[2], keep[3]) if keep else None,
+        rest=(origin[0] + rest[0], origin[1] + rest[1]) if rest else None,
+        type_delay_ms=getattr(args, "type_delay_ms", 65),
+    )
+    if filmed.rest is not None and filmed.keep_out is not None:
+        from jevdual.filmed import _inside
+
+        if _inside(filmed.rest, filmed.keep_out):
+            return "the rest position is inside the keep-out"
+    state.filmed = filmed.to_record()
+    print(
+        f"filmed take: content {content.w:.0f}x{content.h:.0f} at {content.x:.0f},{content.y:.0f}; "
+        f"keep-out {filmed.keep_out}; rest {filmed.rest}"
+    )
+    return None
+
+
+async def cmd_point(args: Any) -> int:
+    """Filmed take: rest the pointer over the one element named LABEL. Nothing is delivered; the page's
+    own hover state shows because the real pointer is there. Finds containers the Driver collapses."""
+    from jevdual import ax
+    from jevdual.filmed import Filmed, FilmedRefusal
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("point needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    try:
+        hits = await asyncio.to_thread(ax.labelled, ax.window_element(state.pid, state.window_id), args.label)
+    except ax.AXError as exc:
+        print(f"point refused: {exc}", file=sys.stderr)
+        return 4
+    exact = [h for h in hits if h[1].casefold() == args.label.casefold()]
+    hits = exact or hits
+    names = sorted({h[1] for h in hits})
+    if len(names) != 1:
+        why = "no element" if not names else f"{len(names)} elements ({', '.join(repr(n[:40]) for n in names[:4])})"
+        print(f"point refused: {why} named {args.label!r}", file=sys.stderr)
+        return 4
+    role, name, frame = hits[0]
+    try:
+        record = await filmed.approach((frame.x, frame.y, frame.w, frame.h), name)
+    except FilmedRefusal as refusal:
+        state.filmed = filmed.to_record()
+        state.log({"kind": "point", "label": name, "refused": refusal.code, "reason": refusal.reason})
+        state.save()
+        print(f"point refused: {refusal.code}: {refusal.reason}", file=sys.stderr)
+        return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "point", "role": role, **record})
+    state.save()
+    print(f"pointing at {role} {name[:60]!r} ({record.get('samples', 0)} samples)")
+    return 0
+
+
+async def cmd_keep_out(args: Any) -> int:
+    """Filmed take: arm the keep-out when the frame it protects appears, or turn it off."""
+    from jevdual.filmed import Filmed, _inside
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("keep-out needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    if args.rect.strip().lower() == "off":
+        filmed.keep_out = None
+    else:
+        try:
+            x, y, w, h = (float(v) for v in args.rect.replace(" ", "").split(","))
+        except ValueError:
+            print(f"keep-out takes X,Y,W,H or off, got {args.rect!r}", file=sys.stderr)
+            return 2
+        filmed.keep_out = (filmed.content[0] + x, filmed.content[1] + y, w, h)
+        for name, point in (("rest position", filmed.rest), ("pointer", filmed.last_pointer)):
+            if point is not None and _inside(tuple(point), filmed.keep_out):
+                print(f"keep-out refused: the {name} {point} is inside it", file=sys.stderr)
+                return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "keep_out", "rect": filmed.keep_out})
+    state.save()
+    print(f"keep-out {filmed.keep_out}")
+    return 0
+
+
+async def cmd_park(args: Any) -> int:
+    """Filmed take: move the pointer to the rest position, or to X Y in viewport CSS px."""
+    from jevdual.filmed import Filmed, FilmedRefusal
+
+    state = SessionState.load(session_dir(args.session))
+    if not state.filmed:
+        print("park needs a filmed take (footwork start ... --pointer-motion filmed)", file=sys.stderr)
+        return 2
+    if (args.x is None) != (args.y is None):
+        print("park takes both X and Y, or neither (the rest position)", file=sys.stderr)
+        return 2
+    filmed = Filmed.from_record(state.filmed)
+    point = filmed.viewport(args.x, args.y) if args.x is not None else None
+    try:
+        record = filmed.place(point) if getattr(args, "place", False) else await filmed.park(point)
+    except FilmedRefusal as refusal:
+        state.filmed = filmed.to_record()
+        state.log({"kind": "park", "refused": refusal.code, "reason": refusal.reason})
+        state.save()
+        print(f"park refused: {refusal.code}: {refusal.reason}", file=sys.stderr)
+        return 4
+    state.filmed = filmed.to_record()
+    state.log({"kind": "park", **record})
+    state.save()
+    to = record["to"]
+    print(f"parked at {to[0]:.1f},{to[1]:.1f} ({record.get('samples', 0)} samples)")
+    return 0
 
 
 async def cmd_start(args: Any) -> int:
@@ -1150,6 +1309,11 @@ async def cmd_start(args: Any) -> int:
             answer_expected=args.answer,
             posture=getattr(args, "mode", None) or "background_only",
         )
+        if getattr(args, "pointer_motion", "off") == "filmed":
+            refusal = _filmed_setup(state, args)
+            if refusal:
+                print(f"not starting: {refusal}", file=sys.stderr)
+                return 2
         if durable:
             from jevdual.session_operations import native_identity
 
@@ -1427,7 +1591,7 @@ def _inspection_preview(record: dict[str, Any], manifest_name: str) -> str:
 </body></html>'''
 
 
-_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "key", "hotkey", "menu", "navigate")
+_ROUTES = ("click", "type", "append", "move", "enter", "scroll", "hover", "drag", "key", "hotkey", "menu", "navigate")
 
 
 def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, ...], tuple[str, ...]]:
@@ -1454,6 +1618,11 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
         if not path:
             raise SystemExit('menu needs a path, e.g. menu "File > Save"')
         return op, None, None, (), path
+    if op == "drag":
+        if len(words) != 3:
+            raise SystemExit('drag needs a source and a destination, e.g. drag 12 30 or drag "Card A" "Done"')
+        source = int(words[1]) if words[1].lstrip("-").isdigit() else words[1]
+        return op, source, words[2], (), ()  # type: ignore[return-value]
     if len(words) < 2:
         raise SystemExit(f'{op} needs an element id or a label, e.g. {op} 65 or {op} "Telephone"')
     text = " ".join(words[2:]) if len(words) > 2 else None
@@ -1463,6 +1632,15 @@ def parse_do(words: list[str]) -> tuple[str, int | None, str | None, tuple[str, 
         return op, int(words[1]), text, (), ()
     # a label: resolved against the fresh observation in cmd_do (ids renumber between snapshots)
     return op, words[1], text, (), ()  # type: ignore[return-value]
+
+
+def resolve_destination(nm: Any, selector: str) -> tuple[Any, str]:
+    """A drag's destination on the fresh observation: an element id, or a label as ``resolve_label``."""
+    if selector.lstrip("-").isdigit():
+        cand = nm.menu.candidate(int(selector))
+        return cand, "" if cand is not None else f"destination id {selector} is not on the current observation"
+    rid, why = resolve_label(nm, selector)
+    return (nm.menu.candidate(rid), "") if rid is not None else (None, f"destination: {why}")
 
 
 def resolve_label(nm: Any, label: str) -> tuple[int | None, str]:
@@ -1650,6 +1828,24 @@ async def cmd_do(args: Any) -> int:
                 return 4
         if op == "move" and file_target is None:
             raise NativeBridgeError("file_scope_missing", "move requires a manifest-owned file:/ selector")
+        destination = None
+        if op == "drag":
+            if state.mode != "native" or not callable(getattr(bridge, "drag", None)):
+                print("not admitted: drag is a native route (footwork start --app ...)", file=sys.stderr)
+                return 2
+            destination, why = resolve_destination(nm, text or "")
+            if destination is None:
+                print(why, file=sys.stderr)
+                return 4
+            known = chosen_from.get(destination.id)
+            if known is not None and known != destination.label:
+                print(
+                    f"destination id {destination.id} is now {destination.label!r}, it was {known!r} when you "
+                    "looked; the page changed. Nothing dispatched.",
+                    file=sys.stderr,
+                )
+                return 4
+            text = shown_text = destination.label
         judge = None
         client = None
         # every route the authorizer judges (authorize.JUDGED_ROUTES), plus navigation: a key or Return
@@ -1692,9 +1888,11 @@ async def cmd_do(args: Any) -> int:
         if op == "navigate":
             action = dataclasses.replace(action, label=f"navigate to {shown_text}", route="click")
         line = f"{op}({target.label if target else (shown_text if op == 'navigate' else ('+'.join(keys) if keys else ' > '.join(path)))})"
+        if destination is not None and target is not None:
+            line = f"drag({target.label} -> {destination.label})"
         if carried is not None:
             line += f" text=@{carried.name} (from {carried.surface} {carried.location or carried.title})"
-        elif shown_text:
+        elif shown_text and op != "drag":
             line += f" text={shown_text[:60]!r}"
         if operations is not None:
             line = _safe_operation_value(state, line, text if secret_used else None)
@@ -1848,6 +2046,9 @@ async def cmd_do(args: Any) -> int:
                 eff = await bridge.key(nm, keys[-1], list(keys[:-1]))
             elif op == "menu":
                 eff = await bridge.menu(nm, list(path))
+            elif op == "drag":
+                assert target is not None and destination is not None
+                eff = await bridge.drag(nm, target.id, destination.id)
             else:
                 assert target is not None
                 route_arg = getattr(args, "route", None)
@@ -1885,6 +2086,8 @@ async def cmd_do(args: Any) -> int:
                 )
             raise
         exec_ms = (time.perf_counter() - t0) * 1000
+        if getattr(bridge, "filmed", None) is not None:
+            state.filmed = bridge.filmed.to_record()
         state.pending = {
             "line": line,
             "driver_effect": driver_effect,
@@ -2499,7 +2702,7 @@ def _proposal(
 ) -> grants.Proposal:
     arguments = (
         text
-        if op in ("type", "append", "move", "navigate")
+        if op in ("type", "append", "move", "navigate", "drag")
         else ("+".join(keys) if keys else " > ".join(path) or None)
     )
     return grants.Proposal(
@@ -2562,6 +2765,12 @@ async def cmd_grant(args: Any) -> int:
             if target is None:
                 print(f"id {cid} is not on the current observation", file=sys.stderr)
                 return 4
+        if op == "drag":
+            destination, why = resolve_destination(nm, raw_text or "")
+            if destination is None:
+                print(why, file=sys.stderr)
+                return 4
+            raw_text = destination.label
         g = grants.issue(
             _proposal(
                 state,

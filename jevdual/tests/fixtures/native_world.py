@@ -88,6 +88,11 @@ class World:
     backed_toggles: dict[int, ToggleControl] = field(default_factory=dict)
     toggle_writes: list[str] = field(default_factory=list)
     tool_calls: list[tuple[str, dict[str, Any]]] = field(default_factory=list)
+    #: the main display's backing scale. CUA's desktop ``move_cursor`` takes native screenshot pixels and
+    #: divides by this (platform-macos tools/mod.rs ``desktop_screenshot_point``).
+    scale: float = 1.0
+    #: where the real pointer is, in global screen points, after the last desktop move
+    pointer: tuple[float, float] | None = None
     n: int = 0
     base: dict[str, Any] = field(default_factory=lambda: json.loads(FIXTURE.read_text()))
 
@@ -180,8 +185,16 @@ class World:
         )
 
     async def call_tool(self, name: str, args_json: str) -> Any:
-        self.tool_calls.append((name, json.loads(args_json)))
-        return SimpleNamespace(action=None, text="", is_error=False, error_code=None, structured_json=None)
+        args = json.loads(args_json)
+        self.tool_calls.append((name, args))
+        structured = None
+        if name == "get_screen_size":
+            structured = json.dumps({"width": 1512, "height": 982, "scale_factor": self.scale})
+        elif name == "move_cursor" and args.get("scope") == "desktop":
+            self.pointer = (args["x"] / self.scale, args["y"] / self.scale)
+        return SimpleNamespace(
+            action=None, text="", is_error=False, error_code=None, structured_json=structured
+        )
 
     # ---- rendering
 

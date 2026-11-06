@@ -1,0 +1,29 @@
+{
+  "frame": [
+    439.0,
+    545.0,
+    48.0,
+    48.0
+  ],
+  "centre_pt": [
+    463.0,
+    569.0
+  ],
+  "before_pt": [
+    927.1015625,
+    433.078125
+  ],
+  "idle_s": 11.629085667,
+  "after_pt": [
+    463.0,
+    569.0
+  ],
+  "max_axis_error_pt": 0.0,
+  "effect": {
+    "dispatched": true,
+    "error_code": null,
+    "effect": "unverifiable"
+  },
+  "outcome": "pass",
+  "t": "2026-11-05T16:46:20"
+}
