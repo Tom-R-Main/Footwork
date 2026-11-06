@@ -21,7 +21,7 @@ import sys
 import time
 from pathlib import Path
 
-KEEP_OUT = "420,145,980,558"
+KEEP_OUT = "420,119,980,584"
 REST = "360,460"
 BRIEF = "Show how a failed webhook gets replayed in relay.dev"
 REVISION = "Hold the replay scene a bit longer"
