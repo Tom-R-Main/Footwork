@@ -1,0 +1,21 @@
+{
+  "experiment": "SQ1",
+  "model": "subq-snap-preview",
+  "source_commit": "ff69a0fcee3892bd6474f2a03b0bef069ba077ab",
+  "planned": 12,
+  "attempted": 12,
+  "completed": 12,
+  "contract_valid": 12,
+  "route_correct": 12,
+  "route_accuracy_planned": 1.0,
+  "completion_correct": 12,
+  "score_correct": 12,
+  "reported_input_tokens": 54769,
+  "reported_usage_available_calls": 12,
+  "estimated_reported_charge_usd": 0.0027384500000000003,
+  "reserved_or_settled_usd": 0.0027384500000000003,
+  "latency_median_seconds": 0.3760941455839202,
+  "latency_max_seconds": 0.779385874979198,
+  "stop_reason": null,
+  "decision": "larger separately registered study eligible"
+}

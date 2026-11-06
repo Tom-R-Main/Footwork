@@ -1,0 +1,33 @@
+{
+  "model": "subq-snap-preview",
+  "state": "HISTORICAL IRRELEVANT CONTEXT (0 ASCII characters):\n\nCURRENT AUTHORITATIVE STATE:\nUser requests a local draft containing exactly \"Hello team.\" The draft must be saved durably. This is a synthetic local draft task. A required draft title is missing. Only the user can supply it. Ask for clarification.",
+  "questions": {
+    "route": {
+      "type": "choice",
+      "instructions": "Choose the next route using only CURRENT AUTHORITATIVE STATE.",
+      "criteria": {
+        "act": "A safe enabled action can advance the requested draft.",
+        "wait": "A save is in progress with a busy indicator and no completion receipt.",
+        "done": "Exact requested content and a successful durable save receipt are present.",
+        "escalate": "A required value is missing and must be supplied by the user."
+      }
+    },
+    "completion": {
+      "type": "noul",
+      "instructions": "Has the requested local draft been completed and durably saved?",
+      "criteria": {
+        "true": "Exact requested content and a successful durable save receipt are present.",
+        "false": "Required content or a successful durable save receipt is absent."
+      }
+    },
+    "progress": {
+      "type": "score",
+      "instructions": "Score progress from the current authoritative evidence.",
+      "criteria": [
+        "Not started: no draft exists, or a required value needs user clarification.",
+        "Partial: the draft is being saved, with no successful durable save receipt.",
+        "Complete: exact requested content and a successful durable save receipt exist."
+      ]
+    }
+  }
+}

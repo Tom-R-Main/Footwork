@@ -1,0 +1,31 @@
+{
+  "verdict": "passed; no integrity anomaly",
+  "reviewer_independence": "fresh non-authoring agent; same configured model family",
+  "measured_source": "bd34247b514191162cdee280d927e6f484422527",
+  "attempts": 636,
+  "per_provider": {
+    "completion": 108,
+    "risk": 120,
+    "actions": 90
+  },
+  "repeats_per_case": 3,
+  "cases": 106,
+  "request_contract_errors": 0,
+  "forced_singleton_bindings_across_replays": 51,
+  "reported_usage_available": 636,
+  "estimated_charge_usd": 0.025787922,
+  "largest_predispatch_package_reservation_usd": 0.05334871,
+  "cap_usd": 1,
+  "checks": [
+    "individual attempt copies equal aggregate rows",
+    "fresh fixture captures and shared/wire/manifest hashes match",
+    "exact schedule, requested/returned models, cold flags and provenance match",
+    "all raw responses replay through production verifier/policy/arbiter; exclude only nondeterministic local latency field",
+    "all metrics independently recomputed including paired/cold/warm timing",
+    "central/local ledgers equal; all entries settled; no active run or stale lock"
+  ],
+  "artifact_sha256": {
+    "results.json": "33f679e0a0f8173d01644c14efb6ac393cf7a101283fa5a24bd1b32bbece35de",
+    "summary.json": "639a82a4349c3b57a5df1241f8f81de56421035d33f59bd6c655ee40e044b0c2"
+  }
+}
