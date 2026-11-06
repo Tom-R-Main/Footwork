@@ -120,7 +120,6 @@ class Obs:
         got = readback["input"]["inputSettings"]
         if got.get("show_cursor") is not True or got.get("window") != window_id or got.get("type") != 1:
             raise TakeFailed(f"OBS capture readback differs: {got}")
-        readback["frame"] = self.frame_check()
         (self.take.out / "obs-settings.json").write_text(json.dumps(readback, indent=1))
         self.take.record(step="setup", cmd="obs setup", code=0, readback=readback)
         return readback
@@ -154,6 +153,9 @@ class Obs:
 
     def start(self) -> None:
         self.one("SetCurrentProgramScene", {"sceneName": SCENE})
+        # OBS renders a capture only while its scene shows, so check the picture after switching (FT3)
+        frame = self.frame_check()
+        self.take.record(step="setup", cmd="obs frame", code=0, frame=frame)
         self.one("StartRecord")
         deadline = time.monotonic() + 10
         while not self.one("GetRecordStatus")["outputActive"]:
