@@ -73,3 +73,30 @@ Observed: the new clock-isolation regression fails before andpassesafter replaci
 Inferred: sharedstdlib-clock mutation was an isolation defect and isremoved without changing product/helper/qualifiedartifact bytes; the nextCIrun must establish whether it caused the hostedStopIteration.
 Next: push the boundedtest-only correction andinspect currentCI beforemerge.
 Refs: output/consolidation-ci-failure-v2.log; tests/test_capability_fixture.py:test_fake_clock_preserves_process_wide_time_functions; worker clockbefore/after evidence inoutput/consolidation-20261014
+
+## CA12 · update · 2026-10-14 14:08
+Resolves: CA8 = held
+Observed: hostedrun38610601896 passes at881f27d: source1594/28skips/12browserdeselections; syntheticcamera18 withoneplatformskip; inbox/workbench30 plus11subtests; physical332. Rust, Node, lint and bothmacOS/Linuxconsumer-artifact jobs pass. No unresolved reviewthreads remain. PR3 merged with two parents as42a64316cd77c9775a7593a476cfa8648b0b2d82; 445a348/d931559 andbothrequestedbranchheads remainmainancestors. Primarycheckout isclean onmain andequalsorigin/main.
+Inferred: integration, observedCIportability and boundedreviewremediation gates areheld for the testedsource. Changedphysicalsource isconformance-only; olderqualificationrecords remain boundto theirfrozencommits.
+Next: retire thisinactive managedcheckout afterfinalevidence preservation; A3remainsresourcegated. Preserve thiscloseoutnote with thearchive; no runtimechange or newunmergedimplementation isintroduced.
+Refs: PR3; hostedrun38610601896; hostedrun38610601771; output/consolidation-ci-success.log; results/consolidation-20261014; primarymain42a6431
+
+## CA13 · update · 2026-10-14 14:08
+Resolves: CA10 = held
+Observed: the same previouslyfailing readiness test passes in full hostedLinux suite afterfixture-localclock isolation; wholeCI succeeds. Product/helper/qualifiedartifactbytes areunchanged.
+Inferred: isolating test clocks removes the globaltiming interference exercised byhostedCI; no browserruntime timingrelaxation wasneeded.
+Next: retain bothfailedCIlane records and the clockregression.
+Refs: output/consolidation-ci-failure-v2.log; output/consolidation-ci-success.log; 881f27d
+
+## CA14 · summary · 2026-10-14 14:08
+Established: bothrequestedbranches landed through reviewedPR3 andcurrentgreenCI; primarymain42a6431 isclean; qualified445a348/released931559 history isreachable; exactZIP8dc81c72 andwheeldigests remainunchanged. Private screenshots, traces, journals, originalsandfailedruns haveverifiedcopies under primaryoutput/consolidation-preserved-20261014. The unrelateduntrackeddraft wasmoved there byte-identically. ThreeattestedidleFootworkservices were stopped; VMstaysstopped. A GitHubmacOSprerelease draft holds exactapprovedZIP andchecksums, withserverassetdigest matching.
+Uncertain: README-onlyCodex adoption hasnotrun. Userrequires8GiBavailableRAM; currentreadings areapproximately4GiB and theidle-appquestion ispending. AnotherMac, coldOS, arbitrarydiscovery, pixels, realhardware anddiskpersistence remainunqualified.
+Decision: handoffconsolidation ascompletedcodeintegration; archive thiscloseoutnotebook asrecoverablecontext alongside privateevidence, keepingpublishedmain unchanged andclean. ResumeA3 onlywhen itsresourcegate holds oruserchangesit; preserve originalartifact andassess demonstratedfriction beforepublishing thedraft.
+Refs: PR3merge42a6431; drafttagv0.0.1-macos-arm64-preview.1; output/prerelease-draft-20261014/github-draft.json; primaryoutput/consolidation-preserved-20261014/preservation-manifest.json; docs/experiments/A3-readme-only-codex-adoption.md
+
+## CA15 · update · 2026-10-14 14:34
+Resolves: CA1 = inconclusive
+Observed: codeintegration/main/CI/history/preservation gates held, but managedarchive requests returnqueued thenrollback theirartifactstate; linkedcheckout remainsregistered andpresent. CodexUIinspection isblocked bythe computeruse tool. Genericretirement observed no checkoutreferences, butmacOSdenied completeinspection of17liveownedprocesses evenafterboundedlsof fallback; no directremoval orforcewasattempted. A completeverifiedGitbundle preserves closeout-only localnotes andhistory. Postmerge mainCI andallconsumerjobs also pass. A3package isstaged, noinstallation/model/nativefixturestarted; availableRAM4.86GiB failsuser8GiB gate.
+Inferred: codeconsolidation succeeded, whilephysicalretirement andunassistedadoption remainunverified externalgates. Noarchivecompletion orresourceheadroom isclaimed.
+Next: obtainactualapparchiveerror fromuser andidle-appselection; retain checkout andbackup pendingowneroperation, resumeA3 onlywhengateholds oruserchangesconstraint. GitHubprerelease staysdraft.
+Refs: primarymain42a6431; output/consolidation-preserved-20261014/consolidation-closeout.bundle; primaryoutput/consolidation-preserved-20261014/lsof-retirement-observation.json; primaryoutput/readme-codex-adoption-20261014-v1/preparation.json; archiveToolqueued/rollbackobservations
