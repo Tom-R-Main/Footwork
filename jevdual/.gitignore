@@ -21,3 +21,7 @@ results/annotation/packets/
 # local smoke runs (e.g. scripts/q15_coexistence.py); results that back a claim go under results/
 runs/
 results/**/screenshots/
+# filmed takes: keep the step log, OBS readback, gesture state and contact sheet; not the video or browser profile
+results/**/chrome-profile/
+results/**/*.mp4
+results/**/*.sqlite.lock

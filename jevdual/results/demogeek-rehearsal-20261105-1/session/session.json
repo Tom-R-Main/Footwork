@@ -1,0 +1,122 @@
+{
+ "dir": "/Users/thomasmain/projects/footwork/jevdual/results/demogeek-rehearsal-20261105-1/session",
+ "app": "Google Chrome",
+ "pid": 58238,
+ "window_id": 39433,
+ "task": "Make a Relay demo in DemoGeek",
+ "requirements": [],
+ "authorized": [
+  "Send"
+ ],
+ "answer_expected": false,
+ "step": 0,
+ "status": "open",
+ "memory": [],
+ "last_url": "app://Google Chrome",
+ "last_title": "DemoGeek",
+ "last_page_text": "New demo\nPaste your product's URL, or describe the moment you want people to see.\nDescribe what to film\u2026",
+ "last_candidates": [
+  {
+   "id": 6,
+   "label": "Attach files",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 7,
+   "label": "Message",
+   "role": "textbox",
+   "operations": [
+    "type",
+    "append"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": "textarea",
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  },
+  {
+   "id": 8,
+   "label": "relay.dev: show how a failed webhook gets replayed",
+   "role": "button",
+   "operations": [
+    "click"
+   ],
+   "value": null,
+   "href": null,
+   "input_type": null,
+   "checked": null,
+   "selected": false,
+   "expanded": null,
+   "pressed": null,
+   "section": null
+  }
+ ],
+ "last_native_ambiguous": [],
+ "last_snapshot": "s00000001",
+ "pending": null,
+ "mode": "native",
+ "posture": "exclusive_desktop",
+ "browser_tab": "",
+ "secret_names": [],
+ "visual_generation": "5c181e68f5a84caeb0b9fb06624d8258",
+ "last_visual_check": null,
+ "authority": "",
+ "session_id": "",
+ "native_binding": {},
+ "native_scope": {},
+ "finder_scope": {},
+ "ticket_scope": {},
+ "filmed": {
+  "window": [
+   36.0,
+   40.0,
+   1440.0,
+   932.0
+  ],
+  "content": [
+   36.0,
+   72.0,
+   1440.0,
+   900.0
+  ],
+  "keep_out": [
+   456.0,
+   217.0,
+   980.0,
+   558.0
+  ],
+  "rest": [
+   396.0,
+   532.0
+  ],
+  "margin_pt": 4.0,
+  "arcs": [
+   0.18,
+   0.1,
+   0.05,
+   0.0
+  ],
+  "timing": "DELIBERATE",
+  "dwell_s": 0.18,
+  "type_delay_ms": 65,
+  "continuity_pt": 2.0,
+  "take_ended": null,
+  "last_pointer": null,
+  "gestures": []
+ }
+}
