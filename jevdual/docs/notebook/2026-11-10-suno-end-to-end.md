@@ -245,3 +245,17 @@ Test: on frozen114a1b9 plus unchanged focus1 overlay, fresh observation then typ
 Predicts: independently corroborated caret/selection reaches exactly one paced type call per requested edit; the complete raw values and actual visible text match.
 Against: any range/text/focus guard refuses, only AX changes, output differs including LF, or outcome is unknown. Preserve unknown effects and reconcile before further input.
 Refs: results/foreground-web-selection-20261110/report.md; output/suno-20261110/runtime-114a1b9/identity.json; output/suno-20261110/lyrics-parameterized-observation.json
+
+## SUNU25 · update · 2026-11-10 18:30
+Resolves: SUN20 = failed
+Observed: frozen114a1b9 passes542 affected checks, but the live requested0:0 insertion refuses selection_unqualified because exact selected range/text is unreadable; receipt explicitly says not sent. The post-observation still shows empty lyrics and zero characters. The earlier independent AXSelectedText empty read followed Select All; this new test followed style/title input and Create. No diagnostic text reached synthesis.
+Inferred: the addressed field may need ordinary focus preparation before independent selected-text proof is available. This remains a hypothesis, not proof that selection values may be assumed empty.
+Next: one observed field click as focus preparation, fresh observation, then repeat the explicitly refused zero-length insertion only if its own independent guards qualify.
+Refs: output/suno-20261110/range-edit-signal.txt; output/suno-20261110/lyrics-parameterized-observation.json
+
+## SUN21 · prediction · 2026-11-10 18:30
+Hypothesis: clicking the observed empty Lyrics editor establishes its DOM text focus, making exact AXSelectedText readable for the guarded0:0 insertion.
+Test: click the actual unique field once on frozen114a1b9, observe, then request signal at exact range0:0. A prior pre-text refusal established non-delivery. Require exact raw value plus visible signal; no fallback, no generation.
+Predicts: field focus preparation lets existing selection/value/text checks pass and the rendered editor plus raw receipt agree on signal followed by its preserved LF.
+Against: click refuses, exact selection remains unreadable/mismatched, focus shifts elsewhere, text outcome is unknown, or only AX changes.
+Refs: output/suno-20261110/range-edit-signal.txt
