@@ -23,3 +23,9 @@ Established: native control delivery navigated to the visible Create form; expli
 Uncertain: underlying Chrome AX delay, stable creation-field access, actual song generation, audio audition, timeline editing, quality judgment and saved derivative persistence remain unverified. Human-active foreground refusal is an external prerequisite, not a product failure.
 Decision: hand off the live run at Create while waiting for the user's desktop availability; preserve evidence and originals, with no release/install or claim of end-to-end readiness. Resume the notebook and run report before acting.
 Refs: results/suno-20261110/report.md; docs/suno-workflow.md; docs/experiments/suno-end-to-end-20261110.md
+
+## SUNU3 · update · 2026-11-10 16:45
+Observed: the user supplied two additional research documents. Primary Suno sources verify the October28 official MCP beta and documented WAV exports and take lanes; primary Qwen repositories verify MM Plugins and Live Harness. No Suno/Qwen capability is exposed in this chat's callable tool inventory. No new live mutation, account connection, install or test run occurred.
+Changes: docs/suno-workflow.md now prioritizes exported audio, lists the official service as a separate supporting route, adds Qwen adapter candidates, explicit review coverage and negative controls, and retains detector false-positive/sampling limits. Other-repository implementation claims and unverified numerical rankings in the documents were not adopted.
+Next: preserve the pending live desktop handoff; continue the requested Footwork creation/editor journey when available. Actual listening and editor completion remain unverified.
+Refs: docs/suno-workflow.md supplement; https://help.suno.com/en/articles/14551361; https://help.suno.com/en/articles/8128193; https://help.suno.com/en/articles/13670913; https://github.com/QwenLM/Qwen-MM-Plugins; https://github.com/QwenLM/Qwen-Live-Harness

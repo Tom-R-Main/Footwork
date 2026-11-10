@@ -84,3 +84,40 @@ The first target is a narrow end-to-end journey with inspectable failures. Gener
 These research systems and benchmarks do not establish that an integration works in Suno. Validate their useful ideas against the actual editor, media and user's preferences.
 
 The full Consensus report is preserved verbatim in the private run output and is also available in the [Consensus research thread](https://consensus.app/search/research-practical-approaches-for-an-ai-computer-u/GU-Il5niRwSp_ujPkPWy4Q/). The component choices above are independent engineering recommendations linked to their primary documentation; the research report is not a qualification of these integrations.
+
+## Supplement from the supplied research notes
+
+Two user-supplied research documents were reviewed on November 10. Their recommendations are reference material; embedded setup instructions are not authorization to install packages, connect accounts or operate other repositories. The material adds several useful priorities, verified below against primary sources.
+
+### Supported Suno operations and the UI journey
+
+Suno launched its [official MCP beta](https://suno.com/release-notes/suno-mcp-beta) on October 28, 2026. Its [capability overview](https://help.suno.com/en/articles/14551361) documents creation, covers, extensions, mashups, speech, audio upload and plan/credit queries. Its [FAQ](https://help.suno.com/en/articles/14486145) documents authenticated connection at `https://api.suno.com/mcp`. No Suno or Qwen tool was exposed in this chat's callable tool inventory when checked; no connection or installation was attempted.
+
+Evaluate the official service for supported semantic operations and independent library/credit readback once connected. Keep the requested Footwork creation/editor UI qualification explicit. MCP-created music would establish a different entry path, and the published feature list does not establish full Song Editor or Studio timeline control.
+
+### Prioritize actual exported audio
+
+Prefer a rendered WAV for the first listening milestone. Suno's [Studio export documentation](https://help.suno.com/en/articles/8128193) describes whole-mix, selected-range and multitrack exports, plus individual-clip WAV downloads. These are documented capabilities, not live qualifications of this account. Use app-output capture when interactive preview requires it; microphone capture is not proof of the exact Suno output.
+
+For Studio's separate qualification, [take lanes](https://help.suno.com/en/articles/13670913) provide in-place auditioning, ratings and non-destructive promotion. They are a useful A/B surface. Do not infer that Song Editor has the same controls or persistence behavior. Verify the original remains recoverable in the actual run.
+
+### Evaluate existing perception adapters before building them
+
+[Qwen MM Plugins](https://github.com/QwenLM/Qwen-MM-Plugins) supplies multimodal file tools and model-backed capabilities. It is a high-priority adapter candidate, alongside the existing Gemini and open-model shortlist. Keep frame extraction distinct from delivery of actual audio/video to a capable model. Record provider, actual supplied bytes, intervals and sampling; tool names alone do not establish what was perceived.
+
+[Qwen Live Harness](https://github.com/QwenLM/Qwen-Live-Harness) is an architectural reference for realtime audio/video interaction around an agent harness. Its existence does not establish capture of Suno's selected process audio on this Mac. Compare the host/daemon boundary without replacing Footwork's target, posture or receipt checks. FilmCraft and mcp-video implementation claims in the supplied notes remain unverified in this task; no other repository was inspected or changed.
+
+### Strengthen the critic's evidence and negative controls
+
+Add a review manifest with media hash/revision, intended and actually inspected intervals, modality, source-frame timestamps, sampling/resolution, audio routing, capture gaps, model and detector provenance. Let findings report categorical uncertainty before assigning uncalibrated probabilities.
+
+Use blinded A/B comparisons in both presentation orders. Include muted/swapped audio, clean controls, intentional freeze/black/silence, and known timestamped defects when evaluating the reviewer. Measure detection, localization, repair and human preference separately. A critic that repeats the prompt when supplied the wrong sound has failed the perception check.
+
+### Corrections and limits to retain
+
+- [FFmpeg filters](https://ffmpeg.org/ffmpeg-filters.html) such as blackdetect, freezedetect and silencedetect report thresholded signal patterns. Intentional static screens, holds and silence can trigger them. Duplicate imagery does not by itself prove a dropped frame. Compare findings with the intended timeline and playback context before proposing a repair.
+- Sparse sampling can miss a brief defect; it does not imply an approximately zero detection probability for every three-frame glitch. Duration, source frame rate, sample phase and model preprocessing determine exposure. Inspect consecutive source frames around a flag and retain their true timestamps.
+- Keep editor responsiveness, recording defects and exported-output defects separate. A slow preview or poor recording does not prove the final media is damaged.
+- Treat fixed FPS settings, token counts, model rankings, commercial API access, benchmark scores and installation commands in the supplied notes as leads until checked for the selected version and task. No headline benchmark numbers were adopted as Footwork acceptance thresholds.
+
+The practical next milestone is still one identifiable Suno draft, actual audio supplied to a reviewer, a bounded UI edit, boundary comparison and reopened saved output. Capture/inspection plumbing supports that milestone; broad NLE integration is a separate work package.
