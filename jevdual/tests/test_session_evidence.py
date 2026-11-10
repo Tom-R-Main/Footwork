@@ -102,6 +102,18 @@ def test_a_refusal_carried_on_the_receipt_is_kept():
     assert r.effect == "refused" and "requires_foreground" in r.evidence
 
 
+def test_truncated_preview_does_not_override_refusal_or_ambiguous_identity(tmp_path):
+    from dataclasses import replace
+
+    field = replace(_field("preview…"), value_truncated=True)
+    refused = _receipt(tmp_path, _nm(_field("")), _nm(field), driver_effect="refused")
+    assert refused["effect"] == "refused"
+    fresh = _nm(field)
+    fresh.ambiguous_targets = {field.id}
+    ambiguous = _receipt(tmp_path, _nm(_field("")), fresh)
+    assert ambiguous["effect"] == "unverifiable" and "ambiguous identity" in ambiguous["evidence"]
+
+
 def test_two_fields_with_one_label_bind_to_the_chosen_id(tmp_path):
     before = _nm(_field("", id=1), _field("", id=7))
     after = _nm(_field("", id=1), _field("Ada", id=7))

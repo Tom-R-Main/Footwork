@@ -1921,6 +1921,82 @@ def test_native_enter_arity_guard_does_not_change_browser_route(world, fw, monke
     assert "native enter sends Return only" not in err
 
 
+def _native_styles_field(world, monkeypatch, *, actual_after=None, initial=""):
+    row = {
+        "element_index": 910, "element_token": "initial:910", "role": "AXTextArea",
+        "label": "Styles", "value": initial, "enabled": True, "actions": [],
+        "frame": {"x": 10, "y": 20, "w": 300, "h": 100},
+    }
+    world.base["elements"].append(row)
+    original = world.call_tool
+
+    async def write(name, args_json):
+        arguments = json.loads(args_json)
+        if name == "set_value":
+            row["value"] = arguments["value"] if actual_after is None else actual_after
+        return await original(name, args_json)
+
+    monkeypatch.setattr(world, "call_tool", write)
+    return row
+
+
+@pytest.mark.parametrize("false_equality", [False, True])
+def test_native_type_bounded_preview_is_not_full_readback(world, fw, monkeypatch, false_equality):
+    intended = "a" * 479 + "…" if false_equality else "a" * 600
+    actual = "a" * 479 + "different unseen suffix" if false_equality else intended
+    row = _native_styles_field(world, monkeypatch, actual_after=actual)
+    assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+    code, out, err = fw("do", "type", "Styles", intended, "--no-judge")
+    assert code == 0, err
+    assert row["value"] == actual
+    assert (row["value"] != intended) is false_equality
+    receipt = _state(fw)["memory"][-1]
+    assert "unverifiable" in receipt
+    assert "value preview is truncated" in out
+    assert "not the text typed" not in out
+    saved = next(c for c in _state(fw)["last_candidates"] if c["label"] == "Styles")
+    assert saved["value_truncated"] is True
+    assert len(saved["value"]) == 480
+
+
+def test_native_literal_ellipsis_is_not_projection_truncation(world, fw, monkeypatch):
+    payload = "a" * 479 + "…"
+    row = _native_styles_field(world, monkeypatch)
+    assert fw("start", "Fill own song styles", "--app", "Calculator")[0] == 0
+    code, _, err = fw("do", "type", "Styles", payload, "--no-judge")
+    assert code == 0 and row["value"] == payload, err
+    assert "confirmed" in _state(fw)["memory"][-1]
+    saved = next(c for c in _state(fw)["last_candidates"] if c["label"] == "Styles")
+    assert saved["value_truncated"] is False
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_native_append_receipt_does_not_compare_a_truncated_persisted_baseline(
+    world, fw, monkeypatch, legacy
+):
+    from jevdual.session import SessionState
+
+    row = _native_styles_field(world, monkeypatch, initial="a" * 600)
+    assert fw("start", "Append own song note", "--app", "Calculator")[0] == 0
+    state = SessionState.load(fw.session)
+    state.pending = {
+        "line": "append(Styles)", "op": "append", "mode": "native", "target_id": 910,
+        "target_label": "Styles", "intended": "new ending", "dispatched": True,
+        "driver_effect": "unverifiable", "secret": False,
+    }
+    if legacy:
+        for saved in state.last_candidates:
+            saved.pop("value_truncated", None)
+    state.save()
+    # The action's eventual fresh state is short: only the old baseline is bounded.
+    row["value"] = "new ending"
+    code, out, err = fw("look")
+    assert code == 0, err
+    assert "unverifiable" in _state(fw)["memory"][-1]
+    assert "earlier value preview is truncated" in out
+    assert world.tool_calls == []
+
+
 @pytest.mark.parametrize("command", ["start", "look"])
 @pytest.mark.parametrize("permission", ["not_granted", "unavailable"])
 def test_denied_accessibility_is_an_explicit_observation_failure(world, fw, monkeypatch, command, permission):

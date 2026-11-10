@@ -58,6 +58,7 @@ _CAND_FIELDS = (
     "pressed",
     "section",
     "placeholder",
+    "value_truncated",
 )
 
 
@@ -743,6 +744,15 @@ def _bound_field(menu: Menu | None, pending: dict[str, Any]) -> Candidate | None
 _MASK_CHARS = frozenset("•●*·∙")
 
 
+def _bounded_native_value(field: Candidate) -> bool:
+    if field.value_truncated is not None:
+        return field.value_truncated
+    # Old persisted menus have no provenance bit. Their cap-shaped ellipsis
+    # cannot distinguish clipping from a literal ellipsis, so retain uncertainty.
+    cap = 480 if field.input_type == "textarea" else 120
+    return len(field.value or "") == cap and (field.value or "").endswith("…")
+
+
 def _field_receipt(
     r: Any, pending: dict[str, Any], nm: Any, *, prev: Menu | None = None, secret_value: str | None = None
 ) -> Any:
@@ -815,6 +825,17 @@ def _field_receipt(
             evidence=f"{label!r} {'changed' if changed else 'did not change'}; a secret is compared only during the command that typed it",
         )
     intended = (secret_value if secret else pending.get("intended")) or ""
+    if pending.get("mode", "native") == "native":
+        if _bounded_native_value(field):
+            return dataclasses.replace(
+                r, effect="unverifiable",
+                evidence=f"{label!r} value preview is truncated; full content comparison is unavailable",
+            )
+        if pending["op"] == "append" and was is not None and _bounded_native_value(was):
+            return dataclasses.replace(
+                r, effect="unverifiable",
+                evidence=f"{label!r} earlier value preview is truncated; full append comparison is unavailable",
+            )
     alternates: tuple[str, ...] = ()
     if pending["op"] == "type":
         expected: str | None = intended
@@ -863,6 +884,8 @@ def render_observation(nm: NativeMenu, *, text_chars: int = 3000, receipt: dict[
     lines.append(f"{len(m.candidates)} elements:")
     for c in m.candidates:
         extra = f" = {c.value!r}" if c.value else ""
+        if c.value_truncated:
+            extra += " [value preview truncated]"
         for key in ("checked", "pressed", "expanded"):
             if getattr(c, key) is not None:
                 extra += f" {key}={getattr(c, key)}"

@@ -51,6 +51,32 @@ def test_buttons_are_click_candidates_with_labels(snapshot):
     assert nm.menu.by_operation["click"]
 
 
+@pytest.mark.parametrize(("role", "cap"), [("AXTextField", 120), ("AXTextArea", 480)])
+@pytest.mark.parametrize("extra", [0, 1])
+def test_native_value_projection_records_actual_clipping_not_literal_ellipsis(role, cap, extra):
+    value = "a" * (cap - 1) + "…" + "b" * extra
+    snap = {"elements": [{
+        "element_index": 1, "element_token": "s:1", "role": role,
+        "label": "Styles", "value": value,
+    }]}
+    nm = menu_from_snapshot(snap)
+    (candidate,) = nm.menu.candidates
+    assert candidate.value_truncated is bool(extra)
+    assert len(candidate.value) == cap
+    assert nm.values[1] == value
+    assert candidate.to_state()["value_truncated"] is bool(extra)
+
+
+def test_native_secure_field_does_not_derive_truncation_from_secret_length():
+    snap = {"elements": [{
+        "element_index": 1, "element_token": "s:1", "role": "AXSecureTextField",
+        "label": "Password", "value": "synthetic-secret" * 100,
+    }]}
+    (candidate,) = menu_from_snapshot(snap).menu.candidates
+    assert candidate.value is None and candidate.value_truncated is None
+    assert "value_truncated" not in candidate.to_state()
+
+
 def test_page_text_is_the_display_static_text(snapshot):
     nm = menu_from_snapshot(snapshot)
     # invisible direction marks are stripped; the display shows the expression and the result

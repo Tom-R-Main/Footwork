@@ -480,10 +480,12 @@ def menu_from_snapshot(
         if placeholder and mac_proof.get("placeholder_qualified", True) and label in (role, "text area"):
             label = placeholder
         value: str | None = None
+        value_truncated = False if role in _TEXT_ROLES and not sensitive else None
         if role in _TEXT_ROLES and not sensitive and raw_value not in (None, ""):
-            value = (
-                _clean_multiline(raw_value, _VALUE_CAP * 4) if multiline else _clean(raw_value, _VALUE_CAP)
-            )
+            preview = _clean_multiline(raw_value) if multiline else _clean(raw_value)
+            cap = _VALUE_CAP * 4 if multiline else _VALUE_CAP
+            value_truncated = len(preview) > cap
+            value = preview[:cap - 1] + "…" if value_truncated else preview
         checked = _checked(raw_value) if role in ("checkbox", "radio", "switch") else None
         if linux_role and role in ("checkbox", "radio"):
             checked = _get(el, "selected")
@@ -501,6 +503,7 @@ def menu_from_snapshot(
             section=(mac_sections or {}).get(int(idx)) or _section_of(el, by_index),
             offscreen=_offscreen(frame, bounds),
             placeholder=placeholder,
+            value_truncated=value_truncated,
         )
         candidates.append(cand)
         tokens[cand.id] = str(token)

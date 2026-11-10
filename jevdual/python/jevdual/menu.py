@@ -62,6 +62,8 @@ class Candidate:
     pressed: ControlState = None
     #: Independently read field hint; never entered content or proof of a nonempty value.
     placeholder: str | None = None
+    #: Native display projection clipped this value. None means legacy/unreported, not exact readback.
+    value_truncated: bool | None = None
 
     def to_state(self) -> dict[str, Any]:
         """Compact JSON object for Jev state and Choice criteria (no None fields)."""
@@ -72,7 +74,8 @@ class Candidate:
             "operations": list(self.operations),
         }
         for key in (
-            "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder"
+            "value", "href", "input_type", "checked", "selected", "expanded", "pressed", "section", "placeholder",
+            "value_truncated",
         ):
             val = getattr(self, key)
             if val is not None:
