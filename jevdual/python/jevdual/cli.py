@@ -463,6 +463,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="with foreground web type: replace only this already selected UTF-16 range; does not set selection",
     )
     do.add_argument(
+        "--click-delivery", choices=("foreground",),
+        help="explicit native macOS foreground click on a fresh qualified element; normal gates and idle policy apply",
+    )
+    do.add_argument(
         "--route",
         choices=("trusted", "dom"),
         help="browser mode: the click route (default trusted; dom for radio, checkbox, switch)",

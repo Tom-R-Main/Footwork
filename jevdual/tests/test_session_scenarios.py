@@ -2164,6 +2164,137 @@ def _foreground_styles_fixture(
     return row
 
 
+def _foreground_popup_fixture(world, monkeypatch, *, idle=60, outcome=None, changed=False):
+    row = _foreground_styles_fixture(world, monkeypatch, idle=idle, focus_change=changed)
+    row.update(role="AXPopUpButton", label="More actions")
+    attempts = []
+
+    async def click(inp):
+        attempts.append(inp)
+        if inp.delivery_mode.name == "BACKGROUND":
+            raise RuntimeError("Not opened: select_menu_would_raise_window; nothing was sent")
+        if isinstance(outcome, Exception):
+            raise outcome
+        if outcome is not None:
+            return outcome
+        world.presses.append("More actions")
+        return cd.ActionResult(
+            effect=cd.ActionEffect.UNVERIFIABLE, route=cd.ActionRoute.ACCESSIBILITY,
+            delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=1),
+            evidence=[], escalation=None, summary="menu press acknowledged", error=None,
+            hint=None, next_call=None, fast_path=None,
+        )
+
+    monkeypatch.setattr(world, "click", click)
+    return row, attempts
+
+
+def test_explicit_foreground_native_click_uses_fresh_token_and_sdk_delivery(world, fw, monkeypatch):
+    _, attempts = _foreground_popup_fixture(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0 and world.presses == ["More actions"], (out, err)
+    click, = attempts
+    assert click.delivery_mode.name == "FOREGROUND"
+    assert click.position.element_token == f"s{world.n - 1:08x}:910"
+    assert click.target.pid == 77 and click.target.window_id == 40335
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["action"]["click_delivery"] == "foreground"
+    assert receipt["action"]["native_delivery"]["driver_delivery"] == "foreground"
+
+
+def test_native_dropdown_background_refusal_has_no_automatic_foreground_retry(world, fw, monkeypatch):
+    _, attempts = _foreground_popup_fixture(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--authorize", "More actions")
+    assert code == 0 and "unverifiable" in out + err, (out, err)
+    assert len(attempts) == 1 and attempts[0].delivery_mode.name == "BACKGROUND"
+    assert not world.presses and world.tool_calls == []
+
+
+@pytest.mark.parametrize("failure", ["human_active", "target_changed", "window_changed", "uncertain"])
+def test_explicit_foreground_native_click_refuses_drift_and_never_retries(world, fw, monkeypatch, failure):
+    from jevdual import ax
+
+    _, attempts = _foreground_popup_fixture(world, monkeypatch, idle=0 if failure == "human_active" else 60,
+                                           changed=failure == "target_changed",
+                                           outcome=RuntimeError("click reply lost") if failure == "uncertain" else None)
+    if failure == "window_changed":
+        monkeypatch.setattr(ax, "focused_window_id", lambda pid: 999)
+        monkeypatch.setattr(ax, "title_bar_point", lambda *args: None)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0, (out, err)
+    assert len(attempts) == (1 if failure == "uncertain" else 0)
+    assert ("unverifiable" in out + err if failure == "uncertain"
+            else any(word in out + err for word in ("refused", "not sent")))
+
+
+@pytest.mark.parametrize("variant", ["background_only", "browser", "type", "no_judge", "web_text", "route", "file_selector", "nonmac"])
+def test_explicit_foreground_native_click_unsupported_refuses_before_binding(world, fw, monkeypatch, variant):
+    _foreground_popup_fixture(world, monkeypatch)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode",
+              "background_only" if variant == "background_only" else "foreground_permitted")[0] == 0
+    if variant == "browser":
+        path = fw.session / "session.json"
+        state = json.loads(path.read_text()); state["mode"] = "browser"; path.write_text(json.dumps(state))
+    if variant == "nonmac":
+        from jevdual import native
+        monkeypatch.setattr(native, "sys", SimpleNamespace(platform="linux"))
+
+    def forbidden(**kwargs):
+        pytest.fail("unsupported foreground click must refuse before binding")
+
+    monkeypatch.setattr(cd.CuaDriver, "create", forbidden)
+    args = ["do", "type" if variant == "type" else "click",
+            "file:/owned/song" if variant == "file_selector" else "More actions"]
+    if variant == "type":
+        args.append("signal")
+    args.extend(["--click-delivery", "foreground"])
+    if variant == "no_judge":
+        args.append("--no-judge")
+    if variant == "web_text":
+        args.extend(["--web-text-delivery", "foreground"])
+    if variant == "route":
+        args.extend(["--route", "dom"])
+    code, _, err = fw(*args)
+    assert code == 2 and "foreground click" in err
+
+
+def test_explicit_foreground_native_click_does_not_retry_sdk_refusal(world, fw, monkeypatch):
+    refusal = cd.ActionResult(
+        effect=cd.ActionEffect.REFUSED, route=cd.ActionRoute.ACCESSIBILITY,
+        delivery=cd.ActionDelivery(mode=cd.ActionDeliveryMode.FOREGROUND, delivered_count=0),
+        evidence=[], escalation=None, summary="fresh target refused", error=None,
+        hint=None, next_call=None, fast_path=None,
+    )
+    _, attempts = _foreground_popup_fixture(world, monkeypatch, outcome=refusal)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0 and len(attempts) == 1 and world.presses == [], (out, err)
+    records = [json.loads(line) for line in (fw.session / "session.jsonl").read_text().splitlines()]
+    receipt = next(record for record in records if record["kind"] == "receipt")
+    assert receipt["dispatched"] is False
+
+
+def test_explicit_foreground_native_click_retains_hidden_peer_ambiguity_after_activation(world, fw, monkeypatch):
+    row, attempts = _foreground_popup_fixture(world, monkeypatch)
+    original = world.call_tool
+
+    async def add_peer(name, encoded):
+        result = await original(name, encoded)
+        if name == "bring_to_front":
+            world.base["elements"].append({**row, "element_index": 911, "element_token": "initial:911"})
+        return result
+
+    monkeypatch.setattr(world, "call_tool", add_peer)
+    assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+    code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+    assert code == 0 and "target_ambiguous" in out + err, (out, err)
+    assert not attempts
+
+
 @pytest.mark.parametrize("initial", ["", "prior text"])
 def test_explicit_foreground_web_type_preserves_target_and_readback(world, fw, monkeypatch, initial):
     row = _foreground_styles_fixture(world, monkeypatch, initial=initial)

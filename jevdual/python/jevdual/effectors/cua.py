@@ -231,3 +231,7 @@ def element_position(*, element_token: str) -> Any:
 
 def background_delivery() -> Any:
     return _sdk().InputDeliveryMode.BACKGROUND
+
+
+def foreground_delivery() -> Any:
+    return _sdk().InputDeliveryMode.FOREGROUND

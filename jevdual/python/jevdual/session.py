@@ -257,6 +257,7 @@ def _operation_request(args: Any) -> dict[str, Any]:
         "route": getattr(args, "route", None),
         **({"web_text_delivery": args.web_text_delivery} if getattr(args, "web_text_delivery", None) else {}),
         **({"web_text_range": args.web_text_range} if getattr(args, "web_text_range", None) is not None else {}),
+        **({"click_delivery": args.click_delivery} if getattr(args, "click_delivery", None) else {}),
     }
     if getattr(args, "_native_scope", None):
         request["native_scope"] = dict(args._native_scope)
@@ -1902,6 +1903,22 @@ async def cmd_do(args: Any) -> int:
         return 2
     op, cid, raw_text, keys, path = parse_do(args.words)
     web_text_delivery = getattr(args, "web_text_delivery", None)
+    click_delivery = getattr(args, "click_delivery", None)
+    if click_delivery:
+        from jevdual.native import require_foreground_click_runtime
+
+        if (state.mode != "native" or op != "click" or state.posture == "background_only"
+                or getattr(args, "no_judge", False) or str(cid).startswith("file:")
+                or getattr(args, "route", None) or web_text_delivery
+                or getattr(args, "web_text_range", None) is not None):
+            print("foreground click requires native click, foreground posture and normal action gates; "
+                  "other operations and delivery options are unsupported", file=sys.stderr)
+            return 2
+        try:
+            require_foreground_click_runtime()
+        except NativeBridgeError as exc:
+            print(f"foreground click unavailable: {exc}", file=sys.stderr)
+            return 2
     web_text_range = None
     range_text = getattr(args, "web_text_range", None)
     if range_text is not None:
@@ -2356,6 +2373,8 @@ async def cmd_do(args: Any) -> int:
                 elif web_text_delivery:
                     eff = await bridge.act(nm, op, target.id, text, web_text_delivery=web_text_delivery,
                                            **({"web_text_range": web_text_range} if web_text_range is not None else {}))
+                elif click_delivery:
+                    eff = await bridge.act(nm, op, target.id, text, click_delivery=click_delivery)
                 else:
                     eff = await bridge.act(nm, op, target.id, text)
             ended_at = time.time()
@@ -2408,14 +2427,15 @@ async def cmd_do(args: Any) -> int:
             "app": state.app,
             **({"carry": dataclasses.asdict(carried)} if carried is not None else {}),
             **({
-                "web_text_delivery": web_text_delivery,
+                **({"web_text_delivery": web_text_delivery} if web_text_delivery else {}),
+                **({"click_delivery": click_delivery} if click_delivery else {}),
                 **({"web_text_range": list(web_text_range)} if web_text_range is not None else {}),
                 "native_delivery": {
                     key: getattr(eff, key, None) for key in (
                         "delivery", "driver_delivery", "dispatched", "delivered_count", "delivery_basis", "route"
                     )
                 },
-            } if web_text_delivery else {}),
+            } if web_text_delivery or click_delivery else {}),
         }
         if getattr(eff, "readback", None) is not None:
             state.pending["save_readback"] = eff.readback

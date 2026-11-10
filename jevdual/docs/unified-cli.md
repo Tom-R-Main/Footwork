@@ -123,6 +123,15 @@ distinguish the group. Missing peer evidence, duplicate URLs and the 64-link rea
 ambiguity even when menu pruning hides peers. URLs over 2048 characters, credentials, whitespace,
 relative and unsupported URLs are not qualified. Buttons in song rows do not inherit link identity.
 
+For a native macOS menu that needs its window in front, use
+`footwork do click "More actions" --click-delivery foreground`. This explicit option requires
+foreground posture, shared-desktop idle admission, and normal action gates; browser mode,
+`--no-judge`, other operations and mixed delivery options refuse before driver binding.
+The route activates the exact bound window, freshly reobserves and rematches the qualified target,
+then sends one SDK foreground click addressed by its fresh element token. Errors and refusals stop
+without retry or automatic fallback. The default remains background delivery. A click acknowledgement
+does not establish that the menu opened; reobserve its actual controls before continuing.
+
 For a read-only DOM observation, use `footwork browser lightpanda read URL --executable /absolute/lightpanda`.
 This separate profile owns one fresh external prebuilt engine and connection, withholds input/editable
 values, and supplies no input authority or geometry. Run `footwork browser lightpanda artifact` and

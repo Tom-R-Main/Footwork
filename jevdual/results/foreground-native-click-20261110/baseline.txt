@@ -1,0 +1,140 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+___ test_explicit_foreground_native_click_uses_fresh_token_and_sdk_delivery ____
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x12841d080>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1285ec650>
+
+    def test_explicit_foreground_native_click_uses_fresh_token_and_sdk_delivery(world, fw, monkeypatch):
+        _, attempts = _foreground_popup_fixture(world, monkeypatch)
+        assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+>       assert code == 0 and world.presses == ["More actions"], (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...nt,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --click-delivery foreground
+E         ')
+E       assert (2 == 0)
+
+tests/test_session_scenarios.py:2194: AssertionError
+_ test_explicit_foreground_native_click_refuses_drift_and_never_retries[human_active] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x1285614e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x12844cd70>
+failure = 'human_active'
+
+    @pytest.mark.parametrize("failure", ["human_active", "target_changed", "window_changed", "uncertain"])
+    def test_explicit_foreground_native_click_refuses_drift_and_never_retries(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        _, attempts = _foreground_popup_fixture(world, monkeypatch, idle=0 if failure == "human_active" else 60,
+                                               changed=failure == "target_changed",
+                                               outcome=RuntimeError("click reply lost") if failure == "uncertain" else None)
+        if failure == "window_changed":
+            monkeypatch.setattr(ax, "focused_window_id", lambda pid: 999)
+            monkeypatch.setattr(ax, "title_bar_point", lambda *args: None)
+        assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...nt,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --click-delivery foreground
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2226: AssertionError
+_ test_explicit_foreground_native_click_refuses_drift_and_never_retries[target_changed] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x12839fce0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x128302b10>
+failure = 'target_changed'
+
+    @pytest.mark.parametrize("failure", ["human_active", "target_changed", "window_changed", "uncertain"])
+    def test_explicit_foreground_native_click_refuses_drift_and_never_retries(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        _, attempts = _foreground_popup_fixture(world, monkeypatch, idle=0 if failure == "human_active" else 60,
+                                               changed=failure == "target_changed",
+                                               outcome=RuntimeError("click reply lost") if failure == "uncertain" else None)
+        if failure == "window_changed":
+            monkeypatch.setattr(ax, "focused_window_id", lambda pid: 999)
+            monkeypatch.setattr(ax, "title_bar_point", lambda *args: None)
+        assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...nt,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --click-delivery foreground
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2226: AssertionError
+_ test_explicit_foreground_native_click_refuses_drift_and_never_retries[window_changed] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x12839f380>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x128345910>
+failure = 'window_changed'
+
+    @pytest.mark.parametrize("failure", ["human_active", "target_changed", "window_changed", "uncertain"])
+    def test_explicit_foreground_native_click_refuses_drift_and_never_retries(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        _, attempts = _foreground_popup_fixture(world, monkeypatch, idle=0 if failure == "human_active" else 60,
+                                               changed=failure == "target_changed",
+                                               outcome=RuntimeError("click reply lost") if failure == "uncertain" else None)
+        if failure == "window_changed":
+            monkeypatch.setattr(ax, "focused_window_id", lambda pid: 999)
+            monkeypatch.setattr(ax, "title_bar_point", lambda *args: None)
+        assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...nt,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --click-delivery foreground
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2226: AssertionError
+_ test_explicit_foreground_native_click_refuses_drift_and_never_retries[uncertain] _
+
+world = World(calc=Calc(entry='0', acc=None, op=None, expr='', fresh=True), apps=[('Calculator', 77, True)], window_id=40335, ...'truncated': None, 'truncation_reason': None, 'window_bounds': None, 'window_id': 40335, 'window_title': 'Calculator'})
+fw = <function fw.<locals>.run at 0x12839f240>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10798eed0>
+failure = 'uncertain'
+
+    @pytest.mark.parametrize("failure", ["human_active", "target_changed", "window_changed", "uncertain"])
+    def test_explicit_foreground_native_click_refuses_drift_and_never_retries(world, fw, monkeypatch, failure):
+        from jevdual import ax
+    
+        _, attempts = _foreground_popup_fixture(world, monkeypatch, idle=0 if failure == "human_active" else 60,
+                                               changed=failure == "target_changed",
+                                               outcome=RuntimeError("click reply lost") if failure == "uncertain" else None)
+        if failure == "window_changed":
+            monkeypatch.setattr(ax, "focused_window_id", lambda pid: 999)
+            monkeypatch.setattr(ax, "title_bar_point", lambda *args: None)
+        assert fw("start", "Open owned song menu", "--app", "Calculator", "--mode", "foreground_permitted")[0] == 0
+        code, out, err = fw("do", "click", "More actions", "--click-delivery", "foreground", "--authorize", "More actions")
+>       assert code == 0, (out, err)
+E       AssertionError: ('', 'usage: footwork [-h]
+E                         {run,menu,apps,start,park,point,keep-out,look,inspect-target,visual-check,...nt,snapshot-file,status}
+E                         ...
+E         footwork: error: unrecognized arguments: --click-delivery foreground
+E         ')
+E       assert 2 == 0
+
+tests/test_session_scenarios.py:2226: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_native_click_uses_fresh_token_and_sdk_delivery
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_native_click_refuses_drift_and_never_retries[human_active]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_native_click_refuses_drift_and_never_retries[target_changed]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_native_click_refuses_drift_and_never_retries[window_changed]
+FAILED tests/test_session_scenarios.py::test_explicit_foreground_native_click_refuses_drift_and_never_retries[uncertain]
+5 failed, 257 deselected in 0.98s

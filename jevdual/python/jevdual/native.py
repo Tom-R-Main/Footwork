@@ -692,6 +692,11 @@ def require_foreground_web_text_runtime() -> None:
         )
 
 
+def require_foreground_click_runtime() -> None:
+    if sys.platform != "darwin":
+        raise NativeBridgeError("foreground_click_platform_unsupported", "explicit foreground click requires native macOS")
+
+
 @dataclass(frozen=True)
 class NativeEffect:
     """One native producer's account of an action and its declared local predicate.
@@ -1897,14 +1902,36 @@ class NativeBridge:
             }, evidence=(*effect.evidence, "SDK text-dispatch refusal: zero characters; preparation may have occurred"))
         return effect
 
-    async def _click_token(self, token: str) -> Any:
-        from jevdual.effectors.cua import background_delivery, click_input, element_position
+    async def _click_foreground(self, nm: NativeMenu, id: int, cand: Candidate) -> NativeEffect:
+        refused = await self._filmed_gate("click", id, cand.label, nm.frames.get(id))
+        if refused is not None:
+            return refused
+
+        async def call() -> Any:
+            await self._front_and_key()
+            current, target_id = await self._live(nm, id, "click")
+            target, token = self._require_fresh(current, target_id)
+            if "click" not in target.operations:
+                raise NativeBridgeError("target_changed", "the fresh target no longer offers click")
+            self.last = None
+            self.dispatches += 1
+            return await self._click_token(token, foreground=True)
+
+        return await self._foreground("click", id, cand.label, call, why=f"explicit foreground click {cand.label!r}")
+
+    async def _click_token(self, token: str, *, foreground: bool = False) -> Any:
+        from jevdual.effectors.cua import (
+            background_delivery,
+            click_input,
+            element_position,
+            foreground_delivery,
+        )
 
         return await self.driver.click(
             click_input(
                 target=self._target(),
                 position=element_position(element_token=token),
-                delivery_mode=background_delivery(),
+                delivery_mode=foreground_delivery() if foreground else background_delivery(),
                 session=self.session,
                 button=None,
                 count=None,
@@ -2572,6 +2599,7 @@ class NativeBridge:
         append_precondition: AppendPrecondition | None = None,
         web_text_delivery: str | None = None,
         web_text_range: tuple[int, int] | None = None,
+        click_delivery: str | None = None,
     ) -> NativeEffect:
         """Dispatch exactly one operation. The caller must reobserve afterwards; ``self.last`` is
         cleared so a second act on the same snapshot is refused as stale."""
@@ -2580,6 +2608,14 @@ class NativeBridge:
                 "unknown_operation", "An exact append precondition only applies to append"
             )
         cand, token = self._require_fresh(nm, id)
+        if click_delivery is not None:
+            require_foreground_click_runtime()
+            if (click_delivery != "foreground" or operation != "click" or "click" not in cand.operations
+                    or web_text_delivery is not None or web_text_range is not None):
+                return self._not_sent(operation, id, cand.label, "foreground_click_unsupported",
+                                      "explicit foreground delivery supports only native click", "foreground")
+            self._require_unambiguous(nm, id)
+            return await self._click_foreground(nm, id, cand)
         if web_text_range is not None and (
             web_text_delivery != "foreground" or not isinstance(web_text_range, tuple) or len(web_text_range) != 2
             or any(type(value) is not int or value < 0 for value in web_text_range) or sum(web_text_range) > 65_536
